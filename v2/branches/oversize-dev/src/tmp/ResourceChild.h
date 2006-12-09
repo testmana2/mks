@@ -1,0 +1,1 @@
+#ifndef RESOURCECHILD_H#define RESOURCECHILD_H#include "AbstractChild.h"#include <string>class ResourceChild : virtual public AbstractChild{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	ResourceChild ( );	/**	 * Empty Destructor	 */	virtual ~ResourceChild ( );protected:private:};#endif // RESOURCECHILD_H

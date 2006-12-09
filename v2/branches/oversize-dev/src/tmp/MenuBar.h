@@ -1,0 +1,1 @@
+#ifndef MENUBAR_H#define MENUBAR_H#include <string>#include <vector>/**  * class MenuBar  * This is the menubar of the application  */class MenuBar{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	MenuBar ( );	/**	 * Empty Destructor	 */	virtual ~MenuBar ( );protected:private:};#endif // MENUBAR_H

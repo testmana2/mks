@@ -1,0 +1,1 @@
+#ifndef QMAKEPROJECT_H#define QMAKEPROJECT_H#include <string>#include <vector>class QMakeProject{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	QMakeProject ( );	/**	 * Empty Destructor	 */	virtual ~QMakeProject ( );protected:private:};#endif // QMAKEPROJECT_H

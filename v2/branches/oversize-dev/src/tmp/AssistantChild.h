@@ -1,0 +1,1 @@
+#ifndef ASSISTANTCHILD_H#define ASSISTANTCHILD_H#include "AbstractChild.h"#include <string>class AssistantChild : virtual public AbstractChild{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	AssistantChild ( );	/**	 * Empty Destructor	 */	virtual ~AssistantChild ( );protected:private:};#endif // ASSISTANTCHILD_H

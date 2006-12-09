@@ -1,0 +1,1 @@
+#include "QtAssistantChild.h"// Constructors/Destructors//  QtAssistantChild::QtAssistantChild ( ) {}QtAssistantChild::~QtAssistantChild ( ) { }

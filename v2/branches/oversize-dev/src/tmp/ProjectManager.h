@@ -1,0 +1,1 @@
+#ifndef PROJECTMANAGER_H#define PROJECTMANAGER_H#include <string>#include <vector>class ProjectManager{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	ProjectManager ( );	/**	 * Empty Destructor	 */	virtual ~ProjectManager ( );protected:private:};#endif // PROJECTMANAGER_H

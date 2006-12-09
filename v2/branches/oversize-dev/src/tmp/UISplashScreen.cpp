@@ -1,0 +1,1 @@
+#include "UISplashScreen.h"// Constructors/Destructors//  UISplashScreen::UISplashScreen ( ) {}UISplashScreen::~UISplashScreen ( ) { }//  // Methods//  // Accessor methods//  

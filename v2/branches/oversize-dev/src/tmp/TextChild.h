@@ -1,0 +1,1 @@
+#ifndef TEXTCHILD_H#define TEXTCHILD_H#include "AbstractChild.h"#include <string>class TextChild : virtual public AbstractChild{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	TextChild ( );	/**	 * Empty Destructor	 */	virtual ~TextChild ( );protected:private:};#endif // TEXTCHILD_H

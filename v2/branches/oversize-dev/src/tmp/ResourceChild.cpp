@@ -1,0 +1,1 @@
+#include "ResourceChild.h"// Constructors/Destructors//  ResourceChild::ResourceChild ( ) {}ResourceChild::~ResourceChild ( ) { }

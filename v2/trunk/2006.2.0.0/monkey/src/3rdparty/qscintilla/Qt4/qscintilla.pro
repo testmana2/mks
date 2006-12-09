@@ -1,0 +1,237 @@
+# The project file for the QScintilla library.
+#
+# Copyright (c) 2006
+# 	Riverbank Computing Limited <info@riverbankcomputing.co.uk>
+# 
+# This file is part of QScintilla.
+# 
+# This copy of QScintilla is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option) any
+# later version.
+# 
+# QScintilla is supplied in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+# 
+# You should have received a copy of the GNU General Public License along with
+# QScintilla; see the file LICENSE.  If not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+!win32:VERSION = 1.0.0
+
+TEMPLATE = lib
+TARGET = qscintilla2
+CONFIG += qt warn_off release dll thread
+INCLUDEPATH = . ../include ../src
+DEFINES = QSCINTILLA_MAKE_DLL QT SCI_LEXER
+
+# Handle both Qt v4 and v3.
+DESTDIR = $$[QT_INSTALL_LIBS]
+isEmpty(DESTDIR) {
+	DESTDIR = $(QTDIR)/lib
+}
+
+header.path = $$[QT_INSTALL_HEADERS]
+isEmpty(header.path) {
+	header.path = $(QTDIR)/include
+}
+header.files = qsci*.h
+
+trans.path = $$[QT_INSTALL_TRANSLATIONS]
+isEmpty(trans.path) {
+	trans.path = $(QTDIR)/translations
+}
+trans.files = qscintilla_*.qm
+
+qsci.path = $$[QT_INSTALL_DATA]
+isEmpty(qsci.path) {
+	qsci.path = $(QTDIR)
+}
+qsci.files = ../qsci
+
+INSTALLS += header trans qsci
+
+HEADERS = \
+	qsciglobal.h \
+	qsciscintilla.h \
+	qsciscintillabase.h \
+	qsciapis.h \
+	qscicommand.h \
+	qscicommandset.h \
+	qscidocument.h \
+	qscilexer.h \
+	qscilexerbash.h \
+	qscilexerbatch.h \
+	qscilexercpp.h \
+	qscilexercsharp.h \
+	qscilexercss.h \
+	qscilexerdiff.h \
+	qscilexerhtml.h \
+	qscilexeridl.h \
+	qscilexerjava.h \
+	qscilexerjavascript.h \
+	qscilexerlua.h \
+	qscilexermakefile.h \
+	qscilexerperl.h \
+	qscilexerpov.h \
+	qscilexerproperties.h \
+	qscilexerpython.h \
+	qscilexerruby.h \
+	qscilexersql.h \
+	qscilexertex.h \
+	qscimacro.h \
+	qsciprinter.h \
+	ListBoxQt.h \
+	SciClasses.h \
+	ScintillaQt.h \
+	../include/Accessor.h \
+	../include/KeyWords.h \
+	../include/Platform.h \
+	../include/PropSet.h \
+	../include/SString.h \
+	../include/SciLexer.h \
+	../include/Scintilla.h \
+	../include/ScintillaWidget.h \
+	../include/WindowAccessor.h \
+	../src/AutoComplete.h \
+	../src/CallTip.h \
+	../src/CellBuffer.h \
+	../src/ContractionState.h \
+	../src/CharClassify.h \
+	../src/Document.h \
+	../src/DocumentAccessor.h \
+	../src/Editor.h \
+	../src/ExternalLexer.h \
+	../src/Indicator.h \
+	../src/KeyMap.h \
+	../src/LineMarker.h \
+	../src/RESearch.h \
+	../src/SVector.h \
+	../src/ScintillaBase.h \
+	../src/Style.h \
+	../src/StyleContext.h \
+	../src/ViewStyle.h \
+	../src/XPM.h
+
+SOURCES = \
+	qsciscintilla.cpp \
+	qsciscintillabase.cpp \
+	qsciapis.cpp \
+	qscicommand.cpp \
+	qscicommandset.cpp \
+	qscidocument.cpp \
+	qscilexer.cpp \
+	qscilexerbash.cpp \
+	qscilexerbatch.cpp \
+	qscilexercpp.cpp \
+	qscilexercsharp.cpp \
+	qscilexercss.cpp \
+	qscilexerdiff.cpp \
+	qscilexerhtml.cpp \
+	qscilexeridl.cpp \
+	qscilexerjava.cpp \
+	qscilexerjavascript.cpp \
+	qscilexerlua.cpp \
+	qscilexermakefile.cpp \
+	qscilexerperl.cpp \
+	qscilexerpov.cpp \
+	qscilexerproperties.cpp \
+	qscilexerpython.cpp \
+	qscilexerruby.cpp \
+	qscilexersql.cpp \
+	qscilexertex.cpp \
+	qscimacro.cpp \
+	qsciprinter.cpp \
+	SciClasses.cpp \
+	ListBoxQt.cpp \
+	PlatQt.cpp \
+	ScintillaQt.cpp \
+	../src/AutoComplete.cpp \
+	../src/CallTip.cpp \
+	../src/CellBuffer.cpp \
+	../src/ContractionState.cpp \
+	../src/CharClassify.cpp \
+	../src/Document.cpp \
+	../src/DocumentAccessor.cpp \
+	../src/Editor.cpp \
+	../src/ExternalLexer.cpp \
+	../src/Indicator.cpp \
+        ../src/KeyMap.cpp \
+	../src/KeyWords.cpp \
+	../src/LexAPDL.cpp \
+	../src/LexAU3.cpp \
+	../src/LexAVE.cpp \
+	../src/LexAda.cpp \
+	../src/LexAsm.cpp \
+	../src/LexAsn1.cpp \
+	../src/LexBaan.cpp \
+	../src/LexBash.cpp \
+	../src/LexBasic.cpp \
+	../src/LexBullant.cpp \
+	../src/LexCLW.cpp \
+	../src/LexCPP.cpp \
+	../src/LexCSS.cpp \
+	../src/LexCaml.cpp \
+	../src/LexConf.cpp \
+	../src/LexCrontab.cpp \
+	../src/LexCsound.cpp \
+	../src/LexEScript.cpp \
+	../src/LexEiffel.cpp \
+	../src/LexErlang.cpp \
+	../src/LexFlagship.cpp \
+	../src/LexForth.cpp \
+	../src/LexFortran.cpp \
+	../src/LexGui4Cli.cpp \
+	../src/LexHTML.cpp \
+	../src/LexHaskell.cpp \
+	../src/LexInno.cpp \
+	../src/LexKix.cpp \
+	../src/LexLisp.cpp \
+	../src/LexLout.cpp \
+	../src/LexLua.cpp \
+	../src/LexMMIXAL.cpp \
+	../src/LexMPT.cpp \
+	../src/LexMSSQL.cpp \
+	../src/LexMatlab.cpp \
+	../src/LexMetapost.cpp \
+	../src/LexNsis.cpp \
+	../src/LexOpal.cpp \
+	../src/LexOthers.cpp \
+	../src/LexPB.cpp \
+	../src/LexPOV.cpp \
+	../src/LexPS.cpp \
+	../src/LexPascal.cpp \
+	../src/LexPerl.cpp \
+	../src/LexPython.cpp \
+	../src/LexRebol.cpp \
+	../src/LexRuby.cpp \
+	../src/LexSQL.cpp \
+	../src/LexScriptol.cpp \
+	../src/LexSmalltalk.cpp \
+	../src/LexSpecman.cpp \
+	../src/LexSpice.cpp \
+	../src/LexTADS3.cpp \
+	../src/LexTCL.cpp \
+	../src/LexTeX.cpp \
+	../src/LexVB.cpp \
+	../src/LexVHDL.cpp \
+	../src/LexVerilog.cpp \
+	../src/LexYAML.cpp \
+	../src/LineMarker.cpp \
+	../src/PropSet.cpp \
+        ../src/RESearch.cpp \
+        ../src/ScintillaBase.cpp \
+	../src/Style.cpp \
+	../src/StyleContext.cpp \
+	../src/ViewStyle.cpp \
+	../src/WindowAccessor.cpp \
+	../src/XPM.cpp
+
+TRANSLATIONS = \
+	qscintilla_de.ts \
+	qscintilla_fr.ts \
+	qscintilla_pt_br.ts \
+	qscintilla_ru.ts

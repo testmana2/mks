@@ -1,0 +1,33 @@
+RESTRUCTURATION CODE
+====================
+
+Settings: 100%
+MenuBar: 100%
+StatusBar: 90%, need elided text, QLabel don't support it :(
+UITranslator: 100%
+RecentsManager: 100%
+ToolsManager: 100%
+UIToolsEdit: 100%
+UIAbout: 100%
+UIMain: -
+MonkeyEditor: need searchbox
+AbstractChild: 100%
+UISaveFiles: 90%, need connect button and make filenames short in view
+TabToolBar: 100%
+Workspace: - , need to check if tabinserted, tabremoved call tabchanged when there is no child
+BasePlugin: 100%
+PluginsManager: 100% maybe need new members in the futur
+WorkspacePlugin: 100% need futur members :)
+ChildPlugin: 100%
+CompilerPlugin: 100% need futur members :)
+DebuggerPlugin: 100% need futur members :)
+ProjectsManager: -
+Monkey:
+main:
+
+Text: 100%
+TextChild: 100%
+
+manual
+qt documentation
+popup menu action ( form header implementation split h split v )

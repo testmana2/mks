@@ -1,0 +1,1 @@
+#ifndef QTASSISTANTCHILD_H#define QTASSISTANTCHILD_H#include "AbstractChild.h"#include <string>class QtAssistantChild : virtual public AbstractChild{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	QtAssistantChild ( );	/**	 * Empty Destructor	 */	virtual ~QtAssistantChild ( );protected:private:};#endif // QTASSISTANTCHILD_H

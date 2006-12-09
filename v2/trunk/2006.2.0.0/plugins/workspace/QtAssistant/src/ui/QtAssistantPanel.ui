@@ -1,0 +1,300 @@
+<ui version="4.0" >
+ <class>QtAssistantPanel</class>
+ <widget class="QDockWidget" name="QtAssistantPanel" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>259</width>
+    <height>419</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Qt Assistant</string>
+  </property>
+  <widget class="QWidget" name="centralWidget" >
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>2</number>
+    </property>
+    <property name="spacing" >
+     <number>2</number>
+    </property>
+    <item>
+     <widget class="QToolBar" name="tbActions" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>7</hsizetype>
+        <vsizetype>0</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="cursor" >
+       <cursor>13</cursor>
+      </property>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="iconSize" >
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
+      </property>
+      <addaction name="aPrevious" />
+      <addaction name="aNext" />
+      <addaction name="aHome" />
+      <addaction name="separator" />
+      <addaction name="aFind" />
+      <addaction name="aPrint" />
+      <addaction name="separator" />
+      <addaction name="aZoomIn" />
+      <addaction name="aZoomOut" />
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget" >
+      <property name="currentIndex" >
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="pContents" >
+       <attribute name="title" >
+        <string>Con&amp;tents</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>3</number>
+        </property>
+        <item>
+         <widget class="QTreeWidget" name="twContents" />
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="pIndex" >
+       <attribute name="title" >
+        <string>&amp;Index</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>3</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lIndex" >
+          <property name="text" >
+           <string>&amp;Look For:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>leIndex</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="leIndex" />
+        </item>
+        <item>
+         <widget class="QListWidget" name="lwIndex" />
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="pBookmarks" >
+       <attribute name="title" >
+        <string>&amp;Bookmarks</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>3</number>
+        </property>
+        <item>
+         <widget class="QListWidget" name="lwBookmarks" />
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>3</number>
+          </property>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbNew" >
+            <property name="text" >
+             <string>&amp;New</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbDelete" >
+            <property name="text" >
+             <string>&amp;Delete</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="pSearch" >
+       <attribute name="title" >
+        <string>&amp;Search</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>3</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lSearch1" >
+          <property name="text" >
+           <string>Searching &amp;for:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>leSearch</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="leSearch" />
+        </item>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="pbHelp" >
+            <property name="text" >
+             <string>He&amp;lp</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbSearch" >
+            <property name="text" >
+             <string>&amp;Search</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="lSearch2" >
+          <property name="text" >
+           <string>Found &amp;Documents:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>lwSearch</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="lwSearch" />
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <action name="aPrevious" >
+   <property name="icon" >
+    <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/helpprev.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Previous</string>
+   </property>
+  </action>
+  <action name="aNext" >
+   <property name="icon" >
+    <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/helpnext.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Next</string>
+   </property>
+  </action>
+  <action name="aHome" >
+   <property name="icon" >
+    <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/helphome.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Home</string>
+   </property>
+  </action>
+  <action name="aFind" >
+   <property name="icon" >
+    <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/tabsearch.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Find</string>
+   </property>
+  </action>
+  <action name="aPrint" >
+   <property name="icon" >
+    <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/fileprint.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Print</string>
+   </property>
+  </action>
+  <action name="aZoomIn" >
+   <property name="icon" >
+    <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/zoomin.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="aZoomOut" >
+   <property name="icon" >
+    <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/zoomout.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Zoom Out</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../../../../monkey/src/resources/resources.qrc" />
+ </resources>
+ <connections/>
+</ui>
