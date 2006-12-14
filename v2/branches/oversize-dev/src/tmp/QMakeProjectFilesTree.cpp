@@ -1,1 +1,0 @@
-#include "QMakeProjectFilesTree.h"// Constructors/Destructors//  QMakeProjectFilesTree::QMakeProjectFilesTree ( ) {}QMakeProjectFilesTree::~QMakeProjectFilesTree ( ) { }//  // Methods//  // Accessor methods//  

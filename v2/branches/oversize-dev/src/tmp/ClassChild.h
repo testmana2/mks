@@ -1,1 +1,0 @@
-#ifndef CLASSCHILD_H#define CLASSCHILD_H#include "AbstractChild.h"#include <string>class ClassChild : virtual public AbstractChild{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	ClassChild ( );	/**	 * Empty Destructor	 */	virtual ~ClassChild ( );protected:private:};#endif // CLASSCHILD_H

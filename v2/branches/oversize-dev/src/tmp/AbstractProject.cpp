@@ -1,1 +1,0 @@
-#include "AbstractProject.h"// Constructors/Destructors//  AbstractProject::AbstractProject ( ) {}AbstractProject::~AbstractProject ( ) { }//  // Methods//  // Accessor methods//  

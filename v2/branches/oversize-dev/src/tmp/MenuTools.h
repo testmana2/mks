@@ -1,1 +1,0 @@
-#ifndef MENUTOOLS_H#define MENUTOOLS_H#include <string>#include <vector>/**  * class MenuTools  * This is the tools menu  */class MenuTools{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	MenuTools ( );	/**	 * Empty Destructor	 */	virtual ~MenuTools ( );protected:private:};#endif // MENUTOOLS_H

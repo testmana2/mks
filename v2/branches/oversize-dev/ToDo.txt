@@ -1,5 +1,0 @@
-manual d
-qt documentation
-status window
-container
-popup menu action ( form header implementation split h split v )

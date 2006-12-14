@@ -1,1 +1,0 @@
-#include "GNUCompiler.h"// Constructors/Destructors//  GNUCompiler::GNUCompiler ( ) {}GNUCompiler::~GNUCompiler ( ) { }

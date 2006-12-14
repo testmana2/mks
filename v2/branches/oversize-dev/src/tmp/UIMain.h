@@ -1,1 +1,0 @@
-#ifndef UIMAIN_H#define UIMAIN_H#include <string>#include <vector>/**  * class UIMain  * This is the main window of Monkey Studio  */class UIMain{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	UIMain ( );	/**	 * Empty Destructor	 */	virtual ~UIMain ( );protected:private:};#endif // UIMAIN_H

@@ -1,1 +1,0 @@
-#include "QMakeProjectClassViewer.h"// Constructors/Destructors//  QMakeProjectClassViewer::QMakeProjectClassViewer ( ) {}QMakeProjectClassViewer::~QMakeProjectClassViewer ( ) { }//  // Methods//  // Accessor methods//  

@@ -1,1 +1,0 @@
-#ifndef WORKSPACE_H#define WORKSPACE_H#include <string>#include <vector>class Workspace{public:	// Constructors/Destructors	//  	/**	 * Empty Constructor	 */	Workspace ( );	/**	 * Empty Destructor	 */	virtual ~Workspace ( );protected:private:};#endif // WORKSPACE_H

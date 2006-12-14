@@ -1,1 +1,0 @@
-#include "QMakeProject.h"// Constructors/Destructors//  QMakeProject::QMakeProject ( ) {}QMakeProject::~QMakeProject ( ) { }//  // Methods//  // Accessor methods//  
