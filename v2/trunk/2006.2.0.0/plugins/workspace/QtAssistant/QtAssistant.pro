@@ -5,7 +5,7 @@ include( "../../plugins.inc" )
 TEMPLATE	= lib
 QT	= gui core xml
 LANGUAGE	= C++
-INCLUDEPATH	= . src ../../../monkey/src/pluginsmanager/ ../../../monkey/src/workspacemanager/ ../../../monkey/src/3rdparty/widgets/pTabWorkspace/ ../../../monkey/src/3rdparty/widgets/pTabToolBar/ src/ui/ 3rdparty/assistant/
+INCLUDEPATH	= . src ../../../monkey/src/pluginsmanager/ ../../../monkey/src/workspacemanager/ ../../../monkey/src/3rdparty/widgets/pTabWorkspace/ ../../../monkey/src/3rdparty/widgets/pTabToolBar/ 3rdparty/assistant/
 CONFIG	+= qt warn_on release lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR$$/workspace
 RESOURCES	= 3rdparty/assistant/assistant.qrc
@@ -22,8 +22,7 @@ SOURCES	= src/QtAssistant.cpp \
 	3rdparty/assistant/tabbedbrowser.cpp \
 	3rdparty/assistant/topicchooser.cpp
 
-FORMS	= src/ui/QtAssistantPanel.ui \
-	3rdparty/assistant/helpdialog.ui \
+FORMS	= 3rdparty/assistant/helpdialog.ui \
 	3rdparty/assistant/mainwindow.ui \
 	3rdparty/assistant/tabbedbrowser.ui \
 	3rdparty/assistant/topicchooser.ui

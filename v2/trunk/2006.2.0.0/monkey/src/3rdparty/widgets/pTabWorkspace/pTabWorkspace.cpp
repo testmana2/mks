@@ -103,7 +103,7 @@ int pTabWorkspace::addTab( QWidget* child, const QString& label )
 	if ( !child || mDocuments.contains( child ) )
 		return -1;
 	int i = mTabBar->addTab( label );
-	mTabBar->setTabData( i, QVariant( reinterpret_cast<uint>( child ) ) );
+	mTabBar->setTabData( i, QVariant( reinterpret_cast<quint64>( child ) ) );
 	appendWidget( child );
 	if ( cornerWidget() )
 		cornerWidget()->setEnabled( count() );
@@ -170,7 +170,7 @@ QWidget* pTabWorkspace::currentWidget() const
 //
 int pTabWorkspace::indexOf( QWidget* w ) const
 {
-	uint p = reinterpret_cast<uint>( w );
+	quint64 p = reinterpret_cast<quint64>( w );
 	for ( int i = 0; i < mTabBar->count(); i++ )
 		if ( mTabBar->tabData( i ).toUInt() == p )
 			return i;
@@ -182,7 +182,7 @@ int pTabWorkspace::insertTab( int index, QWidget* widget, const QString& label )
 	if ( !widget || mDocuments.contains( widget ) )
 		return -1;
 	int i = mTabBar->insertTab( index, label );
-	mTabBar->setTabData( i, QVariant( reinterpret_cast<uint>( widget ) ) );
+	mTabBar->setTabData( i, QVariant( reinterpret_cast<quint64>( widget ) ) );
 	appendWidget( widget );
 	if ( cornerWidget() )
 		cornerWidget()->setEnabled( count() );
