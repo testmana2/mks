@@ -27,12 +27,6 @@ FORMS	= 3rdparty/assistant/helpdialog.ui \
 	3rdparty/assistant/tabbedbrowser.ui \
 	3rdparty/assistant/topicchooser.ui
 
-OPENEDFILES	= src/QtAssistant.h \
-	src/QtAssistant.cpp \
-	src/QtAssistantChild.h \
-	src/QtAssistantChild.cpp \
-	ToDo.txt
-
 HEADERS	= src/QtAssistant.h \
 	src/QtAssistantChild.h \
 	3rdparty/assistant/config.h \

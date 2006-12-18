@@ -58,8 +58,10 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UIMain.ui \
 	src/monkeyeditor/ui/qscintillaSearch.ui
 
-OPENEDFILES	= src/3rdparty/widgets/pTabWorkspace/pTabWorkspace.h \
-	src/3rdparty/widgets/pTabWorkspace/pTabWorkspace.cpp
+OPENEDFILES	= src/monkeyeditor/MonkeyEditor.h \
+	src/monkeyeditor/MonkeyEditor.cpp \
+	src/workspacemanager/Workspace.h \
+	src/workspacemanager/Workspace.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
