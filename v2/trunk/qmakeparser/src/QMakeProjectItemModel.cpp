@@ -2,7 +2,7 @@
 #include "QMakeProjectItem.h"
 //
 #include <QTime>
-#include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QTextCodec>
 #include <QRegExp>
@@ -24,17 +24,34 @@ QMakeProjectItemModel::QMakeProjectItemModel( const QString& s, QObject* p )
 {
 }
 //
-bool QMakeProjectItemModel::openProject( bool )
+QMakeProjectItemModel::~QMakeProjectItemModel()
+{
+	// close project on delete
+	close();
+}
+//
+QStringList QMakeProjectItemModel::simpleModelVariables()
+{
+	return QStringList() << "FORMS" << "HEADERS" << "SOURCES"
+		<< "TRANSLATIONS" << "RESOURCES" << "OPENEDFILES";
+}
+//
+QStandardItem* QMakeProjectItemModel::projectItem() const
+{
+	return iProject;
+}
+//
+bool QMakeProjectItemModel::open( bool )
 {
 	if ( mIsOpen )
 		return false;
-	mIsOpen = parseProject();
+	mIsOpen = parse();
 	if ( mIsOpen )
-		emit projectOpened( true );
+		emit isOpenChanged( true );
 	return mIsOpen;
 }
 // parse project
-bool QMakeProjectItemModel::parseProject()
+bool QMakeProjectItemModel::parse()
 {
 	// check time to parse a project
 	QTime mTime;
@@ -47,11 +64,12 @@ bool QMakeProjectItemModel::parseProject()
 		return false;
 	}
 	// create project item
-	QMakeProjectItem* iProject = new QMakeProjectItem( QMakeProjectItem::Project );
+	iProject = new QMakeProjectItem( QMakeProjectItem::Project );
 	iProject->setData( filePath(), QMakeProjectItem::AbsoluteFilePathRole );
 	iProject->setText( name() );
 	setItemIcon( iProject );
 	appendRow( iProject );
+	setHorizontalHeaderItem( 0, iProject->clone() );
 	// look for codec
 	QString mCodec = "System";
 	QString mBuffer = f.readAll();
@@ -125,6 +143,14 @@ bool QMakeProjectItemModel::parseProject()
 	// need check brace count to know if there was an error or not at parsing
 	return true;
 }
+// append item to iparent
+void QMakeProjectItemModel::appendRow( QStandardItem* item, QStandardItem* iParent )
+{
+	if ( !iParent )
+		AbstractProjectItemModel::appendRow( item );
+	else
+		iParent->appendRow( item );
+}
 // return the parameters string of a function as a qstringlist
 QStringList QMakeProjectItemModel::parseFunctionParameters( const QString& s )
 {
@@ -152,12 +178,12 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 	// empty line
 	if ( mLine.isEmpty() )
 	{
-		// create item as Empty type
+		// create item as EmptyLine type
 		QMakeProjectItem* iEmptyLine = new QMakeProjectItem( QMakeProjectItem::EmptyLine );
 		iEmptyLine->setText( tr( "Empty Line" ) );
 		iEmptyLine->setToolTip( tr( "Contents: Empty Line" ) );
 		setItemIcon( iEmptyLine );
-		item->appendRow( iEmptyLine );
+		appendRow( iEmptyLine, item );
 		return;
 	}
 	// comment
@@ -167,7 +193,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 		iComment->setText( mLine );
 		iComment->setToolTip( tr( "Comment: %1" ).arg( mLine ) );
 		setItemIcon( iComment );
-		item->appendRow( iComment );
+		appendRow( iComment, item );
 		return;
 	}
 	//
@@ -189,7 +215,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 			iScope->setData( mKeyword.startsWith( "!" ), QMakeProjectItem::NegateRole );
 			iScope->setToolTip( tr( "Scope: %1" ).arg( mKeyword ) );
 			setItemIcon( iScope );
-			iLast->appendRow( iScope );
+			appendRow( iScope, iLast );
 			iLast = iScope;
 		}
 		else if ( mOperator.contains( "=" ) )
@@ -200,8 +226,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 			iVariable->setData( mOperator, QMakeProjectItem::OperatorRole );
 			iVariable->setToolTip( tr( "Operator: %1\nContents:\n%2" ).arg( mOperator, mLine ) );
 			setItemIcon( iVariable );
-			iLast->appendRow( iVariable );
-			iLast = iVariable;
+			appendRow( iVariable, iLast );
 			// now need to parse content and create items contents
 			// split entries by \n
 			QStringList l = mLine.split( "\n" );
@@ -219,18 +244,29 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 				i = 0;
 				while ( ( i = rx.indexIn( s, i ) ) != -1 )
 				{
-					iValue = new QMakeProjectItem( QMakeProjectItem::Value );
+					// got value
 					mTemp = s.mid( i, rx.matchedLength() );
+					// increment i by matchedlength
+					i += rx.matchedLength();
+					// remove # at end and starts if exists
 					if ( mTemp.startsWith( '"' ) && mTemp.endsWith( '"' ) )
 					{
 						mTemp.chop( 1 );
 						mTemp.remove( 0, 1 );
 					}
-					iValue->setText( mTemp );
+					iValue = new QMakeProjectItem( QMakeProjectItem::Value );
 					setItemIcon( iValue );
-					//
-					iLast->appendRow( iValue );
-					i += rx.matchedLength();
+					if ( simpleModelVariables().contains( iVariable->text(), Qt::CaseInsensitive ) )
+					{
+						QFileInfo mFile( mTemp );
+						iValue->setText( mFile.fileName() );
+						appendRow( iValue, getFolder( mFile.path(), iVariable ) );
+					}
+					else
+					{
+						iValue->setText( mTemp );
+						appendRow( iValue, iVariable );
+					}
 				}
 				// add comment to last entry
 				if ( iValue && !mComment.isEmpty() )
@@ -262,7 +298,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 			iFunction->setData( mComment, QMakeProjectItem::CommentRole );
 			iFunction->setToolTip( tr( "Function: %1\nParameters:\n%2\nComment: %3" ).arg( mKeyword, mParameters.join( "\n" ), mComment ) );
 			setItemIcon( iFunction );
-			iLast->appendRow( iFunction );
+			appendRow( iFunction, iLast );
 			//
 			return;
 		}
@@ -337,7 +373,6 @@ void QMakeProjectItemModel::setItemIcon( QMakeProjectItem* item )
 		mFileName = ":/icons/icons/value.png";
 		break;
 	case QMakeProjectItem::Scope:
-	qWarning( qPrintable( item->data().toString() ) );
 		mFileName = ":/icons/icons/scope.png";
 		if ( mText == "unix" )
 			mFileName = ":/icons/icons/unix.png";
@@ -367,10 +402,45 @@ void QMakeProjectItemModel::setItemIcon( QMakeProjectItem* item )
 	}
 	item->setIcon( QIcon( mFileName ) );
 }
-//
-void QMakeProjectItemModel::closeProject()
+// return an item for mPath folder and parent item iParent
+QMakeProjectItem* QMakeProjectItemModel::getFolder( const QString& mPath, QMakeProjectItem* iParent )
 {
+	if ( mPath.isEmpty() || mPath == "." || mPath == "./" )
+		return iParent;
+	QMakeProjectItem* iFolder;
+	QStringList l = mPath.split( "/", QString::SkipEmptyParts );
+	QString mName;
+	foreach ( QString s, l )
+	{
+		iFolder = 0;
+		for ( int j = 0; j < iParent->rowCount(); j++ )
+		{
+			iFolder = (QMakeProjectItem*)iParent->child( j );
+			if ( iFolder->type() == QMakeProjectItem::Folder && iFolder->text() == s )
+				return iFolder;
+			iFolder = 0;
+		}
+		if ( !iFolder )
+		{
+			mName += "/" +s;
+			if ( mName.startsWith( "/" ) )
+				mName.remove( 0, 1 );
+			iFolder = new QMakeProjectItem( QMakeProjectItem::Folder );
+			iFolder->setText( s );
+			iFolder->setToolTip( tr( "Path: %1" ).arg( mName ) );
+			setItemIcon( iFolder );
+			iParent->insertRow( 0, iFolder );
+		}
+		iParent = iFolder;
+	}
+	return iFolder;
+}
+//
+void QMakeProjectItemModel::close()
+{
+	if ( !mIsOpen )
+		return;
 	clear();
 	mIsOpen = false;
-	emit projectOpened( false );
+	emit isOpenChanged( false );
 }

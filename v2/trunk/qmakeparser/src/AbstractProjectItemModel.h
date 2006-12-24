@@ -15,20 +15,21 @@ public:
 	virtual QString path() const;
 	virtual QString filePath() const;
 	virtual QString filePath( const QString& );
-	virtual bool openProject( bool = true ) = 0;
+	virtual bool open( bool = true ) = 0;
+	virtual QStandardItem* projectItem() const = 0;
 	//
 protected:
-	virtual bool parseProject() = 0;
+	virtual bool parse() = 0;
 	//
 	QString mFilePath;
 	bool mIsOpen;
 	//
 public slots:
 	virtual void setFilePath( const QString& );
-	virtual void closeProject() = 0;
+	virtual void close() = 0;
 	//
 signals:
-	void projectOpened( bool );
+	void isOpenChanged( bool );
 	void filePathChanged( const QString& );
 	//
 };

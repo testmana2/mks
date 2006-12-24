@@ -3,29 +3,26 @@
 //
 #include <QSortFilterProxyModel>
 //
-class QMakeProjectItemModel;
+#include "AbstractProjectItemModel.h"
 //
 class AbstractProjectProxy : public QSortFilterProxyModel
 {
 	Q_OBJECT
 	//
 public:
-	AbstractProjectProxy( QMakeProjectItemModel* );
-	~AbstractProjectProxy();
+	AbstractProjectProxy( AbstractProjectItemModel* );
 	//
-	QMakeProjectItemModel* project() const;
+	virtual	bool isComplexModel() const;
 	//
-	bool isComplexModel() const;
-	//
-private:
-	QMakeProjectItemModel* mSource;
-	bool mComplexModel;
+	virtual AbstractProjectItemModel* project() const = 0;
 	//
 protected:
-	virtual bool filterAcceptsRow( int, const QModelIndex& ) const;
+	virtual bool filterAcceptsRow( int, const QModelIndex& ) const = 0;
+	//
+	bool mComplexModel;
 	//
 public slots:
-	void setComplexModel( bool );
+	virtual void setComplexModel( bool );
 	//
 signals:
 	void complexModelChanged( bool );

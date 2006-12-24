@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/icons" >
+        <file>icons/close.png</file>
         <file>icons/codec.png</file>
         <file>icons/comment.png</file>
         <file>icons/emptyline.png</file>
@@ -10,8 +11,10 @@
         <file>icons/headers.png</file>
         <file>icons/language.png</file>
         <file>icons/mac.png</file>
+        <file>icons/open.png</file>
         <file>icons/openedfiles.png</file>
         <file>icons/project.png</file>
+        <file>icons/save.png</file>
         <file>icons/scope.png</file>
         <file>icons/sources.png</file>
         <file>icons/template.png</file>

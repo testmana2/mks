@@ -1,9 +1,9 @@
 #ifndef QMAKEPROJECTITEM_H
 #define QMAKEPROJECTITEM_H
 //
-#include "AbstractProjectItem.h"
+#include <QStandardItem>
 //
-class QMakeProjectItem : public AbstractProjectItem
+class QMakeProjectItem : public QStandardItem
 {
 public:
 	enum NodeRole

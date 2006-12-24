@@ -11,19 +11,27 @@ class QMakeProjectItemModel : public AbstractProjectItemModel
 	//
 public:
 	QMakeProjectItemModel( const QString&, QObject* = 0 );
+	~QMakeProjectItemModel();
 	//
-	virtual bool openProject( bool = true );
+	static QStringList simpleModelVariables();
+	QStandardItem* projectItem() const;
+	//
+	virtual bool open( bool = true );
 	//
 protected:
-	bool parseProject();
+	bool parse();
 	//
+	void appendRow( QStandardItem*, QStandardItem* = 0 );
 	QStringList parseFunctionParameters( const QString& );
-	void parseLine( const QString&, QMakeProjectItem* );
-	void parseBlock( const QString&, QMakeProjectItem* );
+	void parseLine( const QString&, QMakeProjectItem* = 0 );
+	void parseBlock( const QString&, QMakeProjectItem* = 0 );
 	void setItemIcon( QMakeProjectItem* );
+	QMakeProjectItem* getFolder( const QString&, QMakeProjectItem* = 0 );
+	//
+	QMakeProjectItem* iProject;
 	//
 public slots:
-	virtual void closeProject();
+	virtual void close();
 	//
 };
 //

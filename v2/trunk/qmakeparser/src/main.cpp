@@ -1,14 +1,14 @@
 #include <QApplication>
 #include <QErrorMessage>
 //
-#include "UIMain.h"
+#include "UIProjectsManager.h"
 //
 int main( int argc, char ** argv )
 {
 	QApplication app( argc, argv );
 	//
 	QErrorMessage::qtHandler();
-	UIMain::self()->show();
+	UIProjectsManager::self()->show();
 	//
 	app.connect( &app, SIGNAL( lastWindowClosed() ), &app, SLOT( quit() ) );
 	return app.exec();
