@@ -440,7 +440,18 @@ void QMakeProjectItemModel::close()
 {
 	if ( !mIsOpen )
 		return;
+	if ( !mIsModified )
+		save();
 	clear();
 	mIsOpen = false;
 	emit isOpenChanged( false );
+}
+//
+void QMakeProjectItemModel::save()
+{
+	if ( !mIsOpen || !mIsModified )
+		return;
+	// need do save stuff here
+	mIsModified = false;
+	emit isModifiedChanged( false );
 }

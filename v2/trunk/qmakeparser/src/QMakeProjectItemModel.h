@@ -32,6 +32,7 @@ protected:
 	//
 public slots:
 	virtual void close();
+	virtual void save();
 	//
 };
 //

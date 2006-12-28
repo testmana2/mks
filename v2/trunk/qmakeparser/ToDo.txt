@@ -1,8 +1,1 @@
-AbstractProject standart types:
-
-NodeType:
-=========
-
-* Project : use NodeRole
-	- AbsoluteFilePathRole : contains the full file path to project ( pro )
-	- 
+need open child project
