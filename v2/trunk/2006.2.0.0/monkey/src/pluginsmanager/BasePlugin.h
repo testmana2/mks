@@ -6,12 +6,14 @@
 #include "Workspace.h"
 #include "MonkeyExport.h"
 //
+/*
 struct PluginInfos{
   QString Caption; // the string to show as ut s caption
   int Type; // the plugin type
   QString Name; // the plugin name for version control
   int Version; // the plugin version for version control
 }
+*/
 //
 class Q_MONKEY_EXPORT BasePlugin
 {
