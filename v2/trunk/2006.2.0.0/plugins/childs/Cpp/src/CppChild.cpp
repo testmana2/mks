@@ -19,6 +19,7 @@ CppChild::CppChild()
 	// header
 	mHeader = new MonkeyEditor;
 	mHeader->setLexer( new QsciLexerCPP( mHeader, true ) );
+	mHeader->setFolding( MonkeyEditor::BoxedTreeFoldStyle );
 	connect( mHeader, SIGNAL( cursorPositionChanged( const QPoint& ) ), this, SIGNAL( cursorPositionChanged( const QPoint& ) ) );
 	connect( mHeader, SIGNAL( modificationChanged( bool ) ), this, SIGNAL( modifiedChanged( bool ) ) );
 	connect( mHeader, SIGNAL( undoAvailable( bool ) ), this, SIGNAL( undoAvailableChanged( bool ) ) );
@@ -30,6 +31,7 @@ CppChild::CppChild()
 	// source
 	mSource = new MonkeyEditor;
 	mSource->setLexer( new QsciLexerCPP( mSource, true ) );
+	mSource->setFolding( MonkeyEditor::BoxedTreeFoldStyle );
 	connect( mSource, SIGNAL( cursorPositionChanged( const QPoint& ) ), this, SIGNAL( cursorPositionChanged( const QPoint& ) ) );
 	connect( mSource, SIGNAL( modificationChanged( bool ) ), this, SIGNAL( modifiedChanged( bool ) ) );
 	connect( mSource, SIGNAL( undoAvailable( bool ) ), this, SIGNAL( undoAvailableChanged( bool ) ) );

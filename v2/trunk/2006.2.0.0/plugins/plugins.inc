@@ -10,7 +10,7 @@ RCC_DIR	= ../../../build/.rcc
 MONKEY_PLUGINS_DIR	= ../../../binary/plugins
 
 LIBS	= -lqscintilla2
-win32:LIBS = -L../../../monkey -lmonkey
+win32:LIBS += -L../../../monkey -lmonkey
 unix:LIBS	+= -L../../../monkey/src/3rdparty/qscintilla/Qt4
 
 INCLUDEPATH	= ../../../monkey/src/pluginsmanager \
