@@ -41,6 +41,38 @@ QStandardItem* QMakeProjectItemModel::projectItem() const
 	return iProject;
 }
 //
+QStringList QMakeProjectItemModel::subProjects() const
+{
+	if ( getValue( "template" ).toLower() != "subdirs" )
+		return QStringList();
+	//
+	return QStringList();
+}
+
+// get first value by path
+QString QMakeProjectItemModel::getValue( const QString& s ) const
+{
+	QStringList l = s.split( "/", QString::SkipEmptyParts );
+	//QStandardItem* i = 0;
+	return QString();
+	/*
+	QList<QStandardItem*> l = findItems( "template", Qt::MatchFixedString );
+	if ( !l.count() )
+		return QString();
+	return l.last()->
+	*/
+}
+// get all values by path
+QStringList QMakeProjectItemModel::getValuesList( const QString& ) const
+{
+	return QStringList();
+}
+// get all values as string by path
+QString QMakeProjectItemModel::getValues( const QString& ) const
+{
+	return QString();
+}
+//
 bool QMakeProjectItemModel::open( bool )
 {
 	if ( mIsOpen )
@@ -66,6 +98,7 @@ bool QMakeProjectItemModel::parse()
 	// create project item
 	iProject = new QMakeProjectItem( QMakeProjectItem::Project );
 	iProject->setData( filePath(), QMakeProjectItem::AbsoluteFilePathRole );
+	iProject->setData( QString(), QMakeProjectItem::InProjectPathRole );
 	iProject->setText( name() );
 	setItemIcon( iProject );
 	appendRow( iProject );
@@ -181,6 +214,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 		// create item as EmptyLine type
 		QMakeProjectItem* iEmptyLine = new QMakeProjectItem( QMakeProjectItem::EmptyLine );
 		iEmptyLine->setText( tr( "Empty Line" ) );
+		iEmptyLine->setData( QString(), QMakeProjectItem::InProjectPathRole );
 		iEmptyLine->setToolTip( tr( "Contents: Empty Line" ) );
 		setItemIcon( iEmptyLine );
 		appendRow( iEmptyLine, item );
@@ -191,6 +225,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 	{
 		QMakeProjectItem* iComment = new QMakeProjectItem( QMakeProjectItem::Comment );
 		iComment->setText( mLine );
+		iComment->setData( QString(), QMakeProjectItem::InProjectPathRole );
 		iComment->setToolTip( tr( "Comment: %1" ).arg( mLine ) );
 		setItemIcon( iComment );
 		appendRow( iComment, item );
@@ -199,13 +234,14 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 	//
 	rx.setPattern( "([^\\s\\w\\.!\\$]+)" );
 	int i = 0;
-	QString mOperator, mKeyword, mTemp;
+	QString mPath, mOperator, mKeyword, mTemp;
 	QMakeProjectItem* iLast = item;
 	while ( ( i = rx.indexIn( mLine, i ) ) != -1 )
 	{
 		mOperator = mLine.mid( i, rx.matchedLength() );
 		mKeyword = mLine.left( i ).trimmed();
 		mLine = mLine.mid( i +rx.matchedLength() ).trimmed();
+		mPath += mKeyword;
 		i = 0;
 		//
 		if ( mOperator == ":" )
@@ -213,7 +249,8 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 			QMakeProjectItem* iScope = new QMakeProjectItem( QMakeProjectItem::Scope );
 			iScope->setText( mKeyword );
 			iScope->setData( mKeyword.startsWith( "!" ), QMakeProjectItem::NegateRole );
-			iScope->setToolTip( tr( "Scope: %1" ).arg( mKeyword ) );
+			iScope->setData( mPath, QMakeProjectItem::InProjectPathRole );
+			iScope->setToolTip( tr( "Scope: %1\nInProject Path: %2" ).arg( mKeyword, mPath ) );
 			setItemIcon( iScope );
 			appendRow( iScope, iLast );
 			iLast = iScope;
@@ -224,7 +261,8 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 			QMakeProjectItem* iVariable = new QMakeProjectItem( QMakeProjectItem::Variable );
 			iVariable->setText( mKeyword );
 			iVariable->setData( mOperator, QMakeProjectItem::OperatorRole );
-			iVariable->setToolTip( tr( "Operator: %1\nContents:\n%2" ).arg( mOperator, mLine ) );
+			iVariable->setData( mPath, QMakeProjectItem::InProjectPathRole );
+			iVariable->setToolTip( tr( "Operator: %1\nContents:\n%2\nInProject Path: %3" ).arg( mOperator, mLine, mPath ) );
 			setItemIcon( iVariable );
 			appendRow( iVariable, iLast );
 			// now need to parse content and create items contents
@@ -255,6 +293,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 						mTemp.remove( 0, 1 );
 					}
 					iValue = new QMakeProjectItem( QMakeProjectItem::Value );
+					iValue->setData( QString(), QMakeProjectItem::InProjectPathRole );
 					setItemIcon( iValue );
 					if ( simpleModelVariables().contains( iVariable->text(), Qt::CaseInsensitive ) )
 					{
@@ -296,12 +335,15 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 			iFunction->setData( mKeyword.startsWith( "!" ), QMakeProjectItem::NegateRole );
 			iFunction->setData( mParameters, QMakeProjectItem::ParametersRole );
 			iFunction->setData( mComment, QMakeProjectItem::CommentRole );
-			iFunction->setToolTip( tr( "Function: %1\nParameters:\n%2\nComment: %3" ).arg( mKeyword, mParameters.join( "\n" ), mComment ) );
+			iFunction->setData( mPath, QMakeProjectItem::InProjectPathRole );
+			iFunction->setToolTip( tr( "Function: %1\nParameters:\n%2\nComment: %3\nInProject Path: %4" ).arg( mKeyword, mParameters.join( "\n" ), mComment ).arg( mPath ) );
 			setItemIcon( iFunction );
 			appendRow( iFunction, iLast );
 			//
 			return;
 		}
+		//
+		mPath += mOperator;
 	}
 }
 // this parse a bloc ie: { } or ( )
