@@ -34,14 +34,18 @@ public:
 	virtual bool open( bool = true ) = 0;
 	// the root project item
 	virtual QStandardItem* projectItem() const = 0;
-	// get all subprojects
+	// get all subprojects u must send full file path
 	virtual QStringList subProjects() const = 0;
-	// get first value by path
+	// get first value by variable name
 	virtual QString getValue( const QString& ) const = 0;
-	// get all values by path
+	// get all values by variable name
 	virtual QStringList getValuesList( const QString& ) const = 0;
-	// get all values as string by path
+	// get all values as string by variable name
 	virtual QString getValues( const QString& ) const = 0;
+	// return the items for variable name
+	virtual QList<QStandardItem*> itemsByName( const QString& ) const = 0;
+	// return the first item for variable name
+	virtual QStandardItem* itemByName( const QString& ) const = 0;
 	//
 protected:
 	// parse the project

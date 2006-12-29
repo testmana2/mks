@@ -9,14 +9,14 @@ public:
 	enum NodeRole
 	{
 		TypeRole = Qt::UserRole, // the item type
+		ValueRole, // eal value of the item as it can be short for filenames ie: titi.h instead of src/ful/titi.h
 		AbsoluteFilePathRole, // absolute path in case of type Project, Folder ou File
 		ProjectFilePathRole, // original filepath
 		NegateRole, // bool
 		//NestedRole, // nested ie: else, win2 etc
 		ParametersRole, // function parameters as QStringList
 		CommentRole, // a comment line after value
-		OperatorRole, // an operator like -=, = etc
-		InProjectPathRole // path in project like : !win32:HEADERS
+		OperatorRole // an operator like -=, = etc
 	};
 	//
 	enum NodeType

@@ -37,7 +37,8 @@ OPENEDFILES	= src/AbstractProjectProxy.h \
 	src/QMakeProjectItem.cpp \
 	src/AbstractProjectProxy.cpp \
 	src/ui/UIProjectsManager.h \
-	src/ui/UIProjectsManager.cpp
+	src/ui/UIProjectsManager.cpp \
+	ToDo.txt
 
 HEADERS	= src/AbstractProjectItemModel.h \
 	src/QMakeProjectItemModel.h \

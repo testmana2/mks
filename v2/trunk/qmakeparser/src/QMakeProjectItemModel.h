@@ -18,12 +18,16 @@ public:
 	virtual QStandardItem* projectItem() const;
 	// return child project
 	virtual QStringList subProjects() const;
-	// get first value by path
+	// get first value by variable name
 	virtual QString getValue( const QString& ) const;
-	// get all values by path
+	// get all values by variable name
 	virtual QStringList getValuesList( const QString& ) const;
-	// get all values as string by path
+	// get all values as string by variable name
 	virtual QString getValues( const QString& ) const;
+	// return the items for variable name
+	virtual QList<QStandardItem*> itemsByName( const QString& ) const;
+	// return the first item for variable name
+	virtual QStandardItem* itemByName( const QString& ) const;
 	// open project
 	virtual bool open( bool = true );
 	//
