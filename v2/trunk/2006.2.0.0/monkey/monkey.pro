@@ -20,7 +20,7 @@ win32:LIBS	+= -Wl,--out-implib,libmonkey.a
 unix:LIBS	+= -L. -Lsrc/3rdparty/qscintilla/Qt4 -rdynamic
 QT	= gui core
 LANGUAGE	= C++
-INCLUDEPATH	= . src src/ui src/3rdparty/objects/pSettings/ src/3rdparty/widgets/pMenuBar/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4 src/workspacemanager/ src/maininterface/ src/toolsmanager/ui/ src/3rdparty/widgets/pTabToolBar/ src/3rdparty/widgets/pTabWorkspace/ src/projectsmanager/ src/pluginsmanager/ src/maininterface/ui/ src/toolsmanager/ src/recentsmanager/ src/monkeyeditor/ui/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci
+INCLUDEPATH	= . src src/ui src/3rdparty/objects/pSettings/ src/3rdparty/widgets/pMenuBar/ src/workspacemanager/ src/maininterface/ src/toolsmanager/ui/ src/3rdparty/widgets/pTabToolBar/ src/3rdparty/widgets/pTabWorkspace/ src/projectsmanager/ui/ src/projectsmanager/ src/pluginsmanager/ src/maininterface/ui/ src/toolsmanager/ src/recentsmanager/ src/monkeyeditor/ui/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4
 CONFIG	+= qt warn_on release app_bundle thread x11 windows console
 DESTDIR	= ../binary
 win32:RC_FILE	+= monkey.rc
@@ -50,6 +50,7 @@ SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/pluginsmanager/PluginsManager.cpp \
 	src/projectsmanager/AbstractProjectItemModel.cpp \
 	src/projectsmanager/AbstractProjectProxy.cpp \
+	src/projectsmanager/ui/ProjectsManager.cpp \
 	src/Monkey.cpp \
 	src/main.cpp \
 	src/workspacemanager/LeftCorner.cpp \
@@ -59,12 +60,17 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/toolsmanager/ui/UIToolsEdit.ui \
 	src/maininterface/ui/UIAbout.ui \
 	src/maininterface/ui/UIMain.ui \
-	src/monkeyeditor/ui/qscintillaSearch.ui
+	src/monkeyeditor/ui/qscintillaSearch.ui \
+	src/projectsmanager/ui/ProjectsManager.ui
 
 OPENEDFILES	= src/projectsmanager/AbstractProjectItemModel.h \
 	src/projectsmanager/AbstractProjectItemModel.cpp \
 	src/projectsmanager/AbstractProjectProxy.h \
-	src/projectsmanager/AbstractProjectProxy.cpp
+	src/projectsmanager/AbstractProjectProxy.cpp \
+	src/workspacemanager/Workspace.h \
+	src/workspacemanager/Workspace.cpp \
+	src/projectsmanager/ui/ProjectsManager.h \
+	src/projectsmanager/ui/ProjectsManager.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
@@ -97,6 +103,7 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/pluginsmanager/DebuggerPlugin.h \
 	src/projectsmanager/AbstractProjectItemModel.h \
 	src/projectsmanager/AbstractProjectProxy.h \
+	src/projectsmanager/ui/ProjectsManager.h \
 	src/Monkey.h \
 	src/main.h \
 	src/workspacemanager/LeftCorner.h \

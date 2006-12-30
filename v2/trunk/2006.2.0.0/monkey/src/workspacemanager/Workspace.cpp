@@ -2,7 +2,7 @@
 #include "Settings.h"
 #include "MenuBar.h"
 #include "TabToolBar.h"
-#include "ProjectsManager.h"
+//#include "ProjectsManager.h"
 #include "StatusBar.h"
 #include "AbstractChild.h"
 #include "RecentsManager.h"
@@ -367,7 +367,7 @@ TabToolBar* Workspace::tabToolBar()
 //
 ProjectsManager* Workspace::projectsManager()
 {
-	return ProjectsManager::self();
+	return 0; //ProjectsManager::self();
 }
 //
 StatusBar* Workspace::statusBar()
