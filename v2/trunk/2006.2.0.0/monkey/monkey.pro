@@ -15,9 +15,9 @@ win32:ICON	+= src/resources/Icons/icon.ico
 
 TEMPLATE	= app
 DEFINES	= MONKEY_CORE_BUILD
-LIBS	= -lqscintilla2
+LIBS	= -lqscintilla2 -L.
 win32:LIBS	+= -Wl,--out-implib,libmonkey.a
-unix:LIBS	+= -L. -Lsrc/3rdparty/qscintilla/Qt4 -rdynamic
+unix:LIBS	+= -Lsrc/3rdparty/qscintilla/Qt4 -rdynamic
 QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/ui src/3rdparty/objects/pSettings/ src/3rdparty/widgets/pMenuBar/ src/workspacemanager/ src/maininterface/ src/toolsmanager/ui/ src/3rdparty/widgets/pTabToolBar/ src/3rdparty/widgets/pTabWorkspace/ src/projectsmanager/ui/ src/projectsmanager/ src/pluginsmanager/ src/maininterface/ui/ src/toolsmanager/ src/recentsmanager/ src/monkeyeditor/ui/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4
