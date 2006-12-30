@@ -17,7 +17,7 @@ TEMPLATE	= app
 DEFINES	= MONKEY_CORE_BUILD
 LIBS	= -lqscintilla2
 win32:LIBS	+= -Wl,--out-implib,libmonkey.a
-unix:LIBS	+= -Lsrc/3rdparty/qscintilla/Qt4 -rdynamic
+unix:LIBS	+= -L. -Lsrc/3rdparty/qscintilla/Qt4 -rdynamic
 QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/ui src/3rdparty/objects/pSettings/ src/3rdparty/widgets/pMenuBar/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4 src/workspacemanager/ src/maininterface/ src/toolsmanager/ui/ src/3rdparty/widgets/pTabToolBar/ src/3rdparty/widgets/pTabWorkspace/ src/projectsmanager/ src/pluginsmanager/ src/maininterface/ui/ src/toolsmanager/ src/recentsmanager/ src/monkeyeditor/ui/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci
@@ -59,11 +59,6 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UIAbout.ui \
 	src/maininterface/ui/UIMain.ui \
 	src/monkeyeditor/ui/qscintillaSearch.ui
-
-OPENEDFILES	= src/monkeyeditor/MonkeyEditor.h \
-	src/monkeyeditor/MonkeyEditor.cpp \
-	src/workspacemanager/Workspace.h \
-	src/workspacemanager/Workspace.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \

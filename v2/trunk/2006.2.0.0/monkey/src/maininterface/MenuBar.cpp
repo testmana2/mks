@@ -64,6 +64,9 @@ void MenuBar::initialize()
 	beginGroup( "mView" );
 		menu( "mContainer", tr( "&Container" ), QIcon( ":/Icons/Icons/containers.png" ) );
 		menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );
+		action( "aSeparator1" );
+		action( "aNext", tr( "&Next tab" ), QIcon( ":/Icons/Icons/buttonnext.png" ), tr( "Alt+Right" ) )->setEnabled( false );
+		action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/Icons/Icons/buttonprevious.png" ), tr( "Alt+Left" ) )->setEnabled( false );
 	endGroup();
 	menu( "mProject", tr( "&Project" ) );
 	beginGroup( "mProject" );

@@ -33,6 +33,7 @@ public:
 private:
 	Workspace( QWidget* = 0 );
 	void initialize();
+	void updateTabNumbers( int );
 	//
 	static QPointer<Workspace> mSelf;
 	//
@@ -65,7 +66,9 @@ public slots:
 	void editPaste_triggered();
 	void editSearchReplace_triggered();
 	void editGoTo_triggered();
-	//
+	// view menu
+	void viewNext_triggered();
+	void viewPrevious_triggered();
 };
 //
 #endif // WORKSPACE_H

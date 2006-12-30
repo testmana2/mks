@@ -62,6 +62,25 @@ void Workspace::initialize()
 	connect( menuBar()->action( "mEdit/aPaste" ), SIGNAL( triggered() ), this, SLOT( editPaste_triggered() ) );
 	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), this, SLOT( editSearchReplace_triggered() ) );
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), this, SLOT( editGoTo_triggered() ) );
+	// view connection
+	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), this, SLOT( viewNext_triggered() ) );
+	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), this, SLOT( viewPrevious_triggered() ) );
+}
+//
+void Workspace::updateTabNumbers( int i )
+{
+	// loop documents starting at id i
+	for ( int j = i; j < count(); j++ )
+	{
+		if ( j > 9 )
+			return;
+		// got tab text
+		QString s = tabText( j );
+		// look index of cut part
+		int k = s.indexOf( ":" );
+		// set new tab caption
+		setTabText( j, QString( "&%1: %2" ).arg( j ).arg( s.mid( k != -1 ? k +2 : 0 ) ) );
+	}
 }
 //
 void Workspace::updateWorkspace()
@@ -86,6 +105,9 @@ void Workspace::updateWorkspace()
 		menuBar()->action( "mEdit/aPaste" )->setEnabled( c->isPasteAvailable() );
 		menuBar()->action( "mEdit/aSearchReplace" )->setEnabled( c->isSearchReplaceAvailable() );
 		menuBar()->action( "mEdit/aGoTo" )->setEnabled( c->isGoToAvailable() );
+		// update view menu
+		menuBar()->action( "mView/aNext" )->setEnabled( true );
+		menuBar()->action( "mView/aPrevious" )->setEnabled( true );
 		// update status bar
 		statusBar()->setCursorPosition( c->cursorPosition() );
 		statusBar()->setModified( c->isModified() );
@@ -110,6 +132,9 @@ void Workspace::updateWorkspace()
 		menuBar()->action( "mEdit/aPaste" )->setEnabled( false );
 		menuBar()->action( "mEdit/aSearchReplace" )->setEnabled( false );
 		menuBar()->action( "mEdit/aGoTo" )->setEnabled( false );
+		// update view menu
+		menuBar()->action( "mView/aNext" )->setEnabled( false );
+		menuBar()->action( "mView/aPrevious" )->setEnabled( false );
 		// update status bar
 		statusBar()->setCursorPosition( QPoint( -1, -1 ) );
 		statusBar()->setModified( false );
@@ -118,27 +143,28 @@ void Workspace::updateWorkspace()
 	}
 }
 //
-void Workspace::tabChanged( int i )
+void Workspace::tabChanged( int )
 {
-	qWarning( "tabChanged %d", i );
 	// updating workspace
 	updateWorkspace();
 }
 //
 void Workspace::tabInserted( int i )
 {
-	qWarning( "tabInserted: %d", i );
 	// if it s the first child we update workspace
 	if ( count() == 1 )
 		updateWorkspace();
+	// update view menu
+	updateTabNumbers( i );
 }
 //
 void Workspace::tabRemoved( int i )
 {
-	qWarning( "tabRemoved: %d", i );
 	// if there is no child we update workspace
 	if ( !count() )
 		updateWorkspace();
+	// update view menu
+	updateTabNumbers( i );
 }
 // file menu
 void Workspace::fileOpen_triggered()
@@ -261,6 +287,22 @@ void Workspace::editGoTo_triggered()
 	AbstractChild* c = qobject_cast<AbstractChild*>( currentWidget() );
 	if ( c )
 		c->goTo();
+}
+//
+void Workspace::viewNext_triggered()
+{
+	if ( currentIndex() +1 == count() )
+		setCurrentIndex( 0 );
+	else
+		setCurrentIndex( currentIndex() +1 );	
+}
+//
+void Workspace::viewPrevious_triggered()
+{
+	if ( currentIndex() -1 == -1 )
+		setCurrentIndex( count() -1 );
+	else
+		setCurrentIndex( currentIndex() -1 );
 }
 //
 void Workspace::openFile( const QString& s, AbstractProject* p )
