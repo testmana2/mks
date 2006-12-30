@@ -48,7 +48,8 @@ SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/workspacemanager/TabToolBar.cpp \
 	src/workspacemanager/Workspace.cpp \
 	src/pluginsmanager/PluginsManager.cpp \
-	src/projectsmanager/ProjectsManager.cpp \
+	src/projectsmanager/AbstractProjectItemModel.cpp \
+	src/projectsmanager/AbstractProjectProxy.cpp \
 	src/Monkey.cpp \
 	src/main.cpp \
 	src/workspacemanager/LeftCorner.cpp \
@@ -59,6 +60,11 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UIAbout.ui \
 	src/maininterface/ui/UIMain.ui \
 	src/monkeyeditor/ui/qscintillaSearch.ui
+
+OPENEDFILES	= src/projectsmanager/AbstractProjectItemModel.h \
+	src/projectsmanager/AbstractProjectItemModel.cpp \
+	src/projectsmanager/AbstractProjectProxy.h \
+	src/projectsmanager/AbstractProjectProxy.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
@@ -89,7 +95,8 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/pluginsmanager/ChildPlugin.h \
 	src/pluginsmanager/CompilerPlugin.h \
 	src/pluginsmanager/DebuggerPlugin.h \
-	src/projectsmanager/ProjectsManager.h \
+	src/projectsmanager/AbstractProjectItemModel.h \
+	src/projectsmanager/AbstractProjectProxy.h \
 	src/Monkey.h \
 	src/main.h \
 	src/workspacemanager/LeftCorner.h \
