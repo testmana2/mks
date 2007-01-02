@@ -12,7 +12,7 @@ RCC_DIR	= ../../../build/.rcc
 MONKEY_PLUGINS_DIR	= ../../../binary/plugins
 
 LIBS	= -L../../../build/.lib -lqscintilla2
-win32-g++:LIBS += -lmonkey
+win32:LIBS += -lmonkey
 
 INCLUDEPATH	= ../../../monkey/src/pluginsmanager \
 	../../../monkey/src/workspacemanager \

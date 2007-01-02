@@ -17,6 +17,7 @@ TEMPLATE	= app
 DEFINES	= MONKEY_CORE_BUILD
 LIBS	= -L../build/.lib -lqscintilla2
 win32-g++:LIBS	+= -Wl,--out-implib,../.lib/libmonkey.a
+win32-msvc:LIBS += /IMPLIB:../build/.lib/monkey.lib
 linux-g++:LIBS	+= -rdynamic
 QT	= gui core
 LANGUAGE	= C++
