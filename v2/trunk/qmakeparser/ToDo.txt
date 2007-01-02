@@ -1,1 +1,0 @@
-ajouter des membre pr choisir des values par operator
