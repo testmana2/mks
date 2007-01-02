@@ -61,7 +61,7 @@ QStringList QMakeProjectItemModel::subProjects() const
 		if ( !d.exists() )
 			continue;
 		// getting all pro files where name like subproject name + .pro
-		QStringList ld = d.entryList( QStringList() << QString( "%1.pro" ).arg( d.dirName() ), QDir::QDir::Files | QDir::QDir::NoDotAndDotDot );
+		QStringList ld = d.entryList( QStringList() << QString( "%1.pro" ).arg( d.dirName() ), QDir::Files | QDir::NoDotAndDotDot );
 		// if found 1 or more, add the first to lf
 		if ( ld.count() )
 			lf << d.absoluteFilePath( ld.value( 0 ) );
