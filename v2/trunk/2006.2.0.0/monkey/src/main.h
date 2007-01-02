@@ -13,9 +13,9 @@
 //
 #define PROGRAM_NAME "Monkey Studio"
 #define PROGRAM_TITLE "Monkey Studio"
-#define PROGRAM_VERSION "2006.2.0.0"
-#define ORGANIZATION "MonkeyStudio" // SoDream
-#define COPYRIGHTS "SoDream (c) 2005, 2006 - Monkey Studio Team"
+#define PROGRAM_VERSION "2.0.0"
+#define ORGANIZATION "monkeystudio" // SoDream
+#define COPYRIGHTS "(c) 2005 - 2007, Azevedo Filipe & The Monkey Studio Team"
 //
 #define CRITICAL QObject::tr( "Critical..." )
 #define INFORMATION QObject::tr( "Information..." )

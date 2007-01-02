@@ -19,8 +19,8 @@ public:
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QStringList filters() const;
-	virtual bool addNewDocument( const QString&, AbstractProject* = 0 );
-	virtual bool openFile( const QString&, AbstractProject* = 0 );
+	virtual bool addNewDocument( const QString&, AbstractProjectProxy* = 0 );
+	virtual bool openFile( const QString&, AbstractProjectProxy* = 0 );
 	//
 };
 //

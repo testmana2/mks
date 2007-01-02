@@ -13,6 +13,13 @@ AbstractProjectProxy::AbstractProjectProxy( AbstractProjectItemModel* s )
 	mProxysList[ mId ] = this;
 }
 //
+AbstractProjectProxy::~AbstractProjectProxy()
+{
+	if ( mProxysList.contains( mId ) )
+		mProxysList.remove( mId );
+	qWarning( "Proxy deleted" );
+}
+//
 int AbstractProjectProxy::id() const
 {
 	return mId;
@@ -28,6 +35,14 @@ AbstractProjectProxy* AbstractProjectProxy::byId( int i )
 QHashProxys AbstractProjectProxy::all()
 {
 	return mProxysList;
+}
+//
+AbstractProjectProxy* AbstractProjectProxy::getProxyByProject( AbstractProjectItemModel* p )
+{
+	foreach ( AbstractProjectProxy* py, all() )
+		if ( py->project() == p )
+			return py;
+	return 0;
 }
 //
 bool AbstractProjectProxy::isComplexModel() const

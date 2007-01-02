@@ -7,8 +7,9 @@
 #include <QPointer>
 //
 class AbstractProjectProxy;
+class AbstractProjectItemModel;
 //
-class Q_MONKEY_EXPORT ProjectsManager : public QWidget, public Ui::ProjectsManager
+class Q_MONKEY_EXPORT ProjectsManager : public QDockWidget, public Ui::ProjectsManager
 {
 	Q_OBJECT
 	//
@@ -19,22 +20,27 @@ public:
 	//
 	void setCurrentProxy( AbstractProjectProxy* );
 	AbstractProjectProxy* currentProxy() const;
+	void setCurrentProject( AbstractProjectItemModel* );
+	AbstractProjectItemModel* currentProject() const;
 	QTreeWidgetItem* getItemByProxyId( int );
 	QAbstractItemView* getViewByProxyId( int );
-	bool openProject( const QString&, int = -1 );
-	void closeProject( QTreeWidgetItem* );
+	void closeProxy( AbstractProjectProxy* );
+	void closeProject( AbstractProjectItemModel* );
+	void addProxy( AbstractProjectProxy*, AbstractProjectProxy* = 0 );
 	//
 private:
 	ProjectsManager( QWidget* = 0 );
 	static QPointer<ProjectsManager> mSelf;
 	//
 private slots:
-	void on_tbOpen_clicked();
-	void on_tbComplexCurrent_clicked();
-	void on_tbSaveCurrent_clicked();
-	void on_tbCloseCurrent_clicked();
+	void on_tbSave_clicked();
+	void on_tbClose_clicked();
 	void on_twProjects_itemClicked( QTreeWidgetItem*, int );
 	void on_swProjects_currentChanged( int );
+	//
+signals:
+	void proxyAdded( AbstractProjectProxy* );
+	void currentProxyChanged( AbstractProjectProxy* );
 	//
 };
 //

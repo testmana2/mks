@@ -46,10 +46,10 @@ QStringList Text::filters() const
 	return QStringList() << QString( "Text Files ( %1 )" ).arg( f.join( " " ) );
 }
 //
-bool Text::addNewDocument( const QString& s, AbstractProject* p )
+bool Text::addNewDocument( const QString& s, AbstractProjectProxy* p )
 {
 	TextChild* c = new TextChild;
-	c->setProject( p );
+	c->setProxy( p );
 	c->addFile( s );
 	int i = mWorkspace->addChild( c, QFileInfo( s ).fileName() );
 	if ( i == -1 )
@@ -57,14 +57,14 @@ bool Text::addNewDocument( const QString& s, AbstractProject* p )
 	return c;
 }
 //
-bool Text::openFile( const QString& s, AbstractProject* p )
+bool Text::openFile( const QString& s, AbstractProjectProxy* p )
 {
 	QString f = QFileInfo( s ).canonicalFilePath();
 	// try finding already existing child
 	foreach ( QWidget* w, mWorkspace->documents() )
 	{
 		TextChild* c = qobject_cast<TextChild*>( w );
-		if ( c && c->project() == p && c->files().contains( f ) )
+		if ( c && c->proxy() == p && c->files().contains( f ) )
 		{
 			mWorkspace->setCurrentWidget( c );
 			return false;

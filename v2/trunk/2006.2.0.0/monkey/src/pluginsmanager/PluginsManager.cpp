@@ -3,6 +3,7 @@
 #include "WorkspacePlugin.h"
 #include "CompilerPlugin.h"
 #include "DebuggerPlugin.h"
+#include "ProjectPlugin.h"
 #include "Workspace.h"
 //
 #include <QPluginLoader>
@@ -86,7 +87,7 @@ bool PluginsManager::addPlugin( QObject* o )
 	return true;
 }
 //
-bool PluginsManager::childPluginOpenFile( const QString& s, AbstractProject* p )
+bool PluginsManager::childPluginOpenFile( const QString& s, AbstractProjectProxy* p )
 {
 	QString mExtension = QFileInfo( s ).completeSuffix();
 	foreach ( BasePlugin* bp, mPlugins )
@@ -111,6 +112,36 @@ QStringList PluginsManager::childsFilters() const
 			ChildPlugin* cp = (ChildPlugin*)bp;
 			if ( cp )
 				l << cp->filters();
+		}
+	}
+	return l;
+}
+//
+bool PluginsManager::projectPluginOpenProject( const QString& s )
+{
+	QString mExtension = QFileInfo( s ).completeSuffix();
+	foreach ( BasePlugin* bp, mPlugins )
+	{
+		if ( bp->type() == BasePlugin::iProject )
+		{
+			ProjectPlugin* pp = (ProjectPlugin*)bp;
+			if ( pp && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
+				return pp->openProject( s );
+		}
+	}
+	return false;
+}
+//
+QStringList PluginsManager::projectsFilters() const
+{
+	QStringList l;
+	foreach ( BasePlugin* bp, mPlugins )
+	{
+		if ( bp->type() == BasePlugin::iProject )
+		{
+			ProjectPlugin* pp = (ProjectPlugin*)bp;
+			if ( pp )
+				l << pp->filters();
 		}
 	}
 	return l;

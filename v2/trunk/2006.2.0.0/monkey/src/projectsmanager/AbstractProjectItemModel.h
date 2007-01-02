@@ -2,6 +2,7 @@
 #define ABSTRACTPROJECTITEMMODEL_H
 //
 #include <QStandardItemModel>
+#include <QHash>
 //
 #include "MonkeyExport.h"
 //
@@ -14,6 +15,7 @@ class Q_MONKEY_EXPORT AbstractProjectItemModel : public QStandardItemModel
 	//
 public:
 	AbstractProjectItemModel( const QString&, QObject* = 0 );
+	virtual ~AbstractProjectItemModel();
 	// project id
 	int id() const;
 	// get project by id

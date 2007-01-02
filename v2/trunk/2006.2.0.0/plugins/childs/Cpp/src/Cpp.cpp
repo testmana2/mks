@@ -58,10 +58,10 @@ QStringList Cpp::filters() const
 	return f;
 }
 //
-bool Cpp::addNewDocument( const QString& s, AbstractProject* p )
+bool Cpp::addNewDocument( const QString& s, AbstractProjectProxy* p )
 {
 	CppChild* c = new CppChild;
-	c->setProject( p );
+	c->setProxy( p );
 	c->addFile( s );
 	int i = mWorkspace->addChild( c, QFileInfo( s ).baseName() );
 	if ( i == -1 )
@@ -69,14 +69,14 @@ bool Cpp::addNewDocument( const QString& s, AbstractProject* p )
 	return c;
 }
 //
-bool Cpp::openFile( const QString& s, AbstractProject* p )
+bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
 {
 	QString fp = QFileInfo( s ).canonicalFilePath();
 	// try finding already existing child
 	foreach ( QWidget* w, mWorkspace->documents() )
 	{
 		CppChild* c = qobject_cast<CppChild*>( w );
-		if ( c && c->project() == p )
+		if ( c && c->proxy() == p )
 		{
 			// if already open return false
 			if ( c->files().contains( fp ) )

@@ -8,7 +8,7 @@
 #include "BasePlugin.h"
 #include "MonkeyExport.h"
 //
-class AbstractProject;
+class AbstractProjectProxy;
 //
 class Q_MONKEY_EXPORT PluginsManager : public QObject
 {
@@ -21,9 +21,12 @@ public:
 	void loadsPlugins( const QString& = QString() );
 	void loadsPlugins( QDir );
 	bool addPlugin( QObject* );
-	//
-	bool childPluginOpenFile( const QString&, AbstractProject* = 0 );
+	// loading files using childs plugins
+	bool childPluginOpenFile( const QString&, AbstractProjectProxy* = 0 );
 	QStringList childsFilters() const;
+	// loading projects using projects plugins
+	bool projectPluginOpenProject( const QString& );
+	QStringList projectsFilters() const;
 	//
 private:
 	PluginsManager( QObject* = 0 );

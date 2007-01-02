@@ -65,6 +65,9 @@ void MenuBar::initialize()
 		menu( "mContainer", tr( "&Container" ), QIcon( ":/Icons/Icons/containers.png" ) );
 		menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );
 		action( "aSeparator1" );
+		action( "aProjectsList", tr( "Show/Hide the projects list" ), QIcon( ":/Icons/Icons/helpgreettings.png" ) )->setCheckable( true );
+		action( "aComplexProject", tr( "Show/Hide the complex project" ), QIcon( ":/Icons/Icons/helptesters.png" ) )->setCheckable( true );
+		action( "aSeparator2" );
 		action( "aNext", tr( "&Next tab" ), QIcon( ":/Icons/Icons/buttonnext.png" ), tr( "Alt+Right" ) )->setEnabled( false );
 		action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/Icons/Icons/buttonprevious.png" ), tr( "Alt+Left" ) )->setEnabled( false );
 	endGroup();
@@ -76,8 +79,8 @@ void MenuBar::initialize()
 		action( "mSave/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/projectsave.png" ) );
 		action( "mSave/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/projectsaveall.png" ) );
 		menu( "mClose", tr( "&Close" ), QIcon( ":/Icons/Icons/projectclose.png" ) );
-		action( "mClose/aClose", tr( "&Current" ), QIcon( ":/Icons/Icons/projectclose.png" ) );
-		action( "mClose/aCloseAll", tr( "&All" ), QIcon( ":/Icons/Icons/projectcloseall.png" ) );
+		action( "mClose/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/projectclose.png" ) );
+		action( "mClose/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/projectcloseall.png" ) );
 		menu( "mShow", tr( "S&how" ), QIcon( ":/Icons/Icons/projectshow.png" ) );
 		action( "mShow/aSource", tr( "&Source" ), QIcon( ":/Icons/Icons/projectshowfile.png" ) );
 		action( "mShow/aToDo", tr( "&ToDo" ), QIcon( ":/Icons/Icons/projectshowfile.png" ) );

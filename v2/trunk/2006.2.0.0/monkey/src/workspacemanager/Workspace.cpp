@@ -2,12 +2,13 @@
 #include "Settings.h"
 #include "MenuBar.h"
 #include "TabToolBar.h"
-//#include "ProjectsManager.h"
+#include "ProjectsManager.h"
 #include "StatusBar.h"
 #include "AbstractChild.h"
 #include "RecentsManager.h"
 #include "PluginsManager.h"
 #include "UISaveFiles.h"
+#include "AbstractProjectProxy.h"
 //
 #include <QFileDialog>
 #include <QFileInfo>
@@ -37,13 +38,15 @@ void Workspace::initialize()
 	// set mode
 	setTabShape( QTabBar::RoundedSouth );
 	setTabMode( tmMDI );
+	// add project manager to dock area
+	tabToolBar()->bar( TabToolBar::Left )->appendTab( projectsManager(), QPixmap( ":/Icons/Icons/project.png" ), tr( "Projects" ) );
 	// itself
 	connect( this, SIGNAL( tabInserted( int ) ), this, SLOT( tabInserted( int ) ) );
 	connect( this, SIGNAL( tabRemoved( int ) ), this, SLOT( tabRemoved( int ) ) );
 	connect( this, SIGNAL( currentChanged( int ) ), this, SLOT( tabChanged( int ) ) );
 	// recentsmanager
 	connect( RecentsManager::self(), SIGNAL( openFileRequested( const QString& ) ), this, SLOT( openFile( const QString& ) ) );
-	connect( RecentsManager::self(), SIGNAL( openProjectRequested( const QString& ) ), this, SLOT( openFile( const QString& ) ) );
+	connect( RecentsManager::self(), SIGNAL( openProjectRequested( const QString& ) ), this, SLOT( openProject( const QString& ) ) );
 	// file connection
 	connect( menuBar()->action( "mFile/aOpen" ), SIGNAL( triggered() ), this, SLOT( fileOpen_triggered() ) );
 	connect( menuBar()->action( "mFile/mSave/aCurrent" ), SIGNAL( triggered() ), this, SLOT( fileSaveCurrent_triggered() ) );
@@ -63,8 +66,21 @@ void Workspace::initialize()
 	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), this, SLOT( editSearchReplace_triggered() ) );
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), this, SLOT( editGoTo_triggered() ) );
 	// view connection
+	connect( menuBar()->action( "mView/aProjectsList" ), SIGNAL( triggered( bool ) ), this, SLOT( viewProjectsList_triggered( bool ) ) );
+	connect( menuBar()->action( "mView/aComplexProject" ), SIGNAL( triggered( bool ) ), this, SLOT( viewComplexProject_triggered( bool ) ) );
 	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), this, SLOT( viewNext_triggered() ) );
 	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), this, SLOT( viewPrevious_triggered() ) );
+	// project connection
+	connect( menuBar()->action( "mProject/aNew" ), SIGNAL( triggered() ), this, SLOT( projectNew_triggered() ) );
+	connect( menuBar()->action( "mProject/aOpen" ), SIGNAL( triggered() ), this, SLOT( projectOpen_triggered() ) );
+	connect( menuBar()->action( "mProject/mSave/aCurrent" ), SIGNAL( triggered() ), this, SLOT( projectSaveCurrent_triggered() ) );
+	connect( menuBar()->action( "mProject/mSave/aAll" ), SIGNAL( triggered() ), this, SLOT( projectSaveAll_triggered() ) );
+	connect( menuBar()->action( "mProject/mClose/aCurrent" ), SIGNAL( triggered() ), this, SLOT( projectCloseCurrent_triggered() ) );
+	connect( menuBar()->action( "mProject/mClose/aAll" ), SIGNAL( triggered() ), this, SLOT( projectCloseAll_triggered() ) );
+	connect( menuBar()->action( "mProject/mShow/aSource" ), SIGNAL( triggered() ), this, SLOT( projectShowSource_triggered() ) );
+	connect( menuBar()->action( "mProject/mShow/aToDo" ), SIGNAL( triggered() ), this, SLOT( projectShowToDo_triggered() ) );
+	connect( menuBar()->action( "mProject/mShow/aChanges" ), SIGNAL( triggered() ), this, SLOT( projectShowChanges_triggered() ) );
+	connect( menuBar()->action( "mProject/aSettings" ), SIGNAL( triggered() ), this, SLOT( projectSettings_triggered() ) );
 }
 //
 void Workspace::updateTabNumbers( int i )
@@ -143,12 +159,6 @@ void Workspace::updateWorkspace()
 	}
 }
 //
-void Workspace::tabChanged( int )
-{
-	// updating workspace
-	updateWorkspace();
-}
-//
 void Workspace::tabInserted( int i )
 {
 	// if it s the first child we update workspace
@@ -166,18 +176,20 @@ void Workspace::tabRemoved( int i )
 	// update view menu
 	updateTabNumbers( i );
 }
+//
+void Workspace::tabChanged( int )
+{
+	// updating workspace
+	updateWorkspace();
+}
 // file menu
 void Workspace::fileOpen_triggered()
 {
-	const QString mPath = settings()->value( "Recents/OpenPath" ).toString();
+	const QString mPath = settings()->value( "Recents/FileOpenPath" ).toString();
 	QString mFilters = PluginsManager::self()->childsFilters().join( ";;" );
 	QStringList l = QFileDialog::getOpenFileNames( this, tr( "Choose the file(s) to open" ), mPath, mFilters );
-	if ( l.count() )
-	{
-		settings()->setValue( "Recents/OpenPath", QFileInfo( l.at( 0 ) ).canonicalPath() );
-		foreach ( QString s, l )
-			openFile( s );
-	}
+	foreach ( QString s, l )
+		openFile( s );
 }
 //
 void Workspace::fileSaveCurrent_triggered()
@@ -288,6 +300,16 @@ void Workspace::editGoTo_triggered()
 	if ( c )
 		c->goTo();
 }
+// view menu
+void Workspace::viewProjectsList_triggered( bool b )
+{
+	projectsManager()->twProjects->setVisible( b );
+}
+//
+void Workspace::viewComplexProject_triggered( bool b )
+{
+	projectsManager()->currentProxy()->setComplexModel( b );
+}
 //
 void Workspace::viewNext_triggered()
 {
@@ -304,12 +326,84 @@ void Workspace::viewPrevious_triggered()
 	else
 		setCurrentIndex( currentIndex() -1 );
 }
-//
-void Workspace::openFile( const QString& s, AbstractProject* p )
+// project menu
+void Workspace::projectNew_triggered()
 {
-	if ( PluginsManager::self()->childPluginOpenFile( s, p ) && !p )
-		recentsManager()->addRecentFile( s );
-	
+}
+//
+void Workspace::projectOpen_triggered()
+{
+	const QString mPath = settings()->value( "Recents/ProjectOpenPath" ).toString();
+	QString mFilters = PluginsManager::self()->projectsFilters().join( ";;" );
+	QString mFilePath = QFileDialog::getOpenFileName( this, tr( "Choose the project to open" ), mPath, mFilters );
+	if ( !mFilePath.isNull() )
+		openProject( mFilePath );
+}
+//
+void Workspace::projectSaveCurrent_triggered()
+{
+	projectsManager()->currentProxy()->project()->save();
+}
+//
+void Workspace::projectSaveAll_triggered()
+{
+	foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
+		p->project()->save();
+}
+//
+void Workspace::projectCloseCurrent_triggered()
+{
+	projectsManager()->closeProxy( projectsManager()->currentProxy() );
+}
+//
+void Workspace::projectCloseAll_triggered()
+{
+	foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
+		projectsManager()->closeProxy( p );
+}
+//
+void Workspace::projectShowSource_triggered()
+{
+}
+//
+void Workspace::projectShowToDo_triggered()
+{
+}
+//
+void Workspace::projectShowChanges_triggered()
+{
+}
+//
+void Workspace::projectSettings_triggered()
+{
+}
+//
+void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
+{
+	const QFileInfo f( s );
+	if ( !f.exists() )
+		return;
+	if ( PluginsManager::self()->childPluginOpenFile( f.canonicalFilePath(), p ) )
+	{
+		settings()->setValue( "Recents/FileOpenPath", f.canonicalPath() );
+		if ( !p )
+			recentsManager()->addRecentFile( s );
+	}
+}
+//
+void Workspace::openProject( const QString& s )
+{
+	const QFileInfo f( s );
+	if ( !f.exists() )
+		return;
+	// open project
+	if ( PluginsManager::self()->projectPluginOpenProject( f.canonicalFilePath() ) )
+	{
+		// save recent project open path
+		settings()->setValue( "Recents/ProjectOpenPath", f.canonicalPath() );
+		// append it to recents
+		recentsManager()->addRecentProject( f.canonicalFilePath() );
+	}
 }
 //
 int Workspace::addChild( AbstractChild* c, const QString& s )
@@ -367,7 +461,7 @@ TabToolBar* Workspace::tabToolBar()
 //
 ProjectsManager* Workspace::projectsManager()
 {
-	return 0; //ProjectsManager::self();
+	return ProjectsManager::self();
 }
 //
 StatusBar* Workspace::statusBar()

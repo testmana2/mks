@@ -6,7 +6,7 @@
 //
 #include "MonkeyExport.h"
 //
-class AbstractProject;
+class AbstractProjectProxy;
 //
 class Q_MONKEY_EXPORT AbstractChild : public QWidget
 {
@@ -16,7 +16,7 @@ public:
 	enum Mode { mNone = 0, mNa, mInsert, mOverwrite, mReadOnly };
 	// constructor
 	AbstractChild()
-	{ mProject = 0;
+	{ mProxy = 0;
 		setAttribute( Qt::WA_DeleteOnClose ); }
 	// add a new file to the files list that this child manage
 	virtual void addFile( const QString& s )
@@ -39,11 +39,11 @@ public:
 	virtual QStringList files() const
 	{ return mFiles; }
 	// set the project for this child
-	virtual void setProject( AbstractProject* p )
-	{ mProject = p; }
+	virtual void setProxy( AbstractProjectProxy* p )
+	{ mProxy = p; }
 	// return the project of this child
-	virtual AbstractProject* project() const
-	{ return mProject; }
+	virtual AbstractProjectProxy* proxy() const
+	{ return mProxy; }
 	// return cursor position if available
 	virtual QPoint cursorPosition() const = 0;
 	// return editor write mode is available
@@ -112,7 +112,7 @@ protected:
 	// files list this child manage
 	QStringList mFiles;
 	// child project
-	AbstractProject* mProject;
+	AbstractProjectProxy* mProxy;
 	// for saving modified files
 	virtual void closeEvent( QCloseEvent* e )
 	{ emit closeEvent( this, e ); }

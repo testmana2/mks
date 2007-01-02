@@ -18,7 +18,7 @@ struct PluginInfos{
 class Q_MONKEY_EXPORT BasePlugin
 {
 public:
-	enum Type { iUnknow = -1, iChild, iWorkspace, iCompiler, iDebugger };
+	enum Type { iUnknow = -1, iChild, iWorkspace, iCompiler, iDebugger, iProject };
 	//
 	BasePlugin()
 	{ mInstalled = false; mWorkspace = 0; }

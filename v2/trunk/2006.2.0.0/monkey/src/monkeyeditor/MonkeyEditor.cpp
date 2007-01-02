@@ -37,23 +37,23 @@ MonkeyEditor::MonkeyEditor( QWidget* p )
 	connect( this, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
 	connect( this, SIGNAL( cursorPositionChanged( int, int ) ), this, SLOT( cursorPositionChanged( int, int ) ) );
 	// create action
-	mActions << new Action( tr( "Matching Brace" ), this, SLOT( moveToMatchingBrace() ), Action::TextLength, tr( "Ctrl+M" ) );
-	mActions << new Action( tr( "Undo" ), this, SLOT( undo() ), Action::UndoAvailable, tr( "Ctrl+Z" ) );
-	mActions << new Action( tr( "Redo" ), this, SLOT( redo() ), Action::RedoAvailable, tr( "Ctrl+Y" ) );
-	mActions << new Action( tr( "Separator" ) );
-	mActions << new Action( tr( "Copy" ), this, SLOT( copy() ), Action::CopyAvailable, tr( "Ctrl+C" ) );
-	mActions << new Action( tr( "Cut" ), this, SLOT( cut() ), Action::CopyAvailable, tr( "Ctrl+X" ) );
-	mActions << new Action( tr( "Paste" ), this, SLOT( paste() ), Action::PasteAvailable, tr( "Ctrl+V" ) );
-	mActions << new Action( tr( "Separator" ) );
-	mActions << new Action( tr( "Select All" ), this, SLOT( selectAll() ), Action::NotCopyAvailableAndTextLength, tr( "Ctrl+A" ) );
-	mActions << new Action( tr( "Select None" ), this, SLOT( selectNone() ), Action::CopyAvailable, tr( "Ctrl+Shift+A" ) );
-	mActions << new Action( tr( "Separator" ) );
-	mActions << new Action( tr( "Go To Line..." ), this, SLOT( goToLine() ), Action::TextLength, tr( "Ctrl+G" ) );
+	mActions << new pAction( tr( "Matching Brace" ), this, SLOT( moveToMatchingBrace() ), pAction::TextLength, tr( "Ctrl+M" ) );
+	mActions << new pAction( tr( "Undo" ), this, SLOT( undo() ), pAction::UndoAvailable, tr( "Ctrl+Z" ) );
+	mActions << new pAction( tr( "Redo" ), this, SLOT( redo() ), pAction::RedoAvailable, tr( "Ctrl+Y" ) );
+	mActions << new pAction( tr( "Separator" ) );
+	mActions << new pAction( tr( "Copy" ), this, SLOT( copy() ), pAction::CopyAvailable, tr( "Ctrl+C" ) );
+	mActions << new pAction( tr( "Cut" ), this, SLOT( cut() ), pAction::CopyAvailable, tr( "Ctrl+X" ) );
+	mActions << new pAction( tr( "Paste" ), this, SLOT( paste() ), pAction::PasteAvailable, tr( "Ctrl+V" ) );
+	mActions << new pAction( tr( "Separator" ) );
+	mActions << new pAction( tr( "Select All" ), this, SLOT( selectAll() ), pAction::NotCopyAvailableAndTextLength, tr( "Ctrl+A" ) );
+	mActions << new pAction( tr( "Select None" ), this, SLOT( selectNone() ), pAction::CopyAvailable, tr( "Ctrl+Shift+A" ) );
+	mActions << new pAction( tr( "Separator" ) );
+	mActions << new pAction( tr( "Go To Line..." ), this, SLOT( goToLine() ), pAction::TextLength, tr( "Ctrl+G" ) );
 }
 //
 MonkeyEditor::~MonkeyEditor()
 {
-	foreach ( Action* a, mActions )
+	foreach ( pAction* a, mActions )
 		delete a;
 	mActions.clear();
 }
@@ -74,7 +74,7 @@ void MonkeyEditor::focusOutEvent( QFocusEvent* e )
 void MonkeyEditor::contextMenuEvent( QContextMenuEvent* e )
 {
 	QMenu m( this );
-	foreach ( Action* a, mActions )
+	foreach ( pAction* a, mActions )
 	{
 		if ( a->Caption == tr( "Separator" ) )
 			m.addSeparator();
@@ -94,33 +94,33 @@ bool MonkeyEditor::copyAvailable() const
 	return mCopyAvailable;
 }
 //
-bool MonkeyEditor::getState( Action::StateType s )
+bool MonkeyEditor::getState( pAction::StateType s )
 {
 	switch ( s )
 	{
-	case Action::TextLength:
+	case pAction::TextLength:
 		return text().length();
 		break;
-	case Action::UndoAvailable:
+	case pAction::UndoAvailable:
 		return isUndoAvailable();
 		break;
-	case Action::RedoAvailable:
+	case pAction::RedoAvailable:
 		return isRedoAvailable();
 		break;
-	case Action::CopyAvailable:
+	case pAction::CopyAvailable:
 		return mCopyAvailable;
 		break;
-	case Action::PasteAvailable:
+	case pAction::PasteAvailable:
 		return pasteAvailable();
 		break;
-	case Action::NotCopyAvailableAndTextLength:
+	case pAction::NotCopyAvailableAndTextLength:
 		return !mCopyAvailable && text().length();
 		break;
-	case Action::Enabled:
-	case Action::None:
+	case pAction::Enabled:
+	case pAction::None:
 		return true;
 		break;
-	case Action::Disabled:
+	case pAction::Disabled:
 	default:
 		return false;
 		break;

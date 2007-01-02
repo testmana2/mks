@@ -1,8 +1,7 @@
 #include "ProjectsManager.h"
+#include "MenuBar.h"
 #include "AbstractProjectProxy.h"
 #include "AbstractProjectItemModel.h"
-//#include "QMakeProjectProxy.h"
-//#include "QMakeProjectItemModel.h"
 //
 #include <QFileDialog>
 #include <QTreeView>
@@ -17,9 +16,17 @@ ProjectsManager* ProjectsManager::self( QWidget* p )
 }
 //
 ProjectsManager::ProjectsManager( QWidget* p )
-	: QWidget( p )
+	: QDockWidget( p )
 {
 	setupUi( this );
+	tbList->setDefaultAction( MenuBar::self()->action( "mView/aProjectsList" ) );
+	tbOpen->setDefaultAction( MenuBar::self()->action( "mProject/aOpen" ) );
+	tbComplex->setDefaultAction( MenuBar::self()->action( "mView/aComplexProject" ) );
+	tbSave->setDefaultAction( MenuBar::self()->menu( "mProject/mSave" )->menuAction() );
+	tbClose->setDefaultAction( MenuBar::self()->menu( "mProject/mClose" )->menuAction() );
+	// update actions state
+	on_swProjects_currentChanged( -1 );
+	MenuBar::self()->action( "mView/aProjectsList" )->setChecked( true );
 }
 //
 void ProjectsManager::setCurrentProxy( AbstractProjectProxy* p )
@@ -40,6 +47,26 @@ AbstractProjectProxy* ProjectsManager::currentProxy() const
 		if ( v )
 			return qobject_cast<AbstractProjectProxy*>( v->model() );
 	}
+	return 0;
+}
+//
+void ProjectsManager::setCurrentProject( AbstractProjectItemModel* p )
+{
+	foreach ( AbstractProjectProxy* py, AbstractProjectProxy::all() )
+	{
+		if ( py->project() == p )
+		{
+			setCurrentProxy( py );
+			return;
+		}
+	}
+}
+//
+AbstractProjectItemModel* ProjectsManager::currentProject() const
+{
+	AbstractProjectProxy* p = currentProxy();
+	if ( p )
+		return p->project();
 	return 0;
 }
 //
@@ -64,120 +91,95 @@ QAbstractItemView* ProjectsManager::getViewByProxyId( int i )
 	return 0;
 }
 //
-bool ProjectsManager::openProject( const QString& s, int i )
+void ProjectsManager::closeProxy( AbstractProjectProxy* p )
 {
-/*
-	// create proxy and project
-	AbstractProjectProxy* mProxy = new QMakeProjectProxy( new QMakeProjectItemModel( s, this ) );
-	// open project
-	if ( mProxy->project()->open() )
-	{
-		// create view and project
-		QTreeView* tv = new QTreeView;
-		tv->setModel( mProxy );
-		if ( mProxy->rowCount() > 0 )
-			tv->setRootIndex( mProxy->index( 0, 0 ) );
-		// set current view this one
-		swProjects->addWidget( tv );
-		swProjects->setCurrentWidget( tv );
-		// add entry on twProjects
-		QTreeWidgetItem* twi;
-		if ( i != -1 )
-			twi = new QTreeWidgetItem( getItemByProxyId( i ) );
-		else
-			twi = new QTreeWidgetItem( twProjects );
-		twi->setText( 0, mProxy->project()->name() );
-		twi->setIcon( 0, QIcon( ":/icons/icons/project.png" ) );
-		twi->setData( 0, ProxyIdRole, mProxy->id() ); // proxy id
-		twi->setData( 0, ProjectFilePathRole, mProxy->project()->filePath() ); // project file path
-		twi->setToolTip( 0, tr( "Proxy Id: %1\nProject Id: %2\nFile Path: %3" ).arg( mProxy->id() ).arg( mProxy->project()->id() ).arg( mProxy->project()->filePath() ) );
-		twProjects->setCurrentItem( twi );
-		// open subprojects
-		foreach ( QString h, mProxy->project()->subProjects() )
-			openProject( h, mProxy->id() );
-		return true;
-	}
-	else
-		delete mProxy;
-	return false;
-*/
-	return false;
-}
-//
-void ProjectsManager::closeProject( QTreeWidgetItem* i )
-{
-	// if no item do nothing
-	if ( !i )
+	QTreeWidgetItem* twi;
+	if ( !p || !( twi = getItemByProxyId( p->id() ) ) )
 		return;
+	const QString s = p->project()->name();
 	// close childs
-	while ( i->childCount() )
-		closeProject( i->child( 0 ) );
-	// delete view and item
-	delete getViewByProxyId( i->data( 0, ProxyIdRole ).toInt() );
-	delete i;
-}
-//
-void ProjectsManager::on_tbOpen_clicked()
-{
-	QString mFilePath = QFileDialog::getOpenFileName( this, tr( "Open Qt Project" ), QDir::homePath().append( "/Desktop" ), tr( "Qt Projects (*.pro)" ) );
-	if ( !mFilePath.isNull() )
-	{
-		// got clean and absolute file path
-		mFilePath = QFileInfo( mFilePath ).canonicalFilePath();
-		// check if file is already open
-		foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
-		{
-			if ( p->project()->filePath() == mFilePath )
-			{
-				setCurrentProxy( p );
-				return;
-			}
-		}
-		// open project
-		if ( openProject( mFilePath ) )
-		{
-			// add entry to recents projects
-		}
-	}
-}
-//
-void ProjectsManager::on_tbComplexCurrent_clicked()
-{
-	currentProxy()->setComplexModel( tbComplexCurrent->isChecked() );
-}
-//
-void ProjectsManager::on_tbSaveCurrent_clicked()
-{
-	currentProxy()->project()->save();
-}
-//
-void ProjectsManager::on_tbCloseCurrent_clicked()
-{
-	closeProject( getItemByProxyId( currentProxy()->id() ) );
+	while ( twi->childCount() )
+		closeProxy( AbstractProjectProxy::byId( twi->child( 0 )->data( 0, ProxyIdRole ).toInt() ) );
+	// delete view, project, proxy and item
+	delete getViewByProxyId( p->id() );
+	delete p->sourceModel(); // as project is the sourceModel ( child ) of proxy, it delete proxy too
+	delete twi;
+	// update tool button if there is no project
 	if ( !swProjects->count() )
 		on_swProjects_currentChanged( -1 );
+}
+//
+void ProjectsManager::closeProject( AbstractProjectItemModel* p )
+{
+	if ( p )
+		closeProxy( AbstractProjectProxy::getProxyByProject( p ) );
+}
+//
+void ProjectsManager::addProxy( AbstractProjectProxy* p, AbstractProjectProxy* pParent )
+{
+	if ( !p )
+		return;
+	// connect close signal with deletion 
+	connect( p->project(), SIGNAL( isModifiedChanged( bool ) ), MenuBar::self()->action( "mProject/mSave/aCurrent" ), SLOT( setEnabled( bool ) ) );
+	// create a view for proxy
+	QTreeView* tv = new QTreeView;
+	tv->setModel( p );
+	if ( p->rowCount() > 0 )
+		tv->setRootIndex( p->index( 0, 0 ) );
+	// set current view this one
+	swProjects->addWidget( tv );
+	swProjects->setCurrentWidget( tv );
+	// add entry on twProjects
+	QTreeWidgetItem* twi;
+	if ( pParent )
+		twi = new QTreeWidgetItem( getItemByProxyId( pParent->id() ) );
+	else
+		twi = new QTreeWidgetItem( twProjects );
+	twi->setText( 0, p->project()->name() );
+	twi->setIcon( 0, QIcon( ":/icons/icons/project.png" ) );
+	twi->setData( 0, ProxyIdRole, p->id() ); // proxy id
+	twi->setData( 0, ProjectFilePathRole, p->project()->filePath() ); // project file path
+	twi->setToolTip( 0, tr( "Proxy Id: %1\nProject Id: %2\nFile Path: %3" ).arg( p->id() ).arg( p->project()->id() ).arg( p->project()->filePath() ) );
+	twProjects->setCurrentItem( twi );
+	// emit signal
+	emit proxyAdded( p );
+}
+//
+void ProjectsManager::on_tbSave_clicked()
+{
+	QAction* a = MenuBar::self()->action( "mProject/mSave/aCurrent" );
+	if ( a->isEnabled() )
+		a->trigger();
+}
+//
+void ProjectsManager::on_tbClose_clicked()
+{
+	QAction* a = MenuBar::self()->action( "mProject/mClose/aCurrent" );
+	if ( a->isEnabled() )
+		a->trigger();
 }
 //
 void ProjectsManager::on_twProjects_itemClicked( QTreeWidgetItem* i, int )
 {
 	if ( !i )
 		return;
-	setCurrentProxy( AbstractProjectProxy::byId( i->data( 0, ProxyIdRole ).toInt() ) );
+	AbstractProjectProxy* p = AbstractProjectProxy::byId( i->data( 0, ProxyIdRole ).toInt() );
+	setCurrentProxy( p );
+	emit currentProxyChanged( p );
 }
 //
 void ProjectsManager::on_swProjects_currentChanged( int )
 {
 	AbstractProjectProxy* p = currentProxy();
-	if ( p )
-	{
-		tbComplexCurrent->setChecked( p->isComplexModel() );
-		tbSaveCurrent->setEnabled( p->project()->isModified() );
-	}
-	else
-	{
-		tbComplexCurrent->setChecked( false );
-		tbSaveCurrent->setEnabled( false );
-	}
-	tbComplexCurrent->setEnabled( p );
-	tbCloseCurrent->setEnabled( p );
+	// enable / disable, check / uncheck action according to proxy
+	MenuBar::self()->action( "mView/aComplexProject" )->setEnabled( p );
+	MenuBar::self()->action( "mView/aComplexProject" )->setChecked( p ? p->isComplexModel() : false );
+	MenuBar::self()->action( "mProject/mSave/aCurrent" )->setEnabled( p ? p->project()->isModified() : false );
+	MenuBar::self()->action( "mProject/mSave/aAll" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mClose/aCurrent" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mClose/aAll" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mShow/aSource" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mShow/aToDo" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mShow/aChanges" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/aSettings" )->setEnabled( p );
 }

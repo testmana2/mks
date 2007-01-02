@@ -12,7 +12,7 @@ class RecentsManager;
 class TabToolBar;
 class ProjectsManager;
 class StatusBar;
-class AbstractProject;
+class AbstractProjectProxy;
 class AbstractChild;
 //
 class Q_MONKEY_EXPORT Workspace : public pTabWorkspace
@@ -44,7 +44,8 @@ public slots:
 	void tabRemoved( int );
 	void tabChanged( int );
 	//
-	void openFile( const QString&, AbstractProject* = 0 );
+	void openFile( const QString&, AbstractProjectProxy* = 0 );
+	void openProject( const QString& );
 	int addChild( AbstractChild*, const QString& );
 	void childCloseEvent( AbstractChild*, QCloseEvent* );
 	// file menu
@@ -67,8 +68,21 @@ public slots:
 	void editSearchReplace_triggered();
 	void editGoTo_triggered();
 	// view menu
+	void viewProjectsList_triggered( bool );
+	void viewComplexProject_triggered( bool );
 	void viewNext_triggered();
 	void viewPrevious_triggered();
+	// project menu
+	void projectNew_triggered();
+	void projectOpen_triggered();
+	void projectSaveCurrent_triggered();
+	void projectSaveAll_triggered();
+	void projectCloseCurrent_triggered();
+	void projectCloseAll_triggered();
+	void projectShowSource_triggered();
+	void projectShowToDo_triggered();
+	void projectShowChanges_triggered();
+	void projectSettings_triggered();
 };
 //
 #endif // WORKSPACE_H

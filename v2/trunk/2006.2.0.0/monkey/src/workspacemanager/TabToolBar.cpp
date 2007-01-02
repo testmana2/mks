@@ -27,9 +27,8 @@ void TabToolBar::initialize()
 	bar( Top )->addAction( MenuBar::self()->menu( "mProject/mRecents" )->menuAction() );
 	bar( Top )->addSeparator();
 	// file action
-	bar( Top )->addAction( MenuBar::self()->action( "mFile/mSave/aCurrent" ) );
-	bar( Top )->addAction( MenuBar::self()->action( "mFile/mSave/aAll" ) );
-	bar( Top )->addAction( MenuBar::self()->action( "mFile/mClose/aAll" ) );
+	bar( Top )->addAction( MenuBar::self()->menu( "mFile/mSave" )->menuAction() );
+	bar( Top )->addAction( MenuBar::self()->menu( "mFile/mClose" )->menuAction() );
 	bar( Top )->addAction( MenuBar::self()->action( "mFile/aQuickPrint" ) );
 	bar( Top )->addSeparator();
 	// edit action

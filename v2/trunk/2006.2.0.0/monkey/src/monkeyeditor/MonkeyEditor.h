@@ -8,12 +8,12 @@
 //
 #include "MonkeyExport.h"
 //
-struct Q_MONKEY_EXPORT Action
+struct Q_MONKEY_EXPORT pAction
 {
 	enum StateType { None = 0, TextLength, UndoAvailable, RedoAvailable,
 					CopyAvailable, PasteAvailable, NotCopyAvailableAndTextLength,
 					Enabled, Disabled };
-	Action( const QString& caption, QObject* receiver = 0, const char* slot = 0,
+	pAction( const QString& caption, QObject* receiver = 0, const char* slot = 0,
 		StateType state = Enabled, const QString& shortcut = QString(), const QString& pixmap = QString() )
 		: Caption( caption ), Receiver( receiver ), Slot( slot ), State( state ),
 			Shortcut( shortcut ), Pixmap( pixmap ) {}
@@ -38,7 +38,7 @@ public:
 	//
 	bool pasteAvailable() const;
 	bool copyAvailable() const;
-	bool getState( Action::StateType );
+	bool getState( pAction::StateType );
 	//
 	void print( bool = false );
 	void quickPrint();
@@ -52,7 +52,7 @@ protected:
 	//
 private:
 	bool mCopyAvailable;
-	QList<Action*> mActions;
+	QList<pAction*> mActions;
 	//
 private slots:
 	void clipboard_dataChanged();

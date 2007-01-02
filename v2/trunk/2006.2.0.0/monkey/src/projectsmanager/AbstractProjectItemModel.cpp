@@ -16,6 +16,13 @@ AbstractProjectItemModel::AbstractProjectItemModel( const QString& s, QObject* p
 	setFilePath( s );
 }
 //
+AbstractProjectItemModel::~AbstractProjectItemModel()
+{
+	if ( mProjectsList.contains( mId ) )
+		mProjectsList.remove( mId );
+	qWarning( "Project deleted" );
+}
+//
 int AbstractProjectItemModel::id() const
 {
 	return mId;

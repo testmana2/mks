@@ -11,8 +11,8 @@ RCC_DIR	= ../../../build/.rcc
 
 MONKEY_PLUGINS_DIR	= ../../../binary/plugins
 
-LIBS	= -L../../../monkey -lqscintilla2
-win32:LIBS += -lmonkey
+LIBS	= -L../../../build/.lib -lqscintilla2
+win32-g++:LIBS += -lmonkey
 
 INCLUDEPATH	= ../../../monkey/src/pluginsmanager \
 	../../../monkey/src/workspacemanager \
@@ -20,4 +20,6 @@ INCLUDEPATH	= ../../../monkey/src/pluginsmanager \
 	 ../../../monkey/src/3rdparty/widgets/pTabToolBar \
 	../../../monkey/src/monkeyeditor \
 	../../../monkey/src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4 \
-	../../../monkey/src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci
+	../../../monkey/src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci \
+	../../../monkey/src/projectsmanager \
+	../../../monkey/src/projectsmanager/ui

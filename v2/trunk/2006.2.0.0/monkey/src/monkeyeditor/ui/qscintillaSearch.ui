@@ -9,6 +9,9 @@
     <height>70</height>
    </rect>
   </property>
+  <property name="allowedAreas" >
+   <set>Qt::BottomDockWidgetArea|Qt::NoDockWidgetArea|Qt::TopDockWidgetArea</set>
+  </property>
   <widget class="QWidget" name="centralWidget" >
    <layout class="QGridLayout" >
     <property name="margin" >

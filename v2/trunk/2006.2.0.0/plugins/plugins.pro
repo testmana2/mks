@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
-SUBDIRS	= childs \
+SUBDIRS	= projects \
+	childs \
 	workspace

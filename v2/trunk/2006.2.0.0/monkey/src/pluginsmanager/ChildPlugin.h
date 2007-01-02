@@ -6,7 +6,7 @@
 //
 #include <QStringList>
 //
-class AbstractProject;
+class AbstractProjectProxy;
 //
 class Q_MONKEY_EXPORT ChildPlugin : public BasePlugin
 {
@@ -19,9 +19,9 @@ public:
 	//
 	virtual QStringList filters() const = 0;
 	//
-	virtual bool addNewDocument( const QString&, AbstractProject* = 0 ) = 0;
+	virtual bool addNewDocument( const QString&, AbstractProjectProxy* = 0 ) = 0;
 	//
-	virtual bool openFile( const QString&, AbstractProject* = 0 ) = 0;
+	virtual bool openFile( const QString&, AbstractProjectProxy* = 0 ) = 0;
 	//
 protected:
 	QStringList mExtensions;

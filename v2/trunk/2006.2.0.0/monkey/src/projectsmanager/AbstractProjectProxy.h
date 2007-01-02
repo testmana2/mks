@@ -2,6 +2,7 @@
 #define ABSTRACTPROJECTPROXY_H
 //
 #include <QSortFilterProxyModel>
+#include <QHash>
 //
 #include "AbstractProjectItemModel.h"
 //
@@ -14,10 +15,12 @@ class Q_MONKEY_EXPORT AbstractProjectProxy : public QSortFilterProxyModel
 	//
 public:
 	AbstractProjectProxy( AbstractProjectItemModel* );
+	virtual ~AbstractProjectProxy();
 	//
 	int id() const;
 	static AbstractProjectProxy* byId( int );
 	static QHashProxys all();
+	static AbstractProjectProxy* getProxyByProject( AbstractProjectItemModel* );
 	virtual	bool isComplexModel() const;
 	//
 	virtual AbstractProjectItemModel* project() const = 0;

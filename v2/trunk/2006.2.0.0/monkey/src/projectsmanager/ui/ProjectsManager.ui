@@ -1,47 +1,55 @@
 <ui version="4.0" >
  <class>ProjectsManager</class>
- <widget class="QWidget" name="ProjectsManager" >
+ <widget class="QDockWidget" name="ProjectsManager" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>256</width>
-    <height>422</height>
+    <width>206</width>
+    <height>349</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Projects Manager</string>
+  <property name="sizePolicy" >
+   <sizepolicy>
+    <hsizetype>5</hsizetype>
+    <vsizetype>7</vsizetype>
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
-  <property name="windowIcon" >
-   <iconset/>
+  <property name="allowedAreas" >
+   <set>Qt::LeftDockWidgetArea|Qt::NoDockWidgetArea|Qt::RightDockWidgetArea</set>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
-    <number>3</number>
+  <widget class="QWidget" name="centralWidget" >
+   <property name="sizePolicy" >
+    <sizepolicy>
+     <hsizetype>5</hsizetype>
+     <vsizetype>7</vsizetype>
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
-   <property name="spacing" >
-    <number>2</number>
+   <property name="windowTitle" >
+    <string>Projects Manager</string>
    </property>
-   <item row="1" column="0" colspan="7" >
-    <widget class="QSplitter" name="splitter" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>7</hsizetype>
-       <vsizetype>7</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
+   <property name="windowIcon" >
+    <iconset/>
+   </property>
+   <layout class="QGridLayout" >
+    <property name="margin" >
+     <number>0</number>
+    </property>
+    <property name="spacing" >
+     <number>2</number>
+    </property>
+    <item row="1" column="0" colspan="7" >
      <widget class="QTreeWidget" name="twProjects" >
       <property name="sizePolicy" >
        <sizepolicy>
         <hsizetype>7</hsizetype>
         <vsizetype>7</vsizetype>
         <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
+        <verstretch>1</verstretch>
        </sizepolicy>
       </property>
       <property name="columnCount" >
@@ -53,114 +61,81 @@
        </property>
       </column>
      </widget>
+    </item>
+    <item row="2" column="0" colspan="7" >
      <widget class="QStackedWidget" name="swProjects" >
       <property name="sizePolicy" >
        <sizepolicy>
         <hsizetype>7</hsizetype>
         <vsizetype>7</vsizetype>
         <horstretch>0</horstretch>
-        <verstretch>255</verstretch>
+        <verstretch>99</verstretch>
        </sizepolicy>
       </property>
      </widget>
-    </widget>
-   </item>
-   <item row="0" column="6" >
-    <widget class="QToolButton" name="tbCloseCurrent" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="text" >
-      <string>Close</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/projectclose.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2" >
-    <widget class="QToolButton" name="tbOpen" >
-     <property name="text" >
-      <string>Open</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/projectopen.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="5" >
-    <widget class="QToolButton" name="tbSaveCurrent" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="text" >
-      <string>Save</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/projectsave.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="4" >
-    <widget class="QToolButton" name="tbComplexCurrent" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="text" >
-      <string>Complex</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/helptesters.png</iconset>
-     </property>
-     <property name="checkable" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="3" >
-    <widget class="Line" name="lSeparator" >
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QToolButton" name="tbProjectsList" >
-     <property name="text" >
-      <string>Projects List</string>
-     </property>
-     <property name="icon" >
-      <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/helpgreettings.png</iconset>
-     </property>
-     <property name="checkable" >
-      <bool>true</bool>
-     </property>
-     <property name="checked" >
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>211</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-  </layout>
+    </item>
+    <item row="0" column="0" >
+     <spacer>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType" >
+       <enum>QSizePolicy::Preferred</enum>
+      </property>
+      <property name="sizeHint" >
+       <size>
+        <width>211</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QToolButton" name="tbList" />
+    </item>
+    <item row="0" column="3" >
+     <widget class="Line" name="lSeparator" >
+      <property name="orientation" >
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4" >
+     <widget class="QToolButton" name="tbComplex" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="checkable" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5" >
+     <widget class="QToolButton" name="tbSave" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" >
+     <widget class="QToolButton" name="tbOpen" />
+    </item>
+    <item row="0" column="6" >
+     <widget class="QToolButton" name="tbClose" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources>
   <include location="../../resources/resources.qrc" />
  </resources>
  <connections>
   <connection>
-   <sender>tbProjectsList</sender>
+   <sender>tbList</sender>
    <signal>toggled(bool)</signal>
    <receiver>twProjects</receiver>
    <slot>setVisible(bool)</slot>
