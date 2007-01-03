@@ -1,0 +1,1151 @@
+ArithmeticError(??)
+AssertionError(??)
+AttributeError(??)
+DeprecationWarning(??)
+EOFError(??)
+Ellipsis
+EnvironmentError(??)
+Exception(??)
+False
+FloatingPointError(??)
+FutureWarning(??)
+IOError(??)
+ImportError(??)
+IndentationError(??)
+IndexError(??)
+KeyError(??)
+KeyboardInterrupt(??)
+LookupError(??)
+MemoryError(??)
+NameError(??)
+None
+NotImplemented
+NotImplementedError(??)
+OSError(??)
+OverflowError(??)
+OverflowWarning(??)
+PendingDeprecationWarning(??)
+ReferenceError(??)
+RuntimeError(??)
+RuntimeWarning(??)
+StandardError(??)
+StopIteration(??)
+SyntaxError(??)
+SyntaxWarning(??)
+SystemError(??)
+SystemExit(??)
+TabError(??)
+True
+TypeError(??)
+UnboundLocalError(??)
+UnicodeDecodeError(??)
+UnicodeEncodeError(??)
+UnicodeError(??)
+UnicodeTranslateError(??)
+UserWarning(??)
+ValueError(??)
+Warning(??)
+ZeroDivisionError(??)
+__debug__
+__doc__
+__import__(name, globals, locals, fromlist) -> module
+__name__
+abs(number) -> number
+apply(object[, args[, kwargs]]) -> value
+basestring
+bool(x) -> bool
+bsddb.UserDict
+bsddb._DBWithCursor(??)
+bsddb.__builtins__
+bsddb.__doc__
+bsddb.__file__
+bsddb.__name__
+bsddb.__path__
+bsddb.__version__
+bsddb._bsddb
+bsddb._checkflag(??)
+bsddb._db
+bsddb._iter_mixin(??)
+bsddb._openDBEnv(??)
+bsddb.btopen(??)
+bsddb.db
+bsddb.error(??)
+bsddb.hashopen(??)
+bsddb.os
+bsddb.ref
+bsddb.rnopen(??)
+bsddb.sys
+buffer(object [, offset[, size]])
+cache.__builtins__
+cache.__doc__
+cache.__file__
+cache.__name__
+cache.__path__
+callable(object) -> bool
+chr(i) -> character
+classmethod(function) -> method
+cmp(x, y) -> integer
+coerce(x, y) -> (x1, y1)
+compile(source, filename, mode[, flags[, dont_inherit]]) -> code object
+compiler.__builtins__
+compiler.__doc__
+compiler.__file__
+compiler.__name__
+compiler.__path__
+compiler.ast
+compiler.compile(??)
+compiler.compileFile(??)
+compiler.consts
+compiler.future
+compiler.misc
+compiler.parse(??)
+compiler.parseFile(??)
+compiler.pyassem
+compiler.pycodegen
+compiler.symbols
+compiler.syntax
+compiler.transformer
+compiler.visitor
+compiler.walk(??)
+complex(real[, imag]) -> complex number
+copyright
+credits
+curses.ALL_MOUSE_EVENTS
+curses.A_ALTCHARSET
+curses.A_ATTRIBUTES
+curses.A_BLINK
+curses.A_BOLD
+curses.A_CHARTEXT
+curses.A_COLOR
+curses.A_DIM
+curses.A_HORIZONTAL
+curses.A_INVIS
+curses.A_LEFT
+curses.A_LOW
+curses.A_NORMAL
+curses.A_PROTECT
+curses.A_REVERSE
+curses.A_RIGHT
+curses.A_STANDOUT
+curses.A_TOP
+curses.A_UNDERLINE
+curses.A_VERTICAL
+curses.BUTTON1_CLICKED
+curses.BUTTON1_DOUBLE_CLICKED
+curses.BUTTON1_PRESSED
+curses.BUTTON1_RELEASED
+curses.BUTTON1_TRIPLE_CLICKED
+curses.BUTTON2_CLICKED
+curses.BUTTON2_DOUBLE_CLICKED
+curses.BUTTON2_PRESSED
+curses.BUTTON2_RELEASED
+curses.BUTTON2_TRIPLE_CLICKED
+curses.BUTTON3_CLICKED
+curses.BUTTON3_DOUBLE_CLICKED
+curses.BUTTON3_PRESSED
+curses.BUTTON3_RELEASED
+curses.BUTTON3_TRIPLE_CLICKED
+curses.BUTTON4_CLICKED
+curses.BUTTON4_DOUBLE_CLICKED
+curses.BUTTON4_PRESSED
+curses.BUTTON4_RELEASED
+curses.BUTTON4_TRIPLE_CLICKED
+curses.BUTTON_ALT
+curses.BUTTON_CTRL
+curses.BUTTON_SHIFT
+curses.COLOR_BLACK
+curses.COLOR_BLUE
+curses.COLOR_CYAN
+curses.COLOR_GREEN
+curses.COLOR_MAGENTA
+curses.COLOR_RED
+curses.COLOR_WHITE
+curses.COLOR_YELLOW
+curses.ERR
+curses.KEY_A1
+curses.KEY_A3
+curses.KEY_B2
+curses.KEY_BACKSPACE
+curses.KEY_BEG
+curses.KEY_BREAK
+curses.KEY_BTAB
+curses.KEY_C1
+curses.KEY_C3
+curses.KEY_CANCEL
+curses.KEY_CATAB
+curses.KEY_CLEAR
+curses.KEY_CLOSE
+curses.KEY_COMMAND
+curses.KEY_COPY
+curses.KEY_CREATE
+curses.KEY_CTAB
+curses.KEY_DC
+curses.KEY_DL
+curses.KEY_DOWN
+curses.KEY_EIC
+curses.KEY_END
+curses.KEY_ENTER
+curses.KEY_EOL
+curses.KEY_EOS
+curses.KEY_EXIT
+curses.KEY_F0
+curses.KEY_F1
+curses.KEY_F10
+curses.KEY_F11
+curses.KEY_F12
+curses.KEY_F13
+curses.KEY_F14
+curses.KEY_F15
+curses.KEY_F16
+curses.KEY_F17
+curses.KEY_F18
+curses.KEY_F19
+curses.KEY_F2
+curses.KEY_F20
+curses.KEY_F21
+curses.KEY_F22
+curses.KEY_F23
+curses.KEY_F24
+curses.KEY_F25
+curses.KEY_F26
+curses.KEY_F27
+curses.KEY_F28
+curses.KEY_F29
+curses.KEY_F3
+curses.KEY_F30
+curses.KEY_F31
+curses.KEY_F32
+curses.KEY_F33
+curses.KEY_F34
+curses.KEY_F35
+curses.KEY_F36
+curses.KEY_F37
+curses.KEY_F38
+curses.KEY_F39
+curses.KEY_F4
+curses.KEY_F40
+curses.KEY_F41
+curses.KEY_F42
+curses.KEY_F43
+curses.KEY_F44
+curses.KEY_F45
+curses.KEY_F46
+curses.KEY_F47
+curses.KEY_F48
+curses.KEY_F49
+curses.KEY_F5
+curses.KEY_F50
+curses.KEY_F51
+curses.KEY_F52
+curses.KEY_F53
+curses.KEY_F54
+curses.KEY_F55
+curses.KEY_F56
+curses.KEY_F57
+curses.KEY_F58
+curses.KEY_F59
+curses.KEY_F6
+curses.KEY_F60
+curses.KEY_F61
+curses.KEY_F62
+curses.KEY_F63
+curses.KEY_F7
+curses.KEY_F8
+curses.KEY_F9
+curses.KEY_FIND
+curses.KEY_HELP
+curses.KEY_HOME
+curses.KEY_IC
+curses.KEY_IL
+curses.KEY_LEFT
+curses.KEY_LL
+curses.KEY_MARK
+curses.KEY_MAX
+curses.KEY_MESSAGE
+curses.KEY_MIN
+curses.KEY_MOUSE
+curses.KEY_MOVE
+curses.KEY_NEXT
+curses.KEY_NPAGE
+curses.KEY_OPEN
+curses.KEY_OPTIONS
+curses.KEY_PPAGE
+curses.KEY_PREVIOUS
+curses.KEY_PRINT
+curses.KEY_REDO
+curses.KEY_REFERENCE
+curses.KEY_REFRESH
+curses.KEY_REPLACE
+curses.KEY_RESET
+curses.KEY_RESIZE
+curses.KEY_RESTART
+curses.KEY_RESUME
+curses.KEY_RIGHT
+curses.KEY_SAVE
+curses.KEY_SBEG
+curses.KEY_SCANCEL
+curses.KEY_SCOMMAND
+curses.KEY_SCOPY
+curses.KEY_SCREATE
+curses.KEY_SDC
+curses.KEY_SDL
+curses.KEY_SELECT
+curses.KEY_SEND
+curses.KEY_SEOL
+curses.KEY_SEXIT
+curses.KEY_SF
+curses.KEY_SFIND
+curses.KEY_SHELP
+curses.KEY_SHOME
+curses.KEY_SIC
+curses.KEY_SLEFT
+curses.KEY_SMESSAGE
+curses.KEY_SMOVE
+curses.KEY_SNEXT
+curses.KEY_SOPTIONS
+curses.KEY_SPREVIOUS
+curses.KEY_SPRINT
+curses.KEY_SR
+curses.KEY_SREDO
+curses.KEY_SREPLACE
+curses.KEY_SRESET
+curses.KEY_SRIGHT
+curses.KEY_SRSUME
+curses.KEY_SSAVE
+curses.KEY_SSUSPEND
+curses.KEY_STAB
+curses.KEY_SUNDO
+curses.KEY_SUSPEND
+curses.KEY_UNDO
+curses.KEY_UP
+curses.OK
+curses.REPORT_MOUSE_POSITION
+curses.__builtins__
+curses.__doc__
+curses.__file__
+curses.__name__
+curses.__path__
+curses.__revision__
+curses.baudrate
+curses.beep
+curses.can_change_color
+curses.cbreak
+curses.color_content
+curses.color_pair
+curses.curs_set
+curses.def_prog_mode
+curses.def_shell_mode
+curses.delay_output
+curses.doupdate
+curses.echo
+curses.endwin
+curses.erasechar
+curses.error(??)
+curses.filter
+curses.flash
+curses.flushinp
+curses.getmouse
+curses.getsyx
+curses.getwin
+curses.halfdelay
+curses.has_colors
+curses.has_ic
+curses.has_il
+curses.has_key
+curses.init_color
+curses.init_pair
+curses.initscr(??)
+curses.intrflush
+curses.isendwin
+curses.keyname
+curses.killchar
+curses.longname
+curses.meta
+curses.mouseinterval
+curses.mousemask
+curses.napms
+curses.newpad
+curses.newwin
+curses.nl
+curses.nocbreak
+curses.noecho
+curses.nonl
+curses.noqiflush
+curses.noraw
+curses.pair_content
+curses.pair_number
+curses.putp
+curses.qiflush
+curses.raw
+curses.reset_prog_mode
+curses.reset_shell_mode
+curses.resetty
+curses.savetty
+curses.setsyx
+curses.setupterm
+curses.start_color(??)
+curses.termattrs
+curses.termname
+curses.tigetflag
+curses.tigetnum
+curses.tigetstr
+curses.tparm
+curses.typeahead
+curses.unctrl
+curses.ungetch
+curses.ungetmouse
+curses.use_default_colors
+curses.use_env
+curses.version
+curses.wrapper(??)
+delattr(object, name)
+dict() -> new empty dictionary.
+dir([object]) -> list of strings
+divmod(x, y) -> (div, mod)
+elog_modules.__builtins__
+elog_modules.__doc__
+elog_modules.__file__
+elog_modules.__name__
+elog_modules.__path__
+email.__all__
+email.__builtins__
+email.__doc__
+email.__file__
+email.__name__
+email.__path__
+email.__version__
+email.message_from_file(??)
+email.message_from_string(??)
+enumerate(iterable) -> iterator for index, value of iterable
+errno.E2BIG
+errno.EACCES
+errno.EADDRINUSE
+errno.EADDRNOTAVAIL
+errno.EADV
+errno.EAFNOSUPPORT
+errno.EAGAIN
+errno.EALREADY
+errno.EBADE
+errno.EBADF
+errno.EBADFD
+errno.EBADMSG
+errno.EBADR
+errno.EBADRQC
+errno.EBADSLT
+errno.EBFONT
+errno.EBUSY
+errno.ECHILD
+errno.ECHRNG
+errno.ECOMM
+errno.ECONNABORTED
+errno.ECONNREFUSED
+errno.ECONNRESET
+errno.EDEADLK
+errno.EDEADLOCK
+errno.EDESTADDRREQ
+errno.EDOM
+errno.EDOTDOT
+errno.EDQUOT
+errno.EEXIST
+errno.EFAULT
+errno.EFBIG
+errno.EHOSTDOWN
+errno.EHOSTUNREACH
+errno.EIDRM
+errno.EILSEQ
+errno.EINPROGRESS
+errno.EINTR
+errno.EINVAL
+errno.EIO
+errno.EISCONN
+errno.EISDIR
+errno.EISNAM
+errno.EL2HLT
+errno.EL2NSYNC
+errno.EL3HLT
+errno.EL3RST
+errno.ELIBACC
+errno.ELIBBAD
+errno.ELIBEXEC
+errno.ELIBMAX
+errno.ELIBSCN
+errno.ELNRNG
+errno.ELOOP
+errno.EMFILE
+errno.EMLINK
+errno.EMSGSIZE
+errno.EMULTIHOP
+errno.ENAMETOOLONG
+errno.ENAVAIL
+errno.ENETDOWN
+errno.ENETRESET
+errno.ENETUNREACH
+errno.ENFILE
+errno.ENOANO
+errno.ENOBUFS
+errno.ENOCSI
+errno.ENODATA
+errno.ENODEV
+errno.ENOENT
+errno.ENOEXEC
+errno.ENOLCK
+errno.ENOLINK
+errno.ENOMEM
+errno.ENOMSG
+errno.ENONET
+errno.ENOPKG
+errno.ENOPROTOOPT
+errno.ENOSPC
+errno.ENOSR
+errno.ENOSTR
+errno.ENOSYS
+errno.ENOTBLK
+errno.ENOTCONN
+errno.ENOTDIR
+errno.ENOTEMPTY
+errno.ENOTNAM
+errno.ENOTSOCK
+errno.ENOTTY
+errno.ENOTUNIQ
+errno.ENXIO
+errno.EOPNOTSUPP
+errno.EOVERFLOW
+errno.EPERM
+errno.EPFNOSUPPORT
+errno.EPIPE
+errno.EPROTO
+errno.EPROTONOSUPPORT
+errno.EPROTOTYPE
+errno.ERANGE
+errno.EREMCHG
+errno.EREMOTE
+errno.EREMOTEIO
+errno.ERESTART
+errno.EROFS
+errno.ESHUTDOWN
+errno.ESOCKTNOSUPPORT
+errno.ESPIPE
+errno.ESRCH
+errno.ESRMNT
+errno.ESTALE
+errno.ESTRPIPE
+errno.ETIME
+errno.ETIMEDOUT
+errno.ETOOMANYREFS
+errno.ETXTBSY
+errno.EUCLEAN
+errno.EUNATCH
+errno.EUSERS
+errno.EWOULDBLOCK
+errno.EXDEV
+errno.EXFULL
+errno.__doc__
+errno.__name__
+errno.errorcode
+eval(source[, globals[, locals]]) -> value
+exceptions.ArithmeticError(??)
+exceptions.AssertionError(??)
+exceptions.AttributeError(??)
+exceptions.DeprecationWarning(??)
+exceptions.EOFError(??)
+exceptions.EnvironmentError(??)
+exceptions.Exception(??)
+exceptions.FloatingPointError(??)
+exceptions.FutureWarning(??)
+exceptions.IOError(??)
+exceptions.ImportError(??)
+exceptions.IndentationError(??)
+exceptions.IndexError(??)
+exceptions.KeyError(??)
+exceptions.KeyboardInterrupt(??)
+exceptions.LookupError(??)
+exceptions.MemoryError(??)
+exceptions.NameError(??)
+exceptions.NotImplementedError(??)
+exceptions.OSError(??)
+exceptions.OverflowError(??)
+exceptions.OverflowWarning(??)
+exceptions.PendingDeprecationWarning(??)
+exceptions.ReferenceError(??)
+exceptions.RuntimeError(??)
+exceptions.RuntimeWarning(??)
+exceptions.StandardError(??)
+exceptions.StopIteration(??)
+exceptions.SyntaxError(??)
+exceptions.SyntaxWarning(??)
+exceptions.SystemError(??)
+exceptions.SystemExit(??)
+exceptions.TabError(??)
+exceptions.TypeError(??)
+exceptions.UnboundLocalError(??)
+exceptions.UnicodeDecodeError(??)
+exceptions.UnicodeEncodeError(??)
+exceptions.UnicodeError(??)
+exceptions.UnicodeTranslateError(??)
+exceptions.UserWarning(??)
+exceptions.ValueError(??)
+exceptions.Warning(??)
+exceptions.ZeroDivisionError(??)
+exceptions.__doc__
+exceptions.__name__
+execfile(filename[, globals[, locals]])
+exit
+file(name[, mode[, buffering]]) -> file object
+filter(function or None, sequence) -> list, tuple, or string
+float(x) -> floating point number
+frozenset(iterable) --> frozenset object
+gc.DEBUG_COLLECTABLE
+gc.DEBUG_INSTANCES
+gc.DEBUG_LEAK
+gc.DEBUG_OBJECTS
+gc.DEBUG_SAVEALL
+gc.DEBUG_STATS
+gc.DEBUG_UNCOLLECTABLE
+gc.__doc__
+gc.__name__
+gc.collect() -> n
+gc.disable() -> None
+gc.enable() -> None
+gc.garbage
+gc.get_debug() -> flags
+gc.get_objects() -> [...]
+gc.get_referents(*objs) -> list
+gc.get_referrers(*objs) -> list
+gc.get_threshold() -> (threshold0, threshold1, threshold2)
+gc.isenabled() -> status
+gc.set_debug(flags) -> None
+gc.set_threshold(threshold0, [threshold1, threshold2]) -> None
+getattr(object, name[, default]) -> value
+globals() -> dictionary
+hasattr(object, name) -> bool
+hash(object) -> integer
+help
+hex(number) -> string
+hotshot.Profile(??)
+hotshot.ProfilerError(??)
+hotshot.__builtins__
+hotshot.__doc__
+hotshot.__file__
+hotshot.__name__
+hotshot.__path__
+hotshot._hotshot
+id(object) -> integer
+imp.C_BUILTIN
+imp.C_EXTENSION
+imp.IMP_HOOK
+imp.PKG_DIRECTORY
+imp.PY_CODERESOURCE
+imp.PY_COMPILED
+imp.PY_FROZEN
+imp.PY_RESOURCE
+imp.PY_SOURCE
+imp.SEARCH_ERROR
+imp.__doc__
+imp.__name__
+imp.acquire_lock() -> None
+imp.find_module(name, [path]) -> (file, filename, (suffix, mode, type))
+imp.get_frozen_object
+imp.get_magic() -> string
+imp.get_suffixes() -> [(suffix, mode, type), ...]
+imp.init_builtin
+imp.init_frozen
+imp.is_builtin
+imp.is_frozen
+imp.load_compiled
+imp.load_dynamic
+imp.load_module(name, file, filename, (suffix, mode, type)) -> module
+imp.load_package
+imp.load_source
+imp.lock_held() -> boolean
+imp.new_module(name) -> module
+imp.release_lock() -> None
+input([prompt]) -> value
+int(x[, base]) -> integer
+intern(string) -> string
+isinstance(object, class-or-type-or-tuple) -> bool
+issubclass(C, B) -> bool
+iter(collection) -> iterator
+len(object) -> integer
+license
+list() -> new list
+locals() -> dictionary
+logging.BASIC_FORMAT
+logging.BufferingFormatter(??)
+logging.CRITICAL
+logging.DEBUG
+logging.ERROR
+logging.FATAL
+logging.FileHandler(??)
+logging.Filter(??)
+logging.Filterer(??)
+logging.Formatter(??)
+logging.Handler(??)
+logging.INFO
+logging.LogRecord(??)
+logging.Logger(??)
+logging.Manager(??)
+logging.NOTSET
+logging.PlaceHolder(??)
+logging.RootLogger(??)
+logging.StreamHandler(??)
+logging.WARN
+logging.WARNING
+logging.__author__
+logging.__builtins__
+logging.__date__
+logging.__doc__
+logging.__file__
+logging.__name__
+logging.__path__
+logging.__status__
+logging.__version__
+logging._acquireLock(??)
+logging._defaultFormatter
+logging._handlerList
+logging._handlers
+logging._levelNames
+logging._lock
+logging._loggerClass(??)
+logging._releaseLock(??)
+logging._srcfile
+logging._startTime
+logging.addLevelName(??)
+logging.atexit
+logging.basicConfig(??)
+logging.cStringIO
+logging.codecs
+logging.critical(??)
+logging.currentframe
+logging.debug(??)
+logging.disable(??)
+logging.error(??)
+logging.exception(??)
+logging.fatal(??)
+logging.getLevelName(??)
+logging.getLogger(??)
+logging.getLoggerClass(??)
+logging.info(??)
+logging.log(??)
+logging.makeLogRecord(??)
+logging.os
+logging.raiseExceptions
+logging.root
+logging.setLoggerClass(??)
+logging.shutdown(??)
+logging.string
+logging.sys
+logging.thread
+logging.threading
+logging.time
+logging.traceback
+logging.types
+logging.warn(??)
+logging.warning(??)
+long(x[, base]) -> integer
+map(function, sequence[, sequence, ...]) -> list
+marshal.__doc__
+marshal.__name__
+marshal.dump
+marshal.dumps
+marshal.load
+marshal.loads
+marshal.version
+max(sequence) -> value
+min(sequence) -> value
+object
+oct(number) -> string
+open
+ord(c) -> integer
+posix.EX_CANTCREAT
+posix.EX_CONFIG
+posix.EX_DATAERR
+posix.EX_IOERR
+posix.EX_NOHOST
+posix.EX_NOINPUT
+posix.EX_NOPERM
+posix.EX_NOUSER
+posix.EX_OK
+posix.EX_OSERR
+posix.EX_OSFILE
+posix.EX_PROTOCOL
+posix.EX_SOFTWARE
+posix.EX_TEMPFAIL
+posix.EX_UNAVAILABLE
+posix.EX_USAGE
+posix.F_OK
+posix.NGROUPS_MAX
+posix.O_APPEND
+posix.O_CREAT
+posix.O_DIRECT
+posix.O_DIRECTORY
+posix.O_DSYNC
+posix.O_EXCL
+posix.O_LARGEFILE
+posix.O_NDELAY
+posix.O_NOCTTY
+posix.O_NOFOLLOW
+posix.O_NONBLOCK
+posix.O_RDONLY
+posix.O_RDWR
+posix.O_RSYNC
+posix.O_SYNC
+posix.O_TRUNC
+posix.O_WRONLY
+posix.R_OK
+posix.TMP_MAX
+posix.WCONTINUED
+posix.WCOREDUMP(status) -> bool
+posix.WEXITSTATUS(status) -> integer
+posix.WIFCONTINUED(status) -> bool
+posix.WIFEXITED(status) -> bool
+posix.WIFSIGNALED(status) -> bool
+posix.WIFSTOPPED(status) -> bool
+posix.WNOHANG
+posix.WSTOPSIG(status) -> integer
+posix.WTERMSIG(status) -> integer
+posix.WUNTRACED
+posix.W_OK
+posix.X_OK
+posix.__doc__
+posix.__name__
+posix._exit(status)
+posix.abort() -> does not return!
+posix.access(path, mode) -> 1 if granted, 0 otherwise
+posix.chdir(path)
+posix.chmod(path, mode)
+posix.chown(path, uid, gid)
+posix.chroot(path)
+posix.close(fd)
+posix.confstr(name) -> string
+posix.confstr_names
+posix.ctermid() -> string
+posix.dup(fd) -> fd2
+posix.dup2(old_fd, new_fd)
+posix.environ
+posix.error(??)
+posix.execv(path, args)
+posix.execve(path, args, env)
+posix.fchdir(fildes)
+posix.fdatasync(fildes)
+posix.fdopen(fd [, mode='r' [, bufsize]]) -> file_object
+posix.fork() -> pid
+posix.forkpty() -> (pid, master_fd)
+posix.fpathconf(fd, name) -> integer
+posix.fstat(fd) -> stat result
+posix.fstatvfs(fd) -> statvfs result
+posix.fsync(fildes)
+posix.ftruncate(fd, length)
+posix.getcwd() -> path
+posix.getcwdu() -> path
+posix.getegid() -> egid
+posix.geteuid() -> euid
+posix.getgid() -> gid
+posix.getgroups() -> list of group IDs
+posix.getloadavg() -> (float, float, float)
+posix.getlogin() -> string
+posix.getpgid(pid) -> pgid
+posix.getpgrp() -> pgrp
+posix.getpid() -> pid
+posix.getppid() -> ppid
+posix.getsid(pid) -> sid
+posix.getuid() -> uid
+posix.isatty(fd) -> bool
+posix.kill(pid, sig)
+posix.killpg(pgid, sig)
+posix.lchown(path, uid, gid)
+posix.link(src, dst)
+posix.listdir(path) -> list_of_strings
+posix.lseek(fd, pos, how) -> newpos
+posix.lstat(path) -> stat result
+posix.major(device) -> major number
+posix.makedev(major, minor) -> device number
+posix.minor(device) -> minor number
+posix.mkdir(path [, mode=0777])
+posix.mkfifo(filename [, mode=0666])
+posix.mknod(filename [, mode=0600, device])
+posix.nice(inc) -> new_priority
+posix.open(filename, flag [, mode=0777]) -> fd
+posix.openpty() -> (master_fd, slave_fd)
+posix.pathconf(path, name) -> integer
+posix.pathconf_names
+posix.pipe() -> (read_end, write_end)
+posix.popen(command [, mode='r' [, bufsize]]) -> pipe
+posix.putenv(key, value)
+posix.read(fd, buffersize) -> string
+posix.readlink(path) -> path
+posix.remove(path)
+posix.rename(old, new)
+posix.rmdir(path)
+posix.setegid(gid)
+posix.seteuid(uid)
+posix.setgid(gid)
+posix.setgroups(list)
+posix.setpgid(pid, pgrp)
+posix.setpgrp()
+posix.setregid(rgid, egid)
+posix.setreuid(ruid, euid)
+posix.setsid()
+posix.setuid(uid)
+posix.stat(path) -> stat result
+posix.stat_float_times([newval]) -> oldval
+posix.stat_result
+posix.statvfs(path) -> statvfs result
+posix.statvfs_result
+posix.strerror(code) -> string
+posix.symlink(src, dst)
+posix.sysconf(name) -> integer
+posix.sysconf_names
+posix.system(command) -> exit_status
+posix.tcgetpgrp(fd) -> pgid
+posix.tcsetpgrp(fd, pgid)
+posix.tempnam([dir[, prefix]]) -> string
+posix.times() -> (utime, stime, cutime, cstime, elapsed_time)
+posix.tmpfile() -> file object
+posix.tmpnam() -> string
+posix.ttyname(fd) -> string
+posix.umask(new_mask) -> old_mask
+posix.uname() -> (sysname, nodename, release, version, machine)
+posix.unlink(path)
+posix.unsetenv(key)
+posix.utime(path, (atime, utime))
+posix.wait() -> (pid, status)
+posix.waitpid(pid, options) -> (pid, status)
+posix.write(fd, string) -> byteswritten
+pow(x, y[, z]) -> number
+property(fget=None, fset=None, fdel=None, doc=None) -> property attribute
+pwd.__doc__
+pwd.__name__
+pwd.getpwall() -> list_of_entries
+pwd.getpwnam(name) -> (pw_name,pw_passwd,pw_uid,
+pwd.getpwuid(uid) -> (pw_name,pw_passwd,pw_uid,
+pwd.struct_passwd
+pwd.struct_pwent
+quit
+range([start,] stop[, step]) -> list of integers
+raw_input([prompt]) -> string
+reduce(function, sequence[, initial]) -> value
+reload(module) -> module
+repr(object) -> string
+reversed(sequence) -> reverse iterator over values of the sequence
+round(number[, ndigits]) -> floating point number
+set(iterable) --> set object
+setattr(object, name, value)
+signal.NSIG
+signal.SIGABRT
+signal.SIGALRM
+signal.SIGBUS
+signal.SIGCHLD
+signal.SIGCLD
+signal.SIGCONT
+signal.SIGFPE
+signal.SIGHUP
+signal.SIGILL
+signal.SIGINT
+signal.SIGIO
+signal.SIGIOT
+signal.SIGKILL
+signal.SIGPIPE
+signal.SIGPOLL
+signal.SIGPROF
+signal.SIGPWR
+signal.SIGQUIT
+signal.SIGRTMAX
+signal.SIGRTMIN
+signal.SIGSEGV
+signal.SIGSTOP
+signal.SIGSYS
+signal.SIGTERM
+signal.SIGTRAP
+signal.SIGTSTP
+signal.SIGTTIN
+signal.SIGTTOU
+signal.SIGURG
+signal.SIGUSR1
+signal.SIGUSR2
+signal.SIGVTALRM
+signal.SIGWINCH
+signal.SIGXCPU
+signal.SIGXFSZ
+signal.SIG_DFL
+signal.SIG_IGN
+signal.__doc__
+signal.__name__
+signal.alarm(seconds)
+signal.default_int_handler(...)
+signal.getsignal(sig) -> action
+signal.pause()
+signal.signal(sig, action) -> action
+slice([start,] stop[, step])
+sorted(iterable, cmp=None, key=None, reverse=False) --> new sorted list
+staticmethod(function) -> method
+str(object) -> string
+sum(sequence, start=0) -> value
+super(type) -> unbound super object
+sys.__displayhook__
+sys.__doc__
+sys.__excepthook__
+sys.__name__
+sys.__stderr__
+sys.__stdin__
+sys.__stdout__
+sys._getframe([depth]) -> frameobject
+sys.api_version
+sys.argv
+sys.builtin_module_names
+sys.byteorder
+sys.call_tracing(func, args) -> object
+sys.callstats() -> tuple of integers
+sys.copyright
+sys.displayhook(object) -> None
+sys.exc_clear() -> None
+sys.exc_info() -> (type, value, traceback)
+sys.exc_type
+sys.excepthook(exctype, value, traceback) -> None
+sys.exec_prefix
+sys.executable
+sys.exit([status])
+sys.getcheckinterval() -> current check interval; see setcheckinterval().
+sys.getdefaultencoding() -> string
+sys.getdlopenflags() -> int
+sys.getfilesystemencoding() -> string
+sys.getrecursionlimit()
+sys.getrefcount(object) -> integer
+sys.hexversion
+sys.maxint
+sys.maxunicode
+sys.meta_path
+sys.modules
+sys.path
+sys.path_hooks
+sys.path_importer_cache
+sys.platform
+sys.prefix
+sys.setcheckinterval(n)
+sys.setdlopenflags(n) -> None
+sys.setprofile(function)
+sys.setrecursionlimit(n)
+sys.settrace(function)
+sys.stderr
+sys.stdin
+sys.stdout
+sys.version
+sys.version_info
+sys.warnoptions
+thread.LockType
+thread.__doc__
+thread.__name__
+thread._local
+thread.allocate
+thread.allocate_lock() -> lock object
+thread.error(??)
+thread.exit()
+thread.exit_thread
+thread.get_ident() -> integer
+thread.interrupt_main()
+thread.start_new
+thread.start_new_thread(function, args[, kwargs])
+tuple() -> an empty tuple
+type(object) -> the object's type
+unichr(i) -> Unicode character
+unicode(string [, encoding[, errors]]) -> object
+vars([object]) -> dictionary
+xml._MINIMUM_XMLPLUS_VERSION
+xml.__all__
+xml.__builtins__
+xml.__doc__
+xml.__file__
+xml.__name__
+xml.__path__
+xml.__version__
+xml.dom
+xml.dom.DOMException(??)
+xml.dom.DOMSTRING_SIZE_ERR
+xml.dom.DomstringSizeErr(??)
+xml.dom.EMPTY_NAMESPACE
+xml.dom.EMPTY_PREFIX
+xml.dom.HIERARCHY_REQUEST_ERR
+xml.dom.HierarchyRequestErr(??)
+xml.dom.INDEX_SIZE_ERR
+xml.dom.INUSE_ATTRIBUTE_ERR
+xml.dom.INVALID_ACCESS_ERR
+xml.dom.INVALID_CHARACTER_ERR
+xml.dom.INVALID_MODIFICATION_ERR
+xml.dom.INVALID_STATE_ERR
+xml.dom.IndexSizeErr(??)
+xml.dom.InuseAttributeErr(??)
+xml.dom.InvalidAccessErr(??)
+xml.dom.InvalidCharacterErr(??)
+xml.dom.InvalidModificationErr(??)
+xml.dom.InvalidStateErr(??)
+xml.dom.NAMESPACE_ERR
+xml.dom.NOT_FOUND_ERR
+xml.dom.NOT_SUPPORTED_ERR
+xml.dom.NO_DATA_ALLOWED_ERR
+xml.dom.NO_MODIFICATION_ALLOWED_ERR
+xml.dom.NamespaceErr(??)
+xml.dom.NoDataAllowedErr(??)
+xml.dom.NoModificationAllowedErr(??)
+xml.dom.Node(??)
+xml.dom.NotFoundErr(??)
+xml.dom.NotSupportedErr(??)
+xml.dom.SYNTAX_ERR
+xml.dom.SyntaxErr(??)
+xml.dom.UserDataHandler(??)
+xml.dom.VALIDATION_ERR
+xml.dom.ValidationErr(??)
+xml.dom.WRONG_DOCUMENT_ERR
+xml.dom.WrongDocumentErr(??)
+xml.dom.XHTML_NAMESPACE
+xml.dom.XMLNS_NAMESPACE
+xml.dom.XML_NAMESPACE
+xml.dom.__builtins__
+xml.dom.__doc__
+xml.dom.__file__
+xml.dom.__name__
+xml.dom.__path__
+xml.dom.domreg
+xml.dom.getDOMImplementation(name = None, features = ()) -> DOM implementation.
+xml.dom.minicompat
+xml.dom.registerDOMImplementation(name, factory)
+xml.parsers
+xml.parsers.__builtins__
+xml.parsers.__doc__
+xml.parsers.__file__
+xml.parsers.__name__
+xml.parsers.__path__
+xml.sax
+xml.sax.ContentHandler(??)
+xml.sax.ErrorHandler(??)
+xml.sax.InputSource(??)
+xml.sax.SAXException(??)
+xml.sax.SAXNotRecognizedException(??)
+xml.sax.SAXNotSupportedException(??)
+xml.sax.SAXParseException(??)
+xml.sax.SAXReaderNotAvailable(??)
+xml.sax.__builtins__
+xml.sax.__doc__
+xml.sax.__file__
+xml.sax.__name__
+xml.sax.__path__
+xml.sax._create_parser(??)
+xml.sax._exceptions
+xml.sax._false
+xml.sax._key
+xml.sax.default_parser_list
+xml.sax.handler
+xml.sax.make_parser(??)
+xml.sax.parse(??)
+xml.sax.parseString(??)
+xml.sax.xmlreader
+xrange([start,] stop[, step]) -> xrange object
+xxsubtype.__doc__
+xxsubtype.__name__
+xxsubtype.bench
+xxsubtype.spamdict
+xxsubtype.spamlist
+zip(seq1 [, seq2 [...]]) -> [(seq1[0], seq2[0] ...), (...)]
+zipimport.ZipImportError(??)
+zipimport.__doc__
+zipimport.__name__
+zipimport._zip_directory_cache
+zipimport.zipimporter(archivepath) -> zipimporter object

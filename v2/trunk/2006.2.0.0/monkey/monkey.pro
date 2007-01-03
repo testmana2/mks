@@ -23,7 +23,7 @@ QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/ui src/3rdparty/objects/pSettings/ src/3rdparty/widgets/pMenuBar/ src/workspacemanager/ src/maininterface/ src/toolsmanager/ui/ src/3rdparty/widgets/pTabToolBar/ src/3rdparty/widgets/pTabWorkspace/ src/projectsmanager/ui/ src/projectsmanager/ src/pluginsmanager/ src/maininterface/ui/ src/toolsmanager/ src/recentsmanager/ src/monkeyeditor/ui/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4
 CONFIG	+= qt warn_on release app_bundle thread x11 windows console
-DESTDIR	= ../binary
+DESTDIR	= ../bin
 win32:RC_FILE	+= monkey.rc
 RESOURCES	= src/resources/resources.qrc
 
