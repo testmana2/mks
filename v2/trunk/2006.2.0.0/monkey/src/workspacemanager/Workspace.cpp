@@ -377,10 +377,10 @@ void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
 	{
 		settings()->setValue( "Recents/FileOpenPath", f.canonicalPath() );
 		if ( !p )
-			recentsManager()->addRecentFile( f.canonicalPath() );
+			recentsManager()->addRecentFile( f.canonicalFilePath() );
 	}
 	else
-		recentsManager()->removeRecentFile( f.canonicalPath() );
+		recentsManager()->removeRecentFile( f.canonicalFilePath() );
 }
 //
 void Workspace::openProject( const QString& s )

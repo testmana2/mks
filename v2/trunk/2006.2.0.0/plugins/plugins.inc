@@ -10,7 +10,6 @@ MOC_DIR	= ../../../build/.moc
 RCC_DIR	= ../../../build/.rcc 
 
 MONKEY_PLUGINS_DIR	= ../../../bin/plugins
-
 LIBS	= -L../../../build/.lib -lqscintilla2
 win32:LIBS += -lmonkey
 

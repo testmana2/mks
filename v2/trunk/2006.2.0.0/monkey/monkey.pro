@@ -16,9 +16,9 @@ win32:ICON	= src/resources/Icons/icon.ico
 TEMPLATE	= app
 DEFINES	= MONKEY_CORE_BUILD
 LIBS	= -L../build/.lib -lqscintilla2
-win32-g++:LIBS	+= -Wl,--out-implib,../.lib/libmonkey.a
-win32-msvc:LIBS += /IMPLIB:../build/.lib/monkey.lib
 linux-g++:LIBS	+= -rdynamic
+win32-msvc:LIBS	+= /IMPLIB:../build/.lib/monkey.lib
+win32-g++:LIBS	+= -Wl,--out-implib,../build/.lib/libmonkey.a
 QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/ui src/3rdparty/objects/pSettings/ src/3rdparty/widgets/pMenuBar/ src/workspacemanager/ src/maininterface/ src/toolsmanager/ui/ src/3rdparty/widgets/pTabToolBar/ src/3rdparty/widgets/pTabWorkspace/ src/projectsmanager/ui/ src/projectsmanager/ src/pluginsmanager/ src/maininterface/ui/ src/toolsmanager/ src/recentsmanager/ src/monkeyeditor/ui/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4
@@ -70,14 +70,10 @@ OPENEDFILES	= src/projectsmanager/AbstractProjectItemModel.h \
 	src/projectsmanager/AbstractProjectProxy.cpp \
 	src/workspacemanager/Workspace.h \
 	src/workspacemanager/Workspace.cpp \
-	src/projectsmanager/ui/ProjectsManager.h \
-	src/projectsmanager/ui/ProjectsManager.cpp \
 	src/recentsmanager/RecentsManager.h \
 	src/recentsmanager/RecentsManager.cpp \
-	src/monkeyeditor/MonkeyEditor.h \
-	src/monkeyeditor/MonkeyEditor.cpp \
-	src/workspacemanager/TabToolBar.h \
-	src/workspacemanager/TabToolBar.cpp
+	src/projectsmanager/ui/ProjectsManager.h \
+	src/projectsmanager/ui/ProjectsManager.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
