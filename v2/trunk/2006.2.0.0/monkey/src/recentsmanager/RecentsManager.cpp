@@ -116,6 +116,16 @@ void RecentsManager::addRecentFile( const QString& s )
 	updateRecentFiles();
 }
 //
+void RecentsManager::removeRecentFile( const QString& s )
+{
+	QStringList f = settings()->value( "Recents/Files" ).toStringList();
+	f.removeAll( s );
+	while ( f.size() > maxRecentFiles() )
+		f.removeLast();
+	settings()->setValue( "Recents/Files", f );
+	updateRecentFiles();
+}
+//
 void RecentsManager::recentProjects_triggered( QAction* a )
 {
 	if ( a->text() != tr( "&Clear" ) )
@@ -157,6 +167,16 @@ void RecentsManager::addRecentProject( const QString& s )
 	QStringList f = settings()->value( "Recents/Projects" ).toStringList();
 	f.removeAll( s );
 	f.prepend( s );
+	while ( f.size() > maxRecentProjects() )
+		f.removeLast();
+	settings()->setValue( "Recents/Projects", f );
+	updateRecentProjects();
+}
+//
+void RecentsManager::removeRecentProject( const QString& s )
+{
+	QStringList f = settings()->value( "Recents/Projects" ).toStringList();
+	f.removeAll( s );
 	while ( f.size() > maxRecentProjects() )
 		f.removeLast();
 	settings()->setValue( "Recents/Projects", f );

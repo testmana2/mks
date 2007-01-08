@@ -45,5 +45,5 @@ void TabToolBar::initialize()
 	// help action
 	bar( Top )->addAction( MenuBar::self()->action( "mHelp/aAbout" ) );
 	// dock qscintillaSearch
-	bar( Top )->appendTab( qscintillaSearch::self(), QPixmap( ":/Icons/Icons/tabsearch.png" ), tr( "Search - Replace" ) );
+	bar( Bottom )->appendTab( qscintillaSearch::self(), QPixmap( ":/Icons/Icons/tabsearch.png" ), tr( "Search - Replace" ) );
 }

@@ -9,9 +9,9 @@ UI_DIR	= ../build/.ui
 MOC_DIR	= ../build/.moc
 RCC_DIR	= ../build/.rcc
 
-mac:ICON	+= src/resources/Icons/icon.icns
-unix:ICON	+= src/resources/Icons/icon.png
-win32:ICON	+= src/resources/Icons/icon.ico
+unix:ICON	= src/resources/Icons/icon.png
+mac:ICON	= src/resources/Icons/icon.icns
+win32:ICON	= src/resources/Icons/icon.ico
 
 TEMPLATE	= app
 DEFINES	= MONKEY_CORE_BUILD
@@ -75,7 +75,9 @@ OPENEDFILES	= src/projectsmanager/AbstractProjectItemModel.h \
 	src/recentsmanager/RecentsManager.h \
 	src/recentsmanager/RecentsManager.cpp \
 	src/monkeyeditor/MonkeyEditor.h \
-	src/monkeyeditor/MonkeyEditor.cpp
+	src/monkeyeditor/MonkeyEditor.cpp \
+	src/workspacemanager/TabToolBar.h \
+	src/workspacemanager/TabToolBar.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \

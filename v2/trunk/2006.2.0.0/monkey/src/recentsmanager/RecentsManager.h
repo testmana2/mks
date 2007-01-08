@@ -36,10 +36,12 @@ public slots:
 	void recentFiles_triggered( QAction* );
 	void updateRecentFiles();
 	void addRecentFile( const QString& );
+	void removeRecentFile( const QString& );
 	//
 	void recentProjects_triggered( QAction* );
 	void updateRecentProjects();
 	void addRecentProject( const QString& );
+	void removeRecentProject( const QString& );
 	//
 signals:
 	void openFileRequested( const QString& );

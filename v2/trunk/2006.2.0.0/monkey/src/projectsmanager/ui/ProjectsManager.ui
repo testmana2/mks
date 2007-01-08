@@ -43,36 +43,84 @@
      <number>2</number>
     </property>
     <item row="1" column="0" colspan="7" >
-     <widget class="QTreeWidget" name="twProjects" >
+     <widget class="QSplitter" name="sProjects" >
       <property name="sizePolicy" >
        <sizepolicy>
         <hsizetype>7</hsizetype>
         <vsizetype>7</vsizetype>
         <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
+        <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="columnCount" >
-       <number>1</number>
+      <property name="orientation" >
+       <enum>Qt::Vertical</enum>
       </property>
-      <column>
-       <property name="text" >
-        <string>Projects List</string>
+      <widget class="QTreeWidget" name="twProjects" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>7</hsizetype>
+         <vsizetype>5</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-      </column>
+       <property name="columnCount" >
+        <number>1</number>
+       </property>
+       <column>
+        <property name="text" >
+         <string>Projects List</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QStackedWidget" name="swProjects" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>7</hsizetype>
+         <vsizetype>7</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </widget>
     </item>
-    <item row="2" column="0" colspan="7" >
-     <widget class="QStackedWidget" name="swProjects" >
-      <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>7</hsizetype>
-        <vsizetype>7</vsizetype>
-        <horstretch>0</horstretch>
-        <verstretch>99</verstretch>
-       </sizepolicy>
+    <item row="0" column="6" >
+     <widget class="QToolButton" name="tbClose" >
+      <property name="enabled" >
+       <bool>false</bool>
       </property>
      </widget>
+    </item>
+    <item row="0" column="2" >
+     <widget class="QToolButton" name="tbOpen" />
+    </item>
+    <item row="0" column="5" >
+     <widget class="QToolButton" name="tbSave" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4" >
+     <widget class="QToolButton" name="tbComplex" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="checkable" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3" >
+     <widget class="Line" name="lSeparator" >
+      <property name="orientation" >
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QToolButton" name="tbList" />
     </item>
     <item row="0" column="0" >
      <spacer>
@@ -89,43 +137,6 @@
        </size>
       </property>
      </spacer>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QToolButton" name="tbList" />
-    </item>
-    <item row="0" column="3" >
-     <widget class="Line" name="lSeparator" >
-      <property name="orientation" >
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4" >
-     <widget class="QToolButton" name="tbComplex" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="5" >
-     <widget class="QToolButton" name="tbSave" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2" >
-     <widget class="QToolButton" name="tbOpen" />
-    </item>
-    <item row="0" column="6" >
-     <widget class="QToolButton" name="tbClose" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>

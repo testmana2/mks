@@ -66,8 +66,8 @@ void Workspace::initialize()
 	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), this, SLOT( editSearchReplace_triggered() ) );
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), this, SLOT( editGoTo_triggered() ) );
 	// view connection
-	connect( menuBar()->action( "mView/aProjectsList" ), SIGNAL( triggered( bool ) ), this, SLOT( viewProjectsList_triggered( bool ) ) );
-	connect( menuBar()->action( "mView/aComplexProject" ), SIGNAL( triggered( bool ) ), this, SLOT( viewComplexProject_triggered( bool ) ) );
+	connect( menuBar()->action( "mView/aProjectsList" ), SIGNAL( triggered( bool ) ), projectsManager(), SLOT( setTreeProjectsVisible( bool ) ) );
+	connect( menuBar()->action( "mView/aComplexProject" ), SIGNAL( triggered( bool ) ), projectsManager(), SLOT( setComplexModel( bool ) ) );
 	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), this, SLOT( viewNext_triggered() ) );
 	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), this, SLOT( viewPrevious_triggered() ) );
 	// project connection
@@ -301,16 +301,6 @@ void Workspace::editGoTo_triggered()
 		c->goTo();
 }
 // view menu
-void Workspace::viewProjectsList_triggered( bool b )
-{
-	projectsManager()->twProjects->setVisible( b );
-}
-//
-void Workspace::viewComplexProject_triggered( bool b )
-{
-	projectsManager()->currentProxy()->setComplexModel( b );
-}
-//
 void Workspace::viewNext_triggered()
 {
 	if ( currentIndex() +1 == count() )
@@ -387,8 +377,10 @@ void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
 	{
 		settings()->setValue( "Recents/FileOpenPath", f.canonicalPath() );
 		if ( !p )
-			recentsManager()->addRecentFile( s );
+			recentsManager()->addRecentFile( f.canonicalPath() );
 	}
+	else
+		recentsManager()->removeRecentFile( f.canonicalPath() );
 }
 //
 void Workspace::openProject( const QString& s )
@@ -404,6 +396,8 @@ void Workspace::openProject( const QString& s )
 		// append it to recents
 		recentsManager()->addRecentProject( f.canonicalFilePath() );
 	}
+	else
+		recentsManager()->removeRecentProject( f.canonicalFilePath() );
 }
 //
 int Workspace::addChild( AbstractChild* c, const QString& s )

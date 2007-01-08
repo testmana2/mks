@@ -27,6 +27,7 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	// update actions state
 	on_swProjects_currentChanged( -1 );
 	MenuBar::self()->action( "mView/aProjectsList" )->setChecked( true );
+	sProjects->setStretchFactor( sProjects->indexOf( swProjects ), 1 );
 }
 //
 void ProjectsManager::setCurrentProxy( AbstractProjectProxy* p )
@@ -143,6 +144,18 @@ void ProjectsManager::addProxy( AbstractProjectProxy* p, AbstractProjectProxy* p
 	twProjects->setCurrentItem( twi );
 	// emit signal
 	emit proxyAdded( p );
+}
+//
+void ProjectsManager::setTreeProjectsVisible( bool b )
+{
+	twProjects->setVisible( b );
+}
+//
+void ProjectsManager::setComplexModel( bool b )
+{
+	AbstractProjectProxy* p = currentProxy();
+	if ( p )
+		p->setComplexModel( b );
 }
 //
 void ProjectsManager::on_tbSave_clicked()

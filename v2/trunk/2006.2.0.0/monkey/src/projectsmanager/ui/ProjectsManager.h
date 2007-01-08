@@ -32,6 +32,10 @@ private:
 	ProjectsManager( QWidget* = 0 );
 	static QPointer<ProjectsManager> mSelf;
 	//
+public slots:
+	void setTreeProjectsVisible( bool );
+	void setComplexModel( bool );
+	//
 private slots:
 	void on_tbSave_clicked();
 	void on_tbClose_clicked();

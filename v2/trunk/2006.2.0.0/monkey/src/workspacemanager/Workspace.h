@@ -68,8 +68,6 @@ public slots:
 	void editSearchReplace_triggered();
 	void editGoTo_triggered();
 	// view menu
-	void viewProjectsList_triggered( bool );
-	void viewComplexProject_triggered( bool );
 	void viewNext_triggered();
 	void viewPrevious_triggered();
 	// project menu
