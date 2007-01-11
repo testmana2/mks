@@ -31,8 +31,6 @@ pTabWorkspace::pTabWorkspace( QWidget* p, pTabWorkspace::TabMode m )
 	mLayout1->setAlignment( mLayout2, Qt::AlignTop );
 	//
 	setCornerWidget( pRightCorner::self( this ) );
-	//
-	connect( qApp, SIGNAL( focusChanged( QWidget*, QWidget* ) ), this, SLOT( application_focusChanged( QWidget*, QWidget* ) ) );
 	setTabMode( m );
 	//
 	cornerWidget()->setEnabled( count() );
@@ -50,10 +48,9 @@ bool pTabWorkspace::eventFilter( QObject* o, QEvent* e )
 		QWidget* w = qobject_cast<QWidget*>( o );
 		if ( w )
 		{
+			// in top level mode / mdi activated
 			if ( t == QEvent::WindowActivate )
 				setCurrentWidget( w );
-			else if ( t == QEvent::Close )
-				removeTab( indexOf( w ) );
 		}
 	}
 	return QFrame::eventFilter( o, e );
@@ -79,23 +76,6 @@ void pTabWorkspace::tabBar_currentChanged( int i )
 		break;
 	}
 	emit currentChanged( i );
-}
-//
-void pTabWorkspace::application_focusChanged( QWidget*, QWidget* w )
-{
-	setCurrentWidget( w );
-}
-//
-void pTabWorkspace::childDestroyed( QObject* o )
-{
-	QWidget* w = qobject_cast<QWidget*>( o );
-	if ( w )
-	{
-		int i = indexOf( w );
-		mDocuments.removeAll( w );
-		mTabBar->removeTab( indexOf( w ) );
-		emit tabRemoved( i );
-	}
 }
 //
 int pTabWorkspace::addTab( QWidget* child, const QString& label )
@@ -204,17 +184,21 @@ bool pTabWorkspace::isTabEnabled( int index ) const
 	return mTabBar->isTabEnabled( index );
 }
 //
-void pTabWorkspace::removeTab( int index )
+void pTabWorkspace::removeTab( int i )
 {
-	if ( index == -1 )
+	removeTab( widget( i ) );
+}
+//
+void pTabWorkspace::removeTab( QWidget* w )
+{
+	if ( !w )
 		return;
-	QWidget* w = widget( index );
-	w->close();
+	int i = indexOf( w );
 	mDocuments.removeAll( w );
-	mTabBar->removeTab( index );
+	mTabBar->removeTab( i );
 	if ( cornerWidget() )
 		cornerWidget()->setEnabled( count() );
-	emit tabRemoved( index );
+	emit tabRemoved( i );
 }
 //
 void pTabWorkspace::setCornerWidget( QWidget* widget, Qt::Corner corner )
@@ -355,7 +339,6 @@ void pTabWorkspace::appendWidget( QWidget* w )
 	w->setAttribute( Qt::WA_DeleteOnClose );
 	w->installEventFilter( this );
 	mDocuments.append( w );
-	connect( w, SIGNAL( destroyed( QObject* ) ), this, SLOT( childDestroyed( QObject* ) ) );
 	updateView( mTabMode );
 }
 //
@@ -381,6 +364,7 @@ bool pTabWorkspace::updateView( pTabWorkspace::TabMode to )
 		{
 			mWorkspace = new QWorkspace;
 			mWorkspace->setScrollBarsEnabled( true );
+			connect( mWorkspace, SIGNAL( windowActivated( QWidget* ) ), this, SLOT( setCurrentWidget( QWidget* ) ) );
 		}
 		wc = mWorkspace->windowList();
 		foreach ( QWidget* w, mDocuments )

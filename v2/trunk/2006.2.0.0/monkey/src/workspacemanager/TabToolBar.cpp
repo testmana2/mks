@@ -22,28 +22,39 @@ TabToolBar::TabToolBar( QMainWindow* p )
 //
 void TabToolBar::initialize()
 {
+	QAction* a;
 	// recents
-	bar( Top )->addAction( MenuBar::self()->menu( "mFile/mRecents" )->menuAction() );
-	bar( Top )->addAction( MenuBar::self()->menu( "mProject/mRecents" )->menuAction() );
-	bar( Top )->addSeparator();
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mFile/mRecents" )->menuAction() );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mProject/mRecents" )->menuAction() );
+	a = new QAction( this );
+	a->setSeparator( true );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), a );
 	// file action
-	bar( Top )->addAction( MenuBar::self()->menu( "mFile/mSave" )->menuAction() );
-	bar( Top )->addAction( MenuBar::self()->menu( "mFile/mClose" )->menuAction() );
-	bar( Top )->addAction( MenuBar::self()->action( "mFile/aQuickPrint" ) );
-	bar( Top )->addSeparator();
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mFile/mSave" )->menuAction() );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mFile/mClose" )->menuAction() );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mFile/aQuickPrint" ) );
+	a = new QAction( this );
+	a->setSeparator( true );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), a );
 	// edit action
-	bar( Top )->addAction( MenuBar::self()->action( "mEdit/aUndo" ) );
-	bar( Top )->addAction( MenuBar::self()->action( "mEdit/aRedo" ) );
-	bar( Top )->addSeparator();
-	bar( Top )->addAction( MenuBar::self()->action( "mEdit/aCut" ) );
-	bar( Top )->addAction( MenuBar::self()->action( "mEdit/aCopy" ) );
-	bar( Top )->addAction( MenuBar::self()->action( "mEdit/aPaste" ) );
-	bar( Top )->addSeparator();
-	bar( Top )->addAction( MenuBar::self()->action( "mEdit/aSearchReplace" ) );
-	bar( Top )->addAction( MenuBar::self()->action( "mEdit/aGoTo" ) );
-	bar( Top )->addSeparator();
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mEdit/aUndo" ) );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mEdit/aRedo" ) );
+	a = new QAction( this );
+	a->setSeparator( true );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), a );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mEdit/aCut" ) );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mEdit/aCopy" ) );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mEdit/aPaste" ) );
+	a = new QAction( this );
+	a->setSeparator( true );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), a );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mEdit/aSearchReplace" ) );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mEdit/aGoTo" ) );
+	a = new QAction( this );
+	a->setSeparator( true );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), a );
 	// help action
-	bar( Top )->addAction( MenuBar::self()->action( "mHelp/aAbout" ) );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mHelp/aAbout" ) );
 	// dock qscintillaSearch
 	bar( Bottom )->appendTab( qscintillaSearch::self(), QPixmap( ":/Icons/Icons/tabsearch.png" ), tr( "Search - Replace" ) );
 }

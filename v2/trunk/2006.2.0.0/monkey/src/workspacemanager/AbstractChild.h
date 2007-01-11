@@ -3,6 +3,7 @@
 //
 #include <QWidget>
 #include <QFileInfo>
+#include <QCloseEvent>
 //
 #include "MonkeyExport.h"
 //

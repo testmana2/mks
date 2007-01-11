@@ -1,64 +1,64 @@
 #include "LeftCorner.h"
-/*
+#include "Workspace.h"
+#include "AbstractChild.h"
 //
 #include <QMenu>
 #include <QActionGroup>
 //
 QPointer<LeftCorner> LeftCorner::mSelf = 0L;
 //
-LeftCorner* LeftCorner::self( pTabWorkspace* p )
+LeftCorner* LeftCorner::self( Workspace* p )
 {
 	if ( !mSelf )
 		mSelf = new LeftCorner( p );
 	return mSelf;
 }
 //
-LeftCorner::LeftCorner( pTabWorkspace* p )
+LeftCorner::LeftCorner( Workspace* p )
 	: QToolButton( p )
 {
 	Q_ASSERT( p != 0 );
+	mWorkspace = p;
 	setFixedSize( QSize( 24, 24 ) );
+	setEnabled( false );
 	//
 	setIcon( QIcon( ":/Icons/Icons/fileopen.png" ) );
-	setPopupMode( QToolButton::MenuButtonPopup );
+	setPopupMode( QToolButton::InstantPopup );
 	setMenu( new QMenu( this ) );
-	agClassFile = new QActionGroup( menu() );
-	QMetaEnum e;
-	// fill agClassFile
-	e = p->metaObject()->enumerator( p->metaObject()->indexOfEnumerator( "ClassFile" ) );
-	for ( int i = 0; i < e.keyCount(); i++ )
+	agFiles = new QActionGroup( menu() );
+	//
+	connect( menu(), SIGNAL( aboutToShow() ), this, SLOT( menu_aboutToShow() ) );
+	connect( agFiles, SIGNAL( triggered( QAction* ) ), this, SLOT( agFiles_triggered( QAction* ) ) );
+}
+//
+void LeftCorner::menu_aboutToShow()
+{
+	// clear menu actions
+	menu()->clear();
+	// if no active child return
+	AbstractChild* c;
+	if ( !mWorkspace->currentWidget() || !( c = qobject_cast<AbstractChild*>( mWorkspace->currentWidget() ) ) )
+		return;
+	QFileInfo f;
+	QAction* a;
+	// got all files this child manage
+	foreach ( QString s, c->files() )
 	{
-		QAction* a = new QAction( e.key( i ), agView );
+		f.setFile( s );
+		a = new QAction( f.fileName(), menu() );
+		a->setToolTip( s );
 		a->setCheckable( true );
-		//if ( p->classFile() == e.value( i ) )
-			//a->setChecked( true );
-		a->setData( i );
+		a->setChecked( c->currentFile() == s );
+		agFiles->addAction( a );
 	}
-	//
-	menu()->addMenu( tr( "Open" ) )->addActions( agClassFile->actions() );
-	connect( agClassFile, SIGNAL( triggered( QAction* ) ), this, SLOT( agClassFile_triggered( QAction* ) ) );
-	//
-	connect( this, SIGNAL( requestChangeClassFile( Workspace::ClassFile ) ), p, SLOT( setClassFile( pTabWorkspace::TabMode ) ) );
-	connect( p, SIGNAL( tabModeChanged( pTabWorkspace::TabMode ) ), this, SLOT( tabModeChanged( pTabWorkspace::TabMode ) ) );
+	menu()->addActions( agFiles->actions() );
 }
 //
-void LeftCorner::agClassFile_triggered( QAction* a )
+void LeftCorner::agFiles_triggered( QAction* a )
 {
-	emit requestChangeClassFile( (Workspace::ClassFile)a->data().toInt() );
+	AbstractChild* c;
+	// if no active child return
+	if ( !mWorkspace->currentWidget() || !( c = qobject_cast<AbstractChild*>( mWorkspace->currentWidget() ) ) )
+		return;
+	c->showFile( a->toolTip() );
 }
-//
-void LeftCorner::classFileChanged( Workspace::ClassFile )
-{
-	QList<QAction*> l = agView->actions();
-	foreach ( QAction* a, l )
-	{
-		if ( a->data().toInt() == m )
-		{
-			if ( !a->isChecked() )
-				a->setChecked( true );
-			agWindows->setEnabled( m == pTabWorkspace::tmMDI ? true : false );
-			return;
-		}
-	}
-}
-*/

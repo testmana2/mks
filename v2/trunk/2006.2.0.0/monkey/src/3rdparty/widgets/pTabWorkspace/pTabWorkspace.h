@@ -55,6 +55,7 @@ public:
 	int insertTab( int, QWidget*, const QIcon&, const QString& );
 	bool isTabEnabled( int ) const;
 	void removeTab( int );
+	void removeTab( QWidget* );
 	void setCornerWidget( QWidget*, Qt::Corner = Qt::TopRightCorner );
 	void setElideMode( Qt::TextElideMode );
 	void setIconSize( const QSize& );
@@ -100,8 +101,6 @@ public slots:
 	//
 private slots:
 	void tabBar_currentChanged( int );
-	void application_focusChanged( QWidget*, QWidget* );
-	void childDestroyed( QObject* );
 	//
 signals:
 	void tabInserted( int );

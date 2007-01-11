@@ -48,14 +48,13 @@ SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/workspacemanager/UISaveFiles.cpp \
 	src/workspacemanager/TabToolBar.cpp \
 	src/workspacemanager/Workspace.cpp \
+	src/workspacemanager/LeftCorner.cpp \
 	src/pluginsmanager/PluginsManager.cpp \
 	src/projectsmanager/AbstractProjectItemModel.cpp \
 	src/projectsmanager/AbstractProjectProxy.cpp \
 	src/projectsmanager/ui/ProjectsManager.cpp \
 	src/Monkey.cpp \
-	src/main.cpp \
-	src/workspacemanager/LeftCorner.cpp \
-	src/workspacemanager/FileType.cpp
+	src/main.cpp
 
 FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/toolsmanager/ui/UIToolsEdit.ui \
@@ -64,16 +63,13 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/monkeyeditor/ui/qscintillaSearch.ui \
 	src/projectsmanager/ui/ProjectsManager.ui
 
-OPENEDFILES	= src/projectsmanager/AbstractProjectItemModel.h \
-	src/projectsmanager/AbstractProjectItemModel.cpp \
-	src/projectsmanager/AbstractProjectProxy.h \
-	src/projectsmanager/AbstractProjectProxy.cpp \
-	src/workspacemanager/Workspace.h \
+OPENEDFILES	= src/workspacemanager/Workspace.h \
 	src/workspacemanager/Workspace.cpp \
-	src/recentsmanager/RecentsManager.h \
-	src/recentsmanager/RecentsManager.cpp \
 	src/projectsmanager/ui/ProjectsManager.h \
-	src/projectsmanager/ui/ProjectsManager.cpp
+	src/projectsmanager/ui/ProjectsManager.cpp \
+	ToDo.txt \
+	src/monkeyeditor/ui/qscintillaSearch.h \
+	src/monkeyeditor/ui/qscintillaSearch.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
@@ -97,6 +93,7 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/workspacemanager/UISaveFiles.h \
 	src/workspacemanager/TabToolBar.h \
 	src/workspacemanager/Workspace.h \
+	src/workspacemanager/LeftCorner.h \
 	src/pluginsmanager/MonkeyExport.h \
 	src/pluginsmanager/BasePlugin.h \
 	src/pluginsmanager/PluginsManager.h \
@@ -109,7 +106,5 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/projectsmanager/AbstractProjectProxy.h \
 	src/projectsmanager/ui/ProjectsManager.h \
 	src/Monkey.h \
-	src/main.h \
-	src/workspacemanager/LeftCorner.h \
-	src/workspacemanager/FileType.h
+	src/main.h
 

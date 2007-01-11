@@ -12,7 +12,7 @@ pTabToolBar::pTabToolBar( pTabToolBarManager* t, KMultiTabBar::KMultiTabBarMode 
 	Q_ASSERT( t != 0 );
 	mManager = t;
 	mMultiTabBar = new KMultiTabBar( m, this );
-	addWidget( mMultiTabBar );
+	mAction = addWidget( mMultiTabBar );
 	connect( this, SIGNAL( orientationChanged( Qt::Orientation ) ), this, SLOT( internal_orientationChanged( Qt::Orientation ) ) );
 }
 //
@@ -46,8 +46,7 @@ int pTabToolBar::appendButton( const QPixmap& p, QMenu* m, const QString& s )
 void pTabToolBar::removeButton( int i )
 {
 	mMultiTabBar->removeButton( i );
-	if ( ( !buttons()->count() && !tabs()->count() ) && isVisible() )
-		hide();
+	checkVisibility();
 }
 //
 KMultiTabBarButton* pTabToolBar::button( int i ) const
@@ -98,8 +97,7 @@ void pTabToolBar::removeTab( int i )
 		disconnect( dockWidget( i ), SIGNAL( destroyed( QObject* ) ), this, SLOT( internal_childDestroyed( QObject* ) ) );
 		mMultiTabBar->removeTab( i );
 		mTabDocks.remove( i );
-		if ( ( !buttons()->count() && !tabs()->count() ) && isVisible() )
-			hide();
+		checkVisibility();
 	}
 }
 //
@@ -183,6 +181,17 @@ KMultiTabBar::KMultiTabBarStyle pTabToolBar::tabStyle() const
 void pTabToolBar::showActiveTabTexts( bool b )
 {
 	mMultiTabBar->showActiveTabTexts( b );
+}
+//
+QAction* pTabToolBar::tabBarAction()
+{
+	return mAction;
+}
+//
+void pTabToolBar::checkVisibility()
+{
+	if ( ( !buttons()->count() && !tabs()->count() && actions().count() == 1 ) && isVisible() )
+		hide();
 }
 //
 void pTabToolBar::internal_orientationChanged( Qt::Orientation o )

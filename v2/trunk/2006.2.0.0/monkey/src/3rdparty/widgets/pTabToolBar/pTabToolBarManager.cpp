@@ -46,10 +46,10 @@ pTabToolBar* pTabToolBarManager::bar( pTabToolBarManager::Align a )
 			mMain->addToolBar( Qt::RightToolBarArea, mBars[a] );
 			break;
 		}
-		mBars.value( a )->setMovable( false );
-		connect( mBars.value( a ), SIGNAL( dockWidgetTabToolBarChanged( QDockWidget*, pTabToolBar* ) ), this, SLOT( dockWidgetTabToolBarChanged( QDockWidget*, pTabToolBar* ) ) );
+		mBars[a]->setMovable( false );
+		connect( mBars[a], SIGNAL( dockWidgetTabToolBarChanged( QDockWidget*, pTabToolBar* ) ), this, SLOT( dockWidgetTabToolBarChanged( QDockWidget*, pTabToolBar* ) ) );
 	}
-	return mBars.value( a );
+	return mBars[a];
 }
 //
 pTabToolBarManager::Align pTabToolBarManager::dockWidgetAreaToAlign( Qt::DockWidgetArea a ) const

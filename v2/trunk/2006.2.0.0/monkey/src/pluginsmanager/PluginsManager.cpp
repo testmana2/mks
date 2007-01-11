@@ -68,7 +68,13 @@ void PluginsManager::loadsPlugins( QDir d )
 	{
 		QPluginLoader l( d.absoluteFilePath( s ) );
 		if ( !addPlugin( l.instance() ) )
-			qWarning( qPrintable( tr( "Failed to load plugin: %1" ).arg( s ) ) );
+		{
+			// try unload it and reload it in case of old one in memory
+			l.unload();
+			l.load();
+			if ( !addPlugin( l.instance() ) )			
+				qWarning( qPrintable( tr( "Failed to load plugin ( %1 ): Error: %2" ).arg( s, l.errorString() ) ) );
+		}
 	}
 }
 //

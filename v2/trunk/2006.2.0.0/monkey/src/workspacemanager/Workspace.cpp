@@ -9,6 +9,7 @@
 #include "PluginsManager.h"
 #include "UISaveFiles.h"
 #include "AbstractProjectProxy.h"
+#include "LeftCorner.h"
 //
 #include <QFileDialog>
 #include <QFileInfo>
@@ -35,6 +36,8 @@ Workspace::~Workspace()
 //
 void Workspace::initialize()
 {
+	// set left corner
+	setCornerWidget( LeftCorner::self( this ), Qt::TopLeftCorner );
 	// set mode
 	setTabShape( QTabBar::RoundedSouth );
 	setTabMode( tmMDI );
@@ -103,60 +106,32 @@ void Workspace::updateWorkspace()
 {
 	// a new child has been activated, update gui
 	AbstractChild* c = qobject_cast<AbstractChild*>( currentWidget() );
-	if ( c )
-	{
-		// update file menu
-		menuBar()->action( "mFile/mSave/aCurrent" )->setEnabled( c->isModified() );
-		menuBar()->action( "mFile/mSave/aAll" )->setEnabled( true );
-		menuBar()->action( "mFile/mClose/aCurrent" )->setEnabled( true );
-		menuBar()->action( "mFile/mClose/aAll" )->setEnabled( true );
-		menuBar()->action( "mFile/aSaveAsTemplate" )->setEnabled( false );
-		menuBar()->action( "mFile/aQuickPrint" )->setEnabled( c->isPrintAvailable() );
-		menuBar()->action( "mFile/aPrint" )->setEnabled( c->isPrintAvailable() );
-		// update edit menu
-		menuBar()->action( "mEdit/aUndo" )->setEnabled( c->isUndoAvailable() );
-		menuBar()->action( "mEdit/aRedo" )->setEnabled( c->isRedoAvailable() );
-		menuBar()->action( "mEdit/aCut" )->setEnabled( c->isCopyAvailable() );
-		menuBar()->action( "mEdit/aCopy" )->setEnabled( c->isCopyAvailable() );
-		menuBar()->action( "mEdit/aPaste" )->setEnabled( c->isPasteAvailable() );
-		menuBar()->action( "mEdit/aSearchReplace" )->setEnabled( c->isSearchReplaceAvailable() );
-		menuBar()->action( "mEdit/aGoTo" )->setEnabled( c->isGoToAvailable() );
-		// update view menu
-		menuBar()->action( "mView/aNext" )->setEnabled( true );
-		menuBar()->action( "mView/aPrevious" )->setEnabled( true );
-		// update status bar
-		statusBar()->setCursorPosition( c->cursorPosition() );
-		statusBar()->setModified( c->isModified() );
-		statusBar()->setMode( c->mode() );
-		statusBar()->setFileName( c->currentFile() );
-	}
-	else
-	{
-		// update file menu
-		menuBar()->action( "mFile/mSave/aCurrent" )->setEnabled( false );
-		menuBar()->action( "mFile/mSave/aAll" )->setEnabled( false );
-		menuBar()->action( "mFile/mClose/aCurrent" )->setEnabled( false );
-		menuBar()->action( "mFile/mClose/aAll" )->setEnabled( false );
-		menuBar()->action( "mFile/aSaveAsTemplate" )->setEnabled( false );
-		menuBar()->action( "mFile/aQuickPrint" )->setEnabled( false );
-		menuBar()->action( "mFile/aPrint" )->setEnabled( false );
-		// update edit menu
-		menuBar()->action( "mEdit/aUndo" )->setEnabled( false );
-		menuBar()->action( "mEdit/aRedo" )->setEnabled( false );
-		menuBar()->action( "mEdit/aCut" )->setEnabled( false );
-		menuBar()->action( "mEdit/aCopy" )->setEnabled( false );
-		menuBar()->action( "mEdit/aPaste" )->setEnabled( false );
-		menuBar()->action( "mEdit/aSearchReplace" )->setEnabled( false );
-		menuBar()->action( "mEdit/aGoTo" )->setEnabled( false );
-		// update view menu
-		menuBar()->action( "mView/aNext" )->setEnabled( false );
-		menuBar()->action( "mView/aPrevious" )->setEnabled( false );
-		// update status bar
-		statusBar()->setCursorPosition( QPoint( -1, -1 ) );
-		statusBar()->setModified( false );
-		statusBar()->setMode( AbstractChild::mNone );
-		statusBar()->setFileName( QString::null );
-	}
+	// update file menu
+	menuBar()->action( "mFile/mSave/aCurrent" )->setEnabled( c ? c->isModified() : false );
+	menuBar()->action( "mFile/mSave/aAll" )->setEnabled( c );
+	menuBar()->action( "mFile/mClose/aCurrent" )->setEnabled( c );
+	menuBar()->action( "mFile/mClose/aAll" )->setEnabled( c );
+	menuBar()->action( "mFile/aSaveAsTemplate" )->setEnabled( false );
+	menuBar()->action( "mFile/aQuickPrint" )->setEnabled( c ? c->isPrintAvailable() : false );
+	menuBar()->action( "mFile/aPrint" )->setEnabled( c ? c->isPrintAvailable() : false );
+	// update edit menu
+	menuBar()->action( "mEdit/aUndo" )->setEnabled( c ? c->isUndoAvailable() : false );
+	menuBar()->action( "mEdit/aRedo" )->setEnabled( c ? c->isRedoAvailable() : false );
+	menuBar()->action( "mEdit/aCut" )->setEnabled( c ? c->isCopyAvailable() : false );
+	menuBar()->action( "mEdit/aCopy" )->setEnabled( c ? c->isCopyAvailable() : false );
+	menuBar()->action( "mEdit/aPaste" )->setEnabled( c ? c->isPasteAvailable() : false );
+	menuBar()->action( "mEdit/aSearchReplace" )->setEnabled( c ? c->isSearchReplaceAvailable() : false );
+	menuBar()->action( "mEdit/aGoTo" )->setEnabled( c ? c->isGoToAvailable() : false );
+	// update view menu
+	menuBar()->action( "mView/aNext" )->setEnabled( c );
+	menuBar()->action( "mView/aPrevious" )->setEnabled( c );
+	// update status bar
+	statusBar()->setCursorPosition( c ? c->cursorPosition() : QPoint( -1, -1 ) );
+	statusBar()->setModified( c ? c->isModified() : false );
+	statusBar()->setMode( c ? c->mode() : AbstractChild::mNone );
+	statusBar()->setFileName( c ? c->currentFile() : QString::null );
+	// left corner widget
+	cornerWidget( Qt::TopLeftCorner )->setEnabled( c );
 }
 //
 void Workspace::tabInserted( int i )
@@ -218,8 +193,8 @@ void Workspace::fileCloseCurrent_triggered()
 //
 void Workspace::fileCloseAll_triggered()
 {
-	while ( currentWidget() )
-		currentWidget()->close();
+	foreach ( QWidget* w, documents() )
+		w->close();
 }
 //
 void Workspace::fileSaveAsTemplate_triggered()
@@ -372,22 +347,31 @@ void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
 {
 	const QFileInfo f( s );
 	if ( !f.exists() )
+	{
+		// remove it from recents files
+		recentsManager()->removeRecentFile( f.canonicalFilePath() );
 		return;
+	}
+	// open file
 	if ( PluginsManager::self()->childPluginOpenFile( f.canonicalFilePath(), p ) )
 	{
+		// save recent file path
 		settings()->setValue( "Recents/FileOpenPath", f.canonicalPath() );
+		// append it to recents
 		if ( !p )
 			recentsManager()->addRecentFile( f.canonicalFilePath() );
 	}
-	else
-		recentsManager()->removeRecentFile( f.canonicalFilePath() );
 }
 //
 void Workspace::openProject( const QString& s )
 {
 	const QFileInfo f( s );
 	if ( !f.exists() )
+	{
+		// remove it from recents projects
+		recentsManager()->removeRecentProject( f.canonicalFilePath() );
 		return;
+	}
 	// open project
 	if ( PluginsManager::self()->projectPluginOpenProject( f.canonicalFilePath() ) )
 	{
@@ -396,8 +380,6 @@ void Workspace::openProject( const QString& s )
 		// append it to recents
 		recentsManager()->addRecentProject( f.canonicalFilePath() );
 	}
-	else
-		recentsManager()->removeRecentProject( f.canonicalFilePath() );
 }
 //
 int Workspace::addChild( AbstractChild* c, const QString& s )
@@ -431,6 +413,8 @@ int Workspace::addChild( AbstractChild* c, const QString& s )
 void Workspace::childCloseEvent( AbstractChild* c, QCloseEvent* e )
 {
 	UISaveFiles::execute( c, e );
+	if ( e->isAccepted() )
+		removeTab( c );
 }
 //
 Settings* Workspace::settings()

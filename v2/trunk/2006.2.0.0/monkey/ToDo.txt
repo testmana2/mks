@@ -28,8 +28,6 @@ main:
 Text: 100%
 TextChild: 100%
 
-RecentsManager need a remove member to remove not existings files
-
 manual
 qt documentation
 popup menu action ( form header implementation split h split v )

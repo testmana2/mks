@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QIcon>
 #include <QFontMetrics>
+#include <QUrl>
 //
 QPointer<StatusBar> StatusBar::mSelf = 0L;
 //
@@ -86,6 +87,7 @@ void StatusBar::setMode( AbstractChild::Mode m )
 //
 void StatusBar::setFileName( const QString& s )
 {
-	setText( tFilePath, s.isEmpty() ? tr( "No File" ) : s );
+	QFileInfo f( QUrl( s ).toString( QUrl::RemoveScheme | QUrl::RemoveAuthority | QUrl::RemoveQuery | QUrl::RemoveFragment ) );
+	setText( tFilePath, f.exists() ? f.fileName() : tr( "No File" ) );
+	label( tFilePath )->setToolTip( f.exists() ? s : tr( "No File" ) );
 }
-//

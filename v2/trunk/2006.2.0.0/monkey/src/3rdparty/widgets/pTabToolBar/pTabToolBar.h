@@ -8,6 +8,7 @@
 #include "MonkeyExport.h"
 //
 class QDockWidget;
+class QAction;
 class pTabToolBarManager;
 class KMultiTabBarButton;
 class KMultiTabBarTab;
@@ -46,8 +47,12 @@ public:
 	//	
 	void showActiveTabTexts( bool = true );
 	//
+	QAction* tabBarAction();
+	void checkVisibility();
+	//
 private:
 	KMultiTabBar* mMultiTabBar;
+	QAction* mAction;
 	pTabToolBarManager* mManager;
 	QHash<int, QDockWidget*> mTabDocks;
 	int mButtonId;

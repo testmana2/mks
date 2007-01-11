@@ -61,6 +61,8 @@ void UIMain::saveState()
 //
 void UIMain::initGui()
 {
+	// set icon size for toolbar
+	setIconSize( QSize( 16, 16 ) );
 	// set menu bar
 	setMenuBar( MenuBar::self() );
 	// create action for styles
