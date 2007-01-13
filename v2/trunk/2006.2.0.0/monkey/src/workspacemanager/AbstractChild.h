@@ -12,13 +12,37 @@ class AbstractProjectProxy;
 class Q_MONKEY_EXPORT AbstractChild : public QWidget
 {
 	Q_OBJECT
+	Q_ENUMS( DocumentMode LayoutMode )
 	//
 public:
-	enum Mode { mNone = 0, mNa, mInsert, mOverwrite, mReadOnly };
+	enum DocumentMode { mNone = 0, mNa, mInsert, mOverwrite, mReadOnly } mDocument;
+	enum LayoutMode { lNone = 0, lNormal, lVertical, lHorizontal } mLayout;
 	// constructor
 	AbstractChild()
 	{ mProxy = 0;
+		mDocument = mNone;
+		mLayout = lNone;
 		setAttribute( Qt::WA_DeleteOnClose ); }
+	// return child document mode
+	virtual AbstractChild::DocumentMode documentMode() const
+	{ return mDocument; }
+	// set the child document mode
+	virtual void setDocumentMode( AbstractChild::DocumentMode m )
+	{ if ( mDocument == m )
+			return;
+		mDocument = m;
+		emit documentModeChanged( mDocument );
+	}
+	// return the child layout mode
+	virtual AbstractChild::LayoutMode layoutMode() const
+	{ return mLayout; }
+	// set the child layout mode
+	virtual void setLayoutMode( AbstractChild::LayoutMode m )
+	{ if ( mLayout == m )
+			return;
+		mLayout = m;
+		emit layoutModeChanged( mLayout );
+	}
 	// add a new file to the files list that this child manage
 	virtual void addFile( const QString& s )
 	{ if ( mFiles.contains( s ) )
@@ -47,8 +71,6 @@ public:
 	{ return mProxy; }
 	// return cursor position if available
 	virtual QPoint cursorPosition() const = 0;
-	// return editor write mode is available
-	virtual AbstractChild::Mode mode() const = 0;
 	// show/focus the file in child
 	virtual void showFile( const QString& ) = 0;
 	// the current visible / focused file
@@ -119,12 +141,14 @@ protected:
 	{ emit closeEvent( this, e ); }
 	//
 signals:
+	// emit when the child layout mode has changed
+	void layoutModeChanged( AbstractChild::LayoutMode );
+	// emit when the child document mode has changed
+	void documentModeChanged( AbstractChild::DocumentMode );
 	// emit when cursor position changed
 	void cursorPositionChanged( const QPoint& );
 	// emit when current file changed
 	void currentFileChanged( const QString& );
-	// emit when mode changed
-	void modeChanged( AbstractChild::Mode );
 	// emit when a file is modified
 	void modifiedChanged( bool );
 	// emit when undo has changed

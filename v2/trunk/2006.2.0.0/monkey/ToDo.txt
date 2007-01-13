@@ -30,4 +30,4 @@ TextChild: 100%
 
 manual
 qt documentation
-popup menu action ( form header implementation split h split v )
+layout ( normal, vertical, horizontal ) for abstractchild

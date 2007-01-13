@@ -5,6 +5,7 @@
 #include <QPointer>
 //
 class QAction;
+class QMenu;
 class QActionGroup;
 class Workspace;
 //
@@ -19,11 +20,13 @@ private:
 	LeftCorner( Workspace* = 0 );
 	static QPointer<LeftCorner> mSelf;
 	Workspace* mWorkspace;
-	QActionGroup* agFiles;
+	QMenu* mLayouts;
+	QActionGroup* agFiles, *agLayouts;	
 	//
 private slots:
 	void menu_aboutToShow();
 	void agFiles_triggered( QAction* );
+	void agLayouts_triggered( QAction* );
 	//
 };
 //

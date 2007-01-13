@@ -15,8 +15,6 @@ public:
 	TextChild();
 	// return cursor position if available
 	virtual QPoint cursorPosition() const;
-	// return editor write mode is available
-	virtual AbstractChild::Mode mode() const ;
 	// show the current file in child
 	virtual void showFile( const QString& );
 	// the current visible / focused file

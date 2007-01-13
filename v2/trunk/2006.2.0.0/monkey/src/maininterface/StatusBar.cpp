@@ -33,7 +33,8 @@ void StatusBar::initialize()
 {
 	setCursorPosition( QPoint( -1, -1 ) );
 	setModified( false );
-	setMode( AbstractChild::mNone );
+	setDocumentMode( AbstractChild::mNone );
+	setLayoutMode( AbstractChild::lNone );
 	setFileName( QString::null );
 }
 //
@@ -69,18 +70,37 @@ void StatusBar::setModified( bool b )
 	setPixmap( tState, QIcon( ":/Icons/Icons/filesave.png" ).pixmap( 16, (QIcon::Mode)!b ) );
 }
 //
-void StatusBar::setMode( AbstractChild::Mode m )
+void StatusBar::setDocumentMode( AbstractChild::DocumentMode m )
 {
 	switch ( m )
 	{
 	case AbstractChild::mInsert:
-		setText( tMode, tr( "INSERT" ) );
+		setText( tDocumentMode, tr( "INSERT" ) );
 		break;
 	case AbstractChild::mOverwrite:
-		setText( tMode,  tr( "OVERWRITE" ) );
+		setText( tDocumentMode,  tr( "OVERWRITE" ) );
 		break;
 	default:
-		setText( tMode,  tr( "N/A" ) );
+		setText( tDocumentMode,  tr( "N/A" ) );
+		break;
+	}
+}
+//
+void StatusBar::setLayoutMode( AbstractChild::LayoutMode m )
+{
+	switch ( m )
+	{
+	case AbstractChild::lNormal:
+		setText( tLayoutMode, tr( "NORMAL" ) );
+		break;
+	case AbstractChild::lVertical:
+		setText( tLayoutMode,  tr( "VERTICAL" ) );
+		break;
+	case AbstractChild::lHorizontal:
+		setText( tLayoutMode,  tr( "HORIZONTAL" ) );
+		break;
+	default:
+		setText( tLayoutMode,  tr( "N/A" ) );
 		break;
 	}
 }

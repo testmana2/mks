@@ -14,7 +14,7 @@ class Q_MONKEY_EXPORT StatusBar : public QStatusBar
 	Q_OBJECT
 	//
 public:
-	enum Type { tStatusTip = 0, tCursor, tState, tMode, tFilePath };
+	enum Type { tStatusTip = 0, tCursor, tState, tDocumentMode, tLayoutMode, tFilePath };
 	//
 	static StatusBar* self( QWidget* = 0 );
 	//
@@ -25,7 +25,8 @@ public slots:
 	void setPixmap( Type, const QPixmap&, int i = 0 );
 	void setCursorPosition( const QPoint& );
 	void setModified( bool );
-	void setMode( AbstractChild::Mode );
+	void setDocumentMode( AbstractChild::DocumentMode );
+	void setLayoutMode( AbstractChild::LayoutMode );
 	void setFileName( const QString& );
 	//
 private:
@@ -33,7 +34,7 @@ private:
 	void initialize();
 	//
 	static QPointer<StatusBar> mSelf;
-	QLabel* mLabels[ 5 ];
+	QLabel* mLabels[ 6 ];
 	//
 };
 //

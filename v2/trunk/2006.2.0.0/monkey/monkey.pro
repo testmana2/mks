@@ -68,8 +68,11 @@ OPENEDFILES	= src/workspacemanager/Workspace.h \
 	src/projectsmanager/ui/ProjectsManager.h \
 	src/projectsmanager/ui/ProjectsManager.cpp \
 	ToDo.txt \
-	src/monkeyeditor/ui/qscintillaSearch.h \
-	src/monkeyeditor/ui/qscintillaSearch.cpp
+	src/workspacemanager/TabToolBar.h \
+	src/workspacemanager/TabToolBar.cpp \
+	src/workspacemanager/AbstractChild.h \
+	src/workspacemanager/LeftCorner.h \
+	src/workspacemanager/LeftCorner.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \

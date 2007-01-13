@@ -78,12 +78,6 @@ QPoint QtAssistantChild::cursorPosition() const
 	// there is no cursor position in assistant
 	return QPoint( -1, -1 );
 }
-// return editor write mode is available
-AbstractChild::Mode QtAssistantChild::mode() const
-{
-	// file are read only
-	return AbstractChild::mReadOnly;
-}
 // show the current file in child
 void QtAssistantChild::showFile( const QString& )
 { /*mMain->showLink( s );*/ }

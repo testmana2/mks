@@ -20,7 +20,7 @@
   <property name="allowedAreas" >
    <set>Qt::LeftDockWidgetArea|Qt::NoDockWidgetArea|Qt::RightDockWidgetArea</set>
   </property>
-  <widget class="QWidget" name="centralWidget" >
+  <widget class="QWidget" name="backWidget" >
    <property name="sizePolicy" >
     <sizepolicy>
      <hsizetype>5</hsizetype>

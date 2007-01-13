@@ -128,7 +128,8 @@ void Workspace::updateWorkspace()
 	// update status bar
 	statusBar()->setCursorPosition( c ? c->cursorPosition() : QPoint( -1, -1 ) );
 	statusBar()->setModified( c ? c->isModified() : false );
-	statusBar()->setMode( c ? c->mode() : AbstractChild::mNone );
+	statusBar()->setDocumentMode( c ? c->documentMode() : AbstractChild::mNone );
+	statusBar()->setLayoutMode( c ? c->layoutMode() : AbstractChild::lNone );
 	statusBar()->setFileName( c ? c->currentFile() : QString::null );
 	// left corner widget
 	cornerWidget( Qt::TopLeftCorner )->setEnabled( c );
@@ -400,7 +401,8 @@ int Workspace::addChild( AbstractChild* c, const QString& s )
 		// update status bar
 		connect( c, SIGNAL( cursorPositionChanged( const QPoint& ) ), statusBar(), SLOT( setCursorPosition( const QPoint& ) ) );
 		connect( c, SIGNAL( modifiedChanged( bool ) ), statusBar(), SLOT( setModified( bool ) ) );
-		connect( c, SIGNAL( modeChanged( AbstractChild::Mode ) ), statusBar(), SLOT( setMode( AbstractChild::Mode ) ) );
+		connect( c, SIGNAL( documentModeChanged( AbstractChild::DocumentMode ) ), statusBar(), SLOT( setDocumentMode( AbstractChild::DocumentMode ) ) );
+		connect( c, SIGNAL( layoutModeChanged( AbstractChild::LayoutMode ) ), statusBar(), SLOT( setLayoutMode( AbstractChild::LayoutMode ) ) );
 		connect( c, SIGNAL( currentFileChanged( const QString& ) ), statusBar(), SLOT( setFileName( const QString& ) ) );
 		// update save child event
 		connect( c, SIGNAL( closeEvent( AbstractChild*, QCloseEvent* ) ), this, SLOT( childCloseEvent( AbstractChild*, QCloseEvent* ) ) );

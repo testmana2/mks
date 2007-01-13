@@ -62,7 +62,6 @@ void MenuBar::initialize()
 	endGroup();
 	menu( "mView", tr( "&View" ) );
 	beginGroup( "mView" );
-		menu( "mContainer", tr( "&Container" ), QIcon( ":/Icons/Icons/containers.png" ) );
 		menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );
 		action( "aSeparator1" );
 		action( "aProjectsList", tr( "Show/Hide the projects list" ), QIcon( ":/Icons/Icons/helpgreettings.png" ) )->setCheckable( true );

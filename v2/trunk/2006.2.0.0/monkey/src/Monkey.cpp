@@ -26,12 +26,20 @@ Monkey::Monkey( int& argc, char** argv )
 	initialize();
 }
 //
+void showMessage( QSplashScreen* s, const QString& m )
+{
+	s->showMessage( m, Qt::AlignRight | Qt::AlignTop, Qt::red );
+}
+//
 void Monkey::initialize()
 {
 	QSplashScreen splash( QPixmap( ":/Icons/Icons/helpsplashscreen.png" ) );
+	QFont f( splash.font() );
+	f.setBold( true );
+	splash.setFont( f );
 	splash.show();
 	// init application
-	splash.showMessage( tr( "Initializing Application..." ), Qt::AlignRight | Qt::AlignTop );
+	showMessage( &splash, tr( "Initializing Application..." ) );
 	setStyle( Settings::current()->value( "Style", "plastique" ).toString() );
 	setOrganizationName( ORGANIZATION );
 	setOrganizationDomain( QString( "www.%1.org" ).arg( ORGANIZATION ).toLower() );
@@ -39,7 +47,7 @@ void Monkey::initialize()
 	addLibraryPath( "plugins" );
 	connect( this, SIGNAL( lastWindowClosed() ), this, SLOT( quit() ) );
 	// init translation
-	splash.showMessage( tr( "Initializing Translation..." ), Qt::AlignRight | Qt::AlignTop );
+	showMessage( &splash, tr( "Initializing Translation..." ) );
 	QString mLanguage = Settings::current()->value( "Language" ).toString();
 	if ( mLanguage.isEmpty() )
 	{
@@ -53,19 +61,19 @@ void Monkey::initialize()
 		installTranslator( &t );
 	}
 	// init main window
-	splash.showMessage( tr( "Initializing Main Window..." ), Qt::AlignRight | Qt::AlignTop );
+	showMessage( &splash, tr( "Initializing Main Window..." ) );
 	UIMain::self()->setWindowTitle( QString( "%1 v%2 - %3" ).arg( PROGRAM_TITLE, PROGRAM_VERSION, COPYRIGHTS ) );
 	// menu tools
-	splash.showMessage( tr( "Initializing Tools Manager..." ), Qt::AlignRight | Qt::AlignTop );
+	showMessage( &splash, tr( "Initializing Tools Manager..." ) );
 	ToolsManager::self( UIMain::self() );
 	// init recents
-	splash.showMessage( tr( "Initializing Recents Manager..." ), Qt::AlignRight | Qt::AlignTop );
+	showMessage( &splash, tr( "Initializing Recents Manager..." ) );
 	RecentsManager::self( UIMain::self() );
 	// init pluginsmanager
-	splash.showMessage( tr( "Initializing Plugins Manager..." ), Qt::AlignRight | Qt::AlignTop );
+	showMessage( &splash, tr( "Initializing Plugins Manager..." ) );
 	PluginsManager::self( UIMain::self() )->loadsPlugins();
 	// ready
-	splash.showMessage( tr( "%1 v%2 Ready !" ).arg( PROGRAM_TITLE, PROGRAM_VERSION ), Qt::AlignRight | Qt::AlignTop );
+	showMessage( &splash, tr( "%1 v%2 Ready !" ).arg( PROGRAM_TITLE, PROGRAM_VERSION ) );
 	StatusBar::self()->setText( StatusBar::tStatusTip, tr( "%1 v%2 Ready !" ).arg( PROGRAM_TITLE, PROGRAM_VERSION ), 15000 );
 	// finish splashscreen
 	UIMain::self()->show();

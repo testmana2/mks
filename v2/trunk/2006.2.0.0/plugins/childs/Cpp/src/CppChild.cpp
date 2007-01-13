@@ -10,12 +10,14 @@ QStringList CppChild::mHeaderExtensions = QStringList() << "h" << "hh" << "hpp" 
 QStringList CppChild::mSourceExtensions = QStringList() << "c" << "cc" << "cpp" << "c++" << "cxx";
 //
 CppChild::CppChild()
+	: mInit( false )
 {
 	QVBoxLayout* vl = new QVBoxLayout( this );
 	vl->setMargin( 0 );
 	vl->setSpacing( 0 );
 	mSplitter = new QSplitter( Qt::Vertical, this );
 	vl->addWidget( mSplitter );
+	connect( this, SIGNAL( layoutModeChanged( AbstractChild::LayoutMode ) ), this, SLOT( layoutModeChanged( AbstractChild::LayoutMode ) ) );
 	// header
 	mHeader = new MonkeyEditor;
 	mHeader->setLexer( new QsciLexerCPP( mHeader, true ) );
@@ -40,6 +42,16 @@ CppChild::CppChild()
 	connect( mSource, SIGNAL( copyAvailable( bool ) ), this, SIGNAL( copyAvailableChanged( bool ) ) );
 	connect( mSource, SIGNAL( focused( bool ) ), this, SIGNAL( updateWorkspaceRequested() ) );
 	mSplitter->addWidget( mSource );
+}
+//
+void CppChild::showEvent( QShowEvent* e )
+{
+	AbstractChild::showEvent( e );
+	if ( !mInit )
+	{
+		mInit = true;
+		setLayoutMode( AbstractChild::lNormal );
+	}
 }
 // give current editor
 MonkeyEditor* CppChild::currentEditor() const
@@ -68,12 +80,6 @@ QPoint CppChild::cursorPosition() const
 	currentEditor()->getCursorPosition( &l, &i );
 	return QPoint( i +1, l +1 );
 }
-// return editor write mode is available
-AbstractChild::Mode CppChild::mode() const
-{
-	// ToDo: Need update
-	return AbstractChild::mNone;
-}
 // show the current file in child
 void CppChild::showFile( const QString& s )
 {
@@ -81,6 +87,7 @@ void CppChild::showFile( const QString& s )
 		mHeader->setFocus();
 	else if ( mSource->filePath() == s )
 		mSource->setFocus();
+	layoutModeChanged( layoutMode() );
 }
 // the current visible / focused file
 QString CppChild::currentFile() const
@@ -205,4 +212,42 @@ bool CppChild::isGoToAvailable() const
 bool CppChild::isPrintAvailable() const
 {
 	return true;
+}
+//
+void CppChild::layoutModeChanged( AbstractChild::LayoutMode m )
+{
+	switch ( m )
+	{
+	case AbstractChild::lVertical:
+		mSplitter->setOrientation( Qt::Vertical );
+		if ( !mHeader->isVisible() )
+			mHeader->show();
+		if ( !mSource->isVisible() )
+			mSource->show();
+		break;
+	case AbstractChild::lHorizontal:
+		mSplitter->setOrientation( Qt::Horizontal );
+		if ( !mHeader->isVisible() )
+			mHeader->show();
+		if ( !mSource->isVisible() )
+			mSource->show();
+		break;
+	default:
+		mSplitter->setOrientation( Qt::Vertical );
+		if ( currentEditor() == mHeader )
+		{
+			if ( !mHeader->isVisible() )
+				mHeader->show();
+			if ( mSource->isVisible() )
+				mSource->hide();
+		}
+		else
+		{
+			if ( mHeader->isVisible() )
+				mHeader->hide();
+			if ( !mSource->isVisible() )
+				mSource->show();
+		}
+		break;
+	}
 }

@@ -28,11 +28,6 @@ QPoint TextChild::cursorPosition() const
 	mEditor->getCursorPosition( &l, &i );
 	return QPoint( i +1, l +1 );
 }
-// return editor write mode is available
-AbstractChild::Mode TextChild::mode() const
-{
-	return AbstractChild::mNone;
-}
 // show the current file in child
 void TextChild::showFile( const QString& )
 {}
