@@ -16,8 +16,6 @@ class QtAssistant : public QObject, public WorkspacePlugin
 public:
 	virtual ~QtAssistant();
 	virtual void initialize( Workspace* );
-	virtual QString name() const;
-	virtual QString description() const;
 	virtual bool install();
 	virtual bool uninstall();
 	//

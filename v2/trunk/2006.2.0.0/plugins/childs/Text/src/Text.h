@@ -14,8 +14,6 @@ class Text : public QObject, public ChildPlugin
 public:
 	virtual ~Text();
 	virtual void initialize( Workspace* );
-	virtual QString name() const;
-	virtual QString description() const;
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QStringList filters() const;

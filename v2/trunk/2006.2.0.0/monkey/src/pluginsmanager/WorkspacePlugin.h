@@ -6,10 +6,6 @@
 //
 class Q_MONKEY_EXPORT WorkspacePlugin : public BasePlugin
 {
-public:
-	virtual BasePlugin::Type type() const
-	{ return BasePlugin::iWorkspace; }
-	//
 };
 //
 Q_DECLARE_INTERFACE( WorkspacePlugin, "org.monkeystudio.MonkeyStudio.WorkspacePlugin/1.0" )

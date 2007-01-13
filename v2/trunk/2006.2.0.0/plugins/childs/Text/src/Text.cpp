@@ -12,28 +12,26 @@ Text::~Text()
 void Text::initialize( Workspace* w )
 {
 	ChildPlugin::initialize( w );
+	// plugin infos
+	mPluginInfos.Caption = tr( "Plain Text Files Plugin Manager" );
+	mPluginInfos.Description = tr( "This plugin allow you to use Plain Text files" );
+	mPluginInfos.Type = PluginInfos::iChild;
+	mPluginInfos.Name ="Text";
+	mPluginInfos.Version = "1.0.0";
+	mPluginInfos.Installed = false;
+	//
 	mExtensions = QStringList() << "txt" << "cfg" << "ini" << "conf";
-}
-//
-QString Text::name() const
-{
-	return "Text";
-}
-//
-QString Text::description() const
-{
-	return "This plugin can show plain text file: txt, cfg and ini";
 }
 //
 bool Text::install()
 {
-	mInstalled = true;
+	mPluginInfos.Installed = true;
 	return true;
 }
 //
 bool Text::uninstall()
 {
-	mInstalled = false;
+	mPluginInfos.Installed = false;
 	return true;
 }
 //

@@ -30,4 +30,4 @@ TextChild: 100%
 
 manual
 qt documentation
-layout ( normal, vertical, horizontal ) for abstractchild
+gestionaire de configuration pour les plugins

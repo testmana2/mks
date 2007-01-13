@@ -6,38 +6,37 @@
 #include "Workspace.h"
 #include "MonkeyExport.h"
 //
-/*
-struct PluginInfos{
-  QString Caption; // the string to show as ut s caption
-  int Type; // the plugin type
-  QString Name; // the plugin name for version control
-  int Version; // the plugin version for version control
-}
-*/
+struct Q_MONKEY_EXPORT PluginInfos
+{
+	enum PluginType { iUnknow = -1, iChild, iWorkspace, iCompiler, iDebugger, iProject };
+	QString Caption; // the string to show as ut s caption
+	QString Description; // the plugin description
+	PluginInfos::PluginType Type; // the plugin type
+	QString Name; // the plugin name for version control
+	QString Version; // the plugin version for version control
+	bool Installed; // to know if this plugin is installed
+};
 //
 class Q_MONKEY_EXPORT BasePlugin
 {
 public:
-	enum Type { iUnknow = -1, iChild, iWorkspace, iCompiler, iDebugger, iProject };
-	//
 	BasePlugin()
-	{ mInstalled = false; mWorkspace = 0; }
+	{ mPluginInfos.Installed = false; mWorkspace = 0; }
 	virtual ~BasePlugin() {}
 	//
 	virtual void initialize( Workspace* w )
 	{ Q_ASSERT( w != 0 ); mWorkspace = w; }
 	//
-	virtual QString name() const = 0;
-	virtual QString description() const = 0;
-	virtual BasePlugin::Type type() const = 0;
+	virtual PluginInfos infos() const
+	{ return mPluginInfos; }
 	//
 	virtual bool install() = 0;
 	virtual bool uninstall() = 0;
 	virtual bool isInstalled() const
-	{ return mInstalled; }
+	{ return mPluginInfos.Installed; }
 	//
 protected:
-	bool mInstalled;
+	PluginInfos mPluginInfos;
 	Workspace* mWorkspace;
 	//
 };

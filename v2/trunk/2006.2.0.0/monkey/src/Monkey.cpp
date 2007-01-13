@@ -9,6 +9,8 @@
 #include "StatusBar.h"
 //
 #include <QSplashScreen>
+#include <QLibraryInfo>
+#include <QLocale>
 #include <QTranslator>
 //
 QPointer<Monkey> Monkey::mSelf = 0L;
@@ -48,6 +50,21 @@ void Monkey::initialize()
 	connect( this, SIGNAL( lastWindowClosed() ), this, SLOT( quit() ) );
 	// init translation
 	showMessage( &splash, tr( "Initializing Translation..." ) );
+	// qt translation
+	QString resourceDir = QLibraryInfo::location( QLibraryInfo::TranslationsPath );
+	// setting qt translation
+	QTranslator qtTranslator;
+	qtTranslator.load( QLatin1String( "qt_" ) + QLocale::system().name(), resourceDir );
+	installTranslator( &qtTranslator );
+	// setting assistant translation
+	QTranslator assistantTranslator;
+	assistantTranslator.load( QLatin1String( "assistant_" ) + QLocale::system().name(), resourceDir );
+	installTranslator( &assistantTranslator );
+	// setting designer translation
+	QTranslator designerTranslator;
+	designerTranslator.load( QLatin1String( "designer_" ) + QLocale::system().name(), resourceDir );
+	installTranslator( &designerTranslator );
+	//
 	QString mLanguage = Settings::current()->value( "Language" ).toString();
 	if ( mLanguage.isEmpty() )
 	{

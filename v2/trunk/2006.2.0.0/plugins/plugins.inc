@@ -2,12 +2,12 @@
 
 include( ../../../monkey/src/3rdparty/qscintilla/qscintilla.inc )
 
-unix:OBJECTS_DIR	= ../../../build/.o/unix
-win32:OBJECTS_DIR	= ../../../build/.o/win32
-mac:OBJECTS_DIR	= ../../../build/.o/mac
+unix:OBJECTS_DIR	= ../../../build/.o/unix/plugins
+win32:OBJECTS_DIR	= ../../../build/.o/win32/plugins
+mac:OBJECTS_DIR	= ../../../build/.o/mac/plugins
 UI_DIR	= ../../../build/.ui
-MOC_DIR	= ../../../build/.moc
-RCC_DIR	= ../../../build/.rcc 
+MOC_DIR	= ../../../build/.moc/plugins
+RCC_DIR	= ../../../build/.rcc/plugins
 
 MONKEY_PLUGINS_DIR	= ../../../bin/plugins
 LIBS	= -L../../../build/.lib -lqscintilla2

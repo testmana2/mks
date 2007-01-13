@@ -39,7 +39,7 @@ void Workspace::initialize()
 	// set left corner
 	setCornerWidget( LeftCorner::self( this ), Qt::TopLeftCorner );
 	// set mode
-	setTabShape( QTabBar::RoundedSouth );
+	setTabShape( QTabBar::RoundedNorth );
 	setTabMode( tmMDI );
 	// add project manager to dock area
 	tabToolBar()->bar( TabToolBar::Left )->appendTab( projectsManager(), QPixmap( ":/Icons/Icons/project.png" ), tr( "Projects" ) );

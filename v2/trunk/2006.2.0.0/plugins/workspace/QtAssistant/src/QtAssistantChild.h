@@ -16,6 +16,10 @@ class QtAssistantChild : public AbstractChild
 	//
 public:
 	static QtAssistantChild* self( Workspace* = 0, MainWindow* = 0 );
+	// browsers list
+	QList<HelpWindow*> browsersList() const;
+	// return files that this child manage
+	virtual QStringList files() const;
 	// return cursor position if available
 	virtual QPoint cursorPosition() const;
 	// show the current file in child
@@ -71,12 +75,12 @@ private:
 	static QtAssistantChild* mSelf;
 	Workspace* mWorkspace;
 	MainWindow* mMain;
-	QList<HelpWindow*> mHelps;
 	//
 protected:
 	virtual void closeEvent( QCloseEvent* );
 	//
 private slots:
+	void helpWindow_destroyed( QObject* );
 	void showLink( const QString& = QString() );
 	void showLink( const QUrl& );
 	//

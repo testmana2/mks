@@ -49,6 +49,7 @@ MonkeyEditor::MonkeyEditor( QWidget* p )
 	mActions << new pAction( tr( "Select None" ), this, SLOT( selectNone() ), pAction::CopyAvailable, tr( "Ctrl+Shift+A" ) );
 	mActions << new pAction( tr( "Separator" ) );
 	mActions << new pAction( tr( "Go To Line..." ), this, SLOT( goToLine() ), pAction::TextLength, tr( "Ctrl+G" ) );
+	mActions << new pAction( tr( "Search - Replace..." ), this, SLOT( searchReplace() ), pAction::TextLength, tr( "Ctrl+F" ) );
 }
 //
 MonkeyEditor::~MonkeyEditor()
@@ -180,6 +181,7 @@ void MonkeyEditor::selectNone()
 void MonkeyEditor::searchReplace()
 {
 	qscintillaSearch::self()->setEditor( this );
+	qscintillaSearch::self()->leSearch->setFocus();
 	if ( !qscintillaSearch::self()->isVisible() )
 		qscintillaSearch::self()->setVisible( true );
 }

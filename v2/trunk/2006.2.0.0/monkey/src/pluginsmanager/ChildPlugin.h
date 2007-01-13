@@ -11,9 +11,6 @@ class AbstractProjectProxy;
 class Q_MONKEY_EXPORT ChildPlugin : public BasePlugin
 {
 public:
-	virtual BasePlugin::Type type() const
-	{ return BasePlugin::iChild; }
-	//
 	virtual QStringList extensions() const
 	{ return mExtensions; }
 	//

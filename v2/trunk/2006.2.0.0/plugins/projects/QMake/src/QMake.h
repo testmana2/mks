@@ -12,8 +12,6 @@ class QMake : public QObject, public ProjectPlugin
 public:
 	virtual ~QMake();
 	virtual void initialize( Workspace* );
-	virtual QString name() const;
-	virtual QString description() const;
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QStringList filters() const;

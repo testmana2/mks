@@ -85,10 +85,10 @@ bool PluginsManager::addPlugin( QObject* o )
 		return false;
 	//
 	p->initialize( Workspace::self() );
-	if ( !p->isInstalled() && !p->install() )
-		qWarning( qPrintable( tr( "Failed to install plugin: %1" ).arg( p->name() ) ) );
+	if ( !p->infos().Installed && !p->install() )
+		qWarning( qPrintable( tr( "Failed to install plugin: %1" ).arg( p->infos().Name ) ) );
 	//
-	qWarning( "Plugin: %s, type: %d", qPrintable( p->name() ), p->type() );
+	qWarning( "Plugin: %s, type: %d", qPrintable( p->infos().Name ), p->infos().Type );
 	mPlugins << p;
 	return true;
 }
@@ -98,7 +98,7 @@ bool PluginsManager::childPluginOpenFile( const QString& s, AbstractProjectProxy
 	QString mExtension = QFileInfo( s ).completeSuffix();
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->type() == BasePlugin::iChild )
+		if ( bp->infos().Type == PluginInfos::iChild )
 		{
 			ChildPlugin* cp = (ChildPlugin*)bp;
 			if ( cp && cp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
@@ -113,7 +113,7 @@ QStringList PluginsManager::childsFilters() const
 	QStringList l;
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->type() == BasePlugin::iChild )
+		if ( bp->infos().Type == PluginInfos::iChild )
 		{
 			ChildPlugin* cp = (ChildPlugin*)bp;
 			if ( cp )
@@ -128,7 +128,7 @@ bool PluginsManager::projectPluginOpenProject( const QString& s )
 	QString mExtension = QFileInfo( s ).completeSuffix();
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->type() == BasePlugin::iProject )
+		if ( bp->infos().Type == PluginInfos::iProject )
 		{
 			ProjectPlugin* pp = (ProjectPlugin*)bp;
 			if ( pp && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
@@ -143,7 +143,7 @@ QStringList PluginsManager::projectsFilters() const
 	QStringList l;
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->type() == BasePlugin::iProject )
+		if ( bp->infos().Type == PluginInfos::iProject )
 		{
 			ProjectPlugin* pp = (ProjectPlugin*)bp;
 			if ( pp )

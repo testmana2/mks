@@ -59,21 +59,29 @@ void LeftCorner::menu_aboutToShow()
 	}
 	menu()->addActions( agFiles->actions() );
 	//
-	menu()->addSeparator();
-	menu()->addMenu( mLayouts );
-	//
-	QMetaEnum e = c->metaObject()->enumerator( c->metaObject()->indexOfEnumerator( "LayoutMode" ) );
-	for ( int i = 0; i < e.keyCount(); i++ )
+	AbstractChild::LayoutMode m = c->layoutMode();
+	if ( m != AbstractChild::lNone )
 	{
-		a = new QAction( e.key( i ), mLayouts );
-		a->setEnabled( c->layoutMode() != AbstractChild::lNone );
-		a->setCheckable( true );
-		if ( c->layoutMode() == e.value( i ) )
-			a->setChecked( true );
-		a->setData( i );
-		agLayouts->addAction( a );
+		menu()->addSeparator();
+		menu()->addMenu( mLayouts );
+		//
+		AbstractChild::LayoutMode m = c->layoutMode();
+		QMetaEnum e = c->metaObject()->enumerator( c->metaObject()->indexOfEnumerator( "LayoutMode" ) );
+		for ( int i = 0; i < e.keyCount(); i++ )
+		{
+			a = new QAction( e.key( i ), mLayouts );
+			a->setCheckable( true );
+			if ( c->layoutMode() == e.value( i ) )
+				a->setChecked( true );
+			a->setData( i );
+			if ( m == AbstractChild::lNone )
+				a->setEnabled( false  );
+			else if ( i == AbstractChild::lNone )
+				a->setEnabled( false  );
+			agLayouts->addAction( a );
+		}
+		mLayouts->addActions( agLayouts->actions() );
 	}
-	mLayouts->addActions( agLayouts->actions() );
 }
 //
 void LeftCorner::agFiles_triggered( QAction* a )

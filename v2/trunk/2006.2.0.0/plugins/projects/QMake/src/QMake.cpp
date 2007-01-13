@@ -12,28 +12,26 @@ QMake::~QMake()
 void QMake::initialize( Workspace* w )
 {
 	ProjectPlugin::initialize( w );
+	// plugin infos
+	mPluginInfos.Caption = tr( "Qt QMake Project Plugin Manager" );
+	mPluginInfos.Description = tr( "This plugin allow you to use Qt QMake project files" );
+	mPluginInfos.Type = PluginInfos::iProject;
+	mPluginInfos.Name = "QMake";
+	mPluginInfos.Version = "1.0.0";
+	mPluginInfos.Installed = false;
+	//
 	mExtensions = QStringList() << "pro";
-}
-//
-QString QMake::name() const
-{
-	return "QMake";
-}
-//
-QString QMake::description() const
-{
-	return "This plugin can open and manage the Qt QMake project files ( .pro )";
 }
 //
 bool QMake::install()
 {
-	mInstalled = true;
+	mPluginInfos.Installed = true;
 	return true;
 }
 //
 bool QMake::uninstall()
 {
-	mInstalled = false;
+	mPluginInfos.Installed = false;
 	return true;
 }
 //

@@ -1,7 +1,10 @@
 #include "Cpp.h"
 #include "CppChild.h"
+#include "AbstractProjectItemModel.h"
+#include "AbstractProjectProxy.h"
 //
 #include <QFileInfo>
+#include <QDir>
 //
 Cpp::~Cpp()
 {
@@ -12,28 +15,26 @@ Cpp::~Cpp()
 void Cpp::initialize( Workspace* w )
 {
 	ChildPlugin::initialize( w );
+	// plugin infos
+	mPluginInfos.Caption = tr( "C/C++ Files Plugin Manager" );
+	mPluginInfos.Description = tr( "This plugin allow you to use C/C++ files" );
+	mPluginInfos.Type = PluginInfos::iChild;
+	mPluginInfos.Name = "Cpp";
+	mPluginInfos.Version = "1.0.0";
+	mPluginInfos.Installed = false;
+	//
 	mExtensions << CppChild::headerExtensions() << CppChild::sourceExtensions();
-}
-//
-QString Cpp::name() const
-{
-	return "Cpp";
-}
-//
-QString Cpp::description() const
-{
-	return "This plugin handle C/C++ files";
 }
 //
 bool Cpp::install()
 {
-	mInstalled = true;
+	mPluginInfos.Installed = true;
 	return true;
 }
 //
 bool Cpp::uninstall()
 {
-	mInstalled = false;
+	mPluginInfos.Installed = false;
 	return true;
 }
 //
@@ -69,9 +70,8 @@ bool Cpp::addNewDocument( const QString& s, AbstractProjectProxy* p )
 	return c;
 }
 //
-bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
+bool Cpp::open( const QString& s, AbstractProjectProxy* p )
 {
-	QString fp = QFileInfo( s ).canonicalFilePath();
 	// try finding already existing child
 	foreach ( QWidget* w, mWorkspace->documents() )
 	{
@@ -79,7 +79,7 @@ bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
 		if ( c && c->proxy() == p )
 		{
 			// if already open return false
-			if ( c->files().contains( fp ) )
+			if ( c->files().contains( s ) )
 			{
 				// active correct file in child
 				c->showFile( s );
@@ -88,7 +88,7 @@ bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
 				return false;
 			}
 			// else if fullPathBaseName are same, we can open it
-			else if ( c->fullPathBaseName() == c->fullPathBaseName( fp ) )
+			else if ( c->fullPathBaseName() == c->fullPathBaseName( s ) )
 			{
 				// open file in child
 				c->addFile( s );
@@ -99,7 +99,62 @@ bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
 		}
 	}
 	// else create a new one
-	return addNewDocument( fp, p );
+	return addNewDocument( s, p );
+}
+//
+bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
+{
+	// get info on file
+	QFileInfo f( s );
+	// try opening relating file
+	// get extensions to check
+	QStringList extensions;
+	if ( CppChild::headerExtensions().contains( f.completeSuffix(), Qt::CaseInsensitive ) )
+		extensions << CppChild::sourceExtensions();
+	else if ( CppChild::sourceExtensions().contains( f.completeSuffix(), Qt::CaseInsensitive ) )
+		extensions << CppChild::headerExtensions();
+	// if extensions to check
+	if ( !extensions.isEmpty() )
+	{
+		// get all path to check in
+		QStringList l;
+		if ( p )
+		{
+			l << p->project()->getValuesList( "INCLUDEPATH" );
+			l << p->project()->getValuesList( "DEPENDPATH" );
+			l << p->project()->getValuesList( "VPATH" );
+			// made path absolute
+			for ( int i = 0; i < l.count(); i++ )
+			{
+				QFileInfo fs( l.at( i ) );
+				if ( fs.isRelative() )
+					l[i] = QString( "%1/%2" ).arg( p->project()->path(), l.at( i ) );
+				l[i] = QFileInfo( l.at( i ) ).canonicalFilePath();
+			}
+		}
+		// add file path if not present
+		if ( !l.contains( f.canonicalPath() ) )
+			l << f.canonicalPath();
+		// loop all path
+		foreach ( QString ds, l )
+		{
+			// go to path
+			QDir d( ds );
+			// looping all files
+			foreach ( QString file, d.entryList( QStringList( QString( "%1.*" ).arg( f.baseName() ) ), QDir::Files ) )
+			{
+				// we only need to open one
+				if ( extensions.contains( QFileInfo( file ).completeSuffix(), Qt::CaseInsensitive ) )
+				{
+					open( d.absoluteFilePath( file ), p );
+					// open the requested file
+					return open( f.canonicalFilePath(), p );
+				}
+			}
+		}
+	}
+	// open the requested file
+	return open( f.canonicalFilePath(), p );
 }
 //
 Q_EXPORT_PLUGIN2( ChildCpp, Cpp )

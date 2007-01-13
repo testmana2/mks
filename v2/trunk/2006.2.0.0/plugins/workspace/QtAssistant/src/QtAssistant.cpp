@@ -8,9 +8,6 @@
 #include "config.h"
 //
 #include <QDockWidget>
-#include <QLibraryInfo>
-#include <QTranslator>
-#include <QLocale>
 //
 //class Q_MONKEY_EXPORT Workspace;
 //
@@ -23,21 +20,15 @@ QtAssistant::~QtAssistant()
 void QtAssistant::initialize( Workspace* w )
 {
 	WorkspacePlugin::initialize( w );
+	// plugin infos
+	mPluginInfos.Caption = tr( "Qt Assistant Plugin" );
+	mPluginInfos.Description = tr( "This plugin embbeded the Qt Asssitant" );
+	mPluginInfos.Type = PluginInfos::iWorkspace;
+	mPluginInfos.Name = "Qt Assistant";
+	mPluginInfos.Version = "1.0.0";
+	mPluginInfos.Installed = false;
 	// initialize assistant resource
 	Q_INIT_RESOURCE( assistant );
-	// initialize assistant config
-	QString resourceDir;
-	if( resourceDir.isNull() )
-		resourceDir = QLibraryInfo::location( QLibraryInfo::TranslationsPath );
-	// setting assistant translation
-	QTranslator translator( 0 );
-	translator.load( QLatin1String( "assistant_" ) + QLocale::system().name(), resourceDir );
-	qApp->installTranslator( &translator );
-	// setting qt translation
-	QTranslator qtTranslator( 0 );
-	qtTranslator.load( QLatin1String( "qt_" ) + QLocale::system().name(), resourceDir );
-	qApp->installTranslator( &qtTranslator );
-	//
 	Config* conf = Config::loadConfig( QString() );
 	if ( !conf )
 	{
@@ -45,39 +36,34 @@ void QtAssistant::initialize( Workspace* w )
 		deleteLater();
 		return;
 	}
-	// initialisation de la fenetre mere
-	mMain = new MainWindow;
-	mMain->setObjectName( "Assistant" );
-	// initialisation du child
-	mChild = QtAssistantChild::self( mWorkspace, mMain );
-	mChild->setObjectName( "AssistantChild" );
-}
-//
-QString QtAssistant::name() const
-{
-	return "Qt Assistant";
-}
-//
-QString QtAssistant::description() const
-{
-	return "This plugin manage Qt Assistant inside Monkey Studio";
 }
 //
 bool QtAssistant::install()
 {
+	if ( !mMain )
+	{
+		// init main window
+		mMain = new MainWindow;
+		mMain->setObjectName( "Assistant" );
+		// initialisation du child
+		mChild = QtAssistantChild::self( mWorkspace, mMain );
+		mChild->setObjectName( "AssistantChild" );
+	}
+	//
 	QDockWidget* dw = qobject_cast<QDockWidget*>( mMain->helpDialog()->parentWidget() );
 	if ( !dw )
 		return false;
-	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->appendTab( dw, QPixmap( ":/Icons/Icons/helpassistant.png" ), tr( "Qt Assistant" ) );
-	mInstalled = true;
+	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->appendTab( dw, QPixmap( ":/Icons/Icons/helpassistant.png" ), infos().Caption );
+	mPluginInfos.Installed = true;
 	return true;
 }
 //
 bool QtAssistant::uninstall()
 {
 	delete mChild;
+	delete mMain->helpDialog();
 	delete mMain;
-	mInstalled = false;
+	mPluginInfos.Installed = false;
 	return true;
 }
 //

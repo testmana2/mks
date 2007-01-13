@@ -49,6 +49,11 @@ void QtAssistantChild::closeEvent( QCloseEvent* e )
 	AbstractChild::closeEvent( e );
 }
 //
+void QtAssistantChild::helpWindow_destroyed( QObject* )
+{
+	emit currentFileChanged( currentFile() );
+}
+//
 void QtAssistantChild::showLink( const QString& s )
 {
 	// check if child is in workspace
@@ -58,11 +63,11 @@ void QtAssistantChild::showLink( const QString& s )
 		mWorkspace->addChild( this, "Qt Assistant" );
 	// check if the the current browser is already tracked
 	HelpWindow* hw = mMain->browsers()->currentBrowser();
-	if ( !mHelps.contains( hw ) )
-	{
-		mHelps << hw;
-		connect( hw, SIGNAL( sourceChanged( const QUrl& ) ), this, SLOT( showLink( const QUrl& ) ) );
-	}
+	hw->setAttribute( Qt::WA_DeleteOnClose );
+	disconnect( hw, SIGNAL( sourceChanged( const QUrl& ) ), this, SLOT( showLink( const QUrl& ) ) );
+	connect( hw, SIGNAL( sourceChanged( const QUrl& ) ), this, SLOT( showLink( const QUrl& ) ) );
+	disconnect( hw, SIGNAL( destroyed( QObject* ) ), this, SLOT( helpWindow_destroyed( QObject* ) ) );
+	connect( hw, SIGNAL( destroyed( QObject* ) ), this, SLOT( helpWindow_destroyed( QObject* ) ) );
 	// tell filename has changed
 	emit currentFileChanged( !s.isEmpty() ? s : currentFile() );
 }
@@ -72,6 +77,19 @@ void QtAssistantChild::showLink( const QUrl& u )
 	// tell filename has changed
 	showLink( u.toString() );
 }
+// browsers list
+QList<HelpWindow*> QtAssistantChild::browsersList() const
+{
+	return mMain->browsers()->findChild<QTabWidget*>( "tab" )->findChildren<HelpWindow*>();
+}
+// return files that this child manage
+QStringList QtAssistantChild::files() const
+{
+	QStringList l;
+	foreach ( HelpWindow* w, browsersList() )
+		l << w->source().toString();
+	return l;
+}
 // return cursor position if available
 QPoint QtAssistantChild::cursorPosition() const
 {
@@ -79,8 +97,17 @@ QPoint QtAssistantChild::cursorPosition() const
 	return QPoint( -1, -1 );
 }
 // show the current file in child
-void QtAssistantChild::showFile( const QString& )
-{ /*mMain->showLink( s );*/ }
+void QtAssistantChild::showFile( const QString& s )
+{
+	foreach ( HelpWindow* w, browsersList() )
+	{
+		if ( w->source().toString() == s )
+		{
+			mMain->browsers()->findChild<QTabWidget*>( "tab" )->setCurrentWidget( w );
+			return;
+		}
+	}
+}
 // the current visible / focused file
 QString QtAssistantChild::currentFile() const
 {

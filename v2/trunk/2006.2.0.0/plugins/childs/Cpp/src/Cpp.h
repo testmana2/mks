@@ -14,12 +14,11 @@ class Cpp : public QObject, public ChildPlugin
 public:
 	virtual ~Cpp();
 	virtual void initialize( Workspace* );
-	virtual QString name() const;
-	virtual QString description() const;
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QStringList filters() const;
 	virtual bool addNewDocument( const QString&, AbstractProjectProxy* = 0 );
+	virtual bool open( const QString&, AbstractProjectProxy* = 0 );
 	virtual bool openFile( const QString&, AbstractProjectProxy* = 0 );
 	//
 };
