@@ -67,9 +67,7 @@ OPENEDFILES	= src/workspacemanager/Workspace.h \
 	src/workspacemanager/Workspace.cpp \
 	src/projectsmanager/ui/ProjectsManager.h \
 	src/projectsmanager/ui/ProjectsManager.cpp \
-	ToDo.txt \
-	src/workspacemanager/LeftCorner.h \
-	src/workspacemanager/LeftCorner.cpp
+	ToDo.txt
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
