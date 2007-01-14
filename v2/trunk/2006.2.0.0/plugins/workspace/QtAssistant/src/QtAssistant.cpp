@@ -9,8 +9,6 @@
 //
 #include <QDockWidget>
 //
-//class Q_MONKEY_EXPORT Workspace;
-//
 QtAssistant::~QtAssistant()
 {
 	if ( isInstalled() )
@@ -21,10 +19,10 @@ void QtAssistant::initialize( Workspace* w )
 {
 	WorkspacePlugin::initialize( w );
 	// plugin infos
-	mPluginInfos.Caption = tr( "Qt Assistant Plugin" );
+	mPluginInfos.Caption = tr( "Qt Assistant" );
 	mPluginInfos.Description = tr( "This plugin embbeded the Qt Asssitant" );
 	mPluginInfos.Type = PluginInfos::iWorkspace;
-	mPluginInfos.Name = "Qt Assistant";
+	mPluginInfos.Name = "QtAssistant";
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.Installed = false;
 	// initialize assistant resource

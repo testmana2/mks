@@ -4,8 +4,6 @@
 #include "ChildPlugin.h"
 #include "Workspace.h"
 //
-class Q_MONKEY_EXPORT Workspace;
-//
 class Text : public QObject, public ChildPlugin
 {
 	Q_OBJECT

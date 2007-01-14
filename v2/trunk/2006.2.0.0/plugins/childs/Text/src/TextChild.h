@@ -4,9 +4,6 @@
 #include "MonkeyEditor.h"
 #include "AbstractChild.h"
 //
-class Q_MONKEY_EXPORT MonkeyEditor;
-class Q_MONKEY_EXPORT AbstractChild;
-//
 class TextChild : public AbstractChild
 {
 	Q_OBJECT

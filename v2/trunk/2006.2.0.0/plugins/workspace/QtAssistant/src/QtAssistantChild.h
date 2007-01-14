@@ -5,7 +5,6 @@
 //
 #include <QUrl>
 //
-//class Q_MONKEY_EXPORT AbstractChild;
 class Workspace;
 class MainWindow;
 class HelpWindow;
