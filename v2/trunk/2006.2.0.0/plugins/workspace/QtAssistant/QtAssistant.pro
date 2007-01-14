@@ -4,14 +4,14 @@ include( ../../plugins.inc )
 include( src/3rdparty/assistant/assistant.pro )
 
 win32 {
-	RC_FILE	-= asssitant.rc
+	RC_FILE	-= assistant.rc
 }
 
 mac {
-	ICON	-= assistant.icns
+	ICON	-= assitant.icns
 }
 
-contains( SOURCE, main.cpp ) {
+contains( SOURCES, main.cpp ) {
 	SOURCES	-= main.cpp
 }
 

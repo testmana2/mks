@@ -107,7 +107,10 @@ void StatusBar::setLayoutMode( AbstractChild::LayoutMode m )
 //
 void StatusBar::setFileName( const QString& s )
 {
-	QFileInfo f( QUrl( s ).toString( QUrl::RemoveScheme | QUrl::RemoveAuthority | QUrl::RemoveQuery | QUrl::RemoveFragment ) );
-	setText( tFilePath, f.exists() ? f.fileName() : tr( "No File" ) );
-	label( tFilePath )->setToolTip( f.exists() ? s : tr( "No File" ) );
+	QFileInfo f( QUrl( s ).toString( QUrl::RemoveScheme ) );
+#ifdef Q_WS_WIN
+	f.setFile( f.filePath().replace( "///", QString::null ) );
+#endif
+	setText( tFilePath, f.fileName().length() ? f.fileName() : tr( "No File" ) );
+	label( tFilePath )->setToolTip( f.fileName().length() ? s : tr( "No File" ) );
 }
