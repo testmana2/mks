@@ -3,18 +3,20 @@
 //
 #include "AbstractChild.h"
 //
+#include <QPointer>
 #include <QUrl>
 //
 class Workspace;
 class MainWindow;
 class HelpWindow;
+class QDockWidget;
 //
 class QtAssistantChild : public AbstractChild
 {
 	Q_OBJECT
 	//
 public:
-	static QtAssistantChild* self( Workspace* = 0, MainWindow* = 0 );
+	static QtAssistantChild* self( Workspace* = 0 );
 	// browsers list
 	QList<HelpWindow*> browsersList() const;
 	// return files that this child manage
@@ -67,13 +69,17 @@ public:
 	virtual bool isGoToAvailable() const;
 	// print available
 	virtual bool isPrintAvailable() const;
-	//
+	// return the main
+	MainWindow* main();
+	// return the dock
+	QDockWidget* dock();
 private:
-	QtAssistantChild( Workspace*, MainWindow* );
+	QtAssistantChild( Workspace* );
 	//
-	static QtAssistantChild* mSelf;
+	static QPointer<QtAssistantChild> mSelf;
 	Workspace* mWorkspace;
 	MainWindow* mMain;
+	QDockWidget* mDock;
 	//
 protected:
 	virtual void closeEvent( QCloseEvent* );

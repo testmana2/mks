@@ -14,6 +14,7 @@ class ProjectsManager;
 class StatusBar;
 class AbstractProjectProxy;
 class AbstractChild;
+class PluginsManager;
 //
 class Q_MONKEY_EXPORT Workspace : public pTabWorkspace
 {
@@ -28,6 +29,7 @@ public:
 	RecentsManager* recentsManager();
 	TabToolBar* tabToolBar();
 	ProjectsManager* projectsManager();
+	PluginsManager* pluginsManager();
 	StatusBar* statusBar();
 	//
 private:
@@ -81,6 +83,7 @@ public slots:
 	void projectShowToDo_triggered();
 	void projectShowChanges_triggered();
 	void projectSettings_triggered();
+	//
 };
 //
 #endif // WORKSPACE_H

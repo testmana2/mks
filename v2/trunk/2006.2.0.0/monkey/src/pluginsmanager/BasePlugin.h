@@ -2,13 +2,14 @@
 #define BASEPLUGIN_H
 //
 #include <QtPlugin>
+#include <QLabel>
 //
 #include "Workspace.h"
 #include "MonkeyExport.h"
 //
 struct Q_MONKEY_EXPORT PluginInfos
 {
-	enum PluginType { iUnknow = -1, iChild, iWorkspace, iCompiler, iDebugger, iProject };
+	enum PluginType { iAll = -1, iChild, iWorkspace, iCompiler, iDebugger, iProject, iLast };
 	QString Caption; // the string to show as ut s caption
 	QString Description; // the plugin description
 	PluginInfos::PluginType Type; // the plugin type
@@ -29,6 +30,9 @@ public:
 	//
 	virtual PluginInfos infos() const
 	{ return mPluginInfos; }
+	//
+	virtual QWidget* settingsWidget()
+	{ return new QLabel( QObject::tr( "This plugin can't be configured" ) ); }
 	//
 	virtual bool install() = 0;
 	virtual bool uninstall() = 0;

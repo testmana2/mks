@@ -5,6 +5,8 @@
 #include "DebuggerPlugin.h"
 #include "ProjectPlugin.h"
 #include "Workspace.h"
+#include "UIPluginsSettings.h"
+#include "Settings.h"
 //
 #include <QPluginLoader>
 #include <QApplication>
@@ -70,9 +72,9 @@ void PluginsManager::loadsPlugins( QDir d )
 		if ( !addPlugin( l.instance() ) )
 		{
 			// try unload it and reload it in case of old one in memory
-			l.unload();
-			l.load();
-			if ( !addPlugin( l.instance() ) )			
+			//l.unload();
+			//l.load();
+			//if ( !addPlugin( l.instance() ) )			
 				qWarning( qPrintable( tr( "Failed to load plugin ( %1 ): Error: %2" ).arg( s, l.errorString() ) ) );
 		}
 	}
@@ -83,14 +85,33 @@ bool PluginsManager::addPlugin( QObject* o )
 	BasePlugin* p = qobject_cast<BasePlugin*>( o );
 	if ( !p )
 		return false;
-	//
+	// initialize plugin
 	p->initialize( Workspace::self() );
-	if ( !p->infos().Installed && !p->install() )
-		qWarning( qPrintable( tr( "Failed to install plugin: %1" ).arg( p->infos().Name ) ) );
-	//
-	qWarning( "Plugin: %s, type: %d", qPrintable( p->infos().Name ), p->infos().Type );
-	mPlugins << p;
-	return true;
+	// check in settings if we can install this plugin
+	if ( !Settings::current()->value( QString( "Plugins/%1" ).arg( p->infos().Name ), true ).toBool() )
+	{
+		qWarning( "Plugin: %s, type: %d, user want not to load it", qPrintable( p->infos().Name ), p->infos().Type );
+		mPlugins << p;
+		return false;
+	}
+	// if not installed, install it
+	if ( !p->infos().Installed )
+	{
+		qWarning( "Plugin: %s, type: %d", qPrintable( p->infos().Name ), p->infos().Type );
+		bool b = p->install();
+		mPlugins << p;
+		if ( !b )
+			qWarning( qPrintable( tr( "Failed to install plugin: %1" ).arg( p->infos().Name ) ) );
+		return b;
+	}
+	else
+		qWarning( "Plugin: %s, already installed", qPrintable( p->infos().Name ) );
+	return false;
+}
+//
+QList<BasePlugin*> PluginsManager::plugins() const
+{
+	return mPlugins;
 }
 //
 bool PluginsManager::childPluginOpenFile( const QString& s, AbstractProjectProxy* p )
@@ -101,7 +122,7 @@ bool PluginsManager::childPluginOpenFile( const QString& s, AbstractProjectProxy
 		if ( bp->infos().Type == PluginInfos::iChild )
 		{
 			ChildPlugin* cp = (ChildPlugin*)bp;
-			if ( cp && cp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
+			if ( cp && cp->infos().Installed && cp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
 				return cp->openFile( s, p );
 		}
 	}
@@ -116,7 +137,7 @@ QStringList PluginsManager::childsFilters() const
 		if ( bp->infos().Type == PluginInfos::iChild )
 		{
 			ChildPlugin* cp = (ChildPlugin*)bp;
-			if ( cp )
+			if ( cp && cp->infos().Installed )
 				l << cp->filters();
 		}
 	}
@@ -131,7 +152,7 @@ bool PluginsManager::projectPluginOpenProject( const QString& s )
 		if ( bp->infos().Type == PluginInfos::iProject )
 		{
 			ProjectPlugin* pp = (ProjectPlugin*)bp;
-			if ( pp && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
+			if ( pp && pp->infos().Installed && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
 				return pp->openProject( s );
 		}
 	}
@@ -146,9 +167,14 @@ QStringList PluginsManager::projectsFilters() const
 		if ( bp->infos().Type == PluginInfos::iProject )
 		{
 			ProjectPlugin* pp = (ProjectPlugin*)bp;
-			if ( pp )
+			if ( pp && pp->infos().Installed )
 				l << pp->filters();
 		}
 	}
 	return l;
+}
+//
+void PluginsManager::manageRequested()
+{
+	UIPluginsSettings::self( this, qApp->activeWindow() )->exec(); 
 }

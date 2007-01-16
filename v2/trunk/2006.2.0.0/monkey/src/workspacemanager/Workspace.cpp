@@ -84,6 +84,8 @@ void Workspace::initialize()
 	connect( menuBar()->action( "mProject/mShow/aToDo" ), SIGNAL( triggered() ), this, SLOT( projectShowToDo_triggered() ) );
 	connect( menuBar()->action( "mProject/mShow/aChanges" ), SIGNAL( triggered() ), this, SLOT( projectShowChanges_triggered() ) );
 	connect( menuBar()->action( "mProject/aSettings" ), SIGNAL( triggered() ), this, SLOT( projectSettings_triggered() ) );
+	// plugins menu
+	connect( menuBar()->action( "mPlugins/aManage" ), SIGNAL( triggered() ), pluginsManager(), SLOT( manageRequested() ) );
 }
 //
 void Workspace::updateTabNumbers( int i )
@@ -162,7 +164,7 @@ void Workspace::tabChanged( int )
 void Workspace::fileOpen_triggered()
 {
 	const QString mPath = settings()->value( "Recents/FileOpenPath" ).toString();
-	QString mFilters = PluginsManager::self()->childsFilters().join( ";;" );
+	QString mFilters = pluginsManager()->childsFilters().join( ";;" );
 	QStringList l = QFileDialog::getOpenFileNames( this, tr( "Choose the file(s) to open" ), mPath, mFilters );
 	foreach ( QString s, l )
 		openFile( s );
@@ -300,7 +302,7 @@ void Workspace::projectNew_triggered()
 void Workspace::projectOpen_triggered()
 {
 	const QString mPath = settings()->value( "Recents/ProjectOpenPath" ).toString();
-	QString mFilters = PluginsManager::self()->projectsFilters().join( ";;" );
+	QString mFilters = pluginsManager()->projectsFilters().join( ";;" );
 	QString mFilePath = QFileDialog::getOpenFileName( this, tr( "Choose the project to open" ), mPath, mFilters );
 	if ( !mFilePath.isNull() )
 		openProject( mFilePath );
@@ -354,7 +356,7 @@ void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
 		return;
 	}
 	// open file
-	if ( PluginsManager::self()->childPluginOpenFile( f.canonicalFilePath(), p ) )
+	if ( pluginsManager()->childPluginOpenFile( f.canonicalFilePath(), p ) )
 	{
 		// save recent file path
 		settings()->setValue( "Recents/FileOpenPath", f.canonicalPath() );
@@ -374,7 +376,7 @@ void Workspace::openProject( const QString& s )
 		return;
 	}
 	// open project
-	if ( PluginsManager::self()->projectPluginOpenProject( f.canonicalFilePath() ) )
+	if ( pluginsManager()->projectPluginOpenProject( f.canonicalFilePath() ) )
 	{
 		// save recent project open path
 		settings()->setValue( "Recents/ProjectOpenPath", f.canonicalPath() );
@@ -442,6 +444,11 @@ TabToolBar* Workspace::tabToolBar()
 ProjectsManager* Workspace::projectsManager()
 {
 	return ProjectsManager::self();
+}
+//
+PluginsManager* Workspace::pluginsManager()
+{
+	return PluginsManager::self();
 }
 //
 StatusBar* Workspace::statusBar()

@@ -3,8 +3,6 @@
 #include "TabToolBar.h"
 #include "QtAssistantChild.h"
 // assistant include
-#include "mainwindow.h"
-#include "helpdialog.h"
 #include "config.h"
 //
 #include <QDockWidget>
@@ -38,29 +36,16 @@ void QtAssistant::initialize( Workspace* w )
 //
 bool QtAssistant::install()
 {
-	if ( !mMain )
-	{
-		// init main window
-		mMain = new MainWindow;
-		mMain->setObjectName( "Assistant" );
-		// initialisation du child
-		mChild = QtAssistantChild::self( mWorkspace, mMain );
-		mChild->setObjectName( "AssistantChild" );
-	}
-	//
-	QDockWidget* dw = qobject_cast<QDockWidget*>( mMain->helpDialog()->parentWidget() );
-	if ( !dw )
-		return false;
-	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->appendTab( dw, QPixmap( ":/Icons/Icons/helpassistant.png" ), infos().Caption );
+	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->appendTab( QtAssistantChild::self( mWorkspace )->dock(), QPixmap( ":/Icons/Icons/helpassistant.png" ), infos().Caption );
 	mPluginInfos.Installed = true;
 	return true;
 }
 //
 bool QtAssistant::uninstall()
 {
-	delete mChild;
-	delete mMain->helpDialog();
-	delete mMain;
+	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->removeTab( QtAssistantChild::self( mWorkspace )->dock() );
+	delete QtAssistantChild::self( mWorkspace )->dock();
+	delete QtAssistantChild::self( mWorkspace );
 	mPluginInfos.Installed = false;
 	return true;
 }

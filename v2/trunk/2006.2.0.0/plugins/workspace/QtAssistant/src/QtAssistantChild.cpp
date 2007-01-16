@@ -9,30 +9,33 @@
 #include <QVBoxLayout>
 #include <QMenuBar>
 #include <QStatusBar>
+#include <QDockWidget>
 //
-QtAssistantChild* QtAssistantChild::mSelf = 0L;
+QPointer<QtAssistantChild> QtAssistantChild::mSelf = 0L;
 //
-QtAssistantChild* QtAssistantChild::self( Workspace* w, MainWindow* mw )
+QtAssistantChild* QtAssistantChild::self( Workspace* w )
 {
 	if ( !mSelf )
-		mSelf = new QtAssistantChild( w, mw );
+		mSelf = new QtAssistantChild( w );
 	return mSelf;
 }
 //
-QtAssistantChild::QtAssistantChild( Workspace* w, MainWindow* mw )
+QtAssistantChild::QtAssistantChild( Workspace* w )
 {
 	Q_ASSERT( w );
-	Q_ASSERT( mw );
 	mWorkspace = w;
-	mMain = mw;
-	//
-	QVBoxLayout* vl = new QVBoxLayout( this );
-	vl->setMargin( 0 );
-	vl->setSpacing( 0 );
+	// init main window
+	mMain = new MainWindow;
 	// modify some mMain widget
 	mMain->menuBar()->hide();
 	mMain->setIconSize( QSize( 16, 16 ) );
 	mMain->statusBar()->hide();
+	// get dock pointeur
+	mDock = mMain->findChild<QDockWidget*>();
+	// layout
+	QVBoxLayout* vl = new QVBoxLayout( this );
+	vl->setMargin( 0 );
+	vl->setSpacing( 0 );
 	// connection
 	connect( mMain->helpDialog(), SIGNAL( showLink( const QString& ) ), this, SLOT( showLink( const QString& ) ) );
 	connect( mMain->browsers()->findChild<QTabWidget*>( "tab" ), SIGNAL( currentChanged( int ) ), this, SLOT( showLink() ) );
@@ -176,3 +179,9 @@ bool QtAssistantChild::isGoToAvailable() const
 // print available
 bool QtAssistantChild::isPrintAvailable() const
 { return false; }
+// return the main
+MainWindow* QtAssistantChild::main()
+{ return mMain; }
+// return the dock
+QDockWidget* QtAssistantChild::dock()
+{ return mDock; }

@@ -126,6 +126,11 @@ void MenuBar::initialize()
 		action( "aEdit", tr( "&Edit..." ), QIcon( ":/Icons/Icons/toolsedit.png" ) );
 		action( "aSeparator1" );
 	endGroup();
+	menu( "mPlugins", tr( "Plu&gins" ) );
+	beginGroup( "mPlugins" );
+		action( "aManage", tr( "&Manage..." ), QIcon( ":/Icons/Icons/toolsedit.png" ) );
+		action( "aSeparator1" );
+	endGroup();
 	menu( "mHelp", tr( "&Help" ) );
 	beginGroup( "mHelp" );
 		action( "aManual", tr( "&Manual" ), QIcon( ":/Icons/Icons/helpassistant.png" ) );

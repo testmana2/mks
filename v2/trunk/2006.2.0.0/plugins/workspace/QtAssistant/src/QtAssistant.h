@@ -3,11 +3,6 @@
 //
 #include "WorkspacePlugin.h"
 //
-#include <QPointer>
-//
-class MainWindow;
-class QtAssistantChild;
-//
 class QtAssistant : public QObject, public WorkspacePlugin
 {
 	Q_OBJECT
@@ -18,10 +13,6 @@ public:
 	virtual void initialize( Workspace* );
 	virtual bool install();
 	virtual bool uninstall();
-	//
-private:
-	QPointer<MainWindow> mMain;
-	QPointer<QtAssistantChild> mChild;
 	//
 };
 //

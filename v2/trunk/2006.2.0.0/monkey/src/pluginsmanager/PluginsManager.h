@@ -21,6 +21,7 @@ public:
 	void loadsPlugins( const QString& = QString() );
 	void loadsPlugins( QDir );
 	bool addPlugin( QObject* );
+	QList<BasePlugin*> plugins() const;
 	// loading files using childs plugins
 	bool childPluginOpenFile( const QString&, AbstractProjectProxy* = 0 );
 	QStringList childsFilters() const;
@@ -33,6 +34,9 @@ private:
 	//
 	static QPointer<PluginsManager> mSelf;
 	QList<BasePlugin*> mPlugins;
+	//
+public slots:
+	void manageRequested();
 	//
 };
 //
