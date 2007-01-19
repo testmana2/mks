@@ -3,6 +3,9 @@
 //
 #include <QFileDialog>
 #include <QWhatsThis>
+#include <QMessageBox>
+#include <QCloseEvent>
+#include <QFileInfo>
 //
 QPointer<UIToolsEdit> UIToolsEdit::mSelf = 0L;
 //
@@ -25,12 +28,20 @@ UIToolsEdit::UIToolsEdit( QWidget* p )
 	for ( int i = 0; i < n; i++ )
 	{
 		s->setArrayIndex( i );
-		it = new QListWidgetItem( s->value( "Caption" ).toString(), lwTools );
-		it->setData( Qt::UserRole +1, s->value( "Icon" ).toString() );
+		it = new QListWidgetItem( lwTools );
+		it->setData( idCaption, s->value( "Caption" ).toString() );
+		it->setData( idFileIcon, s->value( "FileIcon" ).toString() );
+		it->setData( idFilePath, s->value( "FilePath" ).toString() );
+		it->setData( idWorkingPath, s->value( "WorkingPath" ).toString() );
 		it->setIcon( QIcon( it->data( Qt::UserRole +1 ).toString() ) );
-		it->setData( Qt::UserRole +2, s->value( "Command" ).toString() );
 	}
 	s->endArray();
+}
+//
+void UIToolsEdit::closeEvent( QCloseEvent* e )
+{
+	if ( QMessageBox::question( this, tr( "Tools Editor..." ), tr( "You're about to discard all changes. Are you sure ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes ) == QMessageBox::No )
+		e->ignore();
 }
 //
 void UIToolsEdit::on_lwTools_itemClicked( QListWidgetItem* i )
@@ -38,8 +49,9 @@ void UIToolsEdit::on_lwTools_itemClicked( QListWidgetItem* i )
 	if ( !i )
 		return;
 	leCaption->setText( i->text() );
-	tbIcon->setIcon( i->icon() );
-	lePath->setText( i->data( Qt::UserRole +2 ).toString() );
+	tbFileIcon->setIcon( i->icon() );
+	leFilePath->setText( i->data( idFilePath ).toString() );
+	leWorkingPath->setText( i->data( idWorkingPath ).toString() );
 }
 //
 void UIToolsEdit::on_pbNew_clicked()
@@ -49,8 +61,7 @@ void UIToolsEdit::on_pbNew_clicked()
 //
 void UIToolsEdit::on_pbDelete_clicked()
 {
-	if ( lwTools->currentItem() )
-		delete lwTools->currentItem();
+	delete lwTools->currentItem();
 }
 //
 void UIToolsEdit::on_pbUp_clicked()
@@ -87,12 +98,11 @@ void UIToolsEdit::on_tbHelp_clicked()
 void UIToolsEdit::on_leCaption_editingFinished()
 {
 	QListWidgetItem* it = lwTools->currentItem();
-	if ( !it )
-		return;
-	it->setText( leCaption->text() );
+	if ( it )
+		it->setData( idCaption, leCaption->text() );
 }
 //
-void UIToolsEdit::on_tbIcon_clicked()
+void UIToolsEdit::on_tbFileIcon_clicked()
 {
 	QListWidgetItem* it = lwTools->currentItem();
 	if ( !it )
@@ -100,17 +110,59 @@ void UIToolsEdit::on_tbIcon_clicked()
 	QString s = QFileDialog::getOpenFileName( this, tr( "Choose an icon for this tool" ), QString::null, tr( "Images (*.png *.xpm *.jpg)" ) );
 	if ( s.isEmpty() )
 		return;
-	it->setData( Qt::UserRole +1, s );
-	tbIcon->setIcon( QIcon( s ) );
-	it->setIcon( tbIcon->icon() );
+	it->setData( idFileIcon, s );
+	tbFileIcon->setIcon( QIcon( s ) );
+	it->setIcon( tbFileIcon->icon() );
 }
 //
-void UIToolsEdit::on_lePath_editingFinished()
+void UIToolsEdit::on_leFilePath_editingFinished()
+{
+	QListWidgetItem* it = lwTools->currentItem();
+	if ( it )
+		it->setData( idFilePath, leFilePath->text() );
+}
+//
+void UIToolsEdit::on_tbFilePath_clicked()
 {
 	QListWidgetItem* it = lwTools->currentItem();
 	if ( !it )
 		return;
-	it->setData( Qt::UserRole +2, lePath->text() );
+	QString s = QFileDialog::getOpenFileName( this, tr( "Choose the file to execute for this tool" ) );
+	if ( s.isEmpty() )
+		return;
+	leFilePath->setText( s );
+	leFilePath->setFocus();
+}
+//
+void UIToolsEdit::on_tbUpdateWorkingPath_clicked()
+{
+	if ( !lwTools->currentItem())
+		return;
+	QFileInfo f( leFilePath->text() );
+	if ( f.exists() && f.absolutePath() != leWorkingPath->text() )
+	{
+		leWorkingPath->setText( f.absolutePath() );
+		leWorkingPath->setFocus();
+	}
+}
+//
+void UIToolsEdit::on_leWorkingPath_editingFinished()
+{
+	QListWidgetItem* it = lwTools->currentItem();
+	if ( it )
+		it->setData( idWorkingPath, leWorkingPath->text() );
+}
+//
+void UIToolsEdit::on_tbWorkingPath_clicked()
+{
+	QListWidgetItem* it = lwTools->currentItem();
+	if ( !it )
+		return;
+	QString s = QFileDialog::getOpenFileName( this, tr( "Choose the working path for this tool" ) );
+	if ( s.isEmpty() )
+		return;
+	leWorkingPath->setText( s );
+	leWorkingPath->setFocus();
 }
 //
 void UIToolsEdit::accept()
@@ -120,9 +172,10 @@ void UIToolsEdit::accept()
 	for ( int i = 0; i < lwTools->count(); i++ )
 	{
 		s->setArrayIndex( i );
-		s->setValue( "Caption", lwTools->item( i )->text() );
-		s->setValue( "Icon", lwTools->item( i )->data( Qt::UserRole +1 ).toString() );
-		s->setValue( "Command", lwTools->item( i )->data( Qt::UserRole +2 ).toString() );
+		s->setValue( "Caption", lwTools->item( i )->data( idCaption ).toString() );
+		s->setValue( "FileIcon", lwTools->item( i )->data( idFileIcon ).toString() );
+		s->setValue( "FilePath", lwTools->item( i )->data( idFilePath ).toString() );
+		s->setValue( "WorkingPath", lwTools->item( i )->data( idWorkingPath ).toString() );
 	}
 	s->endArray();
 	QDialog::accept();

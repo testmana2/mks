@@ -4,6 +4,10 @@
 #include "UIToolsEdit.h"
 //
 #include <QProcess>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QFile>
+#include <QTimer>
 //
 QPointer<ToolsManager> ToolsManager::mSelf = 0L;
 //
@@ -32,6 +36,12 @@ MenuBar* ToolsManager::menuBar() const
 //
 void ToolsManager::initialize()
 {
+	initializeTools();
+	connect( menuBar()->menu( "mTools" ), SIGNAL( triggered( QAction* ) ), this, SLOT( toolsMenu_triggered( QAction* ) ) );
+}
+//
+void ToolsManager::initializeTools()
+{
 	// got menu
 	QMenu* m = menuBar()->menu( "mTools" );
 	// create action
@@ -39,20 +49,33 @@ void ToolsManager::initialize()
 	for ( int i = 0; i < n; i++ )
 	{
 		settings()->setArrayIndex( i );
-		QAction* ac = new QAction( QIcon( settings()->value( "Icon" ).toString() ), settings()->value( "Caption" ).toString(), m );
-		ac->setStatusTip( settings()->value( "Command" ).toString() );
+		QAction* ac = new QAction( QIcon( settings()->value( "FileIcon" ).toString() ), settings()->value( "Caption" ).toString(), m );
+		ac->setStatusTip( settings()->value( "FilePath" ).toString() );
+		ac->setData( settings()->value( "WorkingPath" ).toString() );
 		m->addAction( ac );
 	}
 	settings()->endArray();
-	connect( menuBar()->menu( "mTools" ), SIGNAL( triggered( QAction* ) ), this, SLOT( toolsMenu_triggered( QAction* ) ) );
 }
 //
 void ToolsManager::toolsMenu_triggered( QAction* a )
 {
 	if ( a != menuBar()->action( "mTools/aEdit" ) )
 	{
-		if ( !QProcess::startDetached( a->statusTip() ) )
-			qWarning( qPrintable( a->statusTip().prepend( tr( "can't start: %1" ).arg( a->statusTip() ) ) ) );
+		bool b = false;
+		if ( a->data().toString().isEmpty() && QFile::exists( a->statusTip() ) )
+			b = QDesktopServices::openUrl( QUrl::fromLocalFile( a->statusTip() ) );
+		else if ( a->data().toString().isEmpty() )
+			b = QProcess::startDetached( a->statusTip() );
+		else
+		{
+			QProcess* p = new QProcess( this );
+			connect( p, SIGNAL( finished( int ) ), p, SLOT( deleteLater() ) );
+			p->setWorkingDirectory( a->data().toString() );
+			p->start( a->statusTip() );
+			b = p->waitForStarted();
+		}
+		if ( !b )
+			qWarning( qPrintable( tr( "can't start: %1" ).arg( a->statusTip() ) ) );
 	}
 	else if ( UIToolsEdit::self()->exec() )
 	{
@@ -63,11 +86,9 @@ void ToolsManager::toolsMenu_triggered( QAction* a )
 		QAction* as = menuBar()->action( "mTools/aSeparator1" );
 		// delete unneeded action
 		foreach ( QAction* ac, l )
-		{
 			if ( ac != ae && ac != as )
 				delete ac;
-		}
 		// initialize
-		initialize();
+		initializeTools();
 	}
 }

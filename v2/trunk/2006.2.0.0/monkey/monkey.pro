@@ -76,7 +76,12 @@ OPENEDFILES	= src/workspacemanager/Workspace.h \
 	src/pluginsmanager/PluginsManager.cpp \
 	src/pluginsmanager/ui/UIPluginsSettings.h \
 	src/pluginsmanager/ui/UIPluginsSettings.cpp \
-	src/pluginsmanager/BasePlugin.h
+	src/pluginsmanager/BasePlugin.h \
+	src/toolsmanager/ToolsManager.h \
+	src/toolsmanager/ToolsManager.cpp \
+	src/toolsmanager/ui/UIToolsEdit.h \
+	src/toolsmanager/ui/UIToolsEdit.cpp \
+	Changes.txt
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \

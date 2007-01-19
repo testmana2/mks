@@ -21,6 +21,7 @@ private:
 	Settings* settings() const;
 	MenuBar* menuBar() const;
 	void initialize();
+	void initializeTools();
 	//
 	static QPointer<ToolsManager> mSelf;
 	//
