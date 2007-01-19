@@ -1,3 +1,3 @@
 # Monkey Studio 2.0.0 QScintilla Project file
 # define where is the official qscintilla folder
-QSCINTILLAVERSION	= QScintilla-1.71-gpl-2-snapshot-20070109
+QSCINTILLAVERSION	= QScintilla-1.72-gpl-2-snapshot-20070117
