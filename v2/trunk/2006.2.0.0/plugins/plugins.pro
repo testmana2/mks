@@ -1,4 +1,6 @@
 TEMPLATE = subdirs
-SUBDIRS	= projects \
+SUBDIRS	= bridges \
+	projects \
 	childs \
+	compilers \
 	workspace

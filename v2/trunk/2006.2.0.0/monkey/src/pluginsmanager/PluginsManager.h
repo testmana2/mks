@@ -21,7 +21,9 @@ public:
 	void loadsPlugins( const QString& = QString() );
 	void loadsPlugins( QDir );
 	bool addPlugin( QObject* );
+	void installPlugins();
 	QList<BasePlugin*> plugins() const;
+	BasePlugin* plugin( const QString&, BasePlugin::Type = BasePlugin::iAll,  const QString& = QString::null );
 	// loading files using childs plugins
 	bool childPluginOpenFile( const QString&, AbstractProjectProxy* = 0 );
 	QStringList childsFilters() const;

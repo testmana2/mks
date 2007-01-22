@@ -15,7 +15,7 @@ void QMake::initialize( Workspace* w )
 	// plugin infos
 	mPluginInfos.Caption = tr( "Qt QMake Project Plugin Manager" );
 	mPluginInfos.Description = tr( "This plugin allow you to use Qt QMake project files" );
-	mPluginInfos.Type = PluginInfos::iProject;
+	mPluginInfos.Type = BasePlugin::iProject;
 	mPluginInfos.Name = "QMake";
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.Installed = false;

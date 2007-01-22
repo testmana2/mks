@@ -19,7 +19,7 @@ void QtAssistant::initialize( Workspace* w )
 	// plugin infos
 	mPluginInfos.Caption = tr( "Qt Assistant" );
 	mPluginInfos.Description = tr( "This plugin embbeded the Qt Asssitant" );
-	mPluginInfos.Type = PluginInfos::iWorkspace;
+	mPluginInfos.Type = BasePlugin::iWorkspace;
 	mPluginInfos.Name = "QtAssistant";
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.Installed = false;

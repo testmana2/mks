@@ -10,12 +10,12 @@ class AbstractProjectProxy;
 //
 class Q_MONKEY_EXPORT ProjectPlugin : public BasePlugin
 {
+	Q_OBJECT
+	//
 public:
 	virtual QStringList extensions() const
 	{ return mExtensions; }
-	//
 	virtual QStringList filters() const = 0;
-	//
 	virtual bool openProject( const QString&, AbstractProjectProxy* = 0 ) = 0;
 	//
 protected:

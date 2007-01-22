@@ -7,20 +7,33 @@
 #include "Workspace.h"
 #include "MonkeyExport.h"
 //
-struct Q_MONKEY_EXPORT PluginInfos
+class Q_MONKEY_EXPORT BasePlugin : public QObject
 {
-	enum PluginType { iAll = -1, iChild, iWorkspace, iCompiler, iDebugger, iProject, iLast };
-	QString Caption; // the string to show as ut s caption
-	QString Description; // the plugin description
-	PluginInfos::PluginType Type; // the plugin type
-	QString Name; // the plugin name for version control
-	QString Version; // the plugin version for version control
-	bool Installed; // to know if this plugin is installed
-};
-//
-class Q_MONKEY_EXPORT BasePlugin
-{
+	Q_OBJECT
+	Q_ENUMS( Type )
+	//
 public:
+	// plugin type enums
+	enum Type
+	{	iAll = -1,
+		iBase,
+		iChild,
+		iWorkspace,
+		iCompiler,
+		iDebugger,
+		iProject,
+		iLast };
+	// plugin info structure
+	struct Q_MONKEY_EXPORT PluginInfos
+	{
+		QString Caption; // the string to show as caption
+		QString Description; // the plugin description
+		BasePlugin::Type Type; // the plugin type
+		QString Name; // the plugin name for version control
+		QString Version; // the plugin version for version control
+		bool Installed; // to know if this plugin is installed
+	};
+	//
 	BasePlugin()
 	{ mPluginInfos.Installed = false; mWorkspace = 0; }
 	virtual ~BasePlugin() {}
@@ -34,10 +47,11 @@ public:
 	virtual QWidget* settingsWidget()
 	{ return new QLabel( QObject::tr( "This plugin can't be configured" ) ); }
 	//
-	virtual bool install() = 0;
-	virtual bool uninstall() = 0;
 	virtual bool isInstalled() const
 	{ return mPluginInfos.Installed; }
+	// NEED REIMPLEMENTATION
+	virtual bool install() = 0;
+	virtual bool uninstall() = 0;
 	//
 protected:
 	PluginInfos mPluginInfos;

@@ -31,10 +31,6 @@ PluginsManager::~PluginsManager()
 //
 void PluginsManager::loadsPlugins( const QString& s )
 {
-	// load static plugins
-	foreach ( QObject* o, QPluginLoader::staticInstances() )
-		if ( !addPlugin( o ) )
-			qWarning( qPrintable( tr( "Failed to load static plugin" ) ) );
 	// dor application path
 	QDir d( s.isEmpty() ? qApp->applicationDirPath() : s );
 #if defined( Q_OS_WIN )
@@ -52,8 +48,14 @@ void PluginsManager::loadsPlugins( const QString& s )
 #endif
 	// go into plugins dir
 	d.cd( "plugins" );
+	// loads static plugins
+	foreach ( QObject* o, QPluginLoader::staticInstances() )
+		if ( !addPlugin( o ) )
+			qWarning( qPrintable( tr( "Failed to load static plugin" ) ) );
 	// check all subdirs to load plugins
 	loadsPlugins( d );
+	// installs user requested plugins
+	installPlugins();
 }
 //
 void PluginsManager::loadsPlugins( QDir d )
@@ -72,9 +74,9 @@ void PluginsManager::loadsPlugins( QDir d )
 		if ( !addPlugin( l.instance() ) )
 		{
 			// try unload it and reload it in case of old one in memory
-			//l.unload();
-			//l.load();
-			//if ( !addPlugin( l.instance() ) )			
+			l.unload();
+			l.load();
+			if ( !addPlugin( l.instance() ) )			
 				qWarning( qPrintable( tr( "Failed to load plugin ( %1 ): Error: %2" ).arg( s, l.errorString() ) ) );
 		}
 	}
@@ -82,31 +84,37 @@ void PluginsManager::loadsPlugins( QDir d )
 //
 bool PluginsManager::addPlugin( QObject* o )
 {
-	BasePlugin* p = qobject_cast<BasePlugin*>( o );
-	if ( !p )
+	BasePlugin* bp = qobject_cast<BasePlugin*>( o );
+	if ( !bp )
 		return false;
 	// initialize plugin
-	p->initialize( Workspace::self() );
-	// check in settings if we can install this plugin
-	if ( !Settings::current()->value( QString( "Plugins/%1" ).arg( p->infos().Name ), true ).toBool() )
+	bp->initialize( Workspace::self() );
+	// show plugin infos
+	qWarning( qPrintable( tr( "Found plugin: %1, type: %2" ).arg( bp->infos().Name ).arg( bp->infos().Type ) ) );
+	// add it to plugins list
+	mPlugins << bp;
+	//
+	return true;
+}
+//
+void PluginsManager::installPlugins()
+{
+	foreach ( BasePlugin* bp, mPlugins )
 	{
-		qWarning( "Plugin: %s, type: %d, user want not to load it", qPrintable( p->infos().Name ), p->infos().Type );
-		mPlugins << p;
-		return false;
+		// check in settings if we must install this plugin
+		if ( !Settings::current()->value( QString( "Plugins/%1" ).arg( bp->infos().Name ), true ).toBool() )
+			qWarning( qPrintable( tr( "User wantn't to intall plugin: %1" ).arg( bp->infos().Name ) ) );
+		// if not installed, install it
+		else if ( !bp->infos().Installed )
+		{
+			if ( bp->install() )
+				qWarning( qPrintable( tr( "Successfully installed plugin: %1" ).arg( bp->infos().Name ) ) );
+			else
+				qWarning( qPrintable( tr( "Unsuccessfully installed plugin: %1" ).arg( bp->infos().Name ) ) );
+		}
+		else
+			qWarning( qPrintable( tr( "Already installed plugin: %1" ).arg( bp->infos().Name ) ) );
 	}
-	// if not installed, install it
-	if ( !p->infos().Installed )
-	{
-		qWarning( "Plugin: %s, type: %d", qPrintable( p->infos().Name ), p->infos().Type );
-		bool b = p->install();
-		mPlugins << p;
-		if ( !b )
-			qWarning( qPrintable( tr( "Failed to install plugin: %1" ).arg( p->infos().Name ) ) );
-		return b;
-	}
-	else
-		qWarning( "Plugin: %s, already installed", qPrintable( p->infos().Name ) );
-	return false;
 }
 //
 QList<BasePlugin*> PluginsManager::plugins() const
@@ -114,12 +122,26 @@ QList<BasePlugin*> PluginsManager::plugins() const
 	return mPlugins;
 }
 //
+BasePlugin* PluginsManager::plugin( const QString& n, BasePlugin::Type t, const QString& v )
+{
+	// for each plugin
+	foreach ( BasePlugin* bp, mPlugins )
+		// good name
+		if ( bp->infos().Name == n )
+			// good type or type = iAll
+			if ( t == BasePlugin::iAll || bp->infos().Type == t )
+				// no version or good version
+				if ( v.isNull() || bp->infos().Version == v )
+					return bp;
+	return 0;
+}
+//
 bool PluginsManager::childPluginOpenFile( const QString& s, AbstractProjectProxy* p )
 {
 	QString mExtension = QFileInfo( s ).completeSuffix();
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->infos().Type == PluginInfos::iChild )
+		if ( bp->infos().Type == BasePlugin::iChild )
 		{
 			ChildPlugin* cp = (ChildPlugin*)bp;
 			if ( cp && cp->infos().Installed && cp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
@@ -134,7 +156,7 @@ QStringList PluginsManager::childsFilters() const
 	QStringList l;
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->infos().Type == PluginInfos::iChild )
+		if ( bp->infos().Type == BasePlugin::iChild )
 		{
 			ChildPlugin* cp = (ChildPlugin*)bp;
 			if ( cp && cp->infos().Installed )
@@ -149,7 +171,7 @@ bool PluginsManager::projectPluginOpenProject( const QString& s )
 	QString mExtension = QFileInfo( s ).completeSuffix();
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->infos().Type == PluginInfos::iProject )
+		if ( bp->infos().Type == BasePlugin::iProject )
 		{
 			ProjectPlugin* pp = (ProjectPlugin*)bp;
 			if ( pp && pp->infos().Installed && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
@@ -164,7 +186,7 @@ QStringList PluginsManager::projectsFilters() const
 	QStringList l;
 	foreach ( BasePlugin* bp, mPlugins )
 	{
-		if ( bp->infos().Type == PluginInfos::iProject )
+		if ( bp->infos().Type == BasePlugin::iProject )
 		{
 			ProjectPlugin* pp = (ProjectPlugin*)bp;
 			if ( pp && pp->infos().Installed )

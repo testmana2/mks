@@ -65,23 +65,9 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/projectsmanager/ui/ProjectsManager.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui
 
-OPENEDFILES	= src/workspacemanager/Workspace.h \
-	src/workspacemanager/Workspace.cpp \
-	src/projectsmanager/ui/ProjectsManager.h \
-	src/projectsmanager/ui/ProjectsManager.cpp \
-	ToDo.txt \
-	src/maininterface/MenuBar.h \
-	src/maininterface/MenuBar.cpp \
-	src/pluginsmanager/PluginsManager.h \
-	src/pluginsmanager/PluginsManager.cpp \
-	src/pluginsmanager/ui/UIPluginsSettings.h \
-	src/pluginsmanager/ui/UIPluginsSettings.cpp \
-	src/pluginsmanager/BasePlugin.h \
-	src/toolsmanager/ToolsManager.h \
-	src/toolsmanager/ToolsManager.cpp \
-	src/toolsmanager/ui/UIToolsEdit.h \
-	src/toolsmanager/ui/UIToolsEdit.cpp \
-	Changes.txt
+OPENEDFILES	= src/pluginsmanager/CommonPlugin.h \
+	src/Studio.h \
+	src/Studio.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \

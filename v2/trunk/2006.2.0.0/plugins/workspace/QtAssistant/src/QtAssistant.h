@@ -3,7 +3,7 @@
 //
 #include "WorkspacePlugin.h"
 //
-class QtAssistant : public QObject, public WorkspacePlugin
+class QtAssistant : public WorkspacePlugin
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin WorkspacePlugin )

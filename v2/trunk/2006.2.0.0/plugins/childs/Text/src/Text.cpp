@@ -15,7 +15,7 @@ void Text::initialize( Workspace* w )
 	// plugin infos
 	mPluginInfos.Caption = tr( "Plain Text Files Plugin Manager" );
 	mPluginInfos.Description = tr( "This plugin allow you to use Plain Text files" );
-	mPluginInfos.Type = PluginInfos::iChild;
+	mPluginInfos.Type = BasePlugin::iChild;
 	mPluginInfos.Name ="Text";
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.Installed = false;

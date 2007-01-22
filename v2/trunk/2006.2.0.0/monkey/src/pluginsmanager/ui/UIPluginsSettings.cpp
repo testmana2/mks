@@ -2,6 +2,8 @@
 #include "PluginsManager.h"
 #include "Settings.h"
 //
+#include <QMetaEnum>
+//
 QPointer<UIPluginsSettings> UIPluginsSettings::mSelf = 0L;
 //
 UIPluginsSettings* UIPluginsSettings::self( PluginsManager* m, QWidget* p )
@@ -18,8 +20,10 @@ UIPluginsSettings::UIPluginsSettings( PluginsManager* m, QWidget* p )
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	// fill list with plugins type
-	for ( int i = PluginInfos::iAll; i < PluginInfos::iLast; i++ )
-		cbType->addItem( tr( "Type %1" ).arg( i ), i );
+	const QMetaObject mo = BasePlugin::staticMetaObject;
+	QMetaEnum e = mo.enumerator( mo.indexOfEnumerator( "Type" ) );
+	for ( int i = 0; i < e.keyCount() -1; i++ )
+		cbType->addItem( e.key( i ), e.value( i ) );
 	// update plugins list
 	updateList();
 	// connections
@@ -70,7 +74,7 @@ void UIPluginsSettings::currentIndexChanged( int i )
 		QListWidgetItem* it = lwNames->item( j ); // get item
 		int pt = it->data( Qt::UserRole +2 ).toInt(); // get item plugin type
 		int ct = cbType->itemData( i ).toInt(); // get current visible type
-		it->setHidden( ( ct != PluginInfos::iAll && ct != pt ) ? true : false );
+		it->setHidden( ( ct != BasePlugin::iAll && ct != pt ) ? true : false ); // show or hide the plugin
 	}
 	// select the first visible item if current is hidden
 	if ( lwNames->count() && lwNames->currentItem()->isHidden() )
@@ -85,15 +89,16 @@ void UIPluginsSettings::currentIndexChanged( int i )
 				return;
 			}
 		}
-		clearInfos();
 	}
+	// in case og no entry/plugins
+	clearInfos();
 }
 //
 void UIPluginsSettings::itemClicked( QListWidgetItem* i )
 {
 	if ( !i )
 		return;
-	PluginInfos pi = mPluginsManager->plugins().at( i->data( Qt::UserRole ).toInt() )->infos();
+	BasePlugin::PluginInfos pi = mPluginsManager->plugins().at( i->data( Qt::UserRole ).toInt() )->infos();
 	leCaption->setText( pi.Caption );
 	leName->setText( pi.Name );
 	leVersion->setText( pi.Version );

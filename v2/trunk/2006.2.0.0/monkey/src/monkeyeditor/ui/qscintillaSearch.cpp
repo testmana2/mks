@@ -17,6 +17,7 @@ qscintillaSearch::qscintillaSearch( QsciScintilla* p )
 	: QDockWidget( p )
 {
 	setupUi( this );
+	setMaximumHeight( 80 );
 	setEditor( p );
 }
 //

@@ -4,7 +4,7 @@
 #include "ChildPlugin.h"
 #include "Workspace.h"
 //
-class Cpp : public QObject, public ChildPlugin
+class Cpp : public ChildPlugin
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin ChildPlugin )

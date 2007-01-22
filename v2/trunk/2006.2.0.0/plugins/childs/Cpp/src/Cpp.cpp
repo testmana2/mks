@@ -18,7 +18,7 @@ void Cpp::initialize( Workspace* w )
 	// plugin infos
 	mPluginInfos.Caption = tr( "C/C++ Files Plugin Manager" );
 	mPluginInfos.Description = tr( "This plugin allow you to use C/C++ files" );
-	mPluginInfos.Type = PluginInfos::iChild;
+	mPluginInfos.Type = BasePlugin::iChild;
 	mPluginInfos.Name = "Cpp";
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.Installed = false;

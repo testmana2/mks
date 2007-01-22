@@ -4,7 +4,7 @@
 #include "ProjectPlugin.h"
 #include "Workspace.h"
 //
-class QMake : public QObject, public ProjectPlugin
+class QMake : public ProjectPlugin
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin ProjectPlugin )

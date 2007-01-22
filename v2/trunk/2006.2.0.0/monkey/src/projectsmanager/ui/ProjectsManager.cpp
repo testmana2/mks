@@ -19,6 +19,9 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	: QDockWidget( p )
 {
 	setupUi( this );
+	sProjects->setStretchFactor( sProjects->indexOf( swProjects ), 1 );
+	twProjects->setMinimumHeight( 50 );
+	sProjects->setSizes( QList<int>() << twProjects->minimumHeight() );
 	tbList->setDefaultAction( MenuBar::self()->action( "mView/aProjectsList" ) );
 	tbOpen->setDefaultAction( MenuBar::self()->action( "mProject/aOpen" ) );
 	tbComplex->setDefaultAction( MenuBar::self()->action( "mView/aComplexProject" ) );
@@ -27,7 +30,6 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	// update actions state
 	on_swProjects_currentChanged( -1 );
 	MenuBar::self()->action( "mView/aProjectsList" )->setChecked( true );
-	sProjects->setStretchFactor( sProjects->indexOf( swProjects ), 1 );
 }
 //
 void ProjectsManager::setCurrentProxy( AbstractProjectProxy* p )

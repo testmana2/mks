@@ -6,6 +6,8 @@
 //
 class Q_MONKEY_EXPORT WorkspacePlugin : public BasePlugin
 {
+	Q_OBJECT
+	//
 };
 //
 Q_DECLARE_INTERFACE( WorkspacePlugin, "org.monkeystudio.MonkeyStudio.WorkspacePlugin/1.0" )
