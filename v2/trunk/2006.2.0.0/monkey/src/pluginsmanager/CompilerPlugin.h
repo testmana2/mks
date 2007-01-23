@@ -7,6 +7,7 @@
 //
 class ConsoleCommand;
 typedef QList<ConsoleCommand> ConsoleCommands;
+typedef QList<ConsoleCommands> ConsoleCommandsList;
 //
 class Q_MONKEY_EXPORT CompilerPlugin : public BasePlugin
 {
@@ -27,10 +28,20 @@ public slots:
 	virtual void distCleanBuildExecute() = 0;
 	//
 signals:
+	// console slots
+	void setEnvironment( const QStringList& );
+	void getEnvironment( QStringList& );
+	void addCommands( const ConsoleCommands& );
+	void removeCommands( const ConsoleCommands& );
+	void getCommandsList( ConsoleCommandsList& );
+	void run();
+	void isRunning( bool& );
+	void runConsoleCommands( const ConsoleCommands& );
+	void stopConsole();
+	// messagebox slots
 	void messageBox( const QString& );
 	void clearMessageBox();
-	void runConsoleCommands( ConsoleCommands* );
-	void stopConsole();
+	void dataAvailable( const QString& );
 	//
 };
 //

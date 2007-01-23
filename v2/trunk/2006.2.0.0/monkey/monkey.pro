@@ -67,7 +67,8 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 
 OPENEDFILES	= src/pluginsmanager/CommonPlugin.h \
 	src/Studio.h \
-	src/Studio.cpp
+	src/Studio.cpp \
+	src/pluginsmanager/CompilerPlugin.h
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \

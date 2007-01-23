@@ -60,18 +60,6 @@ void MenuBar::initialize()
 		action( "aSearchReplace", tr( "&Search - Replace..." ), QIcon( ":/Icons/Icons/editreplace.png" ), tr( "Ctrl+F" ) )->setEnabled( false );
 		action( "aGoTo", tr( "&Go To..." ), QIcon( ":/Icons/Icons/editgoto.png" ), tr( "Ctrl+G" ) )->setEnabled( false );
 	endGroup();
-	/*
-	menu( "mView", tr( "&View" ) );
-	beginGroup( "mView" );
-		menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );
-		action( "aSeparator1" );
-		action( "aProjectsList", tr( "Show/Hide the projects list" ), QIcon( ":/Icons/Icons/helpgreettings.png" ) )->setCheckable( true );
-		action( "aComplexProject", tr( "Show/Hide the complex project" ), QIcon( ":/Icons/Icons/helptesters.png" ) )->setCheckable( true );
-		action( "aSeparator2" );
-		action( "aNext", tr( "&Next tab" ), QIcon( ":/Icons/Icons/buttonnext.png" ), tr( "Alt+Right" ) )->setEnabled( false );
-		action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/Icons/Icons/buttonprevious.png" ), tr( "Alt+Left" ) )->setEnabled( false );
-	endGroup();
-	*/
 	menu( "mView", tr( "&View" ) );
 	beginGroup( "mView" );
 		menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );

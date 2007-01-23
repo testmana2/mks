@@ -11,14 +11,14 @@ public:
 	ConsoleCommand( const QString& c, const QString& w )
 		: mCommand( c ), mWorkingFolder( w ) {}
 	//
-	bool isNull() const { return mCommand.isNull(); }
+	bool isNull() const { return mCommand.trimmed().isEmpty(); }
 	QString command() const { return mCommand; }
 	void setCommand( const QString& s ) { mCommand = s; }
 	QString workingFolder() const { return mWorkingFolder; }
 	void setWorkingFolder( const QString& s ) { mWorkingFolder = s; }
 	//
 	bool operator == ( const ConsoleCommand& c ) const
-	{ return mCommand == c.command() && mWorkingFolder == c.workingFolder(); }
+	{ return command() == c.command() && workingFolder() == c.workingFolder(); }
 	//
 private:
 	QString mCommand; // the command line to execute
@@ -40,21 +40,20 @@ public:
 	virtual bool install();
 	virtual bool uninstall();
 	//
-	bool isRunning();
-	QStringList systemEnvironment() const;
-	ConsoleCommandsList commandsList() const;
-	//
 private:
 	QProcess* mProcess;
 	ConsoleCommandsList mConsoleCommandsList;
 	bool mStop;
 	//
 public slots:
-	void setSystemEnvironment( const QStringList& );
+	void setEnvironment( const QStringList& );
+	void getEnvironment( QStringList& );
 	void addCommands( const ConsoleCommands& );
 	void removeCommands( const ConsoleCommands& );
+	void getCommandsList( ConsoleCommandsList& );
 	void run();
-	void runConsoleCommands( ConsoleCommands* );
+	void isRunning( bool& );
+	void runConsoleCommands( const ConsoleCommands& );
 	void stopConsole();
 	//
 private slots:

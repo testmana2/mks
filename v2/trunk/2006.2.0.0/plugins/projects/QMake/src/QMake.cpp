@@ -17,7 +17,7 @@ void QMake::initialize( Workspace* w )
 	mPluginInfos.Description = tr( "This plugin allow you to use Qt QMake project files" );
 	mPluginInfos.Type = BasePlugin::iProject;
 	mPluginInfos.Name = "QMake";
-	mPluginInfos.Version = "1.0.0";
+	mPluginInfos.Version = "0.5.0";
 	mPluginInfos.Installed = false;
 	//
 	mExtensions = QStringList() << "pro";
@@ -37,6 +37,8 @@ bool QMake::uninstall()
 //
 QStringList QMake::filters() const
 {
+	if ( !isInstalled() )
+		return QStringList();
 	QStringList e = extensions();
 	QStringList f;
 	foreach ( QString s, e )
@@ -46,6 +48,8 @@ QStringList QMake::filters() const
 //
 bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 {
+	if ( !isInstalled() )
+		return false;
 	// s is normally clean and canonical
 	// check if project is already open
 	foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
@@ -53,7 +57,7 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 		if ( p->project()->filePath() == s )
 		{
 			mWorkspace->projectsManager()->setCurrentProxy( p );
-			return false;
+			return true;
 		}
 	}
 	// create a new qmake project

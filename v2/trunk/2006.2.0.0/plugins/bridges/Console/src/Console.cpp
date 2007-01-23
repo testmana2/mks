@@ -59,20 +59,16 @@ bool Console::uninstall()
 	return true;
 }
 //
-bool Console::isRunning()
-{
-	return isInstalled() ? !mProcess->state() == QProcess::NotRunning : false;
-}
-//
-QStringList Console::systemEnvironment() const
-{
-	return isInstalled() ? mProcess->systemEnvironment() : QProcess::systemEnvironment();
-}
-//
-void Console::setSystemEnvironment( const QStringList& l )
+void Console::setEnvironment( const QStringList& l )
 {
 	if ( isInstalled() )
 		mProcess->setEnvironment( l );
+}
+//
+void Console::getEnvironment( QStringList& l )
+{
+	if ( &l )
+		l = ( isInstalled() ? mProcess->environment() : QProcess::systemEnvironment() );
 }
 //
 void Console::addCommands( const ConsoleCommands& c )
@@ -87,14 +83,23 @@ void Console::removeCommands( const ConsoleCommands& c )
 		mConsoleCommandsList.removeAll( c );
 }
 //
-ConsoleCommandsList Console::commandsList() const
+void Console::getCommandsList( ConsoleCommandsList& l )
 {
-	return isInstalled() ? mConsoleCommandsList : ConsoleCommandsList();
+	if ( &l )
+		l = ( isInstalled() ? mConsoleCommandsList : ConsoleCommandsList() );
+}
+//
+void Console::isRunning( bool& b )
+{
+	if ( &b )
+		b = ( isInstalled() ? !mProcess->state() == QProcess::NotRunning : false );
 }
 //
 void Console::run()
 {
-	if ( !isInstalled() || mConsoleCommandsList.isEmpty() || isRunning() )
+	bool b;
+	isRunning( b );
+	if ( !isInstalled() || mConsoleCommandsList.isEmpty() || b )
 		return;
 	// got the current command list
 	ConsoleCommands& cc = mConsoleCommandsList.first();
@@ -118,7 +123,7 @@ void Console::run()
 		if ( cc.isEmpty() )
 			mConsoleCommandsList.removeFirst();
 		// execute command or run next
-		if ( c.isNull() )
+		if ( command.isEmpty() )
 			run();
 		else
 		{
@@ -131,20 +136,23 @@ void Console::run()
 			}
 			emit messageBox( tr( "<font color=\"green\">Executing: <font color=\"red\"><b>%1</b></font></font>" ).arg( command ) );
 			emit messageBox( "<font color=\"green\"><b>************************************************************</b></font>" );
+			qWarning( qPrintable( QString( "try running: '%1'" ).arg( command ) ) );
 			mProcess->start( command );
 		}
 	}
 }
 //
-void Console::runConsoleCommands( ConsoleCommands* c )
+void Console::runConsoleCommands( const ConsoleCommands& c )
 {
-	addCommands( *c );
+	addCommands( c );
 	run();
 }
 //
 void Console::stopConsole()
 {
-	if ( isInstalled() && isRunning() )
+	bool b;
+	isRunning( b );
+	if ( isInstalled() && b )
 	{
 		mStop = true;
 		mProcess->terminate();

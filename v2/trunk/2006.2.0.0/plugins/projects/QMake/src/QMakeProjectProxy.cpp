@@ -40,9 +40,6 @@ bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 	case QMakeProjectItem::Variable:
 		return QMakeProjectItemModel::simpleModelVariables().contains( index.data().toString(), Qt::CaseInsensitive );
 		break;
-	default:
-		return false;
-		break;
 	}
 	return false;
 }

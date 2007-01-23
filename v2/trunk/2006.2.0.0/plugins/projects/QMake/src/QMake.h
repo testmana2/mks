@@ -2,7 +2,6 @@
 #define QMAKE_H
 //
 #include "ProjectPlugin.h"
-#include "Workspace.h"
 //
 class QMake : public ProjectPlugin
 {

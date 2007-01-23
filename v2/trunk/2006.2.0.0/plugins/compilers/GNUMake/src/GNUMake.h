@@ -36,11 +36,11 @@ private:
 	AbstractProjectItemModel* currentProject();
 	AbstractProjectItemModel* parentProject();
 	//
-	ConsoleCommand qmakeCommand( AbstractProjectItemModel* ) const;
-	ConsoleCommand makeCommand( AbstractProjectItemModel* ) const;
-	ConsoleCommand makeCleanCommand( AbstractProjectItemModel* ) const;
-	ConsoleCommand makeDistCleanCommand( AbstractProjectItemModel* ) const;
-	ConsoleCommand executeCommand( AbstractProjectItemModel*, const QString& = QString::null ) const;
+	ConsoleCommand qmakeCommand( AbstractProjectItemModel* );
+	ConsoleCommand makeCommand( AbstractProjectItemModel* );
+	ConsoleCommand makeCleanCommand( AbstractProjectItemModel* );
+	ConsoleCommand makeDistCleanCommand( AbstractProjectItemModel* );
+	ConsoleCommand executeCommand( AbstractProjectItemModel*, const QString& = QString::null );
 	//
 };
 //

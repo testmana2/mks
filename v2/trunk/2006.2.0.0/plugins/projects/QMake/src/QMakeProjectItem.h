@@ -39,13 +39,10 @@ public:
 	};
 	//
 	QMakeProjectItem( QMakeProjectItem::NodeType );
-	~QMakeProjectItem();
 	//
 	virtual int type() const;
 	//
 private:
-	void initialize();
-	//
 	QMakeProjectItem::NodeType mType;
 	//
 };

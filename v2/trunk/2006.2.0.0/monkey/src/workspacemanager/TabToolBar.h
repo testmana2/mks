@@ -13,6 +13,8 @@ class Q_MONKEY_EXPORT TabToolBar : public pTabToolBarManager
 public:
 	static TabToolBar* self( QMainWindow* = 0 );
 	//
+	QAction* newSeparator();
+	//
 private:
 	TabToolBar( QMainWindow* );
 	void initialize();
