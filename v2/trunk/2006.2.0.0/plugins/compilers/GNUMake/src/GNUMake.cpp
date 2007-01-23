@@ -259,8 +259,10 @@ void GNUMake::executeWithParameters()
 		return;
 	// get params
 	bool b;
-	QString s;
+	QString s = Settings::current()->value( "Plugins/GNU Make/LastParameters" ).toString();
 	s = QInputDialog::getText( qApp->activeWindow(), tr( "Parameters" ), tr( "Input parameters for executing " ), QLineEdit::Normal, s, &b );
+	if ( !s.isNull() )
+		Settings::current()->setValue( "Plugins/GNU Make/LastParameters", s );
 	// create command sentences
 	ConsoleCommands l;
 	l << executeCommand( p, b ? s : QString::null );
@@ -391,7 +393,12 @@ ConsoleCommand GNUMake::executeCommand( AbstractProjectItemModel* p, const QStri
 	QFileInfo f( QString( "%1/%2" ).arg( mPath, mFile ) );
 	QString mFilePath = f.canonicalFilePath();
 	if ( f.isDir() || !f.exists() )
-		mFilePath = QFileDialog::getOpenFileName( qApp->activeWindow(), tr( "Choose the file to be executed" ), p->path() );
+	{
+		mFilePath = Settings::current()->value( "Plugins/GNU Make/LastExecute", p->path() ).toString();
+		mFilePath = QFileDialog::getOpenFileName( qApp->activeWindow(), tr( "Choose the file to be executed" ), mFilePath );
+		if ( !mFilePath.isNull() )
+			Settings::current()->setValue( "Plugins/GNU Make/LastExecute", mFilePath );
+	}
 	f.setFile( mFilePath );
 	if ( f.exists() )
 	{

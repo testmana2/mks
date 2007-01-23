@@ -136,7 +136,6 @@ void Console::run()
 			}
 			emit messageBox( tr( "<font color=\"green\">Executing: <font color=\"red\"><b>%1</b></font></font>" ).arg( command ) );
 			emit messageBox( "<font color=\"green\"><b>************************************************************</b></font>" );
-			qWarning( qPrintable( QString( "try running: '%1'" ).arg( command ) ) );
 			mProcess->start( command );
 		}
 	}
