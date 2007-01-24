@@ -29,34 +29,27 @@ bool MessageBox::install()
 		return true;
 	// reset values
 	errorsCount = 0;
-	warningsCount = 0;
-	// check if object already exists
-	if ( !mMessageBox )
-	{	
-		// create dock
-		mMessageBox = UIMessageBox::self( mWorkspace );
-		// create parser
-		parser = new gccParser;
-		// create actions
-		mWorkspace->menuBar()->action( "aSeparator3" );
-		QAction* aShowConsole = mWorkspace->menuBar()->action( "mView/aShowConsole", tr( "Show Console" ), QIcon( ":/icons/tabconsole.png" ), tr( "F11" ) );
-		QAction* aShowListBox = mWorkspace->menuBar()->action( "mView/aShowListBox", tr( "Show ListBox" ), QIcon( ":/icons/builderrorR.png" ), tr( "F12" ) );
-		// connections
-		connect( aShowConsole, SIGNAL( triggered() ), this, SLOT( showConsole() ) );
-		connect( aShowListBox, SIGNAL( triggered() ), this, SLOT( showListBox() ) );
-		// connect to Console bridge
-		Console* c = (Console*)mWorkspace->pluginsManager()->plugin( "Console" );
-		if ( c )
-		{
-			connect( c, SIGNAL( messageBox( const QString& ) ), this, SLOT( messageBox( const QString& ) ) );
-			connect( c, SIGNAL( clearMessageBox() ), this, SLOT( clearMessageBox() ) );
-			connect( c, SIGNAL( dataAvailable( const QString& ) ), this, SLOT( dataAvailable( const QString& ) ) );
-		}
-		/*
-		connect (Studio::self(), SIGNAL(buildComplete (bool)),this, SLOT (buildComplete (bool)));
-		connect (this, SIGNAL(gotoLine (QString , int )),Studio::self(), SIGNAL (gotoLine (QString , int )));
-		connect ( ui->listWidget, SIGNAL (itemDoubleClicked ( QListWidgetItem*)), this, SLOT (makeGoto()));
-		*/
+	warningsCount = 0;	
+	// create dock
+	mMessageBox = UIMessageBox::self( mWorkspace );
+	// create parser
+	parser = new gccParser;
+	// create actions
+	mWorkspace->menuBar()->action( "aSeparator3" );
+	QAction* aShowConsole = mWorkspace->menuBar()->action( "mView/aShowConsole", tr( "Show Console" ), QIcon( ":/icons/tabconsole.png" ), tr( "F11" ) );
+	QAction* aShowListBox = mWorkspace->menuBar()->action( "mView/aShowListBox", tr( "Show ListBox" ), QIcon( ":/icons/builderrorR.png" ), tr( "F12" ) );
+	// connections
+	connect( aShowConsole, SIGNAL( triggered() ), this, SLOT( showConsole() ) );
+	connect( aShowListBox, SIGNAL( triggered() ), this, SLOT( showListBox() ) );
+	// connect to Console bridge
+	BasePlugin* bp = mWorkspace->pluginsManager()->plugin( "Console" );
+	if ( bp )
+	{
+		connect( bp, SIGNAL( messageBox( const QString& ) ), this, SLOT( messageBox( const QString& ) ) );
+		connect( bp, SIGNAL( clearMessageBox() ), this, SLOT( clearMessageBox() ) );
+		connect( bp, SIGNAL( dataAvailable( const QString& ) ), this, SLOT( dataAvailable( const QString& ) ) );
+		connect( bp, SIGNAL( showListBox() ), this, SLOT( showListBox() ) );
+		connect( bp, SIGNAL( showConsole() ), this, SLOT( showConsole() ) );
 	}
 	// add dock to tabbar
 	mWorkspace->tabToolBar()->bar( TabToolBar::Bottom )->appendTab( mMessageBox,  QPixmap( ":/icons/builderror.png" ), tr( "Message Box" ) );
@@ -78,17 +71,15 @@ bool MessageBox::uninstall()
 	delete aShowConsole;
 	delete aShowListBox;
 	// connect to Console bridge
-	Console* c = (Console*)mWorkspace->pluginsManager()->plugin( "Console" );
-	if ( c )
+	BasePlugin* bp = mWorkspace->pluginsManager()->plugin( "Console" );
+	if ( bp )
 	{
-		disconnect( c, SIGNAL( messageBox( const QString& ) ), this, SLOT( messageBox( const QString& ) ) );
-		disconnect( c, SIGNAL( clearMessageBox() ), this, SLOT( clearMessageBox() ) );
-		disconnect( c, SIGNAL( dataAvailable( const QString& ) ), this, SLOT( dataAvailable( const QString& ) ) );
+		disconnect( bp, SIGNAL( messageBox( const QString& ) ), this, SLOT( messageBox( const QString& ) ) );
+		disconnect( bp, SIGNAL( clearMessageBox() ), this, SLOT( clearMessageBox() ) );
+		disconnect( bp, SIGNAL( dataAvailable( const QString& ) ), this, SLOT( dataAvailable( const QString& ) ) );
+		disconnect( bp, SIGNAL( showListBox() ), this, SLOT( showListBox() ) );
+		disconnect( bp, SIGNAL( showConsole() ), this, SLOT( showConsole() ) );
 	}
-	/*
-	disconnect (Studio::self(), SIGNAL(buildComplete (bool)),this, SLOT (buildComplete (bool)));
-	disconnect (this, SIGNAL(gotoLine (QString , int )),Studio::self(), SIGNAL (gotoLine (QString , int )));
-	*/
 	// remove dock from tabtoolbar
 	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->removeTab( mMessageBox );
 	// delete dock
@@ -107,6 +98,7 @@ void MessageBox::messageBox( const QString& s )
 	// we check if the scroll bar is at maximum
 	bool b = mMessageBox->tbMessages->verticalScrollBar()->value() == mMessageBox->tbMessages->verticalScrollBar()->maximum();
 	// append text
+	mMessageBox->tbMessages->moveCursor( QTextCursor::End );
 	mMessageBox->tbMessages->insertHtml( s +"<br />" );
 	// if scrollbar is at maximum, increase it
 	if ( b )
@@ -132,6 +124,7 @@ void MessageBox::dataAvailable( const QString& s )
 	// we check if the scroll bar is at maximum
 	bool b = mMessageBox->tbMessages->verticalScrollBar()->value() == mMessageBox->tbMessages->verticalScrollBar()->maximum();
 	// append log
+	mMessageBox->tbMessages->moveCursor( QTextCursor::End );
 	mMessageBox->tbMessages->insertPlainText( s );
 	// if scrollbar is at maximum, increase it
 	if ( b )

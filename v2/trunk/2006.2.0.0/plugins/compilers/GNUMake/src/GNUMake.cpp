@@ -5,6 +5,7 @@
 #include "PluginsManager.h"
 #include "UISettings.h"
 #include "Settings.h"
+#include "Console.h"
 //
 #include <QFileInfo>
 #include <QFileDialog>
@@ -61,6 +62,8 @@ bool GNUMake::install()
 		connect( this, SIGNAL( messageBox( const QString& ) ), c, SIGNAL( messageBox( const QString& ) ) );
 		connect( this, SIGNAL( clearMessageBox() ), c, SIGNAL( clearMessageBox() ) );
 		connect( this, SIGNAL( dataAvailable( const QString& ) ), c, SIGNAL( dataAvailable( const QString& ) ) );
+		connect( this, SIGNAL( showListBox() ), c, SIGNAL( showListBox() ) );
+		connect( this, SIGNAL( showConsole() ), c, SIGNAL( showConsole() ) );
 	}
 	//
 	mPluginInfos.Installed = true;
@@ -99,6 +102,8 @@ bool GNUMake::uninstall()
 		disconnect( this, SIGNAL( messageBox( const QString& ) ), c, SIGNAL( messageBox( const QString& ) ) );
 		disconnect( this, SIGNAL( clearMessageBox() ), c, SIGNAL( clearMessageBox() ) );
 		disconnect( this, SIGNAL( dataAvailable( const QString& ) ), c, SIGNAL( dataAvailable( const QString& ) ) );
+		disconnect( this, SIGNAL( showListBox() ), c, SIGNAL( showListBox() ) );
+		disconnect( this, SIGNAL( showConsole() ), c, SIGNAL( showConsole() ) );
 	}
 	//
 	mPluginInfos.Installed = false;
@@ -112,9 +117,9 @@ QWidget* GNUMake::settingsWidget()
 //
 void GNUMake::buildCurrent()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = currentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -127,9 +132,9 @@ void GNUMake::buildCurrent()
 //
 void GNUMake::buildAll()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = parentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -142,9 +147,9 @@ void GNUMake::buildAll()
 //
 void GNUMake::reBuildCurrent()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = currentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -158,9 +163,9 @@ void GNUMake::reBuildCurrent()
 //
 void GNUMake::reBuildAll()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = parentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -179,9 +184,9 @@ void GNUMake::stop()
 //
 void GNUMake::cleanCurrent()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = currentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -194,9 +199,9 @@ void GNUMake::cleanCurrent()
 //
 void GNUMake::cleanAll()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = parentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -209,9 +214,9 @@ void GNUMake::cleanAll()
 //
 void GNUMake::distCleanCurrent()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = currentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -224,9 +229,9 @@ void GNUMake::distCleanCurrent()
 //
 void GNUMake::distCleanAll()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = parentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -239,9 +244,9 @@ void GNUMake::distCleanAll()
 //
 void GNUMake::execute() 
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = currentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -253,9 +258,9 @@ void GNUMake::execute()
 //
 void GNUMake::executeWithParameters() 
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = currentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// get params
 	bool b;
@@ -273,9 +278,9 @@ void GNUMake::executeWithParameters()
 //
 void GNUMake::distCleanBuildExecute()
 {
-	// got project
+	// check project
 	AbstractProjectItemModel* p = currentProject();
-	if ( !p )
+	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
 	ConsoleCommands l;
@@ -287,6 +292,16 @@ void GNUMake::distCleanBuildExecute()
 	// send commands
 	emit clearMessageBox();
 	emit runConsoleCommands( l );
+}
+//
+bool GNUMake::checkForProject( AbstractProjectItemModel* p )
+{
+	if ( !p )
+	{
+		emit messageBox( tr( "<font color=\"red\"><b>You need to open a project before using this action.<b></font>" ) );
+		emit showConsole();
+	}
+	return p;
 }
 //
 AbstractProjectItemModel* GNUMake::currentProject()

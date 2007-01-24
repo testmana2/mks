@@ -42,6 +42,8 @@ signals:
 	void messageBox( const QString& );
 	void clearMessageBox();
 	void dataAvailable( const QString& );
+	void showListBox();
+	void showConsole();
 	//
 };
 //

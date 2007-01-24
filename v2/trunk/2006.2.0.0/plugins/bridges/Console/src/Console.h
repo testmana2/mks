@@ -64,9 +64,13 @@ private slots:
 	void stateChanged( QProcess::ProcessState );
 	//
 signals:
+	void consoleCommandFinished( const ConsoleCommand& );
+	// messagebox slots
 	void messageBox( const QString& );
 	void clearMessageBox();
 	void dataAvailable( const QString& );
+	void showListBox();
+	void showConsole();
 	//
 };
 //

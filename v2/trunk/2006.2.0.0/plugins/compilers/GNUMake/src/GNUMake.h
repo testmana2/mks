@@ -2,7 +2,6 @@
 #define GNUMAKE_H
 //
 #include "CompilerPlugin.h"
-#include "Console.h"
 //
 class AbstractProjectItemModel;
 //
@@ -33,6 +32,7 @@ public slots:
 	virtual void distCleanBuildExecute();
 	//
 private:
+	bool checkForProject( AbstractProjectItemModel* );
 	AbstractProjectItemModel* currentProject();
 	AbstractProjectItemModel* parentProject();
 	//
