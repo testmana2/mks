@@ -19,6 +19,8 @@ private:
 	//
 protected:
 	virtual bool filterAcceptsRow( int, const QModelIndex& ) const;
+	virtual void doubleClicked( const QModelIndex& );
+	virtual void customContextMenuRequested( const QPoint& );
 	//
 };
 //

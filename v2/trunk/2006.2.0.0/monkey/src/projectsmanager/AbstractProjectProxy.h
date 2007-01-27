@@ -35,9 +35,13 @@ protected:
 	//
 public slots:
 	virtual void setComplexModel( bool );
+	virtual void doubleClicked( const QModelIndex& ) = 0;
+	virtual void customContextMenuRequested( const QPoint& ) = 0;
 	//
 signals:
 	void complexModelChanged( bool );
+	// emit when a file request to be open
+	void fileOpenRequested( const QString&, AbstractProjectProxy* );
 	//
 };
 //

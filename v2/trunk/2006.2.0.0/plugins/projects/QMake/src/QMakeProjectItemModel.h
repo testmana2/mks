@@ -40,7 +40,7 @@ protected:
 	void parseLine( const QString&, QMakeProjectItem* = 0 );
 	void parseBlock( const QString&, QMakeProjectItem* = 0 );
 	void setItemIcon( QMakeProjectItem* );
-	QMakeProjectItem* getFolder( const QString&, QMakeProjectItem* = 0 );
+	QMakeProjectItem* getFolder( const QString&, QMakeProjectItem* = 0, bool = true );
 	//
 	QMakeProjectItem* iProject;
 	//

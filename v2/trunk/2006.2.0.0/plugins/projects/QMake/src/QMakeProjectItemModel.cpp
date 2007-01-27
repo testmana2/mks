@@ -315,18 +315,26 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 						mTemp.chop( 1 );
 						mTemp.remove( 0, 1 );
 					}
-					iValue = new QMakeProjectItem( QMakeProjectItem::Value );
-					iValue->setData( mTemp, QMakeProjectItem::ValueRole );
-					iValue->setToolTip( tr( "Value: %1" ).arg( mTemp ) );
-					setItemIcon( iValue );
+					//
 					if ( simpleModelVariables().contains( iVariable->text(), Qt::CaseInsensitive ) )
 					{
+						iValue = new QMakeProjectItem( QMakeProjectItem::File );
+						iValue->setData( mTemp, QMakeProjectItem::ValueRole );
+						iValue->setData( filePath( mTemp ), QMakeProjectItem::AbsoluteFilePathRole );
+						iValue->setToolTip( tr( "Value: %1" ).arg( mTemp ) );
+						setItemIcon( iValue );
+						//
 						QFileInfo mFile( mTemp );
 						iValue->setText( mFile.fileName() );
 						appendRow( iValue, getFolder( mFile.path(), iVariable ) );
 					}
 					else
 					{
+						iValue = new QMakeProjectItem( QMakeProjectItem::Value );
+						iValue->setData( mTemp, QMakeProjectItem::ValueRole );
+						iValue->setToolTip( tr( "Value: %1" ).arg( mTemp ) );
+						setItemIcon( iValue );
+						//
 						iValue->setText( mTemp );
 						appendRow( iValue, iVariable );
 					}
@@ -466,36 +474,45 @@ void QMakeProjectItemModel::setItemIcon( QMakeProjectItem* item )
 	item->setIcon( QIcon( mFileName ) );
 }
 // return an item for mPath folder and parent item iParent
-QMakeProjectItem* QMakeProjectItemModel::getFolder( const QString& mPath, QMakeProjectItem* iParent )
+QMakeProjectItem* QMakeProjectItemModel::getFolder( const QString& mPath, QMakeProjectItem* iParent, bool b )
 {
 	if ( mPath.isEmpty() || mPath == "." || mPath == "./" )
 		return iParent;
+	//
 	QMakeProjectItem* iFolder = 0;
+	QMakeProjectItem* it = 0;
+	// ther can be bug is path start with / need rewrite
 	QStringList l = mPath.split( "/", QString::SkipEmptyParts );
-	QString mName;
+	QStringList mName;
 	foreach ( QString s, l )
 	{
 		iFolder = 0;
+		mName << s;
 		for ( int j = 0; j < iParent->rowCount(); j++ )
 		{
-			iFolder = (QMakeProjectItem*)iParent->child( j );
-			if ( iFolder->type() == QMakeProjectItem::Folder && iFolder->text() == s )
-				return iFolder;
-			iFolder = 0;
+			// got item
+			it = (QMakeProjectItem*)iParent->child( j );
+			// check if itel is the one require
+			if ( it->type() == QMakeProjectItem::Folder && it->data( QMakeProjectItem::FolderPathRole ).toString() == mName.join( "/" ) )
+			{
+				iFolder = it;
+				break;
+			}
 		}
+		// create item if it not exists
 		if ( !iFolder )
 		{
-			mName += "/" +s;
-			if ( mName.startsWith( "/" ) )
-				mName.remove( 0, 1 );
 			iFolder = new QMakeProjectItem( QMakeProjectItem::Folder );
 			iFolder->setText( s );
-			iFolder->setToolTip( tr( "Path: %1" ).arg( mName ) );
+			iFolder->setToolTip( tr( "Path: %1" ).arg( mName.join( "/" ) ) );
+			iFolder->setData( mName.join( "/" ), QMakeProjectItem::FolderPathRole );
 			setItemIcon( iFolder );
 			iParent->insertRow( 0, iFolder );
 		}
+		// set parent now this new item
 		iParent = iFolder;
 	}
+	//
 	return iFolder;
 }
 //

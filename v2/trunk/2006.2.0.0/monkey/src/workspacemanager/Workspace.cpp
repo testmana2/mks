@@ -43,6 +43,7 @@ void Workspace::initialize()
 	setTabMode( tmMDI );
 	// add project manager to dock area
 	tabToolBar()->bar( TabToolBar::Left )->appendTab( projectsManager(), QPixmap( ":/Icons/Icons/project.png" ), tr( "Projects" ) );
+	connect( projectsManager(), SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ), this, SLOT( openFile( const QString&, AbstractProjectProxy* ) ) );
 	// itself
 	connect( this, SIGNAL( tabInserted( int ) ), this, SLOT( tabInserted( int ) ) );
 	connect( this, SIGNAL( tabRemoved( int ) ), this, SLOT( tabRemoved( int ) ) );

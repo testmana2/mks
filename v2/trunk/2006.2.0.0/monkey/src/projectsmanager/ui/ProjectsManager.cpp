@@ -126,6 +126,13 @@ void ProjectsManager::addProxy( AbstractProjectProxy* p, AbstractProjectProxy* p
 	connect( p->project(), SIGNAL( isModifiedChanged( bool ) ), MenuBar::self()->action( "mProject/mSave/aCurrent" ), SLOT( setEnabled( bool ) ) );
 	// create a view for proxy
 	QTreeView* tv = new QTreeView;
+	tv->setEditTriggers( QAbstractItemView::NoEditTriggers );
+	tv->setContextMenuPolicy( Qt::CustomContextMenu );
+	// connect view
+	connect( tv, SIGNAL( doubleClicked( const QModelIndex& ) ), p, SLOT( doubleClicked( const QModelIndex& ) ) );
+	connect( tv, SIGNAL( customContextMenuRequested( const QPoint& ) ), p, SLOT( customContextMenuRequested( const QPoint& ) ) );
+	connect( p, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ), this, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ) );
+	// set model
 	tv->setModel( p );
 	if ( p->rowCount() > 0 )
 		tv->setRootIndex( p->index( 0, 0 ) );

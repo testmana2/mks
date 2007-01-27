@@ -27,6 +27,7 @@ bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 	case QMakeProjectItem::Project:
 	case QMakeProjectItem::Folder:
 	case QMakeProjectItem::Value:
+	case QMakeProjectItem::File:
 		return true;
 		break;
 	case QMakeProjectItem::Scope:
@@ -42,4 +43,17 @@ bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 		break;
 	}
 	return false;
+}
+//
+void QMakeProjectProxy::doubleClicked( const QModelIndex& i )
+{
+	QModelIndex t = mapToSource( i );
+	QMakeProjectItem* it = (QMakeProjectItem*)mSource->itemFromIndex( t );
+	if ( it && it->type() == QMakeProjectItem::File )
+		emit fileOpenRequested( it->data( QMakeProjectItem::AbsoluteFilePathRole ).toString() , this );
+}
+//
+void QMakeProjectProxy::customContextMenuRequested( const QPoint& p )
+{
+	qWarning( "context menu" );
 }

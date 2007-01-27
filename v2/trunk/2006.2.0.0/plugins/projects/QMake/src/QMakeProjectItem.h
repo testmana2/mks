@@ -16,7 +16,8 @@ public:
 		//NestedRole, // nested ie: else, win2 etc
 		ParametersRole, // function parameters as QStringList
 		CommentRole, // a comment line after value
-		OperatorRole // an operator like -=, = etc
+		OperatorRole, // an operator like -=, = etc
+		FolderPathRole // folder type path content
 	};
 	//
 	enum NodeType

@@ -10,11 +10,6 @@ DESTDIR	= $$MONKEY_PLUGINS_DIR/bridges
 
 SOURCES	= src/Console.cpp
 
-OPENEDFILES	= src/ConsoleCommand.h \
-	src/Console.h \
-	src/Console.cpp \
-	src/ConsoleCommandParser.h
-
 HEADERS	= src/Console.h \
 	src/ConsoleCommand.h \
 	src/ConsoleCommandParser.h

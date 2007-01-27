@@ -45,6 +45,7 @@ private slots:
 signals:
 	void proxyAdded( AbstractProjectProxy* );
 	void currentProxyChanged( AbstractProjectProxy* );
+	void fileOpenRequested( const QString&, AbstractProjectProxy* );
 	//
 };
 //
