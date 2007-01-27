@@ -118,6 +118,7 @@ void MenuBar::initialize()
 		action( "aExecute", tr( "&Execute" ), QIcon( ":/Icons/Icons/buildexecute.png" ) );
 		action( "aExecuteWithParameters", tr( "Execute with &parameters..." ), QIcon( ":/Icons/Icons/buildexecute.png" ) );
 		action( "aSeparator4" );
+		action( "aBuildExecute", tr( "Build, Execu&te" ), QIcon( ":/Icons/Icons/buildmisc.png" ) );
 		action( "aDistCleanBuildExecute", tr( "Dist Clean, Build, E&xecute" ), QIcon( ":/Icons/Icons/buildmisc.png" ) );
 	endGroup();
 	/*

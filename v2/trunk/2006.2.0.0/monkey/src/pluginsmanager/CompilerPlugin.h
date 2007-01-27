@@ -25,6 +25,7 @@ public slots:
 	virtual void distCleanAll() = 0;
 	virtual void execute() = 0;
 	virtual void executeWithParameters() = 0;
+	virtual void buildExecute() = 0;
 	virtual void distCleanBuildExecute() = 0;
 	//
 signals:

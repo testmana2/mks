@@ -42,17 +42,13 @@ pTabWorkspace::~pTabWorkspace()
 //
 bool pTabWorkspace::eventFilter( QObject* o, QEvent* e )
 {
+	if ( mTabMode != tmTopLevel )
+		return QFrame::eventFilter( o, e );
+	// only check this in tmTopLevel mode for tracking window activate
 	QEvent::Type t = e->type();
-	if ( o && o->isWidgetType() )
-	{
-		QWidget* w = qobject_cast<QWidget*>( o );
-		if ( w )
-		{
-			// in top level mode / mdi activated
-			if ( t == QEvent::WindowActivate )
-				setCurrentWidget( w );
-		}
-	}
+	if ( t == QEvent::WindowActivate )
+		if ( o && o->isWidgetType() && o != currentWidget() )
+			setCurrentWidget( (QWidget*)o );
 	return QFrame::eventFilter( o, e );
 }
 //
@@ -70,7 +66,10 @@ void pTabWorkspace::tabBar_currentChanged( int i )
 		break;
 	case tmTopLevel:
 		if ( widget( i ) )
+		{
+			widget( i )->raise();
 			widget( i )->activateWindow();
+		}
 		break;
 	default:
 		break;

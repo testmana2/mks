@@ -9,7 +9,6 @@ DESTDIR	= $$MONKEY_PLUGINS_DIR/workspace
 RESOURCES	= src/resources/messagebox_resources.qrc
 
 SOURCES	= src/MessageBox.cpp \
-	src/gccParser.cpp \
 	src/ui/UIMessageBox.cpp
 
 FORMS	= src/ui/UIMessageBox.ui
@@ -18,6 +17,5 @@ OPENEDFILES	= src/MessageBox.h \
 	src/MessageBox.cpp
 
 HEADERS	= src/MessageBox.h \
-	src/ui/UIMessageBox.h \
-	src/gccParser.h
+	src/ui/UIMessageBox.h
 

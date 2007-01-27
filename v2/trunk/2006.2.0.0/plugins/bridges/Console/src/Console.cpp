@@ -1,4 +1,5 @@
 #include "Console.h"
+#include "ConsoleCommandParser.h"
 //
 #include <QMessageBox>
 #include <QApplication>
@@ -13,6 +14,7 @@ void Console::initialize( Workspace* w )
 {
 	BasePlugin::initialize( w );
 	mProcess = 0L;
+	mParser = 0L;
 	mStop = false;
 	// plugin infos
 	mPluginInfos.Caption = tr( "Console Plugin" );
@@ -117,6 +119,10 @@ void Console::run()
 		ConsoleCommand& c = cc.first();
 		QString command = c.command();
 		QString workingdir = c.workingFolder();
+		// parser
+		mParser = c.parser();
+		if ( mParser )
+			connect( mParser, SIGNAL( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ), this, SIGNAL( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ) );
 		// remove command from list
 		cc.removeFirst();
 		// remove the entry if list is empty
@@ -155,7 +161,7 @@ void Console::stopConsole()
 	{
 		mStop = true;
 		mProcess->terminate();
-		mProcess->waitForFinished( 15000 );
+		mProcess->waitForFinished( 5000 );
 		mProcess->kill();
 		emit messageBox( tr( "<font color=\"red\"><b>*** Console stopped by user ***</b></font>" ) );
 	}
@@ -186,7 +192,7 @@ void Console::error( QProcess::ProcessError e )
 		s = tr( "An unknown error occurred. This is the default return value of error()." );
 		break;
 	}
-	//emit messageBox( s );
+	emit messageBox( s );
 }
 //
 void Console::finished( int i, QProcess::ExitStatus e )
@@ -203,6 +209,11 @@ void Console::finished( int i, QProcess::ExitStatus e )
 	default:
 		s = tr( "An unknown error occurred." );
 	}
+	// parser
+	if ( mParser )
+		emit messageBox( mParser->resultString() );
+	delete mParser;
+	// send command finish
 	emit messageBox( s.prepend( "<b><font color=\"blue\">*** " ).append( tr( " Exit Code: %1" ).arg( i ) ).append( " ***</font></b>" ) );
 	// execute next command
 	if ( mStop && !mConsoleCommandsList.isEmpty() )
@@ -222,7 +233,12 @@ void Console::finished( int i, QProcess::ExitStatus e )
 void Console::readyRead()
 {
 	if ( isInstalled() )
-		emit dataAvailable( QString::fromLocal8Bit( mProcess->readAllStandardOutput().data() ) );
+	{
+		QString s = QString::fromLocal8Bit( mProcess->readAllStandardOutput().data() );
+		if ( mParser )
+			mParser->appendToBuffer( s );
+		emit dataAvailable( s );
+	}
 }
 //
 void Console::started()

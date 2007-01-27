@@ -53,7 +53,7 @@ void TabToolBar::initialize()
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), newSeparator() );
 	// build action
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mBuild/mBuild/aCurrent" ) );
-	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mBuild/aDistCleanBuildExecute" ) );
+	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mBuild/aBuildExecute" ) );
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mBuild/aStop" ) );
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), newSeparator() );
 	// help action

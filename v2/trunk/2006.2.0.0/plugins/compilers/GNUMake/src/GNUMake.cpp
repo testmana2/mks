@@ -6,6 +6,7 @@
 #include "UISettings.h"
 #include "Settings.h"
 #include "Console.h"
+#include "GNUMakeParser.h"
 //
 #include <QFileInfo>
 #include <QFileDialog>
@@ -43,6 +44,7 @@ bool GNUMake::install()
 	connect( mWorkspace->menuBar()->action( "mBuild/mDistClean/aAll" ), SIGNAL( triggered() ), this, SLOT( distCleanAll() ) );
 	connect( mWorkspace->menuBar()->action( "mBuild/aExecute" ), SIGNAL( triggered() ), this, SLOT( execute() ) );
 	connect( mWorkspace->menuBar()->action( "mBuild/aExecuteWithParameters" ), SIGNAL( triggered() ), this, SLOT( executeWithParameters() ) );
+	connect( mWorkspace->menuBar()->action( "mBuild/aBuildExecute" ), SIGNAL( triggered() ), this, SLOT( buildExecute() ) );
 	connect( mWorkspace->menuBar()->action( "mBuild/aDistCleanBuildExecute" ), SIGNAL( triggered() ), this, SLOT( distCleanBuildExecute() ) );
 	// connect to console bridge
 	BasePlugin* c = mWorkspace->pluginsManager()->plugin( "Console" );
@@ -83,6 +85,7 @@ bool GNUMake::uninstall()
 	disconnect( mWorkspace->menuBar()->action( "mBuild/mDistClean/aAll" ), SIGNAL( triggered() ), this, SLOT( distCleanAll() ) );
 	disconnect( mWorkspace->menuBar()->action( "mBuild/aExecute" ), SIGNAL( triggered() ), this, SLOT( execute() ) );
 	disconnect( mWorkspace->menuBar()->action( "mBuild/aExecuteWithParameters" ), SIGNAL( triggered() ), this, SLOT( executeWithParameters() ) );
+	disconnect( mWorkspace->menuBar()->action( "mBuild/aBuildExecute" ), SIGNAL( triggered() ), this, SLOT( buildExecute() ) );
 	disconnect( mWorkspace->menuBar()->action( "mBuild/aDistCleanBuildExecute" ), SIGNAL( triggered() ), this, SLOT( distCleanBuildExecute() ) );
 	// disconnect from console bridge
 	BasePlugin* c = mWorkspace->pluginsManager()->plugin( "Console" );
@@ -266,8 +269,10 @@ void GNUMake::executeWithParameters()
 	bool b;
 	QString s = Settings::current()->value( "Plugins/GNU Make/LastParameters" ).toString();
 	s = QInputDialog::getText( qApp->activeWindow(), tr( "Parameters" ), tr( "Input parameters for executing " ), QLineEdit::Normal, s, &b );
-	if ( !s.isNull() )
-		Settings::current()->setValue( "Plugins/GNU Make/LastParameters", s );
+	if ( !b || s.isNull() )
+		return;
+	//
+	Settings::current()->setValue( "Plugins/GNU Make/LastParameters", s );
 	// create command sentences
 	ConsoleCommands l;
 	l << executeCommand( p, b ? s : QString::null );
@@ -275,6 +280,22 @@ void GNUMake::executeWithParameters()
 	emit clearMessageBox();
 	emit runConsoleCommands( l );
 };
+//
+void GNUMake::buildExecute()
+{
+	// check project
+	AbstractProjectItemModel* p = currentProject();
+	if ( !checkForProject( p ) )
+		return;
+	// create command sentences
+	ConsoleCommands l;
+	l << qmakeCommand( p );
+	l << makeCommand( p );
+	l << executeCommand( p );
+	// send commands
+	emit clearMessageBox();
+	emit runConsoleCommands( l );
+}
 //
 void GNUMake::distCleanBuildExecute()
 {
@@ -324,11 +345,7 @@ ConsoleCommand GNUMake::makeCommand( AbstractProjectItemModel* p )
 {
 	QString mMake = "make";
 #if defined ( Q_WS_WIN )
-	#if defined ( Q_CC_GNU )
-		mMake = "mingw32-make";
-	#elif defined( Q_CC_MSVC )
-		mMake = "nmake";
-	#endif
+	mMake = "mingw32-make";
 #endif
 	// if there is a path we need sure it s added to system environment once
 	if ( !Settings::current()->value( "Plugins/GNU Make/Path" ).toString().isEmpty() )
@@ -355,7 +372,7 @@ ConsoleCommand GNUMake::makeCommand( AbstractProjectItemModel* p )
 	}
 	QString s = Settings::current()->value( "Plugins/GNU Make/Binary", mMake ).toString();
 	if ( !s.isNull() )
-		return ConsoleCommand( s, p->path() );
+		return ConsoleCommand( s, p->path(), new GNUMakeParser );
 	return ConsoleCommand( QString::null, QString::null ); // this command will not be executed by console
 }
 //

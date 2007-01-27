@@ -4,13 +4,18 @@
 #include <QFileDialog>
 #include <QFileInfo>
 //
-UISettings::UISettings( QWidget* parent )
-	: QWidget( parent )
+UISettings::UISettings( QWidget* p )
+	: QWidget( p )
 {
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	//
-	leBinary->setText( Settings::current()->value( "Plugins/GNU Make/Binary" ).toString() );
+	QString mMake = "make";
+#if defined ( Q_WS_WIN )
+	mMake = "mingw32-make";
+#endif
+	//
+	leBinary->setText( Settings::current()->value( "Plugins/GNU Make/Binary", mMake ).toString() );
 	lePath->setText( Settings::current()->value( "Plugins/GNU Make/Path" ).toString() );
 }
 //

@@ -2,32 +2,10 @@
 #define CONSOLE_H
 //
 #include "BasePlugin.h"
+#include "ConsoleCommand.h"
+#include "ConsoleCommandParser.h"
 //
 #include <QProcess>
-//
-class ConsoleCommand
-{
-public:
-	ConsoleCommand( const QString& c, const QString& w )
-		: mCommand( c ), mWorkingFolder( w ) {}
-	//
-	bool isNull() const { return mCommand.trimmed().isEmpty(); }
-	QString command() const { return mCommand; }
-	void setCommand( const QString& s ) { mCommand = s; }
-	QString workingFolder() const { return mWorkingFolder; }
-	void setWorkingFolder( const QString& s ) { mWorkingFolder = s; }
-	//
-	bool operator == ( const ConsoleCommand& c ) const
-	{ return command() == c.command() && workingFolder() == c.workingFolder(); }
-	//
-private:
-	QString mCommand; // the command line to execute
-	QString mWorkingFolder; // the working directory
-	//
-};
-//
-typedef QList<ConsoleCommand> ConsoleCommands; // a list of ConsoleCommand
-typedef QList<ConsoleCommands> ConsoleCommandsList; // a type for list of ConsoleCommands
 //
 class Console : public BasePlugin
 {
@@ -40,8 +18,9 @@ public:
 	virtual bool install();
 	virtual bool uninstall();
 	//
-private:
+protected:
 	QProcess* mProcess;
+	ConsoleCommandParser* mParser;
 	ConsoleCommandsList mConsoleCommandsList;
 	bool mStop;
 	//
@@ -71,6 +50,8 @@ signals:
 	void dataAvailable( const QString& );
 	void showListBox();
 	void showConsole();
+	// parser signal
+	void newErrorAvailable( const ConsoleCommandParser::ErrorInfos& );
 	//
 };
 //

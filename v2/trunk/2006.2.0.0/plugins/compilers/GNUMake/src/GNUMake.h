@@ -29,6 +29,7 @@ public slots:
 	virtual void distCleanAll();
 	virtual void execute();
 	virtual void executeWithParameters();
+	virtual void buildExecute();
 	virtual void distCleanBuildExecute();
 	//
 private:
