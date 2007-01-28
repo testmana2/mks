@@ -3,24 +3,26 @@
 #include <QRegExp>
 #include <QStringList>
 //
-QRegExp rx;
+QRegExp rxErrWarn;
+QRegExp rxBuild;
 //
-GNUMakeParser::GNUMakeParser( const QString& s )
+GNUMakeParser::GNUMakeParser( const QString& s1, const QString& s2 )
 {
-	setRegExp( s );
+	rxErrWarn.setPattern( s1 );
+	rxBuild.setPattern( s2 );
 }
 //
 QString GNUMakeParser::resultString()
 {
 	int e = 0, w = 0, o = 0;
-	foreach ( ConsoleCommandParser::ErrorInfos ce, mErrors )
+	foreach ( Message m, mMessages )
 	{
-		switch ( ce.mType )
+		switch ( m.mType )
 		{
-		case ConsoleCommandParser::Error:
+		case Error:
 			e++;
 			break;
-		case ConsoleCommandParser::Warning:
+		case Warning:
 			w++;
 			break;
 		default:
@@ -28,17 +30,37 @@ QString GNUMakeParser::resultString()
 			break;
 		}
 	}
-	//
+	// message
+	Message m;
+	m.mFileName = QString::null;
+	m.mPosition = QPoint( 0, 0 );
+	// result string
 	QString s;
 	QString b = colorText( "<br />[beta:If you see wrong message, please, send console output to the trac.monkeystudio.org]", "red" );
 	if ( e )
+	{
+		// message
+		m.mText = tr( "Build failed" );
+		m.mType = Bad;
+		// result string
 		s = tr( "Make failed. %1 error(s), %2 warning(s) and %3 unknow(s)." ).append( b )
 			.arg( colorText( QString::number( e ), "red" ), colorText( QString::number( w ), "red" ), colorText( QString::number( o ), "red" ) );
+	}
 	else
+	{
+		// message
+		m.mText = tr( "Build complete" );
+		m.mType = Good;
+		// result string
 		s = tr( "Make complete with %1 error(s), %2 warning(s) and %3 unknow(s)." ).append( b )
 			.arg( colorText( QString::number( e ), "red" ), colorText( QString::number( w ), "red" ), colorText( QString::number( o ), "red" ) );
+	}
+	// message
+	m.mFullText = s;
+	mMessages.append( m );
+	emit newErrorAvailable( m );
+	// result string
 	return QString( "<b>%1</b>" ).arg( colorText( s, "green" ) );
-
 }
 //
 void GNUMakeParser::appendToBuffer( const QString& s )
@@ -50,14 +72,9 @@ void GNUMakeParser::appendToBuffer( const QString& s )
 	parse();	
 }
 //
-void GNUMakeParser::setRegExp( const QString& s )
-{
-	rx.setPattern( s );
-}
-//
 void GNUMakeParser::parse()
 {
-	if ( rx.pattern().isNull() )
+	if ( rxErrWarn.pattern().isNull() )
 		return;
 	//
 	QStringList l = mBuffer.split( '\n' );
@@ -65,24 +82,40 @@ void GNUMakeParser::parse()
 	{
 		int i = 0;
 		QString t;
-		while ( ( i = rx.indexIn( s, i ) ) != -1 )
+		while ( ( i = rxErrWarn.indexIn( s, i ) ) != -1 )
 		{
-			ErrorInfos e;
-			e.mFullText = rx.cap( 0 );
-			e.mFileName = rx.cap( 1 );
-			e.mPosition = QPoint( 0, rx.cap( 2 ).toInt() );
-			t = rx.cap( 4 ).toLower();
+			Message m;
+			m.mFullText = rxErrWarn.cap( 0 );
+			m.mFileName = rxErrWarn.cap( 1 );
+			m.mPosition = QPoint( 0, rxErrWarn.cap( 2 ).toInt() );
+			t = rxErrWarn.cap( 4 ).toLower();
 			if ( t == "error" )
-				e.mType = ConsoleCommandParser::Error;
+				m.mType = Error;
 			else if ( t == "warning" )
-				e.mType = ConsoleCommandParser::Warning;
-			e.mText = rx.cap( 7 );
+				m.mType = Warning;
+			m.mText = QString( "%1:%2: %3" ).arg( m.mFileName ).arg( m.mPosition.y() ).arg( rxErrWarn.cap( 7 ) );
 			// add error to list
-			mErrors.append( e );
+			mMessages.append( m );
 			// emit signal
-			emit newErrorAvailable( e );
+			emit newErrorAvailable( m );
 			// update i
-			i += rx.matchedLength();
+			i += rxErrWarn.matchedLength();
+		}
+		//
+		i = 0;
+		while ( ( i = rxBuild.indexIn( s, i ) ) != -1 )
+		{
+			Message m;
+			m.mFullText = rxBuild.cap( 0 );
+			m.mFileName = QString::null;
+			m.mPosition = QPoint( 0, 0 );
+			m.mType = State;
+			m.mText =  tr( "Compiling %1..." ).arg( rxBuild.cap( 1 ) );
+			mMessages.append( m );
+			// emit signal
+			emit newErrorAvailable( m );
+			// update i
+			i += rxBuild.matchedLength();
 		}
 	}
 	mBuffer.clear();

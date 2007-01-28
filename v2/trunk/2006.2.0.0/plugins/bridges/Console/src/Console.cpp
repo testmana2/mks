@@ -122,7 +122,7 @@ void Console::run()
 		// parser
 		mParser = c.parser();
 		if ( mParser )
-			connect( mParser, SIGNAL( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ), this, SIGNAL( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ) );
+			connect( mParser, SIGNAL( newErrorAvailable( const ConsoleCommandParser::Message& ) ), this, SIGNAL( newErrorAvailable( const ConsoleCommandParser::Message& ) ) );
 		// remove command from list
 		cc.removeFirst();
 		// remove the entry if list is empty

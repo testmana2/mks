@@ -15,7 +15,7 @@ void MessageBox::initialize( Workspace* w )
 	mPluginInfos.Description = tr( "Message box for messages and errors" );
 	mPluginInfos.Type = BasePlugin::iWorkspace;
 	mPluginInfos.Name = "MessageBox";
-	mPluginInfos.Version = "0.1.0";
+	mPluginInfos.Version = "0.5.0";
 	mPluginInfos.Installed = false;
 	//
 	mMessageBox = 0L;
@@ -44,7 +44,7 @@ bool MessageBox::install()
 		connect( bp, SIGNAL( showListBox() ), this, SLOT( showListBox() ) );
 		connect( bp, SIGNAL( showConsole() ), this, SLOT( showConsole() ) );
 		// parser
-		connect( bp, SIGNAL( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ), this, SLOT( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ) );
+		connect( bp, SIGNAL( newErrorAvailable( const ConsoleCommandParser::Message& ) ), this, SLOT( newErrorAvailable( const ConsoleCommandParser::Message& ) ) );
 	}
 	// add dock to tabbar
 	mWorkspace->tabToolBar()->bar( TabToolBar::Bottom )->appendTab( mMessageBox,  QPixmap( ":/icons/builderror.png" ), tr( "Message Box" ) );
@@ -75,7 +75,7 @@ bool MessageBox::uninstall()
 		disconnect( bp, SIGNAL( showListBox() ), this, SLOT( showListBox() ) );
 		disconnect( bp, SIGNAL( showConsole() ), this, SLOT( showConsole() ) );
 		// parser
-		disconnect( bp, SIGNAL( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ), this, SLOT( newErrorAvailable( const ConsoleCommandParser::ErrorInfos& ) ) );
+		disconnect( bp, SIGNAL( newErrorAvailable( const ConsoleCommandParser::Message& ) ), this, SLOT( newErrorAvailable( const ConsoleCommandParser::Message& ) ) );
 	}
 	// remove dock from tabtoolbar
 	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->removeTab( mMessageBox );
@@ -146,16 +146,26 @@ void MessageBox::showConsole()
 	mMessageBox->twMessageBox->setCurrentWidget( mMessageBox->tbMessages );
 };
 //
-void MessageBox::newErrorAvailable( const ConsoleCommandParser::ErrorInfos& e )
+void MessageBox::newErrorAvailable( const ConsoleCommandParser::Message& m )
 {
-	QListWidgetItem* it = new QListWidgetItem( mMessageBox->lwErrors );
-	it->setText( QString( "%1: %2, %3: %4" ).arg( e.mFileName )
-		.arg( e.mPosition.y() ).arg( e.mPosition.x() ).arg( e.mText ) );
-	it->setToolTip( e.mFullText );
-	it->setData( Qt::UserRole +1, e.mType ); // type
-	it->setData( Qt::UserRole +2, e.mFileName ); // filename
-	it->setData( Qt::UserRole +3, e.mPosition ); // position
-	switch ( e.mType )
+	// get last type
+	ConsoleCommandParser::MessageType t = ConsoleCommandParser::Unknow;
+	QListWidgetItem* lastIt = mMessageBox->lwErrors->item( mMessageBox->lwErrors->count() -1 );
+	if ( lastIt )
+		t = (ConsoleCommandParser::MessageType)lastIt->data( Qt::UserRole +1 ).toInt();
+	// create new/update item
+	QListWidgetItem* it;
+	if ( t == ConsoleCommandParser::State )
+		it = mMessageBox->lwErrors->item( mMessageBox->lwErrors->count() -1 );
+	else
+		it = new QListWidgetItem( mMessageBox->lwErrors );
+	// set item infos
+	it->setText( m.mText );
+	it->setToolTip( m.mFullText );
+	it->setData( Qt::UserRole +1, m.mType ); // type
+	it->setData( Qt::UserRole +2, m.mFileName ); // filename
+	it->setData( Qt::UserRole +3, m.mPosition ); // position
+	switch ( m.mType )
 	{
 	case ConsoleCommandParser::Error:
 		it->setIcon( QIcon( ":/icons/builderror.png" ) );
@@ -165,6 +175,18 @@ void MessageBox::newErrorAvailable( const ConsoleCommandParser::ErrorInfos& e )
 		it->setIcon( QIcon( ":/icons/buildwarning.png" ) );
 		it->setBackground( QColor( 0, 255, 0, 20 ) );
 		break;
+	case ConsoleCommandParser::State:
+		it->setIcon( QIcon( ":/icons/clock.png" ) );
+		it->setBackground( QColor( 0, 0, 255, 20 ) );
+		break;
+	case ConsoleCommandParser::Good:
+		it->setIcon( QIcon( ":/icons/buildwarning.png" ) );
+		it->setBackground( QColor( 0, 255, 0, 90 ) );
+		break;
+	case ConsoleCommandParser::Bad:
+		it->setIcon( QIcon( ":/icons/builderror.png" ) );
+		it->setBackground( QColor( 255, 0, 0, 90 ) );
+		break;
 	default:
 		it->setIcon( QIcon( ":/icons/unknow.png" ) );
 		it->setBackground( QColor( 125, 125, 125, 20 ) );
@@ -172,7 +194,7 @@ void MessageBox::newErrorAvailable( const ConsoleCommandParser::ErrorInfos& e )
 	}
 }
 //
-void MessageBox::makeGoto ()
+void MessageBox::makeGoto()
 {
 /*
 	if (errPointers [ui->listWidget->currentRow()] != NULL)

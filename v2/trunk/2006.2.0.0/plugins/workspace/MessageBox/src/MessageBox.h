@@ -25,7 +25,7 @@ public slots:
 	void showListBox();
 	void showConsole();
 	// parser
-	void newErrorAvailable( const ConsoleCommandParser::ErrorInfos& );
+	void newErrorAvailable( const ConsoleCommandParser::Message& );
 	//
 private slots:
 	void makeGoto();
@@ -34,7 +34,7 @@ private:
 	QPointer<UIMessageBox> mMessageBox;
 	//
 signals:
-	void gotoLine( const QString&, int );
+	void gotoFile( const QString&, const QPoint& );
 	//
 };
 //

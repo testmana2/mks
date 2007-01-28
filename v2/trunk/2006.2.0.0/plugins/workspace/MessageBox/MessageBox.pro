@@ -13,9 +13,6 @@ SOURCES	= src/MessageBox.cpp \
 
 FORMS	= src/ui/UIMessageBox.ui
 
-OPENEDFILES	= src/MessageBox.h \
-	src/MessageBox.cpp
-
 HEADERS	= src/MessageBox.h \
 	src/ui/UIMessageBox.h
 

@@ -12,11 +12,6 @@ SOURCES	= src/Cpp.cpp \
 	src/CppChild.cpp \
 	src/CppCornerWidget.cpp
 
-OPENEDFILES	= src/CppChild.h \
-	src/CppChild.cpp \
-	src/CppCornerWidget.h \
-	src/CppCornerWidget.cpp
-
 HEADERS	= src/Cpp.h \
 	src/CppChild.h \
 	src/CppCornerWidget.h

@@ -51,7 +51,7 @@ signals:
 	void showListBox();
 	void showConsole();
 	// parser signal
-	void newErrorAvailable( const ConsoleCommandParser::ErrorInfos& );
+	void newErrorAvailable( const ConsoleCommandParser::Message& );
 	//
 };
 //
