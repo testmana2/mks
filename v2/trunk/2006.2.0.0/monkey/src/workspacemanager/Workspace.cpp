@@ -37,7 +37,7 @@ Workspace::~Workspace()
 void Workspace::initialize()
 {
 	// set left corner
-	setCornerWidget( LeftCorner::self( this ), Qt::TopLeftCorner );
+	//setCornerWidget( LeftCorner::self( this ), Qt::TopLeftCorner );
 	// set mode
 	setTabShape( QTabBar::RoundedNorth );
 	setTabMode( tmMDI );
@@ -135,7 +135,10 @@ void Workspace::updateWorkspace()
 	statusBar()->setLayoutMode( c ? c->layoutMode() : AbstractChild::lNone );
 	statusBar()->setFileName( c ? c->currentFile() : QString::null );
 	// left corner widget
-	cornerWidget( Qt::TopLeftCorner )->setEnabled( c );
+	if ( c && c->cornerWidget() && cornerWidget( Qt::TopLeftCorner ) != c->cornerWidget() )
+		setCornerWidget( c->cornerWidget(), Qt::TopLeftCorner );
+	else if ( !count() || ( c && !c->cornerWidget() ) )
+		delete cornerWidget( Qt::TopLeftCorner );
 }
 //
 void Workspace::tabInserted( int i )

@@ -14,15 +14,6 @@ SOURCES	= src/QMake.cpp \
 	src/QMakeProjectItemModel.cpp \
 	src/QMakeProjectProxy.cpp
 
-OPENEDFILES	= src/QMake.h \
-	src/QMake.cpp \
-	src/QMakeProjectItem.h \
-	src/QMakeProjectItem.cpp \
-	src/QMakeProjectItemModel.h \
-	src/QMakeProjectItemModel.cpp \
-	src/QMakeProjectProxy.h \
-	src/QMakeProjectProxy.cpp
-
 HEADERS	= src/QMake.h \
 	src/QMakeProjectItem.h \
 	src/QMakeProjectItemModel.h \

@@ -1,5 +1,8 @@
 #include "pRightCorner.h"
 //
+#include "AbstractChild.h"
+#include "Workspace.h"
+//
 #include <QMenu>
 #include <QActionGroup>
 #include <QMetaEnum>
@@ -25,6 +28,10 @@ pRightCorner::pRightCorner( pTabWorkspace* p )
 	agView = new QActionGroup( menu() );
 	agWindows = new QActionGroup( menu() );
 	agShape = new QActionGroup( menu() );
+	//
+	agFiles = new QActionGroup( menu() );
+	agLayouts = new QActionGroup( menu() );
+	//
 	QMetaEnum e;
 	// fill agView
 	e = p->metaObject()->enumerator( p->metaObject()->indexOfEnumerator( "TabMode" ) );
@@ -57,10 +64,16 @@ pRightCorner::pRightCorner( pTabWorkspace* p )
 	menu()->addMenu( tr( "View" ) )->addActions( agView->actions() );
 	menu()->addMenu( tr( "Windows" ) )->addActions( agWindows->actions() );
 	menu()->addMenu( tr( "Shape" ) )->addActions( agShape->actions() );
+	mLayouts = menu()->addMenu( tr( "Layouts" ) );
+	mFiles = menu()->addMenu( tr( "Files" ) );
 	//
 	connect( agView, SIGNAL( triggered( QAction* ) ), this, SLOT( agView_triggered( QAction* ) ) );
 	connect( agWindows, SIGNAL( triggered( QAction* ) ), this, SLOT( agWindows_triggered( QAction* ) ) );
 	connect( agShape, SIGNAL( triggered( QAction* ) ), this, SLOT( agShape_triggered( QAction* ) ) );
+	//
+	connect( agLayouts, SIGNAL( triggered( QAction* ) ), this, SLOT( agLayouts_triggered( QAction* ) ) );
+	connect( agFiles, SIGNAL( triggered( QAction* ) ), this, SLOT( agFiles_triggered( QAction* ) ) );
+	connect( menu(), SIGNAL( aboutToShow() ), this, SLOT( menu_aboutToShow() ) );
 	//
 	connect( this, SIGNAL( requestChangeTabMode( pTabWorkspace::TabMode ) ), p, SLOT( setTabMode( pTabWorkspace::TabMode ) ) );
 	connect( this, SIGNAL( requestChangeWindowsMode( pTabWorkspace::WindowsMode ) ), p, SLOT( setWindowsMode( pTabWorkspace::WindowsMode ) ) );
@@ -112,4 +125,74 @@ void pRightCorner::tabShapeChanged( QTabBar::Shape s )
 			return;
 		}
 	}
+}
+//
+void pRightCorner::menu_aboutToShow()
+{
+	Workspace* mWorkspace = Workspace::self();
+	// clear menu actions
+	foreach ( QAction* a, agLayouts->actions() )
+		delete a;
+	mLayouts->clear();
+	foreach ( QAction* a, agFiles->actions() )
+		delete a;
+	mFiles->clear();
+	// if no active child return
+	AbstractChild* c;
+	if ( !mWorkspace->currentWidget() || !( c = qobject_cast<AbstractChild*>( mWorkspace->currentWidget() ) ) )
+		return;
+	QFileInfo f;
+	QAction* a;
+	// got all files this child manage
+	foreach ( QString s, c->files() )
+	{
+		f.setFile( s );
+		a = new QAction( f.fileName(), agFiles );
+		a->setToolTip( s );
+		a->setCheckable( true );
+		a->setChecked( c->currentFile() == s );
+		agFiles->addAction( a );
+	}
+	mFiles->addActions( agFiles->actions() );
+	//
+	AbstractChild::LayoutMode m = c->layoutMode();
+	if ( m != AbstractChild::lNone )
+	{
+		AbstractChild::LayoutMode m = c->layoutMode();
+		QMetaEnum e = c->metaObject()->enumerator( c->metaObject()->indexOfEnumerator( "LayoutMode" ) );
+		for ( int i = 0; i < e.keyCount(); i++ )
+		{
+			a = new QAction( e.key( i ), mLayouts );
+			a->setCheckable( true );
+			if ( c->layoutMode() == e.value( i ) )
+				a->setChecked( true );
+			a->setData( i );
+			if ( m == AbstractChild::lNone )
+				a->setEnabled( false  );
+			else if ( i == AbstractChild::lNone )
+				a->setEnabled( false  );
+			agLayouts->addAction( a );
+		}
+		mLayouts->addActions( agLayouts->actions() );
+	}
+}
+//
+void pRightCorner::agFiles_triggered( QAction* a )
+{
+	Workspace* mWorkspace = Workspace::self();
+	AbstractChild* c;
+	// if no active child return
+	if ( !( c = qobject_cast<AbstractChild*>( mWorkspace->currentWidget() ) ) )
+		return;
+	c->showFile( a->toolTip() );
+}
+//
+void pRightCorner::agLayouts_triggered( QAction* a )
+{
+	Workspace* mWorkspace = Workspace::self();
+	AbstractChild* c;
+	// if no active child return
+	if ( !( c = qobject_cast<AbstractChild*>( mWorkspace->currentWidget() ) ) )
+		return;
+	c->setLayoutMode( (AbstractChild::LayoutMode)a->data().toInt() );
 }

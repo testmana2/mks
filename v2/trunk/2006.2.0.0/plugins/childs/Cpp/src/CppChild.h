@@ -3,11 +3,14 @@
 //
 #include "MonkeyEditor.h"
 #include "AbstractChild.h"
+//
 class QSplitter;
+class CppCornerWidget;
 //
 class CppChild : public AbstractChild
 {
 	Q_OBJECT
+	friend class CppCornerWidget;
 	//
 public:
 	CppChild();
@@ -17,6 +20,8 @@ public:
 	static QStringList headerExtensions();
 	// return source extensions
 	static QStringList sourceExtensions();
+	// left corner widget for this child
+	virtual QWidget* cornerWidget();
 	// return cursor position if available
 	virtual QPoint cursorPosition() const;
 	// show the current file in child

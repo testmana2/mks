@@ -43,6 +43,8 @@ public:
 		mLayout = m;
 		emit layoutModeChanged( mLayout );
 	}
+	// left corner widget for this child
+	virtual QWidget* cornerWidget() { return 0L; }
 	// add a new file to the files list that this child manage
 	virtual void addFile( const QString& s )
 	{ if ( mFiles.contains( s ) )

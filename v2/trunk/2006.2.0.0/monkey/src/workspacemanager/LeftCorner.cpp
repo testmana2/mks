@@ -16,8 +16,17 @@ LeftCorner* LeftCorner::self( Workspace* p )
 }
 //
 LeftCorner::LeftCorner( Workspace* p )
-	: QToolButton( p )
+	: /*QToolButton*/QWidget( p )
 {
+	resize (QSize (0,0));
+	Q_ASSERT( p != 0 );
+	mWorkspace = p;
+	widget = NULL;
+	corner = new QGridLayout (this);
+	corner->setMargin ( 0);
+	corner->setSpacing (0);
+	//show();
+/*
 	Q_ASSERT( p != 0 );
 	mWorkspace = p;
 	setFixedSize( QSize( 24, 24 ) );
@@ -34,7 +43,9 @@ LeftCorner::LeftCorner( Workspace* p )
 	connect( menu(), SIGNAL( aboutToShow() ), this, SLOT( menu_aboutToShow() ) );
 	connect( agFiles, SIGNAL( triggered( QAction* ) ), this, SLOT( agFiles_triggered( QAction* ) ) );
 	connect( agLayouts, SIGNAL( triggered( QAction* ) ), this, SLOT( agLayouts_triggered( QAction* ) ) );
+*/
 }
+/*
 //
 void LeftCorner::menu_aboutToShow()
 {
@@ -101,3 +112,4 @@ void LeftCorner::agLayouts_triggered( QAction* a )
 		return;
 	c->setLayoutMode( (AbstractChild::LayoutMode)a->data().toInt() );
 }
+*/

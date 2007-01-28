@@ -1,4 +1,5 @@
 #include "CppChild.h"
+#include "CppCornerWidget.h"
 // qt include
 #include <QVBoxLayout>
 #include <QSplitter>
@@ -72,6 +73,12 @@ QStringList CppChild::headerExtensions()
 QStringList CppChild::sourceExtensions()
 {
 	return mSourceExtensions;
+}
+// left corner widget for this child
+QWidget* CppChild::cornerWidget()
+{
+	CppCornerWidget::self()->setChild( this );
+	return CppCornerWidget::self();
 }
 // return cursor position if available
 QPoint CppChild::cursorPosition() const
