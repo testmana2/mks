@@ -152,6 +152,9 @@ void MessageBox::newErrorAvailable( const ConsoleCommandParser::ErrorInfos& e )
 	it->setText( QString( "%1: %2, %3: %4" ).arg( e.mFileName )
 		.arg( e.mPosition.y() ).arg( e.mPosition.x() ).arg( e.mText ) );
 	it->setToolTip( e.mFullText );
+	it->setData( Qt::UserRole +1, e.mType ); // type
+	it->setData( Qt::UserRole +2, e.mFileName ); // filename
+	it->setData( Qt::UserRole +3, e.mPosition ); // position
 	switch ( e.mType )
 	{
 	case ConsoleCommandParser::Error:

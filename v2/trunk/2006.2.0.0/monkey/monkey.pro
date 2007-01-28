@@ -65,13 +65,8 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/projectsmanager/ui/ProjectsManager.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui
 
-OPENEDFILES	= src/workspacemanager/AbstractChild.h \
-	src/workspacemanager/LeftCorner.h \
-	src/workspacemanager/LeftCorner.cpp \
-	src/workspacemanager/Workspace.h \
-	src/workspacemanager/Workspace.cpp \
-	src/3rdparty/widgets/pTabWorkspace/pRightCorner.h \
-	src/3rdparty/widgets/pTabWorkspace/pRightCorner.cpp
+OPENEDFILES	= src/workspacemanager/Workspace.h \
+	src/workspacemanager/Workspace.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \

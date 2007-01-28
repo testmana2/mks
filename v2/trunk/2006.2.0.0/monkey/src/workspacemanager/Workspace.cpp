@@ -195,7 +195,8 @@ void Workspace::fileSaveAll_triggered()
 void Workspace::fileCloseCurrent_triggered()
 {
 	if ( currentWidget() )
-		currentWidget()->close();
+		widget( currentIndex() )->close();
+		//currentWidget()->close();
 }
 //
 void Workspace::fileCloseAll_triggered()
