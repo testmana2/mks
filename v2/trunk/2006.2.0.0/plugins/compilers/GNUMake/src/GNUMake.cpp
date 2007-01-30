@@ -338,7 +338,12 @@ AbstractProjectItemModel* GNUMake::parentProject()
 //
 ConsoleCommand GNUMake::qmakeCommand( AbstractProjectItemModel* p )
 {
-	return ConsoleCommand( "qmake-qt4", p->path() );
+	QString mQMake = "qmake";
+#if defined ( Q_OS_UNIX )
+	mQMake = "qmake-qt4";
+#endif
+	mQMake = Settings::current()->value( "Plugins/QMake/QMake4", mQMake ).toString();
+	return ConsoleCommand( mQMake, p->path() );
 }
 //
 ConsoleCommand GNUMake::makeCommand( AbstractProjectItemModel* p )

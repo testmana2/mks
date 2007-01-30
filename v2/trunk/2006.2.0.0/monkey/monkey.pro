@@ -65,6 +65,11 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/projectsmanager/ui/ProjectsManager.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui
 
+OPENEDFILES	= src/main.h \
+	src/main.cpp \
+	src/Monkey.h \
+	src/Monkey.cpp
+
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
 	src/3rdparty/widgets/pTabWorkspace/pTabWorkspace.h \

@@ -17,9 +17,6 @@ public:
 private:
 	void parse();
 	//
-	QString errWarnPattern;
-	QString compilingPattern;
-	//
 };
 //
 #endif // GNUMAKEPARSER_H

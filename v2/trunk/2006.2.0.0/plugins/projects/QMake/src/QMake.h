@@ -11,6 +11,7 @@ class QMake : public ProjectPlugin
 public:
 	virtual ~QMake();
 	virtual void initialize( Workspace* );
+	virtual QWidget* settingsWidget();
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QStringList filters() const;

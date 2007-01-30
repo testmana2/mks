@@ -2,6 +2,7 @@
 #include "QMakeProjectItemModel.h"
 #include "QMakeProjectProxy.h"
 #include "ProjectsManager.h"
+#include "UISettings.h"
 //
 QMake::~QMake()
 {
@@ -21,6 +22,11 @@ void QMake::initialize( Workspace* w )
 	mPluginInfos.Installed = false;
 	//
 	mExtensions = QStringList() << "pro";
+}
+//
+QWidget* QMake::settingsWidget()
+{
+	return new UISettings;
 }
 //
 bool QMake::install()

@@ -74,7 +74,7 @@ void GNUMakeParser::appendToBuffer( const QString& s )
 //
 void GNUMakeParser::parse()
 {
-	if ( rxErrWarn.pattern().isNull() )
+	if ( rxErrWarn.pattern().isNull() && rxBuild.pattern().isNull() )
 		return;
 	//
 	QStringList l = mBuffer.split( '\n' );
