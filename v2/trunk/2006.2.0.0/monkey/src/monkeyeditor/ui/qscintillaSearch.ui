@@ -12,7 +12,7 @@
   <property name="allowedAreas" >
    <set>Qt::BottomDockWidgetArea|Qt::NoDockWidgetArea|Qt::TopDockWidgetArea</set>
   </property>
-  <widget class="QWidget" name="centralWidget" >
+  <widget class="QWidget" name="wCentral" >
    <layout class="QGridLayout" >
     <property name="margin" >
      <number>3</number>

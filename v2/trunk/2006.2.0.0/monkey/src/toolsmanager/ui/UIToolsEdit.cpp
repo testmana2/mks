@@ -6,6 +6,8 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QFileInfo>
+#include <QUrl>
+#include <QMimeData>
 //
 QPointer<UIToolsEdit> UIToolsEdit::mSelf = 0L;
 //
@@ -21,6 +23,10 @@ UIToolsEdit::UIToolsEdit( QWidget* p )
 {
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
+	leCaption->installEventFilter( this );
+	tbFileIcon->installEventFilter( this );
+	leFilePath->installEventFilter( this );
+	leWorkingPath->installEventFilter( this );
 	//
 	QListWidgetItem* it;
 	QSettings* s = Settings::current();
@@ -44,6 +50,56 @@ void UIToolsEdit::closeEvent( QCloseEvent* e )
 		e->ignore();
 }
 //
+bool UIToolsEdit::eventFilter( QObject* o, QEvent* e )
+{
+	if ( e->type() == QEvent::DragEnter )
+		e->accept();
+	// if not a drop event, return
+	if ( e->type() != QEvent::Drop )
+		return QDialog::eventFilter( o, e );
+	// got the event
+	QDropEvent* d = dynamic_cast<QDropEvent*>( e );
+	// if no url drop it
+	if ( !d || !d->mimeData()->hasUrls() || d->mouseButtons() != Qt::NoButton )
+		return QDialog::eventFilter( o, e );
+	// if there is no current item selected, ask to create one
+	QListWidgetItem* it = lwTools->currentItem();
+	if ( !it && QMessageBox::question( this, tr( "Adding..." ), tr( "There is no current tool, do you want to add a new one ?" ), QMessageBox::Yes | QMessageBox::No ) == QMessageBox::No )
+		return true; // true else the default drop event will be call
+	else if ( !it )
+		it = new QListWidgetItem( tr( "new Tool" ), lwTools );
+	// get link info
+	QFileInfo f( d->mimeData()->urls().at( 0 ).toLocalFile() );
+	//
+	if ( o == tbFileIcon )
+	{
+		if ( f.isFile() )
+		{
+			it->setData( idFileIcon, f.canonicalFilePath() );
+			tbFileIcon->setIcon( QIcon( f.canonicalFilePath() ) );
+			it->setIcon( tbFileIcon->icon() );
+		}
+	}
+	else
+	{
+		if ( f.isFile() )
+		{
+			leCaption->setText( f.baseName() );
+			it->setData( idCaption, leCaption->text() );
+			leFilePath->setText( f.canonicalFilePath() );
+			it->setData( idFilePath, leFilePath->text() );
+			leWorkingPath->setText( f.canonicalPath() );
+		}
+		else if ( f.isDir() )
+			leWorkingPath->setText( f.canonicalFilePath() );
+		it->setData( idWorkingPath, leWorkingPath->text() );
+	}
+	lwTools->clearSelection();
+	lwTools->setCurrentItem( it );
+	it->setSelected( true );
+	return true;
+}
+//
 void UIToolsEdit::on_lwTools_itemClicked( QListWidgetItem* i )
 {
 	if ( !i )
@@ -56,12 +112,23 @@ void UIToolsEdit::on_lwTools_itemClicked( QListWidgetItem* i )
 //
 void UIToolsEdit::on_pbNew_clicked()
 {
-	lwTools->addItem( "new Tool" );
+	QListWidgetItem* it = new QListWidgetItem( tr( "new Tool" ), lwTools );
+	lwTools->clearSelection();
+	lwTools->setCurrentItem( it );
+	it->setSelected( true );
+	on_lwTools_itemClicked( it );
 }
 //
 void UIToolsEdit::on_pbDelete_clicked()
 {
 	delete lwTools->currentItem();
+	if ( lwTools->count() )
+	{
+		lwTools->clearSelection();
+		lwTools->setCurrentRow( 0 );
+		lwTools->currentItem()->setSelected( true );
+		on_lwTools_itemClicked( lwTools->currentItem() );
+	}
 }
 //
 void UIToolsEdit::on_pbUp_clicked()
@@ -86,7 +153,7 @@ void UIToolsEdit::on_pbDown_clicked()
 //
 void UIToolsEdit::on_tbHelp_clicked()
 {
-	QString s = tr( "<b>Tools Editor</b> give you the possibility to use variables<br><br>"
+	QString s = tr( "<b>Tools Editor ( Not Work Yet! )</b> give you the possibility to use variables<br><br>"
 		"<b>%n</b> : Current project name<br>"
 		"<b>%p</b> : Current project path<br>"
 		"<b>%f</b> : Current project file path<br>"

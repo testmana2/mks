@@ -23,8 +23,10 @@ qscintillaSearch::qscintillaSearch( QsciScintilla* p )
 //
 bool qscintillaSearch::checkEditor()
 {
-	if ( !mEditor )
-		setEnabled( false );
+	QList<QWidget*> l = wCentral->findChildren<QWidget*>();
+	foreach ( QWidget* w, l )
+		if ( w != tbClose )
+			w->setEnabled( mEditor );
 	return mEditor;
 }
 //
@@ -36,7 +38,7 @@ QsciScintilla* qscintillaSearch::editor() const
 void qscintillaSearch::setEditor( QsciScintilla* e )
 {
 	mEditor = e;
-	setEnabled( e );
+	checkEditor();
 };
 //
 bool qscintillaSearch::on_tbPrevious_clicked()

@@ -96,6 +96,9 @@
         <property name="cursor" >
          <cursor>13</cursor>
         </property>
+        <property name="acceptDrops" >
+         <bool>true</bool>
+        </property>
         <property name="toolTip" >
          <string>Browse for an icon file</string>
         </property>

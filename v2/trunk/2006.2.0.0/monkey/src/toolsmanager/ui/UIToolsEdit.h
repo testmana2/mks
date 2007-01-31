@@ -20,6 +20,7 @@ private:
 	//
 protected:
 	void closeEvent( QCloseEvent* );
+	bool eventFilter( QObject*, QEvent* );
 	//
 public slots:
 	void on_lwTools_itemClicked( QListWidgetItem* );
