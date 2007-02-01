@@ -9,16 +9,20 @@ CONFIG	+= qt warn_on release lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR/projects
 RESOURCES	= src/resources/qmake_resources.qrc
 
-FORMS	= src/ui/UISettings.ui
-
 SOURCES	= src/QMake.cpp \
 	src/QMakeProjectItem.cpp \
 	src/QMakeProjectItemModel.cpp \
 	src/QMakeProjectProxy.cpp \
 	src/ui/UISettings.cpp
 
+FORMS	= src/ui/UISettings.ui
+
+OPENEDFILES	= src/QMake.h \
+	src/QMake.cpp
+
 HEADERS	= src/QMake.h \
 	src/QMakeProjectItem.h \
 	src/QMakeProjectItemModel.h \
 	src/QMakeProjectProxy.h \
 	src/ui/UISettings.h
+

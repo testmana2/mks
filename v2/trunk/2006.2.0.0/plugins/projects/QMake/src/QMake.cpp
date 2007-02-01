@@ -67,10 +67,11 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 		}
 	}
 	// create a new qmake project
-	AbstractProjectProxy* mProxy = new QMakeProjectProxy( new QMakeProjectItemModel( s ) );
-	// open project
-	if ( mProxy->project()->open() )
+	QMakeProjectItemModel* mProject = new QMakeProjectItemModel( s );
+	// if we can open project
+	if ( mProject->open() )
 	{
+		AbstractProjectProxy* mProxy = new QMakeProjectProxy( mProject );
 		// add it to projects manager
 		mWorkspace->projectsManager()->addProxy( mProxy, py );
 		// open subprojects
@@ -80,7 +81,7 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 		return true;
 	}
 	else
-		delete mProxy->sourceModel(); // it will delete proxy too
+		delete mProject;
 	return false;
 }
 //

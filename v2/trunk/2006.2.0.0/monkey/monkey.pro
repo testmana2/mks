@@ -13,12 +13,13 @@ unix:ICON	= src/resources/Icons/icon.png
 mac:ICON	= src/resources/Icons/icon.icns
 win32:ICON	= src/resources/Icons/icon.ico
 
-TEMPLATE	= app
-DEFINES	= MONKEY_CORE_BUILD
-LIBS	= -L../build/.lib -lqscintilla2
 linux-g++:LIBS	+= -rdynamic
 win32-msvc:LIBS	+= /IMPLIB:../build/.lib/monkey.lib
 win32-g++:LIBS	+= -Wl,--out-implib,../build/.lib/libmonkey.a
+
+TEMPLATE	= app
+DEFINES	= MONKEY_CORE_BUILD
+LIBS	= -L../build/.lib -lqscintilla2
 QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/ui src/3rdparty/objects/pSettings/ src/3rdparty/widgets/pMenuBar/ src/workspacemanager/ src/maininterface/ src/toolsmanager/ui/ src/3rdparty/widgets/pTabToolBar/ src/3rdparty/widgets/pTabWorkspace/ src/projectsmanager/ui/ src/projectsmanager/ src/pluginsmanager/ src/pluginsmanager/ui src/maininterface/ui/ src/toolsmanager/ src/recentsmanager/ src/monkeyeditor/ui/ src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4
