@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QFileInfo>
+#include <QIcon>
 // qscintilla include
 #include <qscilexercpp.h>
 // handled extensions
@@ -21,8 +22,10 @@ CppChild::CppChild()
 	connect( this, SIGNAL( layoutModeChanged( AbstractChild::LayoutMode ) ), this, SLOT( layoutModeChanged( AbstractChild::LayoutMode ) ) );
 	// header
 	mHeader = new MonkeyEditor;
+	mHeader->setWindowIcon( QIcon( ":/Icons/Icons/h.png" ) );
 	mHeader->setLexer( new QsciLexerCPP( mHeader, true ) );
 	mHeader->setFolding( MonkeyEditor::BoxedTreeFoldStyle );
+	mHeader->setBraceMatching( MonkeyEditor::SloppyBraceMatch );
 	connect( mHeader, SIGNAL( cursorPositionChanged( const QPoint& ) ), this, SIGNAL( cursorPositionChanged( const QPoint& ) ) );
 	connect( mHeader, SIGNAL( modificationChanged( bool ) ), this, SIGNAL( modifiedChanged( bool ) ) );
 	connect( mHeader, SIGNAL( undoAvailable( bool ) ), this, SIGNAL( undoAvailableChanged( bool ) ) );
@@ -33,8 +36,10 @@ CppChild::CppChild()
 	mSplitter->addWidget( mHeader );
 	// source
 	mSource = new MonkeyEditor;
+	mSource->setWindowIcon( QIcon( ":/Icons/Icons/cpp.png" ) );
 	mSource->setLexer( new QsciLexerCPP( mSource, true ) );
 	mSource->setFolding( MonkeyEditor::BoxedTreeFoldStyle );
+	mSource->setBraceMatching( MonkeyEditor::SloppyBraceMatch );
 	connect( mSource, SIGNAL( cursorPositionChanged( const QPoint& ) ), this, SIGNAL( cursorPositionChanged( const QPoint& ) ) );
 	connect( mSource, SIGNAL( modificationChanged( bool ) ), this, SIGNAL( modifiedChanged( bool ) ) );
 	connect( mSource, SIGNAL( undoAvailable( bool ) ), this, SIGNAL( undoAvailableChanged( bool ) ) );
@@ -257,4 +262,5 @@ void CppChild::layoutModeChanged( AbstractChild::LayoutMode m )
 		}
 		break;
 	}
+	setWindowIcon( currentEditor()->windowIcon() );
 }

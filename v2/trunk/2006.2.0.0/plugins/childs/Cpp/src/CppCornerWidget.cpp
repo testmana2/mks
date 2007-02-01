@@ -30,6 +30,7 @@ CppCornerWidget::CppCornerWidget( QWidget* p )
 	tb = new QToolButton( this );
 	tb->setIconSize( QSize( 14, 14 ) );
 	aForm = new QAction( QIcon( ":/Icons/Icons/form.png" ), QString::null, tb );
+	aForm->setShortcut( tr( "Ctrl+Alt+F" ) );
 	aForm->setToolTip( tr( "Form" ) );
 	tb->setDefaultAction( aForm );
 	mLayout->addWidget( tb );
@@ -37,6 +38,7 @@ CppCornerWidget::CppCornerWidget( QWidget* p )
 	tb = new QToolButton( this );
 	tb->setIconSize( QSize( 14, 14 ) );
 	aHeader = ag->addAction( QIcon( ":/Icons/Icons/h.png" ), QString::null );
+	aHeader->setShortcut( tr( "Ctrl+Alt+H" ) );
 	aHeader->setToolTip( tr( "Header" ) );
 	aHeader->setCheckable( true );
 	tb->setDefaultAction( aHeader );
@@ -45,6 +47,7 @@ CppCornerWidget::CppCornerWidget( QWidget* p )
 	tb = new QToolButton( this );
 	tb->setIconSize( QSize( 14, 14 ) );
 	aSource = ag->addAction( QIcon( ":/Icons/Icons/cpp.png" ), QString::null );
+	aSource->setShortcut( tr( "Ctrl+Alt+C" ) );
 	aSource->setToolTip( tr( "Source" ) );
 	aSource->setCheckable( true );
 	tb->setDefaultAction( aSource );
