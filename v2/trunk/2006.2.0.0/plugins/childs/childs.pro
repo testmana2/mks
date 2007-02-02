@@ -1,3 +1,4 @@
 TEMPLATE = subdirs
 SUBDIRS	= Text \
-	Cpp
+	Cpp \
+	Ui
