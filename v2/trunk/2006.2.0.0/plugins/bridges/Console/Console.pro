@@ -8,9 +8,13 @@ LANGUAGE	= C++
 CONFIG	+= qt warn_on release lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR/bridges
 
-SOURCES	= src/Console.cpp
+SOURCES	= src/Console.cpp \
+	src/ui/UISettings.cpp
+
+FORMS	= src/ui/UISettings.ui
 
 HEADERS	= src/Console.h \
 	src/ConsoleCommand.h \
-	src/ConsoleCommandParser.h
+	src/ConsoleCommandParser.h \
+	src/ui/UISettings.h
 

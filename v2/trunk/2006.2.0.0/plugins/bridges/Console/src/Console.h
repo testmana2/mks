@@ -7,6 +7,8 @@
 //
 #include <QProcess>
 //
+class QTextCodec;
+//
 class Console : public BasePlugin
 {
 	Q_OBJECT
@@ -17,12 +19,14 @@ public:
 	virtual void initialize( Workspace* );
 	virtual bool install();
 	virtual bool uninstall();
+	virtual QWidget* settingsWidget();
 	//
 protected:
 	QProcess* mProcess;
 	ConsoleCommandParser* mParser;
 	ConsoleCommandsList mConsoleCommandsList;
 	bool mStop;
+	QTextCodec* mCodec;
 	//
 public slots:
 	void setEnvironment( const QStringList& );
@@ -41,6 +45,7 @@ private slots:
 	void readyRead();
 	void started();
 	void stateChanged( QProcess::ProcessState );
+	void updateCodec();
 	//
 signals:
 	void consoleCommandFinished( const ConsoleCommand& );

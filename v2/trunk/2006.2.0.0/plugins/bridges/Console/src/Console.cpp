@@ -1,8 +1,11 @@
 #include "Console.h"
 #include "ConsoleCommandParser.h"
+#include "UISettings.h"
+#include "Settings.h"
 //
 #include <QMessageBox>
 #include <QApplication>
+#include <QTextCodec>
 //
 Console::~Console()
 {
@@ -16,6 +19,7 @@ void Console::initialize( Workspace* w )
 	mProcess = 0L;
 	mParser = 0L;
 	mStop = false;
+	mCodec = 0;
 	// plugin infos
 	mPluginInfos.Caption = tr( "Console Plugin" );
 	mPluginInfos.Description = tr( "This plugin provide a qprocess console" );
@@ -35,6 +39,8 @@ bool Console::install()
 	QStringList l = mProcess->systemEnvironment();
 	l.removeAt( l.indexOf( QRegExp( "^LANG.*" ) ) );
 	mProcess->setEnvironment( l );
+	// set codec
+	updateCodec();
 	// connections
 	connect( mProcess, SIGNAL( error( QProcess::ProcessError ) ), this, SLOT( error( QProcess::ProcessError ) ) );
 	connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( finished( int, QProcess::ExitStatus ) ) );
@@ -56,9 +62,17 @@ bool Console::uninstall()
 	disconnect( mProcess, SIGNAL( stateChanged( QProcess::ProcessState ) ), this, SLOT( stateChanged( QProcess::ProcessState ) ) );
 	// delete process
 	delete mProcess;
+	mProcess = 0L;
 	// plugin is not installed
 	mPluginInfos.Installed = false;
 	return true;
+}
+//
+QWidget* Console::settingsWidget()
+{
+	UISettings*  w = new UISettings;
+	connect(  w, SIGNAL ( updateCodec() ), this, SLOT ( updateCodec() ) );
+	return w;
 }
 //
 void Console::setEnvironment( const QStringList& l )
@@ -234,7 +248,8 @@ void Console::readyRead()
 {
 	if ( isInstalled() )
 	{
-		QString s = QString::fromLocal8Bit( mProcess->readAllStandardOutput().data() );
+		
+		QString s = mCodec->toUnicode( mProcess->readAllStandardOutput().data() );
 		if ( mParser )
 			mParser->appendToBuffer( s );
 		emit dataAvailable( s );
@@ -262,6 +277,11 @@ void Console::stateChanged( QProcess::ProcessState e )
 		break;
 	}
 	//emit messageBox( s );
+}
+//
+void Console::updateCodec()
+{
+	mCodec = QTextCodec::codecForName ( Settings::current()->value( "Plugins/Console/Charset", "System" ).toString().toLatin1() );
 }
 //
 Q_EXPORT_PLUGIN2( BaseConsole, Console )
