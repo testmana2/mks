@@ -2,6 +2,7 @@
 #include "MenuBar.h"
 #include "AbstractProjectProxy.h"
 #include "AbstractProjectItemModel.h"
+#include "Settings.h"
 //
 #include <QFileDialog>
 #include <QTreeView>
@@ -30,6 +31,35 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	// update actions state
 	on_swProjects_currentChanged( -1 );
 	MenuBar::self()->action( "mView/aProjectsList" )->setChecked( true );
+}
+//
+void ProjectsManager::showEvent( QShowEvent* e )
+{
+	// restore spliter state
+	QDockWidget::showEvent( e );
+	sProjects->restoreState( Settings::current()->value( "ProjectsManager/State" ).toByteArray() );
+}
+//
+void ProjectsManager::closeEvent( QCloseEvent* e )
+{
+	// save spliter state
+	Settings::current()->setValue( "ProjectsManager/State", sProjects->saveState() );
+	QDockWidget::closeEvent( e );
+}
+QProxyList ProjectsManager::rootProxies() const
+{
+	QProxyList l;
+	for ( int i = 0; i < twProjects->topLevelItemCount(); i++ )
+		l << AbstractProjectProxy::byId( twProjects->topLevelItem( i )->data( 0, ProxyIdRole ).toInt() );
+	return l;
+}
+//
+QProjectList ProjectsManager::rootProjects() const
+{
+	QProjectList l;
+	foreach ( AbstractProjectProxy* p, rootProxies() )
+		l << p->project();
+	return l;
 }
 //
 void ProjectsManager::setCurrentProxy( AbstractProjectProxy* p )

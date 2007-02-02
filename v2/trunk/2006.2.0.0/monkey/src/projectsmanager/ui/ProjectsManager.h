@@ -9,6 +9,9 @@
 class AbstractProjectProxy;
 class AbstractProjectItemModel;
 //
+typedef QList<AbstractProjectProxy*> QProxyList;
+typedef QList<AbstractProjectItemModel*> QProjectList;
+//
 class Q_MONKEY_EXPORT ProjectsManager : public QDockWidget, public Ui::ProjectsManager
 {
 	Q_OBJECT
@@ -18,6 +21,8 @@ public:
 	//
 	static ProjectsManager* self( QWidget* = 0 );
 	//
+	QProxyList rootProxies() const;
+	QProjectList rootProjects() const;
 	void setCurrentProxy( AbstractProjectProxy* );
 	AbstractProjectProxy* currentProxy() const;
 	void setCurrentProject( AbstractProjectItemModel* );
@@ -27,6 +32,10 @@ public:
 	void closeProxy( AbstractProjectProxy* );
 	void closeProject( AbstractProjectItemModel* );
 	void addProxy( AbstractProjectProxy*, AbstractProjectProxy* = 0 );
+	//
+protected:
+	void showEvent( QShowEvent* );
+	void closeEvent( QCloseEvent* );
 	//
 private:
 	ProjectsManager( QWidget* = 0 );
