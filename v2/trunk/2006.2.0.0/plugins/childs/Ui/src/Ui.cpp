@@ -49,7 +49,7 @@ bool Ui::addNewDocument( const QString&, AbstractProjectProxy* )
 	return false;
 }
 //
-bool Ui::openFile( const QString& s, AbstractProjectProxy* p )
+bool Ui::openFile( const QString& s, AbstractProjectProxy* )
 {
 	return QDesktopServices::openUrl( QUrl::fromLocalFile( s ) );
 }
