@@ -63,7 +63,7 @@ void UIPluginsSettings::updateList()
 		it->setData( Qt::UserRole, i ); // plugin index
 		it->setData( Qt::UserRole +1, swWidgets->addWidget( bp->settingsWidget() ) ); // settings widget index
 		it->setData( Qt::UserRole +2, bp->infos().Type ); // plugin type
-		it->setData( Qt::UserRole +3, Settings::current()->value( QString( "Plugins/%1" ).arg( bp->infos().Name ), true ).toBool() ); // plugin type
+		it->setData( Qt::UserRole +3, Settings::current()->value( QString( "Plugins/%1" ).arg( bp->infos().Name ), true ).toBool() ); // plugin auto install
 	}
 }
 //
@@ -90,7 +90,7 @@ void UIPluginsSettings::currentIndexChanged( int i )
 			}
 		}
 	}
-	// in case og no entry/plugins
+	// in case of no entry/plugins
 	clearInfos();
 }
 //
