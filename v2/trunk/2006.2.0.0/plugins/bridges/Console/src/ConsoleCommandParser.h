@@ -10,7 +10,7 @@ class ConsoleCommandParser : public QObject
 	Q_OBJECT
 	//
 public:
-	enum MessageType { Unknow = -1, Error, Warning, Good, Bad, State };
+	enum MessageType { Unknow = -1, Error, Warning, Good, Bad, Compiling, State };
 	struct Message
 	{
 		QString mFileName;

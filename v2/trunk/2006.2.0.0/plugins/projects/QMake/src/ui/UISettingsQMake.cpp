@@ -1,10 +1,10 @@
-#include "UISettings.h"
+#include "UISettingsQMake.h"
 #include "Settings.h"
 //
 #include <QFileDialog>
 #include <QFileInfo>
 //
-UISettings::UISettings( QWidget* p )
+UISettingsQMake::UISettingsQMake( QWidget* p )
 	: QWidget( p )
 {
 	setupUi( this );
@@ -24,7 +24,7 @@ UISettings::UISettings( QWidget* p )
 	loadSettings();
 }
 //
-void UISettings::loadSettings()
+void UISettingsQMake::loadSettings()
 {
 	for ( int i = 0; i < cbKeywords->count(); i++ )
 		cbKeywords->setItemData( i, Settings::current()->value( QString( "Plugins/QMake/%1" ).arg( cbKeywords->itemText( i ) ) ).toString(), DataRole );
@@ -33,17 +33,17 @@ void UISettings::loadSettings()
 		on_cbKeywords_currentIndexChanged( 0 );
 }
 //
-void UISettings::on_cbKeywords_currentIndexChanged( int i )
+void UISettingsQMake::on_cbKeywords_currentIndexChanged( int i )
 {
 	lePath->setText( cbKeywords->itemData( i, DataRole ).toString() );
 }
 //
-void UISettings::on_lePath_editingFinished()
+void UISettingsQMake::on_lePath_editingFinished()
 {
 	cbKeywords->setItemData( cbKeywords->currentIndex(), lePath->text(), DataRole );
 }
 //
-void UISettings::on_tbBrowse_clicked()
+void UISettingsQMake::on_tbBrowse_clicked()
 {
 	QString s = cbKeywords->currentText();
 	switch ( cbKeywords->itemData( cbKeywords->currentIndex(), TypeRole ).toInt() )
@@ -61,7 +61,7 @@ void UISettings::on_tbBrowse_clicked()
 	}
 }
 //
-void UISettings::on_bbDialog_clicked( QAbstractButton* )
+void UISettingsQMake::on_bbDialog_clicked( QAbstractButton* )
 {
 	for ( int i = 0; i < cbKeywords->count(); i++ )
 		Settings::current()->setValue( QString( "Plugins/QMake/%1" ).arg( cbKeywords->itemText( i ) ), cbKeywords->itemData( i, DataRole ).toString() );

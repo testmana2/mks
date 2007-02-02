@@ -474,7 +474,7 @@ void QMakeProjectItemModel::setItemIcon( QMakeProjectItem* item )
 	item->setIcon( QIcon( mFileName ) );
 }
 // return an item for mPath folder and parent item iParent
-QMakeProjectItem* QMakeProjectItemModel::getFolder( const QString& mPath, QMakeProjectItem* iParent, bool b )
+QMakeProjectItem* QMakeProjectItemModel::getFolder( const QString& mPath, QMakeProjectItem* iParent )
 {
 	if ( mPath.isEmpty() || mPath == "." || mPath == "./" )
 		return iParent;

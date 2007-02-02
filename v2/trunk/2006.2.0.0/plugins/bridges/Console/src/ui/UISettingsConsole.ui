@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>UISettings</class>
- <widget class="QWidget" name="UISettings" >
+ <class>UISettingsConsole</class>
+ <widget class="QWidget" name="UISettingsConsole" >
   <property name="geometry" >
    <rect>
     <x>0</x>

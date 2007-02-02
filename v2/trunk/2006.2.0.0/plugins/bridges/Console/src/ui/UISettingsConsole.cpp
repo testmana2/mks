@@ -1,10 +1,10 @@
-#include "UISettings.h"
+#include "UISettingsConsole.h"
 #include "Settings.h"
 //
 #include <QTextCodec>
 #include <QtAlgorithms>
 //
-UISettings::UISettings( QWidget* p )
+UISettingsConsole::UISettingsConsole( QWidget* p )
 	: QWidget( p )
 {
 	setupUi( this );
@@ -21,7 +21,7 @@ UISettings::UISettings( QWidget* p )
 	cbCodecs->setCurrentIndex ( i );   
 }
 //
-void UISettings::on_bbDialog_clicked( QAbstractButton* )
+void UISettingsConsole::on_bbDialog_clicked( QAbstractButton* )
 {
 	Settings::current()->setValue( "Plugins/Console/Charset", cbCodecs->currentText() );
 	emit updateCodec();

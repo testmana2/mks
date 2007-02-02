@@ -3,7 +3,7 @@
 #include "MenuBar.h"
 #include "ProjectsManager.h"
 #include "PluginsManager.h"
-#include "UISettings.h"
+#include "UISettingsGNUMake.h"
 #include "Settings.h"
 #include "Console.h"
 #include "GNUMakeParser.h"
@@ -115,7 +115,7 @@ bool GNUMake::uninstall()
 //
 QWidget* GNUMake::settingsWidget()
 {
-	return new UISettings;
+	return new UISettingsGNUMake;
 }
 //
 void GNUMake::buildCurrent()

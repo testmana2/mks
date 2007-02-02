@@ -1,16 +1,16 @@
-#ifndef UISETTINGS_H
-#define UISETTINGS_H
+#ifndef UISETTINGSQMAKE_H
+#define UISETTINGSQMAKE_H
 //
-#include "ui_UISettings.h"
+#include "ui_UISettingsQMake.h"
 //
-class UISettings : public QWidget, public Ui::UISettings
+class UISettingsQMake : public QWidget, public Ui::UISettingsQMake
 {
 	Q_OBJECT
 	//
 public:
 	enum Type { BinaryType, PathType };
 	enum Role { TypeRole = Qt::UserRole, DataRole };
-	UISettings( QWidget* = 0 );
+	UISettingsQMake( QWidget* = 0 );
 	//
 private slots:
 	void loadSettings();
@@ -21,4 +21,4 @@ private slots:
 	//
 };
 //
-#endif // UISETTINGS_H
+#endif // UISETTINGSQMAKE_H

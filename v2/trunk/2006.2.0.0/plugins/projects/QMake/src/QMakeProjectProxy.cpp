@@ -53,7 +53,7 @@ void QMakeProjectProxy::doubleClicked( const QModelIndex& i )
 		emit fileOpenRequested( it->data( QMakeProjectItem::AbsoluteFilePathRole ).toString() , this );
 }
 //
-void QMakeProjectProxy::customContextMenuRequested( const QPoint& p )
+void QMakeProjectProxy::customContextMenuRequested( const QPoint& )
 {
 	qWarning( "context menu" );
 }

@@ -2,7 +2,7 @@
 #include "QMakeProjectItemModel.h"
 #include "QMakeProjectProxy.h"
 #include "ProjectsManager.h"
-#include "UISettings.h"
+#include "UISettingsQMake.h"
 //
 QMake::~QMake()
 {
@@ -26,7 +26,7 @@ void QMake::initialize( Workspace* w )
 //
 QWidget* QMake::settingsWidget()
 {
-	return new UISettings;
+	return new UISettingsQMake;
 }
 //
 bool QMake::install()

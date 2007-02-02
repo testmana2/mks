@@ -1,14 +1,14 @@
-#ifndef UISETTINGS_H
-#define UISETTINGS_H
+#ifndef UISETTINGSGNUMAKE_H
+#define UISETTINGSGNUMAKE_H
 //
-#include "ui_UISettings.h"
+#include "ui_UISettingsGNUMake.h"
 //
-class UISettings : public QWidget, public Ui::UISettings
+class UISettingsGNUMake : public QWidget, public Ui::UISettingsGNUMake
 {
 	Q_OBJECT
 	//
 public:
-	UISettings( QWidget* = 0 );
+	UISettingsGNUMake( QWidget* = 0 );
 	//
 private slots:
 	void on_tbBinary_clicked();
@@ -17,4 +17,4 @@ private slots:
 	//
 };
 //
-#endif // UISETTINGS_H
+#endif // UISETTINGSGNUMAKE_H

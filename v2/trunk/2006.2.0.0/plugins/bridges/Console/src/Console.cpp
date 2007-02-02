@@ -1,6 +1,6 @@
 #include "Console.h"
 #include "ConsoleCommandParser.h"
-#include "UISettings.h"
+#include "UISettingsConsole.h"
 #include "Settings.h"
 //
 #include <QMessageBox>
@@ -70,7 +70,7 @@ bool Console::uninstall()
 //
 QWidget* Console::settingsWidget()
 {
-	UISettings*  w = new UISettings;
+	UISettingsConsole*  w = new UISettingsConsole;
 	connect(  w, SIGNAL ( updateCodec() ), this, SLOT ( updateCodec() ) );
 	return w;
 }

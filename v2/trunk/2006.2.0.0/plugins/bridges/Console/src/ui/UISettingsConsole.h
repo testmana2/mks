@@ -1,14 +1,14 @@
-#ifndef UISETTINGS_H
-#define UISETTINGS_H
+#ifndef UISETTINGSCONSOLE_H
+#define UISETTINGSCONSOLE_H
 //
-#include "ui_UISettings.h"
+#include "ui_UISettingsConsole.h"
 //
-class UISettings : public QWidget, public Ui::UISettings
+class UISettingsConsole : public QWidget, public Ui::UISettingsConsole
 {
 	Q_OBJECT
 	//
 public:
-	UISettings( QWidget* = 0 );
+	UISettingsConsole( QWidget* = 0 );
 	//
 private slots:
 	void on_bbDialog_clicked( QAbstractButton* );
@@ -18,4 +18,4 @@ signals:
 	//
 };
 //
-#endif // UISETTINGS_H
+#endif // UISETTINGSCONSOLE_H

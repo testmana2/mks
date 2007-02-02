@@ -5,16 +5,20 @@
 //
 QRegExp rxErrWarn;
 QRegExp rxBuild;
+QRegExp rxUndefRef;
+QRegExp rxNoRule;
 //
-GNUMakeParser::GNUMakeParser( const QString& s1, const QString& s2 )
+GNUMakeParser::GNUMakeParser( const QString& s1, const QString& s2, const QString& s3, const QString& s4 )
 {
 	rxErrWarn.setPattern( s1 );
 	rxBuild.setPattern( s2 );
+	rxUndefRef.setPattern( s3 );
+	rxNoRule.setPattern( s4 );
 }
 //
 QString GNUMakeParser::resultString()
 {
-	int e = 0, w = 0, o = 0;
+	int e = 0, w = 0, c = 0, u = 0;
 	foreach ( Message m, mMessages )
 	{
 		switch ( m.mType )
@@ -25,8 +29,11 @@ QString GNUMakeParser::resultString()
 		case Warning:
 			w++;
 			break;
+		case Compiling:
+			c++;
+			break;
 		default:
-			o++;
+			u++;
 			break;
 		}
 	}
@@ -37,24 +44,38 @@ QString GNUMakeParser::resultString()
 	// result string
 	QString s;
 	QString b = colorText( "<br />[beta:If you see wrong message, please, send console output to the trac.monkeystudio.org]", "red" );
+	// errors
 	if ( e )
 	{
 		// message
 		m.mText = tr( "Build failed" );
 		m.mType = Bad;
 		// result string
-		s = tr( "Make failed. %1 error(s), %2 warning(s) and %3 unknow(s)." ).append( b )
-			.arg( colorText( QString::number( e ), "red" ), colorText( QString::number( w ), "red" ), colorText( QString::number( o ), "red" ) );
+		s.append( tr( "Build failed." ) );
+		//
+		s.append( tr( " %1 error(s)," ).arg( colorText( QString::number( e ), "red" ) ) );
 	}
+	// no errors
 	else
 	{
 		// message
 		m.mText = tr( "Build complete" );
 		m.mType = Good;
 		// result string
-		s = tr( "Make complete with %1 error(s), %2 warning(s) and %3 unknow(s)." ).append( b )
-			.arg( colorText( QString::number( e ), "red" ), colorText( QString::number( w ), "red" ), colorText( QString::number( o ), "red" ) );
+		s.append( tr( "Build complete." ) );
 	}
+	// warnings
+	if ( w )
+		s.append( tr( " %1 warning(s)," ).arg( colorText( QString::number( w ), "red" ) ) );
+	// compiling
+	if ( c )
+		s.append( tr( " %1 file(s) built," ).arg( colorText( QString::number( c ), "red" ) ) );
+	// others
+	if ( u )
+		s.append( tr( " %1 unknow(s)," ).arg( colorText( QString::number( u ), "red" ) ) );
+	// trimmin last , and repalce it by .
+	if ( s.endsWith( "," ) )
+		s[s.length() -1] = '.';
 	// message
 	m.mFullText = s;
 	mMessages.append( m );
@@ -74,15 +95,29 @@ void GNUMakeParser::appendToBuffer( const QString& s )
 //
 void GNUMakeParser::parse()
 {
-	if ( rxErrWarn.pattern().isNull() && rxBuild.pattern().isNull() )
+	if ( rxErrWarn.pattern().isEmpty() && rxBuild.pattern().isEmpty() && rxUndefRef.pattern().isEmpty() && rxNoRule.pattern().isEmpty() )
 		return;
 	//
 	QStringList l = mBuffer.split( '\n' );
-	foreach ( QString s, l )
+	foreach ( QString s, l )  
 	{
-		int i = 0;
 		QString t;
-		while ( ( i = rxErrWarn.indexIn( s, i ) ) != -1 )
+		// compiling file
+		if ( rxBuild.indexIn( s )  != -1 )
+		{
+			Message m;
+			m.mFullText = rxBuild.cap( 0 );
+			m.mFileName = QString::null;
+			m.mPosition = QPoint( 0, 0 );
+			m.mType = Compiling;
+			m.mText =  tr( "Compiling %1..." ).arg( rxBuild.cap( 1 ) );
+			mMessages.append( m );
+			// emit signal
+			emit newErrorAvailable( m );
+			continue;
+		}
+		// error, warning in the source
+		if (   rxErrWarn.indexIn( s ) != -1 )
 		{
 			Message m;
 			m.mFullText = rxErrWarn.cap( 0 );
@@ -98,24 +133,36 @@ void GNUMakeParser::parse()
 			mMessages.append( m );
 			// emit signal
 			emit newErrorAvailable( m );
-			// update i
-			i += rxErrWarn.matchedLength();
+			continue;
 		}
-		//
-		i = 0;
-		while ( ( i = rxBuild.indexIn( s, i ) ) != -1 )
+		// undefined reference
+ 		if (   rxUndefRef.indexIn( s ) != -1 )
 		{
 			Message m;
-			m.mFullText = rxBuild.cap( 0 );
+			m.mFullText = rxUndefRef.cap( 0 );
 			m.mFileName = QString::null;
 			m.mPosition = QPoint( 0, 0 );
-			m.mType = State;
-			m.mText =  tr( "Compiling %1..." ).arg( rxBuild.cap( 1 ) );
+			m.mType = Error;
+			m.mText =   rxUndefRef.cap( 1 )   //  in function 'main':main.cpp:
+						+ rxUndefRef.cap( 2 ) ;  //undefined reference to ...
 			mMessages.append( m );
 			// emit signal
 			emit newErrorAvailable( m );
-			// update i
-			i += rxBuild.matchedLength();
+			continue;
+		}
+		// no rule to make target ...
+ 		if (   rxNoRule.indexIn( s ) != -1 )
+		{
+			Message m;
+			m.mFullText = rxNoRule.cap( 0 );
+			m.mFileName = QString::null;
+			m.mPosition = QPoint( 0, 0 );
+			m.mType = Error;
+			m.mText =   rxNoRule.cap( 1 ) ;
+			mMessages.append( m );
+			// emit signal
+			emit newErrorAvailable( m );
+			continue;
 		}
 	}
 	mBuffer.clear();
