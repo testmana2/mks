@@ -144,7 +144,7 @@ void GNUMakeParser::parse()
 			m.mPosition = QPoint( 0, 0 );
 			m.mType = Error;
 			m.mText =   rxUndefRef.cap( 1 )   //  in function 'main':main.cpp:
-						+ rxUndefRef.cap( 2 ) ;  //undefined reference to ...
+				+ rxUndefRef.cap( 2 ) ;  //undefined reference to ...
 			mMessages.append( m );
 			// emit signal
 			emit newErrorAvailable( m );

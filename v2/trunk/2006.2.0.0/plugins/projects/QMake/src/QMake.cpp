@@ -80,7 +80,10 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 		// set root project the current project
 		mWorkspace->projectsManager()->setCurrentProxy( mProxy );
 		// show/hide projects lsit according to projects list count
-		mWorkspace->projectsManager()->setTreeProjectsVisible( mWorkspace->projectsManager()->rootProjects().count() > 1 );
+		bool b = mWorkspace->projectsManager()->rootProjects().count() > 1;
+		if ( !b && mProject->subProjects().count() )
+			b = true;
+		mWorkspace->projectsManager()->setTreeProjectsVisible( b );
 		// return true
 		return true;
 	}

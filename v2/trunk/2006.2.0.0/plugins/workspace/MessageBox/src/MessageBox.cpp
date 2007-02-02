@@ -153,12 +153,23 @@ void MessageBox::newErrorAvailable( const ConsoleCommandParser::Message& m )
 	QListWidgetItem* lastIt = mMessageBox->lwErrors->item( mMessageBox->lwErrors->count() -1 );
 	if ( lastIt )
 		t = (ConsoleCommandParser::MessageType)lastIt->data( Qt::UserRole +1 ).toInt();
+	lastIt = 0L;
 	// create new/update item
 	QListWidgetItem* it;
-	if ( t == ConsoleCommandParser::State )
-		it = mMessageBox->lwErrors->item( mMessageBox->lwErrors->count() -1 );
+	if ( t == ConsoleCommandParser::Compiling )
+	{
+		if ( m.mType == ConsoleCommandParser::Warning )
+		{
+			lastIt = mMessageBox->lwErrors->takeItem( mMessageBox->lwErrors->count() -1 );
+			it = new QListWidgetItem( mMessageBox->lwErrors );
+		}
+		else
+			it = mMessageBox->lwErrors->item( mMessageBox->lwErrors->count() -1 );
+	}
 	else
 		it = new QListWidgetItem( mMessageBox->lwErrors );
+	if ( lastIt )
+		mMessageBox->lwErrors->addItem( lastIt );
 	// set item infos
 	it->setText( m.mText );
 	it->setToolTip( m.mFullText );
@@ -175,7 +186,7 @@ void MessageBox::newErrorAvailable( const ConsoleCommandParser::Message& m )
 		it->setIcon( QIcon( ":/icons/buildwarning.png" ) );
 		it->setBackground( QColor( 0, 255, 0, 20 ) );
 		break;
-	case ConsoleCommandParser::State:
+	case ConsoleCommandParser::Compiling:
 		it->setIcon( QIcon( ":/icons/clock.png" ) );
 		it->setBackground( QColor( 0, 0, 255, 20 ) );
 		break;
