@@ -52,15 +52,16 @@ void UIToolsEdit::closeEvent( QCloseEvent* e )
 //
 bool UIToolsEdit::eventFilter( QObject* o, QEvent* e )
 {
+	// accept drag enter event
 	if ( e->type() == QEvent::DragEnter )
 		e->accept();
 	// if not a drop event, return
 	if ( e->type() != QEvent::Drop )
 		return QDialog::eventFilter( o, e );
 	// got the event
-	QDropEvent* d = dynamic_cast<QDropEvent*>( e );
+	QDropEvent* d = static_cast<QDropEvent*>( e );
 	// if no url drop it
-	if ( !d || !d->mimeData()->hasUrls() || d->mouseButtons() != Qt::NoButton )
+	if ( !d || !d->mimeData()->hasUrls() )
 		return QDialog::eventFilter( o, e );
 	// if there is no current item selected, ask to create one
 	QListWidgetItem* it = lwTools->currentItem();
@@ -70,7 +71,7 @@ bool UIToolsEdit::eventFilter( QObject* o, QEvent* e )
 		it = new QListWidgetItem( tr( "new Tool" ), lwTools );
 	// get link info
 	QFileInfo f( d->mimeData()->urls().at( 0 ).toLocalFile() );
-	//
+	// drag for tbFileIcon
 	if ( o == tbFileIcon )
 	{
 		if ( f.isFile() )
@@ -80,6 +81,7 @@ bool UIToolsEdit::eventFilter( QObject* o, QEvent* e )
 			it->setIcon( tbFileIcon->icon() );
 		}
 	}
+	// others
 	else
 	{
 		if ( f.isFile() )
@@ -94,9 +96,11 @@ bool UIToolsEdit::eventFilter( QObject* o, QEvent* e )
 			leWorkingPath->setText( f.canonicalFilePath() );
 		it->setData( idWorkingPath, leWorkingPath->text() );
 	}
+	// select the current item
 	lwTools->clearSelection();
 	lwTools->setCurrentItem( it );
 	it->setSelected( true );
+	// we finish
 	return true;
 }
 //
