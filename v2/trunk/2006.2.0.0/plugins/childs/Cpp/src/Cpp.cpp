@@ -76,7 +76,7 @@ bool Cpp::open( const QString& s, AbstractProjectProxy* p )
 	foreach ( QWidget* w, mWorkspace->documents() )
 	{
 		CppChild* c = qobject_cast<CppChild*>( w );
-		if ( c && c->proxy() == p )
+		if ( c )
 		{
 			// if already open return false
 			if ( c->files().contains( s ) )
