@@ -62,7 +62,7 @@ bool Text::openFile( const QString& s, AbstractProjectProxy* p )
 	foreach ( QWidget* w, mWorkspace->documents() )
 	{
 		TextChild* c = qobject_cast<TextChild*>( w );
-		if ( c && c->proxy() == p && c->files().contains( f ) )
+		if ( c && c->files().contains( f ) )
 		{
 			mWorkspace->setCurrentWidget( c );
 			return false;
