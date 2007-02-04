@@ -43,6 +43,7 @@ public slots:
 	void agStyles_triggered( QAction* );
 	void aboutApplication_triggered();
 	void aboutQt_triggered();
+	void testReport_triggered();
 	//
 };
 //

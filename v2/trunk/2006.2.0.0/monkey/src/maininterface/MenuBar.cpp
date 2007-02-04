@@ -178,5 +178,8 @@ void MenuBar::initialize()
 		action( "aSeparator1" );
 		action( "aAbout", tr( "&About..." ), QIcon( ":/Icons/Icons/icon.png" ) );
 		action( "aAboutQt", tr( "About &Qt..." ), QIcon( ":/Icons/Icons/helpqt.png" ) );
+#ifdef __COVERAGESCANNER__
+		action( "aTestReport", tr( "&Test Report" ), QIcon( ) , tr( "Pause" ) );
+#endif
 	endGroup();
 }

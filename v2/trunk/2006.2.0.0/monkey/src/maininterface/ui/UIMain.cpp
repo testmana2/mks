@@ -13,6 +13,7 @@
 #include "Workspace.h"
 #include "StatusBar.h"
 #include "UIAbout.h"
+#include "UITestReport.h"
 //
 #include <QStyleFactory>
 //
@@ -85,6 +86,9 @@ void UIMain::initConnections()
 	connect( agStyles, SIGNAL( triggered( QAction* ) ), this, SLOT( agStyles_triggered( QAction* ) ) );
 	connect( MenuBar::self()->action( "mHelp/aAbout" ), SIGNAL( triggered() ), this, SLOT( aboutApplication_triggered() ) );
 	connect( MenuBar::self()->action( "mHelp/aAboutQt" ), SIGNAL( triggered() ), this, SLOT( aboutQt_triggered() ) );
+#ifdef __COVERAGESCANNER__
+	connect( MenuBar::self()->action( "mHelp/aTestReport" ), SIGNAL( triggered() ), this, SLOT( testReport_triggered() ) );
+#endif
 }
 //
 void UIMain::agStyles_triggered( QAction* a )
@@ -96,6 +100,10 @@ void UIMain::agStyles_triggered( QAction* a )
 void UIMain::aboutApplication_triggered()
 {
 	UIAbout::self( this )->exec();
+}
+void UIMain::testReport_triggered()
+{
+  UITestReport::self()->exec();
 }
 //
 void UIMain::aboutQt_triggered()
