@@ -103,7 +103,7 @@ void UIMain::aboutApplication_triggered()
 }
 void UIMain::testReport_triggered()
 {
-  UITestReport::self()->exec();
+  UITestReport::self( this )->exec();
 }
 //
 void UIMain::aboutQt_triggered()
