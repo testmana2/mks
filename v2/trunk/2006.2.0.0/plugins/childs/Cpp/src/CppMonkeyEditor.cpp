@@ -1,6 +1,7 @@
 #include "CppMonkeyEditor.h"
 //
 #include <QApplication>
+#include <QKeyEvent>
 // qscintilla include
 #include <qscilexercpp.h>
 #include <qsciapis.h>
@@ -15,8 +16,14 @@ CppMonkeyEditor::CppMonkeyEditor( QWidget* p )
 	{
 		mLexer = new QsciLexerCPP( qApp );
 		mAPI = new QsciAPIs( mLexer );
-		if ( mAPI->isPrepared( "Qt4.api" ) )
-			mAPI->loadPrepared( "Qt4.api" );
+		qWarning( "trying to load qt4 api" );
+		if ( mAPI->isPrepared( "Qt4_Prepared.api" ) )
+		{
+			qWarning( "api is prepared" );
+			//mAPI->prepare();
+			mAPI->loadPrepared( "Qt4_Prepared.api" );
+		}
+		qWarning( "api loaded" );
 		mLexer->setAutoIndentStyle( AiMaintain );
 	}
 	//
@@ -26,14 +33,30 @@ CppMonkeyEditor::CppMonkeyEditor( QWidget* p )
 	setFolding( BoxedTreeFoldStyle );
 	setBraceMatching( SloppyBraceMatch );
 	setAutoCompletionSource( AcsAll );
-	setAutoCompletionThreshold( 2 );
+	//setAutoCompletionThreshold( -1 );
 	setAutoIndent( true );
 	setIndentationsUseTabs( true );
 	setAutoCompletionShowSingle( true );
+	setAutoCompletionWordSeparators( QStringList() << "." << "->" );
 }
 //
 CppMonkeyEditor::~CppMonkeyEditor()
 {
+	//mAPI->savePrepared( "Qt4_Prepared.api" );
+}
+//
+void CppMonkeyEditor::keyReleaseEvent( QKeyEvent* e )
+{
+	e->ignore();
+	return;
+/*
+	if ( !e->isAutoRepeat() && !isListActive() && e->matches( QKeySentence( tr( "Ctrl+Space" ) ) ) )
+	{
+		
+		e->accept();
+		return;
+	}
+	e->ignore();*/
 }
 //
 bool CppMonkeyEditor::openFile( const QString& s, QTextCodec* c )

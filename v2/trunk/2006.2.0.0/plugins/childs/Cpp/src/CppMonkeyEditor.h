@@ -14,6 +14,9 @@ public:
 	CppMonkeyEditor( QWidget* = 0 );
 	~CppMonkeyEditor();
 	//
+protected:
+	void keyReleaseEvent( QKeyEvent* );
+	//
 private:
 	static QsciLexerCPP* mLexer;
 	static QsciAPIs* mAPI;
