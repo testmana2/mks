@@ -101,9 +101,10 @@ void UIMain::aboutApplication_triggered()
 {
 	UIAbout::self( this )->exec();
 }
+//
 void UIMain::testReport_triggered()
 {
-  UITestReport::self( this )->exec();
+	UITestReport::self( this )->exec();
 }
 //
 void UIMain::aboutQt_triggered()

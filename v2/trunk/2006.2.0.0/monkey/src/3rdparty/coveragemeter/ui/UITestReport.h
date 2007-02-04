@@ -12,11 +12,11 @@ class Q_MONKEY_EXPORT UITestReport : public QDialog, public Ui::UITestReport
 	//
 public:
 	static UITestReport* self( QWidget* = 0 );
-    static void setTestTitle(const QString &);
+	static void setTestTitle( const QString& );
 	//
 private slots:
 	void okClicked( );
-    void cancelClicked();
+	void cancelClicked();
 	//
 private:
 	UITestReport( QWidget* = 0 );

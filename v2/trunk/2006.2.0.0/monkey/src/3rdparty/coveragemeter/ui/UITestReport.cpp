@@ -21,8 +21,8 @@ UITestReport::UITestReport( QWidget* p )
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	//
-    QString descriptionText;
-    descriptionText = "<HTML><BODY>" 
+	QString descriptionText;
+	descriptionText = "<HTML><BODY>" 
                       "<H1>Test Report Generation for MonkeyStudio</H1>"
                       "<P>"
                       "Process as follows:"
@@ -43,49 +43,54 @@ UITestReport::UITestReport( QWidget* p )
                       "to xxxx@xxx.xx" 
                       "</P>"
                       "</BODY></HTML>";
-    description->setText(descriptionText);
-    //
-    connect( ok, SIGNAL( clicked( ) ), this, SLOT( okClicked( ) ) );
-    connect( cancel, SIGNAL( clicked( ) ), this, SLOT( cancelClicked( ) ) );
+	description->setText(descriptionText);
+	//
+	connect( ok, SIGNAL( clicked( ) ), this, SLOT( okClicked( ) ) );
+	connect( cancel, SIGNAL( clicked( ) ), this, SLOT( cancelClicked( ) ) );
 }
 //
 void UITestReport::okClicked( )
 {
 #ifdef __COVERAGESCANNER__
-    setTestTitle(title->text());
-    switch (status->currentIndex())
-    {
-        case 1:  __coveragescanner_teststate("PASSED");  break;
-        case 2:  __coveragescanner_teststate("FAILED");  break;
-        default: __coveragescanner_teststate("UNKNOWN"); break;
-    }
-    __coveragescanner_save();
-    setTestTitle(QString());
+	setTestTitle( title->text() );
+	switch ( status->currentIndex() )
+	{
+	case 1:
+		__coveragescanner_teststate( "PASSED" );
+		break;
+        case 2:
+		__coveragescanner_teststate( "FAILED" );
+		break;
+        default:
+		__coveragescanner_teststate( "UNKNOWN" );
+		break;
+	}
+	__coveragescanner_save();
+	setTestTitle( QString() );
 #endif
-    accept();
+	accept();
 }
 
 void UITestReport::cancelClicked( )
 {
-    reject();
+	reject();
 }
 
-void UITestReport::setTestTitle(const QString  &title)
+void UITestReport::setTestTitle( const QString& s )
 {
-    QString userName=QString(getenv("USERNAME"));
-    QString user=QString(getenv("USER"));
-    QString testName;
-    testName=user;
-    if (!userName.isEmpty())
-        testName+="("+userName+")";
-
-    testName+="/";
-    if (title.isEmpty())
-        testName+=QString("unnamed");
-    else
-        testName+=title;
-
+	QString userName = QString( getenv( "USERNAME" ) );
+	QString user = QString( getenv( "USER" ) );
+	QString testName;
+	testName = user;
+	if ( !userName.isEmpty() )
+		testName += "(" +userName +")";
+	//
+	testName += "/";
+	if ( s.isEmpty() )
+		testName += QString( "unnamed" );
+	else
+		testName += s;
 #ifdef __COVERAGESCANNER__
-    __coveragescanner_testname(testName.toAscii());
+	__coveragescanner_testname( testName.toAscii() );
 #endif
 }
