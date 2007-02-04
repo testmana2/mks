@@ -34,16 +34,16 @@ public:
 	enum WriteMode { wmNone = 0, wmInsert, wmOverwrite };
 	//
 	MonkeyEditor( QWidget* = 0 );
-	~MonkeyEditor();
+	virtual ~MonkeyEditor();
 	//
-	bool pasteAvailable() const;
-	bool copyAvailable() const;
-	bool getState( pAction::StateType );
+	virtual bool pasteAvailable() const;
+	virtual bool copyAvailable() const;
+	virtual bool getState( pAction::StateType );
 	//
-	void print( bool = false );
-	void quickPrint();
+	virtual void print( bool = false );
+	virtual void quickPrint();
 	//
-	QString filePath() const { return mFilePath; }
+	virtual QString filePath() const { return mFilePath; }
 	//
 protected:
 	virtual void focusInEvent( QFocusEvent* );
@@ -53,20 +53,22 @@ protected:
 private:
 	bool mCopyAvailable;
 	QList<pAction*> mActions;
+	QTextCodec* mCodec;
+	QString mFilePath;
 	//
 private slots:
-	void clipboard_dataChanged();
-	void cursorPositionChanged( int, int );
-	void textChanged();
-	void setCopyAvailable( bool );
+	virtual void clipboard_dataChanged();
+	virtual void cursorPositionChanged( int, int );
+	virtual void textChanged();
+	virtual void setCopyAvailable( bool );
 	//
 public slots:
-	void selectNone();
-	void searchReplace();
-	void goToLine();
-	bool openFile( const QString&, QTextCodec* = QTextCodec::codecForLocale() );
-	void saveFile();
-	void closeFile();
+	virtual void selectNone();
+	virtual void searchReplace();
+	virtual void goToLine();
+	virtual bool openFile( const QString&, QTextCodec* = QTextCodec::codecForLocale() );
+	virtual void saveFile();
+	virtual void closeFile();
 	//
 signals:
 	void cursorPositionChanged( const QPoint& );
@@ -75,10 +77,6 @@ signals:
 	void pasteAvailable( bool );
 	void fileOpened( bool );
 	void focused( bool );
-	//
-private:
-	QTextCodec* mCodec;
-	QString mFilePath;
 	//
 };
 //

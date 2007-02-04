@@ -1,7 +1,7 @@
 #ifndef CPPCHILD_H
 #define CPPCHILD_H
 //
-#include "MonkeyEditor.h"
+#include "CppMonkeyEditor.h"
 #include "AbstractChild.h"
 //
 class QSplitter;
@@ -15,7 +15,7 @@ class CppChild : public AbstractChild
 public:
 	CppChild();
 	// give current editor
-	MonkeyEditor* currentEditor() const;
+	CppMonkeyEditor* currentEditor() const;
 	// return headers extension
 	static QStringList headerExtensions();
 	// return source extensions
@@ -75,8 +75,8 @@ private:
 	static QStringList mHeaderExtensions;
 	static QStringList mSourceExtensions;
 	QSplitter* mSplitter;
-	MonkeyEditor* mHeader;
-	MonkeyEditor* mSource;
+	CppMonkeyEditor* mHeader;
+	CppMonkeyEditor* mSource;
 	//
 protected:
 	void showEvent( QShowEvent* );

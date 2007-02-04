@@ -9,10 +9,12 @@ CONFIG	+= qt warn_on release lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR/childs
 
 SOURCES	= src/Cpp.cpp \
+	src/CppMonkeyEditor.cpp \
 	src/CppChild.cpp \
 	src/CppCornerWidget.cpp
 
 HEADERS	= src/Cpp.h \
+	src/CppMonkeyEditor.h \
 	src/CppChild.h \
 	src/CppCornerWidget.h
 
