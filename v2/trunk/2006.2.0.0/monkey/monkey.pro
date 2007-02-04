@@ -22,29 +22,35 @@ win32-g++:LIBS	+= -Wl,--out-implib,../build/.lib/libmonkey.a
 QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/ui \
-  src/3rdparty/objects/pSettings/ \
-  src/3rdparty/widgets/pMenuBar/  \
-  src/workspacemanager/           \
-  src/maininterface/              \
-  src/toolsmanager/ui/            \
-  src/3rdparty/widgets/pTabToolBar/   \
-  src/3rdparty/widgets/pTabWorkspace/ \
-  src/projectsmanager/ui/ \
-  src/projectsmanager/    \
-  src/pluginsmanager/     \
-  src/pluginsmanager/ui   \
-  src/maininterface/ui/   \
-  src/toolsmanager/       \
-  src/recentsmanager/     \
-  src/monkeyeditor/ui/    \
-  src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci \
-  src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4      \
-  src/3rdparty/coveragemeter/ui
-  
+	src/3rdparty/objects/pSettings \
+	src/3rdparty/widgets/pMenuBar \
+	src/workspacemanager \
+	src/maininterface \
+	src/toolsmanager/ui \
+	src/3rdparty/widgets/pTabToolBar \
+	src/3rdparty/widgets/pTabWorkspace \
+	src/projectsmanager/ui \
+	src/projectsmanager \
+	src/pluginsmanager \
+	src/pluginsmanager/ui \
+	src/maininterface/ui \
+	src/toolsmanager \
+	src/recentsmanager \
+	src/monkeyeditor/ui \
+	src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci \
+	src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4 \
+	src/3rdparty/coveragemeter/ui
 CONFIG	+= qt warn_on release app_bundle thread x11 windows console
 DESTDIR	= ../bin
 win32:RC_FILE	+= monkey.rc
 RESOURCES	= src/resources/resources.qrc
+
+contains( DEFINES, __COVERAGESCANNER__ ) {
+	message( "Coverage Meter Activated." )
+	QMAKE_LINK	= cslink
+	QMAKE_CXX	= cscl
+	QMAKE_CC	= cscl
+}
 
 SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.cpp \
