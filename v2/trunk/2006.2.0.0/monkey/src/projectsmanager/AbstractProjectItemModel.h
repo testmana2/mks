@@ -3,9 +3,12 @@
 //
 #include <QStandardItemModel>
 #include <QHash>
+#include <QDir>
 //
 #include "MonkeyExport.h"
 //
+class QsciLexer;
+class QsciAPIs;
 class AbstractProjectItemModel;
 typedef QHash<int, AbstractProjectItemModel*> QHashProjects; // id, project
 //
@@ -26,6 +29,10 @@ public:
 	virtual bool isOpen() const;
 	// project modified flag
 	virtual bool isModified() const;
+	// project lexer
+	virtual QsciLexer* lexer() const;
+	// project apis
+	virtual QsciAPIs* apis() const;
 	// the project name
 	virtual QString name() const;
 	// the project path
@@ -52,6 +59,10 @@ public:
 	virtual QStandardItem* itemByName( const QString& ) const = 0;
 	//
 protected:
+	// preapre completion
+	virtual void prepareCompletion() = 0;
+	// get recursive files
+	virtual QStringList recursiveFiles( QDir );
 	// parse the project
 	virtual bool parse() = 0;
 	//
@@ -61,12 +72,18 @@ protected:
 	QString mFilePath;
 	bool mIsOpen;
 	bool mIsModified;
+	QsciLexer* mLexer;
+	QsciAPIs* mAPIs;
 	//
 public slots:
 	// set project file path
 	virtual void setFilePath( const QString& );
 	// set project modified flag
 	virtual void setModified( bool );
+	// set project lexer
+	virtual void setLexer( QsciLexer* );
+	// set project lexer
+	virtual void setAPIs( QsciAPIs* );
 	// close project
 	virtual void close() = 0;
 	// save project

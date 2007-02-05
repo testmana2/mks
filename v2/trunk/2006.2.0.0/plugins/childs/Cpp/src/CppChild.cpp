@@ -1,5 +1,6 @@
 #include "CppChild.h"
 #include "CppCornerWidget.h"
+#include "AbstractProjectProxy.h"
 // qt include
 #include <QVBoxLayout>
 #include <QSplitter>
@@ -70,6 +71,15 @@ QStringList CppChild::headerExtensions()
 QStringList CppChild::sourceExtensions()
 {
 	return mSourceExtensions;
+}
+// set the project for this child
+void CppChild::setProxy( AbstractProjectProxy* p )
+{
+	AbstractChild::setProxy( p );
+	if ( !p )
+		return;
+	mHeader->setLexer( p->project()->lexer() );
+	mSource->setLexer( p->project()->lexer() );
 }
 // left corner widget for this child
 QWidget* CppChild::cornerWidget()

@@ -2,7 +2,9 @@
 //
 #include <QHash>
 #include <QFileInfo>
-#include <QDir>
+//
+#include <qscilexer.h>
+#include <qsciapis.h>
 //
 int AbstractProjectItemModel::mUniqueId = 0;
 QHashProjects AbstractProjectItemModel::mProjectsList = QHashProjects();
@@ -20,7 +22,8 @@ AbstractProjectItemModel::~AbstractProjectItemModel()
 {
 	if ( mProjectsList.contains( mId ) )
 		mProjectsList.remove( mId );
-	qWarning( "Project deleted" );
+	delete mAPIs;
+	delete mLexer;
 }
 //
 int AbstractProjectItemModel::id() const
@@ -50,6 +53,16 @@ bool AbstractProjectItemModel::isModified() const
 	return mIsModified;
 }
 //
+QsciLexer* AbstractProjectItemModel::lexer() const
+{
+	return mLexer;
+}
+// project apis
+QsciAPIs* AbstractProjectItemModel::apis() const
+{
+	return mAPIs;
+}
+//
 QString AbstractProjectItemModel::name() const
 {
 	return QFileInfo( mFilePath ).baseName();
@@ -69,6 +82,23 @@ QString AbstractProjectItemModel::filePath( const QString& s )
 {
 	return QDir::convertSeparators( QFileInfo( QString( "%1/%2" ).arg( path(), s ) ).canonicalFilePath() );
 }
+// get all files
+QStringList AbstractProjectItemModel::recursiveFiles( QDir d )
+{
+	QStringList l;
+	// looking fodlers to load
+	foreach ( QString s, d.entryList( QDir::Dirs | QDir::NoDotAndDotDot ) )
+	{
+		d.cd( s );
+		l << recursiveFiles( d );
+		d.cdUp();
+	}
+	// looking files to load
+	foreach ( QString s, d.entryList( QDir::Files ) )
+		l << d.absoluteFilePath( s );
+	//
+	return l;
+}
 //
 void AbstractProjectItemModel::setFilePath( const QString& s )
 {
@@ -85,4 +115,16 @@ void AbstractProjectItemModel::setModified( bool b )
 		return;
 	mIsModified = b;
 	emit isModifiedChanged( mIsModified );
+}
+//
+void AbstractProjectItemModel::setLexer( QsciLexer* l )
+{
+	delete l;
+	mLexer = l;
+}
+//
+void AbstractProjectItemModel::setAPIs( QsciAPIs* a )
+{
+	delete mAPIs;
+	mAPIs = a;
 }

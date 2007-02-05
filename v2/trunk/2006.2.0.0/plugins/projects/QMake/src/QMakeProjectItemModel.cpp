@@ -3,10 +3,12 @@
 //
 #include <QTime>
 #include <QFileInfo>
-#include <QDir>
 #include <QTextStream>
 #include <QTextCodec>
 #include <QRegExp>
+//
+#include <qscilexercpp.h>
+#include <qsciapis.h>
 //
 static QRegExp rx;
 //
@@ -23,6 +25,8 @@ QString quoted( const QString& s )
 QMakeProjectItemModel::QMakeProjectItemModel( const QString& s, QObject* p )
 	: AbstractProjectItemModel( s, p )
 {
+	mLexer = new QsciLexerCPP( this );
+	mAPIs = new QsciAPIs( mLexer ) ;
 }
 //
 QMakeProjectItemModel::~QMakeProjectItemModel()
@@ -74,12 +78,26 @@ QString QMakeProjectItemModel::getValue( const QString& s ) const
 	return getValuesList( s ).value( 0 );
 }
 //
+QStringList get( QStandardItem* it )
+{
+	QStringList l;
+	if ( !it )
+		return l;
+	for ( int i = 0; i < it->rowCount(); i++ )
+	{
+		if ( it->child( i )->rowCount() )
+			l << get( it->child( i ) );
+		if ( it->child( i ) ->type() != QMakeProjectItem::Folder )
+			l << it->child( i )->data( QMakeProjectItem::ValueRole ).toString();
+	}
+	return l;
+}
+//
 QStringList QMakeProjectItemModel::getValuesList( const QString& s ) const
 {
 	QStringList l;
 	foreach ( QStandardItem* i, itemsByName( s ) )
-		for ( int j = 0; j < i->rowCount(); j++ )
-			l << i->child( j )->data( QMakeProjectItem::ValueRole ).toString();
+		l << get( i );
 	return l;
 }
 //
@@ -108,8 +126,51 @@ bool QMakeProjectItemModel::open( bool )
 		return false;
 	mIsOpen = parse();
 	if ( mIsOpen )
+	{
+		prepareCompletion();
 		emit isOpenChanged( true );
+	}
 	return mIsOpen;
+}
+// preapre completion
+void QMakeProjectItemModel::prepareCompletion()
+{
+	// load qt4 prepared api
+	if ( mAPIs->isPrepared( "Qt4_Prepared.api" ) )
+		mAPIs->loadPrepared( "Qt4_Prepared.api" );
+	//
+	QStringList l, f;
+	// add headers to apis
+	l = getValuesList( "HEADERS" );
+	foreach ( QString s, l )
+		mAPIs->load( filePath( s ) );
+	// add sources to apis
+	l = getValuesList( "SOURCES" );
+	foreach ( QString s, l )
+		mAPIs->load( filePath( s ) );
+	// includepath
+	l = getValuesList( "INCLUDEPATH" );
+	foreach ( QString s, l )
+		f = recursiveFiles( QDir( filePath( s ) ) );
+	foreach ( QString s, f )
+		if ( !mAPIs->installedAPIFiles().contains( s ) )
+			mAPIs->load( s );
+	// dependpath
+	l = getValuesList( "DEPENDPATH" );
+	foreach ( QString s, l )
+		f = recursiveFiles( QDir( filePath( s ) ) );
+	foreach ( QString s, f )
+		if ( !mAPIs->installedAPIFiles().contains( s ) )
+			mAPIs->load( s );
+	// vpath
+	l = getValuesList( "VPATH" );
+	foreach ( QString s, l )
+		f = recursiveFiles( QDir( filePath( s ) ) );
+	foreach ( QString s, f )
+		if ( !mAPIs->installedAPIFiles().contains( s ) )
+			mAPIs->load( s );
+	// start prepare thread
+	mAPIs->prepare();
 }
 // parse project
 bool QMakeProjectItemModel::parse()

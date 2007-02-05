@@ -3,6 +3,8 @@
 //
 #include "AbstractProjectItemModel.h"
 //
+#include <QDir>
+//
 class QMakeProjectItem;
 //
 class QMakeProjectItemModel : public AbstractProjectItemModel
@@ -32,6 +34,8 @@ public:
 	virtual bool open( bool = true );
 	//
 protected:
+	// preapre completion
+	virtual void prepareCompletion();
 	// parse project
 	virtual bool parse();
 	//

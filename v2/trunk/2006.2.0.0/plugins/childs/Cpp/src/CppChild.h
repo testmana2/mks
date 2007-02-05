@@ -20,6 +20,8 @@ public:
 	static QStringList headerExtensions();
 	// return source extensions
 	static QStringList sourceExtensions();
+	// set the project for this child
+	virtual void setProxy( AbstractProjectProxy* p );
 	// left corner widget for this child
 	virtual QWidget* cornerWidget();
 	// return cursor position if available

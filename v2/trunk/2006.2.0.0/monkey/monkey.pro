@@ -14,7 +14,7 @@ mac:ICON	= src/resources/Icons/icon.icns
 win32:ICON	= src/resources/Icons/icon.ico
 
 TEMPLATE	= app
-DEFINES	= MONKEY_CORE_BUILD __COVERAGESCANNER__
+DEFINES	= MONKEY_CORE_BUILD #__COVERAGESCANNER__
 LIBS	= -L../build/.lib -lqscintilla2
 linux-g++:LIBS	+= -rdynamic
 win32-msvc:LIBS	+= /IMPLIB:../build/.lib/monkey.lib
