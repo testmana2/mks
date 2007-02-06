@@ -83,19 +83,24 @@ QString AbstractProjectItemModel::filePath( const QString& s )
 	return QDir::convertSeparators( QFileInfo( QString( "%1/%2" ).arg( path(), s ) ).canonicalFilePath() );
 }
 // get all files
-QStringList AbstractProjectItemModel::recursiveFiles( QDir d )
+QStringList AbstractProjectItemModel::getFiles( QDir d, const QStringList& f, bool b )
 {
 	QStringList l;
-	// looking fodlers to load
-	foreach ( QString s, d.entryList( QDir::Dirs | QDir::NoDotAndDotDot ) )
+	if ( !d.exists() )
+		return l;
+	// looking recursive fodlers to load if needed
+	if ( b )
 	{
-		d.cd( s );
-		l << recursiveFiles( d );
-		d.cdUp();
+		foreach ( QString s, d.entryList( QDir::Dirs | QDir::NoDotAndDotDot ) )
+		{
+			d.cd( s );
+			l << getFiles( d, f, b );
+			d.cdUp();
+		}
 	}
 	// looking files to load
-	foreach ( QString s, d.entryList( QDir::Files ) )
-		l << d.absoluteFilePath( s );
+	foreach ( QString s, d.entryList( f, QDir::Files ) )
+		l << QDir( path() ).relativeFilePath( d.absoluteFilePath( s ) );
 	//
 	return l;
 }

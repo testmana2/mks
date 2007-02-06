@@ -62,7 +62,7 @@ protected:
 	// preapre completion
 	virtual void prepareCompletion() = 0;
 	// get recursive files
-	virtual QStringList recursiveFiles( QDir );
+	virtual QStringList getFiles( QDir, const QStringList& = QStringList() << "*", bool = false );
 	// parse the project
 	virtual bool parse() = 0;
 	//

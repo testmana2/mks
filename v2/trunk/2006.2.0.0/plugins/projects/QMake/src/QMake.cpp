@@ -4,6 +4,8 @@
 #include "ProjectsManager.h"
 #include "UISettingsQMake.h"
 //
+#include <QApplication>
+//
 QMake::~QMake()
 {
 	if ( isInstalled() )
@@ -76,7 +78,10 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 		mWorkspace->projectsManager()->addProxy( mProxy, py );
 		// open subprojects
 		foreach ( QString h, mProxy->project()->subProjects() )
+		{
+			QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
 			openProject( h, mProxy );
+		}
 		// set root project the current project
 		mWorkspace->projectsManager()->setCurrentProxy( mProxy );
 		// show/hide projects lsit according to projects list count

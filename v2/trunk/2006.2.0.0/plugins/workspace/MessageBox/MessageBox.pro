@@ -15,4 +15,3 @@ FORMS	= src/ui/UIMessageBox.ui
 
 HEADERS	= src/MessageBox.h \
 	src/ui/UIMessageBox.h
-

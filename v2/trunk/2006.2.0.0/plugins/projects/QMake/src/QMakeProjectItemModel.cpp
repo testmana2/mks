@@ -12,16 +12,6 @@
 //
 static QRegExp rx;
 //
-void warn( const QString& s )
-{
-	qWarning( qPrintable( s ) );
-}
-//
-QString quoted( const QString& s )
-{
-	return QString( "'%1'" ).arg( s );
-}
-//
 QMakeProjectItemModel::QMakeProjectItemModel( const QString& s, QObject* p )
 	: AbstractProjectItemModel( s, p )
 {
@@ -72,12 +62,7 @@ QStringList QMakeProjectItemModel::subProjects() const
 	}
 	return lf;
 }
-//
-QString QMakeProjectItemModel::getValue( const QString& s ) const
-{
-	return getValuesList( s ).value( 0 );
-}
-//
+// recursive get in case of folder
 QStringList get( QStandardItem* it )
 {
 	QStringList l;
@@ -91,6 +76,11 @@ QStringList get( QStandardItem* it )
 			l << it->child( i )->data( QMakeProjectItem::ValueRole ).toString();
 	}
 	return l;
+}
+//
+QString QMakeProjectItemModel::getValue( const QString& s ) const
+{
+	return getValuesList( s ).value( 0 );
 }
 //
 QStringList QMakeProjectItemModel::getValuesList( const QString& s ) const
@@ -127,7 +117,8 @@ bool QMakeProjectItemModel::open( bool )
 	mIsOpen = parse();
 	if ( mIsOpen )
 	{
-		prepareCompletion();
+		if ( getValue( "TEMPLATE" ).toLower() != "subdirs" )
+			prepareCompletion();
 		emit isOpenChanged( true );
 	}
 	return mIsOpen;
@@ -135,40 +126,54 @@ bool QMakeProjectItemModel::open( bool )
 // preapre completion
 void QMakeProjectItemModel::prepareCompletion()
 {
-	// load qt4 prepared api
-	if ( mAPIs->isPrepared( "Qt4_Prepared.api" ) )
-		mAPIs->loadPrepared( "Qt4_Prepared.api" );
-	//
-	QStringList l, f;
+	QStringList l, f, e = QStringList() << "*.h*" << "*.c*" ;
+	QString s;
+	// load qt prepared api if needed
+	s = getValue( "LANGUAGE" ).toLower();
+	if ( s.contains( "qt3" ) && mAPIs->isPrepared( "Qt3.api" ) )
+		mAPIs->loadPrepared( "Qt3.api" );
+	else if ( mAPIs->isPrepared( "Qt4.api" ) )
+		mAPIs->loadPrepared( "Qt4.api" );
 	// add headers to apis
 	l = getValuesList( "HEADERS" );
-	foreach ( QString s, l )
-		mAPIs->load( filePath( s ) );
 	// add sources to apis
-	l = getValuesList( "SOURCES" );
-	foreach ( QString s, l )
-		mAPIs->load( filePath( s ) );
+	l << getValuesList( "SOURCES" );
 	// includepath
-	l = getValuesList( "INCLUDEPATH" );
-	foreach ( QString s, l )
-		f = recursiveFiles( QDir( filePath( s ) ) );
-	foreach ( QString s, f )
-		if ( !mAPIs->installedAPIFiles().contains( s ) )
-			mAPIs->load( s );
+	f = getValuesList( "INCLUDEPATH" );
+	foreach ( s, f )
+	{
+		s = filePath( s );
+		if ( QFile::exists( s ) )
+			l << getFiles( QDir( s ), e );
+	}
 	// dependpath
-	l = getValuesList( "DEPENDPATH" );
-	foreach ( QString s, l )
-		f = recursiveFiles( QDir( filePath( s ) ) );
-	foreach ( QString s, f )
-		if ( !mAPIs->installedAPIFiles().contains( s ) )
-			mAPIs->load( s );
+	f = getValuesList( "DEPENDPATH" );
+	foreach ( s, f )
+	{
+		s = filePath( s );
+		if ( QFile::exists( s ) )
+			l << getFiles( QDir( s ), e );
+	}
 	// vpath
-	l = getValuesList( "VPATH" );
-	foreach ( QString s, l )
-		f = recursiveFiles( QDir( filePath( s ) ) );
-	foreach ( QString s, f )
-		if ( !mAPIs->installedAPIFiles().contains( s ) )
-			mAPIs->load( s );
+	f = getValuesList( "VPATH" );
+	foreach ( s, f )
+	{
+		s = filePath( s );
+		if ( QFile::exists( s ) )
+			l << getFiles( QDir( s ), e );
+	}
+	// load files
+	f.clear();
+	foreach ( s, l )
+	{
+		s = filePath( s );
+		if ( !f.contains( s ) )
+		{
+			f << s;
+			if ( QFile::exists( s ) )
+				mAPIs->load( s );
+		}
+	}
 	// start prepare thread
 	mAPIs->prepare();
 }
@@ -182,7 +187,7 @@ bool QMakeProjectItemModel::parse()
 	QFile f( mFilePath );
 	if ( !f.exists() || !f.open( QFile::ReadOnly | QFile::Text ) )
 	{
-		warn( QString( "Can't open project: %1" ).arg( mFilePath ) );
+		qWarning( qPrintable( tr( "Can't open project: %1" ).arg( mFilePath ) ) );
 		return false;
 	}
 	// create project item
@@ -404,7 +409,7 @@ void QMakeProjectItemModel::parseLine( const QString& line, QMakeProjectItem* it
 				if ( iValue && !mComment.isEmpty() )
 				{
 					iValue->setData( mComment, QMakeProjectItem::CommentRole );
-					iValue->setToolTip( tr( "%1Comment: %1" ).arg( iValue->toolTip().append( "\n" ), mComment ) );
+					iValue->setToolTip( tr( "%1Comment: %2" ).arg( iValue->toolTip().append( "\n" ), mComment ) );
 					mComment.clear();
 				}
 			}

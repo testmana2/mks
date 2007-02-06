@@ -16,4 +16,3 @@ SOURCES	= $$SOURCES \
 HEADERS	= $$HEADERS \
 	src/QtAssistant.h \
 	src/QtAssistantChild.h
-
