@@ -21,7 +21,7 @@ public:
 	static AbstractProjectProxy* byId( int );
 	static QHashProxys all();
 	static AbstractProjectProxy* getProxyByProject( AbstractProjectItemModel* );
-	virtual	bool isComplexModel() const;
+	virtual bool isComplexModel() const;
 	//
 	virtual AbstractProjectItemModel* project() const = 0;
 	//

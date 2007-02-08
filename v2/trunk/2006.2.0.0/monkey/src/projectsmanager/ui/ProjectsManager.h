@@ -49,7 +49,6 @@ private slots:
 	void on_tbSave_clicked();
 	void on_tbClose_clicked();
 	void on_twProjects_itemClicked( QTreeWidgetItem*, int );
-	void on_swProjects_currentChanged( int );
 	//
 signals:
 	void proxyAdded( AbstractProjectProxy* );

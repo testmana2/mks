@@ -1,6 +1,10 @@
 #include "QMakeProjectProxy.h"
 #include "QMakeProjectItemModel.h"
 #include "QMakeProjectItem.h"
+#include "MenuBar.h"
+//
+#include <QMenu>
+#include <QAbstractItemView>
 //
 QMakeProjectProxy::QMakeProjectProxy( QMakeProjectItemModel* s )
 	: AbstractProjectProxy( s ), mSource( s )
@@ -53,7 +57,35 @@ void QMakeProjectProxy::doubleClicked( const QModelIndex& i )
 		emit fileOpenRequested( it->data( QMakeProjectItem::AbsoluteFilePathRole ).toString() , this );
 }
 //
-void QMakeProjectProxy::customContextMenuRequested( const QPoint& )
+void QMakeProjectProxy::customContextMenuRequested( const QPoint& p )
 {
-	qWarning( "context menu" );
+	QAbstractItemView* v = qobject_cast<QAbstractItemView*>( sender() );
+	if ( !v )
+		return;
+	QMenu* sm;
+	QMenu m( v );
+	// project menu
+	m.addMenu( MenuBar::self()->menu( "mProject" ) );
+	m.addSeparator();
+	// show menu
+	sm = m.addMenu( QIcon( ":/Icons/Icons/projectshow.png" ), tr( "&Show" ) );
+	sm->addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "&Source" ), this, SLOT( showSource() ) );
+	sm->addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "&ToDo" ), this, SLOT( showToDo() ) );
+	sm->addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "&Changes" ), this, SLOT( showChanges() ) );
+	// add menu
+	sm = m.addMenu( QIcon( ":/Icons/Icons/projectadd.png" ), tr( "&Add" ) );
+	sm->addAction( QIcon( ":/Icons/Icons/projectaddform.png" ), tr( "New F&orm..." ), this, SLOT( addNewForm() ) );
+	sm->addAction( QIcon( ":/Icons/Icons/projectaddfile.png" ), tr( "New &Files..." ), this, SLOT( addNewFile() ) );
+	sm->addAction( QIcon( ":/Icons/Icons/projectaddtemplate.png" ), tr( "New &Templates" ), this, SLOT( addNewTemplate() ) );
+	sm->addSeparator();
+	sm->addAction( QIcon( ":/Icons/Icons/projectaddfile.png" ), tr( "&Existing Files..." ), this, SLOT( addExistingFile() ) );
+	m.addSeparator();
+	// actions
+	m.addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "Re&name..." ), this, SLOT( rename() ), tr( "Shift+*" ) );
+	m.addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "&Move..." ), this, SLOT( move() ), tr( "Shift+/" ) );
+	m.addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "Move To &Scope..." ), this, SLOT( moveToScope() ), tr( "Shift++" ) );
+	m.addSeparator();
+	m.addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "&Remove..." ), this, SLOT( remove() ), tr( "Del" ) );
+	m.addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "Remove && &Delete..." ), this, SLOT( removeAndDelete() ), tr( "Shift+Del" ) );
+	m.exec( v->mapToGlobal( p ) );
 }

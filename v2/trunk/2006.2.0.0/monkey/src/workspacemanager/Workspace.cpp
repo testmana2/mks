@@ -81,9 +81,6 @@ void Workspace::initialize()
 	connect( menuBar()->action( "mProject/mSave/aAll" ), SIGNAL( triggered() ), this, SLOT( projectSaveAll_triggered() ) );
 	connect( menuBar()->action( "mProject/mClose/aCurrent" ), SIGNAL( triggered() ), this, SLOT( projectCloseCurrent_triggered() ) );
 	connect( menuBar()->action( "mProject/mClose/aAll" ), SIGNAL( triggered() ), this, SLOT( projectCloseAll_triggered() ) );
-	connect( menuBar()->action( "mProject/mShow/aSource" ), SIGNAL( triggered() ), this, SLOT( projectShowSource_triggered() ) );
-	connect( menuBar()->action( "mProject/mShow/aToDo" ), SIGNAL( triggered() ), this, SLOT( projectShowToDo_triggered() ) );
-	connect( menuBar()->action( "mProject/mShow/aChanges" ), SIGNAL( triggered() ), this, SLOT( projectShowChanges_triggered() ) );
 	connect( menuBar()->action( "mProject/aSettings" ), SIGNAL( triggered() ), this, SLOT( projectSettings_triggered() ) );
 	// plugins menu
 	connect( menuBar()->action( "mPlugins/aManage" ), SIGNAL( triggered() ), pluginsManager(), SLOT( manageRequested() ) );

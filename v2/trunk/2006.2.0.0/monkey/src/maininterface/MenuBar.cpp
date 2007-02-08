@@ -80,16 +80,6 @@ void MenuBar::initialize()
 		menu( "mClose", tr( "&Close" ), QIcon( ":/Icons/Icons/projectclose.png" ) );
 		action( "mClose/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/projectclose.png" ) );
 		action( "mClose/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/projectcloseall.png" ) );
-		menu( "mShow", tr( "S&how" ), QIcon( ":/Icons/Icons/projectshow.png" ) );
-		action( "mShow/aSource", tr( "&Source" ), QIcon( ":/Icons/Icons/projectshowfile.png" ) );
-		action( "mShow/aToDo", tr( "&ToDo" ), QIcon( ":/Icons/Icons/projectshowfile.png" ) );
-		action( "mShow/aChanges", tr( "&Changes" ), QIcon( ":/Icons/Icons/projectshowfile.png" ) );
-		menu( "mAdd", tr( "&Add" ), QIcon( ":/Icons/Icons/projectadd.png" ) );
-		action( "mAdd/aNewForm", tr( "New F&orm..." ), QIcon( ":/Icons/Icons/projectaddform.png" ) );
-		action( "mAdd/aNewFiles", tr( "New &Files..." ), QIcon( ":/Icons/Icons/projectaddfile.png" ) );
-		action( "mAdd/aNewTemplates", tr( "New &Templates" ), QIcon( ":/Icons/Icons/projectaddtemplate.png" ) );
-		action( "mAdd/aSeparator1" );
-		action( "mAdd/aExistingFiles", tr( "&Existing Files..." ), QIcon( ":/Icons/Icons/projectaddfile.png" ) );
 		action( "aSeparator2" );
 		action( "aSettings", tr( "Set&tings..." ), QIcon( ":/Icons/Icons/projectsettings.png" ) );
 		action( "aSeparator3" );

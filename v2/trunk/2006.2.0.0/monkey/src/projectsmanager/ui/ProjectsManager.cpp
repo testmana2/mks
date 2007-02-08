@@ -29,7 +29,7 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	tbSave->setDefaultAction( MenuBar::self()->menu( "mProject/mSave" )->menuAction() );
 	tbClose->setDefaultAction( MenuBar::self()->menu( "mProject/mClose" )->menuAction() );
 	// update actions state
-	on_swProjects_currentChanged( -1 );
+	setCurrentProxy( 0 );
 	MenuBar::self()->action( "mView/aProjectsList" )->setChecked( true );
 }
 //
@@ -64,22 +64,30 @@ QProjectList ProjectsManager::rootProjects() const
 //
 void ProjectsManager::setCurrentProxy( AbstractProjectProxy* p )
 {
-	if ( !p )
-		return;
-	swProjects->setCurrentWidget( getViewByProxyId( p->id() ) );
-	if ( twProjects->currentItem() &&
-		twProjects->currentItem()->data( 0, ProxyIdRole ).toInt() != p->id() )
-		twProjects->setCurrentItem( getItemByProxyId( p->id() ) );
+	if ( p )
+	{
+		swProjects->setCurrentWidget( getViewByProxyId( p->id() ) );
+		QTreeWidgetItem* it = getItemByProxyId( p->id() );
+		if ( twProjects->currentItem() != it )
+			twProjects->setCurrentItem( it );
+	}
+	// enable / disable, check / uncheck action according to proxy
+	MenuBar::self()->action( "mView/aComplexProject" )->setEnabled( p );
+	MenuBar::self()->action( "mView/aComplexProject" )->setChecked( p ? p->isComplexModel() : false );
+	MenuBar::self()->action( "mProject/mSave/aCurrent" )->setEnabled( p ? p->project()->isModified() : false );
+	MenuBar::self()->action( "mProject/mSave/aAll" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mClose/aCurrent" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mClose/aAll" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/aSettings" )->setEnabled( p );
+	// emit change
+	emit currentProxyChanged( p );
 }
 //
 AbstractProjectProxy* ProjectsManager::currentProxy() const
 {
-	if ( swProjects->count() )
-	{
-		QAbstractItemView* v = qobject_cast<QAbstractItemView*>( swProjects->currentWidget() );
-		if ( v )
-			return qobject_cast<AbstractProjectProxy*>( v->model() );
-	}
+	QAbstractItemView* v = qobject_cast<QAbstractItemView*>( swProjects->currentWidget() );
+	if ( v )
+		return qobject_cast<AbstractProjectProxy*>( v->model() );
 	return 0;
 }
 //
@@ -138,14 +146,15 @@ void ProjectsManager::closeProxy( AbstractProjectProxy* p )
 	delete p->sourceModel(); // as project is the sourceModel ( child ) of proxy, it delete proxy too
 	delete twi;
 	// update tool button if there is no project
-	if ( !swProjects->count() )
-		on_swProjects_currentChanged( -1 );
+	p = 0;
+	if ( twProjects->topLevelItemCount() )
+		p = AbstractProjectProxy::byId( twProjects->topLevelItem( 0 )->data( 0, ProxyIdRole ).toInt() );
+	setCurrentProxy( p );	
 }
 //
 void ProjectsManager::closeProject( AbstractProjectItemModel* p )
 {
-	if ( p )
-		closeProxy( AbstractProjectProxy::getProxyByProject( p ) );
+	closeProxy( AbstractProjectProxy::getProxyByProject( p ) );
 }
 //
 void ProjectsManager::addProxy( AbstractProjectProxy* p, AbstractProjectProxy* pParent )
@@ -168,7 +177,6 @@ void ProjectsManager::addProxy( AbstractProjectProxy* p, AbstractProjectProxy* p
 		tv->setRootIndex( p->index( 0, 0 ) );
 	// set current view this one
 	swProjects->addWidget( tv );
-	swProjects->setCurrentWidget( tv );
 	// add entry on twProjects
 	QTreeWidgetItem* twi;
 	if ( pParent )
@@ -180,7 +188,8 @@ void ProjectsManager::addProxy( AbstractProjectProxy* p, AbstractProjectProxy* p
 	twi->setData( 0, ProxyIdRole, p->id() ); // proxy id
 	twi->setData( 0, ProjectFilePathRole, p->project()->filePath() ); // project file path
 	twi->setToolTip( 0, tr( "Proxy Id: %1\nProject Id: %2\nFile Path: %3" ).arg( p->id() ).arg( p->project()->id() ).arg( p->project()->filePath() ) );
-	twProjects->setCurrentItem( twi );
+	// show the correct project
+	setCurrentProxy( p );
 	// emit signal
 	emit proxyAdded( p );
 }
@@ -213,25 +222,8 @@ void ProjectsManager::on_tbClose_clicked()
 //
 void ProjectsManager::on_twProjects_itemClicked( QTreeWidgetItem* i, int )
 {
-	if ( !i )
-		return;
-	AbstractProjectProxy* p = AbstractProjectProxy::byId( i->data( 0, ProxyIdRole ).toInt() );
+	AbstractProjectProxy* p = 0;
+	if ( i )
+		p = AbstractProjectProxy::byId( i->data( 0, ProxyIdRole ).toInt() );
 	setCurrentProxy( p );
-	emit currentProxyChanged( p );
-}
-//
-void ProjectsManager::on_swProjects_currentChanged( int )
-{
-	AbstractProjectProxy* p = currentProxy();
-	// enable / disable, check / uncheck action according to proxy
-	MenuBar::self()->action( "mView/aComplexProject" )->setEnabled( p );
-	MenuBar::self()->action( "mView/aComplexProject" )->setChecked( p ? p->isComplexModel() : false );
-	MenuBar::self()->action( "mProject/mSave/aCurrent" )->setEnabled( p ? p->project()->isModified() : false );
-	MenuBar::self()->action( "mProject/mSave/aAll" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/mClose/aCurrent" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/mClose/aAll" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/mShow/aSource" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/mShow/aToDo" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/mShow/aChanges" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/aSettings" )->setEnabled( p );
 }
