@@ -1,5 +1,7 @@
 #include "CppCornerWidget.h"
 #include "CppChild.h"
+#include "AbstractProjectProxy.h"
+#include "Workspace.h"
 //
 #include <QHBoxLayout>
 #include <QActionGroup>
@@ -71,7 +73,60 @@ void CppCornerWidget::setChild( CppChild* c )
 //
 void CppCornerWidget::aForm_triggered()
 {
-	qWarning( "CppCornerWidget::aForm_triggered() not yet implemented." );
+	if ( !mChild )
+		return;
+	// get all path to check in
+	Workspace* w = Workspace::self();
+	QStringList l;
+	QString s;
+	QFileInfo f( mChild->currentFile() );
+	//
+	if ( mChild->proxy() )
+	{
+		// check inf FORMS variable
+		//i = l.indexOf( QRegExp( QString( "*%1*" ).arg( f.baseName() ), Qt::CaseSensitive, QRegExp::Wildcard ) );
+		l = mChild->proxy()->project()->getValuesList( "FORMS" ).filter( f.baseName() );	
+		if ( l.count() )
+		{
+			w->openFile( mChild->proxy()->project()->filePath( l.at( 0 ) ), mChild->proxy() );
+			return;
+		}
+		// check inf FORMS3 variable
+		l = mChild->proxy()->project()->getValuesList( "FORMS3" ).filter( f.baseName() );	
+		if ( l.count() )
+		{
+			w->openFile( mChild->proxy()->project()->filePath( l.at( 0 ) ), mChild->proxy() );
+			return;
+		}
+		// checking in all path that project include
+		l << mChild->proxy()->project()->getValuesList( "INCLUDEPATH" );
+		l << mChild->proxy()->project()->getValuesList( "DEPENDPATH" );
+		l << mChild->proxy()->project()->getValuesList( "VPATH" );
+		// made path absolute
+		for ( int i = 0; i < l.count(); i++ )
+		{
+			QFileInfo fs( l.at( i ) );
+			if ( fs.isRelative() )
+				l[i] = mChild->proxy()->project()->filePath( l.at( i ) );
+			l[i] = QFileInfo( l.at( i ) ).canonicalFilePath();
+		}
+	}
+	// loop all path
+	foreach ( QString ds, l )
+	{
+		// go to path
+		QDir d( ds );
+		// looping all files
+		foreach ( QString file, d.entryList( QStringList( QString( "%1.*" ).arg( f.baseName() ) ), QDir::Files ) )
+		{
+			// we only need to open one
+			if ( QFileInfo( file ).completeSuffix().toLower() == "ui" )
+			{
+				w->openFile( d.absoluteFilePath( file ), mChild->proxy() );
+				return;
+			}
+		}
+	}
 }
 //
 void CppCornerWidget::ag_triggered( QAction* a )

@@ -6,10 +6,8 @@ int AbstractProjectProxy::mUniqueId = 0;
 QHashProxys AbstractProjectProxy::mProxysList = QHashProxys();
 //
 AbstractProjectProxy::AbstractProjectProxy( AbstractProjectItemModel* s )
-	: QSortFilterProxyModel( s ), mComplexModel( false )
+	: QSortFilterProxyModel( s ), mId(mUniqueId++ ), mComplexModel( false )
 {
-	mId = mUniqueId;
-	mUniqueId++;
 	mProxysList[ mId ] = this;
 }
 //
@@ -17,7 +15,6 @@ AbstractProjectProxy::~AbstractProjectProxy()
 {
 	if ( mProxysList.contains( mId ) )
 		mProxysList.remove( mId );
-	qWarning( "Proxy deleted" );
 }
 //
 int AbstractProjectProxy::id() const

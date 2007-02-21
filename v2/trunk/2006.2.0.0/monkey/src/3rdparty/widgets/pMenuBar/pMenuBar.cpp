@@ -147,6 +147,8 @@ QAction* pMenuBar::action( const QString& s, const QString& l, const QIcon& i, c
 		mAction->setShortcut( c );
 	if ( !t.isEmpty() && mAction->statusTip() != t )
 		mAction->setStatusTip( t );
+	if ( !t.isEmpty() && mAction->toolTip() != t )
+		mAction->setToolTip( t );
 	return mAction;
 }
 //

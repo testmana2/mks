@@ -9,21 +9,31 @@
 int AbstractProjectItemModel::mUniqueId = 0;
 QHashProjects AbstractProjectItemModel::mProjectsList = QHashProjects();
 //
-AbstractProjectItemModel::AbstractProjectItemModel( const QString& s, QObject* p )
-	: QStandardItemModel( p ), mFilePath( s ), mIsOpen( false )
+AbstractProjectItemModel::AbstractProjectItemModel( const QString& s, AbstractProjectItemModel* p )
+	: QStandardItemModel( p ), mId( mUniqueId++ ), mFilePath( s ), mIsOpen( false ),
+	mIsModified( false ), mParentProject( p ), mLexer( 0 ), mAPIs( 0 )
 {
-	mId = mUniqueId;
-	mUniqueId++;
 	mProjectsList[ mId ] = this;
 	setFilePath( s );
+	// if parent project we take same lexer/api
+	if ( mParentProject )
+	{
+		setLexer( p->lexer() );
+		setAPIs( p->apis() );
+	}
 }
 //
 AbstractProjectItemModel::~AbstractProjectItemModel()
 {
+	// remove itself from projects list
 	if ( mProjectsList.contains( mId ) )
 		mProjectsList.remove( mId );
-	delete mAPIs;
-	delete mLexer;
+	// delete lexer and proxy if there is no parent
+	if ( !mParentProject )
+	{
+		delete mAPIs;
+		delete mLexer;
+	}
 }
 //
 int AbstractProjectItemModel::id() const
@@ -82,6 +92,11 @@ QString AbstractProjectItemModel::filePath( const QString& s )
 {
 	return QDir::convertSeparators( QFileInfo( QString( "%1/%2" ).arg( path(), s ) ).canonicalFilePath() );
 }
+// get the parent project
+AbstractProjectItemModel* AbstractProjectItemModel::parentProject() const
+{
+	return mParentProject;
+}
 // get all files
 QStringList AbstractProjectItemModel::getFiles( QDir d, const QStringList& f, bool b )
 {
@@ -124,7 +139,7 @@ void AbstractProjectItemModel::setModified( bool b )
 //
 void AbstractProjectItemModel::setLexer( QsciLexer* l )
 {
-	delete l;
+	delete mLexer;
 	mLexer = l;
 }
 //

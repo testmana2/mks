@@ -10,9 +10,10 @@ class QMakeProjectItem;
 class QMakeProjectItemModel : public AbstractProjectItemModel
 {
 	Q_OBJECT
+	friend class QMake;
 	//
 public:
-	QMakeProjectItemModel( const QString&, QObject* = 0 );
+	QMakeProjectItemModel( const QString&, AbstractProjectItemModel* = 0 );
 	virtual ~QMakeProjectItemModel();
 	// return the simple keyword to show
 	static QStringList simpleModelVariables();
@@ -34,6 +35,8 @@ public:
 	virtual bool open( bool = true );
 	//
 protected:
+	// prepare the completion list
+	virtual QStringList prepareCompletionFilesList();
 	// preapre completion
 	virtual void prepareCompletion();
 	// parse project

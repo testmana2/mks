@@ -17,7 +17,7 @@ class Q_MONKEY_EXPORT AbstractProjectItemModel : public QStandardItemModel
 	Q_OBJECT
 	//
 public:
-	AbstractProjectItemModel( const QString&, QObject* = 0 );
+	AbstractProjectItemModel( const QString&, AbstractProjectItemModel* = 0 );
 	virtual ~AbstractProjectItemModel();
 	// project id
 	int id() const;
@@ -47,6 +47,8 @@ public:
 	virtual QStandardItem* projectItem() const = 0;
 	// get all subprojects u must send full file path
 	virtual QStringList subProjects() const = 0;
+	// get the parent project
+	virtual AbstractProjectItemModel* parentProject() const;
 	// get first value by variable name
 	virtual QString getValue( const QString& ) const = 0;
 	// get all values by variable name
@@ -59,6 +61,8 @@ public:
 	virtual QStandardItem* itemByName( const QString& ) const = 0;
 	//
 protected:
+	// prepare the completion list
+	virtual QStringList prepareCompletionFilesList() = 0;
 	// preapre completion
 	virtual void prepareCompletion() = 0;
 	// get recursive files
@@ -67,11 +71,12 @@ protected:
 	virtual bool parse() = 0;
 	//
 	static int mUniqueId;
-	int mId;
 	static QHashProjects mProjectsList;
+	int mId;
 	QString mFilePath;
 	bool mIsOpen;
 	bool mIsModified;
+	AbstractProjectItemModel* mParentProject;
 	QsciLexer* mLexer;
 	QsciAPIs* mAPIs;
 	//

@@ -52,7 +52,7 @@ bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 void QMakeProjectProxy::doubleClicked( const QModelIndex& i )
 {
 	QModelIndex t = mapToSource( i );
-	QMakeProjectItem* it = (QMakeProjectItem*)mSource->itemFromIndex( t );
+	QMakeProjectItem* it = static_cast<QMakeProjectItem*>( mSource->itemFromIndex( t ) );
 	if ( it && it->type() == QMakeProjectItem::File )
 		emit fileOpenRequested( it->data( QMakeProjectItem::AbsoluteFilePathRole ).toString() , this );
 }
@@ -88,4 +88,8 @@ void QMakeProjectProxy::customContextMenuRequested( const QPoint& p )
 	m.addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "&Remove..." ), this, SLOT( remove() ), tr( "Del" ) );
 	m.addAction( QIcon( ":/Icons/Icons/projectshowfile.png" ), tr( "Remove && &Delete..." ), this, SLOT( removeAndDelete() ), tr( "Shift+Del" ) );
 	m.exec( v->mapToGlobal( p ) );
+	/*
+	action( "alupdate", tr( "l&update" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Execute lupdate on current" ) );
+	action( "alrelease", tr( "l&release" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Execute lrelease on current" ) );
+	*/
 }

@@ -12,11 +12,14 @@
 //
 static QRegExp rx;
 //
-QMakeProjectItemModel::QMakeProjectItemModel( const QString& s, QObject* p )
+QMakeProjectItemModel::QMakeProjectItemModel( const QString& s, AbstractProjectItemModel* p )
 	: AbstractProjectItemModel( s, p )
 {
-	mLexer = new QsciLexerCPP( this );
-	mAPIs = new QsciAPIs( mLexer ) ;
+	if ( !p )
+	{
+		mLexer = new QsciLexerCPP( this );
+		mAPIs = new QsciAPIs( mLexer );
+	}
 }
 //
 QMakeProjectItemModel::~QMakeProjectItemModel()
@@ -116,24 +119,16 @@ bool QMakeProjectItemModel::open( bool )
 		return false;
 	mIsOpen = parse();
 	if ( mIsOpen )
-	{
-		if ( getValue( "TEMPLATE" ).toLower() != "subdirs" )
-			prepareCompletion();
 		emit isOpenChanged( true );
-	}
 	return mIsOpen;
 }
-// preapre completion
-void QMakeProjectItemModel::prepareCompletion()
+//
+QStringList QMakeProjectItemModel::prepareCompletionFilesList()
 {
+	if ( getValue( "TEMPLATE" ).toLower() == "subdirs" )
+		return QStringList();
 	QStringList l, f, e = QStringList() << "*.h*" << "*.c*" ;
 	QString s;
-	// load qt prepared api if needed
-	s = getValue( "LANGUAGE" ).toLower();
-	if ( s.contains( "qt3" ) && mAPIs->isPrepared( "Qt3.api" ) )
-		mAPIs->loadPrepared( "Qt3.api" );
-	else if ( mAPIs->isPrepared( "Qt4.api" ) )
-		mAPIs->loadPrepared( "Qt4.api" );
 	// add headers to apis
 	l = getValuesList( "HEADERS" );
 	// add sources to apis
@@ -162,16 +157,34 @@ void QMakeProjectItemModel::prepareCompletion()
 		if ( QFile::exists( s ) )
 			l << getFiles( QDir( s ), e );
 	}
+	// make fiels absolute as they will be called from top project
+	for ( int i = 0; i < l.count(); i++ )
+		l[i] = filePath( l.at( i ) );
+	// return list
+	return l;
+}
+// preapre completion
+void QMakeProjectItemModel::prepareCompletion()
+{
+	// load qt prepared api if needed
+	QString s = getValue( "LANGUAGE" ).toLower();
+	if ( s.contains( "qt3" ) && mAPIs->isPrepared( "Qt3.api" ) )
+		mAPIs->loadPrepared( "Qt3.api" );
+	else if ( mAPIs->isPrepared( "Qt4.api" ) )
+		mAPIs->loadPrepared( "Qt4.api" );
+	// prepare the list fiels to add to lexer / apis
+	QStringList f, l = prepareCompletionFilesList();
+	// got all child project
+	QList<QMakeProjectItemModel*> mProjects = findChildren<QMakeProjectItemModel*>();
+	foreach ( QMakeProjectItemModel* p, mProjects )
+		l << p->prepareCompletionFilesList();
 	// load files
-	f.clear();
 	foreach ( s, l )
 	{
-		s = filePath( s );
-		if ( !f.contains( s ) )
+		if ( !f.contains( s ) && QFile::exists( s ) )
 		{
 			f << s;
-			if ( QFile::exists( s ) )
-				mAPIs->load( s );
+			mAPIs->load( s );
 		}
 	}
 	// start prepare thread

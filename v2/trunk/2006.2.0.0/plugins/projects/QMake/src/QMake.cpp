@@ -69,7 +69,7 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 		}
 	}
 	// create a new qmake project
-	QMakeProjectItemModel* mProject = new QMakeProjectItemModel( s );
+	QMakeProjectItemModel* mProject = new QMakeProjectItemModel( s, py ? py->project() : 0 );
 	// if we can open project
 	if ( mProject->open() )
 	{
@@ -82,13 +82,19 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 			QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
 			openProject( h, mProxy );
 		}
-		// set root project the current project
-		mWorkspace->projectsManager()->setCurrentProxy( mProxy );
-		// show/hide projects lsit according to projects list count
-		bool b = mWorkspace->projectsManager()->rootProjects().count() > 1;
-		if ( !b && mProject->subProjects().count() )
-			b = true;
-		mWorkspace->projectsManager()->setTreeProjectsVisible( b );
+		//
+		if ( !py )
+		{
+			// set root project the current project
+			mWorkspace->projectsManager()->setCurrentProxy( mProxy );
+			// show/hide projects lsit according to projects list count
+			bool b = mWorkspace->projectsManager()->rootProjects().count() > 1;
+			if ( !b && mProject->subProjects().count() )
+				b = true;
+			mWorkspace->projectsManager()->setTreeProjectsVisible( b );
+			// prepare completion
+			mProject->prepareCompletion();
+		}
 		// return true
 		return true;
 	}

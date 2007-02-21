@@ -5,12 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>487</width>
-    <height>281</height>
+    <width>423</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>About...</string>
+   <string>About : %1</string>
   </property>
   <layout class="QGridLayout" >
    <property name="margin" >
@@ -19,108 +19,20 @@
    <property name="spacing" >
     <number>3</number>
    </property>
-   <item row="0" column="0" >
-    <widget class="QListWidget" name="listWidget" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>7</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>65</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>65</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="verticalScrollBarPolicy" >
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy" >
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="editTriggers" >
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <property name="textElideMode" >
-      <enum>Qt::ElideNone</enum>
-     </property>
-     <property name="movement" >
-      <enum>QListView::Static</enum>
-     </property>
-     <property name="viewMode" >
-      <enum>QListView::IconMode</enum>
-     </property>
-     <property name="uniformItemSizes" >
-      <bool>true</bool>
-     </property>
-     <property name="currentRow" >
-      <number>0</number>
-     </property>
-     <item>
-      <property name="text" >
-       <string>Version</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/helpgreettings.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Authors</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/buildbuild.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Testers</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/helptesters.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Greetings</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/helpgreettings.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Licence</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/text.png</iconset>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2" >
+   <item row="2" column="0" >
     <spacer>
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="sizeHint" >
       <size>
-       <width>391</width>
+       <width>321</width>
        <height>27</height>
       </size>
      </property>
     </spacer>
    </item>
-   <item row="1" column="2" >
+   <item row="2" column="1" >
     <widget class="QPushButton" name="pbOK" >
      <property name="sizePolicy" >
       <sizepolicy>
@@ -141,106 +53,62 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="2" >
-    <widget class="QStackedWidget" name="twInformations" >
-     <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>7</hsizetype>
-       <vsizetype>7</vsizetype>
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="cursor" >
-      <cursor>13</cursor>
-     </property>
-     <widget class="QWidget" name="pVersion" >
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="lLogo" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>7</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="pixmap" >
-          <pixmap resource="../../resources/resources.qrc" >:/Icons/Icons/helpsplashscreen.png</pixmap>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lInformations" >
-         <property name="text" >
-          <string>Informations</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QTabWidget" name="twAbout" >
+     <widget class="QLabel" name="lLogo" >
+      <property name="pixmap" >
+       <pixmap resource="../../resources/resources.qrc" >:/Icons/Icons/helpsplashscreen.png</pixmap>
+      </property>
+      <attribute name="title" >
+       <string>About</string>
+      </attribute>
      </widget>
-     <widget class="QTextBrowser" name="tbAuthors" >
-      <property name="undoRedoEnabled" >
-       <bool>false</bool>
-      </property>
-      <property name="readOnly" >
-       <bool>true</bool>
-      </property>
-      <property name="tabStopWidth" >
-       <number>40</number>
-      </property>
+     <widget class="QTextBrowser" name="tbBugs" >
+      <attribute name="title" >
+       <string>Bugs &amp;&amp; Wishes</string>
+      </attribute>
      </widget>
-     <widget class="QTextBrowser" name="tbTesters" >
-      <property name="undoRedoEnabled" >
-       <bool>false</bool>
-      </property>
-      <property name="readOnly" >
-       <bool>true</bool>
-      </property>
-      <property name="tabStopWidth" >
-       <number>40</number>
-      </property>
+     <widget class="QTextBrowser" name="tbTeam" >
+      <attribute name="title" >
+       <string>Team</string>
+      </attribute>
      </widget>
-     <widget class="QTextBrowser" name="tbGreetings" >
-      <property name="undoRedoEnabled" >
-       <bool>false</bool>
-      </property>
-      <property name="readOnly" >
-       <bool>true</bool>
-      </property>
-      <property name="tabStopWidth" >
-       <number>40</number>
-      </property>
+     <widget class="QTextBrowser" name="tbDonations" >
+      <attribute name="title" >
+       <string>Donations</string>
+      </attribute>
      </widget>
-     <widget class="QTextBrowser" name="tbLicence" >
+     <widget class="QTextBrowser" name="tbLicense" >
       <property name="font" >
        <font>
-        <family>FreeMono</family>
+        <family>Monospace</family>
+        <pointsize>9</pointsize>
        </font>
       </property>
-      <property name="undoRedoEnabled" >
-       <bool>false</bool>
-      </property>
-      <property name="readOnly" >
-       <bool>true</bool>
-      </property>
-      <property name="tabStopWidth" >
-       <number>40</number>
-      </property>
-      <property name="acceptRichText" >
-       <bool>false</bool>
-      </property>
+      <attribute name="title" >
+       <string>License</string>
+      </attribute>
      </widget>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2" >
+    <widget class="QLabel" name="lInformations" >
+     <property name="font" >
+      <font>
+       <pointsize>9</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <strikeout>false</strikeout>
+       <antialiasing>true</antialiasing>
+       <kerning>true</kerning>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Informations</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
    </item>
   </layout>
@@ -262,22 +130,6 @@
     <hint type="destinationlabel" >
      <x>237</x>
      <y>275</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>listWidget</sender>
-   <signal>currentRowChanged(int)</signal>
-   <receiver>twInformations</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>38</x>
-     <y>55</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>73</x>
-     <y>59</y>
     </hint>
    </hints>
   </connection>

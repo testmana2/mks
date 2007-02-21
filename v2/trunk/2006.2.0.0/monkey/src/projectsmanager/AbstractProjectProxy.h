@@ -29,8 +29,8 @@ protected:
 	virtual bool filterAcceptsRow( int, const QModelIndex& ) const = 0;
 	//
 	static int mUniqueId;
-	int mId;
 	static QHashProxys mProxysList;
+	int mId;
 	bool mComplexModel;
 	//
 public slots:
