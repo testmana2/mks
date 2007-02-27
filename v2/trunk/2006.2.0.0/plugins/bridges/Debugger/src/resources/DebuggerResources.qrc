@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/Icons" >
+	<file>breakpoint.png</file>
+	<file>pointat.png</file>
+    </qresource>
+</RCC>

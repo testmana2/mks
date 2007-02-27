@@ -21,8 +21,8 @@ void Console::initialize( Workspace* w )
 	mStop = false;
 	mCodec = 0;
 	// plugin infos
-	mPluginInfos.Caption = tr( "Console Plugin" );
-	mPluginInfos.Description = tr( "This plugin provide a qprocess console" );
+	mPluginInfos.Caption = tr( "Console Bridge" );
+	mPluginInfos.Description = tr( "This plugin provide a qprocess console bridge" );
 	mPluginInfos.Type = BasePlugin::iBase;
 	mPluginInfos.Name ="Console";
 	mPluginInfos.Version = "0.5.0";

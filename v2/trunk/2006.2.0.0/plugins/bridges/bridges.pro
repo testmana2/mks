@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS	= Console
+SUBDIRS	= Console \
+	Debugger

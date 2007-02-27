@@ -12,7 +12,7 @@ public:
 	~CppMonkeyEditor();
 	//
 protected:
-	void keyPressEvent( QKeyEvent* );
+	virtual void keyPressEvent( QKeyEvent* );
 	//
 };
 //

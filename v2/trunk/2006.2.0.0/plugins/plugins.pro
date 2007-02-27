@@ -3,4 +3,5 @@ SUBDIRS	= bridges \
 	projects \
 	childs \
 	compilers \
+	debuggers \
 	workspace

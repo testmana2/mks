@@ -6,6 +6,7 @@ CONFIG	+= warn_on release lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR/workspace
 DEFINES	+= NDEBUG
 INCLUDEPATH	+= src src/ui src/3rdparty/astyle
+RESOURCES	+= src/resources/astyle_resources.qrc
 
 FORMS	= src/ui/UISettingsAStyle.ui
 

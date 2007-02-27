@@ -29,7 +29,7 @@ bool AStylePlugin::install()
 	if ( isInstalled() )
 		return true;
 	// create action
-	aAStyle = mWorkspace->menuBar()->action( "mEdit/aAStyle", tr( "AStyle Formatter" ), QIcon( ":/Icons/Icons/text.png" ), tr( "Ctrl+I" ), mPluginInfos.Description );
+	aAStyle = mWorkspace->menuBar()->action( "mEdit/aAStyle", tr( "AStyle Formatter" ), QIcon( ":/Icons/astyle.png" ), tr( "Ctrl+I" ), mPluginInfos.Description );
 	// connect action
 	connect( aAStyle, SIGNAL( triggered() ), this, SLOT( applyFormatter() ) );
 	// set plugin installed
