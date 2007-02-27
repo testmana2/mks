@@ -15,6 +15,7 @@ class StatusBar;
 class AbstractProjectProxy;
 class AbstractChild;
 class PluginsManager;
+class MonkeyEditor;
 //
 class Q_MONKEY_EXPORT Workspace : public pTabWorkspace
 {

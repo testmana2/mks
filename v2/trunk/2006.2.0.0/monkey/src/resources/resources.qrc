@@ -5,6 +5,16 @@
         <file>About/testers.html</file>
     </qresource>
     <qresource prefix="/Icons" >
+        <file>Icons/EditorBookmark0.png</file>
+        <file>Icons/EditorBookmark1.png</file>
+        <file>Icons/EditorBookmark2.png</file>
+        <file>Icons/EditorBookmark3.png</file>
+        <file>Icons/EditorBookmark4.png</file>
+        <file>Icons/EditorBookmark5.png</file>
+        <file>Icons/EditorBookmark6.png</file>
+        <file>Icons/EditorBookmark7.png</file>
+        <file>Icons/EditorBookmark8.png</file>
+        <file>Icons/EditorBookmark9.png</file>
         <file>Icons/addtab.png</file>
         <file>Icons/background.png</file>
         <file>Icons/buildbuild.png</file>

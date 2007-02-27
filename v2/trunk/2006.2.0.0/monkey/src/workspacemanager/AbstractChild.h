@@ -8,6 +8,7 @@
 #include "MonkeyExport.h"
 //
 class AbstractProjectProxy;
+class MonkeyEditor;
 //
 class Q_MONKEY_EXPORT AbstractChild : public QWidget
 {
@@ -173,7 +174,8 @@ signals:
 	void closeEvent( AbstractChild*, QCloseEvent* );
 	// emit when a child require to update workspace
 	void updateWorkspaceRequested();
-	//
+	// emit when an editor request toggle breakpoint
+	void toggleBreakPoint( MonkeyEditor*, int, bool );
 };
 //
 #endif // ABSTRACTCHILD_H

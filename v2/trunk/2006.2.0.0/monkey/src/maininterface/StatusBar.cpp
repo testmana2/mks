@@ -5,6 +5,8 @@
 #include <QIcon>
 #include <QFontMetrics>
 #include <QUrl>
+#include <QSizeGrip>
+#include <QLayout>
 //
 QPointer<StatusBar> StatusBar::mSelf = 0L;
 //
@@ -23,10 +25,15 @@ StatusBar::StatusBar( QWidget* p )
 	{
 		mLabels[ i ] = new QLabel( this );
 		mLabels[ i ]->setFrameStyle( QFrame::Sunken | QFrame::StyledPanel );
-		addPermanentWidget( mLabels[ i ], i != tFilePath ? 0 : 100 );
+		addPermanentWidget( mLabels[ i ], i != tStatusTip ? 0 : 100 );
 	}
-	connect( this, SIGNAL( messageChanged( const QString& ) ), label( tStatusTip ), SLOT( setText( const QString& ) ) );
+	connect( this, SIGNAL( messageChanged( const QString& ) ), this, SLOT( setText( const QString& ) ) );
 	initialize();
+}
+//
+void StatusBar::resizeEvent( QResizeEvent* )
+{
+	updateLabelsSize();
 }
 //
 void StatusBar::initialize()
@@ -38,6 +45,21 @@ void StatusBar::initialize()
 	setFileName( QString::null );
 }
 //
+void StatusBar::updateLabelsSize()
+{
+	// calcul max width for label
+	int w = width();
+	// remove layout margin and spacing
+	w -= ( layout()->margin() *2 +layout()->spacing() *6 );
+	// remove all label width
+	w -= ( label( tCursor )->width() +label( tState )->width() +label( tDocumentMode )->width() +label( tLayoutMode )->width() +label( tFilePath )->width() );
+	// remove sizegrip width
+	if ( isSizeGripEnabled() )
+		w -= findChild<QSizeGrip*>()->width();
+	// apply width
+	label( tStatusTip )->setMaximumWidth( w );
+}
+//
 QLabel* StatusBar::label( Type t )
 {
 	return mLabels[ t ];
@@ -45,9 +67,18 @@ QLabel* StatusBar::label( Type t )
 //
 void StatusBar::setText( Type t, const QString& s, int i )
 {
+	// update labels size
+	updateLabelsSize();
+	// set text
 	label( t )->setText( s );
+	// clear message if needed
 	if ( i > 0 )
 		QTimer::singleShot( i, label( t ), SLOT( clear() ) );
+}
+//
+void StatusBar::setText( const QString& s )
+{
+	setText( tStatusTip, s );
 }
 //
 void StatusBar::setPixmap( Type t, const QPixmap& p, int i )

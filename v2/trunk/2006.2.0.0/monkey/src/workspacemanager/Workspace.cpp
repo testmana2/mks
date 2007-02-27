@@ -350,6 +350,10 @@ void Workspace::projectSettings_triggered()
 //
 void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
 {
+	// activate window if it s not it
+	if ( qApp->activeWindow() != window() )
+		qApp->setActiveWindow( window() );
+	//
 	const QFileInfo f( s );
 	if ( !f.exists() )
 	{
@@ -412,6 +416,10 @@ int Workspace::addChild( AbstractChild* c, const QString& s )
 		connect( c, SIGNAL( closeEvent( AbstractChild*, QCloseEvent* ) ), this, SLOT( childCloseEvent( AbstractChild*, QCloseEvent* ) ) );
 		// global workspace update requested
 		connect( c, SIGNAL( updateWorkspaceRequested() ), this, SLOT( updateWorkspace() ) );
+		// register child with bridge debugger
+		BasePlugin* bp = pluginsManager()->plugin( "Debugger" );
+		if ( bp )
+			connect( c, SIGNAL( void toggleBreakPoint( MonkeyEditor*, int, bool ) ), bp, SLOT( void toggleBreakPoint( MonkeyEditor*, int, bool ) ) );
 	}
 	return i;
 }

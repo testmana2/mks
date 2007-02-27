@@ -22,6 +22,7 @@ public:
 	//
 public slots:
 	void setText( Type, const QString&, int i = 0 );
+	void setText( const QString& );
 	void setPixmap( Type, const QPixmap&, int i = 0 );
 	void setCursorPosition( const QPoint& );
 	void setModified( bool );
@@ -29,9 +30,11 @@ public slots:
 	void setLayoutMode( AbstractChild::LayoutMode );
 	void setFileName( const QString& );
 	//
-private:
+protected:
 	StatusBar( QWidget* = 0 );
+	virtual void resizeEvent( QResizeEvent* );
 	void initialize();
+	void updateLabelsSize();
 	//
 	static QPointer<StatusBar> mSelf;
 	QLabel* mLabels[ 6 ];

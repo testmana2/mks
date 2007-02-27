@@ -31,7 +31,26 @@ class Q_MONKEY_EXPORT MonkeyEditor : public QsciScintilla
     Q_OBJECT
     //
 public:
-	enum WriteMode { wmNone = 0, wmInsert, wmOverwrite };
+	enum WriteMode { wmNone = 0,
+					wmInsert,
+					wmOverwrite };
+	enum Bookmarks { bm0 = 0,
+					bm1,
+					bm2, 
+					bm3,
+					bm4,
+					bm5,
+					bm6,
+					bm7,
+					bm8,
+					bm9 };
+	//
+	struct Q_MONKEY_EXPORT pBookmark
+	{
+		QPixmap* Pixmap;
+		int Index;
+		int Handle;
+	};
 	//
 	MonkeyEditor( QWidget* = 0 );
 	virtual ~MonkeyEditor();
@@ -49,18 +68,22 @@ protected:
 	virtual void focusInEvent( QFocusEvent* );
 	virtual void focusOutEvent( QFocusEvent* );
 	virtual void contextMenuEvent( QContextMenuEvent* );
+	virtual void keyPressEvent( QKeyEvent* );
+	virtual void checkBookmarks( Bookmarks, int );
 	//
 private:
 	bool mCopyAvailable;
 	QList<pAction*> mActions;
 	QTextCodec* mCodec;
 	QString mFilePath;
+	QHash<Bookmarks, pBookmark*> mBookmarks;
 	//
 private slots:
 	virtual void clipboard_dataChanged();
 	virtual void cursorPositionChanged( int, int );
 	virtual void textChanged();
 	virtual void setCopyAvailable( bool );
+	virtual void marginClicked( int, int, Qt::KeyboardModifiers );
 	//
 public slots:
 	virtual void selectNone();
@@ -77,6 +100,9 @@ signals:
 	void pasteAvailable( bool );
 	void fileOpened( bool );
 	void focused( bool );
+	// debugger signal
+	// toggle the breakpoint at line, force to show according to bool
+	void toggleBreakPoint( int, bool );
 	//
 };
 //
