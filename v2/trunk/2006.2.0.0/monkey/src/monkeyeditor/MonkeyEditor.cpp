@@ -378,7 +378,7 @@ bool MonkeyEditor::openFile( const QString& s, QTextCodec* c )
 void MonkeyEditor::saveFile()
 {
 	// if no filename abort
-	if ( mFilePath.isEmpty() or not isModified() )
+	if ( mFilePath.isEmpty() || ! isModified() )
 		return;
 	// if can't open file abort
 	QFile f( mFilePath );
