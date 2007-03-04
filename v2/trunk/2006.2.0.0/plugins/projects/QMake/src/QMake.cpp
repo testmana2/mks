@@ -6,22 +6,10 @@
 //
 #include <QApplication>
 //
-QMake::QMake()
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("QMake");
-#endif
-}
-//
 QMake::~QMake()
 {
 	if ( isInstalled() )
 		uninstall();
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
 }
 //
 void QMake::initialize( Workspace* w )

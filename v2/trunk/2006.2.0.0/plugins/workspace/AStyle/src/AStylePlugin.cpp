@@ -5,22 +5,6 @@
 #include "astyle.h"
 #include "FormatterSettings.h"
 //
-AStylePlugin::AStylePlugin()
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("AStylePlugin");
-#endif
-}
-//
-AStylePlugin::~AStylePlugin()
-{
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
-}
-//
 void AStylePlugin::initialize( Workspace* w )
 {
 	WorkspacePlugin::initialize( w );

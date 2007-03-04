@@ -10,7 +10,6 @@ class Cpp : public ChildPlugin
 	Q_INTERFACES( BasePlugin ChildPlugin )
 	//
 public:
-    Cpp();
 	virtual ~Cpp();
 	virtual void initialize( Workspace* );
 	virtual bool install();

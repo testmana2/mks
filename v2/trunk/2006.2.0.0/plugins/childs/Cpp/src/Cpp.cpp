@@ -6,22 +6,10 @@
 #include <QFileInfo>
 #include <QDir>
 //
-Cpp::Cpp()
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("Cpp");
-#endif
-}
-
 Cpp::~Cpp()
 {
 	if ( isInstalled() )
 		uninstall();
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
 }
 //
 void Cpp::initialize( Workspace* w )

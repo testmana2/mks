@@ -14,8 +14,6 @@ class MessageBox : public WorkspacePlugin
 	Q_INTERFACES( BasePlugin WorkspacePlugin )
 	//
 public:
-    MessageBox();
-    virtual ~MessageBox();
 	virtual void initialize( Workspace* );
 	virtual bool install();
 	virtual bool uninstall();

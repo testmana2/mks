@@ -49,7 +49,10 @@ public:
 	//
 	virtual bool isInstalled() const
 	{ return mPluginInfos.Installed; }
-	// NEED REIMPLEMENTATION
+
+    //
+    virtual void saveCodeCoverage(const QString &) { /* Needs to be implemented in the plugin itself */ }
+    // NEED REIMPLEMENTATION
 	virtual bool install() = 0;
 	virtual bool uninstall() = 0;
 	//

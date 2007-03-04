@@ -7,22 +7,10 @@
 //
 #include <QDockWidget>
 //
-QtAssistant::QtAssistant()
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("QtAssistant");
-#endif
-}
-//
 QtAssistant::~QtAssistant()
 {
 	if ( isInstalled() )
 		uninstall();
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
 }
 //
 void QtAssistant::initialize( Workspace* w )
@@ -60,6 +48,18 @@ bool QtAssistant::uninstall()
 	delete QtAssistantChild::self( mWorkspace );
 	mPluginInfos.Installed = false;
 	return true;
+}
+//
+void QtAssistant::saveCodeCoverage(const QString &name)
+{
+#ifdef __COVERAGESCANNER__
+  __coveragescanner_filename("monkey");
+  QString testname=name;
+  testname+="/";
+  testname+=infos().Name;
+  __coveragescanner_testname(testname.toAscii());
+  __coveragescanner_save();
+#endif
 }
 //
 Q_EXPORT_PLUGIN2( WorkspaceQtAssistant, QtAssistant )

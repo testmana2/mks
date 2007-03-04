@@ -13,7 +13,6 @@ class Debugger : public BasePlugin
 public:
 	enum Markers { mBreakPoint = 1, mPointAt };
 	//
-	Debugger();
 	virtual ~Debugger();
 	virtual void initialize( Workspace* );
 	virtual bool install();

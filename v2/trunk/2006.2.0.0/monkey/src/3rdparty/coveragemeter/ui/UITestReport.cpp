@@ -1,4 +1,5 @@
 #include "UITestReport.h"
+#include "PluginsManager.h"
 #include "main.h"
 //
 #include <QFile>
@@ -91,6 +92,12 @@ void UITestReport::setTestTitle( const QString& s )
 	else
 		testName += s;
 #ifdef __COVERAGESCANNER__
-	__coveragescanner_testname( testName.toAscii() );
+    QString monkeyTestName=testName+"/monkey";
+	__coveragescanner_testname( monkeyTestName.toAscii() );
 #endif
+	for ( int i = 0; i < PluginsManager::self()->plugins().count(); i++ )
+	{
+      BasePlugin *plg=PluginsManager::self()->plugins().at(i);
+      plg->saveCodeCoverage(testName);
+    }
 }

@@ -9,7 +9,6 @@ class QMake : public ProjectPlugin
 	Q_INTERFACES( BasePlugin ProjectPlugin )
 	//
 public:
-    QMake();
 	virtual ~QMake();
 	virtual void initialize( Workspace* );
 	virtual QWidget* settingsWidget();

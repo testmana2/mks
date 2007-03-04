@@ -1,22 +1,10 @@
 #include "Debugger.h"
 #include "MonkeyEditor.h"
 //
-Debugger::Debugger()
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("Debugger");
-#endif
-}
-//
 Debugger::~Debugger()
 {
 	if ( isInstalled() )
 		uninstall();
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
 }
 //
 void Debugger::initialize( Workspace* w )

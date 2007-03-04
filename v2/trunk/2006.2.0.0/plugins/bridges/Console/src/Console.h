@@ -15,7 +15,6 @@ class Console : public BasePlugin
 	Q_INTERFACES( BasePlugin )
 	//
 public:
-	Console();
 	virtual ~Console();
 	virtual void initialize( Workspace* );
 	virtual bool install();

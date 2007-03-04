@@ -7,22 +7,6 @@
 //
 #include <QScrollBar>
 //
-MessageBox::MessageBox( )
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("MessageBox");
-#endif
-}
-//
-MessageBox::~MessageBox( )
-{
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
-}
-//
 void MessageBox::initialize( Workspace* w )
 {
 	WorkspacePlugin::initialize( w );
