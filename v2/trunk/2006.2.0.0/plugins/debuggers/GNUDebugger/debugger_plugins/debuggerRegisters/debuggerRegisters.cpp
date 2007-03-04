@@ -12,6 +12,22 @@
 //****************************************************************
 // Plugin Interface
 
+RegisterPlugin::RegisterPlugin()
+{
+#ifdef __COVERAGESCANNER__
+  /* Initialization of the CoverageScanner library.        */
+  __coveragescanner_filename("RegisterPlugin");
+#endif
+}
+
+RegisterPlugin::~RegisterPlugin()
+{
+#ifdef __COVERAGESCANNER__
+  /* Saves the execution report */
+  __coveragescanner_save();
+#endif
+}
+
 
 // some infos  plugins
 QStringList qslPluginsInfos = QStringList() << "View Registers for UIDebugger" << "by Xiantia" << "Version 0.5.1";

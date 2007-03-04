@@ -18,6 +18,21 @@ QString qsPluginMenuName = "View Gdb log";
 QString qsPluginName = "Log_plugin";
 
 #define PLUGIN_CHANGE		PLUGIN_BASE_USER
+LogPlugin::LogPlugin()
+{
+#ifdef __COVERAGESCANNER__
+  /* Initialization of the CoverageScanner library.        */
+  __coveragescanner_filename("LogPlugin");
+#endif
+}
+
+LogPlugin::~LogPlugin()
+{
+#ifdef __COVERAGESCANNER__
+  /* Saves the execution report */
+  __coveragescanner_save();
+#endif
+}
 
 // initialise your widget and return pointer to your widget view
 // here is QFrame

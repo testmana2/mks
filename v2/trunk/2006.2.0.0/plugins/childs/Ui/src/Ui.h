@@ -10,6 +10,7 @@ class Ui : public ChildPlugin
 	Q_INTERFACES( BasePlugin ChildPlugin )
 	//
 public:
+    Ui();
 	virtual ~Ui();
 	virtual void initialize( Workspace* );
 	virtual bool install();

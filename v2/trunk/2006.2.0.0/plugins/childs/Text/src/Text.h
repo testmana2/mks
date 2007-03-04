@@ -10,6 +10,7 @@ class Text : public ChildPlugin
 	Q_INTERFACES( BasePlugin ChildPlugin )
 	//
 public:
+    Text();
 	virtual ~Text();
 	virtual void initialize( Workspace* );
 	virtual bool install();

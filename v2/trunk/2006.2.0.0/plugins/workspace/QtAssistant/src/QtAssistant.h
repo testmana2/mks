@@ -9,6 +9,7 @@ class QtAssistant : public WorkspacePlugin
 	Q_INTERFACES( BasePlugin WorkspacePlugin )
 	//
 public:
+    QtAssistant();
 	virtual ~QtAssistant();
 	virtual void initialize( Workspace* );
 	virtual bool install();

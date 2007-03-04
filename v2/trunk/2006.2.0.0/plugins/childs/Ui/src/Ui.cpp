@@ -3,10 +3,22 @@
 #include <QDesktopServices>
 #include <QUrl>
 //
+Ui::Ui()
+{
+#ifdef __COVERAGESCANNER__
+  /* Initialization of the CoverageScanner library.        */
+  __coveragescanner_filename("Ui");
+#endif
+}
+//
 Ui::~Ui()
 {
 	if ( isInstalled() )
 		uninstall();
+#ifdef __COVERAGESCANNER__
+  /* Saves the execution report */
+  __coveragescanner_save();
+#endif
 }
 //
 void Ui::initialize( Workspace* w )

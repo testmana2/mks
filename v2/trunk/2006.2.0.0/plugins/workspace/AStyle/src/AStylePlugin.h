@@ -12,6 +12,8 @@ class AStylePlugin : public WorkspacePlugin
 	Q_INTERFACES( BasePlugin WorkspacePlugin )
 	//
 public:
+    AStylePlugin();
+    virtual ~AStylePlugin();
 	virtual void initialize( Workspace* );
 	virtual QWidget* settingsWidget();
 	virtual bool install();

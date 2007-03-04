@@ -11,6 +11,7 @@ class GNUMake :  public CompilerPlugin
 	Q_INTERFACES( BasePlugin CompilerPlugin )
 	//
 public:
+    GNUMake();
 	virtual ~GNUMake();
 	virtual void initialize( Workspace* );
 	virtual bool install();

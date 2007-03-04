@@ -7,10 +7,22 @@
 #include <QApplication>
 #include <QTextCodec>
 //
+Console::Console()
+{
+#ifdef __COVERAGESCANNER__
+  /* Initialization of the CoverageScanner library.        */
+  __coveragescanner_filename("Console");
+#endif
+}
+//
 Console::~Console()
 {
 	if ( isInstalled() )
 		uninstall();
+#ifdef __COVERAGESCANNER__
+  /* Saves the execution report */
+  __coveragescanner_save();
+#endif
 }
 //
 void Console::initialize( Workspace* w )

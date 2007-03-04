@@ -18,6 +18,23 @@ QString qsPluginName = "debugger_At";
 
 #define DEBUGGER_AT		PLUGIN_BASE_USER
 
+DebuggerAt::DebuggerAt()
+{
+#ifdef __COVERAGESCANNER__
+  /* Initialization of the CoverageScanner library.        */
+  __coveragescanner_filename("DebuggerAt");
+#endif
+}
+
+DebuggerAt::~DebuggerAt()
+{
+#ifdef __COVERAGESCANNER__
+  /* Saves the execution report */
+  __coveragescanner_save();
+#endif
+}
+
+
 // initialise your widget and return pointer to your widget view
 // call only one when parent load plug 
 QPointer<QWidget> DebuggerAt::pluginGetWidget()

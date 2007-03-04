@@ -3,10 +3,22 @@
 //
 #include <QFileInfo>
 //
+Text::Text()
+{
+#ifdef __COVERAGESCANNER__
+  /* Initialization of the CoverageScanner library.        */
+  __coveragescanner_filename("Text");
+#endif
+}
+//
 Text::~Text()
 {
 	if ( isInstalled() )
 		uninstall();
+#ifdef __COVERAGESCANNER__
+  /* Saves the execution report */
+  __coveragescanner_save();
+#endif
 }
 //
 void Text::initialize( Workspace* w )

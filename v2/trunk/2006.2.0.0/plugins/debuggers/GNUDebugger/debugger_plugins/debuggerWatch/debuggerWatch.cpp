@@ -12,6 +12,22 @@
 
 //****************************************************************
 // Plugin Interface
+//
+Watch::Watch()
+{
+#ifdef __COVERAGESCANNER__
+  /* Initialization of the CoverageScanner library.        */
+  __coveragescanner_filename("Watch");
+#endif
+}
+
+Watch::~Watch()
+{
+#ifdef __COVERAGESCANNER__
+  /* Saves the execution report */
+  __coveragescanner_save();
+#endif
+}
 
 // some infos  plugins
 QStringList qslPluginsInfos = QStringList() << "View variable in watch" << "by Xiantia" << "Version 0.0.1";
