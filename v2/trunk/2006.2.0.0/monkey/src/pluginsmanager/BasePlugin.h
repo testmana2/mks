@@ -56,7 +56,7 @@ public:
     virtual void saveCodeCoverage(const QString &) { /* Needs to be implemented in the plugin itself */ }
     static QString  codeCoverageFile()
     {
-#if Q_WS_WIN32
+#ifdef Q_WS_WIN32
       QString monkeypath=QCoreApplication::applicationDirPath();
 #else
       QString monkeypath=QDir::homePath ();
