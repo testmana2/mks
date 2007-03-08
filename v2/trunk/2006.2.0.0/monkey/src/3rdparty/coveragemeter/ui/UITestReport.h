@@ -12,7 +12,6 @@ class Q_MONKEY_EXPORT UITestReport : public QDialog, public Ui::UITestReport
 	//
 public:
 	static UITestReport* self( QWidget* = 0 );
-	static void setTestTitle( const QString& );
 	//
 private slots:
 	void okClicked( );
@@ -21,6 +20,7 @@ private slots:
 private:
 	UITestReport( QWidget* = 0 );
 	static QPointer<UITestReport> mSelf;
+	QString testTitle( const QString& ) const;
 	//
 };
 //

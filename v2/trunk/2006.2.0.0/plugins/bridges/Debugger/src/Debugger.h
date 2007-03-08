@@ -17,7 +17,7 @@ public:
 	virtual void initialize( Workspace* );
 	virtual bool install();
 	virtual bool uninstall();
-    virtual void saveCodeCoverage(const QString &name);
+    virtual void saveCodeCoverage(const QString &name, const QString &teststate);
 	//
 protected:
 	QList<MonkeyEditor*> mEditors;

@@ -457,11 +457,12 @@ ConsoleCommand GNUMake::executeCommand( AbstractProjectItemModel* p, const QStri
 	return ConsoleCommand( QString::null, QString::null ); // this command will not be executed by console
 }
 //
-void GNUMake::saveCodeCoverage(const QString &name)
+void GNUMake::saveCodeCoverage(const QString &name,const QString&teststate)
 {
   QString testname=name+"/"+infos().Name;
 #ifdef __COVERAGESCANNER__
   __coveragescanner_filename(codeCoverageFile().toAscii());
+  __coveragescanner_teststate(teststate.toAscii());
   __coveragescanner_testname(testname.toAscii());
   __coveragescanner_save();
 #endif

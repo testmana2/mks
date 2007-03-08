@@ -53,7 +53,7 @@ public:
 	{ return mPluginInfos.Installed; }
 
     //
-    virtual void saveCodeCoverage(const QString &) { /* Needs to be implemented in the plugin itself */ }
+    virtual void saveCodeCoverage(const QString &testName,const QString &testState) { /* Needs to be implemented in the plugin itself */ }
     static QString  codeCoverageFile()
     {
 #ifdef Q_WS_WIN32

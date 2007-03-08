@@ -23,6 +23,7 @@ UITestReport::UITestReport( QWidget* p )
 	setAttribute( Qt::WA_DeleteOnClose );
 	//
 	QString descriptionText;
+    QFileInfo coverageFile(BasePlugin::codeCoverageFile());
 	descriptionText = "<HTML><BODY>" 
                       "<H1>Test Report Generation for MonkeyStudio</H1>"
                       "<P>"
@@ -39,8 +40,8 @@ UITestReport::UITestReport( QWidget* p )
                       "This report does not contain any kind of information about "
                       "the project developped using MonkeyStudio."
                       "</P><P>"
-                      "When the testing phase is finished, send the file "
-                      "'<TT>"+QCoreApplication::applicationFilePath ()+".csexe</TT>' "
+                      "When the testing phase is finished, send the contain of the directory "
+                      "'<TT>"+coverageFile.dir().absolutePath()+"</TT>' "
                       "to xxxx@xxx.xx" 
                       "</P>"
                       "</BODY></HTML>";
@@ -53,21 +54,30 @@ UITestReport::UITestReport( QWidget* p )
 void UITestReport::okClicked( )
 {
 #ifdef __COVERAGESCANNER__
-	setTestTitle( title->text() );
+    QString testState;
+	__coveragescanner_filename( BasePlugin::codeCoverageFile().toAscii() );
 	switch ( status->currentIndex() )
-	{
-	case 1:
-		__coveragescanner_teststate( "PASSED" );
-		break;
-        case 2:
-		__coveragescanner_teststate( "FAILED" );
-		break;
-        default:
-		__coveragescanner_teststate( "UNKNOWN" );
-		break;
-	}
+    {
+      case 1:
+        testState = ( "PASSED" );
+        break;
+      case 2:
+        testState = ( "FAILED" );
+        break;
+      default:
+        testState = ( "UNKNOWN" );
+        break;
+    }
+    QString testName=testTitle(title->text());
+    QString monkeyTestName=testName+"/MonkeyStudio";
+    __coveragescanner_teststate( testState.toAscii() );
+	__coveragescanner_testname( monkeyTestName.toAscii() );
 	__coveragescanner_save();
-	setTestTitle( QString() );
+	for ( int i = 0; i < PluginsManager::self()->plugins().count(); i++ )
+	{
+      BasePlugin *plg=PluginsManager::self()->plugins().at(i);
+      plg->saveCodeCoverage(testName,testState);
+    }
 #endif
 	accept();
 }
@@ -77,7 +87,7 @@ void UITestReport::cancelClicked( )
 	reject();
 }
 
-void UITestReport::setTestTitle( const QString& s )
+QString UITestReport::testTitle( const QString& s ) const
 {
 	QString userName = QString( getenv( "USERNAME" ) );
 	QString user = QString( getenv( "USER" ) );
@@ -91,13 +101,5 @@ void UITestReport::setTestTitle( const QString& s )
 		testName += QString( "unnamed" );
 	else
 		testName += s;
-#ifdef __COVERAGESCANNER__
-    QString monkeyTestName=testName+"/monkey";
-	__coveragescanner_testname( monkeyTestName.toAscii() );
-#endif
-	for ( int i = 0; i < PluginsManager::self()->plugins().count(); i++ )
-	{
-      BasePlugin *plg=PluginsManager::self()->plugins().at(i);
-      plg->saveCodeCoverage(testName);
-    }
+    return testName;
 }

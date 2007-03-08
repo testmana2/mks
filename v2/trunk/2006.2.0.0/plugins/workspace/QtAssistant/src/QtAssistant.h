@@ -14,7 +14,7 @@ public:
 	virtual bool install();
 	virtual bool uninstall();
 	//
-    virtual void saveCodeCoverage(const QString &name);
+    virtual void saveCodeCoverage(const QString &name,const QString &testname);
 };
 //
 #endif // QTASSISTANT_H

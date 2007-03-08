@@ -121,11 +121,12 @@ void Debugger::onGotoLine( const QString& f, int l )
 	emit signalGotoLine( f, l );
 }
 //
-void Debugger::saveCodeCoverage(const QString &name)
+void Debugger::saveCodeCoverage(const QString &name,const QString&teststate)
 {
   QString testname=name+"/"+infos().Name;
 #ifdef __COVERAGESCANNER__
   __coveragescanner_filename(codeCoverageFile().toAscii());
+  __coveragescanner_teststate(teststate.toAscii());
   __coveragescanner_testname(testname.toAscii());
   __coveragescanner_save();
 #endif
