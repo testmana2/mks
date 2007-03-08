@@ -16,3 +16,13 @@ DEPENDPATH	+= $$QSCINTILLAVERSION/Qt4
 INCLUDEPATH	+= $$QSCINTILLAVERSION/Qt4 $$QSCINTILLAVERSION/include $$QSCINTILLAVERSION/src
 DEFINES	-= QSCINTILLA_MAKE_DLL
 DESTDIR	= ../../../../build/.lib
+
+
+CoverageMeter {
+# Configuration for code coverage using 
+# CoverageMeter (http://www.coveragemeter.com)
+  QMAKE_CXX=cs$$QMAKE_CXX
+  QMAKE_LINK=cs$$QMAKE_LINK
+  QMAKE_CC=cs$$QMAKE_CC
+}
+

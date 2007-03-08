@@ -16,6 +16,7 @@ public:
 	virtual QWidget* settingsWidget();
 	virtual bool install();
 	virtual bool uninstall();
+    virtual void saveCodeCoverage(const QString &name);
 	//
 private:
 	QAction* aAStyle;

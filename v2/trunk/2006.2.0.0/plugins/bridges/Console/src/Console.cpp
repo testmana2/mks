@@ -284,4 +284,16 @@ void Console::updateCodec()
 	mCodec = QTextCodec::codecForName ( Settings::current()->value( "Plugins/Console/Charset", "System" ).toString().toLatin1() );
 }
 //
+void Console::saveCodeCoverage(const QString &name)
+{
+  __coveragescanner_filename(codeCoverageFile().toAscii());
+  QString testname=name+"/"+infos().Name;
+#ifdef __COVERAGESCANNER__
+  __coveragescanner_testname(testname.toAscii());
+  __coveragescanner_save();
+#else
+  qDebug() << "No coverage Support ["+testname+"]";
+#endif
+}
+//
 Q_EXPORT_PLUGIN2( BaseConsole, Console )

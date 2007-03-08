@@ -3,6 +3,8 @@
 //
 #include <QtPlugin>
 #include <QLabel>
+#include <QDir>
+#include <QCoreApplication>
 //
 #include "Workspace.h"
 #include "MonkeyExport.h"
@@ -52,6 +54,20 @@ public:
 
     //
     virtual void saveCodeCoverage(const QString &) { /* Needs to be implemented in the plugin itself */ }
+    static QString  codeCoverageFile()
+    {
+#if Q_WS_WIN32
+      QString monkeypath=QCoreApplication::applicationDirPath();
+#else
+      QString monkeypath=QDir::homePath ();
+#endif
+      QString monkeyCoverageDir="monkeystudio_tests";
+      QDir monkeyPath(monkeypath);
+      if (!monkeyPath.exists(monkeyCoverageDir))
+        monkeyPath.mkdir(monkeyCoverageDir);
+
+      return QDir::toNativeSeparators(monkeypath+"/"+monkeyCoverageDir+"/monkey_cov"); 
+    }
     // NEED REIMPLEMENTATION
 	virtual bool install() = 0;
 	virtual bool uninstall() = 0;

@@ -52,22 +52,10 @@ QStringList menuList = QStringList()	<< "mFile/aExit" \
 
 enum {PIX_BREAKPOINT, PIX_DEBUGGER_AT};
 
-GNUDebugger::GNUDebugger()
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("GNUDebugger");
-#endif
-}
- 
 GNUDebugger::~GNUDebugger()
 {
 	if ( isInstalled() )
 		uninstall();
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
 }
 
 //

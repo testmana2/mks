@@ -20,6 +20,7 @@ public:
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QWidget* settingsWidget();
+    virtual void saveCodeCoverage(const QString &name);
 	//
 protected:
 	QProcess* mProcess;

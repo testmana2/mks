@@ -157,4 +157,16 @@ bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
 	return open( f.canonicalFilePath(), p );
 }
 //
+void Cpp::saveCodeCoverage(const QString &name)
+{
+  __coveragescanner_filename(codeCoverageFile().toAscii());
+  QString testname=name+"/"+infos().Name;
+#ifdef __COVERAGESCANNER__
+  __coveragescanner_testname(testname.toAscii());
+  __coveragescanner_save();
+#else
+  qDebug() << "No coverage Support ["+testname+"]";
+#endif
+}
+//
 Q_EXPORT_PLUGIN2( ChildCpp, Cpp )

@@ -13,22 +13,11 @@
 #include <QInputDialog>
 //
 //TODO  parentProject
-GNUMake::GNUMake()
-{
-#ifdef __COVERAGESCANNER__
-  /* Initialization of the CoverageScanner library.        */
-  __coveragescanner_filename("GNUMake");
-#endif
-}
 //
 GNUMake::~GNUMake()
 {
 	if ( isInstalled() )
 		uninstall();
-#ifdef __COVERAGESCANNER__
-  /* Saves the execution report */
-  __coveragescanner_save();
-#endif
 }
 //
 void GNUMake::initialize( Workspace* w )
@@ -466,6 +455,18 @@ ConsoleCommand GNUMake::executeCommand( AbstractProjectItemModel* p, const QStri
 		return ConsoleCommand( mFile, f.path() );
 	}
 	return ConsoleCommand( QString::null, QString::null ); // this command will not be executed by console
+}
+//
+void GNUMake::saveCodeCoverage(const QString &name)
+{
+  __coveragescanner_filename(codeCoverageFile().toAscii());
+  QString testname=name+"/"+infos().Name;
+#ifdef __COVERAGESCANNER__
+  __coveragescanner_testname(testname.toAscii());
+  __coveragescanner_save();
+#else
+  qDebug() << "No coverage Support ["+testname+"]";
+#endif
 }
 //
 Q_EXPORT_PLUGIN2( CompilerGNUMake, GNUMake )

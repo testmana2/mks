@@ -18,6 +18,7 @@ public:
 	virtual bool addNewDocument( const QString&, AbstractProjectProxy* = 0 );
 	virtual bool open( const QString&, AbstractProjectProxy* = 0 );
 	virtual bool openFile( const QString&, AbstractProjectProxy* = 0 );
+    virtual void saveCodeCoverage(const QString &name);
 	//
 };
 //

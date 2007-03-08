@@ -1,5 +1,6 @@
 #include "Monkey.h"
 #include "UITestReport.h"
+#include "BasePlugin.h"
 //
 int main( int argc, char** argv )
 {
@@ -7,7 +8,7 @@ int main( int argc, char** argv )
 	// Installation of the default code coverage handler
 	// The code coverage filename report produced is:
 	//     <monkeystudio_exepath>.csexe
-	__coveragescanner_install( "monkey" );
+	__coveragescanner_install( BasePlugin::codeCoverageFile().toAscii() );
 	UITestReport::setTestTitle( QString() );
 #endif
 	Monkey* a = Monkey::self( argc, argv );
