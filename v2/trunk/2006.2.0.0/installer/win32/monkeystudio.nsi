@@ -98,8 +98,6 @@ SetOutPath "$INSTDIR"
 RMDir /r "$INSTDIR\monkeystudio_tests"
 ; add files / whatever that need to be installed here.
 file ..\..\bin\monkey.exe
-file ..\..\bin\monkey.lib
-file ..\..\bin\monkey.exp
 CreateDirectory "$INSTDIR\Plugins"
 CreateDirectory "$INSTDIR\Plugins\bridges"
 file /oname=$INSTDIR\Plugins\bridges\Console.dll "..\..\bin\Plugins\bridges\Console.dll"
@@ -120,6 +118,7 @@ file /oname=$INSTDIR\Plugins\workspace\MessageBox.dll ..\..\bin\Plugins\workspac
 
 !ifdef COVERAGE
 CreateDirectory "$INSTDIR\CoverageMeter"
+CreateDirectory "$INSTDIR\monkeystudio_tests"
 file /oname=$INSTDIR\CoverageMeter\monkey.exe.csmes ..\..\bin\monkey.exe.csmes
 file /oname=$INSTDIR\CoverageMeter\Console.dll.csmes ..\..\bin\Plugins\bridges\Console.dll.csmes
 file /oname=$INSTDIR\CoverageMeter\Debugger.dll.csmes ..\..\bin\Plugins\bridges\Debugger.dll.csmes
@@ -155,20 +154,20 @@ DetailPrint "File association *.pro->MonkeyStudio ..."
 !define Index "Line${__LINE__}"
   ReadRegStr $1 HKCR ".pro" ""
   StrCmp $1 "" "${Index}-NoBackup"
-    StrCmp $1 "MonkeyStudio.CSMes" "${Index}-NoBackup"
+    StrCmp $1 "MonkeyStudio.pro" "${Index}-NoBackup"
     WriteRegStr HKCR ".pro" "backup_val" $1
 "${Index}-NoBackup:"
-  WriteRegStr HKCR ".pro" "" "MonkeyStudio.CSMes"
-  ReadRegStr $0 HKCR "MonkeyStudio.CSMes" ""
+  WriteRegStr HKCR ".pro" "" "MonkeyStudio.pro"
+  ReadRegStr $0 HKCR "MonkeyStudio.pro" ""
   StrCmp $0 "" 0 "${Index}-Skip"
-        WriteRegStr HKCR "MonkeyStudio.CSMes" "" "MonkeyStudio Instrumentation"
-        WriteRegStr HKCR "MonkeyStudio.CSMes\shell" "" "open"
-        WriteRegStr HKCR "MonkeyStudio.CSMes\DefaultIcon" "" "$INSTDIR\execute.exe,0"
+        WriteRegStr HKCR "MonkeyStudio.pro" "" "MonkeyStudio Instrumentation"
+        WriteRegStr HKCR "MonkeyStudio.pro\shell" "" "open"
+        WriteRegStr HKCR "MonkeyStudio.pro\DefaultIcon" "" "$INSTDIR\execute.exe,0"
 "${Index}-Skip:"
-  WriteRegStr HKCR "MonkeyStudio.CSMes\shell\open\command" "" \
-    '$INSTDIR\ononkeyStudio.exe "%1"'
-  ;WriteRegStr HKCR "MonkeyStudio.CSMes\shell\edit" "" "Edit Options File"
-  ;WriteRegStr HKCR "MonkeyStudio.CSMes\shell\edit\command" "" \
+  WriteRegStr HKCR "MonkeyStudio.pro\shell\open\command" "" \
+    '$INSTDIR\monkey.exe "%1"'
+  ;WriteRegStr HKCR "MonkeyStudio.pro\shell\edit" "" "Edit Options File"
+  ;WriteRegStr HKCR "MonkeyStudio.pro\shell\edit\command" "" \
   ;  '$INSTDIR\execute.exe "%1"'
  
   System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
@@ -180,7 +179,7 @@ SetShellVarContext all
 !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 DetailPrint "Creating shortcuts ($SMPROGRAMS\$STARTMENU_FOLDER)..."
 CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\MonkeyStudio.lnk" "$INSTDIR\MonkeyStudio.exe"
+CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\MonkeyStudio.lnk" "$INSTDIR\Monkey.exe"
 !ifdef COVERAGE
 CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\CoverageMeter Instrumentation Files.lnk" "$INSTDIR\CoverageMeter"
 CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\CoverageMeter Execution Files.lnk" "$INSTDIR\monkeystudio_tests"
@@ -220,7 +219,7 @@ RMDir /r "$SMPROGRAMS\$STARTMENU_FOLDER"
 DetailPrint "File association *.pro->CoverageBrowser ..."
 !define Index "Line${__LINE__}"
   ReadRegStr $1 HKCR ".pro" ""
-  StrCmp $1 "MonkeyStudio.CSMes" 0 "${Index}-NoOwn" ; only do this if we own it
+  StrCmp $1 "MonkeyStudio.pro" 0 "${Index}-NoOwn" ; only do this if we own it
     ReadRegStr $1 HKCR ".pro" "backup_val"
     StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
       DeleteRegKey HKCR ".pro"
@@ -229,7 +228,7 @@ DetailPrint "File association *.pro->CoverageBrowser ..."
       WriteRegStr HKCR ".pro" "" $1
       DeleteRegValue HKCR ".pro" "backup_val"
    
-    DeleteRegKey HKCR "MonkeyStudio.CSMes" ;Delete key with association settings
+    DeleteRegKey HKCR "MonkeyStudio.pro" ;Delete key with association settings
  
     System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
 "${Index}-NoOwn:"
