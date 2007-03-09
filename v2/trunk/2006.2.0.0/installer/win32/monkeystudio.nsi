@@ -19,7 +19,11 @@ OutFile "MonkeyStudioSetup_${EXE_VERSION}.exe"
 !endif
 Caption "MonkeyStudio Setup - Version ${MUI_VERSION}"
 
+!ifdef VC80
 !define VISUALSTUDIO "c:/Programme/Microsoft Platform SDK for Windows Server 2003 R2/Bin/win64"
+!else
+!define VISUALSTUDIO "c:/Programme/Microsoft Visual C++ Toolkit 2003/Bin/"
+!endif
 
 SetDatablockOptimize on ; 
 SetCompressor /SOLID /FINAL lzma
@@ -128,9 +132,14 @@ file /oname=$INSTDIR\CoverageMeter\QtAssistant.dll.csmes ..\..\bin\Plugins\works
 file /oname=$INSTDIR\CoverageMeter\AStyle.dll.csmes ..\..\bin\Plugins\workspace\AStyle.dll.csmes
 file /oname=$INSTDIR\CoverageMeter\MessageBox.dll.csmes ..\..\bin\Plugins\workspace\MessageBox.dll.csmes
 !endif
+!ifdef VC80
 File "Microsoft.VC80.CRT"
 File "${VISUALSTUDIO}\MSVCR80.dll"
 File "${VISUALSTUDIO}\MSVCP80.dll"
+!else
+File "${VISUALSTUDIO}\MSVCR71.dll"
+File "${VISUALSTUDIO}\MSVCP71.dll"
+!endif
 File "${QTDIR}\QtGui4.dll"
 File "${QTDIR}\QtCore4.dll"
 
