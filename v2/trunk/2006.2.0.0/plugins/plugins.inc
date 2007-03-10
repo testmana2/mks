@@ -10,9 +10,17 @@ MOC_DIR	= ../../../build/.moc/plugins
 RCC_DIR	= ../../../build/.rcc/plugins
 
 MONKEY_PLUGINS_DIR	= ../../../bin/plugins
+#DEFINES	= __COVERAGESCANNER__
 LIBS	= -L../../../build/.lib -lqscintilla2
 win32:LIBS += -lmonkey
-win32:QMAKE_LIBDIR+=../../../bin
+win32:QMAKE_LIBDIR	+=../../../bin
+
+contains( DEFINES, __COVERAGESCANNER__ ) {
+	message( "Coverage Meter Activated ( http://www.coveragemeter.com )." )
+	QMAKE_CXX = cs$$QMAKE_CXX
+	QMAKE_LINK = cs$$QMAKE_LINK
+	QMAKE_CC = cs$$QMAKE_CC
+}
 
 INCLUDEPATH	= . \
 	src \
@@ -31,12 +39,3 @@ INCLUDEPATH	= . \
 	../../../monkey/src/projectsmanager \
 	../../../monkey/src/projectsmanager/ui \
 	../../../monkey/src
-
-CoverageMeter {
-# Configuration for code coverage using 
-# CoverageMeter (http://www.coveragemeter.com)
-  QMAKE_CXX=cs$$QMAKE_CXX
-  QMAKE_LINK=cs$$QMAKE_LINK
-  QMAKE_CC=cs$$QMAKE_CC
-}
-
