@@ -1,6 +1,5 @@
 #include "Monkey.h"
 #include "UITestReport.h"
-#include "BasePlugin.h"
 //
 int main( int argc, char** argv )
 {
@@ -12,4 +11,3 @@ int main( int argc, char** argv )
 	delete a;
 	return i;
 }
-
