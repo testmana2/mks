@@ -332,20 +332,9 @@ void Workspace::projectCloseAll_triggered()
 		projectsManager()->closeProxy( p );
 }
 //
-void Workspace::projectShowSource_triggered()
-{
-}
-//
-void Workspace::projectShowToDo_triggered()
-{
-}
-//
-void Workspace::projectShowChanges_triggered()
-{
-}
-//
 void Workspace::projectSettings_triggered()
 {
+	projectsManager()->currentProxy()->projectSettings();
 }
 //
 void Workspace::openFile( const QString& s, AbstractProjectProxy* p )

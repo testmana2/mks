@@ -80,9 +80,6 @@ public slots:
 	void projectSaveAll_triggered();
 	void projectCloseCurrent_triggered();
 	void projectCloseAll_triggered();
-	void projectShowSource_triggered();
-	void projectShowToDo_triggered();
-	void projectShowChanges_triggered();
 	void projectSettings_triggered();
 	//
 };
