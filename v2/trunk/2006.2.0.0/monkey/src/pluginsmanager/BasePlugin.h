@@ -3,8 +3,10 @@
 //
 #include <QtPlugin>
 #include <QLabel>
-#include <QDir>
+#ifdef __COVERAGESCANNER__
 #include <QCoreApplication>
+#include <QDir>
+#endif
 //
 #include "Workspace.h"
 #include "MonkeyExport.h"
@@ -51,24 +53,26 @@ public:
 	//
 	virtual bool isInstalled() const
 	{ return mPluginInfos.Installed; }
-
-    //
-    virtual void saveCodeCoverage(const QString &/*testName*/,const QString &/*testState*/) { /* Needs to be implemented in the plugin itself */ }
-    static QString  codeCoverageFile()
-    {
-#ifdef Q_WS_WIN32
-      QString monkeypath=QCoreApplication::applicationDirPath();
+	// coverage support members
+#ifdef __COVERAGESCANNER__
+	virtual void saveCodeCoverage( const QString& /*testName*/, const QString& /*testState*/ )
+	{ /* Needs to be implemented in the plugin itself */ }
+	//
+	static QString codeCoverageFile()
+	{
+#ifdef Q_OS_WIN
+		QString s = QCoreApplication::applicationDirPath();
 #else
-      QString monkeypath=QDir::homePath ();
+		QString s = QDir::homePath();
 #endif
-      QString monkeyCoverageDir="monkeystudio_tests";
-      QDir monkeyPath(monkeypath);
-      if (!monkeyPath.exists(monkeyCoverageDir))
-        monkeyPath.mkdir(monkeyCoverageDir);
-
-      return QDir::toNativeSeparators(monkeypath+"/"+monkeyCoverageDir+"/monkey_cov"); 
-    }
-    // NEED REIMPLEMENTATION
+		s.append( "/monkeystudio_tests" );
+		QDir d( s );
+		if ( !d.exists() )
+			d.mkdir( s );
+		return QDir::toNativeSeparators( s.append( "/monkey_cov" ) ); 
+	}
+#endif
+	// NEED REIMPLEMENTATION
 	virtual bool install() = 0;
 	virtual bool uninstall() = 0;
 	//
