@@ -97,6 +97,15 @@ AbstractProjectItemModel* AbstractProjectItemModel::parentProject() const
 {
 	return mParentProject;
 }
+// return all subprojects pointers recursively according to bool
+QList<AbstractProjectItemModel*> AbstractProjectItemModel::subProjects( bool b ) const
+{
+	QList<AbstractProjectItemModel*> l = findChildren<AbstractProjectItemModel*>();
+	if ( b )
+		foreach ( AbstractProjectItemModel* p, l )
+			l << p->subProjects( b );
+	return l;
+}
 // get all files
 QStringList AbstractProjectItemModel::getFiles( QDir d, const QStringList& f, bool b )
 {

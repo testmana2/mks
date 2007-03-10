@@ -43,12 +43,16 @@ public:
 	virtual QString filePath( const QString& );
 	// open project
 	virtual bool open( bool = true ) = 0;
+	// return all the project files as absolute, recursively according to bool
+	virtual QStringList absoluteFilesPath( bool = false ) = 0;
 	// the root project item
 	virtual QStandardItem* projectItem() const = 0;
-	// get all subprojects u must send full file path
-	virtual QStringList subProjects() const = 0;
+	// get all the subprojects files as absolute, recusively according to bool
+	virtual QStringList absoluteSubProjectsPath( bool = false ) const = 0;
 	// get the parent project
 	virtual AbstractProjectItemModel* parentProject() const;
+	// return all subprojects pointers recursively according to bool
+	virtual QList<AbstractProjectItemModel*> subProjects( bool = false ) const;
 	// get first value by variable name
 	virtual QString getValue( const QString& ) const = 0;
 	// get all values by variable name
@@ -61,10 +65,6 @@ public:
 	virtual QStandardItem* itemByName( const QString& ) const = 0;
 	//
 protected:
-	// prepare the completion list
-	virtual QStringList prepareCompletionFilesList() = 0;
-	// preapre completion
-	virtual void prepareCompletion() = 0;
 	// get recursive files
 	virtual QStringList getFiles( QDir, const QStringList& = QStringList() << "*", bool = false );
 	// parse the project
@@ -93,6 +93,8 @@ public slots:
 	virtual void close() = 0;
 	// save project
 	virtual void save() = 0;
+	// preapre completion
+	virtual void prepareCompletion() = 0;
 	//
 signals:
 	// emit when open state has changed

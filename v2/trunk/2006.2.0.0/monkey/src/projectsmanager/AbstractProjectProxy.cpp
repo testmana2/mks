@@ -6,7 +6,8 @@ int AbstractProjectProxy::mUniqueId = 0;
 QHashProxys AbstractProjectProxy::mProxysList = QHashProxys();
 //
 AbstractProjectProxy::AbstractProjectProxy( AbstractProjectItemModel* s )
-	: QSortFilterProxyModel( s ), mId(mUniqueId++ ), mComplexModel( false )
+	: QSortFilterProxyModel( s ), mId(mUniqueId++ ), mComplexModel( false ),
+	mSettingsView( false )
 {
 	mProxysList[ mId ] = this;
 }
@@ -47,6 +48,11 @@ bool AbstractProjectProxy::isComplexModel() const
 	return mComplexModel;
 }
 //
+bool AbstractProjectProxy::isSettingsView() const
+{
+	return mSettingsView;
+}
+//
 void AbstractProjectProxy::setComplexModel( bool b )
 {
 	if ( mComplexModel == b )
@@ -54,4 +60,13 @@ void AbstractProjectProxy::setComplexModel( bool b )
 	mComplexModel = b;
 	filterChanged();
 	emit complexModelChanged( mComplexModel );
+}
+//
+void AbstractProjectProxy::setSettingsView( bool b )
+{
+	if ( mSettingsView == b )
+		return;
+	mSettingsView = b;
+	filterChanged();
+	emit settingsViewChanged( mSettingsView );
 }

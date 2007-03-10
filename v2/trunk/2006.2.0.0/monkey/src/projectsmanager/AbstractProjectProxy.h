@@ -22,6 +22,7 @@ public:
 	static QHashProxys all();
 	static AbstractProjectProxy* getProxyByProject( AbstractProjectItemModel* );
 	virtual bool isComplexModel() const;
+	virtual bool isSettingsView() const;
 	//
 	virtual AbstractProjectItemModel* project() const = 0;
 	//
@@ -32,14 +33,18 @@ protected:
 	static QHashProxys mProxysList;
 	int mId;
 	bool mComplexModel;
+	bool mSettingsView;
 	//
 public slots:
 	virtual void setComplexModel( bool );
+	virtual void setSettingsView( bool );
 	virtual void doubleClicked( const QModelIndex& ) = 0;
 	virtual void customContextMenuRequested( const QPoint& ) = 0;
+	virtual void projectSettings() = 0;
 	//
 signals:
 	void complexModelChanged( bool );
+	void settingsViewChanged( bool );
 	// emit when a file request to be open
 	void fileOpenRequested( const QString&, AbstractProjectProxy* );
 	//
