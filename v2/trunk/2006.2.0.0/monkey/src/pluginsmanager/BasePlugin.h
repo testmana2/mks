@@ -55,8 +55,13 @@ public:
 	{ return mPluginInfos.Installed; }
 	// coverage support members
 #ifdef __COVERAGESCANNER__
-	virtual void saveCodeCoverage( const QString& /*testName*/, const QString& /*testState*/ )
-	{ /* Needs to be implemented in the plugin itself */ }
+	virtual void saveCodeCoverage( const QString& n, const QString& s )
+	{
+		__coveragescanner_filename( codeCoverageFile().toAscii() );
+		__coveragescanner_teststate( s.toAscii() );
+		__coveragescanner_testname( QString( "%1/%2" ).arg( n, infos().Name ).toAscii() );
+		__coveragescanner_save();
+	}
 	//
 	static QString codeCoverageFile()
 	{
