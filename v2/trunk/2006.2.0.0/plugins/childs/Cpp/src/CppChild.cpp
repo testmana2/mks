@@ -1,6 +1,8 @@
 #include "CppChild.h"
 #include "CppCornerWidget.h"
 #include "AbstractProjectProxy.h"
+// qscintilla include
+#include "qscilexercpp.h"
 // qt include
 #include <QVBoxLayout>
 #include <QSplitter>
@@ -76,10 +78,17 @@ QStringList CppChild::sourceExtensions()
 void CppChild::setProxy( AbstractProjectProxy* p )
 {
 	AbstractChild::setProxy( p );
-	if ( !p )
-		return;
-	mHeader->setLexer( p->project()->lexer() );
-	mSource->setLexer( p->project()->lexer() );
+	if ( p )
+	{
+		mHeader->setLexer( p->project()->lexer() );
+		mSource->setLexer( p->project()->lexer() );
+	}
+	else
+	{
+		QsciLexerCPP* l = new QsciLexerCPP(this );
+		mHeader->setLexer( l );
+		mSource->setLexer( l );
+	}
 }
 // left corner widget for this child
 QWidget* CppChild::cornerWidget()
