@@ -16,7 +16,7 @@ public:
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QWidget* settingsWidget();
-    virtual void saveCodeCoverage(const QString &name,const QString &teststate);
+
 	//
 public slots:
 	virtual void buildCurrent();
