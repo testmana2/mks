@@ -15,12 +15,14 @@ class QMakeProjectItemModel : public AbstractProjectItemModel
 public:
 	QMakeProjectItemModel( const QString&, AbstractProjectItemModel* = 0 );
 	virtual ~QMakeProjectItemModel();
+	// return varialbe name that only contains files
+	static QStringList fileNameBasedVariables();
 	// return the simple keyword to show
 	static QStringList simpleModelVariables();
 	// the root project item
 	virtual QStandardItem* projectItem() const;
 	// return child project
-	virtual QStringList subProjects() const;
+	virtual QStringList absoluteSubProjectsPath( bool = false ) const;
 	// get first value by variable name
 	virtual QString getValue( const QString& ) const;
 	// get all values by variable name
@@ -33,12 +35,10 @@ public:
 	virtual QStandardItem* itemByName( const QString& ) const;
 	// open project
 	virtual bool open( bool = true );
+	// prepare the completion list
+	virtual QStringList absoluteFilesPath( bool = false );
 	//
 protected:
-	// prepare the completion list
-	virtual QStringList prepareCompletionFilesList();
-	// preapre completion
-	virtual void prepareCompletion();
 	// parse project
 	virtual bool parse();
 	//
@@ -50,10 +50,13 @@ protected:
 	QMakeProjectItem* getFolder( const QString&, QMakeProjectItem* = 0 );
 	//
 	QMakeProjectItem* iProject;
+	QStringList mAPISFiles;
 	//
 public slots:
 	virtual void close();
 	virtual void save();
+	// preapre completion
+	virtual void prepareCompletion();
 	//
 };
 //

@@ -22,6 +22,9 @@ protected:
 	virtual void doubleClicked( const QModelIndex& );
 	virtual void customContextMenuRequested( const QPoint& );
 	//
+public slots:
+	virtual void projectSettings();
+	//
 };
 //
 #endif // QMAKEPROJECTPROXY_H

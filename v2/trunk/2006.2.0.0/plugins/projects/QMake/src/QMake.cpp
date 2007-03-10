@@ -77,7 +77,7 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 		// add it to projects manager
 		mWorkspace->projectsManager()->addProxy( mProxy, py );
 		// open subprojects
-		foreach ( QString h, mProxy->project()->subProjects() )
+		foreach ( QString h, mProxy->project()->absoluteSubProjectsPath() )
 		{
 			QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
 			openProject( h, mProxy );
@@ -101,17 +101,6 @@ bool QMake::openProject( const QString& s, AbstractProjectProxy* py )
 	else
 		delete mProject;
 	return false;
-}
-//
-void QMake::saveCodeCoverage(const QString &name,const QString&teststate)
-{
-  QString testname=name+"/"+infos().Name;
-#ifdef __COVERAGESCANNER__
-  __coveragescanner_filename(codeCoverageFile().toAscii());
-  __coveragescanner_testname(testname.toAscii());
-  __coveragescanner_teststate(teststate.toAscii());
-  __coveragescanner_save();
-#endif
 }
 //
 Q_EXPORT_PLUGIN2( ProjectQMake, QMake )

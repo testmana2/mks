@@ -2,6 +2,7 @@
 #include "QMakeProjectItemModel.h"
 #include "QMakeProjectItem.h"
 #include "MenuBar.h"
+#include "UIProjectSettingsQMake.h"
 //
 #include <QMenu>
 #include <QAbstractItemView>
@@ -19,12 +20,22 @@ AbstractProjectItemModel* QMakeProjectProxy::project() const
 //
 bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 {
-	if ( mComplexModel || !i.isValid() )
+	if ( !i.isValid() )
 		return true;
 	// got the needed index
 	QModelIndex index = i;
 	if ( mSource->hasChildren( i ) )
-		index = i.child( r, i.column() );
+		index = i.child( r, i.column() );	
+	// checking is in settingsView
+	if ( isSettingsView() )
+	{
+		if ( index.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::Value )
+			return false;
+		return true;
+	}
+	// checking is complex model
+	else if ( isComplexModel() )
+		return true;
 	// apply filtering
 	switch ( index.data( QMakeProjectItem::TypeRole ).toInt() )
 	{
@@ -92,4 +103,11 @@ void QMakeProjectProxy::customContextMenuRequested( const QPoint& p )
 	action( "alupdate", tr( "l&update" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Execute lupdate on current" ) );
 	action( "alrelease", tr( "l&release" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Execute lrelease on current" ) );
 	*/
+}
+//
+void QMakeProjectProxy::projectSettings()
+{
+	setSettingsView( true );
+	UIProjectSettingsQMake::execute( this );
+	setSettingsView( false );
 }

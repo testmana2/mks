@@ -27,6 +27,12 @@ QMakeProjectItemModel::~QMakeProjectItemModel()
 	// close project on delete
 	close();
 }
+// return varialbe name that only contains files
+QStringList QMakeProjectItemModel::fileNameBasedVariables()
+{
+	return QStringList() << "FORMS" << "FORMS3" << "HEADERS" << "SOURCES"
+		<< "DEF_FILE" << "RC_FILE" << "RES_FILE" << "YACCSOURCES";
+}
 //
 QStringList QMakeProjectItemModel::simpleModelVariables()
 {
@@ -39,19 +45,16 @@ QStandardItem* QMakeProjectItemModel::projectItem() const
 	return iProject;
 }
 //
-QStringList QMakeProjectItemModel::subProjects() const
+QStringList QMakeProjectItemModel::absoluteSubProjectsPath( bool b ) const
 {
-	// check if project is type subdirs
-	if ( getValue( "template" ).toLower() != "subdirs" )
-		return QStringList();
 	// get subdirs values
 	QStringList lf, ls = getValuesList( "subdirs" );
 	QDir d;
-	// loop on all values
-	for ( int i = 0; i < ls.count(); i++ )
+	// loop all subdirs
+	foreach ( QString s, ls )
 	{
-		// go to sub project folder
-		d.setPath( path().append( ls.value( i ).prepend( "/" ) ) );
+		// go to subdir folder
+		d.setPath( path().append( s.prepend( "/" ) ) );
 		// set path clean and absolute
 		d.setPath( d.canonicalPath() );
 		// if folder doesn't exist go next
@@ -63,6 +66,11 @@ QStringList QMakeProjectItemModel::subProjects() const
 		if ( ld.count() )
 			lf << d.absoluteFilePath( ld.value( 0 ) );
 	}
+	// if there is subprojects, then check in them
+	if ( ls.count() && b )
+		foreach ( AbstractProjectItemModel* p, subProjects( b ) )
+			lf << p->absoluteSubProjectsPath( b );
+	// return all subprojects file
 	return lf;
 }
 // recursive get in case of folder
@@ -123,67 +131,50 @@ bool QMakeProjectItemModel::open( bool )
 	return mIsOpen;
 }
 //
-QStringList QMakeProjectItemModel::prepareCompletionFilesList()
+QStringList QMakeProjectItemModel::absoluteFilesPath( bool b )
 {
-	if ( getValue( "TEMPLATE" ).toLower() == "subdirs" )
-		return QStringList();
-	QStringList l, f, e = QStringList() << "*.h*" << "*.c*" ;
-	QString s;
-	// add headers to apis
-	l = getValuesList( "HEADERS" );
-	// add sources to apis
-	l << getValuesList( "SOURCES" );
-	// includepath
-	f = getValuesList( "INCLUDEPATH" );
-	foreach ( s, f )
-	{
-		s = filePath( s );
-		if ( QFile::exists( s ) )
-			l << getFiles( QDir( s ), e );
-	}
-	// dependpath
-	f = getValuesList( "DEPENDPATH" );
-	foreach ( s, f )
-	{
-		s = filePath( s );
-		if ( QFile::exists( s ) )
-			l << getFiles( QDir( s ), e );
-	}
-	// vpath
-	f = getValuesList( "VPATH" );
-	foreach ( s, f )
-	{
-		s = filePath( s );
-		if ( QFile::exists( s ) )
-			l << getFiles( QDir( s ), e );
-	}
-	// make fiels absolute as they will be called from top project
+	QStringList l;
+	// get all files for variables based on filename
+	foreach ( QString s, fileNameBasedVariables() )
+		l << getValuesList( s );
+	// make them absolute
 	for ( int i = 0; i < l.count(); i++ )
 		l[i] = filePath( l.at( i ) );
-	// return list
+	// get subprojects files
+	if ( b )
+		foreach ( AbstractProjectItemModel* p, subProjects( b ) )
+			l << p->absoluteFilesPath( b );
+	// return files list
 	return l;
 }
 // preapre completion
 void QMakeProjectItemModel::prepareCompletion()
 {
+	// only top project can call prepare completion
+	if ( parentProject() )
+		return;
 	// load qt prepared api if needed
-	QString s = getValue( "LANGUAGE" ).toLower();
+	QString e, s = getValue( "LANGUAGE" ).toLower();
 	if ( s.contains( "qt3" ) && mAPIs->isPrepared( "Qt3.api" ) )
 		mAPIs->loadPrepared( "Qt3.api" );
-	else if ( mAPIs->isPrepared( "Qt4.api" ) )
+	else if ( s.contains( "qt4" ) && mAPIs->isPrepared( "Qt4.api" ) )
 		mAPIs->loadPrepared( "Qt4.api" );
-	// prepare the list fiels to add to lexer / apis
-	QStringList f, l = prepareCompletionFilesList();
-	// got all child project
-	QList<QMakeProjectItemModel*> mProjects = findChildren<QMakeProjectItemModel*>();
-	foreach ( QMakeProjectItemModel* p, mProjects )
-		l << p->prepareCompletionFilesList();
+	// prepare the files list to add to lexer / apis
+	QStringList l = absoluteFilesPath( true );
+	QFileInfo fi;
 	// load files
 	foreach ( s, l )
 	{
-		if ( !f.contains( s ) && QFile::exists( s ) )
+		// get file info
+		fi.setFile( s );
+		// get file extension
+		e = fi.completeSuffix().toLower();
+		// check if file need to be inserted
+		if ( !mAPISFiles.contains( s ) && QFile::exists( s ) &&
+			( e.startsWith( "h" ) || e.startsWith( "c" )  ) )
 		{
-			f << s;
+			// add and load it
+			mAPISFiles << s;
 			mAPIs->load( s );
 		}
 	}

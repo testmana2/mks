@@ -16,7 +16,6 @@ public:
 	virtual bool uninstall();
 	virtual QStringList filters() const;
 	virtual bool openProject( const QString&, AbstractProjectProxy* = 0 );
-    virtual void saveCodeCoverage(const QString &name,const QString &testname);
 	//
 };
 //
