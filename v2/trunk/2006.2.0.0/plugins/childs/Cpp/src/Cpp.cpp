@@ -20,7 +20,7 @@ void Cpp::initialize( Workspace* w )
 	mPluginInfos.Description = tr( "This plugin allow you to use C/C++ files" );
 	mPluginInfos.Type = BasePlugin::iChild;
 	mPluginInfos.Name = "Cpp";
-	mPluginInfos.Version = "1.0.0";
+	mPluginInfos.Version = "0.5.0";
 	mPluginInfos.Installed = false;
 	//
 	mExtensions << CppChild::headerExtensions() << CppChild::sourceExtensions();
@@ -155,17 +155,6 @@ bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
 	}
 	// open the requested file
 	return open( f.canonicalFilePath(), p );
-}
-//
-void Cpp::saveCodeCoverage(const QString &name,const QString&teststate)
-{
-  QString testname=name+"/"+infos().Name;
-#ifdef __COVERAGESCANNER__
-  __coveragescanner_filename(codeCoverageFile().toAscii());
-  __coveragescanner_teststate(teststate.toAscii());
-  __coveragescanner_testname(testname.toAscii());
-  __coveragescanner_save();
-#endif
 }
 //
 Q_EXPORT_PLUGIN2( ChildCpp, Cpp )

@@ -17,7 +17,6 @@ public:
 	virtual QStringList filters() const;
 	virtual bool addNewDocument( const QString&, AbstractProjectProxy* = 0 );
 	virtual bool openFile( const QString&, AbstractProjectProxy* = 0 );
-    virtual void saveCodeCoverage(const QString &name, const QString &teststate);
 	//
 };
 //
