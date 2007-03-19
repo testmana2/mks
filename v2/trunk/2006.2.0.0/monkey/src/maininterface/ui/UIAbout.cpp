@@ -17,31 +17,42 @@ UIAbout* UIAbout::self( QWidget* p )
 UIAbout::UIAbout( QWidget* p )
 	: QDialog( p )
 {
-	setupUi( this );
+	setupUi( this );	
 	setAttribute( Qt::WA_DeleteOnClose );
-	//
+	// window title
 	setWindowTitle( windowTitle().arg( PROGRAM_NAME ) );
-	twAbout->findChild<QTabBar*>()->setCursor( Qt::PointingHandCursor );
-	lInformations->setText( QString( "%1 v%2\n%3" ).arg( PROGRAM_NAME, PROGRAM_VERSION, COPYRIGHTS ) );
+	// mouse cursor
+	twAbout->findChild<QTabBar*>()->setCursor( Qt::PointingHandCursor );	
+	// change label color
+	QPalette lp( lInformations->palette() );
+	lp.setColor( lInformations->backgroundRole(), Qt::white );
+	lInformations->setPalette( lp );
+	//
 	QFile file;
+	// show informations table
+	file.setFileName( ":/About/About/informations.html" );
+	file.open( QFile::ReadOnly );
+	lInformations->setTextInteractionFlags( Qt::TextBrowserInteraction | Qt::TextSelectableByKeyboard );
+	lInformations->setText( QString::fromLocal8Bit( file.readAll() ).arg( ":/Icons/Icons/icon.png" ).arg( PROGRAM_NAME ).arg( PROGRAM_VERSION ).arg( COPYRIGHTS ).arg( COPYRIGHTS_OTHERS ).arg( HOMEPAGE ) );
+	file.close();
 	// bugs / wishes
 	file.setFileName( ":/About/About/greetings.html" );
-	file.open( QFile::ReadOnly | QFile::Text );
+	file.open( QFile::ReadOnly );
 	tbBugs->setHtml( file.readAll() );
 	file.close();
 	// team
 	file.setFileName( ":/About/About/authors.html" );
-	file.open( QFile::ReadOnly | QFile::Text );
+	file.open( QFile::ReadOnly );
 	tbTeam->setHtml( file.readAll() );
 	file.close();
 	// donations
 	file.setFileName( ":/About/About/greetings.html" );
-	file.open( QFile::ReadOnly | QFile::Text );
+	file.open( QFile::ReadOnly );
 	tbDonations->setHtml( file.readAll() );
 	file.close();
 	// license
 	file.setFileName( ":/Licenses/Licenses/license.gpl" );
-	file.open( QFile::ReadOnly | QFile::Text );
+	file.open( QFile::ReadOnly );
 	tbLicense->setPlainText( file.readAll() );
 	file.close();
 	//
@@ -52,7 +63,8 @@ UIAbout::UIAbout( QWidget* p )
 void UIAbout::anchorClicked( const QUrl& u )
 {
 	QTextBrowser* b = qobject_cast<QTextBrowser*>( sender() );
-	if ( b )
-		b->setHtml( b->toHtml() );
+	if ( !b )
+		return;
+	b->setHtml( b->toHtml() );
 	QDesktopServices::openUrl( u );
 }

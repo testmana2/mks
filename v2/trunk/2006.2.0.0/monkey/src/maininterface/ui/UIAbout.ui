@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>423</width>
-    <height>316</height>
+    <height>322</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -55,27 +55,23 @@
    </item>
    <item row="1" column="0" colspan="2" >
     <widget class="QTabWidget" name="twAbout" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QLabel" name="lLogo" >
       <property name="pixmap" >
        <pixmap resource="../../resources/resources.qrc" >:/Icons/Icons/helpsplashscreen.png</pixmap>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignCenter</set>
       </property>
       <attribute name="title" >
        <string>About</string>
       </attribute>
      </widget>
-     <widget class="QTextBrowser" name="tbBugs" >
-      <attribute name="title" >
-       <string>Bugs &amp;&amp; Wishes</string>
-      </attribute>
-     </widget>
      <widget class="QTextBrowser" name="tbTeam" >
       <attribute name="title" >
        <string>Team</string>
-      </attribute>
-     </widget>
-     <widget class="QTextBrowser" name="tbDonations" >
-      <attribute name="title" >
-       <string>Donations</string>
       </attribute>
      </widget>
      <widget class="QTextBrowser" name="tbLicense" >
@@ -87,6 +83,16 @@
       </property>
       <attribute name="title" >
        <string>License</string>
+      </attribute>
+     </widget>
+     <widget class="QTextBrowser" name="tbDonations" >
+      <attribute name="title" >
+       <string>Donations</string>
+      </attribute>
+     </widget>
+     <widget class="QTextBrowser" name="tbBugs" >
+      <attribute name="title" >
+       <string>Bugs</string>
       </attribute>
      </widget>
     </widget>
@@ -103,11 +109,20 @@
        <kerning>true</kerning>
       </font>
      </property>
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
      <property name="text" >
       <string>Informations</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignCenter</set>
+     </property>
+     <property name="openExternalLinks" >
+      <bool>true</bool>
      </property>
     </widget>
    </item>

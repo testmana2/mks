@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/About" >
+        <file>About/informations.html</file>
         <file>About/authors.html</file>
         <file>About/greetings.html</file>
         <file>About/testers.html</file>

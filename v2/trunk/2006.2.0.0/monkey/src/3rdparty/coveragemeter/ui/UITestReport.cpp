@@ -22,8 +22,9 @@ UITestReport::UITestReport( QWidget* p )
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	//
-	QString descriptionText;
-    QFileInfo coverageFile(BasePlugin::codeCoverageFile());
+	QString descriptionText = "Unavailable";
+#ifdef __COVERAGESCANNER__
+	QFileInfo coverageFile(BasePlugin::codeCoverageFile());
 	descriptionText = "<HTML><BODY>" 
                       "<H1>Test Report Generation for MonkeyStudio</H1>"
                       "<P>"
@@ -45,6 +46,7 @@ UITestReport::UITestReport( QWidget* p )
                       "to xxxx@xxx.xx" 
                       "</P>"
                       "</BODY></HTML>";
+#endif
 	description->setText(descriptionText);
 	//
 	connect( ok, SIGNAL( clicked( ) ), this, SLOT( okClicked( ) ) );
