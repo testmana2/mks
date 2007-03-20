@@ -6,8 +6,10 @@
 #include <QListView>
 #include <QLabel>
 #include <QWidget>
+#include <QDirModel>
 #include <QVBoxLayout>
 #include <QMessageBox>
+#include <QDirModel>
 
 QPointer<QFileBrowserChild> QFileBrowserChild::mSelf = 0L;
 
@@ -25,6 +27,9 @@ QFileBrowserChild::QFileBrowserChild( Workspace* w)
 	mDock = new QDockWidget();
 	mLayout = new QVBoxLayout();
 	mListView = new QListView();
+	mModel = new QDirModel();
+	mListView->setRootIndex(mModel->index(QDir::rootPath()));
+	mListView->setModel(mModel);
 	mDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	mLabel = new QLabel("blubb");
 	mListView->resize(mDock->width(), mDock->height());

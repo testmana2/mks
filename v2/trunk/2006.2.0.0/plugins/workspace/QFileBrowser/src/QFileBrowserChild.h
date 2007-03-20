@@ -8,6 +8,7 @@ class QVBoxLayout;
 class QListView;
 class QWidget;
 class QLabel;
+class QDirModel;
 
 class QFileBrowserChild : public QObject
 {
@@ -24,6 +25,7 @@ private:
 	QWidget* mWidget;
 	QListView* mListView;
 	QLabel* mLabel;
+	QDirModel* mModel;
 };
 
 #endif
