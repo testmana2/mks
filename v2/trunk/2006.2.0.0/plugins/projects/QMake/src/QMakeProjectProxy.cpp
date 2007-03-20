@@ -10,7 +10,7 @@
 QMakeProjectProxy::QMakeProjectProxy( QMakeProjectItemModel* s )
 	: AbstractProjectProxy( s ), mSource( s )
 {
-	setSourceModel( mSource );
+	setSourceModel( s );
 }
 //
 AbstractProjectItemModel* QMakeProjectProxy::project() const

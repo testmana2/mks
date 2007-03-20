@@ -1,8 +1,14 @@
 #include "QMakeProjectSettingsProxy.h"
 #include "QMakeProjectItemModel.h"
+#include "QMakeProjectItem.h"
+#include "MenuBar.h"
+#include "UIProjectSettingsQMake.h"
 //
+#include <QMenu>
+#include <QAbstractItemView>
+
 QMakeProjectSettingsProxy::QMakeProjectSettingsProxy( QMakeProjectItemModel* m )
-	: QAbstractProxyModel( m )
+	: AbstractProjectProxy( m ),mSource(m)
 {
 	setSourceModel( m );
 }

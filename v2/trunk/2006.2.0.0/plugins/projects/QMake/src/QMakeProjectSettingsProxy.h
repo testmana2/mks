@@ -1,17 +1,20 @@
 #ifndef QMAKEPROJECTSETTINGSPROXY_H
 #define QMAKEPROJECTSETTINGSPROXY_H
 //
-#include <QAbstractProxyModel>
+#include "AbstractProjectProxy.h"
 //
 class QMakeProjectItemModel;
 //
-class QMakeProjectProxy : public QAbstractProxyModel
+class QMakeProjectSettingsProxy : public AbstractProjectProxy
 {
 	Q_OBJECT
 	//
 public:
 	QMakeProjectSettingsProxy( QMakeProjectItemModel* );
 	//
+private:
+	QMakeProjectItemModel* mSource;
+
 protected:
 	virtual bool filterAcceptsRow( int, const QModelIndex& ) const;
 	//
