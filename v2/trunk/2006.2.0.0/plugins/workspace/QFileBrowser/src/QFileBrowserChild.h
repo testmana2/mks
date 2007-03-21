@@ -9,6 +9,9 @@ class QListView;
 class QWidget;
 class QLabel;
 class QDirModel;
+class QMouseEvent;
+class QModelIndex;
+class QComboBox;
 
 class QFileBrowserChild : public QObject
 {
@@ -26,6 +29,10 @@ private:
 	QListView* mListView;
 	QLabel* mLabel;
 	QDirModel* mModel;
+	QComboBox* mComboBox;
+private slots:
+	void clickReaction(const QModelIndex&);
+	void setDrivers(const QString&);
 };
 
 #endif

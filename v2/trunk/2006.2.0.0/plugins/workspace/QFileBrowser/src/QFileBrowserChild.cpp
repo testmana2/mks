@@ -10,6 +10,12 @@
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QDirModel>
+#include <QMouseEvent>
+#include <QMessageBox>
+#include <QModelIndex>
+#include <QString>
+#include <QComboBox>
+#include <QFileInfoList>
 
 QPointer<QFileBrowserChild> QFileBrowserChild::mSelf = 0L;
 
@@ -28,12 +34,39 @@ QFileBrowserChild::QFileBrowserChild( Workspace* w)
 	mLayout = new QVBoxLayout();
 	mListView = new QListView();
 	mModel = new QDirModel();
-	mListView->setRootIndex(mModel->index(QDir::rootPath()));
+	mComboBox = new QComboBox();
+	mWidget = new QWidget();
+	mModel->setFilter(QDir::AllEntries);
 	mListView->setModel(mModel);
+	mComboBox->setModel(mModel);
+	mListView->setRootIndex(mModel->index(mComboBox->currentText()));
 	mDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	mLabel = new QLabel("blubb");
 	mListView->resize(mDock->width(), mDock->height());
-	mDock->setWidget(mListView);
+	mListView->setSelectionMode(QAbstractItemView::SingleSelection);
+	mLayout->addWidget(mComboBox);
+	mLayout->addWidget(mListView);
+	mWidget->setLayout(mLayout);
+	mDock->setWidget(mWidget);
+	connect(mListView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(clickReaction(const QModelIndex&)));
+	connect(mComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(setDrivers(const QString&)));
+}
+
+void QFileBrowserChild::clickReaction(const QModelIndex& index)
+{
+	if(mModel->isDir(index))
+	{
+		mListView->setRootIndex(index);
+	}
+	QFileInfoList fileInfoList = QDir::drives();
+	if(fileInfoList.contains(mModel->fileName(index)))
+	{
+		mComboBox->setCurrentIndex(mComboBox->findText(mModel->fileName(index).remove(-1,1)));
+	}
+}
+
+void QFileBrowserChild::setDrivers(const QString& string)
+{
+	mListView->setRootIndex(mModel->index(string));
 }
 
 QDockWidget* QFileBrowserChild::dock()
