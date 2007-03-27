@@ -12,6 +12,8 @@ class QDirModel;
 class QMouseEvent;
 class QModelIndex;
 class QComboBox;
+class QDir;
+class QShowEvent;
 
 class QFileBrowserChild : public QObject
 {
@@ -27,12 +29,14 @@ private:
 	QVBoxLayout* mLayout;
 	QWidget* mWidget;
 	QListView* mListView;
-	QLabel* mLabel;
+	QDir* mDir;
 	QDirModel* mModel;
 	QComboBox* mComboBox;
 private slots:
 	void clickReaction(const QModelIndex&);
 	void setDrivers(const QString&);
+protected:
+	void showEvent(QShowEvent*);
 };
 
 #endif

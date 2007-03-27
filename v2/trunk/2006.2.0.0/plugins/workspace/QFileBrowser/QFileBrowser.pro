@@ -6,7 +6,7 @@ TEMPLATE 	= lib
 LANGUAGE	= C++
 CONFIG	+= warn_on release lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR/workspace
-RESOURCE	+= src/QFileBrowser.qrc
+RESOURCES	+= src/QFileBrowser.qrc
 TARGET	= QFileBrowser
 
 SOURCES	= $$SOURCES \

@@ -16,6 +16,8 @@
 #include <QString>
 #include <QComboBox>
 #include <QFileInfoList>
+#include <QDir>
+#include <QShowEvent>
 
 QPointer<QFileBrowserChild> QFileBrowserChild::mSelf = 0L;
 
@@ -57,6 +59,11 @@ void QFileBrowserChild::clickReaction(const QModelIndex& index)
 	{
 		mListView->setRootIndex(index);
 	}
+	else
+	{
+		mDir = new QDir(mModel->filePath(index));
+		mWorkspace->openFile( mDir->absolutePath() );
+	}
 	QFileInfoList fileInfoList = QDir::drives();
 	if(fileInfoList.contains(mModel->fileName(index)))
 	{
@@ -67,6 +74,11 @@ void QFileBrowserChild::clickReaction(const QModelIndex& index)
 void QFileBrowserChild::setDrivers(const QString& string)
 {
 	mListView->setRootIndex(mModel->index(string));
+}
+
+void QFileBrowserChild::showEvent ( QShowEvent * event )
+{
+	mListView->resize(mDock->width(), mDock->height());	
 }
 
 QDockWidget* QFileBrowserChild::dock()
