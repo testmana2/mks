@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/Images" >
+        <file>images/folder.png</file>
+	  <file>images/function.png</file>
+	  <file>images/scope.png</file>
+        <file>images/scope_end.png</file>
+        <file>images/line.png</file>
+	  <file>images/project.png</file>
+        <file>images/value.png</file>
+        <file>images/variable.png</file>
+    </qresource>
+</RCC>
