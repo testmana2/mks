@@ -33,10 +33,11 @@ public:
 	virtual void pReset();
 	//
 protected:
-	virtual void setupModelData( const QByteArray&, QMakeProjectItem* );
+	virtual bool setupModelData( const QByteArray&, QMakeProjectItem* );
 	bool mOpen;
 	QString mProjectFilePath;
 	QMakeProjectItem* mRootItem;
+	//
 };
 //
 #endif // QMAKEPROJECTMODEL_H

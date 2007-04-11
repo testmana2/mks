@@ -7,6 +7,8 @@
 #include <QLineEdit>
 #include <QToolButton>
 #include <QEvent>
+#include <QCursor>
+#include <QFocusEvent>
 #include <QApplication>
 //
 #include "QMakeProjectItem.h"
@@ -37,16 +39,31 @@ public:
 		hb->addWidget( ( cbValue = new QComboBox( this ) ), 100 );
 		hb->addWidget( ( tbFile = new QToolButton( this ) ) );
 		hb->addWidget( ( tbFolder = new QToolButton( this ) ) );
+		tbFile->setIcon( QPixmap( ":/Icons/Icons/fileopen.png" ) );
+		tbFolder->setIcon( QPixmap( ":/Icons/Icons/filesys-folder.png" ) );
 		setFocusProxy( cbValue );
+		cbValue->installEventFilter( this );
+		tbFile->installEventFilter( this );
+		tbFolder->installEventFilter( this );
 		cbValue->setEditable( true );
 		setText( i.data().toString() );
-		cbValue->installEventFilter( this );
+	}
+	//
+	void focusOutEvent( QFocusEvent* )
+	{
+		qWarning( "focus out event" );
+	}
+	//
+	void focusInEvent( QFocusEvent* )
+	{
+		qWarning( "focus in event" );
 	}
 	//
 	bool eventFilter( QObject* o, QEvent* e )
 	{
-		if ( o == cbValue && e->type() == QEvent::FocusOut )
-			QApplication::sendEvent( this, e );
+		if ( e->type() == QEvent::FocusOut )
+			if ( !isAncestorOf( QApplication::widgetAt( QCursor::pos() ) ) )
+				QApplication::sendEvent( this, e );
 		return QWidget::eventFilter( o, e );
 	}
 	//

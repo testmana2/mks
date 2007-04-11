@@ -1,5 +1,6 @@
 #include "QMakeProjectModel.h"
 #include "QMakeProjectItem.h"
+#include "QMakeProjectParser.h"
 //
 #include <QFileInfo>
 #include <QBuffer>
@@ -195,12 +196,12 @@ void QMakeProjectModel::pReset()
 	//reset();
 }
 //
-void QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* pi )
+bool QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* pi )
 {
 	QBuffer buf( this );
 	buf.setData( b );
 	if ( !buf.open( QFile::ReadOnly | QFile::Text ) )
-		return;
+		return false;
 	//
 	mRootItem->clear();
 	mRootItem->setModel( this );
@@ -208,6 +209,11 @@ void QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* p
 	mRootItem->setData( QFileInfo( mProjectFilePath ).completeBaseName() );
 	mRootItem->setData( QPixmap( ":/Images/images/project.png" ), Qt::DecorationRole );
 	mRootItem->setData( mProjectFilePath, QMakeProjectItem::AbsoluteFilePathRole );
+	//
+	QMakeProjectParser parser( buf, pi );
+	return true;
+	
+
 	//
 	QMakeProjectItem* p;
 	QMakeProjectItem* i;
