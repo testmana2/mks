@@ -71,8 +71,8 @@ QWidget* QMakeProjectItemDelegate::createEditor( QWidget* w, const QStyleOptionV
 void QMakeProjectItemDelegate::setModelData( QWidget* w, QAbstractItemModel* m, const QModelIndex& i ) const
 {
 qWarning( "commit index: %s", qPrintable( i.data().toString() ) );
-	if ( !w || !m || !i.isValid() || i.column() == 0 )
-		return;
+	//if ( !w || !m || !i.isValid() || i.column() == 0 )
+		//return;
 	switch ( i.sibling( i.row(), 0 ).data( Qt::UserRole +1 ).toInt() )
 	{
 		case QMakeProjectItem::TypeRole:
