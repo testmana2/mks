@@ -6,6 +6,8 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QToolButton>
+#include <QEvent>
+#include <QApplication>
 //
 #include "QMakeProjectItem.h"
 #include "QMakeProjectModel.h"
@@ -38,6 +40,14 @@ public:
 		setFocusProxy( cbValue );
 		cbValue->setEditable( true );
 		setText( i.data().toString() );
+		cbValue->installEventFilter( this );
+	}
+	//
+	bool eventFilter( QObject* o, QEvent* e )
+	{
+		if ( o == cbValue && e->type() == QEvent::FocusOut )
+			QApplication::sendEvent( this, e );
+		return QWidget::eventFilter( o, e );
 	}
 	//
 	void setText( const QString& s )
