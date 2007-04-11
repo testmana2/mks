@@ -207,11 +207,10 @@ bool QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* p
 	mRootItem->setModel( this );
 	mRootItem->setType( QMakeProjectItem::ProjectType );
 	mRootItem->setData( QFileInfo( mProjectFilePath ).completeBaseName() );
-	mRootItem->setData( QPixmap( ":/Images/images/project.png" ), Qt::DecorationRole );
 	mRootItem->setData( mProjectFilePath, QMakeProjectItem::AbsoluteFilePathRole );
 	//
-	QMakeProjectParser parser( buf, pi );
-	return true;
+	//QMakeProjectParser parser( buf, pi );
+	//return true;
 	
 
 	//
@@ -263,4 +262,5 @@ bool QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* p
 	//i = new QMakeProjectItem( QMakeProjectItem::EmptyType, p, pri->d );
 	//
 	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, p );
+	return true;
 }
