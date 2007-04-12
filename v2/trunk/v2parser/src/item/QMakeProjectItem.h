@@ -2,6 +2,7 @@
 #define QMAKEPROJECTITEM_H
 //
 #include <QObject>
+#include <QPointer>
 //
 class QMakeProjectItemPrivate;
 class QMakeProjectModel;
@@ -11,6 +12,7 @@ class QMakeProjectItem : public QObject
 	Q_OBJECT
 	Q_ENUMS( NodeRole NodeType )
 	friend class QMakeProjectModel;
+	//
 public:
 	enum NodeRole
 	{
@@ -53,13 +55,30 @@ public:
 	Qt::ItemFlags flags() const;
 	void setFlags( Qt::ItemFlags );
 	//
+	QVariant data( int = Qt::DisplayRole ) const;
+	void setData( const QVariant&, int = Qt::DisplayRole );
+	void setData( QMakeProjectItemPrivate* );
+	//
+	QMakeProjectItem* parent() const;
+	void setParent( QMakeProjectItem* );
+	//
+	QMakeProjectModel* model() const;
+	void setModel( QMakeProjectModel* );
+	//
+	int row() const;
+	int column() const;
+	//
+	int rowCount() const;
+	int columnCount() const;
+	//
 	QMakeProjectItem* row( int );
-	void appendRow( QMakeProjectItem* );
-	void insertRow( int, QMakeProjectItem* );
-	void removeRow( int );
-	void removeRow( QMakeProjectItem* );
+	QList<QMakeProjectItem*> rows() const;
 	QMakeProjectItem* takeRow( int );
 	QMakeProjectItem* takeRow( QMakeProjectItem* );
+	void removeRow( int );
+	void removeRow( QMakeProjectItem* );
+	void appendRow( QMakeProjectItem* );
+	void insertRow( int, QMakeProjectItem* );
 	//
 	bool swapRow( int, int );
 	bool moveRowUp( int );
@@ -67,25 +86,11 @@ public:
 	bool moveUp();
 	bool moveDown();
 	//
-	QMakeProjectItem* parent() const;
-	void setParent( QMakeProjectItem* );
-	QMakeProjectModel* model() const;
-	void setModel( QMakeProjectModel* );
-	//
-	int rowCount() const;
-	int columnCount() const;
-	int row() const;
-	int column() const;
-	//
-	QVariant data( int = Qt::DisplayRole ) const;
-	void setData( const QVariant&, int = Qt::DisplayRole );
-	void setData( QMakeProjectItemPrivate* );
-	//
 protected:
 	void setPrivateData( const QVariant&, int = Qt::DisplayRole );
 	QMakeProjectModel* mModel;
 	QMakeProjectItem* mParent;
-	QMakeProjectItemPrivate* d;
+	QPointer<QMakeProjectItemPrivate> d;
 	//
 };
 //

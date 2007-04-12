@@ -83,8 +83,13 @@ void UIQMakeProjectSettings::on_tbEdit_clicked()
 void UIQMakeProjectSettings::on_tbRemove_clicked()
 {
 	QModelIndex i = currentIndex();
-	//if ( i.isValid() )
-		//mProject->removeRow( i.row(), i.parent() );
+	if ( i.isValid() && i.parent().isValid() )
+	{
+		qWarning( "1: %s", qPrintable( i.parent().data().toString() ) );
+			qWarning( "about to remove" );
+			QMakeProjectItem* it = mProject->itemFromIndex( i.parent() );
+			it->removeRow( i.row() );
+	}
 }
 //
 void UIQMakeProjectSettings::on_tbClear_clicked()

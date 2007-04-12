@@ -44,9 +44,12 @@ QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const
 QModelIndex QMakeProjectModel::parent( const QModelIndex& i ) const
 {
 	QMakeProjectItem* cItem = static_cast<QMakeProjectItem*>( i.internalPointer() );
-	QMakeProjectItem* pItem = 0;
-	if ( !i.isValid() || !cItem || ( pItem = cItem->parent() ) == mRootItem )
+qWarning( "cItem: %s, %d", qPrintable( cItem->data().toString() ), cItem );
+	if ( !i.isValid() || !cItem || !cItem->parent() || cItem->parent() == mRootItem )
 		return QModelIndex();
+
+	QMakeProjectItem* pItem = cItem->parent();
+	qWarning( "pItem: %s, %d", qPrintable( pItem->data().toString() ), pItem );
 	return createIndex( pItem->row(), pItem->column(), pItem );
 }
 //
@@ -60,16 +63,6 @@ int QMakeProjectModel::columnCount( const QModelIndex& p ) const
 {
 	QMakeProjectItem* pItem = p.isValid() ? static_cast<QMakeProjectItem*>( p.internalPointer() ) : mRootItem;
 	return pItem ? pItem->columnCount() : 0;
-}
-//
-int QMakeProjectModel::rowCount( const QMakeProjectItem* p ) const
-{
-	return p ? p->rowCount() : mRootItem->rowCount();
-}
-//
-int QMakeProjectModel::columnCount( const QMakeProjectItem* p ) const
-{
-	return p ? p->rowCount() : mRootItem->columnCount();
 }
 //
 QVariant QMakeProjectModel::data( const QModelIndex& i, int r ) const
@@ -130,10 +123,15 @@ bool QMakeProjectModel::setData( const QModelIndex& i, const QVariant& v, int r 
 	return mItem;
 }
 //
+Qt::ItemFlags QMakeProjectModel::defaultFlags()
+{
+	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+}
+//
 Qt::ItemFlags QMakeProjectModel::flags( const QModelIndex& i ) const
 {
 	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : 0;
-	return mItem ? mItem->flags() : Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	return mItem ? mItem->flags() : defaultFlags();
 }
 //
 QMakeProjectItem* QMakeProjectModel::itemFromIndex( const QModelIndex& i ) const
@@ -148,20 +146,18 @@ QModelIndex QMakeProjectModel::indexFromItem( const QMakeProjectItem* i ) const
 //
 QMakeProjectItem* QMakeProjectModel::row( int i, QMakeProjectItem* p ) const
 {
-	return i < rowCount( p ) ? static_cast<QMakeProjectItem*>( ( p ? p : mRootItem )->row( i ) ) : 0;
+	return p ? p->row( i ) : mRootItem->row( i );
 }
-
 //
 void QMakeProjectModel::appendRow( QMakeProjectItem* i, QMakeProjectItem* p )
 {
-	insertRow( rowCount( indexFromItem( p ) ), i, p );
+	p = p ? p : mRootItem;
+	insertRow( p->rowCount(), i, p );
 }
 //
 void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem* p )
 {
-	if ( !p )
-		p = mRootItem;
-	if ( i && i->d && j > -1 && j < p->rowCount() +1 )
+	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
 		beginInsertRows( indexFromItem( p ), j, j );
 		p->d->mChilds.insert( j, i );
@@ -171,48 +167,28 @@ void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem*
 	Q_UNUSED( j ); // shut up gcc warning
 }
 //
+bool QMakeProjectModel::insertRows( int r, int c, const QModelIndex& i ) 
+{
+	return false;
+}
+//
 void QMakeProjectModel::removeRow( int i, QMakeProjectItem* p )
 {
-	if ( !p )
-		p = mRootItem;
-	removeRow( p->row( i ), p );
+	p = p ? p : mRootItem;
+	removeRow( row( i, p ), p );
 }
 //
 void QMakeProjectModel::removeRow( QMakeProjectItem* i, QMakeProjectItem* p )
 {
-	delete takeRow( i, p );
+	delete takeRow( i, p ? p : mRootItem );
 }
 //
-QMakeProjectItem* QMakeProjectModel::takeRow( int i, QMakeProjectItem* p )
-{
-	if ( !p )
-		p = mRootItem;
-	return takeRow( p->row( i ) );
-}
-//
-QMakeProjectItem* QMakeProjectModel::takeRow( QMakeProjectItem* i, QMakeProjectItem* p )
-{
-	if ( !p )
-		p = mRootItem;
-	if ( i && i->d )
-	{
-		int j = i->row();
-		beginRemoveRows( indexFromItem( p ), j, j );
-		i->d->mChilds.removeAll( i );
-		i->setParent( 0 );
-		endRemoveRows();
-		return i;
-	}
-	return 0;
-}
-
 bool QMakeProjectModel::removeRows( int r, int c, const QModelIndex& p )
 {
-	if ( !p.isValid() )
-		return false;
+	return false;
 	QMakeProjectItem* mItem = static_cast<QMakeProjectItem*>( p.internalPointer() );
 	bool b = false;
-	if ( mItem )
+	if ( p.isValid() && mItem )
 	{
 		for ( int i = 0; i < c; i++ )
 		{
@@ -226,11 +202,28 @@ bool QMakeProjectModel::removeRows( int r, int c, const QModelIndex& p )
 	return b;
 }
 //
+QMakeProjectItem* QMakeProjectModel::takeRow( int i, QMakeProjectItem* p )
+{
+	return takeRow( ( p ? p : mRootItem )->row( i ) );
+}
+//
+QMakeProjectItem* QMakeProjectModel::takeRow( QMakeProjectItem* i, QMakeProjectItem* p )
+{
+	if ( i && ( p = p ? p : mRootItem ) )
+	{
+		int j = i->row();
+		beginRemoveRows( indexFromItem( p ), j, j );
+		i->d->mChilds.removeAll( i );
+		i->setParent( 0 );
+		endRemoveRows();
+		return i;
+	}
+	return 0;
+}
+//
 QVariant QMakeProjectModel::headerData( int i, Qt::Orientation o, int r ) const
 {
-	if ( o == Qt::Horizontal && i == 0 )
-		return mRootItem->data( r );
-    return QVariant();
+	return o == Qt::Horizontal && i == 0 ? mRootItem->data( r ) : QVariant();
 }
 //
 void QMakeProjectModel::pReset()
@@ -303,4 +296,13 @@ bool QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* p
 	//
 	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, p );
 	return true;
+}
+//
+void QMakeProjectModel::debugModel( QMakeProjectItem* p )
+{
+	if ( !p )
+		p = mRootItem;
+	qWarning( "Item: %s, parent: %s, %d", qPrintable( p->data().toString() ), qPrintable( p->parent() ? p->parent()->data().toString() : QString::null ), p->parent() );
+	foreach ( QMakeProjectItem* i, p->rows() )
+		debugModel( i );
 }

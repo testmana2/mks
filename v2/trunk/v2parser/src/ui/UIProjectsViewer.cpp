@@ -27,6 +27,7 @@ bool UIProjectsViewer::openProject( const QString& s )
 	bool b = mModel->openProject();
 	if ( b )
 	{
+		mModel->debugModel();
 		mProxy = new QMakeProjectProxyModel( mModel );
 		tvProject->setModel( mModel );
 		//

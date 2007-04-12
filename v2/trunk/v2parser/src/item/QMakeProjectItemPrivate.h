@@ -7,8 +7,10 @@
 //
 class QMakeProjectItem;
 //
-class QMakeProjectItemPrivate
+class QMakeProjectItemPrivate : public QObject
 {
+	Q_OBJECT
+	//
 public:
 	QMakeProjectItemPrivate();
 	~QMakeProjectItemPrivate();

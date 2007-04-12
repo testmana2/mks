@@ -35,15 +35,12 @@ OPENEDFILES	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItem.cpp \
 	src/model/QMakeProjectModel.h \
 	src/model/QMakeProjectModel.cpp \
-	src/ui/UIItemSettings.h \
-	src/ui/UIItemSettings.cpp \
-	src/settings/QMakeProjectItemDelegate.h \
-	src/settings/QMakeProjectItemDelegate.cpp \
-	src/main.cpp \
 	src/ui/UIQMakeProjectSettings.h \
 	src/ui/UIQMakeProjectSettings.cpp \
-	src/model/QMakeProjectParser.h \
-	src/model/QMakeProjectParser.cpp
+	src/item/QMakeProjectItemPrivate.h \
+	src/item/QMakeProjectItemPrivate.cpp \
+	src/ui/UIProjectsViewer.h \
+	src/ui/UIProjectsViewer.cpp
 
 HEADERS	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \
