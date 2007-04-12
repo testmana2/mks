@@ -20,15 +20,30 @@ public:
 	//
 	virtual QModelIndex index( int, int, const QModelIndex& = QModelIndex() ) const;
 	virtual QModelIndex parent( const QModelIndex& ) const;
+	//
 	virtual int rowCount( const QModelIndex& = QModelIndex() ) const;
 	virtual int columnCount( const QModelIndex& = QModelIndex() ) const;
+	virtual int rowCount( const QMakeProjectItem* = 0 ) const;
+	virtual int columnCount( const QMakeProjectItem* = 0 ) const;
+	//
 	virtual QVariant data( const QModelIndex&, int = Qt::DisplayRole ) const;
 	virtual bool setData( const QModelIndex&, const QVariant&, int = Qt::EditRole );
+	//
 	virtual Qt::ItemFlags flags( const QModelIndex& ) const;
+	//
 	virtual QMakeProjectItem* itemFromIndex( const QModelIndex& ) const;
-	virtual QModelIndex indexFromItem( QMakeProjectItem* ) const;
-	virtual void insertRow( int, QMakeProjectItem* );
-	virtual QMakeProjectItem* row( int ) const;
+	virtual QModelIndex indexFromItem( const QMakeProjectItem* ) const;
+	//
+	virtual QMakeProjectItem* row( int, QMakeProjectItem* = 0 ) const;
+	virtual void appendRow( QMakeProjectItem*, QMakeProjectItem* = 0 );
+	virtual void insertRow( int, QMakeProjectItem*, QMakeProjectItem* = 0 );
+	virtual void removeRow( int, QMakeProjectItem* = 0 );
+	virtual void removeRow( QMakeProjectItem*, QMakeProjectItem* = 0 );
+	virtual QMakeProjectItem* takeRow( int, QMakeProjectItem* = 0 );
+	virtual QMakeProjectItem* takeRow( QMakeProjectItem*, QMakeProjectItem* = 0 );
+	
+	virtual bool removeRows( int, int, const QModelIndex& = QModelIndex() );
+	//
 	virtual QVariant headerData( int, Qt::Orientation, int ) const;
 	virtual void pReset();
 	//

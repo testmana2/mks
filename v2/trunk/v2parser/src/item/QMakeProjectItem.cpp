@@ -56,19 +56,14 @@ QMakeProjectItem* QMakeProjectItem::row( int i )
 //
 void QMakeProjectItem::appendRow( QMakeProjectItem* i )
 {
-	insertRow( rowCount(), i );
+	if ( model() )
+		model()->appendRow( i, this );
 }
 //
 void QMakeProjectItem::insertRow( int i, QMakeProjectItem* it )
 {
-	if ( d && it && model() && i > -1 && i < rowCount() +1 )
-	{
-		model()->beginInsertRows( model()->indexFromItem( this ), i, i );
-		d->mChilds.insert( i, it );
-		it->setParent( this );
-		model()->endInsertRows();
-	}
-	Q_UNUSED( i ); // shut up gcc warning
+	if ( model() )
+		model()->insertRow( i, it, this );
 }
 //
 void QMakeProjectItem::removeRow( int i )
@@ -88,15 +83,8 @@ QMakeProjectItem* QMakeProjectItem::takeRow( int i )
 //
 QMakeProjectItem* QMakeProjectItem::takeRow( QMakeProjectItem* it )
 {
-	if ( d && it && model() )
-	{
-		int i = it->row();
-		model()->beginRemoveRows( model()->indexFromItem( this ), i, i );
-		d->mChilds.removeAll( it );
-		it->setParent( 0 );
-		model()->endRemoveRows();
-		return it;
-	}
+	if ( model() )
+		return model()->takeRow( it, this );
 	return 0;
 }
 //
@@ -180,9 +168,10 @@ int QMakeProjectItem::columnCount() const
 //
 int QMakeProjectItem::row() const
 {
+	int i = 0;
 	if ( d && parent() )
-		return parent()->d->mChilds.indexOf( const_cast<QMakeProjectItem*>( this ) );
-	return 0;
+		i = parent()->d->mChilds.indexOf( const_cast<QMakeProjectItem*>( this ) );
+	return i > -1 ? i : 0;
 }
 //
 int QMakeProjectItem::column() const

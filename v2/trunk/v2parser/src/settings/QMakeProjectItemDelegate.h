@@ -41,22 +41,12 @@ public:
 		hb->addWidget( ( tbFolder = new QToolButton( this ) ) );
 		tbFile->setIcon( QPixmap( ":/Icons/Icons/fileopen.png" ) );
 		tbFolder->setIcon( QPixmap( ":/Icons/Icons/filesys-folder.png" ) );
-		setFocusProxy( cbValue );
-		cbValue->installEventFilter( this );
-		tbFile->installEventFilter( this );
-		tbFolder->installEventFilter( this );
 		cbValue->setEditable( true );
 		setText( i.data().toString() );
-	}
-	//
-	void focusOutEvent( QFocusEvent* )
-	{
-		qWarning( "focus out event" );
-	}
-	//
-	void focusInEvent( QFocusEvent* )
-	{
-		qWarning( "focus in event" );
+		//
+		setFocusProxy( cbValue );
+		setFocusPolicy( Qt::ClickFocus );
+		cbValue->installEventFilter( this );
 	}
 	//
 	bool eventFilter( QObject* o, QEvent* e )

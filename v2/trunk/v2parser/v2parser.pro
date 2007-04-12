@@ -12,7 +12,7 @@ TEMPLATE	= app
 QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/item/ src/model/ src/settings/ src/ui/
-CONFIG	+= qt warn_on release app_bundle thread x11 windows
+CONFIG	+= qt warn_on release app_bundle thread x11 windows console
 RESOURCES	= src/resources/resources.qrc src/resources/resources2.qrc
 
 SOURCES	= src/item/QMakeProjectItem.cpp \
@@ -41,7 +41,9 @@ OPENEDFILES	= src/item/QMakeProjectItem.h \
 	src/settings/QMakeProjectItemDelegate.cpp \
 	src/main.cpp \
 	src/ui/UIQMakeProjectSettings.h \
-	src/ui/UIQMakeProjectSettings.cpp
+	src/ui/UIQMakeProjectSettings.cpp \
+	src/model/QMakeProjectParser.h \
+	src/model/QMakeProjectParser.cpp
 
 HEADERS	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \
