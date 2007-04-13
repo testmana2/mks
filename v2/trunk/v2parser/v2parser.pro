@@ -12,7 +12,7 @@ TEMPLATE	= app
 QT	= gui core
 LANGUAGE	= C++
 INCLUDEPATH	= . src src/item/ src/model/ src/settings/ src/ui/
-CONFIG	+= qt warn_on release app_bundle thread x11 windows console
+CONFIG	+= qt warn_on debug app_bundle thread x11 windows console
 RESOURCES	= src/resources/resources.qrc src/resources/resources2.qrc
 
 SOURCES	= src/item/QMakeProjectItem.cpp \
@@ -25,7 +25,8 @@ SOURCES	= src/item/QMakeProjectItem.cpp \
 	src/ui/UIProjectsViewer.cpp \
 	src/ui/UIQMakeProjectSettings.cpp \
 	src/main.cpp \
-	src/model/QMakeProjectParser.cpp
+	src/model/QMakeProjectParser.cpp \
+	src/modeltest.cpp
 
 FORMS	= src/ui/UIItemSettings.ui \
 	src/ui/UIProjectsViewer.ui \
@@ -40,7 +41,8 @@ OPENEDFILES	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \
 	src/item/QMakeProjectItemPrivate.cpp \
 	src/ui/UIProjectsViewer.h \
-	src/ui/UIProjectsViewer.cpp
+	src/ui/UIProjectsViewer.cpp \
+	src/main.cpp
 
 HEADERS	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \
@@ -51,5 +53,6 @@ HEADERS	= src/item/QMakeProjectItem.h \
 	src/ui/UIItemSettings.h \
 	src/ui/UIProjectsViewer.h \
 	src/ui/UIQMakeProjectSettings.h \
-	src/model/QMakeProjectParser.h
+	src/model/QMakeProjectParser.h \
+	src/modeltest.h
 

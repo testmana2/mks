@@ -38,19 +38,16 @@ QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const
 {
 	QMakeProjectItem* pItem = p.isValid() ? static_cast<QMakeProjectItem*>( p.internalPointer() ) : mRootItem;
 	QMakeProjectItem* cItem = pItem->row( r );
-	return cItem ? createIndex( r, c, cItem ) : QModelIndex();
+	return cItem && c == 0 ? createIndex( r, 0, cItem ) : QModelIndex();
 }
 //
 QModelIndex QMakeProjectModel::parent( const QModelIndex& i ) const
 {
 	QMakeProjectItem* cItem = static_cast<QMakeProjectItem*>( i.internalPointer() );
-qWarning( "cItem: %s, %d", qPrintable( cItem->data().toString() ), cItem );
-	if ( !i.isValid() || !cItem || !cItem->parent() || cItem->parent() == mRootItem )
+	if ( !i.isValid() || !cItem || cItem->parent() == mRootItem )
 		return QModelIndex();
-
 	QMakeProjectItem* pItem = cItem->parent();
-	qWarning( "pItem: %s, %d", qPrintable( pItem->data().toString() ), pItem );
-	return createIndex( pItem->row(), pItem->column(), pItem );
+	return createIndex( pItem->row(), 0, pItem );
 }
 //
 int QMakeProjectModel::rowCount( const QModelIndex& p ) const
@@ -68,7 +65,7 @@ int QMakeProjectModel::columnCount( const QModelIndex& p ) const
 QVariant QMakeProjectModel::data( const QModelIndex& i, int r ) const
 {
 	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : 0;
-	return mItem ? mItem->data( r ) : QVariant();
+	return mItem ? mItem->data( r ) : QVariant();	
 }
 //
 bool QMakeProjectModel::setData( const QModelIndex& i, const QVariant& v, int r )
@@ -125,7 +122,11 @@ bool QMakeProjectModel::setData( const QModelIndex& i, const QVariant& v, int r 
 //
 Qt::ItemFlags QMakeProjectModel::defaultFlags()
 {
+#ifdef QT_NO_DEBUG
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+#else
+	return Qt::ItemIsDropEnabled;
+#endif
 }
 //
 Qt::ItemFlags QMakeProjectModel::flags( const QModelIndex& i ) const
@@ -300,9 +301,6 @@ bool QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* p
 //
 void QMakeProjectModel::debugModel( QMakeProjectItem* p )
 {
-	if ( !p )
-		p = mRootItem;
-	qWarning( "Item: %s, parent: %s, %d", qPrintable( p->data().toString() ), qPrintable( p->parent() ? p->parent()->data().toString() : QString::null ), p->parent() );
-	foreach ( QMakeProjectItem* i, p->rows() )
+	foreach ( QMakeProjectItem* i, ( p ? p : mRootItem )->rows() )
 		debugModel( i );
 }
