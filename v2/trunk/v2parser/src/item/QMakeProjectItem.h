@@ -3,6 +3,7 @@
 //
 #include <QObject>
 #include <QPointer>
+#include <QModelIndex>
 //
 class QMakeProjectItemPrivate;
 class QMakeProjectModel;
@@ -47,6 +48,8 @@ public:
 	QMakeProjectItem( QMakeProjectItem::NodeType = QMakeProjectItem::EmptyType, QMakeProjectItem* = 0, QMakeProjectItemPrivate* = 0 );
 	virtual ~QMakeProjectItem();
 	//
+	QModelIndex index() const;
+	//
 	virtual void clear();
 	//
 	QMakeProjectItem::NodeType type() const;
@@ -88,6 +91,7 @@ public:
 	//
 protected:
 	void setPrivateData( const QVariant&, int = Qt::DisplayRole );
+	bool removePrivateRow( int );
 	QMakeProjectModel* mModel;
 	QMakeProjectItem* mParent;
 	QPointer<QMakeProjectItemPrivate> d;

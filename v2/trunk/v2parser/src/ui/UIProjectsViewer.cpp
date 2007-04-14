@@ -18,7 +18,9 @@ UIProjectsViewer::UIProjectsViewer( QWidget* p )
 	setupUi( this );
 }
 //
+#ifndef QT_NO_DEBUG
 #include "modeltest.h"
+#endif
 bool UIProjectsViewer::openProject( const QString& s )
 {
 	delete mProxy;
@@ -28,8 +30,10 @@ bool UIProjectsViewer::openProject( const QString& s )
 	bool b = mModel->openProject();
 	if ( b )
 	{
+#ifndef QT_NO_DEBUG
 		new ModelTest( mModel, this );
-		mModel->debugModel();
+#endif
+		//mModel->debugModel();
 		mProxy = new QMakeProjectProxyModel( mModel );
 		tvProject->setModel( mModel );
 		//

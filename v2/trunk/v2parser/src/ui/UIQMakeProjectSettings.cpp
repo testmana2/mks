@@ -11,7 +11,7 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p
 	mProxy = new QMakeProjectScopesProxy( mProject );
 	tvScopes->setModel( mProxy );
 	lvContents->setModel( mProject );
-	//setCurrentIndex( mProject->index( 0, 0 ) );
+	setCurrentIndex( mProject->index( 0, 0 ) );
 }
 //
 UIQMakeProjectSettings::~UIQMakeProjectSettings()
@@ -65,6 +65,11 @@ void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 	// clear selection
 	lvContents->clearSelection();
 	// set root index to show
+	if ( !mProxy->mapToSource( i ).isValid() )
+		qWarning( "set content to invalid index" );
+	qWarning( "start debugging..." );
+	mProject->debugModel( mProject->itemFromIndex( mProxy->mapToSource( i ) ) );
+	qWarning( "end debugging..." );
 	lvContents->setRootIndex( mProxy->mapToSource( i ) );
 }
 //
@@ -83,16 +88,19 @@ void UIQMakeProjectSettings::on_tbEdit_clicked()
 void UIQMakeProjectSettings::on_tbRemove_clicked()
 {
 	QModelIndex i = currentIndex();
-	if ( i.isValid() && i.parent().isValid() )
-		mProject->itemFromIndex( i.parent() )->removeRow( i.row() );
+	if ( i.isValid() )
+		mProject->QAbstractItemModel::removeRow( i.row(), i.parent() );
 }
 //
 void UIQMakeProjectSettings::on_tbClear_clicked()
 {
 	QModelIndex i = currentIndex();
-	//if ( i.isValid() )
-		//while ( mProject->rowCount( i.parent() ) )
-			//mProject->removeRow( 0, i.parent() );
+	if ( i.isValid() )
+	{
+		i = i.parent();
+		while ( mProject->rowCount( i ) )
+			mProject->QAbstractItemModel::removeRow( 0, i );
+	}
 }
 //
 void UIQMakeProjectSettings::on_tbUp_clicked()

@@ -23,6 +23,11 @@ QMakeProjectItem::~QMakeProjectItem()
 		d->detach();
 }
 //
+QModelIndex QMakeProjectItem::index() const
+{
+	return model() ? model()->createIndex( row(), column(), const_cast<QMakeProjectItem*>( this ) ) : QModelIndex();
+}
+//
 void QMakeProjectItem::clear()
 {
 	setData( 0 );
@@ -112,6 +117,18 @@ void QMakeProjectItem::setPrivateData( const QVariant& v, int r )
 {
 	if ( d )
 		d->mDatas[r] = v;
+}
+//
+bool QMakeProjectItem::removePrivateRow( int i )
+{
+	if ( d && rowCount() > i  )
+	{
+		d->mChilds.removeAt( i );
+		setParent( 0 );
+		return true;
+	}
+	qWarning( "item: can't removeprivaterow: %s", qPrintable( data().toString() ) );
+	return false;
 }
 //
 int QMakeProjectItem::rowCount() const
