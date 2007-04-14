@@ -64,13 +64,13 @@ int QMakeProjectModel::columnCount( const QModelIndex& p ) const
 //
 QVariant QMakeProjectModel::data( const QModelIndex& i, int r ) const
 {
-	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : mRootItem; // was 0 instead of mRootItem
+	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : 0;
 	return mItem ? mItem->data( r ) : QVariant();	
 }
 //
 bool QMakeProjectModel::setData( const QModelIndex& i, const QVariant& v, int r )
 {
-	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : mRootItem; // was 0 instead of mRootItem
+	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : 0;
 	if ( mItem )
 	{
 		mItem->setPrivateData( v, r );
@@ -122,23 +122,18 @@ bool QMakeProjectModel::setData( const QModelIndex& i, const QVariant& v, int r 
 //
 Qt::ItemFlags QMakeProjectModel::defaultFlags()
 {
-#ifdef QT_NO_DEBUG
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-#else
-	//return Qt::ItemIsDropEnabled;
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-#endif
 }
 //
 Qt::ItemFlags QMakeProjectModel::flags( const QModelIndex& i ) const
 {
-	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : mRootItem; // was 0 instead of mRootItem
+	QMakeProjectItem* mItem = i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : 0;
 	return mItem ? mItem->flags() : defaultFlags();
 }
 //
 QMakeProjectItem* QMakeProjectModel::itemFromIndex( const QModelIndex& i ) const
 {
-	return i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : mRootItem; // was 0 instead of mRootItem
+	return i.isValid() ? static_cast<QMakeProjectItem*>( i.internalPointer() ) : 0;
 }
 //
 QModelIndex QMakeProjectModel::indexFromItem( const QMakeProjectItem* i ) const
@@ -169,7 +164,7 @@ void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem*
 	Q_UNUSED( j ); // shut up gcc warning
 }
 //
-bool QMakeProjectModel::insertRows( int r, int c, const QModelIndex& i ) 
+bool QMakeProjectModel::insertRows( int, int, const QModelIndex& ) 
 {
 	return false;
 }

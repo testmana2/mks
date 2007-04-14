@@ -62,14 +62,11 @@ void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 //
 void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 {
+	setCurrentIndex( mProxy->mapToSource( i ) );
+	return;
 	// clear selection
 	lvContents->clearSelection();
 	// set root index to show
-	if ( !mProxy->mapToSource( i ).isValid() )
-		qWarning( "set content to invalid index" );
-	qWarning( "start debugging..." );
-	mProject->debugModel( mProject->itemFromIndex( mProxy->mapToSource( i ) ) );
-	qWarning( "end debugging..." );
 	lvContents->setRootIndex( mProxy->mapToSource( i ) );
 }
 //
