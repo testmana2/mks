@@ -47,7 +47,9 @@ void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 	tvScopes->clearSelection();
 	lvContents->clearSelection();
 	// set/select current index
-	if ( i.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
+	if ( !i.isValid() )
+		return;
+	else if ( i.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
 	{
 		tvScopes->setCurrentIndex( mProxy->mapFromSource( i.parent() ) );
 		lvContents->setRootIndex( i.parent() );
@@ -63,11 +65,6 @@ void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 {
 	setCurrentIndex( mProxy->mapToSource( i ) );
-	return;
-	// clear selection
-	lvContents->clearSelection();
-	// set root index to show
-	lvContents->setRootIndex( mProxy->mapToSource( i ) );
 }
 //
 void UIQMakeProjectSettings::on_tbAdd_clicked()

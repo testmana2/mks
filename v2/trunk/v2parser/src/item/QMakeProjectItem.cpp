@@ -105,7 +105,7 @@ void QMakeProjectItem::setModel( QMakeProjectModel* m )
 //
 int QMakeProjectItem::row() const
 {
-	return parent() && parent()->d ? parent()->d->mChilds.indexOf( const_cast<QMakeProjectItem*>( this ) ) : 0;
+	return parent() ? parent()->rows().indexOf( const_cast<QMakeProjectItem*>( this ) ) : 0;
 }
 //
 int QMakeProjectItem::column() const
@@ -121,10 +121,9 @@ void QMakeProjectItem::setPrivateData( const QVariant& v, int r )
 //
 bool QMakeProjectItem::removePrivateRow( int i )
 {
-	if ( d && rowCount() > i  )
+	if ( d && i >= 0 && rowCount() > i  )
 	{
 		d->mChilds.removeAt( i );
-		setParent( 0 );
 		return true;
 	}
 	qWarning( "item: can't removeprivaterow: %s", qPrintable( data().toString() ) );

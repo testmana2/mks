@@ -41,8 +41,13 @@ QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const
 	return cItem && c == 0 ? createIndex( r, 0, cItem ) : QModelIndex();
 }
 //
+#include <QDebug>
 QModelIndex QMakeProjectModel::parent( const QModelIndex& i ) const
 {
+/*
+	qWarning( "index: %s", qPrintable( i.data().toString() ) );
+	qDebug() << i;
+*/
 	QMakeProjectItem* cItem = static_cast<QMakeProjectItem*>( i.internalPointer() );
 	if ( !i.isValid() || !cItem || cItem->parent() == mRootItem )
 		return QModelIndex();
