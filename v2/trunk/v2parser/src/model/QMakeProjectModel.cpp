@@ -8,30 +8,25 @@
 #include <QPixmap>
 //
 QMakeProjectModel::QMakeProjectModel( const QString& s, QObject* p )
-	: QAbstractItemModel( p ), mOpen( false ), mProjectFilePath( s )
+	: QAbstractItemModel( p ), mOpen( false ), mRootItem( 0 )
 {
-	mRootItem = new QMakeProjectItem( QMakeProjectItem::ProjectType );
-}
-//
-bool QMakeProjectModel::openProject( const QString& s )
-{
-	if ( QFile::exists( s ) && ( s != mProjectFilePath || !mOpen ) )
-	{
-		QFile f( ( mProjectFilePath = s ) );
-		if ( f.open( QFile::ReadOnly ) )
-			return setupModelData( f.readAll(), mRootItem );
-	}
-	return false;
-}
-//
-bool QMakeProjectModel::openProject()
-{
-	return openProject( mProjectFilePath );
+	if ( !setupModelData( s ) )
+		qWarning( "Can't open project: %s", qPrintable( s ) );
 }
 //
 QMakeProjectModel::~QMakeProjectModel()
 {
 	delete mRootItem;
+}
+//
+bool QMakeProjectModel::openProject( const QString& s, QMakeProjectItem* i )
+{
+	return setupModelData( s, i );
+}
+//
+bool QMakeProjectModel::isOpen() const
+{
+	return mOpen;
 }
 //
 QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const
@@ -44,10 +39,6 @@ QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const
 #include <QDebug>
 QModelIndex QMakeProjectModel::parent( const QModelIndex& i ) const
 {
-/*
-	qWarning( "index: %s", qPrintable( i.data().toString() ) );
-	qDebug() << i;
-*/
 	QMakeProjectItem* cItem = static_cast<QMakeProjectItem*>( i.internalPointer() );
 	if ( !i.isValid() || !cItem || cItem->parent() == mRootItem )
 		return QModelIndex();
@@ -161,12 +152,10 @@ void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem*
 {
 	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
-		beginInsertRows( indexFromItem( p ), j, j );
-		p->d->mChilds.insert( j, i );
-		i->setParent( p );
+		beginInsertRows( p->index(), j, j );
+		p->insertPrivateRow( j, i );
 		endInsertRows();
 	}
-	Q_UNUSED( j ); // shut up gcc warning
 }
 //
 bool QMakeProjectModel::insertRows( int, int, const QModelIndex& ) 
@@ -224,23 +213,33 @@ QVariant QMakeProjectModel::headerData( int i, Qt::Orientation o, int r ) const
 	return o == Qt::Horizontal && i == 0 ? mRootItem->data( r ) : QVariant();
 }
 //
-void QMakeProjectModel::pReset()
+bool QMakeProjectModel::setupModelData( const QString& s, QMakeProjectItem* pi )
 {
-	//reset();
-}
-//
-bool QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* pi )
-{
-	QBuffer buf( this );
-	buf.setData( b );
-	if ( !buf.open( QFile::ReadOnly | QFile::Text ) )
+	if ( QFile::exists( s ) )
+	{
+		QFile f( s );
+		if ( !f.open( QFile::ReadOnly | QFile::Text ) )
+			return false;
+	}
+	else
 		return false;
+	// set state to open
+	if ( !pi || pi == mRootItem )
+		mOpen = true;
+	// create root item if needed
+	if ( !mRootItem )
+	{
+		mRootItem = new QMakeProjectItem( QMakeProjectItem::ProjectType );
+		pi = mRootItem;
+	}
+	// create teh item for project
+	else
+		pi = new QMakeProjectItem( QMakeProjectItem::ProjectType, mRootItem );
 	//
-	mRootItem->clear();
-	mRootItem->setModel( this );
-	mRootItem->setType( QMakeProjectItem::ProjectType );
-	mRootItem->setData( QFileInfo( mProjectFilePath ).completeBaseName() );
-	mRootItem->setData( mProjectFilePath, QMakeProjectItem::AbsoluteFilePathRole );
+	pi->setPrivateModel( this );
+	pi->setType( QMakeProjectItem::ProjectType );
+	pi->setData( QFileInfo( s ).completeBaseName() );
+	pi->setData( s, QMakeProjectItem::AbsoluteFilePathRole );
 	//
 	//QMakeProjectParser parser( buf, pi );
 	//return true;
@@ -293,12 +292,6 @@ bool QMakeProjectModel::setupModelData( const QByteArray& b, QMakeProjectItem* p
 	//i = new QMakeProjectItem( QMakeProjectItem::EmptyType, p, pri->d );
 	//
 	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, p );
+	//
 	return true;
-}
-//
-void QMakeProjectModel::debugModel( QMakeProjectItem* p )
-{
-	qWarning( "item: %s", qPrintable( p ? p->data().toString() : "null" ) );
-	foreach ( QMakeProjectItem* i, ( p ? p : mRootItem )->rows() )
-		debugModel( i );
 }

@@ -38,10 +38,8 @@ OPENEDFILES	= src/item/QMakeProjectItem.h \
 	src/model/QMakeProjectModel.cpp \
 	src/ui/UIQMakeProjectSettings.h \
 	src/ui/UIQMakeProjectSettings.cpp \
-	src/ui/UIProjectsViewer.h \
-	src/ui/UIProjectsViewer.cpp \
-	src/modeltest.h \
-	src/modeltest.cpp
+	src/ui/UIItemSettings.h \
+	src/ui/UIItemSettings.cpp
 
 HEADERS	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \

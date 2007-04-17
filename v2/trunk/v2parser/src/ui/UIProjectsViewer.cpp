@@ -27,8 +27,7 @@ bool UIProjectsViewer::openProject( const QString& s )
 	delete mModel;
 	//
 	mModel = new QMakeProjectModel( s, this );
-	bool b = mModel->openProject();
-	if ( b )
+	if ( mModel->isOpen() )
 	{
 #ifndef QT_NO_DEBUG
 		new ModelTest( mModel, this );
@@ -46,7 +45,7 @@ bool UIProjectsViewer::openProject( const QString& s )
 		*/
 		//
 	}
-	return b;
+	return mModel->isOpen();
 }
 //
 void UIProjectsViewer::on_pbSettings_clicked()

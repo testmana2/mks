@@ -57,7 +57,7 @@ void UIItemSettings::accept()
 		{
 			int r = 0;
 			int rc = 0;
-			// get teh current index in the project settings
+			// get the current index in the project settings
 			mItem = static_cast<QMakeProjectItem*>( mProject->itemFromIndex( d->currentIndex() ) );
 			// get it s row and rowcount
 			if ( mItem )
@@ -76,32 +76,22 @@ void UIItemSettings::accept()
 			if ( QMessageBox::question( this, tr( "New Item.." ), tr( "Create item as a child of the selected item ?" ), QMessageBox::Yes | QMessageBox::No ) == QMessageBox::Yes )
 			// as child
 			{
-				if ( mItem )
-					mItem->insertRow( rc, new QMakeProjectItem( pNodeType ) );
-				else
-					mProject->insertRow( rc, new QMakeProjectItem( pNodeType ) );					
+				mProject->insertRow( rc, new QMakeProjectItem( pNodeType ), mItem );
 				mItem = static_cast<QMakeProjectItem*>( mItem ? mItem->row( rc ) : mProject->row( rc ) );
 			}
 			else
 			{
-				if ( mItem && mItem->parent() )
-					mItem->parent()->insertRow( r, new QMakeProjectItem( pNodeType ) );
-				else
-					mProject->insertRow( r, new QMakeProjectItem( pNodeType ) );
+				mProject->insertRow( r, new QMakeProjectItem( pNodeType ), mItem->parent() );
 				mItem = static_cast<QMakeProjectItem*>( mItem && mItem->parent() ? mItem->parent()->row( r ) : mProject->row( r ) );
 			}
 			// set the new item the current one
 			d->setCurrentIndex( mProject->indexFromItem( mItem ) );
 		}
 	}
-	//
-	if ( mItem )
 	// update index data
-	{
+	if ( mItem )
 		for ( int i = 0; i < twValueRoles->topLevelItemCount(); i++ )
 			mItem->setData( twValueRoles->topLevelItem( i )->text( 1 ), twValueRoles->topLevelItem( i )->data( 0, Qt::UserRole +1 ).toInt() );
-		//mProject->updateItem( mItem );
-	}
 	//
 	QDialog::accept();
 }

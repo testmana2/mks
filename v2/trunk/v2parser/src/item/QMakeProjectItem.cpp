@@ -5,12 +5,13 @@
 #include <QPixmap>
 //
 QMakeProjectItem::QMakeProjectItem( QMakeProjectItem::NodeType t, QMakeProjectItem* p, QMakeProjectItemPrivate* pp )
+	: mParent( 0 ), mModel( 0 ), d( 0 )
 {
+	setParent( p );
 	if ( pp )
 		setData( pp );
 	else
 		d = new QMakeProjectItemPrivate;
-	setParent( p );
 	if ( parent() )
 		parent()->appendRow( this );
 	setData( t, QMakeProjectItem::TypeRole );
@@ -25,7 +26,7 @@ QMakeProjectItem::~QMakeProjectItem()
 //
 QModelIndex QMakeProjectItem::index() const
 {
-	return model() ? model()->createIndex( row(), column(), const_cast<QMakeProjectItem*>( this ) ) : QModelIndex();
+	return model() ? model()->indexFromItem( this ) : QModelIndex();
 }
 //
 void QMakeProjectItem::clear()
@@ -70,7 +71,7 @@ QVariant QMakeProjectItem::data( int r ) const
 void QMakeProjectItem::setData( const QVariant& v, int r )
 {
 	if ( model() )
-		model()->setData( model()->indexFromItem( this ), v, r );
+		model()->setData( index(), v, r );
 }
 //
 void QMakeProjectItem::setData( QMakeProjectItemPrivate* p )
@@ -90,17 +91,11 @@ QMakeProjectItem* QMakeProjectItem::parent() const
 void QMakeProjectItem::setParent( QMakeProjectItem* i )
 {
 	mParent = i;
-	setModel( i ? i->model() : 0 );
 }
 //
 QMakeProjectModel* QMakeProjectItem::model() const
 {
-	return mModel;
-}
-//
-void QMakeProjectItem::setModel( QMakeProjectModel* m )
-{
-	mModel = m;
+	return parent() ? parent()->model() : mModel;
 }
 //
 int QMakeProjectItem::row() const
@@ -110,29 +105,12 @@ int QMakeProjectItem::row() const
 //
 int QMakeProjectItem::column() const
 {
-	return 1;
-}
-//
-void QMakeProjectItem::setPrivateData( const QVariant& v, int r )
-{
-	if ( d )
-		d->mDatas[r] = v;
-}
-//
-bool QMakeProjectItem::removePrivateRow( int i )
-{
-	if ( d && i >= 0 && rowCount() > i  )
-	{
-		d->mChilds.removeAt( i );
-		return true;
-	}
-	qWarning( "item: can't removeprivaterow: %s", qPrintable( data().toString() ) );
-	return false;
+	return 0;
 }
 //
 int QMakeProjectItem::rowCount() const
 {
-	return d ? d->mChilds.count() : 0;
+	return rows().count();
 }
 //
 int QMakeProjectItem::columnCount() const
@@ -142,7 +120,7 @@ int QMakeProjectItem::columnCount() const
 //
 QMakeProjectItem* QMakeProjectItem::row( int i )
 {
-	return rowCount() > i && i > -1 ? d->mChilds.at( i ) : 0;
+	return i >= 0 && rowCount() > i ? rows().at( i ) : 0;
 }
 //
 QList<QMakeProjectItem*> QMakeProjectItem::rows() const
@@ -184,15 +162,14 @@ void QMakeProjectItem::insertRow( int i, QMakeProjectItem* it )
 //
 bool QMakeProjectItem::swapRow( int i, int j )
 {
-	QMakeProjectItem* ii;
-	QMakeProjectItem* ij;
+	QMakeProjectItem* ii = 0;
+	QMakeProjectItem* ij = 0;
 	if ( ( ii = takeRow( i ) ) && ( ij = takeRow( j ) ) )
 	{
 		insertRow( i, ij );
 		insertRow( j, ii );
-		return true;
 	}
-	return false;
+	return ii && ij;
 }
 //
 bool QMakeProjectItem::moveRowUp( int i )
@@ -204,9 +181,9 @@ bool QMakeProjectItem::moveRowUp( int i )
 //
 bool QMakeProjectItem::moveRowDown( int i )
 {
-	if ( rowCount() -1 > i )
+	if ( i < rowCount() -1 )
 		insertRow( i +1, takeRow( i ) );
-	return rowCount() -1 > i;
+	return i < rowCount() -1;
 }
 //
 bool QMakeProjectItem::moveUp()
@@ -217,4 +194,36 @@ bool QMakeProjectItem::moveUp()
 bool QMakeProjectItem::moveDown()
 {
 	return parent()  ? parent()->moveRowDown( row() ) : false;
+}
+//
+void QMakeProjectItem::setPrivateModel( QMakeProjectModel* m )
+{
+	mModel = m;
+}
+//
+void QMakeProjectItem::setPrivateData( const QVariant& v, int r )
+{
+	if ( d )
+		d->mDatas[r] = v;
+}
+//
+bool QMakeProjectItem::insertPrivateRow( int i, QMakeProjectItem* it )
+{
+	if ( d && i >= 0 && i <= rowCount() )
+	{
+		d->mChilds.insert( i, it );
+		it->setParent( this );
+		return true;
+	}
+	return false;
+}
+//
+bool QMakeProjectItem::removePrivateRow( int i )
+{
+	if ( d && i >= 0 && rowCount() > i  )
+	{
+		d->mChilds.removeAt( i );
+		return true;
+	}
+	return false;
 }

@@ -2,7 +2,6 @@
 #define QMAKEPROJECTITEM_H
 //
 #include <QObject>
-#include <QPointer>
 #include <QModelIndex>
 //
 class QMakeProjectItemPrivate;
@@ -46,34 +45,24 @@ public:
 	};
 	//
 	QMakeProjectItem( QMakeProjectItem::NodeType = QMakeProjectItem::EmptyType, QMakeProjectItem* = 0, QMakeProjectItemPrivate* = 0 );
-	virtual ~QMakeProjectItem();
+	~QMakeProjectItem();
 	//
 	QModelIndex index() const;
-	//
 	virtual void clear();
-	//
 	QMakeProjectItem::NodeType type() const;
 	void setType( QMakeProjectItem::NodeType );
-	//
 	Qt::ItemFlags flags() const;
 	void setFlags( Qt::ItemFlags );
-	//
 	QVariant data( int = Qt::DisplayRole ) const;
 	void setData( const QVariant&, int = Qt::DisplayRole );
 	void setData( QMakeProjectItemPrivate* );
-	//
 	QMakeProjectItem* parent() const;
 	void setParent( QMakeProjectItem* );
-	//
 	QMakeProjectModel* model() const;
-	void setModel( QMakeProjectModel* );
-	//
 	int row() const;
 	int column() const;
-	//
 	int rowCount() const;
 	int columnCount() const;
-	//
 	QMakeProjectItem* row( int );
 	QList<QMakeProjectItem*> rows() const;
 	QMakeProjectItem* takeRow( int );
@@ -90,11 +79,14 @@ public:
 	bool moveDown();
 	//
 protected:
+	void setPrivateModel( QMakeProjectModel* );
 	void setPrivateData( const QVariant&, int = Qt::DisplayRole );
+	bool insertPrivateRow( int, QMakeProjectItem* );
 	bool removePrivateRow( int );
-	QMakeProjectModel* mModel;
+	//
 	QMakeProjectItem* mParent;
-	QPointer<QMakeProjectItemPrivate> d;
+	QMakeProjectModel* mModel;
+	QMakeProjectItemPrivate* d;
 	//
 };
 //

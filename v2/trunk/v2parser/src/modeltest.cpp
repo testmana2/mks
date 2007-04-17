@@ -339,15 +339,6 @@ void ModelTest::checkChildren(const QModelIndex &parent, int currentDepth)
             }*/
 
             // Check that we can get back our real parent.
-            qWarning( "===============BEGIN============" );
-            qWarning( "index: %s", qPrintable( index.data().toString() ) );
-            qDebug() << index;
-            qWarning( "parent1: %s", qPrintable( parent.data().toString() ) );
-            qDebug() << parent;
-            qWarning( "parent2: %s", qPrintable( model->parent(index).data().toString() ) );
-            qDebug() << model->parent(index);
-            qWarning( "================END==============" );
-       
             Q_ASSERT(model->parent(index) == parent);
 
             // recursively go down the children
