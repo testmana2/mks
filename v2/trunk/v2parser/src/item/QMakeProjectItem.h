@@ -12,6 +12,7 @@ class QMakeProjectItem : public QObject
 	Q_OBJECT
 	Q_ENUMS( NodeRole NodeType )
 	friend class QMakeProjectModel;
+	friend class QMakeProjectParser;
 	//
 public:
 	enum NodeRole
@@ -30,7 +31,8 @@ public:
 	//
 	enum NodeType
 	{
-		FirstType = 0, // first type
+		RootType = -1, // root item
+		FirstType, // first type
 		EmptyType, // empty line
 		CommentType, // comment line
 		NestedScopeType, // single line scope

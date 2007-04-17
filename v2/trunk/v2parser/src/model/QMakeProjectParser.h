@@ -1,15 +1,25 @@
 #ifndef QMAKEPROJECTPARSER_H
 #define QMAKEPROJECTPARSER_H
 //
-#include <QBuffer>
+#include <QObject>
 //
-#include "QMakeProjectItem.h"
+class QMakeProjectItem;
 //
-class QMakeProjectParser
+class QMakeProjectParser : public QObject
 {
+	Q_OBJECT
+	//
 public:
-	QMakeProjectParser( const QBuffer&, QMakeProjectItem* );
+	QMakeProjectParser( const QString&, QMakeProjectItem* );
 	~QMakeProjectParser();
+	//
+	bool isOpen() const;
+	//
+protected:
+	bool parse( const QString&, QMakeProjectItem* );
+	//
+	bool mIsOpen;
+	QMakeProjectItem* mRoot;
 	//
 };
 //

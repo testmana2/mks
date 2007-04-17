@@ -39,8 +39,6 @@ public:
 	virtual QVariant headerData( int, Qt::Orientation, int ) const;
 	//
 protected:
-	virtual bool setupModelData( const QString&, QMakeProjectItem* = 0 );
-	//
 	bool mOpen;
 	QMakeProjectItem* mRootItem;
 	//

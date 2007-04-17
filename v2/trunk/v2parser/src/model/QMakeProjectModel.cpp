@@ -2,15 +2,14 @@
 #include "QMakeProjectItem.h"
 #include "QMakeProjectItemPrivate.h"
 #include "QMakeProjectParser.h"
-//
-#include <QFileInfo>
-#include <QBuffer>
+///
 #include <QPixmap>
 //
 QMakeProjectModel::QMakeProjectModel( const QString& s, QObject* p )
-	: QAbstractItemModel( p ), mOpen( false ), mRootItem( 0 )
+	: QAbstractItemModel( p ), mOpen( false ), mRootItem( new QMakeProjectItem( QMakeProjectItem::RootType ) )
 {
-	if ( !setupModelData( s ) )
+	mRootItem->setPrivateModel( this );
+	if ( !openProject( s ) )
 		qWarning( "Can't open project: %s", qPrintable( s ) );
 }
 //
@@ -21,7 +20,9 @@ QMakeProjectModel::~QMakeProjectModel()
 //
 bool QMakeProjectModel::openProject( const QString& s, QMakeProjectItem* i )
 {
-	return setupModelData( s, i );
+	QMakeProjectParser parser( s, i ? i : mRootItem );
+	mOpen = parser.isOpen();
+	return mOpen;
 }
 //
 bool QMakeProjectModel::isOpen() const
@@ -36,7 +37,6 @@ QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const
 	return cItem && c == 0 ? createIndex( r, 0, cItem ) : QModelIndex();
 }
 //
-#include <QDebug>
 QModelIndex QMakeProjectModel::parent( const QModelIndex& i ) const
 {
 	QMakeProjectItem* cItem = static_cast<QMakeProjectItem*>( i.internalPointer() );
@@ -211,87 +211,4 @@ QMakeProjectItem* QMakeProjectModel::takeRow( QMakeProjectItem* i, QMakeProjectI
 QVariant QMakeProjectModel::headerData( int i, Qt::Orientation o, int r ) const
 {
 	return o == Qt::Horizontal && i == 0 ? mRootItem->data( r ) : QVariant();
-}
-//
-bool QMakeProjectModel::setupModelData( const QString& s, QMakeProjectItem* pi )
-{
-	if ( QFile::exists( s ) )
-	{
-		QFile f( s );
-		if ( !f.open( QFile::ReadOnly | QFile::Text ) )
-			return false;
-	}
-	else
-		return false;
-	// set state to open
-	if ( !pi || pi == mRootItem )
-		mOpen = true;
-	// create root item if needed
-	if ( !mRootItem )
-	{
-		mRootItem = new QMakeProjectItem( QMakeProjectItem::ProjectType );
-		pi = mRootItem;
-	}
-	// create teh item for project
-	else
-		pi = new QMakeProjectItem( QMakeProjectItem::ProjectType, mRootItem );
-	//
-	pi->setPrivateModel( this );
-	pi->setType( QMakeProjectItem::ProjectType );
-	pi->setData( QFileInfo( s ).completeBaseName() );
-	pi->setData( s, QMakeProjectItem::AbsoluteFilePathRole );
-	//
-	//QMakeProjectParser parser( buf, pi );
-	//return true;
-	//
-	QMakeProjectItem* p;
-	QMakeProjectItem* i;
-	// pri
-	QMakeProjectItem* pri = new QMakeProjectItem( QMakeProjectItem::IncludeType, pi );
-	pri->setData( "pri", QMakeProjectItem::ValueRole );
-	// header pri
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, pri );
-	p->setData( "HEADERS", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.h" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// source pri
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, pri );
-	p->setData( "SOURCES", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.cpp" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// header
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, pi );
-	p->setData( "HEADERS", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.h" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// header
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, pi );
-	p->setData( "SOURCES", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.cpp" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// win32
-	p = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, pi );
-	p->setData( "win32", QMakeProjectItem::ValueRole );
-	// append clone
-	//i = new QMakeProjectItem( QMakeProjectItem::EmptyType, p, pri->d );
-	//
-	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, p );
-	//
-	return true;
 }
