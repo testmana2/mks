@@ -10,7 +10,7 @@ QMakeProjectProxyModel::QMakeProjectProxyModel( QMakeProjectModel* m )
 //
 bool QMakeProjectProxyModel::filterAcceptsRow( int r, const QModelIndex& i ) const
 {
-	return true;
+return true;
 	QModelIndex index;
 	index = sourceModel()->index( r, 0, i );
 	return index.data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ValueType;

@@ -34,7 +34,6 @@ bool UIProjectsViewer::openProject( const QString& s )
 #endif
 		mProxy = new QMakeProjectProxyModel( mModel );
 		tvProject->setModel( mProxy );
-		tvProject->setRootIndex( mProxy->index( 1, 0 ) );
 		//
 		/*
 		connect( cbFilter, SIGNAL( stateChanged( int ) ), mProxy, SLOT( setFilter( int ) ) );

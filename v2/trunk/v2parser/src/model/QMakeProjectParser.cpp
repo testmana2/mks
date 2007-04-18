@@ -20,18 +20,16 @@ bool QMakeProjectParser::isOpen() const
 	return mIsOpen;
 }
 //
-bool QMakeProjectParser::parse( const QString& s, QMakeProjectItem* ri )
+bool QMakeProjectParser::parse( const QString& s, QMakeProjectItem* it )
 {
 	QFile f( s );
-	if ( !ri || !f.exists() || !f.open( QFile::ReadOnly ) )
+	if ( !it || !f.exists() || !f.open( QFile::ReadOnly ) )
 		return false;
 	QBuffer buf( this );
 	buf.setData( f.readAll() );
 	if ( !buf.open( QBuffer::ReadOnly | QBuffer::Text ) )
 		return false;
 	//
-	QMakeProjectItem* it = new QMakeProjectItem( QMakeProjectItem::ProjectType, ri );
-	it->setPrivateModel( ri->model() );
 	it->setType( QMakeProjectItem::ProjectType );
 	it->setData( QFileInfo( s ).completeBaseName() );
 	it->setData( s, QMakeProjectItem::AbsoluteFilePathRole );

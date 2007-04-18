@@ -15,7 +15,7 @@ public:
 	QMakeProjectModel( const QString& = QString::null, QObject* = 0 );
 	~QMakeProjectModel();
 	//
-	bool openProject( const QString&, QMakeProjectItem* = 0 );
+	bool openProject( const QString& );
 	bool isOpen() const;
 	virtual QModelIndex index( int, int, const QModelIndex& = QModelIndex() ) const;
 	virtual QModelIndex parent( const QModelIndex& ) const;

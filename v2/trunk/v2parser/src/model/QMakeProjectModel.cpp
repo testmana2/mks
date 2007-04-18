@@ -18,9 +18,9 @@ QMakeProjectModel::~QMakeProjectModel()
 	delete mRootItem;
 }
 //
-bool QMakeProjectModel::openProject( const QString& s, QMakeProjectItem* i )
+bool QMakeProjectModel::openProject( const QString& s )
 {
-	QMakeProjectParser parser( s, i ? i : mRootItem );
+	QMakeProjectParser parser( s, mRootItem );
 	mOpen = parser.isOpen();
 	return mOpen;
 }
