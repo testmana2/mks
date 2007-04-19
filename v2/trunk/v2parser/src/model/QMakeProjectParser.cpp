@@ -107,6 +107,10 @@ void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
 	i->setData( "thread", QMakeProjectItem::ValueRole );
 	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
 	i->setData( "designer", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "my_perso_config", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "coveragemeter", QMakeProjectItem::ValueRole );
 	// set qt config
 	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
 	p->setData( "QT", QMakeProjectItem::ValueRole );
@@ -141,6 +145,12 @@ void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
 	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
 	i->setData( "/path/for/mac", QMakeProjectItem::ValueRole );
 	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
+	// set target
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "TARGET", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "my_app_name", QMakeProjectItem::ValueRole );
 	// set libs
 	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
 	p->setData( "LIBS", QMakeProjectItem::ValueRole );

@@ -213,15 +213,34 @@ QVariant QMakeProjectModel::headerData( int i, Qt::Orientation o, int r ) const
 	return o == Qt::Horizontal && i == 0 ? mRootItem->data( r ) : QVariant();
 }
 //
-QStringList QMakeProjectModel::getListValues( const QString& v, const QString& o, const QString& /*s*/ )
+QStringList QMakeProjectModel::getListValues( const QString& v, const QString& o, const QString& s )
 {
-	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, 1, Qt::MatchFixedString | Qt::MatchWrap );
+	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, 10, Qt::MatchFixedString | Qt::MatchRecursive );
 	QStringList l;
+	qWarning( "====" );
 	foreach ( QModelIndex i, indexes )
-		if ( i.data( QMakeProjectItem::OperatorRole ).toString() == o )
-			for ( int j = 0; j < rowCount( i ); j++ )
-				if ( i.child( j, 0 ).data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
-					l << i.child( j, 0 ).data( QMakeProjectItem::ValueRole ).toString();
+	{
+		qWarning( "item: %s, %d", qPrintable( i.data().toString() ), i.internalPointer() );
+		//if ( s.isEmpty() || 
+		/*
+		if ( i.parent().parent() == QModelIndex() )
+		{
+		qWarning( "item: %s, %d", qPrintable( i.data().toString() ), i.internalPointer() );
+		qWarning( "parent: %s, %d, parent_parent: %s, %d", qPrintable( i.parent().data( QMakeProjectItem::ValueRole ).toString() ), i.parent().internalPointer(), qPrintable( i.parent().parent().data( QMakeProjectItem::ValueRole ).toString() ), i.parent().parent().internalPointer() );
+			if ( i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::NestedScopeType || i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeType )
+			{
+			qWarning( "parent is a scope: %s", qPrintable( i.data().toString() ) );
+				if ( i.parent().data( QMakeProjectItem::ValueRole ).toString().toLower() == s.toLower() )
+				{
+				qWarning( "parent is good scope" );
+					if ( i.data( QMakeProjectItem::OperatorRole ).toString() == o )
+						for ( int j = 0; j < rowCount( i ); j++ )
+							if ( i.child( j, 0 ).data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
+								l << i.child( j, 0 ).data( QMakeProjectItem::ValueRole ).toString();
+				}
+			}
+		}*/
+	}
 	return l;
 }
 //
