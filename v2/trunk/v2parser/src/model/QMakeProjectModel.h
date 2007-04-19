@@ -37,6 +37,8 @@ public:
 	virtual QMakeProjectItem* takeRow( int, QMakeProjectItem* = 0 );
 	virtual QMakeProjectItem* takeRow( QMakeProjectItem*, QMakeProjectItem* = 0 );
 	virtual QVariant headerData( int, Qt::Orientation, int ) const;
+	virtual QStringList getListValues( const QString&, const QString& = "=", const QString& = QString::null );
+	virtual QString getStringValues( const QString&, const QString& = "=", const QString& = QString::null );
 	//
 protected:
 	bool mOpen;

@@ -8,10 +8,35 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p
 	: QDialog( p ), mProxy( 0 ), mProject( m )
 {
 	setupUi( this );
+	//
+	for ( int i = 0; i < lwQtModules->count(); i++ )
+		lwQtModules->item( i )->setCheckState( Qt::Unchecked );
+	QFont fo( lwCompilerFlags->font() );
+	fo.setPointSize( 8 );
+	fo.setBold( true );
+	for ( int i = 0; i < lwCompilerFlags->count(); i++ )
+	{
+		QListWidgetItem* it = lwCompilerFlags->item( i );
+		Qt::ItemFlags f = Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
+		if ( !it->text().toLower().contains( "only" ) )
+			f |= Qt::ItemIsEnabled;
+		it->setFlags( f );
+		if ( f & Qt::ItemIsEnabled )
+			it->setCheckState( Qt::Unchecked );
+		else
+		{
+			it->setTextAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
+			it->setBackground( Qt::darkBlue );
+			it->setForeground( Qt::white );
+			it->setFont( fo );
+		}
+	}
+	//
 	mProxy = new QMakeProjectScopesProxy( mProject );
 	tvScopes->setModel( mProxy );
 	lvContents->setModel( mProject );
 	setCurrentIndex( mProject->index( 0, 0 ) );
+	loadSettings();
 }
 //
 UIQMakeProjectSettings::~UIQMakeProjectSettings()
@@ -60,6 +85,55 @@ void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 		tvScopes->setCurrentIndex( mProxy->mapFromSource( i ) );
 		lvContents->setRootIndex( i );
 	}
+}
+//
+void UIQMakeProjectSettings::loadSettings()
+{
+	QString s;
+	QStringList l;
+	// Application
+	leTitle->setText( mProject->getStringValues( "APP_TITLE" ) );
+	leIcon->setText( mProject->getStringValues( "APP_ICON" ) );
+	leHelpFile->setText( mProject->getStringValues( "APP_HELP_FILE" ) );
+	leAuthor->setText( mProject->getStringValues( "APP_AUTHOR" ) );
+	s = mProject->getStringValues( "VERSION" );
+	if ( !s.isEmpty() )
+	{
+		gbVersion->setChecked( true );
+		l = s.split( "." );
+		sbMajor->setValue( l.value( 0 ).toInt() );
+		sbMinor->setValue( l.value( 1 ).toInt() );
+		sbRelease->setValue( l.value( 2 ).toInt() );
+		sbBuild->setValue( l.value( 3 ).toInt() );
+		cbBuildAutoIncrement->setChecked( mProject->getStringValues( "APP_AUTO_INCREMENT" ).toInt() );
+	}
+	s = mProject->getStringValues( "TEMPLATE" );
+	if ( cbTemplate->findText( s, Qt::MatchExactly ) == -1 )
+		cbTemplate->addItem( s );
+	cbTemplate->setCurrentIndex( cbTemplate->findText( s, Qt::MatchExactly ) );
+	s = mProject->getStringValues( "LANGUAGE" );
+	if ( cbLanguage->findText( s, Qt::MatchExactly ) == -1 )
+		cbLanguage->addItem( s );
+	cbLanguage->setCurrentIndex( cbLanguage->findText( s, Qt::MatchExactly ) );
+	s = mProject->getStringValues( "CONFIG", "+=" );
+	if ( s.indexOf( "debug_and_release" ) != -1 )
+		rbDebugRelease->setChecked( true );
+	else if ( s.indexOf( "debug" ) != -1 )
+		rbDebug->setChecked( true );
+	else if ( s.indexOf( "release" ) != -1 )
+		rbRelease->setChecked( true );
+	else
+		rbRelease->setChecked( true );
+	if ( s.indexOf( "warn_off" ) != -1 )
+		rbWarnOff->setChecked( true );
+	else if ( s.indexOf( "warn_onn" ) != -1 )
+		rbWarnOn->setChecked( true );
+	else
+		rbWarnOff->setChecked( true );
+	if ( s.indexOf( "build_all" ) != -1 )
+		cbBuildAll->setChecked( true );
+	if ( s.indexOf( "ordered" ) != -1 )
+		cbOrdered->setChecked( true );
 }
 //
 void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )

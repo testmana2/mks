@@ -25,6 +25,7 @@ protected:
 	QMakeProjectModel* mProject;
 	//
 protected slots:
+	void loadSettings();
 	void on_tvScopes_clicked( const QModelIndex& );
 	void on_tbAdd_clicked();
 	void on_tbEdit_clicked();

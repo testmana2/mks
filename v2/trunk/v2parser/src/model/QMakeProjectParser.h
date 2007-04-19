@@ -17,6 +17,7 @@ public:
 	//
 protected:
 	bool parse( const QString&, QMakeProjectItem* );
+	void fakeProject( QMakeProjectItem* );
 	//
 	bool mIsOpen;
 	QMakeProjectItem* mRoot;

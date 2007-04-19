@@ -29,61 +29,168 @@ bool QMakeProjectParser::parse( const QString& s, QMakeProjectItem* it )
 	buf.setData( f.readAll() );
 	if ( !buf.open( QBuffer::ReadOnly | QBuffer::Text ) )
 		return false;
-	//
+	// set project data
 	it->setType( QMakeProjectItem::ProjectType );
 	it->setData( QFileInfo( s ).completeBaseName() );
 	it->setData( s, QMakeProjectItem::AbsoluteFilePathRole );
-	// HERE TO DROP
 	//
-	QMakeProjectItem* p;
-	QMakeProjectItem* i;
-	// pri
-	QMakeProjectItem* pri = new QMakeProjectItem( QMakeProjectItem::IncludeType, it );
-	pri->setData( "pri", QMakeProjectItem::ValueRole );
-	// header pri
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, pri );
-	p->setData( "HEADERS", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.h" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// source pri
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, pri );
-	p->setData( "SOURCES", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.cpp" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// header
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
-	p->setData( "HEADERS", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.h" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// header
-	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
-	p->setData( "SOURCES", QMakeProjectItem::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-		i->setData( QString( "pouet%1.cpp" ).arg( j ), QMakeProjectItem::ValueRole );
-	}
-	// win32
-	p = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, it );
-	p->setData( "win32", QMakeProjectItem::ValueRole );
-	// append clone
-	//i = new QMakeProjectItem( QMakeProjectItem::EmptyType, p, pri->d );
-	//
-	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, p );
+	fakeProject( it );
 	//
 	mIsOpen = true;
 	return true;
+}
+//
+void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
+{
+	QMakeProjectItem* p, * i, * s;
+	// set app name
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "APP_TITLE", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "Monkey Studio", QMakeProjectItem::ValueRole );
+	// set app icon
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "APP_ICON", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/to/app/icon.png", QMakeProjectItem::ValueRole );
+	// set app help file
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "APP_HELP_FILE", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/to/app/help/file.html", QMakeProjectItem::ValueRole );
+	// set app author
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "APP_AUTHOR", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "Nox P@sNox (pasnox@hotmail.com)", QMakeProjectItem::ValueRole );
+	// set app version
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "VERSION", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "1.0.0.1", QMakeProjectItem::ValueRole );
+	// set build autoincrement
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "APP_AUTO_INCREMENT", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "1", QMakeProjectItem::ValueRole );
+	// set app template
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "TEMPLATE", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "app", QMakeProjectItem::ValueRole );
+	// set app version
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "LANGUAGE", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "Qt4/C++", QMakeProjectItem::ValueRole );
+	// set app config
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "CONFIG", QMakeProjectItem::ValueRole );
+	p->setData( "+=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "debug_and_release", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "warn_off", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "build_all", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "qt", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "thread", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "designer", QMakeProjectItem::ValueRole );
+	// set qt config
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "QT", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "core", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "gui", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "xml", QMakeProjectItem::ValueRole );
+	// set destdir
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "DESTDIR", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/for/defaut", QMakeProjectItem::ValueRole );
+	// set destdir win32
+	s = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, it );
+	s->setData( "win32", QMakeProjectItem::ValueRole );
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, s );
+	p->setData( "DESTDIR", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/for/win32", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
+	// set destdir mac
+	s = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, it );
+	s->setData( "mac", QMakeProjectItem::ValueRole );
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, s );
+	p->setData( "DESTDIR", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/for/mac", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
+	// set libs
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "LIBS", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "-ldefaut", QMakeProjectItem::ValueRole );
+	// set libs win32
+	s = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, it );
+	s->setData( "win32", QMakeProjectItem::ValueRole );
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, s );
+	p->setData( "LIBS", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "-lwin32", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
+	// set libs mac
+	s = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, it );
+	s->setData( "mac", QMakeProjectItem::ValueRole );
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, s );
+	p->setData( "LIBS", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "-lmac", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
+	// set translations
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "TRANSLATIONS", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/for/translations/french.ts", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/for/translations/german.ts", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "/path/for/translations/italian.ts", QMakeProjectItem::ValueRole );
+	// header
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "HEADERS", QMakeProjectItem::ValueRole );
+	//
+	for ( int j = 0; j < 5; j++ )
+	{
+		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+		i->setData( QString( "pouet%1.h" ).arg( j ), QMakeProjectItem::ValueRole );
+	}
+	// source
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "SOURCES", QMakeProjectItem::ValueRole );
+	//
+	for ( int j = 0; j < 5; j++ )
+	{
+		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+		i->setData( QString( "pouet%1.cpp" ).arg( j ), QMakeProjectItem::ValueRole );
+	}
 }

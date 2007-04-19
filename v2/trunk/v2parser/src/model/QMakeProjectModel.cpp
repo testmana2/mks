@@ -212,3 +212,20 @@ QVariant QMakeProjectModel::headerData( int i, Qt::Orientation o, int r ) const
 {
 	return o == Qt::Horizontal && i == 0 ? mRootItem->data( r ) : QVariant();
 }
+//
+QStringList QMakeProjectModel::getListValues( const QString& v, const QString& o, const QString& /*s*/ )
+{
+	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, 1, Qt::MatchFixedString | Qt::MatchWrap );
+	QStringList l;
+	foreach ( QModelIndex i, indexes )
+		if ( i.data( QMakeProjectItem::OperatorRole ).toString() == o )
+			for ( int j = 0; j < rowCount( i ); j++ )
+				if ( i.child( j, 0 ).data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
+					l << i.child( j, 0 ).data( QMakeProjectItem::ValueRole ).toString();
+	return l;
+}
+//
+QString QMakeProjectModel::getStringValues( const QString& v, const QString& o, const QString& s )
+{
+	return getListValues( v, o, s ).join( " " );
+}
