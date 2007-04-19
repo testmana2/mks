@@ -22,7 +22,7 @@ struct QtItem
 	QString Description;
 };
 typedef QList<QtItem*> QtItemList;
-typedef QHash<QString, QStringList> QtSettings;
+typedef QHash<QString, QStringList> QtSettings; // scope|operator|variable, values
 //
 class UIQMakeProjectSettings : public QDialog, public Ui::UIQMakeProjectSettings
 {
@@ -42,7 +42,6 @@ protected:
 	QtItemList mModules;
 	QtItemList mConfigs;
 	QtSettings mSettings;
-	QtSettings mSettingsOutput;
 	//
 protected slots:
 	void loadModules();
@@ -51,6 +50,7 @@ protected slots:
 	void tb_clicked();
 	void lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
 	
+	void cb_highlighted( int );
 	void on_cbScopes_currentIndexChanged( const QString& );
 	void on_cbOperators_currentIndexChanged( const QString& );
 	void on_cbVariables_currentIndexChanged( const QString& );

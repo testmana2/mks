@@ -24,6 +24,9 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p
 	connect( tbHelpFile, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
 	connect( lwQtModules, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
 	connect( lwCompilerFlags, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
+	connect( cbScopes, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
+	connect( cbOperators, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
+	connect( cbVariables, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 }
 //
 UIQMakeProjectSettings::~UIQMakeProjectSettings()
@@ -278,6 +281,13 @@ void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWi
 }
 //
 
+void UIQMakeProjectSettings::cb_highlighted( int )
+{
+	QString k = QString( "%1|%2" ).arg( cbScopes->currentText(), cbOperators->currentText() );
+	mSettings[ QString( "%1|DESTDIR" ).arg( k ) ] = QStringList() << leOutputPath->text();
+	mSettings[ QString( "%1|TARGET" ).arg( k ) ] = QStringList() << leOutputName->text();
+}
+
 void UIQMakeProjectSettings::on_cbScopes_currentIndexChanged( const QString& )
 {
 	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
@@ -286,28 +296,29 @@ void UIQMakeProjectSettings::on_cbScopes_currentIndexChanged( const QString& )
 void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& s )
 {
 	QString k = QString( "%1|%2" ).arg( cbScopes->currentText(), s );
-	// check if we already take it
-	if ( !mSettingsOutput.contains( k ) )
-	{
-		// load destdir and target
+	// set backup data if available
+	if ( mSettings.contains( QString( "%1|DESTDIR" ).arg( k ) ) )
+		leOutputPath->setText( mSettings[ QString( "%1|DESTDIR" ).arg( k ) ].join( " " ) );
+	else // got data
 		leOutputPath->setText( mProject->getStringValues( "DESTDIR", s, cbScopes->currentText() ) );
+	// set backup data if available
+	if ( mSettings.contains( QString( "%1|TARGET" ).arg( k ) ) )
+		leOutputName->setText( mSettings[ QString( "%1|TARGET" ).arg( k ) ].join( " " ) );
+	else // got data
 		leOutputName->setText( mProject->getStringValues( "TARGET", s, cbScopes->currentText() ) );
-		// bakup data
-		mSettingsOutput[k] = QStringList() << leOutputPath->text() << leOutputName->text();
-	}
-	else
-	{
-		// restore data
-		leOutputPath->setText( mSettingsOutput.value( k ).at( 0 ) );
-		leOutputName->setText( mSettingsOutput.value( k ).at( 1 ) );
-	}
-		
 	// load values
-	
+	// load variables
+	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
 }
 
-void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& )
+void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& s )
 {
+	QString k = QString( "%1|%2|%3" ).arg( cbScopes->currentText(), cbOperators->currentText(), s );
+	lwValues->clear();
+	if ( mSettings.contains( k ) )
+		lwValues->addItems( mSettings[ k ] );
+	else
+		lwValues->addItems( mProject->getListValues( s, cbOperators->currentText(), cbScopes->currentText() ) );
 }
 
 //

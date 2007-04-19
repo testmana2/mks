@@ -175,6 +175,30 @@ void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
 	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
 	i->setData( "-lmac", QMakeProjectItem::ValueRole );
 	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
+	// set vpath
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
+	p->setData( "VPATH", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "vpath", QMakeProjectItem::ValueRole );
+	// set vpath win32
+	s = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, it );
+	s->setData( "win32", QMakeProjectItem::ValueRole );
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, s );
+	p->setData( "VPATH", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "vpath win32", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
+	// set vpath mac
+	s = new QMakeProjectItem( QMakeProjectItem::NestedScopeType, it );
+	s->setData( "mac", QMakeProjectItem::ValueRole );
+	p = new QMakeProjectItem( QMakeProjectItem::VariableType, s );
+	p->setData( "VPATH", QMakeProjectItem::ValueRole );
+	p->setData( "=", QMakeProjectItem::OperatorRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
+	i->setData( "vpath mac", QMakeProjectItem::ValueRole );
+	i = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, s );
 	// set translations
 	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
 	p->setData( "TRANSLATIONS", QMakeProjectItem::ValueRole );
