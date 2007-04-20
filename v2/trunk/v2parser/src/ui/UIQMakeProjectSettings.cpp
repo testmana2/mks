@@ -5,6 +5,7 @@
 #include "UIItemSettings.h"
 //
 #include <QFileDialog>
+#include <QInputDialog>
 //
 UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p )
 	: QDialog( p ), mProxy( 0 ), mProject( m )
@@ -280,19 +281,22 @@ void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWi
 		tbInformations->setHtml( it->toolTip() );
 }
 //
-
 void UIQMakeProjectSettings::cb_highlighted( int )
 {
 	QString k = QString( "%1|%2" ).arg( cbScopes->currentText(), cbOperators->currentText() );
 	mSettings[ QString( "%1|DESTDIR" ).arg( k ) ] = QStringList() << leOutputPath->text();
 	mSettings[ QString( "%1|TARGET" ).arg( k ) ] = QStringList() << leOutputName->text();
+	QStringList l;
+	foreach ( QListWidgetItem* it, lwValues->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
+		l << it->text();
+	mSettings[ QString( "%1|%2" ).arg( k, cbVariables->currentText() ) ] = l;
 }
-
+//
 void UIQMakeProjectSettings::on_cbScopes_currentIndexChanged( const QString& )
 {
 	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
 }
-
+//
 void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& s )
 {
 	QString k = QString( "%1|%2" ).arg( cbScopes->currentText(), s );
@@ -310,7 +314,7 @@ void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& 
 	// load variables
 	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
 }
-
+//
 void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& s )
 {
 	QString k = QString( "%1|%2|%3" ).arg( cbScopes->currentText(), cbOperators->currentText(), s );
@@ -320,7 +324,34 @@ void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& 
 	else
 		lwValues->addItems( mProject->getListValues( s, cbOperators->currentText(), cbScopes->currentText() ) );
 }
-
+//
+void UIQMakeProjectSettings::on_pbAddValue_clicked()
+{
+	bool b;
+	QString s = QInputDialog::getText( this, tr( "Add value..." ), tr( "Set your value content :" ), QLineEdit::Normal, QString::null, &b );
+	if ( b && !s.isEmpty() && !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+		lwValues->addItem( s );
+}
+//
+void UIQMakeProjectSettings::on_pbEditValue_clicked()
+{
+	if ( !lwValues->currentItem() )
+		return;
+	bool b;
+	QString s = QInputDialog::getText( this, tr( "Edit value..." ), tr( "Edit your value content :" ), QLineEdit::Normal, lwValues->currentItem()->text(), &b );
+	if ( b && !s.isEmpty() && !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+		lwValues->currentItem()->setText( s );
+}
+//
+void UIQMakeProjectSettings::on_pbDeleteValue_clicked()
+{
+	delete lwValues->currentItem();
+}
+//
+void UIQMakeProjectSettings::on_pbClearValues_clicked()
+{
+	lwValues->clear();
+}
 //
 void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 {

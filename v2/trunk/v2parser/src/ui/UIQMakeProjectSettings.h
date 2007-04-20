@@ -49,11 +49,14 @@ protected slots:
 	void loadSettings();
 	void tb_clicked();
 	void lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
-	
 	void cb_highlighted( int );
 	void on_cbScopes_currentIndexChanged( const QString& );
 	void on_cbOperators_currentIndexChanged( const QString& );
 	void on_cbVariables_currentIndexChanged( const QString& );
+	void on_pbAddValue_clicked();
+	void on_pbEditValue_clicked();
+	void on_pbDeleteValue_clicked();
+	void on_pbClearValues_clicked();
 	
 	void on_tvScopes_clicked( const QModelIndex& );
 	void on_tbAdd_clicked();
