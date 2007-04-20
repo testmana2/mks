@@ -9,6 +9,7 @@
 //
 class QMakeProjectScopesProxy;
 class QMakeProjectModel;
+class QDirModel;
 //
 struct QtItem
 {
@@ -42,11 +43,14 @@ protected:
 	QtItemList mModules;
 	QtItemList mConfigs;
 	QtSettings mSettings;
+	QDirModel* mDirs;
+	QDirModel* mFiles;
 	//
 protected slots:
 	void loadModules();
 	void loadConfigs();
 	void loadSettings();
+	void setDir( const QModelIndex& );
 	void tb_clicked();
 	void lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
 	void cb_highlighted( int );
@@ -57,7 +61,6 @@ protected slots:
 	void on_pbEditValue_clicked();
 	void on_pbDeleteValue_clicked();
 	void on_pbClearValues_clicked();
-	
 	void on_tvScopes_clicked( const QModelIndex& );
 	void on_tbAdd_clicked();
 	void on_tbEdit_clicked();

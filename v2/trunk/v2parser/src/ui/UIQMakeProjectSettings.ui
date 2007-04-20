@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>497</width>
-    <height>398</height>
+    <height>478</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -642,8 +642,8 @@
             <property name="html" >
              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;">Select an item for informations&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Select an item for informations&lt;/p>&lt;/body>&lt;/html></string>
             </property>
            </widget>
           </item>
@@ -660,6 +660,234 @@ p, li { white-space: pre-wrap; }
        <property name="spacing" >
         <number>3</number>
        </property>
+       <item row="2" column="0" colspan="2" >
+        <widget class="QSplitter" name="sDirsFiles" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QTreeView" name="tvDirs" />
+         <widget class="QListView" name="lvFiles" />
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QListWidget" name="lwValues" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>13</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QFrame" name="lVariables" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>5</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="cbVariables" >
+            <item>
+             <property name="text" >
+              <string>LIBS</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DEFINES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>INCLUDEPATH</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>RESOURCES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DEPENDPATH</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>VPATH</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>RESOURCES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DEF_FILE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>RC_FILE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>RES_FILE</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbAddValue" >
+            <property name="text" >
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbEditValue" >
+            <property name="text" >
+             <string>Edit</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbDeleteValue" >
+            <property name="text" >
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbClearValues" >
+            <property name="text" >
+             <string>Clear</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QLabel" name="lDir" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>5</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="palette" >
+          <palette>
+           <active>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </active>
+           <inactive>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </inactive>
+           <disabled>
+            <colorrole role="Base" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+            <colorrole role="Window" >
+             <brush brushstyle="SolidPattern" >
+              <color alpha="255" >
+               <red>255</red>
+               <green>255</green>
+               <blue>255</blue>
+              </color>
+             </brush>
+            </colorrole>
+           </disabled>
+          </palette>
+         </property>
+         <property name="font" >
+          <font>
+           <family>Small Fonts</family>
+           <pointsize>7</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="autoFillBackground" >
+          <bool>true</bool>
+         </property>
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="text" >
+          <string>/dir/model/path/</string>
+         </property>
+         <property name="textFormat" >
+          <enum>Qt::LogText</enum>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <property name="wordWrap" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0" colspan="2" >
         <widget class="QGroupBox" name="gbSettings" >
          <property name="sizePolicy" >
@@ -818,218 +1046,6 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
          </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2" >
-        <widget class="QLabel" name="lDir" >
-         <property name="palette" >
-          <palette>
-           <active>
-            <colorrole role="Base" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Base" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled>
-            <colorrole role="Base" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </disabled>
-          </palette>
-         </property>
-         <property name="font" >
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="autoFillBackground" >
-          <bool>true</bool>
-         </property>
-         <property name="frameShape" >
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="text" >
-          <string>/dir/model/path/</string>
-         </property>
-         <property name="textFormat" >
-          <enum>Qt::LogText</enum>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2" >
-        <widget class="QListView" name="lvDir" />
-       </item>
-       <item row="3" column="1" >
-        <widget class="QFrame" name="lVariables" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>4</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="frameShape" >
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="QComboBox" name="cbVariables" >
-            <item>
-             <property name="text" >
-              <string>LIBS</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>DEFINES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>INCLUDEPATH</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RESOURCES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>DEPENDPATH</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>VPATH</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RESOURCES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>DEF_FILE</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RC_FILE</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RES_FILE</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbAddValue" >
-            <property name="text" >
-             <string>Add</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbEditValue" >
-            <property name="text" >
-             <string>Edit</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbDeleteValue" >
-            <property name="text" >
-             <string>Delete</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbClearValues" >
-            <property name="text" >
-             <string>Clear</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QListWidget" name="lwValues" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>13</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
         </widget>
        </item>
       </layout>
@@ -1241,87 +1257,14 @@ p, li { white-space: pre-wrap; }
      </widget>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QListWidget" name="lwMenu" >
-     <property name="minimumSize" >
-      <size>
-       <width>105</width>
-       <height>0</height>
-      </size>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QDialogButtonBox" name="dbbButtons" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="maximumSize" >
-      <size>
-       <width>70</width>
-       <height>16777215</height>
-      </size>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
      </property>
-     <property name="verticalScrollBarPolicy" >
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy" >
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="autoScroll" >
-      <bool>false</bool>
-     </property>
-     <property name="iconSize" >
-      <size>
-       <width>64</width>
-       <height>64</height>
-      </size>
-     </property>
-     <property name="movement" >
-      <enum>QListView::Static</enum>
-     </property>
-     <property name="viewMode" >
-      <enum>QListView::IconMode</enum>
-     </property>
-     <property name="uniformItemSizes" >
-      <bool>true</bool>
-     </property>
-     <property name="currentRow" >
-      <number>0</number>
-     </property>
-     <item>
-      <property name="text" >
-       <string>Application</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Libraries</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Settings</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Advanced</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Translations</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="0" column="0" colspan="2" >
@@ -1410,14 +1353,87 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2" >
-    <widget class="QDialogButtonBox" name="dbbButtons" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+   <item row="1" column="0" >
+    <widget class="QListWidget" name="lwMenu" >
+     <property name="minimumSize" >
+      <size>
+       <width>105</width>
+       <height>0</height>
+      </size>
      </property>
-     <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     <property name="maximumSize" >
+      <size>
+       <width>70</width>
+       <height>16777215</height>
+      </size>
      </property>
+     <property name="verticalScrollBarPolicy" >
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy" >
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="autoScroll" >
+      <bool>false</bool>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="movement" >
+      <enum>QListView::Static</enum>
+     </property>
+     <property name="viewMode" >
+      <enum>QListView::IconMode</enum>
+     </property>
+     <property name="uniformItemSizes" >
+      <bool>true</bool>
+     </property>
+     <property name="currentRow" >
+      <number>0</number>
+     </property>
+     <item>
+      <property name="text" >
+       <string>Application</string>
+      </property>
+      <property name="icon" >
+       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Libraries</string>
+      </property>
+      <property name="icon" >
+       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Settings</string>
+      </property>
+      <property name="icon" >
+       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Advanced</string>
+      </property>
+      <property name="icon" >
+       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Translations</string>
+      </property>
+      <property name="icon" >
+       <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>

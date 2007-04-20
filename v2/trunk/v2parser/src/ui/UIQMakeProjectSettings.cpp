@@ -4,15 +4,30 @@
 #include "QMakeProjectItem.h"
 #include "UIItemSettings.h"
 //
+#include <QDirModel>
+#include <QHeaderView>
 #include <QFileDialog>
 #include <QInputDialog>
 //
 UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p )
-	: QDialog( p ), mProxy( 0 ), mProject( m )
+	: QDialog( p ), mProxy( new QMakeProjectScopesProxy( m ) ), mProject( m ), mDirs( new QDirModel( this ) ), mFiles( new QDirModel( this ) )
 {
 	setupUi( this );
 	//
-	mProxy = new QMakeProjectScopesProxy( mProject );
+	mDirs->setReadOnly( true);
+	mDirs->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
+	//mDirs->setSorting( QDir::Name );
+	tvDirs->setModel( mDirs );
+	for ( int i = 1; i < tvDirs->header()->count(); i++ )
+		tvDirs->setColumnHidden( i, true );
+	//
+	mFiles->setReadOnly( true);
+	mFiles->setFilter( QDir::Files );
+	//mFiles->setSorting( QDir::Name );
+	lvFiles->setModel( mFiles );
+	//
+	setDir( mDirs->index( 0, 0 ) );
+	//
 	tvScopes->setModel( mProxy );
 	lvContents->setModel( mProject );
 	setCurrentIndex( mProject->index( 0, 0 ) );
@@ -28,6 +43,9 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p
 	connect( cbScopes, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( cbOperators, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( cbVariables, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
+	connect( tvDirs, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
+	connect( tvDirs, SIGNAL( expanded( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
+	connect( tvDirs, SIGNAL( collapsed( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
 }
 //
 UIQMakeProjectSettings::~UIQMakeProjectSettings()
@@ -251,6 +269,14 @@ void UIQMakeProjectSettings::loadSettings()
 	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
 }
 //
+void UIQMakeProjectSettings::setDir( const QModelIndex& i )
+{
+	if ( tvDirs->currentIndex() != i )
+		tvDirs->setCurrentIndex( i );
+	lDir->setText( mDirs->filePath( i ) );
+	lvFiles->setRootIndex( mFiles->index( lDir->text() ) );
+}
+//
 void UIQMakeProjectSettings::tb_clicked()
 {
 	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
@@ -284,8 +310,8 @@ void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWi
 void UIQMakeProjectSettings::cb_highlighted( int )
 {
 	QString k = QString( "%1|%2" ).arg( cbScopes->currentText(), cbOperators->currentText() );
-	mSettings[ QString( "%1|DESTDIR" ).arg( k ) ] = QStringList() << leOutputPath->text();
-	mSettings[ QString( "%1|TARGET" ).arg( k ) ] = QStringList() << leOutputName->text();
+	mSettings[ QString( "%1|DESTDIR" ).arg( k ) ] = QStringList( leOutputPath->text() );
+	mSettings[ QString( "%1|TARGET" ).arg( k ) ] = QStringList( leOutputName->text() );
 	QStringList l;
 	foreach ( QListWidgetItem* it, lwValues->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 		l << it->text();
