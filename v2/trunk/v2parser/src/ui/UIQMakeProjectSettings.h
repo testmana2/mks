@@ -8,7 +8,7 @@
 #include <QHash>
 //
 class QMakeProjectScopesProxy;
-class QMakeProjectModel;
+class QMakeProjectItem;
 class QDirModel;
 //
 struct QtItem
@@ -30,32 +30,33 @@ class UIQMakeProjectSettings : public QDialog, public Ui::UIQMakeProjectSettings
 	Q_OBJECT
 	//
 public:
-	static void execute( QMakeProjectModel*, QWidget* = QApplication::activeWindow() );
+	static void execute( QMakeProjectItem*, QWidget* = QApplication::activeWindow() );
 	~UIQMakeProjectSettings();
 	QModelIndex currentIndex();
 	void setCurrentIndex( const QModelIndex& );
 	//
 protected:
-	UIQMakeProjectSettings( QMakeProjectModel*, QWidget* = 0 );
+	UIQMakeProjectSettings( QMakeProjectItem*, QWidget* = 0 );
 	//
 	QMakeProjectScopesProxy* mProxy;
-	QMakeProjectModel* mProject;
+	QMakeProjectItem* mProject;
 	QtItemList mModules;
 	QtItemList mConfigs;
 	QtSettings mSettings;
 	QDirModel* mDirs;
-	QDirModel* mFiles;
 	//
 protected slots:
 	void loadModules();
 	void loadConfigs();
 	void loadSettings();
+	void setDir( const QString& );
 	void setDir( const QModelIndex& );
 	void tb_clicked();
 	void lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
 	void cb_highlighted( int );
 	void on_cbScopes_currentIndexChanged( const QString& );
 	void on_cbOperators_currentIndexChanged( const QString& );
+	void on_lwFiles_itemDoubleClicked( QListWidgetItem* );
 	void on_cbVariables_currentIndexChanged( const QString& );
 	void on_pbAddValue_clicked();
 	void on_pbEditValue_clicked();

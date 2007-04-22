@@ -49,5 +49,6 @@ bool UIProjectsViewer::openProject( const QString& s )
 //
 void UIProjectsViewer::on_pbSettings_clicked()
 {
-	UIQMakeProjectSettings::execute( mModel, this );
+	if ( mModel->isOpen() )
+		UIQMakeProjectSettings::execute( mModel->project( mProxy->mapToSource( tvProject->currentIndex() ) ), this );
 }

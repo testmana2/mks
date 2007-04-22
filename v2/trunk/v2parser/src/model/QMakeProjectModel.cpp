@@ -30,6 +30,16 @@ bool QMakeProjectModel::isOpen() const
 	return mOpen;
 }
 //
+QMakeProjectItem* QMakeProjectModel::project( const QModelIndex& i )
+{
+	if ( !i.isValid() )
+		return isOpen() ? mRootItem : 0;
+	QMakeProjectItem* it = static_cast<QMakeProjectItem*>( i.internalPointer() );
+	while ( it && it->data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ProjectType )
+		it = it->parent();
+	return it;
+}
+//
 QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const
 {
 	QMakeProjectItem* pItem = p.isValid() ? static_cast<QMakeProjectItem*>( p.internalPointer() ) : mRootItem;

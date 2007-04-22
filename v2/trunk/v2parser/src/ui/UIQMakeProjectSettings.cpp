@@ -4,33 +4,33 @@
 #include "QMakeProjectItem.h"
 #include "UIItemSettings.h"
 //
+#include <QCompleter>
 #include <QDirModel>
 #include <QHeaderView>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <QFileIconProvider>
 //
-UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p )
-	: QDialog( p ), mProxy( new QMakeProjectScopesProxy( m ) ), mProject( m ), mDirs( new QDirModel( this ) ), mFiles( new QDirModel( this ) )
+UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p )
+	: QDialog( p ), mProxy( new QMakeProjectScopesProxy( m->model() ) ), mProject( m ), mDirs( new QDirModel( this ) )
 {
 	setupUi( this );
+	setWindowTitle( QString( "Project Settings - %1" ).arg( m->data().toString() ) );
 	//
 	mDirs->setReadOnly( true);
 	mDirs->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
-	//mDirs->setSorting( QDir::Name );
+	mDirs->setSorting( QDir::Name );
+	leDir->setCompleter( new QCompleter( mDirs, leDir ) );
 	tvDirs->setModel( mDirs );
 	for ( int i = 1; i < tvDirs->header()->count(); i++ )
 		tvDirs->setColumnHidden( i, true );
 	//
-	mFiles->setReadOnly( true);
-	mFiles->setFilter( QDir::Files );
-	//mFiles->setSorting( QDir::Name );
-	lvFiles->setModel( mFiles );
-	//
 	setDir( mDirs->index( 0, 0 ) );
 	//
 	tvScopes->setModel( mProxy );
-	lvContents->setModel( mProject );
-	setCurrentIndex( mProject->index( 0, 0 ) );
+	tvScopes->setRootIndex( mProxy->mapFromSource( mProject->index().parent().isValid() ? mProject->index() : QModelIndex() ) );
+	lvContents->setModel( mProject->model() );
+	setCurrentIndex( mProject->index() );
 	//
 	loadModules();
 	loadConfigs();
@@ -43,9 +43,8 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectModel* m, QWidget* p
 	connect( cbScopes, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( cbOperators, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( cbVariables, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
+	connect( leDir, SIGNAL( textChanged( const QString& ) ), this, SLOT( setDir( const QString& ) ) );
 	connect( tvDirs, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
-	connect( tvDirs, SIGNAL( expanded( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
-	connect( tvDirs, SIGNAL( collapsed( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
 }
 //
 UIQMakeProjectSettings::~UIQMakeProjectSettings()
@@ -57,7 +56,7 @@ UIQMakeProjectSettings::~UIQMakeProjectSettings()
 	mConfigs.clear();
 }
 //
-void UIQMakeProjectSettings::execute( QMakeProjectModel* m, QWidget* p )
+void UIQMakeProjectSettings::execute( QMakeProjectItem* m, QWidget* p )
 {
 	if ( !m )
 		return;
@@ -188,13 +187,13 @@ void UIQMakeProjectSettings::loadSettings()
 	QString c, s;
 	QStringList l;
 	// Application
-	leTitle->setText( mProject->getStringValues( "APP_TITLE" ) );
-	leIcon->setText( mProject->getStringValues( "APP_ICON" ) );
+	leTitle->setText( mProject->model()->getStringValues( "APP_TITLE" ) );
+	leIcon->setText( mProject->model()->getStringValues( "APP_ICON" ) );
 	if ( !leIcon->text().isEmpty() )
 		lPixmap->setPixmap( QPixmap( leIcon->text() ) );
-	leHelpFile->setText( mProject->getStringValues( "APP_HELP_FILE" ) );
-	leAuthor->setText( mProject->getStringValues( "APP_AUTHOR" ) );
-	s = mProject->getStringValues( "VERSION" );
+	leHelpFile->setText( mProject->model()->getStringValues( "APP_HELP_FILE" ) );
+	leAuthor->setText( mProject->model()->getStringValues( "APP_AUTHOR" ) );
+	s = mProject->model()->getStringValues( "VERSION" );
 	if ( !s.isEmpty() )
 	{
 		gbVersion->setChecked( true );
@@ -203,17 +202,17 @@ void UIQMakeProjectSettings::loadSettings()
 		sbMinor->setValue( l.value( 1 ).toInt() );
 		sbRelease->setValue( l.value( 2 ).toInt() );
 		sbBuild->setValue( l.value( 3 ).toInt() );
-		cbBuildAutoIncrement->setChecked( mProject->getStringValues( "APP_AUTO_INCREMENT" ).toInt() );
+		cbBuildAutoIncrement->setChecked( mProject->model()->getStringValues( "APP_AUTO_INCREMENT" ).toInt() );
 	}
-	s = mProject->getStringValues( "TEMPLATE" );
+	s = mProject->model()->getStringValues( "TEMPLATE" );
 	if ( cbTemplate->findText( s, Qt::MatchExactly ) == -1 )
 		cbTemplate->addItem( s );
 	cbTemplate->setCurrentIndex( cbTemplate->findText( s, Qt::MatchExactly ) );
-	s = mProject->getStringValues( "LANGUAGE" );
+	s = mProject->model()->getStringValues( "LANGUAGE" );
 	if ( cbLanguage->findText( s, Qt::MatchExactly ) == -1 )
 		cbLanguage->addItem( s );
 	cbLanguage->setCurrentIndex( cbLanguage->findText( s, Qt::MatchExactly ) );
-	c = mProject->getStringValues( "CONFIG", "+=" );
+	c = mProject->model()->getStringValues( "CONFIG", "+=" );
 	if ( c.indexOf( "debug_and_release", 0, Qt::CaseInsensitive ) != -1 )
 		rbDebugRelease->setChecked( true );
 	else if ( c.indexOf( "debug", 0, Qt::CaseInsensitive ) != -1 )
@@ -242,7 +241,7 @@ void UIQMakeProjectSettings::loadSettings()
 	c.remove( "ordered", Qt::CaseInsensitive );
 	// Libraries
 	gbQtModules->setChecked( c.contains( "qt", Qt::CaseInsensitive ) );
-	s = mProject->getStringValues( "QT" );
+	s = mProject->model()->getStringValues( "QT" );
 	foreach ( QListWidgetItem* it, lwQtModules->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 	{
 		if ( it->data( QtItem::VariableRole ).toString().toLower() == "config" )
@@ -269,12 +268,25 @@ void UIQMakeProjectSettings::loadSettings()
 	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
 }
 //
+void UIQMakeProjectSettings::setDir( const QString& s )
+{
+	if ( QFile::exists( s ) )
+		setDir( mDirs->index( s ) );
+}
+//
 void UIQMakeProjectSettings::setDir( const QModelIndex& i )
 {
 	if ( tvDirs->currentIndex() != i )
 		tvDirs->setCurrentIndex( i );
-	lDir->setText( mDirs->filePath( i ) );
-	lvFiles->setRootIndex( mFiles->index( lDir->text() ) );
+	QString s = leDir->text();
+	if ( s.endsWith( "/" ) )
+		s.chop( 1 );
+	if ( s != mDirs->filePath( i ) )
+		leDir->setText( mDirs->filePath( i ) );
+	lwFiles->clear();
+	QDir d( leDir->text() );
+	foreach ( QString s, d.entryList( QDir::Files, QDir::Name ) )
+		lwFiles->addItem( new QListWidgetItem( mDirs->iconProvider()->icon( QFileIconProvider::File ), s ) );
 }
 //
 void UIQMakeProjectSettings::tb_clicked()
@@ -330,15 +342,92 @@ void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& 
 	if ( mSettings.contains( QString( "%1|DESTDIR" ).arg( k ) ) )
 		leOutputPath->setText( mSettings[ QString( "%1|DESTDIR" ).arg( k ) ].join( " " ) );
 	else // got data
-		leOutputPath->setText( mProject->getStringValues( "DESTDIR", s, cbScopes->currentText() ) );
+		leOutputPath->setText( mProject->model()->getStringValues( "DESTDIR", s, cbScopes->currentText() ) );
 	// set backup data if available
 	if ( mSettings.contains( QString( "%1|TARGET" ).arg( k ) ) )
 		leOutputName->setText( mSettings[ QString( "%1|TARGET" ).arg( k ) ].join( " " ) );
 	else // got data
-		leOutputName->setText( mProject->getStringValues( "TARGET", s, cbScopes->currentText() ) );
-	// load values
-	// load variables
+		leOutputName->setText( mProject->model()->getStringValues( "TARGET", s, cbScopes->currentText() ) );
+	// load variables values
 	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
+}
+//
+void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
+{
+	if ( !i )
+		return;
+	QFileInfo f( leDir->text().append( "/" ).append( i->text() ) );
+	QString s = f.completeSuffix().toLower();
+	QStringList libraries = QStringList() << "lib" << "dll" << "a" << "la" << "so";
+	QString v = cbVariables->currentText().toLower();
+	qWarning( "v: %s, s: %s", qPrintable( v ), qPrintable( s ) );
+	if ( v == "libs" && ( libraries.contains( s ) || s.startsWith( "so." ) ) )
+	{
+		// path // TODO: relative to project path
+		s = f.path();
+		if ( s.contains( " " ) )
+			s.prepend( '"' ).append( '"' );
+		s.prepend( "-L" );
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+		// file
+		s = f.baseName();
+		if ( s.startsWith( "lib", Qt::CaseInsensitive ) )
+			s.remove( 0, 3 );
+		if ( s.contains( " " ) )
+			s.prepend( '"' ).append( '"' );
+		s.prepend( "-l" );
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+	}
+	else if ( v == "defines" )
+	{
+		s = f.baseName();
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s.toUpper() );
+	}
+	else if ( v == "translations" && s == "ts" )
+	{
+		// TODO: relative to project
+		s = f.filePath();
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+	}
+	else if ( v.contains( "path" ) )
+	{
+		// TODO: relative to project
+		s = f.canonicalPath();
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+	}
+	else if ( v == "resources" && s == "qrc" )
+	{
+		// TODO: relative to project
+		s = f.filePath();
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+	}
+	else if ( v == "def_file" && s == "def" )
+	{
+		// TODO: relative to project
+		s = f.filePath();
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+	}
+	else if ( v == "rc_file" && s == "rc" )
+	{
+		// TODO: relative to project
+		s = f.filePath();
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+	}
+	else if ( v == "res_file" && s == "res" )
+	{
+		// TODO: relative to project
+		s = f.filePath();
+		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+			lwValues->addItem( s );
+	}
 }
 //
 void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& s )
@@ -348,7 +437,7 @@ void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& 
 	if ( mSettings.contains( k ) )
 		lwValues->addItems( mSettings[ k ] );
 	else
-		lwValues->addItems( mProject->getListValues( s, cbOperators->currentText(), cbScopes->currentText() ) );
+		lwValues->addItems( mProject->model()->getListValues( s, cbOperators->currentText(), cbScopes->currentText() ) );
 }
 //
 void UIQMakeProjectSettings::on_pbAddValue_clicked()
@@ -386,21 +475,21 @@ void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 //
 void UIQMakeProjectSettings::on_tbAdd_clicked()
 {
-	UIItemSettings::edit( mProject, 0, this )->exec();
+	UIItemSettings::edit( mProject->model(), 0, this )->exec();
 }
 //
 void UIQMakeProjectSettings::on_tbEdit_clicked()
 {
 	QModelIndex i = currentIndex();
 	if ( i.isValid() )
-		UIItemSettings::edit( mProject, static_cast<QMakeProjectItem*>( mProject->itemFromIndex( i ) ), this )->exec();
+		UIItemSettings::edit( mProject->model(), static_cast<QMakeProjectItem*>( mProject->model()->itemFromIndex( i ) ), this )->exec();
 }
 //
 void UIQMakeProjectSettings::on_tbRemove_clicked()
 {
 	QModelIndex i = currentIndex();
 	if ( i.isValid() )
-		mProject->QAbstractItemModel::removeRow( i.row(), i.parent() );
+		mProject->model()->QAbstractItemModel::removeRow( i.row(), i.parent() );
 }
 //
 void UIQMakeProjectSettings::on_tbClear_clicked()
@@ -409,8 +498,8 @@ void UIQMakeProjectSettings::on_tbClear_clicked()
 	if ( i.isValid() )
 	{
 		i = i.parent();
-		while ( mProject->rowCount( i ) )
-			mProject->QAbstractItemModel::removeRow( 0, i );
+		while ( mProject->model()->rowCount( i ) )
+			mProject->model()->QAbstractItemModel::removeRow( 0, i );
 	}
 }
 //
@@ -420,7 +509,7 @@ void UIQMakeProjectSettings::on_tbUp_clicked()
 	QModelIndex i = currentIndex();
 	// check if valid to move
 	if ( i.isValid() )
-		if ( mProject->itemFromIndex( i )->moveUp() )
+		if ( mProject->model()->itemFromIndex( i )->moveUp() )
 			setCurrentIndex( i.sibling( i.row() -1, i.column() ) );
 }
 //
@@ -430,7 +519,7 @@ void UIQMakeProjectSettings::on_tbDown_clicked()
 	QModelIndex i = currentIndex();
 	// check if valid to move
 	if ( i.isValid() )
-		if ( mProject->itemFromIndex( i )->moveDown() )
+		if ( mProject->model()->itemFromIndex( i )->moveDown() )
 			setCurrentIndex( i.sibling( i.row() +1, i.column() ) );
 }
 //

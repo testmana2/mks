@@ -17,6 +17,7 @@ public:
 	//
 	bool openProject( const QString& );
 	bool isOpen() const;
+	QMakeProjectItem* project( const QModelIndex& );
 	virtual QModelIndex index( int, int, const QModelIndex& = QModelIndex() ) const;
 	virtual QModelIndex parent( const QModelIndex& ) const;
 	virtual int rowCount( const QModelIndex& = QModelIndex() ) const;

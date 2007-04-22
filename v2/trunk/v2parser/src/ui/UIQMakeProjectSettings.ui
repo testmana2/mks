@@ -30,7 +30,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="wApplication" >
       <layout class="QVBoxLayout" >
@@ -144,7 +144,7 @@
              <string>Author :</string>
             </property>
             <property name="buddy" >
-             <cstring>toolButton_3</cstring>
+             <cstring>leAuthor</cstring>
             </property>
            </widget>
           </item>
@@ -373,7 +373,7 @@
            </layout>
           </item>
           <item row="1" column="1" >
-           <widget class="QFrame" name="frame_2" >
+           <widget class="QFrame" name="fWarn" >
             <property name="sizePolicy" >
              <sizepolicy>
               <hsizetype>4</hsizetype>
@@ -423,7 +423,7 @@
            </widget>
           </item>
           <item row="1" column="2" >
-           <widget class="QFrame" name="frame_3" >
+           <widget class="QFrame" name="fBuildAll" >
             <property name="sizePolicy" >
              <sizepolicy>
               <hsizetype>4</hsizetype>
@@ -642,8 +642,8 @@
             <property name="html" >
              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Select an item for informations&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;">Select an item for informations&lt;/p>&lt;/body>&lt;/html></string>
             </property>
            </widget>
           </item>
@@ -660,234 +660,6 @@ p, li { white-space: pre-wrap; }
        <property name="spacing" >
         <number>3</number>
        </property>
-       <item row="2" column="0" colspan="2" >
-        <widget class="QSplitter" name="sDirsFiles" >
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <widget class="QTreeView" name="tvDirs" />
-         <widget class="QListView" name="lvFiles" />
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QListWidget" name="lwValues" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>13</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" >
-        <widget class="QFrame" name="lVariables" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="frameShape" >
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="QComboBox" name="cbVariables" >
-            <item>
-             <property name="text" >
-              <string>LIBS</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>DEFINES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>INCLUDEPATH</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RESOURCES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>DEPENDPATH</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>VPATH</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RESOURCES</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>DEF_FILE</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RC_FILE</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>RES_FILE</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbAddValue" >
-            <property name="text" >
-             <string>Add</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbEditValue" >
-            <property name="text" >
-             <string>Edit</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbDeleteValue" >
-            <property name="text" >
-             <string>Delete</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbClearValues" >
-            <property name="text" >
-             <string>Clear</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2" >
-        <widget class="QLabel" name="lDir" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="palette" >
-          <palette>
-           <active>
-            <colorrole role="Base" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </active>
-           <inactive>
-            <colorrole role="Base" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </inactive>
-           <disabled>
-            <colorrole role="Base" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-            <colorrole role="Window" >
-             <brush brushstyle="SolidPattern" >
-              <color alpha="255" >
-               <red>255</red>
-               <green>255</green>
-               <blue>255</blue>
-              </color>
-             </brush>
-            </colorrole>
-           </disabled>
-          </palette>
-         </property>
-         <property name="font" >
-          <font>
-           <family>Small Fonts</family>
-           <pointsize>7</pointsize>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="autoFillBackground" >
-          <bool>true</bool>
-         </property>
-         <property name="frameShape" >
-          <enum>QFrame::StyledPanel</enum>
-         </property>
-         <property name="text" >
-          <string>/dir/model/path/</string>
-         </property>
-         <property name="textFormat" >
-          <enum>Qt::LogText</enum>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <property name="wordWrap" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0" colspan="2" >
         <widget class="QGroupBox" name="gbSettings" >
          <property name="sizePolicy" >
@@ -1044,6 +816,188 @@ p, li { white-space: pre-wrap; }
              </property>
             </item>
            </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2" >
+        <widget class="QSplitter" name="sDirsFiles" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <widget class="QTreeView" name="tvDirs" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>7</hsizetype>
+            <vsizetype>7</vsizetype>
+            <horstretch>40</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+         <widget class="QListWidget" name="lwFiles" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>7</hsizetype>
+            <vsizetype>7</vsizetype>
+            <horstretch>60</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QLineEdit" name="leDir" />
+       </item>
+       <item row="3" column="1" >
+        <widget class="QFrame" name="lVariables" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>5</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="frameShape" >
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="cbVariables" >
+            <item>
+             <property name="text" >
+              <string>LIBS</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DEFINES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>TRANSLATIONS</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>INCLUDEPATH</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DEPENDPATH</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>VPATH</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>RESOURCES</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>DEF_FILE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>RC_FILE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>RES_FILE</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbAddValue" >
+            <property name="text" >
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbEditValue" >
+            <property name="text" >
+             <string>Edit</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbDeleteValue" >
+            <property name="text" >
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbClearValues" >
+            <property name="text" >
+             <string>Clear</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QListWidget" name="lwValues" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>13</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="wTranslations" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>3</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbTranslations" >
+         <property name="title" >
+          <string>Translations</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="lTranslations" >
+            <property name="text" >
+             <string>Tick the language you would like to add to your project</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QListWidget" name="lwTranslations" />
           </item>
          </layout>
         </widget>
@@ -1220,41 +1174,6 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="wTranslations" >
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>3</number>
-       </property>
-       <item>
-        <widget class="QGroupBox" name="gbTranslations" >
-         <property name="title" >
-          <string>Translations</string>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="QLabel" name="lTranslations" >
-            <property name="text" >
-             <string>Tick the language you would like to add to your project</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QListWidget" name="lwTranslations" />
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
    <item row="2" column="0" colspan="2" >
@@ -1382,17 +1301,17 @@ p, li { white-space: pre-wrap; }
        <height>64</height>
       </size>
      </property>
+     <property name="textElideMode" >
+      <enum>Qt::ElideNone</enum>
+     </property>
      <property name="movement" >
       <enum>QListView::Static</enum>
      </property>
+     <property name="flow" >
+      <enum>QListView::TopToBottom</enum>
+     </property>
      <property name="viewMode" >
       <enum>QListView::IconMode</enum>
-     </property>
-     <property name="uniformItemSizes" >
-      <bool>true</bool>
-     </property>
-     <property name="currentRow" >
-      <number>0</number>
      </property>
      <item>
       <property name="text" >
@@ -1420,7 +1339,7 @@ p, li { white-space: pre-wrap; }
      </item>
      <item>
       <property name="text" >
-       <string>Advanced</string>
+       <string>Translations</string>
       </property>
       <property name="icon" >
        <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
@@ -1428,7 +1347,7 @@ p, li { white-space: pre-wrap; }
      </item>
      <item>
       <property name="text" >
-       <string>Translations</string>
+       <string>Advanced</string>
       </property>
       <property name="icon" >
        <iconset resource="../resources/resources.qrc" >:/Images/images/project.png</iconset>
