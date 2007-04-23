@@ -43,7 +43,8 @@ OPENEDFILES	= src/item/QMakeProjectItem.h \
 	src/model/QMakeProjectParser.h \
 	src/model/QMakeProjectParser.cpp \
 	src/ui/UIProjectsViewer.h \
-	src/ui/UIProjectsViewer.cpp
+	src/ui/UIProjectsViewer.cpp \
+	src/main.cpp
 
 HEADERS	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \

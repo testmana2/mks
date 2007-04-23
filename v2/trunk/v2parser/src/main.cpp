@@ -9,7 +9,7 @@ int main( int argc, char ** argv )
 #ifndef Q_WS_WIN
 	UIProjectsViewer::self()->openProject( "/home/pasnox/Documents/Development/Qt4/monkeyrepos/v2/trunk/parser/example/demos.pro" );
 #else
-	UIProjectsViewer::self()->openProject( "E:/Filipe/repository/v2/trunk/parser/example/demos.pro" );
+	UIProjectsViewer::self()->openProject( "E:/Filipe/repository/v2/trunk/v2parser/v2parser.pro" );
 #endif
 	UIProjectsViewer::self()->show();
 	//

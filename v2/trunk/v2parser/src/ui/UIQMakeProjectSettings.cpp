@@ -40,6 +40,9 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	// connections
 	connect( tbIcon, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
 	connect( tbHelpFile, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
+	foreach ( QSpinBox* sb, gbVersion->findChildren<QSpinBox*>() )
+		if ( sb != sbBuild )
+			connect( sb, SIGNAL( valueChanged( int ) ), this, SLOT( sb_valueChanged( int ) ) );
 	connect( lwQtModules, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
 	connect( lwCompilerFlags, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
 	connect( cbScopes, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
@@ -101,6 +104,26 @@ void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 	}
 }
 //
+QString UIQMakeProjectSettings::projectName() const
+{
+	return mProject->model()->projectName( mProject->index() );
+}
+//
+QString UIQMakeProjectSettings::projectPath() const
+{
+	return mProject->model()->projectPath( mProject->index() );
+}
+//
+QString UIQMakeProjectSettings::getFilePath( const QString& s )
+{
+	return mProject->model()->getFilePath( s, mProject->index() );
+}
+//
+QString UIQMakeProjectSettings::getRelativeFilePath( const QString& s )
+{
+	return mProject->model()->getRelativeFilePath( s, mProject->index() );
+}
+//
 void UIQMakeProjectSettings::loadModules()
 {
 	// load modules informations
@@ -126,7 +149,7 @@ void UIQMakeProjectSettings::loadModules()
 		QListWidgetItem* it = new QListWidgetItem( i->Text, lwQtModules );
 		it->setData( QtItem::ValueRole, i->Value );
 		it->setData( QtItem::VariableRole, i->Variable );
-		it->setToolTip( i->Description );
+		it->setData( QtItem::HelpRole, i->Description );
 		it->setCheckState( Qt::Unchecked );
 	}
 }
@@ -159,7 +182,7 @@ void UIQMakeProjectSettings::loadConfigs()
 	mConfigs << new QtItem( "console", "console", "CONFIG", "The target is a Win32 console application (app only). The proper include paths, compiler flags and libraries will automatically be added to the project." );
 	mConfigs << new QtItem( "flat", "flat", "CONFIG", "When using the vcapp template this will put all the source files into the source group and the header files into the header group regardless of what directory they reside in. Turning this option off will group the files within the source/header group depending on the directory they reside. This is turned on by default." );
 	mConfigs << new QtItem( "embed_manifest_dll", "embed_manifest_dll", "CONFIG", "Embeds a manifest file in the DLL created as part of an application/library project." );
-	mConfigs << new QtItem( "ACTIVEQT ONLY", QString::null, QString::null, "No help available" );
+	mConfigs << new QtItem( "ACTIVEQT ONLY", QString::null, QString::null, "Option for Windows/Active Qt only" );
 	mConfigs << new QtItem( "qaxserver_no_postlink", "qaxserver_no_postlink", "CONFIG", "No help available" );
 	// fill lwCompilerFlags
 	QFont fo( lwCompilerFlags->font() );
@@ -170,7 +193,7 @@ void UIQMakeProjectSettings::loadConfigs()
 		QListWidgetItem* it = new QListWidgetItem( i->Text, lwCompilerFlags );
 		it->setData( QtItem::ValueRole, i->Value );
 		it->setData( QtItem::VariableRole, i->Variable );
-		it->setToolTip( i->Description );
+		it->setData( QtItem::HelpRole, i->Description );
 		if ( it->text().toLower().contains( "only" ) )
 		{
 			it->setFlags( 0 );
@@ -186,6 +209,16 @@ void UIQMakeProjectSettings::loadConfigs()
 //
 void UIQMakeProjectSettings::loadSettings()
 {
+	// load configs informations
+	// TODO: need to be add to qmake plugin properties, so user can add new if new qt release go out
+	QStringList list;
+	list = QStringList() << QString::null << "win32" << "unix" << "mac" ;
+	foreach ( QString s, list )
+		cbScopes->addItem( s );
+	list = QStringList() << "=" << "-=" << "+=" << "*=" << "~=";
+	foreach ( QString s, list )
+		cbOperators->addItem( s );
+	//
 	QString c, s;
 	QStringList l;
 	// Application
@@ -313,19 +346,24 @@ void UIQMakeProjectSettings::tb_clicked()
 	// Application
 	if ( tb == tbIcon )
 	{
-		s = QFileDialog::getOpenFileName( this, tr( "Choose your application icon" ), leIcon->text(), tr( "Images (*.png *.xpm *.jpg *.ico)" ) );
+		s = QFileDialog::getOpenFileName( this, tr( "Choose your application icon" ), getFilePath( leIcon->text() ), tr( "Images (*.png *.xpm *.jpg *.ico)" ) );
 		if ( !s.isEmpty() )
 		{
-			leIcon->setText( s );
+			leIcon->setText( getRelativeFilePath( s ) );
 			lPixmap->setPixmap( QPixmap( s ) );
 		}
 	}
 	else if ( tb == tbHelpFile )
 	{
-		s = QFileDialog::getOpenFileName( this, tr( "Choose your application help root file" ), leHelpFile->text(), tr( "HTMLs (*.htm *.html)" ) );
+		s = QFileDialog::getOpenFileName( this, tr( "Choose your application help root file" ), getFilePath( leHelpFile->text() ), tr( "HTMLs (*.htm *.html)" ) );
 		if ( !s.isEmpty() )
-			leHelpFile->setText( s );
+			leHelpFile->setText( getRelativeFilePath( s ) );
 	}
+}
+//
+void UIQMakeProjectSettings::sb_valueChanged( int i )
+{
+	sbBuild->setValue( 0 );
 }
 //
 void UIQMakeProjectSettings::on_cbTemplate_currentIndexChanged( const QString& s )
@@ -336,7 +374,7 @@ void UIQMakeProjectSettings::on_cbTemplate_currentIndexChanged( const QString& s
 void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWidgetItem* )
 {
 	if ( it )
-		tbInformations->setHtml( it->toolTip() );
+		tbInformations->setHtml( it->data( QtItem::HelpRole ).toString() );
 }
 //
 void UIQMakeProjectSettings::cb_highlighted( int )
@@ -380,11 +418,9 @@ void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 	QString s = f.completeSuffix().toLower();
 	QStringList libraries = QStringList() << "lib" << "dll" << "a" << "la" << "so" << "dylib";
 	QString v = cbVariables->currentText().toLower();
-	qWarning( "v: %s, s: %s", qPrintable( v ), qPrintable( s ) );
 	if ( v == "libs" && ( libraries.contains( s ) || s.startsWith( "so." ) ) )
 	{
-		// path // TODO: relative to project path
-		s = f.path();
+		s = getRelativeFilePath( f.path() );
 		if ( s.contains( " " ) )
 			s.prepend( '"' ).append( '"' );
 		s.prepend( "-L" );
@@ -408,43 +444,37 @@ void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 	}
 	else if ( v == "translations" && s == "ts" )
 	{
-		// TODO: relative to project
-		s = f.filePath();
+		s = getRelativeFilePath( f.filePath() );
 		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
 			lwValues->addItem( s );
 	}
 	else if ( v.contains( "path" ) )
 	{
-		// TODO: relative to project
-		s = f.canonicalPath();
+		s = getRelativeFilePath( f.path() );
 		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
 			lwValues->addItem( s );
 	}
 	else if ( v == "resources" && s == "qrc" )
 	{
-		// TODO: relative to project
-		s = f.filePath();
+		s = getRelativeFilePath( f.filePath() );
 		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
 			lwValues->addItem( s );
 	}
 	else if ( v == "def_file" && s == "def" )
 	{
-		// TODO: relative to project
-		s = f.filePath();
+		s = getRelativeFilePath( f.filePath() );
 		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
 			lwValues->addItem( s );
 	}
 	else if ( v == "rc_file" && s == "rc" )
 	{
-		// TODO: relative to project
-		s = f.filePath();
+		s = getRelativeFilePath( f.filePath() );
 		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
 			lwValues->addItem( s );
 	}
 	else if ( v == "res_file" && s == "res" )
 	{
-		// TODO: relative to project
-		s = f.filePath();
+		s = getRelativeFilePath( f.filePath() );
 		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
 			lwValues->addItem( s );
 	}

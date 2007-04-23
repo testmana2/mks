@@ -4,6 +4,8 @@
 #include "QMakeProjectParser.h"
 ///
 #include <QPixmap>
+#include <QFileInfo>
+#include <QDir>
 //
 QMakeProjectModel::QMakeProjectModel( const QString& s, QObject* p )
 	: QAbstractItemModel( p ), mOpen( false ), mRootItem( new QMakeProjectItem( QMakeProjectItem::RootType ) )
@@ -38,6 +40,36 @@ QMakeProjectItem* QMakeProjectModel::project( const QModelIndex& i )
 	while ( it && it->data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ProjectType )
 		it = it->parent();
 	return it;
+}
+//
+QString QMakeProjectModel::projectName( const QModelIndex& i ) const
+{
+	return i.isValid() && i.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ProjectType ? i.data().toString() : QString();
+}
+//
+QString QMakeProjectModel::projectPath( const QModelIndex& i ) const
+{
+	return i.isValid() && i.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ProjectType ? QFileInfo( i.data( QMakeProjectItem::AbsoluteFilePathRole ).toString() ).path() : QString();
+}
+//
+QString QMakeProjectModel::getFilePath( const QString& s, const QModelIndex& i )
+{
+	QString p = s;
+	QFileInfo f( p );
+	if ( f.exists() && f.isRelative() )
+		p = projectPath( i ).append( "/" ).append( s );
+	else if ( !f.exists() || p.isEmpty() )
+		p = projectPath( i );
+	return p;
+}
+//
+QString QMakeProjectModel::getRelativeFilePath( const QString& s, const QModelIndex& i )
+{
+	if( s.isEmpty() || !i.isValid() )
+		return s;
+	if ( QDir::isRelativePath( s ) )
+		return s;
+	return QDir( projectPath( i ) ).relativeFilePath( s );
 }
 //
 QModelIndex QMakeProjectModel::index( int r, int c, const QModelIndex& p ) const

@@ -13,7 +13,7 @@ class QDirModel;
 //
 struct QtItem
 {
-	enum Roles { ValueRole = Qt::UserRole, VariableRole };
+	enum Roles { ValueRole = Qt::UserRole, VariableRole, HelpRole };
 	QtItem( const QString& t, const QString& v, const QString& s, const QString& d = QString::null )
 		: Text( t ), Value( v ), Variable( s ), Description( d )
 	{}
@@ -34,6 +34,10 @@ public:
 	~UIQMakeProjectSettings();
 	QModelIndex currentIndex();
 	void setCurrentIndex( const QModelIndex& );
+	QString projectName() const;
+	QString projectPath() const;
+	QString getFilePath( const QString& );
+	QString getRelativeFilePath( const QString& );
 	//
 protected:
 	UIQMakeProjectSettings( QMakeProjectItem*, QWidget* = 0 );
@@ -53,6 +57,7 @@ protected slots:
 	void setDir( const QString& );
 	void setDir( const QModelIndex& );
 	void tb_clicked();
+	void sb_valueChanged( int );
 	void on_cbTemplate_currentIndexChanged( const QString& );
 	void lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
 	void cb_highlighted( int );

@@ -18,6 +18,10 @@ public:
 	bool openProject( const QString& );
 	bool isOpen() const;
 	QMakeProjectItem* project( const QModelIndex& );
+	QString projectName( const QModelIndex& ) const;
+	QString projectPath( const QModelIndex& ) const;
+	QString getFilePath( const QString&, const QModelIndex& );
+	QString getRelativeFilePath( const QString&, const QModelIndex& );
 	virtual QModelIndex index( int, int, const QModelIndex& = QModelIndex() ) const;
 	virtual QModelIndex parent( const QModelIndex& ) const;
 	virtual int rowCount( const QModelIndex& = QModelIndex() ) const;
