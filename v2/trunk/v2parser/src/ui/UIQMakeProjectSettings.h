@@ -49,9 +49,11 @@ protected slots:
 	void loadModules();
 	void loadConfigs();
 	void loadSettings();
+	void loadLanguages();
 	void setDir( const QString& );
 	void setDir( const QModelIndex& );
 	void tb_clicked();
+	void on_cbTemplate_currentIndexChanged( const QString& );
 	void lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
 	void cb_highlighted( int );
 	void on_cbScopes_currentIndexChanged( const QString& );

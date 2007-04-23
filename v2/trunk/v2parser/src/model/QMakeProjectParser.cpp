@@ -204,11 +204,11 @@ void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
 	p->setData( "TRANSLATIONS", QMakeProjectItem::ValueRole );
 	p->setData( "=", QMakeProjectItem::OperatorRole );
 	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-	i->setData( "/path/for/translations/french.ts", QMakeProjectItem::ValueRole );
+	i->setData( "translations/demos_french.ts", QMakeProjectItem::ValueRole );
 	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-	i->setData( "/path/for/translations/german.ts", QMakeProjectItem::ValueRole );
+	i->setData( "translations/demos_german.ts", QMakeProjectItem::ValueRole );
 	i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
-	i->setData( "/path/for/translations/italian.ts", QMakeProjectItem::ValueRole );
+	i->setData( "translations/demos_italian.ts", QMakeProjectItem::ValueRole );
 	// header
 	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
 	p->setData( "HEADERS", QMakeProjectItem::ValueRole );

@@ -7,6 +7,7 @@
 #include <QCompleter>
 #include <QDirModel>
 #include <QHeaderView>
+#include <QLocale>
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QFileIconProvider>
@@ -35,6 +36,7 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	loadModules();
 	loadConfigs();
 	loadSettings();
+	loadLanguages();
 	// connections
 	connect( tbIcon, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
 	connect( tbHelpFile, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
@@ -268,6 +270,19 @@ void UIQMakeProjectSettings::loadSettings()
 	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
 }
 //
+void UIQMakeProjectSettings::loadLanguages()
+{
+	QStringList t = mProject->model()->getListValues( "TRANSLATIONS" );
+	QListWidgetItem*  it;
+	for ( int i = QLocale::C; i < QLocale::Zulu +1; i++ )
+	{
+		QString s = QLocale::languageToString( ( QLocale::Language )i );
+		QString f = QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( s );
+		it = new QListWidgetItem( s, lwTranslations );
+		it->setCheckState( t.contains( f, Qt::CaseInsensitive ) ? Qt::Checked : Qt::Unchecked );
+	}
+}
+//
 void UIQMakeProjectSettings::setDir( const QString& s )
 {
 	if ( QFile::exists( s ) )
@@ -311,6 +326,11 @@ void UIQMakeProjectSettings::tb_clicked()
 		if ( !s.isEmpty() )
 			leHelpFile->setText( s );
 	}
+}
+//
+void UIQMakeProjectSettings::on_cbTemplate_currentIndexChanged( const QString& s )
+{
+	cbOrdered->setEnabled( s.toLower() == "subdirs" );
 }
 //
 void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWidgetItem* )
@@ -358,7 +378,7 @@ void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 		return;
 	QFileInfo f( leDir->text().append( "/" ).append( i->text() ) );
 	QString s = f.completeSuffix().toLower();
-	QStringList libraries = QStringList() << "lib" << "dll" << "a" << "la" << "so";
+	QStringList libraries = QStringList() << "lib" << "dll" << "a" << "la" << "so" << "dylib";
 	QString v = cbVariables->currentText().toLower();
 	qWarning( "v: %s, s: %s", qPrintable( v ), qPrintable( s ) );
 	if ( v == "libs" && ( libraries.contains( s ) || s.startsWith( "so." ) ) )

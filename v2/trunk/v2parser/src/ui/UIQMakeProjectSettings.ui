@@ -298,9 +298,6 @@
             </item>
             <item>
              <widget class="QComboBox" name="cbTemplate" >
-              <property name="editable" >
-               <bool>true</bool>
-              </property>
               <item>
                <property name="text" >
                 <string>app</string>
@@ -340,9 +337,6 @@
             </item>
             <item>
              <widget class="QComboBox" name="cbLanguage" >
-              <property name="editable" >
-               <bool>true</bool>
-              </property>
               <item>
                <property name="text" >
                 <string>C++</string>
@@ -444,6 +438,9 @@
              </property>
              <item>
               <widget class="QCheckBox" name="cbBuildAll" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
                <property name="text" >
                 <string>Build All</string>
                </property>
@@ -451,6 +448,9 @@
              </item>
              <item>
               <widget class="QCheckBox" name="cbOrdered" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
                <property name="text" >
                 <string>Ordered</string>
                </property>
@@ -642,8 +642,8 @@
             <property name="html" >
              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;">Select an item for informations&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;">Select an item for informations&lt;/p>&lt;/body>&lt;/html></string>
             </property>
            </widget>
           </item>
@@ -825,26 +825,8 @@ p, li { white-space: pre-wrap; }
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QTreeView" name="tvDirs" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>7</vsizetype>
-            <horstretch>40</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-         <widget class="QListWidget" name="lwFiles" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>7</vsizetype>
-            <horstretch>60</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
+         <widget class="QTreeView" name="tvDirs" />
+         <widget class="QListWidget" name="lwFiles" />
         </widget>
        </item>
        <item row="1" column="0" colspan="2" >
@@ -1368,8 +1350,8 @@ p, li { white-space: pre-wrap; }
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>254</x>
-     <y>418</y>
+     <x>255</x>
+     <y>472</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -1384,8 +1366,8 @@ p, li { white-space: pre-wrap; }
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>322</x>
-     <y>418</y>
+     <x>323</x>
+     <y>472</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
@@ -1416,11 +1398,11 @@ p, li { white-space: pre-wrap; }
    <slot>setText(QString)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>118</x>
-     <y>51</y>
+     <x>109</x>
+     <y>48</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>182</x>
+     <x>183</x>
      <y>5</y>
     </hint>
    </hints>
@@ -1432,12 +1414,12 @@ p, li { white-space: pre-wrap; }
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>214</x>
-     <y>209</y>
+     <x>208</x>
+     <y>210</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>490</x>
-     <y>206</y>
+     <x>485</x>
+     <y>210</y>
     </hint>
    </hints>
   </connection>
@@ -1448,12 +1430,12 @@ p, li { white-space: pre-wrap; }
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>304</x>
-     <y>213</y>
+     <x>300</x>
+     <y>210</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>528</x>
-     <y>204</y>
+     <x>485</x>
+     <y>210</y>
     </hint>
    </hints>
   </connection>
@@ -1464,12 +1446,28 @@ p, li { white-space: pre-wrap; }
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>434</x>
-     <y>212</y>
+     <x>393</x>
+     <y>210</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>533</x>
+     <x>485</x>
      <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rbDebugRelease</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbBuildAll</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>187</x>
+     <y>338</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>457</x>
+     <y>294</y>
     </hint>
    </hints>
   </connection>
