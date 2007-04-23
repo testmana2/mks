@@ -56,9 +56,12 @@ QString QMakeProjectModel::getFilePath( const QString& s, const QModelIndex& i )
 {
 	QString p = s;
 	QFileInfo f( p );
-	if ( f.exists() && f.isRelative() )
+	if ( f.isRelative() )
+	{
 		p = projectPath( i ).append( "/" ).append( s );
-	else if ( !f.exists() || p.isEmpty() )
+		f.setFile( p );
+	}
+	if ( !f.exists() || p.isEmpty() )
 		p = projectPath( i );
 	return p;
 }

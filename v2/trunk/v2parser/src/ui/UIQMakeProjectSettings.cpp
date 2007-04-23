@@ -23,6 +23,10 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	mDirs->setSorting( QDir::Name );
 	leDir->setCompleter( new QCompleter( mDirs, leDir ) );
 	tvDirs->setModel( mDirs );
+#ifndef Q_WS_WIN
+	// all os except windows got only one root drive, so don't need to show root
+	tvDirs->setRootIndex( mDirs->index( 0, 0 ) );
+#endif
 	for ( int i = 1; i < tvDirs->header()->count(); i++ )
 		tvDirs->setColumnHidden( i, true );
 	//
@@ -47,6 +51,7 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	connect( lwCompilerFlags, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
 	connect( cbScopes, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( cbOperators, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
+	connect( tbOutputPath, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
 	connect( cbVariables, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( leDir, SIGNAL( textChanged( const QString& ) ), this, SLOT( setDir( const QString& ) ) );
 	connect( tvDirs, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
@@ -212,7 +217,17 @@ void UIQMakeProjectSettings::loadSettings()
 	// load configs informations
 	// TODO: need to be add to qmake plugin properties, so user can add new if new qt release go out
 	QStringList list;
-	list = QStringList() << QString::null << "win32" << "unix" << "mac" ;
+	list = QStringList() << QString::null << "win32" << "unix" << "linux" << "mac" << "macx" << "aix-g++" << "aix-g++-64"
+	<< "aix-xlc" << "aix-xlc-64" << "darwin-g++" << "freebsd-g++" << "freebsd-g++34" << "freebsd-g++40" << "freebsd-icc"
+	<< "hpux-acc" << "hpux-acc-64" << "hpux-acc-o64" << "hpux-g++" << "hpux-g++-64" << "hpuxi-acc" << "hpuxi-acc-64"
+	<< "hurd-g++" << "irix-cc" << "irix-cc-64" << "irix-g++" << "irix-g++-64" << "linux-cxx" << "linux-ecc-64"
+	<< "linux-g++" << "linux-g++-32" << "linux-g++-64" << "linux-icc" << "linux-kcc" << "linux-lsb" << "linux-pgcc"
+	<< "lynxos-g++" << "macx-g++" << "macx-icc" << "macx-pbuilder" << "macx-xcode" << "macx-xlc" << "netbsd-g++"
+	<< "openbsd-g++" << "sco-cc" << "sco-g++" << "solaris-cc" << "solaris-cc-64" << "solaris-g++" << "solaris-g++-64"
+	<< "tru64-cxx" << "tru64-g++" << "unixware-cc" << "unixware-g++" << "win32-g++" << "win32-x-g++" << "default"
+	<< "freebsd-generic-g++" << "linux-arm-g++" << "linux-cellon-g++" << "linux-generic-g++" << "linux-generic-g++-32"
+	<< "linux-ipaq-g++" << "linux-mips-g++" << "linux-sharp-g++" << "linux-x86_64-g++" << "linux-x86-g++"
+	<< "linux-zylonite-g++" << "macx-generic-g++" << "solaris-generic-g++";
 	foreach ( QString s, list )
 		cbScopes->addItem( s );
 	list = QStringList() << "=" << "-=" << "+=" << "*=" << "~=";
@@ -359,9 +374,15 @@ void UIQMakeProjectSettings::tb_clicked()
 		if ( !s.isEmpty() )
 			leHelpFile->setText( getRelativeFilePath( s ) );
 	}
+	else if ( tb == tbOutputPath )
+	{
+		s = QFileDialog::getExistingDirectory( this, tr( "Choose your application output path" ), getFilePath( leOutputPath->text() ) );
+		if ( !s.isEmpty() )
+			leOutputPath->setText( getRelativeFilePath( s ) );
+	}
 }
 //
-void UIQMakeProjectSettings::sb_valueChanged( int i )
+void UIQMakeProjectSettings::sb_valueChanged( int )
 {
 	sbBuild->setValue( 0 );
 }
