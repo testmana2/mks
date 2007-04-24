@@ -597,7 +597,7 @@ void UIQMakeProjectSettings::on_tbDown_clicked()
 void UIQMakeProjectSettings::accept()
 {
 	// applications
-	
+	mProject->model()->setListValues( QStringList() << "test" << "de" << "merde", "LIBS", "=", "mac" );
 	QDialog::accept();
 }
 //

@@ -280,6 +280,39 @@ QString QMakeProjectModel::getStringValues( const QString& v, const QString& o, 
 //
 void QMakeProjectModel::setListValues( const QStringList& val, const QString& v, const QString& o, const QString& s )
 {
+	// TODO: Fix this member to allow scope to be like path, for imbriqued scopes, ie : win32/!debug/
+	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
+	QModelIndex it;
+	foreach ( QModelIndex i, indexes )
+		if ( ( s.isEmpty() && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::NestedScopeType && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ScopeType ) ||
+			( i.parent().parent() == QModelIndex() && ( i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::NestedScopeType || i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeType ) && i.parent().data( QMakeProjectItem::ValueRole ).toString().toLower() == s.toLower() ) )
+			if ( i.data( QMakeProjectItem::OperatorRole ).toString() == o )
+				it = i;
+	if ( it.isValid() )
+	{
+		QStringList l = val;
+		for ( int j = 0; j < rowCount( it ); j++ )
+		{
+			QModelIndex c = it.child( j, 0 );
+			if ( c.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
+			{
+				QString d = c.data().toString();
+				if ( l.contains( d ) )
+					l.removeAll( d );
+				else
+					QAbstractItemModel::removeRow( c.row(), c.parent() );
+			}
+		}
+		QMakeProjectItem* pItem = static_cast<QMakeProjectItem*>( it.internalPointer() );
+		if ( pItem )
+		{
+			foreach ( QString e, l )
+			{
+				QMakeProjectItem* cItem = new QMakeProjectItem( QMakeProjectItem::ValueType, pItem );
+				cItem->setData( e, QMakeProjectItem::ValueRole );
+			}
+		}
+	}
 }
 //
 void QMakeProjectModel::setStringValues( const QString& val, const QString& v, const QString& o, const QString& s )
