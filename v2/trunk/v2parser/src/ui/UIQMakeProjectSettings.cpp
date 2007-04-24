@@ -596,6 +596,8 @@ void UIQMakeProjectSettings::on_tbDown_clicked()
 //
 void UIQMakeProjectSettings::accept()
 {
+	// applications
+	
 	QDialog::accept();
 }
 //

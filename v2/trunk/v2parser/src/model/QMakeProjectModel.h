@@ -44,6 +44,8 @@ public:
 	virtual QVariant headerData( int, Qt::Orientation, int ) const;
 	virtual QStringList getListValues( const QString&, const QString& = "=", const QString& = QString::null );
 	virtual QString getStringValues( const QString&, const QString& = "=", const QString& = QString::null );
+	virtual void setListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null );
+	virtual void setStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null );
 	//
 protected:
 	bool mOpen;

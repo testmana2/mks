@@ -277,3 +277,11 @@ QString QMakeProjectModel::getStringValues( const QString& v, const QString& o, 
 {
 	return getListValues( v, o, s ).join( " " );
 }
+//
+void QMakeProjectModel::setListValues( const QStringList& val, const QString& v, const QString& o, const QString& s )
+{
+}
+//
+void QMakeProjectModel::setStringValues( const QString& val, const QString& v, const QString& o, const QString& s )
+{
+}
