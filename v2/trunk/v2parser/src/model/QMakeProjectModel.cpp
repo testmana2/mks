@@ -195,12 +195,14 @@ void QMakeProjectModel::appendRow( QMakeProjectItem* i, QMakeProjectItem* p )
 //
 void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem* p )
 {
+	qWarning( "inserting item: j: %d, item: %s, parent: %s", j, qPrintable( i->data().toString() ), qPrintable( p->data().toString() ) );
 	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
 		beginInsertRows( p->index(), j, j );
 		p->insertPrivateRow( j, i );
 		endInsertRows();
 	}
+	//reset();
 }
 //
 bool QMakeProjectModel::insertRows( int, int, const QModelIndex& ) 
@@ -288,25 +290,107 @@ void QMakeProjectModel::setListValues( const QStringList& val, const QString& v,
 			( i.parent().parent() == QModelIndex() && ( i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::NestedScopeType || i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeType ) && i.parent().data( QMakeProjectItem::ValueRole ).toString().toLower() == s.toLower() ) )
 			if ( i.data( QMakeProjectItem::OperatorRole ).toString() == o )
 				it = i;
-	if ( it.isValid() )
+	// if no scope create it
+	if ( !it.isValid() )
 	{
-		QStringList l = val;
-		for ( int j = 0; j < rowCount( it ); j++ )
+		if ( val.isEmpty() )
+			return;
+		QMakeProjectItem* sItem = mRootItem;
+		if ( !s.isEmpty() )
 		{
-			QModelIndex c = it.child( j, 0 );
-			if ( c.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
+			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeType, sItem );
+			sItem->setData( s, QMakeProjectItem::ValueRole );
+		}
+		QMakeProjectItem* vItem = new QMakeProjectItem( QMakeProjectItem::VariableType, sItem );
+		vItem->setData( v, QMakeProjectItem::ValueRole );
+		vItem->setData( o, QMakeProjectItem::OperatorRole );
+		if ( !s.isEmpty() )
+			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, sItem );
+		it = vItem->index();
+	}
+	QStringList l = val;
+	// check all child of scope and remove from model/list unneeded index/value
+	for ( int j = rowCount( it ) -1; j > -1; j-- )
+	{
+		QModelIndex c = it.child( j, 0 );
+		if ( c.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
+		{
+			QString d = c.data().toString();
+			if ( l.contains( d ) )
+				l.removeAll( d );
+			else
+				QAbstractItemModel::removeRow( c.row(), c.parent() );
+		}
+	}
+	// add require index
+	QMakeProjectItem* pItem = static_cast<QMakeProjectItem*>( it.internalPointer() );
+	if ( pItem )
+	{
+		foreach ( QString e, l )
+		{
+			if ( !e.isEmpty() )
 			{
-				QString d = c.data().toString();
-				if ( l.contains( d ) )
-					l.removeAll( d );
-				else
-					QAbstractItemModel::removeRow( c.row(), c.parent() );
+				QMakeProjectItem* cItem = new QMakeProjectItem( QMakeProjectItem::ValueType, pItem );
+				cItem->setData( e, QMakeProjectItem::ValueRole );
 			}
 		}
-		QMakeProjectItem* pItem = static_cast<QMakeProjectItem*>( it.internalPointer() );
-		if ( pItem )
+	}
+	if ( !pItem->rowCount() )
+		removeRow( pItem, pItem->parent() );
+}
+//
+void QMakeProjectModel::setStringValues( const QString& val, const QString& v, const QString& o, const QString& s )
+{
+	setListValues( QStringList( val ), v, o, s );
+}
+//
+void QMakeProjectModel::addListValues( const QStringList& val, const QString& v, const QString& o, const QString& s )
+{
+	// TODO: Fix this member to allow scope to be like path, for imbriqued scopes, ie : win32/!debug/
+	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
+	QModelIndex it;
+	foreach ( QModelIndex i, indexes )
+		if ( ( s.isEmpty() && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::NestedScopeType && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ScopeType ) ||
+			( i.parent().parent() == QModelIndex() && ( i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::NestedScopeType || i.parent().data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeType ) && i.parent().data( QMakeProjectItem::ValueRole ).toString().toLower() == s.toLower() ) )
+			if ( i.data( QMakeProjectItem::OperatorRole ).toString() == o )
+				it = i;
+	// if no scope create it
+	if ( !it.isValid() )
+	{
+		if ( val.isEmpty() )
+			return;
+		QMakeProjectItem* sItem = mRootItem;
+		if ( !s.isEmpty() )
 		{
-			foreach ( QString e, l )
+			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeType, sItem );
+			sItem->setData( s, QMakeProjectItem::ValueRole );
+		}
+		QMakeProjectItem* vItem = new QMakeProjectItem( QMakeProjectItem::VariableType, sItem );
+		vItem->setData( v, QMakeProjectItem::ValueRole );
+		vItem->setData( o, QMakeProjectItem::OperatorRole );
+		if ( !s.isEmpty() )
+			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, sItem );
+		it = vItem->index();
+	}
+	QStringList l = val;
+	// check all child of scope and remove from model/list unneeded index/value
+	for ( int j = rowCount( it ) -1; j > -1; j-- )
+	{
+		QModelIndex c = it.child( j, 0 );
+		if ( c.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
+		{
+			QString d = c.data().toString();
+			if ( l.contains( d ) )
+				l.removeAll( d );
+		}
+	}
+	// add require index
+	QMakeProjectItem* pItem = static_cast<QMakeProjectItem*>( it.internalPointer() );
+	if ( pItem )
+	{
+		foreach ( QString e, l )
+		{
+			if ( !e.isEmpty() )
 			{
 				QMakeProjectItem* cItem = new QMakeProjectItem( QMakeProjectItem::ValueType, pItem );
 				cItem->setData( e, QMakeProjectItem::ValueRole );
@@ -315,6 +399,7 @@ void QMakeProjectModel::setListValues( const QStringList& val, const QString& v,
 	}
 }
 //
-void QMakeProjectModel::setStringValues( const QString& val, const QString& v, const QString& o, const QString& s )
+void QMakeProjectModel::addStringValues( const QString& val, const QString& v, const QString& o, const QString& s )
 {
+	addListValues( QStringList( val ), v, o, s );
 }

@@ -43,6 +43,7 @@ bool QMakeProjectParser::parse( const QString& s, QMakeProjectItem* it )
 void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
 {
 	QMakeProjectItem* p, * i, * s;
+	/*
 	// set app name
 	p = new QMakeProjectItem( QMakeProjectItem::VariableType, it );
 	p->setData( "APP_TITLE", QMakeProjectItem::ValueRole );
@@ -227,4 +228,5 @@ void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
 		i = new QMakeProjectItem( QMakeProjectItem::ValueType, p );
 		i->setData( QString( "pouet%1.cpp" ).arg( j ), QMakeProjectItem::ValueRole );
 	}
+	*/
 }

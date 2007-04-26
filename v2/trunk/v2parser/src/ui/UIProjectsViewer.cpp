@@ -29,11 +29,11 @@ bool UIProjectsViewer::openProject( const QString& s )
 	mModel = new QMakeProjectModel( s, this );
 	if ( mModel->isOpen() )
 	{
+		mProxy = new QMakeProjectProxyModel( mModel );
 #ifndef QT_NO_DEBUG
 		new ModelTest( mModel, this );
 #endif
-		mProxy = new QMakeProjectProxyModel( mModel );
-		tvProject->setModel( mProxy );
+		tvProject->setModel( mModel );
 		//
 		/*
 		connect( cbFilter, SIGNAL( stateChanged( int ) ), mProxy, SLOT( setFilter( int ) ) );
@@ -50,5 +50,6 @@ bool UIProjectsViewer::openProject( const QString& s )
 void UIProjectsViewer::on_pbSettings_clicked()
 {
 	if ( mModel->isOpen() )
-		UIQMakeProjectSettings::execute( mModel->project( mProxy->mapToSource( tvProject->currentIndex() ) ), this );
+		UIQMakeProjectSettings::execute( mModel->project( tvProject->currentIndex() ), this );
+		//UIQMakeProjectSettings::execute( mModel->project( mProxy->mapToSource( tvProject->currentIndex() ) ), this );
 }

@@ -46,6 +46,8 @@ public:
 	virtual QString getStringValues( const QString&, const QString& = "=", const QString& = QString::null );
 	virtual void setListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null );
 	virtual void setStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null );
+	virtual void addListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null );
+	virtual void addStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null );
 	//
 protected:
 	bool mOpen;

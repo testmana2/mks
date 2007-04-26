@@ -176,7 +176,7 @@ void UIQMakeProjectSettings::loadConfigs()
 	mConfigs << new QtItem( "staticlib", "staticlib", "CONFIG", "The target is a static library (lib only). The proper compiler flags will automatically be added to the project." );
 	mConfigs << new QtItem( "plugin", "plugin", "CONFIG", "The target is a plugin (lib only). This enables dll as well." );
 	mConfigs << new QtItem( "X11 ONLY", QString::null, QString::null, "Options for X11 only" );
-	mConfigs << new QtItem( "x11", "", "CONFIG", "The target is a X11 application or library. The proper include paths and libraries will automatically be added to the project." );
+	mConfigs << new QtItem( "x11", "x11", "CONFIG", "The target is a X11 application or library. The proper include paths and libraries will automatically be added to the project." );
 	mConfigs << new QtItem( "MAC OS X ONLY", QString::null, QString::null, "Options for Mac OS X only" );
 	mConfigs << new QtItem( "ppc", "ppc", "CONFIG", "Builds a PowerPC binary." );
 	mConfigs << new QtItem( "x86", "x86", "CONFIG", "Builds an i386 compatible binary." );
@@ -238,11 +238,15 @@ void UIQMakeProjectSettings::loadSettings()
 	QStringList l;
 	// Application
 	leTitle->setText( mProject->model()->getStringValues( "APP_TITLE" ) );
+	leTitle->setModified( false );
 	leIcon->setText( mProject->model()->getStringValues( "APP_ICON" ) );
+	leIcon->setModified( false );
 	if ( !leIcon->text().isEmpty() )
-		lPixmap->setPixmap( QPixmap( leIcon->text() ) );
+		lPixmap->setPixmap( QPixmap( QFileInfo( leIcon->text() ).isRelative() ? projectPath().append( "/" ).append( leIcon->text() ) : leIcon->text() ) );
 	leHelpFile->setText( mProject->model()->getStringValues( "APP_HELP_FILE" ) );
+	leHelpFile->setModified( false );
 	leAuthor->setText( mProject->model()->getStringValues( "APP_AUTHOR" ) );
+	leAuthor->setModified( false );
 	s = mProject->model()->getStringValues( "VERSION" );
 	if ( !s.isEmpty() )
 	{
@@ -273,7 +277,7 @@ void UIQMakeProjectSettings::loadSettings()
 		rbRelease->setChecked( true );
 	if ( c.indexOf( "warn_off", 0, Qt::CaseInsensitive ) != -1 )
 		rbWarnOff->setChecked( true );
-	else if ( s.indexOf( "warn_on", 0, Qt::CaseInsensitive ) != -1 )
+	else if ( c.indexOf( "warn_on", 0, Qt::CaseInsensitive ) != -1 )
 		rbWarnOn->setChecked( true );
 	else
 		rbWarnOff->setChecked( true );
@@ -401,8 +405,10 @@ void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWi
 void UIQMakeProjectSettings::cb_highlighted( int )
 {
 	QString k = QString( "%1|%2" ).arg( cbScopes->currentText(), cbOperators->currentText() );
-	mSettings[ QString( "%1|DESTDIR" ).arg( k ) ] = QStringList( leOutputPath->text() );
-	mSettings[ QString( "%1|TARGET" ).arg( k ) ] = QStringList( leOutputName->text() );
+	if ( leOutputPath->isModified() )
+		mSettings[ QString( "%1|DESTDIR" ).arg( k ) ] = QStringList( leOutputPath->text() );
+	if ( leOutputName->isModified() )
+		mSettings[ QString( "%1|TARGET" ).arg( k ) ] = QStringList( leOutputName->text() );
 	QStringList l;
 	foreach ( QListWidgetItem* it, lwValues->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 		l << it->text();
@@ -422,11 +428,13 @@ void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& 
 		leOutputPath->setText( mSettings[ QString( "%1|DESTDIR" ).arg( k ) ].join( " " ) );
 	else // got data
 		leOutputPath->setText( mProject->model()->getStringValues( "DESTDIR", s, cbScopes->currentText() ) );
+	leOutputPath->setModified( false );
 	// set backup data if available
 	if ( mSettings.contains( QString( "%1|TARGET" ).arg( k ) ) )
 		leOutputName->setText( mSettings[ QString( "%1|TARGET" ).arg( k ) ].join( " " ) );
 	else // got data
 		leOutputName->setText( mProject->model()->getStringValues( "TARGET", s, cbScopes->currentText() ) );
+	leOutputName->setModified( false );
 	// load variables values
 	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
 }
@@ -596,8 +604,80 @@ void UIQMakeProjectSettings::on_tbDown_clicked()
 //
 void UIQMakeProjectSettings::accept()
 {
+	// backup current settings state
+	cb_highlighted( 0 );
+	// get model
+	QMakeProjectModel* m = mProject->model();
 	// applications
-	mProject->model()->setListValues( QStringList() << "test" << "de" << "merde", "LIBS", "=", "mac" );
+	QStringList s, c;
+	if ( leTitle->isModified() )
+		m->setStringValues( leTitle->text(), "APP_TITLE" );
+	if ( leIcon->isModified() )
+		m->setStringValues( leIcon->text(), "APP_ICON" );
+	if ( leHelpFile->isModified() )
+		m->setStringValues( leHelpFile->text(), "APP_HELP_FILE" );
+	if ( leAuthor->isModified() )
+		m->setStringValues( leAuthor->text(), "APP_AUTHOR" );
+	if ( gbVersion->isChecked() )
+	{
+		m->setStringValues( QString( "%1.%2.%3.%4" ).arg( sbMajor->value() ).arg( sbMinor->value() ).arg( sbRelease->value() ).arg( sbBuild->value() ), "VERSION" );
+		m->setStringValues( QString::number( cbBuildAutoIncrement->isChecked() ), "APP_AUTO_INCREMENT" );
+	}
+	m->setStringValues( cbTemplate->currentText(), "TEMPLATE" );
+	m->setStringValues( cbLanguage->currentText(), "LANGUAGE" );
+	// reading config variable
+	if ( rbDebug->isChecked() )
+		s << "debug";
+	else if ( rbRelease->isChecked() )
+		s << "release";
+	else if ( rbDebugRelease->isChecked() )
+	{
+		s << "debug_and_release";
+		if ( cbBuildAll->isChecked() )
+			s << "build_all";
+	}
+	if ( rbWarnOff->isChecked() )
+		s << "warn_off";
+	else if ( rbWarnOn->isChecked() )
+		s << "warn_on";
+	if ( cbTemplate->currentText().toLower() == "subdirs" && cbOrdered->isChecked() )
+		s << "ordered";
+	// read qt modules / lwCompilerFlags
+	QList<QListWidgetItem*> l = lwQtModules->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive );
+	l << lwCompilerFlags->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive );
+	foreach ( QListWidgetItem* it, l )
+	{
+		QString v = it->data( QtItem::VariableRole ).toString().toLower();
+		if ( it->checkState() == Qt::Checked )
+		{
+			if ( v == "config" )
+				s << it->data( QtItem::ValueRole ).toString();
+			else if ( v == "qt" )
+				c << it->data( QtItem::ValueRole ).toString();
+		}		
+	}
+	// add other config
+	if ( !leConfig->text().isEmpty() )
+		s << leConfig->text().simplified().split( " " );
+	m->setListValues( s, "CONFIG", "+=" );
+	m->setListValues( c, "QT" );
+	s.clear();
+	c.clear();
+	// settings
+	foreach ( QString v, mSettings.keys() )
+	{
+		QStringList l = v.split( "|" );
+		m->setListValues( mSettings.value( v ), l.at( 2 ), l.at( 1 ), l.at( 0 ) );
+	}
+	// translations
+	foreach ( QListWidgetItem* it, lwTranslations->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
+	{
+		QString v = it->data( Qt::DisplayRole ).toString();
+		if ( it->checkState() == Qt::Checked )
+			s << QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( v );
+	}
+	m->addListValues( s, "TRANSLATIONS" );
+	// close dialog
 	QDialog::accept();
 }
 //
