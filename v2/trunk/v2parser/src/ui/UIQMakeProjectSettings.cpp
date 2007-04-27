@@ -13,7 +13,7 @@
 #include <QFileIconProvider>
 //
 UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p )
-	: QDialog( p ), mProxy( new QMakeProjectScopesProxy( m->model() ) ), mProject( m ), mDirs( new QDirModel( this ) )
+	: QDialog( p ), mReady( false ), mProxy( new QMakeProjectScopesProxy( m->model() ) ), mProject( m ), mDirs( new QDirModel( this ) )
 {
 	setupUi( this );
 	setWindowTitle( QString( "Project Settings - %1" ).arg( m->data().toString() ) );
@@ -32,10 +32,12 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	//
 	setDir( mDirs->index( 0, 0 ) );
 	//
+	/*
 	tvScopes->setModel( mProxy );
 	tvScopes->setRootIndex( mProxy->mapFromSource( mProject->index().parent().isValid() ? mProject->index() : QModelIndex() ) );
 	lvContents->setModel( mProject->model() );
 	setCurrentIndex( mProject->index() );
+	*/
 	//
 	loadModules();
 	loadConfigs();
@@ -55,6 +57,9 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	connect( cbVariables, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( leDir, SIGNAL( textChanged( const QString& ) ), this, SLOT( setDir( const QString& ) ) );
 	connect( tvDirs, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
+	mReady = true;
+	// settings
+	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
 }
 //
 UIQMakeProjectSettings::~UIQMakeProjectSettings()
@@ -259,11 +264,11 @@ void UIQMakeProjectSettings::loadSettings()
 		cbBuildAutoIncrement->setChecked( mProject->model()->getStringValues( "APP_AUTO_INCREMENT" ).toInt() );
 	}
 	s = mProject->model()->getStringValues( "TEMPLATE" );
-	if ( cbTemplate->findText( s, Qt::MatchExactly ) == -1 )
+	if ( cbTemplate->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
 		cbTemplate->addItem( s );
 	cbTemplate->setCurrentIndex( cbTemplate->findText( s, Qt::MatchExactly ) );
 	s = mProject->model()->getStringValues( "LANGUAGE" );
-	if ( cbLanguage->findText( s, Qt::MatchExactly ) == -1 )
+	if ( cbLanguage->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
 		cbLanguage->addItem( s );
 	cbLanguage->setCurrentIndex( cbLanguage->findText( s, Qt::MatchExactly ) );
 	c = mProject->model()->getStringValues( "CONFIG", "+=" );
@@ -318,8 +323,6 @@ void UIQMakeProjectSettings::loadSettings()
 		c.remove( it->data( QtItem::ValueRole ).toString(), Qt::CaseInsensitive );
 	}
 	leConfig->setText( c.simplified() );
-	// settings
-	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
 }
 //
 void UIQMakeProjectSettings::loadLanguages()
@@ -369,6 +372,7 @@ void UIQMakeProjectSettings::tb_clicked()
 		if ( !s.isEmpty() )
 		{
 			leIcon->setText( getRelativeFilePath( s ) );
+			leIcon->setModified( true );
 			lPixmap->setPixmap( QPixmap( s ) );
 		}
 	}
@@ -376,13 +380,19 @@ void UIQMakeProjectSettings::tb_clicked()
 	{
 		s = QFileDialog::getOpenFileName( this, tr( "Choose your application help root file" ), getFilePath( leHelpFile->text() ), tr( "HTMLs (*.htm *.html)" ) );
 		if ( !s.isEmpty() )
+		{
 			leHelpFile->setText( getRelativeFilePath( s ) );
+			leHelpFile->setModified( true );
+		}
 	}
 	else if ( tb == tbOutputPath )
 	{
 		s = QFileDialog::getExistingDirectory( this, tr( "Choose your application output path" ), getFilePath( leOutputPath->text() ) );
 		if ( !s.isEmpty() )
+		{
 			leOutputPath->setText( getRelativeFilePath( s ) );
+			leOutputPath->setModified( true );
+		}
 	}
 }
 //
@@ -393,7 +403,8 @@ void UIQMakeProjectSettings::sb_valueChanged( int )
 //
 void UIQMakeProjectSettings::on_cbTemplate_currentIndexChanged( const QString& s )
 {
-	cbOrdered->setEnabled( s.toLower() == "subdirs" );
+	if ( mReady )
+		cbOrdered->setEnabled( s.toLower() == "subdirs" );
 }
 //
 void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWidgetItem* )
@@ -417,11 +428,14 @@ void UIQMakeProjectSettings::cb_highlighted( int )
 //
 void UIQMakeProjectSettings::on_cbScopes_currentIndexChanged( const QString& )
 {
-	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
+	if ( mReady )
+		on_cbOperators_currentIndexChanged( cbOperators->currentText() );
 }
 //
 void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& s )
 {
+	if ( !mReady )
+		return;
 	QString k = QString( "%1|%2" ).arg( cbScopes->currentText(), s );
 	// set backup data if available
 	if ( mSettings.contains( QString( "%1|DESTDIR" ).arg( k ) ) )
@@ -511,6 +525,8 @@ void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 //
 void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& s )
 {
+	if ( !mReady )
+		return;
 	QString k = QString( "%1|%2|%3" ).arg( cbScopes->currentText(), cbOperators->currentText(), s );
 	lwValues->clear();
 	if ( mSettings.contains( k ) )
@@ -623,8 +639,10 @@ void UIQMakeProjectSettings::accept()
 		m->setStringValues( QString( "%1.%2.%3.%4" ).arg( sbMajor->value() ).arg( sbMinor->value() ).arg( sbRelease->value() ).arg( sbBuild->value() ), "VERSION" );
 		m->setStringValues( QString::number( cbBuildAutoIncrement->isChecked() ), "APP_AUTO_INCREMENT" );
 	}
-	m->setStringValues( cbTemplate->currentText(), "TEMPLATE" );
-	m->setStringValues( cbLanguage->currentText(), "LANGUAGE" );
+	if ( !cbTemplate->currentText().isEmpty() )
+		m->setStringValues( cbTemplate->currentText(), "TEMPLATE" );
+	if ( !cbLanguage->currentText().isEmpty() )
+		m->setStringValues( cbLanguage->currentText(), "LANGUAGE" );
 	// reading config variable
 	if ( rbDebug->isChecked() )
 		s << "debug";
@@ -670,13 +688,14 @@ void UIQMakeProjectSettings::accept()
 		m->setListValues( mSettings.value( v ), l.at( 2 ), l.at( 1 ), l.at( 0 ) );
 	}
 	// translations
+	s << m->getListValues( "TRANSLATIONS" );
 	foreach ( QListWidgetItem* it, lwTranslations->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 	{
 		QString v = it->data( Qt::DisplayRole ).toString();
 		if ( it->checkState() == Qt::Checked )
 			s << QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( v );
 	}
-	m->addListValues( s, "TRANSLATIONS" );
+	m->setListValues( s, "TRANSLATIONS" );
 	// close dialog
 	QDialog::accept();
 }

@@ -195,14 +195,15 @@ void QMakeProjectModel::appendRow( QMakeProjectItem* i, QMakeProjectItem* p )
 //
 void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem* p )
 {
-	qWarning( "inserting item: j: %d, item: %s, parent: %s", j, qPrintable( i->data().toString() ), qPrintable( p->data().toString() ) );
 	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
+		qWarning( "inserting item: j: %d, item: %s, parent: %s", j, qPrintable( i->data().toString() ), qPrintable( p->data().toString() ) );
 		beginInsertRows( p->index(), j, j );
 		p->insertPrivateRow( j, i );
 		endInsertRows();
 	}
-	//reset();
+	else
+		qWarning( "was trying to insert row" );
 }
 //
 bool QMakeProjectModel::insertRows( int, int, const QModelIndex& ) 
@@ -218,7 +219,9 @@ void QMakeProjectModel::removeRow( int i, QMakeProjectItem* p )
 //
 void QMakeProjectModel::removeRow( QMakeProjectItem* i, QMakeProjectItem* p )
 {
-	delete takeRow( i, p ? p : mRootItem );
+	i = takeRow( i, p ? p : mRootItem );
+	if ( i )
+		i->deleteLater();
 }
 //
 bool QMakeProjectModel::removeRows( int r, int c, const QModelIndex& p )
@@ -250,6 +253,7 @@ QMakeProjectItem* QMakeProjectModel::takeRow( QMakeProjectItem* i, QMakeProjectI
 		beginRemoveRows( indexFromItem( p ), j, j );
 		p->removePrivateRow( j );
 		endRemoveRows();
+		//p->setParent( 0 ); // TODO: Fix this ( it crash )
 		return i;
 	}
 	return 0;
@@ -263,7 +267,7 @@ QVariant QMakeProjectModel::headerData( int i, Qt::Orientation o, int r ) const
 QStringList QMakeProjectModel::getListValues( const QString& v, const QString& o, const QString& s )
 {
 	// TODO: Fix this member to allow scope to be like path, for imbriqued scopes, ie : win32/!debug/
-	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
+	QModelIndexList indexes = match( index( 0, 0 ), QMakeProjectItem::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
 	QStringList l;
 	foreach ( QModelIndex i, indexes )
 		if ( ( s.isEmpty() && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::NestedScopeType && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ScopeType ) ||
@@ -280,10 +284,11 @@ QString QMakeProjectModel::getStringValues( const QString& v, const QString& o, 
 	return getListValues( v, o, s ).join( " " );
 }
 //
+#include <QDebug>
 void QMakeProjectModel::setListValues( const QStringList& val, const QString& v, const QString& o, const QString& s )
 {
 	// TODO: Fix this member to allow scope to be like path, for imbriqued scopes, ie : win32/!debug/
-	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
+	QModelIndexList indexes = match( index( 0, 0 ), QMakeProjectItem::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
 	QModelIndex it;
 	foreach ( QModelIndex i, indexes )
 		if ( ( s.isEmpty() && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::NestedScopeType && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ScopeType ) ||
@@ -334,20 +339,23 @@ void QMakeProjectModel::setListValues( const QStringList& val, const QString& v,
 				cItem->setData( e, QMakeProjectItem::ValueRole );
 			}
 		}
+		if ( !pItem->rowCount() )
+		{
+			removeRow( pItem, pItem->parent() );
+			qDebug() << mRootItem->rows();
+		}
 	}
-	if ( !pItem->rowCount() )
-		removeRow( pItem, pItem->parent() );
 }
 //
 void QMakeProjectModel::setStringValues( const QString& val, const QString& v, const QString& o, const QString& s )
 {
-	setListValues( QStringList( val ), v, o, s );
+	setListValues( val.isEmpty() ? QStringList() : QStringList( val ), v, o, s );
 }
 //
 void QMakeProjectModel::addListValues( const QStringList& val, const QString& v, const QString& o, const QString& s )
 {
 	// TODO: Fix this member to allow scope to be like path, for imbriqued scopes, ie : win32/!debug/
-	QModelIndexList indexes = match( index( 0, 0 ), Qt::DisplayRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
+	QModelIndexList indexes = match( index( 0, 0 ), QMakeProjectItem::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
 	QModelIndex it;
 	foreach ( QModelIndex i, indexes )
 		if ( ( s.isEmpty() && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::NestedScopeType && i.parent().data( QMakeProjectItem::TypeRole ).toInt() != QMakeProjectItem::ScopeType ) ||

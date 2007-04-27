@@ -42,6 +42,7 @@ public:
 protected:
 	UIQMakeProjectSettings( QMakeProjectItem*, QWidget* = 0 );
 	//
+	bool mReady;
 	QMakeProjectScopesProxy* mProxy;
 	QMakeProjectItem* mProject;
 	QtItemList mModules;
