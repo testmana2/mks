@@ -18,9 +18,6 @@ UIProjectsViewer::UIProjectsViewer( QWidget* p )
 	setupUi( this );
 }
 //
-#ifndef QT_NO_DEBUG
-#include "modeltest.h"
-#endif
 bool UIProjectsViewer::openProject( const QString& s )
 {
 	delete mProxy;
@@ -30,10 +27,7 @@ bool UIProjectsViewer::openProject( const QString& s )
 	if ( mModel->isOpen() )
 	{
 		mProxy = new QMakeProjectProxyModel( mModel );
-#ifndef QT_NO_DEBUG
-		//new ModelTest( mModel, this );
-#endif
-		tvProject->setModel( mModel );
+		tvProject->setModel( mProxy );
 		//
 		/*
 		connect( cbFilter, SIGNAL( stateChanged( int ) ), mProxy, SLOT( setFilter( int ) ) );
@@ -50,6 +44,6 @@ bool UIProjectsViewer::openProject( const QString& s )
 void UIProjectsViewer::on_pbSettings_clicked()
 {
 	if ( mModel->isOpen() )
-		UIQMakeProjectSettings::execute( mModel->project( tvProject->currentIndex() ), this );
-		//UIQMakeProjectSettings::execute( mModel->project( mProxy->mapToSource( tvProject->currentIndex() ) ), this );
+		//UIQMakeProjectSettings::execute( mModel->project( tvProject->currentIndex() ), this );
+		UIQMakeProjectSettings::execute( mModel->project( mProxy->mapToSource( tvProject->currentIndex() ) ), this );
 }

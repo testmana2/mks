@@ -7,6 +7,7 @@
 QMakeProjectItem::QMakeProjectItem( QMakeProjectItem::NodeType t, QMakeProjectItem* p, QMakeProjectItemPrivate* pp )
 	: mParent( 0 ), mModel( 0 ), d( 0 )
 {
+sss ici faire des warning
 	setParent( p );
 	if ( pp )
 		setData( pp );
@@ -15,6 +16,7 @@ QMakeProjectItem::QMakeProjectItem( QMakeProjectItem::NodeType t, QMakeProjectIt
 	if ( parent() )
 		parent()->appendRow( this );
 	setData( t, QMakeProjectItem::TypeRole );
+	setData( true, QMakeProjectItem::DeleteRole );
 	setFlags( QMakeProjectModel::defaultFlags() );
 }
 //
@@ -58,14 +60,7 @@ void QMakeProjectItem::setFlags( Qt::ItemFlags f )
 //
 QVariant QMakeProjectItem::data( int r ) const
 {
-#ifdef QT_NO_DEBUG
 	return d ? d->mDatas.value( r ) : QVariant();
-#else
-	QVariant v = d ? d->mDatas.value( r ) : QVariant();
-	if ( !v.isValid() && r == Qt::DisplayRole )
-		v = QString();
-	return v;
-#endif
 }
 //
 void QMakeProjectItem::setData( const QVariant& v, int r )
@@ -120,7 +115,7 @@ int QMakeProjectItem::columnCount() const
 //
 QMakeProjectItem* QMakeProjectItem::row( int i )
 {
-	return i >= 0 && rowCount() > i ? rows().at( i ) : 0;
+	return i >= 0 && rowCount() > i ? rows().value( i ) : 0;
 }
 //
 QList<QMakeProjectItem*> QMakeProjectItem::rows() const

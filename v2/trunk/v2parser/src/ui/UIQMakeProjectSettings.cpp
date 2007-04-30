@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QFileIconProvider>
+#include <QTextCodec>
 //
 UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p )
 	: QDialog( p ), mReady( false ), mProxy( new QMakeProjectScopesProxy( m->model() ) ), mProject( m ), mDirs( new QDirModel( this ) )
@@ -38,7 +39,8 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	lvContents->setModel( mProject->model() );
 	setCurrentIndex( mProject->index() );
 	*/
-	//
+	// loading...
+	loadEncodings();
 	loadModules();
 	loadConfigs();
 	loadSettings();
@@ -132,6 +134,15 @@ QString UIQMakeProjectSettings::getFilePath( const QString& s )
 QString UIQMakeProjectSettings::getRelativeFilePath( const QString& s )
 {
 	return mProject->model()->getRelativeFilePath( s, mProject->index() );
+}
+//
+void UIQMakeProjectSettings::loadEncodings()
+{
+	QStringList l;
+	foreach ( QByteArray ba, QTextCodec::availableCodecs() )
+		l << ba;
+	l.sort();
+	cbEncodings->addItems( l );
 }
 //
 void UIQMakeProjectSettings::loadModules()
@@ -271,6 +282,12 @@ void UIQMakeProjectSettings::loadSettings()
 	if ( cbLanguage->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
 		cbLanguage->addItem( s );
 	cbLanguage->setCurrentIndex( cbLanguage->findText( s, Qt::MatchExactly ) );
+	s = mProject->model()->getStringValues( "ENCODING" );
+	if ( s.isEmpty() )
+		s = "UTF-8";
+	if ( cbEncodings->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
+		cbEncodings->addItem( s );
+	cbEncodings->setCurrentIndex( cbEncodings->findText( s, Qt::MatchExactly ) );
 	c = mProject->model()->getStringValues( "CONFIG", "+=" );
 	if ( c.indexOf( "debug_and_release", 0, Qt::CaseInsensitive ) != -1 )
 		rbDebugRelease->setChecked( true );
@@ -357,6 +374,94 @@ void UIQMakeProjectSettings::setDir( const QModelIndex& i )
 	QDir d( leDir->text() );
 	foreach ( QString s, d.entryList( QDir::Files, QDir::Name ) )
 		lwFiles->addItem( new QListWidgetItem( mDirs->iconProvider()->icon( QFileIconProvider::File ), s ) );
+}
+//
+void UIQMakeProjectSettings::addValue( const QString& s )
+{
+	// check if value already exists
+	if ( lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+		return;
+	// check translations
+	if ( cbVariables->currentText().toLower() == "translations" && cbScopes->currentText().isEmpty() && cbOperators->currentText() == "=" )
+	{
+		// add project translation if needed
+		// got language
+		QString f = QFileInfo( s ).baseName().remove( mProject->data().toString() +'_' );
+		// look if it's a project translation
+		if ( s == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		{
+			// find item to check and check it
+			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
+			if ( it )
+				it->setCheckState( Qt::Checked );
+		}
+	}
+	// add item
+	lwValues->addItem( s );
+}
+//
+void UIQMakeProjectSettings::editValue( const QString& s )
+{
+	// got item to edit, else return
+	QListWidgetItem* it = lwValues->currentItem();
+	if ( !it )
+		return;
+	// check if value already exists
+	if ( lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
+		return;
+	// check translations
+	if ( cbVariables->currentText().toLower() == "translations" && cbScopes->currentText().isEmpty() && cbOperators->currentText() == "=" )
+	{
+		QString f;
+		// remove the edited translation if needed
+		// got language
+		f = QFileInfo( it->text() ).baseName().remove( mProject->data().toString() +'_' );
+		// look if it's a project translation
+		if ( it->text() == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		{
+			// find item and uncheck it
+			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
+			if ( it )
+				it->setCheckState( Qt::Unchecked );
+		}
+		// add project translation if needed
+		// got language
+		f = QFileInfo( s ).baseName().remove( mProject->data().toString() +'_' );
+		// look if it's a project translation
+		if ( s == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		{
+			// find item to check and check it
+			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
+			if ( it )
+				it->setCheckState( Qt::Checked );
+		}
+	}
+	// edit item
+	it->setText( s );
+}
+//
+void UIQMakeProjectSettings::deleteValue( const QString& s )
+{
+	// got item to delete, else return
+	QListWidgetItem* cit = s.isEmpty() ? lwValues->currentItem() : lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
+	if ( !cit )
+		return;
+	// check translations
+	if ( cbVariables->currentText().toLower() == "translations" && cbScopes->currentText().isEmpty() && cbOperators->currentText() == "=" )
+	{
+		// got language
+		QString f = QFileInfo( cit->text() ).baseName().remove( mProject->data().toString() +'_' );
+		// look if it's a project translation
+		if ( cit->text() == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		{
+			// find item and uncheck it
+			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
+			if ( it )
+				it->setCheckState( Qt::Unchecked );
+		}
+	}
+	// delete item
+	delete cit;
 }
 //
 void UIQMakeProjectSettings::tb_clicked()
@@ -463,12 +568,12 @@ void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 	QString v = cbVariables->currentText().toLower();
 	if ( v == "libs" && ( libraries.contains( s ) || s.startsWith( "so." ) ) )
 	{
+		// lib path
 		s = getRelativeFilePath( f.path() );
 		if ( s.contains( " " ) )
 			s.prepend( '"' ).append( '"' );
 		s.prepend( "-L" );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
+		addValue( s );
 		// file
 		s = f.baseName();
 		if ( s.startsWith( "lib", Qt::CaseInsensitive ) )
@@ -476,51 +581,14 @@ void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 		if ( s.contains( " " ) )
 			s.prepend( '"' ).append( '"' );
 		s.prepend( "-l" );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
+		addValue( s );
 	}
 	else if ( v == "defines" )
-	{
-		s = f.baseName();
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s.toUpper() );
-	}
-	else if ( v == "translations" && s == "ts" )
-	{
-		s = getRelativeFilePath( f.filePath() );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
-	}
+		addValue( f.baseName().toUpper() );
 	else if ( v.contains( "path" ) )
-	{
-		s = getRelativeFilePath( f.path() );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
-	}
-	else if ( v == "resources" && s == "qrc" )
-	{
-		s = getRelativeFilePath( f.filePath() );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
-	}
-	else if ( v == "def_file" && s == "def" )
-	{
-		s = getRelativeFilePath( f.filePath() );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
-	}
-	else if ( v == "rc_file" && s == "rc" )
-	{
-		s = getRelativeFilePath( f.filePath() );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
-	}
-	else if ( v == "res_file" && s == "res" )
-	{
-		s = getRelativeFilePath( f.filePath() );
-		if ( !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-			lwValues->addItem( s );
-	}
+		addValue( getRelativeFilePath( f.path() ) );
+	else if ( ( v == "translations" && s == "ts" ) || ( v == "resources" && s == "qrc" ) || ( v == "def_file" && s == "def" ) || ( v == "rc_file" && s == "rc" ) || ( v == "res_file" && s == "res" ) )
+		addValue( getRelativeFilePath( f.filePath() ) );
 }
 //
 void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& s )
@@ -539,8 +607,8 @@ void UIQMakeProjectSettings::on_pbAddValue_clicked()
 {
 	bool b;
 	QString s = QInputDialog::getText( this, tr( "Add value..." ), tr( "Set your value content :" ), QLineEdit::Normal, QString::null, &b );
-	if ( b && !s.isEmpty() && !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-		lwValues->addItem( s );
+	if ( b && !s.isEmpty() )
+		addValue( s );
 }
 //
 void UIQMakeProjectSettings::on_pbEditValue_clicked()
@@ -549,18 +617,59 @@ void UIQMakeProjectSettings::on_pbEditValue_clicked()
 		return;
 	bool b;
 	QString s = QInputDialog::getText( this, tr( "Edit value..." ), tr( "Edit your value content :" ), QLineEdit::Normal, lwValues->currentItem()->text(), &b );
-	if ( b && !s.isEmpty() && !lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).count() )
-		lwValues->currentItem()->setText( s );
+	if ( b && !s.isEmpty() )
+		editValue( s );
 }
 //
 void UIQMakeProjectSettings::on_pbDeleteValue_clicked()
 {
-	delete lwValues->currentItem();
+	deleteValue();
 }
 //
 void UIQMakeProjectSettings::on_pbClearValues_clicked()
 {
-	lwValues->clear();
+	if ( cbVariables->currentText().toLower() == "translations" && cbScopes->currentText().isEmpty() && cbOperators->currentText() == "=" )
+		while ( lwValues->count() )
+			deleteValue( lwValues->item( 0 )->text() );
+	else
+		lwValues->clear();
+}
+//
+void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it )
+{
+	if ( !it || !lwTranslations->isVisible() )
+		return;
+	// get translation file
+	QString s = QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( it->text() );
+	QString k = "|=|TRANSLATIONS";
+	// check translation
+	switch ( it->checkState() )
+	{
+		case Qt::Checked:
+			if ( cbVariables->currentText().toLower() == "translations" && cbScopes->currentText().isEmpty() && cbOperators->currentText() == "=" )
+				lwValues->addItem( s );
+			else
+			{
+				if ( !mSettings.contains( k ) )
+					mSettings[ k ] = mProject->model()->getListValues( "TRANSLATIONS" );
+				if ( !mSettings.value( k ).contains( s, Qt::CaseInsensitive ) )
+					mSettings[ k ] << s;
+			}
+			break;
+		case Qt::Unchecked:
+			if ( cbVariables->currentText().toLower() == "translations" && cbScopes->currentText().isEmpty() && cbOperators->currentText() == "=" )
+				delete lwValues->findItems( s, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
+			else
+			{
+				if ( !mSettings.contains( k ) )
+					mSettings[ k ] = mProject->model()->getListValues( "TRANSLATIONS" );
+				if ( mSettings.value( k ).contains( s, Qt::CaseInsensitive ) )
+					mSettings[ k ].removeAll( s );
+			}
+			break;
+		default:
+			break;
+	}
 }
 //
 void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
@@ -643,6 +752,8 @@ void UIQMakeProjectSettings::accept()
 		m->setStringValues( cbTemplate->currentText(), "TEMPLATE" );
 	if ( !cbLanguage->currentText().isEmpty() )
 		m->setStringValues( cbLanguage->currentText(), "LANGUAGE" );
+	if ( !cbEncodings->currentText().isEmpty() )
+		m->setStringValues( cbEncodings->currentText(), "ENCODING" );
 	// reading config variable
 	if ( rbDebug->isChecked() )
 		s << "debug";
@@ -687,15 +798,6 @@ void UIQMakeProjectSettings::accept()
 		QStringList l = v.split( "|" );
 		m->setListValues( mSettings.value( v ), l.at( 2 ), l.at( 1 ), l.at( 0 ) );
 	}
-	// translations
-	s << m->getListValues( "TRANSLATIONS" );
-	foreach ( QListWidgetItem* it, lwTranslations->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
-	{
-		QString v = it->data( Qt::DisplayRole ).toString();
-		if ( it->checkState() == Qt::Checked )
-			s << QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( v );
-	}
-	m->setListValues( s, "TRANSLATIONS" );
 	// close dialog
 	QDialog::accept();
 }

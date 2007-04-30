@@ -25,8 +25,7 @@ SOURCES	= src/item/QMakeProjectItem.cpp \
 	src/ui/UIProjectsViewer.cpp \
 	src/ui/UIQMakeProjectSettings.cpp \
 	src/main.cpp \
-	src/model/QMakeProjectParser.cpp \
-	src/modeltest.cpp
+	src/model/QMakeProjectParser.cpp
 
 FORMS	= src/ui/UIItemSettings.ui \
 	src/ui/UIProjectsViewer.ui \
@@ -43,10 +42,7 @@ OPENEDFILES	= src/item/QMakeProjectItem.h \
 	src/model/QMakeProjectParser.h \
 	src/model/QMakeProjectParser.cpp \
 	src/ui/UIProjectsViewer.h \
-	src/ui/UIProjectsViewer.cpp \
-	src/main.cpp \
-	src/item/QMakeProjectItemPrivate.h \
-	src/item/QMakeProjectItemPrivate.cpp
+	src/ui/UIProjectsViewer.cpp
 
 HEADERS	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \
@@ -57,6 +53,5 @@ HEADERS	= src/item/QMakeProjectItem.h \
 	src/ui/UIItemSettings.h \
 	src/ui/UIProjectsViewer.h \
 	src/ui/UIQMakeProjectSettings.h \
-	src/model/QMakeProjectParser.h \
-	src/modeltest.h
+	src/model/QMakeProjectParser.h
 

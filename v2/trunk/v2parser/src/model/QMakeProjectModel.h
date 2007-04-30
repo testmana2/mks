@@ -35,7 +35,6 @@ public:
 	virtual QMakeProjectItem* row( int, QMakeProjectItem* = 0 ) const;
 	virtual void appendRow( QMakeProjectItem*, QMakeProjectItem* = 0 );
 	virtual void insertRow( int, QMakeProjectItem*, QMakeProjectItem* = 0 );
-	virtual bool insertRows( int, int, const QModelIndex& = QModelIndex() ) ;
 	virtual void removeRow( int, QMakeProjectItem* = 0 );
 	virtual void removeRow( QMakeProjectItem*, QMakeProjectItem* = 0 );
 	virtual bool removeRows( int, int, const QModelIndex& = QModelIndex() );

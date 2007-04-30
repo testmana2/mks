@@ -3,6 +3,7 @@
 //
 #include <QObject>
 #include <QModelIndex>
+#include <QPointer>
 //
 class QMakeProjectItemPrivate;
 class QMakeProjectModel;
@@ -26,6 +27,7 @@ public:
 		AbsoluteFilePathRole, // the filepath of the current value if it s a file/path
 		FileRole, // obsolete, tell if item is a file
 		FolderRole, // oblsolete, tell if item is a folder
+		DeleteRole, // tell if item must be delete when remove from model
 		LastRole // last role
 	};
 	//
@@ -86,7 +88,7 @@ protected:
 	bool insertPrivateRow( int, QMakeProjectItem* );
 	bool removePrivateRow( int );
 	//
-	QMakeProjectItem* mParent;
+	QPointer<QMakeProjectItem> mParent;
 	QMakeProjectModel* mModel;
 	QMakeProjectItemPrivate* d;
 	//

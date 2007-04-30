@@ -1,10 +1,11 @@
 #include "QMakeProjectItemPrivate.h"
+#include "QMakeProjectModel.h"
 #include "QMakeProjectItem.h"
 //
 QMakeProjectItemPrivate::QMakeProjectItemPrivate()
 {
 	mCount = 1;
-	mFlags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	mFlags = QMakeProjectModel::defaultFlags();
 }
 //
 QMakeProjectItemPrivate::~QMakeProjectItemPrivate()

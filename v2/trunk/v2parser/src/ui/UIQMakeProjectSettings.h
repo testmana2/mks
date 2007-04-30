@@ -51,12 +51,16 @@ protected:
 	QDirModel* mDirs;
 	//
 protected slots:
+	void loadEncodings();
 	void loadModules();
 	void loadConfigs();
 	void loadSettings();
 	void loadLanguages();
 	void setDir( const QString& );
 	void setDir( const QModelIndex& );
+	void addValue( const QString& );
+	void editValue( const QString& );
+	void deleteValue( const QString& = QString::null );
 	void tb_clicked();
 	void sb_valueChanged( int );
 	void on_cbTemplate_currentIndexChanged( const QString& );
@@ -70,6 +74,7 @@ protected slots:
 	void on_pbEditValue_clicked();
 	void on_pbDeleteValue_clicked();
 	void on_pbClearValues_clicked();
+	void on_lwTranslations_itemChanged( QListWidgetItem* );
 	void on_tvScopes_clicked( const QModelIndex& );
 	void on_tbAdd_clicked();
 	void on_tbEdit_clicked();

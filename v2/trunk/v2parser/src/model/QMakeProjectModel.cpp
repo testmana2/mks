@@ -197,18 +197,11 @@ void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem*
 {
 	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
-		qWarning( "inserting item: j: %d, item: %s, parent: %s", j, qPrintable( i->data().toString() ), qPrintable( p->data().toString() ) );
 		beginInsertRows( p->index(), j, j );
 		p->insertPrivateRow( j, i );
+		i->setData( true, QMakeProjectItem::DeleteRole );
 		endInsertRows();
 	}
-	else
-		qWarning( "was trying to insert row" );
-}
-//
-bool QMakeProjectModel::insertRows( int, int, const QModelIndex& ) 
-{
-	return false;
 }
 //
 void QMakeProjectModel::removeRow( int i, QMakeProjectItem* p )
@@ -219,25 +212,34 @@ void QMakeProjectModel::removeRow( int i, QMakeProjectItem* p )
 //
 void QMakeProjectModel::removeRow( QMakeProjectItem* i, QMakeProjectItem* p )
 {
-	i = takeRow( i, p ? p : mRootItem );
-	if ( i )
-		i->deleteLater();
+	takeRow( i, p ? p : mRootItem );
 }
 //
 bool QMakeProjectModel::removeRows( int r, int c, const QModelIndex& p )
 {
 	QMakeProjectItem* pItem = p.isValid() ? static_cast<QMakeProjectItem*>( p.internalPointer() ) : mRootItem;
+	bool b = false;
 	if ( pItem )
 	{
 		beginRemoveRows( p, r, r +c -1 );
 		for ( int i = r; i < r +c; i++ )
-			if ( r < rowCount( p ) )
-				if ( !pItem->removePrivateRow( i ) )
-					return false;
+		{
+			QMakeProjectItem* cItem = pItem->row( r );
+			if ( cItem && pItem->removePrivateRow( r ) )
+			{
+				if ( cItem->data( QMakeProjectItem::DeleteRole ).toBool() )
+					delete cItem;
+				b = true;
+			}
+			else
+			{
+				b = false;
+				break;
+			}
+		}
 		endRemoveRows();
-		return true;
 	}
-	return false;
+	return b;
 }
 //
 QMakeProjectItem* QMakeProjectModel::takeRow( int i, QMakeProjectItem* p )
@@ -249,11 +251,9 @@ QMakeProjectItem* QMakeProjectModel::takeRow( QMakeProjectItem* i, QMakeProjectI
 {
 	if ( ( p = p ? p : mRootItem ) && p->rows().contains( i ) )
 	{
-		int j = i->row();
-		beginRemoveRows( indexFromItem( p ), j, j );
-		p->removePrivateRow( j );
-		endRemoveRows();
-		//p->setParent( 0 ); // TODO: Fix this ( it crash )
+		i->setParent( 0 );
+		i->setData( false, QMakeProjectItem::DeleteRole );
+		removeRows( i->row(), 1, p->index() );
 		return i;
 	}
 	return 0;
@@ -306,9 +306,13 @@ void QMakeProjectModel::setListValues( const QStringList& val, const QString& v,
 			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeType, sItem );
 			sItem->setData( s, QMakeProjectItem::ValueRole );
 		}
+	qWarning( "c4" );
+	qDebug() << mRootItem;
+	qDebug() << sItem->data();
 		QMakeProjectItem* vItem = new QMakeProjectItem( QMakeProjectItem::VariableType, sItem );
-		vItem->setData( v, QMakeProjectItem::ValueRole );
-		vItem->setData( o, QMakeProjectItem::OperatorRole );
+		//vItem->setData( v, QMakeProjectItem::ValueRole );
+		//vItem->setData( o, QMakeProjectItem::OperatorRole );
+	qWarning( "c5" );
 		if ( !s.isEmpty() )
 			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, sItem );
 		it = vItem->index();
@@ -339,11 +343,9 @@ void QMakeProjectModel::setListValues( const QStringList& val, const QString& v,
 				cItem->setData( e, QMakeProjectItem::ValueRole );
 			}
 		}
+		// if variable is empty, remove it
 		if ( !pItem->rowCount() )
-		{
-			removeRow( pItem, pItem->parent() );
-			qDebug() << mRootItem->rows();
-		}
+			QAbstractItemModel::removeRow( it.row(), it.parent() );
 	}
 }
 //
