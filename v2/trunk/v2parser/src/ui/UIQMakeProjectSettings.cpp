@@ -695,6 +695,18 @@ void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 	setCurrentIndex( mScopesProxy->mapToSource( i ) );
 }
 //
+void UIQMakeProjectSettings::on_tvScopes_doubleClicked( const QModelIndex& i )
+{
+	if ( i.isValid() )
+		UIItemSettings::edit( mProject->model(), mProject->model()->itemFromIndex( mScopesProxy->mapToSource( i ) ), this )->exec();
+}
+//
+void UIQMakeProjectSettings::on_lvContents_doubleClicked( const QModelIndex& i )
+{
+	if ( i.isValid() )
+		UIItemSettings::edit( mProject->model(), mProject->model()->itemFromIndex( mContentProxy->mapToSource( i ) ), this )->exec();
+}
+//
 void UIQMakeProjectSettings::on_tbAdd_clicked()
 {
 	UIItemSettings::edit( mProject->model(), 0, this )->exec();

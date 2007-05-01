@@ -79,6 +79,8 @@ protected slots:
 	void on_pbClearValues_clicked();
 	void on_lwTranslations_itemChanged( QListWidgetItem* );
 	void on_tvScopes_clicked( const QModelIndex& );
+	void on_tvScopes_doubleClicked( const QModelIndex& );
+	void on_lvContents_doubleClicked( const QModelIndex& );
 	void on_tbAdd_clicked();
 	void on_tbEdit_clicked();
 	void on_tbRemove_clicked();
