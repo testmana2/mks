@@ -7,17 +7,15 @@
 QMakeProjectItem::QMakeProjectItem( QMakeProjectItem::NodeType t, QMakeProjectItem* p, QMakeProjectItemPrivate* pp )
 	: mParent( 0 ), mModel( 0 ), d( 0 )
 {
-sss ici faire des warning
-	setParent( p );
 	if ( pp )
 		setData( pp );
 	else
 		d = new QMakeProjectItemPrivate;
-	if ( parent() )
-		parent()->appendRow( this );
+	if ( p )
+		p->appendRow( this );
+	setFlags( QMakeProjectModel::defaultFlags() );
 	setData( t, QMakeProjectItem::TypeRole );
 	setData( true, QMakeProjectItem::DeleteRole );
-	setFlags( QMakeProjectModel::defaultFlags() );
 }
 //
 QMakeProjectItem::~QMakeProjectItem()
@@ -169,6 +167,11 @@ bool QMakeProjectItem::swapRow( int i, int j )
 //
 bool QMakeProjectItem::moveRowUp( int i )
 {
+	// we can't move up the scope end item
+	QMakeProjectItem* it = row( i );
+	if ( !it || ( it && it->data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeEndType ) )
+		return false;
+	// if valid, move it
 	if ( i > 0 )
 		insertRow( i -1, takeRow( i ) );
 	return i > 0;
@@ -176,6 +179,11 @@ bool QMakeProjectItem::moveRowUp( int i )
 //
 bool QMakeProjectItem::moveRowDown( int i )
 {
+	// if in a scope we can t go to very last item as it s the scope end
+	QMakeProjectItem* it = row( i +1 );
+	if ( !it || ( it && it->data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeEndType ) )
+		return false;
+	// if valid, move it
 	if ( i < rowCount() -1 )
 		insertRow( i +1, takeRow( i ) );
 	return i < rowCount() -1;

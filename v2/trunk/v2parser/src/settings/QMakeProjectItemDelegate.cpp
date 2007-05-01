@@ -19,8 +19,12 @@ QWidget* QMakeProjectItemDelegate::createEditor( QWidget* w, const QStyleOptionV
 			QComboBox* cb = new QComboBox( w );
 			const QMetaObject mo = QMakeProjectItem::staticMetaObject;
 			QMetaEnum me = mo.enumerator( mo.indexOfEnumerator( "NodeType" ) );
-			for ( int j = QMakeProjectItem::FirstType +1; j < QMakeProjectItem::LastType; j++ )
+			for ( int j = 0; j < me.keyCount(); j++ )
+			{
+				if ( me.value( j ) == QMakeProjectItem::RootType || me.value( j ) == QMakeProjectItem::FirstType || me.value( j ) == QMakeProjectItem::LastType )
+					continue;
 				cb->addItem( me.key( j ), me.value( j ) );
+			}
 			cb->setCurrentIndex( cb->findData( i.data() ) );
 			return cb;
 			break;
@@ -70,8 +74,8 @@ QWidget* QMakeProjectItemDelegate::createEditor( QWidget* w, const QStyleOptionV
 //
 void QMakeProjectItemDelegate::setModelData( QWidget* w, QAbstractItemModel* m, const QModelIndex& i ) const
 {
-	//if ( !w || !m || !i.isValid() || i.column() == 0 )
-		//return;
+	if ( !w || !m || !i.isValid() || i.column() == 0 )
+		return;
 	switch ( i.sibling( i.row(), 0 ).data( Qt::UserRole +1 ).toInt() )
 	{
 		case QMakeProjectItem::TypeRole:

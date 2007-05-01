@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>267</width>
-    <height>442</height>
+    <width>279</width>
+    <height>456</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -20,27 +20,42 @@
     <number>3</number>
    </property>
    <item>
-    <widget class="QTreeView" name="tvProject" />
-   </item>
-   <item>
-    <widget class="QLabel" name="lProject" >
-     <property name="text" >
-      <string>TextLabel</string>
+    <widget class="QSplitter" name="splitter" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="cbFilter" >
-     <property name="text" >
-      <string>Filter On/Off</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTextEdit" name="teOutput" >
-     <property name="readOnly" >
-      <bool>true</bool>
-     </property>
+     <widget class="QWidget" name="layoutWidget" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QTreeView" name="tvProject" />
+       </item>
+       <item>
+        <widget class="QLabel" name="lProject" >
+         <property name="text" >
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="cbFilter" >
+         <property name="text" >
+          <string>Filter On/Off</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QTextEdit" name="teOutput" >
+      <property name="readOnly" >
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
    </item>
    <item>

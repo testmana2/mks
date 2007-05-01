@@ -1,0 +1,3 @@
+UIItemSettings
+==============
+* When adding item, verify parent for validatinf or not the insertion

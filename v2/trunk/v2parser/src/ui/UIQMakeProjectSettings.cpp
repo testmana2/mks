@@ -1,6 +1,6 @@
 #include "UIQMakeProjectSettings.h"
-#include "QMakeProjectScopesProxy.h"
 #include "QMakeProjectModel.h"
+#include "QMakeProjectProxy.h"
 #include "QMakeProjectItem.h"
 #include "UIItemSettings.h"
 //
@@ -12,33 +12,43 @@
 #include <QInputDialog>
 #include <QFileIconProvider>
 #include <QTextCodec>
+#include <QMessageBox>
+#include <QCloseEvent>
+//
+QString mTranslationMask = "translations/%1_%2.ts";
 //
 UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p )
-	: QDialog( p ), mReady( false ), mProxy( new QMakeProjectScopesProxy( m->model() ) ), mProject( m ), mDirs( new QDirModel( this ) )
+	: QDialog( p ), mReady( false ), mProject( m ), mDirs( new QDirModel( this ) )
 {
 	setupUi( this );
 	setWindowTitle( QString( "Project Settings - %1" ).arg( m->data().toString() ) );
 	//
-	mDirs->setReadOnly( true);
+	mDirs->setReadOnly( true );
 	mDirs->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
 	mDirs->setSorting( QDir::Name );
 	leDir->setCompleter( new QCompleter( mDirs, leDir ) );
 	tvDirs->setModel( mDirs );
 #ifndef Q_WS_WIN
 	// all os except windows got only one root drive, so don't need to show root
-	tvDirs->setRootIndex( mDirs->index( 0, 0 ) );
+	tvDirs->setRootIndex( mDirs->index( "/" ) );
 #endif
 	for ( int i = 1; i < tvDirs->header()->count(); i++ )
 		tvDirs->setColumnHidden( i, true );
 	//
 	setDir( mDirs->index( 0, 0 ) );
-	//
-	/*
-	tvScopes->setModel( mProxy );
-	tvScopes->setRootIndex( mProxy->mapFromSource( mProject->index().parent().isValid() ? mProject->index() : QModelIndex() ) );
-	lvContents->setModel( mProject->model() );
-	setCurrentIndex( mProject->index() );
-	*/
+	// scopes
+	mScopesProxy = new QMakeProjectProxy( mProject->model(), this );
+	mScopesProxy->setFilterRoles( QList<int>() << QMakeProjectItem::ValueType );
+	mScopesProxy->setFiltering( true );
+	tvScopes->setModel( mScopesProxy );
+	tvScopes->setRootIndex( mScopesProxy->mapFromSource( mProject->index().parent() ) );
+	// scope content
+	mContentProxy = new QMakeProjectProxy( mProject->model(), this );
+	mContentProxy->setFilterRoles( QList<int>() << QMakeProjectItem::ValueType );
+	mContentProxy->setNegateFilter( false );
+	mContentProxy->setFiltering( true );
+	lvContents->setModel( mContentProxy );
+	setCurrentIndex( mProject->index().child( 0, 0 ) );
 	// loading...
 	loadEncodings();
 	loadModules();
@@ -66,11 +76,17 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 //
 UIQMakeProjectSettings::~UIQMakeProjectSettings()
 {
-	delete mProxy;
+	delete mScopesProxy;
 	qDeleteAll( mModules );
 	mModules.clear();
 	qDeleteAll( mConfigs );
 	mConfigs.clear();
+}
+//
+void UIQMakeProjectSettings::closeEvent( QCloseEvent* e )
+{
+	if ( result() == QDialog::Rejected && QMessageBox::question( this, tr( "Cancel..." ), tr( "Are you sure ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::No )
+		e->ignore();
 }
 //
 void UIQMakeProjectSettings::execute( QMakeProjectItem* m, QWidget* p )
@@ -85,13 +101,9 @@ QModelIndex UIQMakeProjectSettings::currentIndex()
 {
 	QModelIndex i;
 	if ( lvContents->selectionModel()->selectedIndexes().count() )
-		i = lvContents->selectionModel()->selectedIndexes().at( 0 );
+		i = mContentProxy->mapToSource( lvContents->selectionModel()->selectedIndexes().at( 0 ) );
 	if ( !i.isValid() && tvScopes->selectionModel()->selectedIndexes().count() )
-	{
-		i = tvScopes->selectionModel()->selectedIndexes().at( 0 );
-		if ( i.isValid() )
-			i = mProxy->mapToSource( i );
-	}
+		i = mScopesProxy->mapToSource( tvScopes->selectionModel()->selectedIndexes().at( 0 ) );
 	return i;
 }
 //
@@ -105,14 +117,14 @@ void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 		return;
 	else if ( i.data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ValueType )
 	{
-		tvScopes->setCurrentIndex( mProxy->mapFromSource( i.parent() ) );
-		lvContents->setRootIndex( i.parent() );
-		lvContents->setCurrentIndex( i );
+		tvScopes->setCurrentIndex( mScopesProxy->mapFromSource( i.parent() ) );
+		lvContents->setRootIndex( mContentProxy->mapFromSource( i.parent() ) );
+		lvContents->setCurrentIndex( mContentProxy->mapFromSource( i ) );
 	}
 	else
 	{
-		tvScopes->setCurrentIndex( mProxy->mapFromSource( i ) );
-		lvContents->setRootIndex( i );
+		tvScopes->setCurrentIndex( mScopesProxy->mapFromSource( i ) );
+		lvContents->setRootIndex( mContentProxy->mapFromSource( i ) );
 	}
 }
 //
@@ -349,7 +361,7 @@ void UIQMakeProjectSettings::loadLanguages()
 	for ( int i = QLocale::C; i < QLocale::Zulu +1; i++ )
 	{
 		QString s = QLocale::languageToString( ( QLocale::Language )i );
-		QString f = QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( s );
+		QString f = mTranslationMask.arg( mProject->data().toString() ).arg( s );
 		it = new QListWidgetItem( s, lwTranslations );
 		it->setCheckState( t.contains( f, Qt::CaseInsensitive ) ? Qt::Checked : Qt::Unchecked );
 	}
@@ -388,7 +400,7 @@ void UIQMakeProjectSettings::addValue( const QString& s )
 		// got language
 		QString f = QFileInfo( s ).baseName().remove( mProject->data().toString() +'_' );
 		// look if it's a project translation
-		if ( s == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		if ( s == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
 		{
 			// find item to check and check it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -417,7 +429,7 @@ void UIQMakeProjectSettings::editValue( const QString& s )
 		// got language
 		f = QFileInfo( it->text() ).baseName().remove( mProject->data().toString() +'_' );
 		// look if it's a project translation
-		if ( it->text() == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		if ( it->text() == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
 		{
 			// find item and uncheck it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -428,7 +440,7 @@ void UIQMakeProjectSettings::editValue( const QString& s )
 		// got language
 		f = QFileInfo( s ).baseName().remove( mProject->data().toString() +'_' );
 		// look if it's a project translation
-		if ( s == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		if ( s == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
 		{
 			// find item to check and check it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -452,7 +464,7 @@ void UIQMakeProjectSettings::deleteValue( const QString& s )
 		// got language
 		QString f = QFileInfo( cit->text() ).baseName().remove( mProject->data().toString() +'_' );
 		// look if it's a project translation
-		if ( cit->text() == QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( f ) )
+		if ( cit->text() == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
 		{
 			// find item and uncheck it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -558,6 +570,12 @@ void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& 
 	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
 }
 //
+void UIQMakeProjectSettings::on_tvDirs_doubleClicked( const QModelIndex& i )
+{
+	if ( i.isValid() && cbVariables->currentText().toLower().contains( "path" ) )
+		addValue( getRelativeFilePath( mDirs->filePath( i ) ) );
+}
+//
 void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 {
 	if ( !i )
@@ -640,7 +658,7 @@ void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it 
 	if ( !it || !lwTranslations->isVisible() )
 		return;
 	// get translation file
-	QString s = QString( "translations/%1_%2.ts" ).arg( mProject->data().toString() ).arg( it->text() );
+	QString s = mTranslationMask.arg( mProject->data().toString() ).arg( it->text() );
 	QString k = "|=|TRANSLATIONS";
 	// check translation
 	switch ( it->checkState() )
@@ -674,7 +692,7 @@ void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it 
 //
 void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 {
-	setCurrentIndex( mProxy->mapToSource( i ) );
+	setCurrentIndex( mScopesProxy->mapToSource( i ) );
 }
 //
 void UIQMakeProjectSettings::on_tbAdd_clicked()
@@ -686,7 +704,7 @@ void UIQMakeProjectSettings::on_tbEdit_clicked()
 {
 	QModelIndex i = currentIndex();
 	if ( i.isValid() )
-		UIItemSettings::edit( mProject->model(), static_cast<QMakeProjectItem*>( mProject->model()->itemFromIndex( i ) ), this )->exec();
+		UIItemSettings::edit( mProject->model(), mProject->model()->itemFromIndex( i ), this )->exec();
 }
 //
 void UIQMakeProjectSettings::on_tbRemove_clicked()
@@ -748,6 +766,11 @@ void UIQMakeProjectSettings::accept()
 		m->setStringValues( QString( "%1.%2.%3.%4" ).arg( sbMajor->value() ).arg( sbMinor->value() ).arg( sbRelease->value() ).arg( sbBuild->value() ), "VERSION" );
 		m->setStringValues( QString::number( cbBuildAutoIncrement->isChecked() ), "APP_AUTO_INCREMENT" );
 	}
+	else
+	{
+		m->setStringValues( QString::null, "VERSION" );
+		m->setStringValues( QString::null, "APP_AUTO_INCREMENT" );
+	}
 	if ( !cbTemplate->currentText().isEmpty() )
 		m->setStringValues( cbTemplate->currentText(), "TEMPLATE" );
 	if ( !cbLanguage->currentText().isEmpty() )
@@ -804,5 +827,6 @@ void UIQMakeProjectSettings::accept()
 //
 void UIQMakeProjectSettings::reject()
 {
-	QDialog::reject();
+	setResult( QDialog::Rejected );
+	close();
 }

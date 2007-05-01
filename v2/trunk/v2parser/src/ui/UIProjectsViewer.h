@@ -6,7 +6,7 @@
 #include <QPointer>
 //
 class QMakeProjectModel;
-class QMakeProjectProxyModel;
+class QMakeProjectProxy;
 //
 class UIProjectsViewer : public QWidget, public Ui::UIProjectsViewer
 {
@@ -20,7 +20,7 @@ protected:
 	UIProjectsViewer( QWidget* = 0 );
 	static QPointer<UIProjectsViewer> mSelf;
 	QMakeProjectModel* mModel;
-	QMakeProjectProxyModel* mProxy;
+	QMakeProjectProxy* mProxy;
 	//
 protected slots:
 	void on_pbSettings_clicked();

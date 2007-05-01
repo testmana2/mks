@@ -198,9 +198,12 @@ void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem*
 	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
 		beginInsertRows( p->index(), j, j );
+		i->setParent( p );
 		p->insertPrivateRow( j, i );
 		i->setData( true, QMakeProjectItem::DeleteRole );
 		endInsertRows();
+		if ( p == mRootItem ) // TODO: fix this fucking hack for proxy !
+			reset();
 	}
 }
 //
@@ -251,9 +254,9 @@ QMakeProjectItem* QMakeProjectModel::takeRow( QMakeProjectItem* i, QMakeProjectI
 {
 	if ( ( p = p ? p : mRootItem ) && p->rows().contains( i ) )
 	{
-		i->setParent( 0 );
 		i->setData( false, QMakeProjectItem::DeleteRole );
 		removeRows( i->row(), 1, p->index() );
+		i->setParent( 0 );
 		return i;
 	}
 	return 0;
@@ -284,7 +287,6 @@ QString QMakeProjectModel::getStringValues( const QString& v, const QString& o, 
 	return getListValues( v, o, s ).join( " " );
 }
 //
-#include <QDebug>
 void QMakeProjectModel::setListValues( const QStringList& val, const QString& v, const QString& o, const QString& s )
 {
 	// TODO: Fix this member to allow scope to be like path, for imbriqued scopes, ie : win32/!debug/
@@ -306,13 +308,9 @@ void QMakeProjectModel::setListValues( const QStringList& val, const QString& v,
 			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeType, sItem );
 			sItem->setData( s, QMakeProjectItem::ValueRole );
 		}
-	qWarning( "c4" );
-	qDebug() << mRootItem;
-	qDebug() << sItem->data();
 		QMakeProjectItem* vItem = new QMakeProjectItem( QMakeProjectItem::VariableType, sItem );
-		//vItem->setData( v, QMakeProjectItem::ValueRole );
-		//vItem->setData( o, QMakeProjectItem::OperatorRole );
-	qWarning( "c5" );
+		vItem->setData( v, QMakeProjectItem::ValueRole );
+		vItem->setData( o, QMakeProjectItem::OperatorRole );
 		if ( !s.isEmpty() )
 			sItem = new QMakeProjectItem( QMakeProjectItem::ScopeEndType, sItem );
 		it = vItem->index();

@@ -17,6 +17,7 @@ public:
 	//
 protected:
 	UIItemSettings( QMakeProjectModel*, QMakeProjectItem*, QWidget* = 0 );
+	//
 	static QPointer<UIItemSettings> mSelf;
 	QMakeProjectItem* mItem;
 	QMakeProjectModel* mProject;

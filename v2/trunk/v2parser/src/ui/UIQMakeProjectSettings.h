@@ -7,7 +7,7 @@
 #include <QList>
 #include <QHash>
 //
-class QMakeProjectScopesProxy;
+class QMakeProjectProxy;
 class QMakeProjectItem;
 class QDirModel;
 //
@@ -41,9 +41,11 @@ public:
 	//
 protected:
 	UIQMakeProjectSettings( QMakeProjectItem*, QWidget* = 0 );
+	void closeEvent( QCloseEvent* );
 	//
 	bool mReady;
-	QMakeProjectScopesProxy* mProxy;
+	QMakeProjectProxy* mScopesProxy;
+	QMakeProjectProxy* mContentProxy;
 	QMakeProjectItem* mProject;
 	QtItemList mModules;
 	QtItemList mConfigs;
@@ -68,6 +70,7 @@ protected slots:
 	void cb_highlighted( int );
 	void on_cbScopes_currentIndexChanged( const QString& );
 	void on_cbOperators_currentIndexChanged( const QString& );
+	void on_tvDirs_doubleClicked( const QModelIndex& );
 	void on_lwFiles_itemDoubleClicked( QListWidgetItem* );
 	void on_cbVariables_currentIndexChanged( const QString& );
 	void on_pbAddValue_clicked();
@@ -82,8 +85,8 @@ protected slots:
 	void on_tbClear_clicked();
 	void on_tbUp_clicked();
 	void on_tbDown_clicked();
-	virtual void accept();
-	virtual void reject();
+	void accept();
+	void reject();
 	//
 };
 //

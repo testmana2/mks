@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
-    <height>478</height>
+    <width>640</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -934,7 +934,7 @@
        <item>
         <widget class="QGroupBox" name="gbTranslations" >
          <property name="title" >
-          <string>Translations</string>
+          <string>&amp;Translations</string>
          </property>
          <layout class="QVBoxLayout" >
           <property name="margin" >
@@ -1264,8 +1264,14 @@
      <property name="flow" >
       <enum>QListView::TopToBottom</enum>
      </property>
+     <property name="isWrapping" stdset="0" >
+      <bool>false</bool>
+     </property>
      <property name="viewMode" >
       <enum>QListView::IconMode</enum>
+     </property>
+     <property name="currentRow" >
+      <number>0</number>
      </property>
      <item>
       <property name="text" >

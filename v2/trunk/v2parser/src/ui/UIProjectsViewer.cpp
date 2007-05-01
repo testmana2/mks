@@ -1,6 +1,6 @@
 #include "UIProjectsViewer.h"
 #include "QMakeProjectModel.h"
-#include "QMakeProjectProxyModel.h"
+#include "QMakeProjectProxy.h"
 #include "UIQMakeProjectSettings.h"
 //
 QPointer<UIProjectsViewer> UIProjectsViewer::mSelf = 0L;
@@ -26,7 +26,7 @@ bool UIProjectsViewer::openProject( const QString& s )
 	mModel = new QMakeProjectModel( s, this );
 	if ( mModel->isOpen() )
 	{
-		mProxy = new QMakeProjectProxyModel( mModel );
+		mProxy = new QMakeProjectProxy( mModel, this );
 		tvProject->setModel( mProxy );
 		//
 		/*
@@ -44,6 +44,8 @@ bool UIProjectsViewer::openProject( const QString& s )
 void UIProjectsViewer::on_pbSettings_clicked()
 {
 	if ( mModel->isOpen() )
+	{
 		//UIQMakeProjectSettings::execute( mModel->project( tvProject->currentIndex() ), this );
 		UIQMakeProjectSettings::execute( mModel->project( mProxy->mapToSource( tvProject->currentIndex() ) ), this );
+	}
 }

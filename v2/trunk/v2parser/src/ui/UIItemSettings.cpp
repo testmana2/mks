@@ -25,7 +25,7 @@ UIItemSettings::UIItemSettings( QMakeProjectModel* p, QMakeProjectItem* pi, QWid
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	twValueRoles->setItemDelegate( new QMakeProjectItemDelegate( twValueRoles ) );
-	// fill list with node type
+	// fill list with node roles
 	const QMetaObject mo = QMakeProjectItem::staticMetaObject;
 	QMetaEnum me = mo.enumerator( mo.indexOfEnumerator( "NodeRole" ) );
 	QFontMetrics fm( twValueRoles->font() );
@@ -49,49 +49,44 @@ UIItemSettings::UIItemSettings( QMakeProjectModel* p, QMakeProjectItem* pi, QWid
 //
 void UIItemSettings::accept()
 {
-	if ( !mItem )
+	// got parent window
+	UIQMakeProjectSettings* d = qobject_cast<UIQMakeProjectSettings*>( parentWidget() );
 	// if no valid index, create one
+	if ( !mItem && d )
 	{
-		UIQMakeProjectSettings* d = qobject_cast<UIQMakeProjectSettings*>( parentWidget() );
-		if ( d )
-		{
-			int r = 0;
-			int rc = 0;
-			// get the current index in the project settings
-			mItem = static_cast<QMakeProjectItem*>( mProject->itemFromIndex( d->currentIndex() ) );
-			// get it s row and rowcount
-			if ( mItem )
-			{
-				r = mItem->row();
-				rc = mItem->rowCount();
-			}
-			else
-			{
-				r = 0;
-				rc = mProject->rowCount();
-			}
-			// get the node type
-			QMakeProjectItem::NodeType pNodeType = ( QMakeProjectItem::NodeType )twValueRoles->topLevelItem( 0 )->data( 1, Qt::DisplayRole ).toInt();
-			// ask which kind of item we must create
-			if ( QMessageBox::question( this, tr( "New Item.." ), tr( "Create item as a child of the selected item ?" ), QMessageBox::Yes | QMessageBox::No ) == QMessageBox::Yes )
-			// as child
-			{
-				mProject->insertRow( rc, new QMakeProjectItem( pNodeType ), mItem );
-				mItem = static_cast<QMakeProjectItem*>( mItem ? mItem->row( rc ) : mProject->row( rc ) );
-			}
-			else
-			{
-				mProject->insertRow( r, new QMakeProjectItem( pNodeType ), mItem->parent() );
-				mItem = static_cast<QMakeProjectItem*>( mItem && mItem->parent() ? mItem->parent()->row( r ) : mProject->row( r ) );
-			}
-			// set the new item the current one
-			d->setCurrentIndex( mProject->indexFromItem( mItem ) );
-		}
+		// get the current index in the project settings
+		mItem = static_cast<QMakeProjectItem*>( mProject->itemFromIndex( d->currentIndex() ) );
+		// get it s row and rowcount
+		int r = mItem ? mItem->row() : 0;
+		int rc = mItem ? mItem->rowCount() : mProject->rowCount();
+		// if item is a scope, remove 1 to rc
+		if ( mItem && ( mItem->data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeType || mItem->data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::NestedScopeType ) )
+			rc--;
+		// if parent is a scope, remove 1 to r
+		if ( mItem && ( mItem->data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::ScopeType || mItem->data( QMakeProjectItem::TypeRole ).toInt() == QMakeProjectItem::NestedScopeType ) )
+			r--;
+		// create the new item
+		QMakeProjectItem::NodeType mNodeType = ( QMakeProjectItem::NodeType )twValueRoles->topLevelItem( 0 )->data( 1, Qt::DisplayRole ).toInt();
+		QMakeProjectItem* cItem = new QMakeProjectItem( mNodeType );
+		// ask which kind of item we must create
+		if ( QMessageBox::question( this, tr( "New Item.." ), tr( "Create item as a child of the current item ?" ), QMessageBox::Yes | QMessageBox::No ) == QMessageBox::Yes )
+		// as child
+			mProject->insertRow( rc, cItem, mItem );
+		else
+			mProject->insertRow( r, cItem, mItem ? mItem->parent() : 0 );
+		// if item is a scope add it s endscope
+		if ( mNodeType == QMakeProjectItem::ScopeType || mNodeType == QMakeProjectItem::NestedScopeType )
+			(void) new QMakeProjectItem( QMakeProjectItem::ScopeEndType, cItem );
+		// transfer pointer
+		mItem = cItem;
 	}
-	// update index data
+	// update item data
 	if ( mItem )
 		for ( int i = 0; i < twValueRoles->topLevelItemCount(); i++ )
 			mItem->setData( twValueRoles->topLevelItem( i )->text( 1 ), twValueRoles->topLevelItem( i )->data( 0, Qt::UserRole +1 ).toInt() );
+	// set the item the current one
+	if ( d )
+		d->setCurrentIndex( mProject->indexFromItem( mItem ) );
 	//
 	QDialog::accept();
 }
