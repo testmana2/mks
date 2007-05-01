@@ -38,7 +38,7 @@ MonkeyEditor::MonkeyEditor( QWidget* p )
 	{
 		b = new pBookmark;
 		b->Pixmap = new QPixmap( QString( ":/Icons/Icons/EditorBookmark%1" ).arg( i ) );
-		b->Index = markerDefine( b->Pixmap );
+		b->Index = markerDefine( *b->Pixmap );
 		b->Handle = -1;
 		mBookmarks[(Bookmarks)i] = b;
 	}
