@@ -32,6 +32,7 @@ QMakeProjectParser::~QMakeProjectParser()
 //
 QStringList QMakeProjectParser::explodeValue(const QString& s)
 {
+	return QStringList( s );
 	QStringList explode = s.split(QChar(' '));
 	QStringList returnValue;
 	QString temp;
@@ -177,6 +178,7 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 			variable->setData( liste[1], AbstractProjectModel::ValueRole );
 			variable->setData( liste[2], AbstractProjectModel::OperatorRole );
 			
+			/*
 			// récup des différentes valeurs
 			QStringList liste2 = explodeValue(liste[3]);
 			
@@ -191,6 +193,7 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 			if ( liste2.count() )
 				value->setData( liste[5], AbstractProjectModel::CommentRole );
 			liste2.clear();
+			*/
 
 			qWarning() << "ligne : " << ligne << " variable found !" << liste[1] << liste[2] << liste[3] << liste[4] << "end variable !";
 			// si il y a un "\" � la fin de la ligne, lire la ligne suivante
@@ -202,7 +205,7 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 				{
 					liste = varLine.capturedTexts();
 					// ==================        5         ==================
-					
+					/*
 					// récup des différentes valeurs
 					liste2 = explodeValue(liste[1]);
 					
@@ -217,14 +220,14 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 					if ( liste2.count() ) // TODO : faudrait peut être modifier ceci par " if (liste[2] != "") " ? et les autres bien entendu
 						value->setData( liste[2], AbstractProjectModel::CommentRole );
 					liste2.clear();
-					
+					*/
 					qWarning() << "ligne : " << ligne << " multiligne found !" << liste[1] << liste[2] << "end multiligne !";
 					
 					ligne++;
 				}
 				liste = content[ligne].split( "#" );
 				
-				liste2 = explodeValue(liste[1]);
+				//liste2 = explodeValue(liste[1]);
 				// TODO : liste2 contient la liste des valeurs, reste à faire le foreach
 				
 				// ici c'est la derni�re ligne qui ne comporte pas de "\"
