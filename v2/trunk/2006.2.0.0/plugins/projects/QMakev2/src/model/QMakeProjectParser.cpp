@@ -93,7 +93,6 @@ bool QMakeProjectParser::loadFile( const QString& s, QMakeProjectItem* it )
 	QFile f( s );
 	if ( !f.exists() || !f.open( QFile::ReadOnly | QFile::Text ) )
 		return false;
-
 	// trim file
 	while (!f.atEnd()) {
 		QByteArray line = f.readLine();
@@ -101,33 +100,15 @@ bool QMakeProjectParser::loadFile( const QString& s, QMakeProjectItem* it )
 		if(line.size() > 0)
 			content += line;
 	}
-		
 	// set project data
 	if ( it != mRoot )
 		it = new QMakeProjectItem( AbstractProjectModel::ProjectType, it );
 	it->setType( AbstractProjectModel::ProjectType );
 	it->setData( QFileInfo( s ).completeBaseName() );
 	it->setData( s, AbstractProjectModel::AbsoluteFilePathRole );
-
 	// parse buffer
 	mIsOpen = parseBuffer( 0, it );
 	return mIsOpen;
-
-	/*
-	QFile f( s );
-	if ( !it || !f.exists() || !f.open( QFile::ReadOnly ) )
-		return false;
-	QBuffer buf( this );
-	buf.setData( f.readAll() );
-	if ( !buf.open( QBuffer::ReadOnly | QBuffer::Text ) )
-		return false;
-	// set project data
-	it->setType( AbstractProjectModel::ProjectType );
-	it->setData( QFileInfo( s ).completeBaseName() );
-	it->setData( s, AbstractProjectModel::AbsoluteFilePathRole );
-	//
-	fakeProject( it );
-	*/
 }
 // parser file
 int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
@@ -170,8 +151,8 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 		// fin de bloc seul
 		else if(end_bloc.exactMatch(content[ligne]))
 		{
-			QStringList liste = end_bloc.capturedTexts();
 			// ==================        3         ==================
+			QStringList liste = end_bloc.capturedTexts();
 			qWarning() << "ligne : " << ligne << " end scope found !" << liste[1] << liste[2] << "end end scope !";
 			
 			return ligne;
@@ -180,23 +161,10 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 		// "HEADERS = ***" ou "win32:HEADERS = ***" ("+=" et "-=" sont aussi g�r�s)
 		else if(variable.exactMatch(content[ligne]))
 		{
-			QStringList liste2, liste = variable.capturedTexts();
 			// ==================        4         ==================
-			QMakeProjectItem *value = 0, *variable = new QMakeProjectItem( AbstractProjectModel::VariableType, it );
-			variable->setData( liste[1], AbstractProjectModel::ValueRole );
-			variable->setData( liste[2], AbstractProjectModel::OperatorRole );
-			
-			// récup des différentes valeurs
-			liste2 = explodeValue( liste[3] );
-			foreach ( QString s, liste2 )
-			{
-				value = new QMakeProjectItem( AbstractProjectModel::ValueType, variable );
-				value->setData( s, AbstractProjectModel::ValueRole );
-			}
-			if ( liste2.count() )
-				value->setData( liste[5], AbstractProjectModel::CommentRole );
-			liste2.clear();
-
+			QStringList liste = variable.capturedTexts();
+			QMakeProjectItem * v = addVariable( liste[1], liste[2], it );
+			addValues( explodeValue( liste[3] ), liste[5], v );
 			qWarning() << "ligne : " << ligne << " variable found !" << liste[1] << liste[2] << liste[3] << liste[4] << "end variable !";
 			// si il y a un "\" � la fin de la ligne, lire la ligne suivante
 			if(liste[4].right(1) == "\\")
@@ -205,62 +173,68 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 				// lire la ligne suivante tant que il y a un "\" � la fin de celle si (attention aux commentaires)
 				while(varLine.exactMatch(content[ligne]))
 				{
-					liste = varLine.capturedTexts();
 					// ==================        5         ==================
-					/*
-					// récup des différentes valeurs
-					liste2 = explodeValue(liste[1]);
-					
-					foreach ( QString s, liste2 )
-					{
-						if ( !s.isEmpty() )
-						{
-							value = new QMakeProjectItem( AbstractProjectModel::ValueType, variable );
-							value->setData( s, AbstractProjectModel::ValueRole );
-						}
-					}
-					if ( liste2.count() ) // TODO : faudrait peut être modifier ceci par " if (liste[2] != "") " ? et les autres bien entendu
-						value->setData( liste[2], AbstractProjectModel::CommentRole );
-					liste2.clear();
-					*/
+					liste = varLine.capturedTexts();
+					addValues( explodeValue( liste[1] ), liste[2], v );
 					qWarning() << "ligne : " << ligne << " multiligne found !" << liste[1] << liste[2] << "end multiligne !";
-					
+					//
 					ligne++;
 				}
+				//
 				liste = content[ligne].split( "#" );
-				
-				//liste2 = explodeValue(liste[1]);
-				// TODO : liste2 contient la liste des valeurs, reste à faire le foreach
-				
-				// ici c'est la derni�re ligne qui ne comporte pas de "\"
-				value = new QMakeProjectItem( AbstractProjectModel::ValueType, variable );
-				value->setData( liste[0], AbstractProjectModel::ValueRole );
-				if ( liste.count() > 1 )
-					value->setData( liste[1], AbstractProjectModel::CommentRole );
-					
+				addValues( explodeValue( liste[0] ), liste.count() > 1 ? liste[1] : QString::null, v );
 				qWarning() << "ligne : " << ligne << " last multiligne found !" << content[ligne] << "end last multiligne !";
 			}
 		}
 		// ici les commentaires seuls sur la ligne
 		else if(comments.exactMatch(content[ligne]))
 		{
-			QStringList liste = function_call.capturedTexts();
 			// ==================        6         ==================
+			addComment( content[ligne], it );
 			qWarning() << "ligne : " << ligne << " comment found !" << content[ligne] << "end comment !";
 		}
 		// ici les lignes vides
 		else if(content[ligne] == "")
-		{
-		}
+			addEmpty( it );
 		// une erreur ? c'est horrible
 		else
-		{
 			qWarning("Error on line %d",(ligne+1));
-		}
 		ligne++;
 	}
 	
 	return 1;
+}
+//
+QMakeProjectItem* QMakeProjectParser::addVariable( const QString& s, const QString& o, QMakeProjectItem* i )
+{
+	QMakeProjectItem* v = new QMakeProjectItem( AbstractProjectModel::VariableType, i );
+	v->setData( s, AbstractProjectModel::ValueRole );
+	v->setData( o, AbstractProjectModel::OperatorRole );
+	return v;
+}
+//
+void QMakeProjectParser::addValues( const QStringList& l, const QString& s, QMakeProjectItem* i )
+{
+	QMakeProjectItem* value = 0;
+	foreach ( QString v, l )
+	{
+		value = new QMakeProjectItem( AbstractProjectModel::ValueType, i );
+		value->setData( v, AbstractProjectModel::ValueRole );
+	}
+	if ( value )
+		value->setData( s, AbstractProjectModel::CommentRole );
+}
+//
+void QMakeProjectParser::addComment( const QString& s, QMakeProjectItem* i )
+{
+	QMakeProjectItem* c = new QMakeProjectItem( AbstractProjectModel::CommentType, i );
+	c->setData( s, AbstractProjectModel::ValueRole );
+}
+//
+void QMakeProjectParser::addEmpty( QMakeProjectItem* i )
+{
+	QMakeProjectItem* e = new QMakeProjectItem( AbstractProjectModel::EmptyType, i );
+	e->setData( QString(), AbstractProjectModel::ValueRole );
 }
 //
 void QMakeProjectParser::fakeProject( QMakeProjectItem* it )

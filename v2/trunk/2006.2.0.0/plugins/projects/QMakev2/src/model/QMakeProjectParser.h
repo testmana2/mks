@@ -19,6 +19,10 @@ protected:
 	QStringList explodeValue( const QString& );
 	bool loadFile( const QString&, QMakeProjectItem* );
 	int parseBuffer( int, QMakeProjectItem* );
+	QMakeProjectItem* addVariable( const QString&, const QString&, QMakeProjectItem* );
+	void addValues( const QStringList&, const QString&, QMakeProjectItem* );
+	void addComment( const QString&, QMakeProjectItem* );
+	void addEmpty( QMakeProjectItem* );
 	void fakeProject( QMakeProjectItem* );
 	//
 	bool mIsOpen;
