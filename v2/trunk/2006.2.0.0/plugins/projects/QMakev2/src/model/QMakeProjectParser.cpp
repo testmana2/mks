@@ -7,6 +7,7 @@
 #include <QVector>
 #include <QRegExp>
 #include <QStringList>
+#include <QDebug>
 // pj
 static int prof = 0; // profondeur courrante
 static int this_prof = 0; // profondeur pr�c�dent
@@ -32,7 +33,15 @@ QMakeProjectParser::~QMakeProjectParser()
 //
 QStringList QMakeProjectParser::explodeValue(const QString& s)
 {
-	return QStringList( s );
+	if ( explodeVars.exactMatch( s ) )
+	{
+		QStringList l = explodeVars.capturedTexts();
+		l.removeFirst();
+		l.removeAll( QString::null );
+		return l;
+	}
+	return QStringList() << s;
+	//
 	QStringList explode = s.split(QChar(' '));
 	QStringList returnValue;
 	QString temp;
@@ -121,7 +130,6 @@ bool QMakeProjectParser::loadFile( const QString& s, QMakeProjectItem* it )
 	*/
 }
 // parser file
-#include <QDebug>
 int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 {
 	while(ligne < content.size())
@@ -172,28 +180,22 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 		// "HEADERS = ***" ou "win32:HEADERS = ***" ("+=" et "-=" sont aussi g�r�s)
 		else if(variable.exactMatch(content[ligne]))
 		{
-			QStringList liste = variable.capturedTexts();
+			QStringList liste2, liste = variable.capturedTexts();
 			// ==================        4         ==================
-			QMakeProjectItem *value = NULL, *variable = new QMakeProjectItem( AbstractProjectModel::VariableType, it );
+			QMakeProjectItem *value = 0, *variable = new QMakeProjectItem( AbstractProjectModel::VariableType, it );
 			variable->setData( liste[1], AbstractProjectModel::ValueRole );
 			variable->setData( liste[2], AbstractProjectModel::OperatorRole );
 			
-			/*
 			// récup des différentes valeurs
-			QStringList liste2 = explodeValue(liste[3]);
-			
+			liste2 = explodeValue( liste[3] );
 			foreach ( QString s, liste2 )
 			{
-				if ( !s.isEmpty() )
-				{
-					value = new QMakeProjectItem( AbstractProjectModel::ValueType, variable );
-					value->setData( s, AbstractProjectModel::ValueRole );
-				}
+				value = new QMakeProjectItem( AbstractProjectModel::ValueType, variable );
+				value->setData( s, AbstractProjectModel::ValueRole );
 			}
 			if ( liste2.count() )
 				value->setData( liste[5], AbstractProjectModel::CommentRole );
 			liste2.clear();
-			*/
 
 			qWarning() << "ligne : " << ligne << " variable found !" << liste[1] << liste[2] << liste[3] << liste[4] << "end variable !";
 			// si il y a un "\" � la fin de la ligne, lire la ligne suivante
