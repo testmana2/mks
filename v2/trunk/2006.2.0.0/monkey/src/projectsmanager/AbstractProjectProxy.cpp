@@ -1,17 +1,19 @@
 #include "AbstractProjectProxy.h"
+#include "AbstractProjectModel.h"
 //
-#include <QHash>
+#include <QTreeView>
 //
 int AbstractProjectProxy::mUniqueId = 0;
 QHashProxys AbstractProjectProxy::mProxysList = QHashProxys();
 //
-AbstractProjectProxy::AbstractProjectProxy( AbstractProjectItemModel* s )
-	: QSortFilterProxyModel( s ), mId(mUniqueId++ ), mComplexModel( false ),
-	mSettingsView( false )
+AbstractProjectProxy::AbstractProjectProxy( AbstractProjectModel* m )
+	: QSortFilterProxyModel( m ), mFiltering( false ), mNegateFilter( true )
 {
 	mProxysList[ mId ] = this;
+	setDynamicSortFilter( true );
+	setFilterRole( AbstractProjectModel::TypeRole );
+	setSourceModel( m );
 }
-//
 AbstractProjectProxy::~AbstractProjectProxy()
 {
 	if ( mProxysList.contains( mId ) )
@@ -25,9 +27,7 @@ int AbstractProjectProxy::id() const
 //
 AbstractProjectProxy* AbstractProjectProxy::byId( int i )
 {
-	if ( !mProxysList.contains( i ) )
-		return 0;
-	return mProxysList.value( i );
+	return mProxysList.contains( i ) ? mProxysList.value( i ) : 0;
 }
 //
 QHashProxys AbstractProjectProxy::all()
@@ -35,38 +35,78 @@ QHashProxys AbstractProjectProxy::all()
 	return mProxysList;
 }
 //
-AbstractProjectProxy* AbstractProjectProxy::getProxyByProject( AbstractProjectItemModel* p )
+AbstractProjectProxy* AbstractProjectProxy::getProxyByProject( AbstractProjectModel* p )
 {
-	foreach ( AbstractProjectProxy* py, all() )
-		if ( py->project() == p )
-			return py;
-	return 0;
+	return p ? p->findChild<AbstractProjectProxy*>() : 0;
 }
 //
-bool AbstractProjectProxy::isComplexModel() const
+AbstractProjectModel* AbstractProjectProxy::project() const
 {
-	return mComplexModel;
+	return qobject_cast<AbstractProjectModel*>( sourceModel() );
 }
 //
-bool AbstractProjectProxy::isSettingsView() const
+bool AbstractProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 {
-	return mSettingsView;
+	if ( !mFiltering )
+		return true;
+	QModelIndex index;
+	index = sourceModel()->index( r, 0, i );
+	bool b = mNegateFilter ? !mFilterRoles.contains( index.data( filterRole() ).toInt() ) : mFilterRoles.contains( index.data( filterRole() ).toInt() );
+	if ( !b )
+		for ( int j = 0; j < sourceModel()->rowCount( index ); j++ )
+			if ( filterAcceptsRow( j, index ) )
+				return true;
+	return b;
 }
 //
-void AbstractProjectProxy::setComplexModel( bool b )
+bool AbstractProjectProxy::isFiltering() const
 {
-	if ( mComplexModel == b )
+	return mFiltering;
+}
+//
+void AbstractProjectProxy::setFiltering( bool b )
+{
+	if ( b == mFiltering )
 		return;
-	mComplexModel = b;
+	mFiltering = b;
+	emit filteringChanged( mFiltering );
 	filterChanged();
-	emit complexModelChanged( mComplexModel );
 }
 //
-void AbstractProjectProxy::setSettingsView( bool b )
+bool AbstractProjectProxy::isNegateFilter() const
 {
-	if ( mSettingsView == b )
+	return mNegateFilter;
+}
+//
+void AbstractProjectProxy::setNegateFilter( bool b )
+{
+	if ( b == mNegateFilter )
 		return;
-	mSettingsView = b;
-	filterChanged();
-	emit settingsViewChanged( mSettingsView );
+	mNegateFilter = b;
+	emit negateFilterChanged( mNegateFilter );
+	if ( mFiltering )
+		filterChanged();
+}
+//
+void AbstractProjectProxy::addFilterRole( int r )
+{
+	if ( mFilterRoles.contains( r ) )
+		return;
+	mFilterRoles << r;
+	if ( mFiltering )
+		filterChanged();
+}
+//
+QList<int> AbstractProjectProxy::filterRoles() const
+{
+	return mFilterRoles;
+}
+//
+void AbstractProjectProxy::setFilterRoles( const QList<int>& r )
+{
+	if ( mFilterRoles == r )
+		return;
+	mFilterRoles = r;
+	if ( mFiltering )
+		filterChanged();
 }

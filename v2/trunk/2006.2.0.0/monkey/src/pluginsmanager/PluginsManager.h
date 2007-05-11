@@ -27,9 +27,6 @@ public:
 	// loading files using childs plugins
 	bool childPluginOpenFile( const QString&, AbstractProjectProxy* = 0 );
 	QStringList childsFilters() const;
-	// loading projects using projects plugins
-	bool projectPluginOpenProject( const QString& );
-	QStringList projectsFilters() const;
 	//
 private:
 	PluginsManager( QObject* = 0 );

@@ -1,5 +1,6 @@
 #include "CppCornerWidget.h"
 #include "CppChild.h"
+#include "AbstractProjectModel.h"
 #include "AbstractProjectProxy.h"
 #include "Workspace.h"
 //
@@ -85,23 +86,23 @@ void CppCornerWidget::aForm_triggered()
 	{
 		// check inf FORMS variable
 		//i = l.indexOf( QRegExp( QString( "*%1*" ).arg( f.baseName() ), Qt::CaseSensitive, QRegExp::Wildcard ) );
-		l = mChild->proxy()->project()->getValuesList( "FORMS" ).filter( f.baseName() );	
+		l = mChild->proxy()->project()->getListValues( "FORMS" ).filter( f.baseName() );	
 		if ( l.count() )
 		{
 			w->openFile( mChild->proxy()->project()->filePath( l.at( 0 ) ), mChild->proxy() );
 			return;
 		}
 		// check inf FORMS3 variable
-		l = mChild->proxy()->project()->getValuesList( "FORMS3" ).filter( f.baseName() );	
+		l = mChild->proxy()->project()->getListValues( "FORMS3" ).filter( f.baseName() );	
 		if ( l.count() )
 		{
 			w->openFile( mChild->proxy()->project()->filePath( l.at( 0 ) ), mChild->proxy() );
 			return;
 		}
 		// checking in all path that project include
-		l << mChild->proxy()->project()->getValuesList( "INCLUDEPATH" );
-		l << mChild->proxy()->project()->getValuesList( "DEPENDPATH" );
-		l << mChild->proxy()->project()->getValuesList( "VPATH" );
+		l << mChild->proxy()->project()->getListValues( "INCLUDEPATH" );
+		l << mChild->proxy()->project()->getListValues( "DEPENDPATH" );
+		l << mChild->proxy()->project()->getListValues( "VPATH" );
 		// made path absolute
 		for ( int i = 0; i < l.count(); i++ )
 		{

@@ -2,8 +2,7 @@
 #define GNUMAKE_H
 //
 #include "CompilerPlugin.h"
-//
-class AbstractProjectItemModel;
+#include "AbstractProjectModel.h"
 //
 class GNUMake :  public CompilerPlugin
 {
@@ -34,15 +33,16 @@ public slots:
 	virtual void distCleanBuildExecute();
 	//
 private:
-	bool checkForProject( AbstractProjectItemModel* );
-	AbstractProjectItemModel* currentProject();
-	AbstractProjectItemModel* parentProject();
+	bool checkForProject( const QModelIndex& );
+	AbstractProjectModel* currentModel() const;
+	QModelIndex currentProject() const;
+	QModelIndex parentProject() const;
 	//
-	ConsoleCommand qmakeCommand( AbstractProjectItemModel* );
-	ConsoleCommand makeCommand( AbstractProjectItemModel* );
-	ConsoleCommand makeCleanCommand( AbstractProjectItemModel* );
-	ConsoleCommand makeDistCleanCommand( AbstractProjectItemModel* );
-	ConsoleCommand executeCommand( AbstractProjectItemModel*, const QString& = QString::null );
+	ConsoleCommand qmakeCommand( const QModelIndex& );
+	ConsoleCommand makeCommand( const QModelIndex& );
+	ConsoleCommand makeCleanCommand( const QModelIndex& );
+	ConsoleCommand makeDistCleanCommand( const QModelIndex& );
+	ConsoleCommand executeCommand( const QModelIndex&, const QString& = QString::null );
 	//
 };
 //

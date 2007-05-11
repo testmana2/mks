@@ -70,8 +70,6 @@ void Workspace::initialize()
 	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), this, SLOT( editSearchReplace_triggered() ) );
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), this, SLOT( editGoTo_triggered() ) );
 	// view connection
-	connect( menuBar()->action( "mView/aProjectsList" ), SIGNAL( triggered( bool ) ), projectsManager(), SLOT( setTreeProjectsVisible( bool ) ) );
-	connect( menuBar()->action( "mView/aComplexProject" ), SIGNAL( triggered( bool ) ), projectsManager(), SLOT( setComplexModel( bool ) ) );
 	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), this, SLOT( viewNext_triggered() ) );
 	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), this, SLOT( viewPrevious_triggered() ) );
 	// project connection
@@ -299,42 +297,37 @@ void Workspace::viewPrevious_triggered()
 // project menu
 void Workspace::projectNew_triggered()
 {
+	projectsManager()->newProject();
 }
 //
 void Workspace::projectOpen_triggered()
 {
-	const QString mPath = settings()->value( "Recents/ProjectOpenPath" ).toString();
-	QString mFilters = pluginsManager()->projectsFilters().join( ";;" );
-	QString mFilePath = QFileDialog::getOpenFileName( this, tr( "Choose the project to open" ), mPath, mFilters );
-	if ( !mFilePath.isNull() )
-		openProject( mFilePath );
+	projectsManager()->openProject();
 }
 //
 void Workspace::projectSaveCurrent_triggered()
 {
-	projectsManager()->currentProxy()->project()->save();
+	projectsManager()->saveCurrent();
 }
 //
 void Workspace::projectSaveAll_triggered()
 {
-	foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
-		p->project()->save();
+	projectsManager()->saveAll();
 }
 //
 void Workspace::projectCloseCurrent_triggered()
 {
-	projectsManager()->closeProxy( projectsManager()->currentProxy() );
+	projectsManager()->closeCurrent();
 }
 //
 void Workspace::projectCloseAll_triggered()
 {
-	foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
-		projectsManager()->closeProxy( p );
+	projectsManager()->closeAll();
 }
 //
 void Workspace::projectSettings_triggered()
 {
-	projectsManager()->currentProxy()->projectSettings();
+	projectsManager()->projectSettings();
 }
 //
 void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
@@ -363,21 +356,7 @@ void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
 //
 void Workspace::openProject( const QString& s )
 {
-	const QFileInfo f( s );
-	if ( !f.exists() )
-	{
-		// remove it from recents projects
-		recentsManager()->removeRecentProject( f.canonicalFilePath() );
-		return;
-	}
-	// open project
-	if ( pluginsManager()->projectPluginOpenProject( f.canonicalFilePath() ) )
-	{
-		// save recent project open path
-		settings()->setValue( "Recents/ProjectOpenPath", f.canonicalPath() );
-		// append it to recents
-		recentsManager()->addRecentProject( f.canonicalFilePath() );
-	}
+	projectsManager()->openProject( s );
 }
 //
 int Workspace::addChild( AbstractChild* c, const QString& s )

@@ -1,6 +1,6 @@
 #include "Cpp.h"
 #include "CppChild.h"
-#include "AbstractProjectItemModel.h"
+#include "AbstractProjectModel.h"
 #include "AbstractProjectProxy.h"
 //
 #include <QFileInfo>
@@ -120,9 +120,9 @@ bool Cpp::openFile( const QString& s, AbstractProjectProxy* p )
 		QStringList l;
 		if ( p )
 		{
-			l << p->project()->getValuesList( "INCLUDEPATH" );
-			l << p->project()->getValuesList( "DEPENDPATH" );
-			l << p->project()->getValuesList( "VPATH" );
+			l << p->project()->getListValues( "INCLUDEPATH" );
+			l << p->project()->getListValues( "DEPENDPATH" );
+			l << p->project()->getListValues( "VPATH" );
 			// made path absolute
 			for ( int i = 0; i < l.count(); i++ )
 			{

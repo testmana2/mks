@@ -166,36 +166,6 @@ QStringList PluginsManager::childsFilters() const
 	return l;
 }
 //
-bool PluginsManager::projectPluginOpenProject( const QString& s )
-{
-	QString mExtension = QFileInfo( s ).completeSuffix();
-	foreach ( BasePlugin* bp, mPlugins )
-	{
-		if ( bp->infos().Type == BasePlugin::iProject )
-		{
-			ProjectPlugin* pp = (ProjectPlugin*)bp;
-			if ( pp && pp->infos().Installed && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
-				return pp->openProject( s );
-		}
-	}
-	return false;
-}
-//
-QStringList PluginsManager::projectsFilters() const
-{
-	QStringList l;
-	foreach ( BasePlugin* bp, mPlugins )
-	{
-		if ( bp->infos().Type == BasePlugin::iProject )
-		{
-			ProjectPlugin* pp = (ProjectPlugin*)bp;
-			if ( pp && pp->infos().Installed )
-				l << pp->filters();
-		}
-	}
-	return l;
-}
-//
 void PluginsManager::manageRequested()
 {
 	UIPluginsSettings::self( this, qApp->activeWindow() )->exec(); 

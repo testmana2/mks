@@ -35,14 +35,53 @@
    <property name="windowIcon" >
     <iconset/>
    </property>
-   <layout class="QGridLayout" >
+   <layout class="QVBoxLayout" >
     <property name="margin" >
-     <number>0</number>
+     <number>3</number>
     </property>
     <property name="spacing" >
-     <number>2</number>
+     <number>3</number>
     </property>
-    <item row="1" column="0" colspan="7" >
+    <item>
+     <widget class="QFrame" name="fActions" >
+      <property name="frameShape" >
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow" >
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QToolBar" name="tbActions" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>1</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="iconSize" >
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
      <widget class="QSplitter" name="sProjects" >
       <property name="sizePolicy" >
        <sizepolicy>
@@ -85,81 +124,11 @@
       </widget>
      </widget>
     </item>
-    <item row="0" column="6" >
-     <widget class="QToolButton" name="tbClose" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2" >
-     <widget class="QToolButton" name="tbOpen" />
-    </item>
-    <item row="0" column="5" >
-     <widget class="QToolButton" name="tbSave" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="4" >
-     <widget class="QToolButton" name="tbComplex" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
-      <property name="checkable" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3" >
-     <widget class="Line" name="lSeparator" >
-      <property name="orientation" >
-       <enum>Qt::Vertical</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QToolButton" name="tbList" />
-    </item>
-    <item row="0" column="0" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType" >
-       <enum>QSizePolicy::Preferred</enum>
-      </property>
-      <property name="sizeHint" >
-       <size>
-        <width>211</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
    </layout>
   </widget>
  </widget>
  <resources>
   <include location="../../resources/resources.qrc" />
  </resources>
- <connections>
-  <connection>
-   <sender>tbList</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>twProjects</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>273</x>
-     <y>11</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>261</x>
-     <y>64</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

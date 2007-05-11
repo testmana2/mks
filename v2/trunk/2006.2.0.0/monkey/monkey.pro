@@ -40,6 +40,7 @@ INCLUDEPATH	= . src src/ui \
 	src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci \
 	src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4 \
 	src/3rdparty/coveragemeter/ui
+
 CONFIG	+= qt warn_on release app_bundle thread x11 windows console
 DESTDIR	= ../bin
 win32:RC_FILE	+= monkey.rc
@@ -75,7 +76,7 @@ SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/workspacemanager/Workspace.cpp \
 	src/workspacemanager/LeftCorner.cpp \
 	src/pluginsmanager/PluginsManager.cpp \
-	src/projectsmanager/AbstractProjectItemModel.cpp \
+	src/projectsmanager/AbstractProjectModel.cpp \
 	src/projectsmanager/AbstractProjectProxy.cpp \
 	src/projectsmanager/ui/ProjectsManager.cpp \
 	src/Monkey.cpp \
@@ -92,11 +93,6 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/projectsmanager/ui/ProjectsManager.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui \
 	src/3rdparty/coveragemeter/ui/UITestReport.ui
-
-OPENEDFILES	= src/main.h \
-	src/main.cpp \
-	src/Monkey.h \
-	src/Monkey.cpp
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
@@ -129,7 +125,7 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/pluginsmanager/CompilerPlugin.h \
 	src/pluginsmanager/DebuggerPlugin.h \
 	src/pluginsmanager/ProjectPlugin.h \
-	src/projectsmanager/AbstractProjectItemModel.h \
+	src/projectsmanager/AbstractProjectModel.h \
 	src/projectsmanager/AbstractProjectProxy.h \
 	src/projectsmanager/ui/ProjectsManager.h \
 	src/Monkey.h \

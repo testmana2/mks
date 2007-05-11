@@ -5,33 +5,36 @@
 #include "MonkeyExport.h"
 //
 #include <QPointer>
+#include <QAction>
 //
 class AbstractProjectProxy;
-class AbstractProjectItemModel;
-//
-typedef QList<AbstractProjectProxy*> QProxyList;
-typedef QList<AbstractProjectItemModel*> QProjectList;
+class AbstractProjectModel;
 //
 class Q_MONKEY_EXPORT ProjectsManager : public QDockWidget, public Ui::ProjectsManager
 {
 	Q_OBJECT
 	//
 public:
-	enum TreeItemRole { ProxyIdRole = Qt::UserRole, ProjectFilePathRole };
-	//
 	static ProjectsManager* self( QWidget* = 0 );
 	//
-	QProxyList rootProxies() const;
-	QProjectList rootProjects() const;
-	void setCurrentProxy( AbstractProjectProxy* );
+	QStringList projectsFilters() const;
+	void newProject();
+	bool openProject( const QString& = QString::null );
+	void saveCurrent();
+	void saveAll();
+	void closeCurrent();
+	void closeAll();
+	void projectSettings();
+	//
+	void addProxy( AbstractProjectProxy* );
+	AbstractProjectModel* modelByIndex( const QModelIndex& ) const;
+	AbstractProjectProxy* proxyByIndex( const QModelIndex& ) const;
+	QAbstractItemView* viewByProxy( AbstractProjectProxy* ) const;
 	AbstractProjectProxy* currentProxy() const;
-	void setCurrentProject( AbstractProjectItemModel* );
-	AbstractProjectItemModel* currentProject() const;
-	QTreeWidgetItem* getItemByProxyId( int );
-	QAbstractItemView* getViewByProxyId( int );
-	void closeProxy( AbstractProjectProxy* );
-	void closeProject( AbstractProjectItemModel* );
-	void addProxy( AbstractProjectProxy*, AbstractProjectProxy* = 0 );
+	AbstractProjectModel* currentModel() const;
+	QModelIndex currentProject() const;
+	void setCurrentProject( const QModelIndex& );
+	void closeProject( const QModelIndex& );
 	//
 protected:
 	void showEvent( QShowEvent* );
@@ -39,20 +42,26 @@ protected:
 	//
 private:
 	ProjectsManager( QWidget* = 0 );
+	QAction* aProjectsList;
+	QAction* aFilteredView;
 	static QPointer<ProjectsManager> mSelf;
 	//
 public slots:
-	void setTreeProjectsVisible( bool );
-	void setComplexModel( bool );
+	void setFilteredModel( bool );
 	//
 private slots:
-	void on_tbSave_clicked();
-	void on_tbClose_clicked();
+	void projectIsModified( bool, const QModelIndex& );
+	void projectAboutToClose( const QModelIndex& );
+	//
+	void buildProjectTreeItems( AbstractProjectProxy*, const QModelIndex&, QTreeWidgetItem* = 0 );
+	void updateProjectActions( const QModelIndex& );
+	void removeProjectItem( const QModelIndex& );
 	void on_twProjects_itemClicked( QTreeWidgetItem*, int );
 	//
 signals:
 	void proxyAdded( AbstractProjectProxy* );
 	void currentProxyChanged( AbstractProjectProxy* );
+	void currentProjectChanged( AbstractProjectModel* );
 	void fileOpenRequested( const QString&, AbstractProjectProxy* );
 	//
 };

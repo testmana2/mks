@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/About" >
-        <file>About/informations.html</file>
         <file>About/authors.html</file>
         <file>About/greetings.html</file>
+        <file>About/informations.html</file>
         <file>About/testers.html</file>
     </qresource>
     <qresource prefix="/Icons" >
@@ -41,7 +41,6 @@
         <file>Icons/completionsignals.png</file>
         <file>Icons/completionslots.png</file>
         <file>Icons/completionvariables.png</file>
-        <file>Icons/cpp.png</file>
         <file>Icons/edit.png</file>
         <file>Icons/editadd.png</file>
         <file>Icons/editbreak.png</file>
@@ -70,8 +69,6 @@
         <file>Icons/filesaveas.png</file>
         <file>Icons/folder_blue.png</file>
         <file>Icons/folder_green.png</file>
-        <file>Icons/form.png</file>
-        <file>Icons/h.png</file>
         <file>Icons/helpassistant.png</file>
         <file>Icons/helpgreettings.png</file>
         <file>Icons/helphome.png</file>

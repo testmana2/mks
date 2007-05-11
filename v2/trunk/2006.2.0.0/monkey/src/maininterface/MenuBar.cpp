@@ -63,10 +63,6 @@ void MenuBar::initialize()
 	menu( "mView", tr( "&View" ) );
 	beginGroup( "mView" );
 		menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );
-		action( "aSeparator1" );
-		action( "aProjectsList", tr( "Show/Hide the projects list" ), QIcon( ":/Icons/Icons/helpgreettings.png" ), QString::null, tr( "Show/Hide the projects list" ) )->setCheckable( true );
-		action( "aComplexProject", tr( "Show/Hide the complex project" ), QIcon( ":/Icons/Icons/helptesters.png" ), QString::null, tr( "Show/Hide the complex project" ) )->setCheckable( true );
-		action( "aSeparator2" );
 		action( "aNext", tr( "&Next tab" ), QIcon( ":/Icons/Icons/buttonnext.png" ), tr( "Alt+Right" ), tr( "Active the next tab" ) )->setEnabled( false );
 		action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/Icons/Icons/buttonprevious.png" ), tr( "Alt+Left" ), tr( "Active the previous tab" ) )->setEnabled( false );
 	endGroup();

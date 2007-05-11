@@ -1,5 +1,5 @@
 #include "GNUMake.h"
-#include "AbstractProjectItemModel.h"
+#include "AbstractProjectModel.h"
 #include "MenuBar.h"
 #include "ProjectsManager.h"
 #include "PluginsManager.h"
@@ -122,7 +122,7 @@ QWidget* GNUMake::settingsWidget()
 void GNUMake::buildCurrent()
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -137,7 +137,7 @@ void GNUMake::buildCurrent()
 void GNUMake::buildAll()
 {
 	// check project
-	AbstractProjectItemModel* p = parentProject();
+	QModelIndex p = parentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -152,7 +152,7 @@ void GNUMake::buildAll()
 void GNUMake::reBuildCurrent()
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -168,7 +168,7 @@ void GNUMake::reBuildCurrent()
 void GNUMake::reBuildAll()
 {
 	// check project
-	AbstractProjectItemModel* p = parentProject();
+	QModelIndex p = parentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -189,7 +189,7 @@ void GNUMake::stop()
 void GNUMake::cleanCurrent()
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -204,7 +204,7 @@ void GNUMake::cleanCurrent()
 void GNUMake::cleanAll()
 {
 	// check project
-	AbstractProjectItemModel* p = parentProject();
+	QModelIndex p = parentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -219,7 +219,7 @@ void GNUMake::cleanAll()
 void GNUMake::distCleanCurrent()
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -234,7 +234,7 @@ void GNUMake::distCleanCurrent()
 void GNUMake::distCleanAll()
 {
 	// check project
-	AbstractProjectItemModel* p = parentProject();
+	QModelIndex p = parentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -249,7 +249,7 @@ void GNUMake::distCleanAll()
 void GNUMake::execute() 
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -263,7 +263,7 @@ void GNUMake::execute()
 void GNUMake::executeWithParameters() 
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// get params
@@ -285,7 +285,7 @@ void GNUMake::executeWithParameters()
 void GNUMake::buildExecute()
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -301,7 +301,7 @@ void GNUMake::buildExecute()
 void GNUMake::distCleanBuildExecute()
 {
 	// check project
-	AbstractProjectItemModel* p = currentProject();
+	QModelIndex p = currentProject();
 	if ( !checkForProject( p ) )
 		return;
 	// create command sentences
@@ -316,38 +316,42 @@ void GNUMake::distCleanBuildExecute()
 	emit runConsoleCommands( l );
 }
 //
-bool GNUMake::checkForProject( AbstractProjectItemModel* p )
+bool GNUMake::checkForProject( const QModelIndex& i )
 {
-	if ( !p )
+	if ( !i.isValid() )
 	{
 		emit messageBox( tr( "<font color=\"red\"><b>You need to open a project before using this action.<b></font>" ) );
 		emit showConsole();
 	}
-	return p;
+	return i.isValid();
 }
 //
-AbstractProjectItemModel* GNUMake::currentProject()
+AbstractProjectModel* GNUMake::currentModel() const
+{
+	return mWorkspace->projectsManager()->currentModel();
+}
+//
+QModelIndex GNUMake::currentProject() const
 {
 	return mWorkspace->projectsManager()->currentProject();
 }
 //
-AbstractProjectItemModel* GNUMake::parentProject()
+QModelIndex GNUMake::parentProject() const
 {
-	// need fix to got real parent
-	return currentProject();
+	return mWorkspace->projectsManager()->currentModel()->parentProject( mWorkspace->projectsManager()->currentProject() );
 }
 //
-ConsoleCommand GNUMake::qmakeCommand( AbstractProjectItemModel* p )
+ConsoleCommand GNUMake::qmakeCommand( const QModelIndex& p )
 {
 	QString mQMake = "qmake";
 #if defined ( Q_OS_UNIX )
 	mQMake = "qmake-qt4";
 #endif
 	mQMake = Settings::current()->value( "Plugins/QMake/QMake4", mQMake ).toString();
-	return ConsoleCommand( mQMake, p->path() );
+	return ConsoleCommand( mQMake, currentModel()->path( p ) );
 }
 //
-ConsoleCommand GNUMake::makeCommand( AbstractProjectItemModel* p )
+ConsoleCommand GNUMake::makeCommand( const QModelIndex& p )
 {
 	QString mMake = "make";
 #if defined ( Q_WS_WIN )
@@ -378,11 +382,11 @@ ConsoleCommand GNUMake::makeCommand( AbstractProjectItemModel* p )
 	}
 	QString s = Settings::current()->value( "Plugins/GNU Make/Binary", mMake ).toString();
 	if ( !s.isNull() )
-		return ConsoleCommand( s, p->path(), new GNUMakeParser );
+		return ConsoleCommand( s, currentModel()->path( p ), new GNUMakeParser );
 	return ConsoleCommand( QString::null, QString::null ); // this command will not be executed by console
 }
 //
-ConsoleCommand GNUMake::makeCleanCommand( AbstractProjectItemModel* p )
+ConsoleCommand GNUMake::makeCleanCommand( const QModelIndex& p )
 {
 	ConsoleCommand c = makeCommand( p );
 	if ( !c.isNull() )
@@ -390,7 +394,7 @@ ConsoleCommand GNUMake::makeCleanCommand( AbstractProjectItemModel* p )
 	return c;
 }
 //
-ConsoleCommand GNUMake::makeDistCleanCommand( AbstractProjectItemModel* p )
+ConsoleCommand GNUMake::makeDistCleanCommand( const QModelIndex& p )
 {
 	ConsoleCommand c = makeCommand( p );
 	if ( !c.isNull() )
@@ -398,14 +402,14 @@ ConsoleCommand GNUMake::makeDistCleanCommand( AbstractProjectItemModel* p )
 	return c;
 }
 //
-ConsoleCommand GNUMake::executeCommand( AbstractProjectItemModel* p, const QString& s )
+ConsoleCommand GNUMake::executeCommand( const QModelIndex& p, const QString& s )
 {
 	// get binary path
-	QString mPath = p->getValue( "DESTDIR" );
+	QString mPath = currentModel()->getStringValues( "DESTDIR" );
 	if ( mPath.isEmpty() )
 	{
-		QString pConfig = p->getValues( "CONFIG" ).toLower();
-		mPath = p->path();
+		QString pConfig = currentModel()->getStringValues( "CONFIG" ).toLower();
+		mPath = currentModel()->path( p );
 #if defined ( Q_WS_WIN )
 		if ( pConfig.contains( "debug" ) )
 			mPath.append( "/debug" );
@@ -422,17 +426,17 @@ ConsoleCommand GNUMake::executeCommand( AbstractProjectItemModel* p, const QStri
 #endif
 	}
 	// get binary name
-	QString mFile = p->getValue( "TARGET" );
-	if ( !p->getValue( "TEMPLATE" ).toLower().contains( "app" ) )
+	QString mFile = currentModel()->getStringValues( "TARGET" );
+	if ( !currentModel()->getStringValues( "TEMPLATE" ).toLower().contains( "app" ) )
 		mFile.clear();
 	else if ( mFile.isEmpty() )
-		mFile = p->name();
+		mFile = currentModel()->name( p );
 	// check file exist
 	QFileInfo f( QString( "%1/%2" ).arg( mPath, mFile ) );
 	QString mFilePath = f.canonicalFilePath();
 	if ( f.isDir() || !f.exists() )
 	{
-		mFilePath = Settings::current()->value( "Plugins/GNU Make/LastExecute", p->path() ).toString();
+		mFilePath = Settings::current()->value( "Plugins/GNU Make/LastExecute", currentModel()->path( p ) ).toString();
 		mFilePath = QFileDialog::getOpenFileName( qApp->activeWindow(), tr( "Choose the file to be executed" ), mFilePath );
 		if ( !mFilePath.isNull() )
 			Settings::current()->setValue( "Plugins/GNU Make/LastExecute", mFilePath );

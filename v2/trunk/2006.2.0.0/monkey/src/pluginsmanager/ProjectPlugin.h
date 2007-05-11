@@ -16,7 +16,7 @@ public:
 	virtual QStringList extensions() const
 	{ return mExtensions; }
 	virtual QStringList filters() const = 0;
-	virtual bool openProject( const QString&, AbstractProjectProxy* = 0 ) = 0;
+	virtual bool openProject( const QString& ) = 0;
 	//
 protected:
 	QStringList mExtensions;

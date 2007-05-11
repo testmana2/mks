@@ -1,5 +1,6 @@
 #include "CppChild.h"
 #include "CppCornerWidget.h"
+#include "AbstractProjectModel.h"
 #include "AbstractProjectProxy.h"
 // qscintilla include
 #include "qscilexercpp.h"

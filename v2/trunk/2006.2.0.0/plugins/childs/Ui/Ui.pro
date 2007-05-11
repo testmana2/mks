@@ -12,4 +12,3 @@ SOURCES	= src/Ui.cpp
 
 HEADERS	= src/Ui.h
 
-OPENEDFILES = src/Ui.h

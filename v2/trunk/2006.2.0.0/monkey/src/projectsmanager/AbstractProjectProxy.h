@@ -4,8 +4,9 @@
 #include <QSortFilterProxyModel>
 #include <QHash>
 //
-#include "AbstractProjectItemModel.h"
+#include "MonkeyExport.h"
 //
+class AbstractProjectModel;
 class AbstractProjectProxy;
 typedef QHash<int, AbstractProjectProxy*> QHashProxys; // id, proxy
 //
@@ -14,37 +15,42 @@ class Q_MONKEY_EXPORT AbstractProjectProxy : public QSortFilterProxyModel
 	Q_OBJECT
 	//
 public:
-	AbstractProjectProxy( AbstractProjectItemModel* );
-	virtual ~AbstractProjectProxy();
-	//
+	AbstractProjectProxy( AbstractProjectModel* );
+	~AbstractProjectProxy();
 	int id() const;
 	static AbstractProjectProxy* byId( int );
 	static QHashProxys all();
-	static AbstractProjectProxy* getProxyByProject( AbstractProjectItemModel* );
-	virtual bool isComplexModel() const;
-	virtual bool isSettingsView() const;
-	//
-	virtual AbstractProjectItemModel* project() const = 0;
+	static AbstractProjectProxy* getProxyByProject( AbstractProjectModel* );
+	virtual AbstractProjectModel* project() const;
+	virtual bool isFiltering() const;
+	virtual bool isNegateFilter() const;
+	virtual QList<int> filterRoles() const;
 	//
 protected:
-	virtual bool filterAcceptsRow( int, const QModelIndex& ) const = 0;
+	virtual bool filterAcceptsRow( int, const QModelIndex& ) const;
 	//
 	static int mUniqueId;
 	static QHashProxys mProxysList;
 	int mId;
-	bool mComplexModel;
-	bool mSettingsView;
+	bool mFiltering;
+	bool mNegateFilter;
+	QList<int> mFilterRoles;
 	//
 public slots:
-	virtual void setComplexModel( bool );
-	virtual void setSettingsView( bool );
+	virtual void setFiltering( bool );
+	virtual void setNegateFilter( bool );
+	virtual void addFilterRole( int );
+	virtual void setFilterRoles( const QList<int>& );
+	//
 	virtual void doubleClicked( const QModelIndex& ) = 0;
 	virtual void customContextMenuRequested( const QPoint& ) = 0;
-	virtual void projectSettings() = 0;
+	virtual void projectSettings( const QModelIndex& = QModelIndex() ) = 0;
 	//
 signals:
-	void complexModelChanged( bool );
-	void settingsViewChanged( bool );
+	// emit when filtering change
+	void filteringChanged( bool );
+	// emit when negate filter change
+	void negateFilterChanged( bool );
 	// emit when a file request to be open
 	void fileOpenRequested( const QString&, AbstractProjectProxy* );
 	//

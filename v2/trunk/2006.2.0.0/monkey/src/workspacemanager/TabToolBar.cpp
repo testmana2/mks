@@ -36,8 +36,8 @@ void TabToolBar::initialize()
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), newSeparator() );
 	// file action
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mFile/aOpen" ) );
-	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mFile/mSave" )->menuAction() );
-	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mFile/mClose" )->menuAction() );
+	bar( Top )->insertActions( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mFile/mSave" )->actions() );
+	bar( Top )->insertActions( bar( Top )->tabBarAction(), MenuBar::self()->menu( "mFile/mClose" )->actions() );
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), MenuBar::self()->action( "mFile/aQuickPrint" ) );
 	bar( Top )->insertAction( bar( Top )->tabBarAction(), newSeparator() );
 	// edit action

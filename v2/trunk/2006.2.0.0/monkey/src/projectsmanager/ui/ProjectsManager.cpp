@@ -1,11 +1,16 @@
 #include "ProjectsManager.h"
 #include "MenuBar.h"
 #include "AbstractProjectProxy.h"
-#include "AbstractProjectItemModel.h"
+#include "AbstractProjectModel.h"
 #include "Settings.h"
+#include "PluginsManager.h"
+#include "RecentsManager.h"
+#include "ProjectPlugin.h"
 //
 #include <QFileDialog>
 #include <QTreeView>
+//
+Q_DECLARE_METATYPE( QModelIndex )
 //
 QPointer<ProjectsManager> ProjectsManager::mSelf = 0L;
 //
@@ -23,14 +28,27 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	sProjects->setStretchFactor( sProjects->indexOf( swProjects ), 1 );
 	twProjects->setMinimumHeight( 50 );
 	sProjects->setSizes( QList<int>() << twProjects->minimumHeight() );
-	tbList->setDefaultAction( MenuBar::self()->action( "mView/aProjectsList" ) );
-	tbOpen->setDefaultAction( MenuBar::self()->action( "mProject/aOpen" ) );
-	tbComplex->setDefaultAction( MenuBar::self()->action( "mView/aComplexProject" ) );
-	tbSave->setDefaultAction( MenuBar::self()->menu( "mProject/mSave" )->menuAction() );
-	tbClose->setDefaultAction( MenuBar::self()->menu( "mProject/mClose" )->menuAction() );
-	// update actions state
-	setCurrentProxy( 0 );
-	MenuBar::self()->action( "mView/aProjectsList" )->setChecked( true );
+	//
+	aProjectsList = new QAction( QIcon( ":/Icons/Icons/helpgreettings.png" ), tr( "Projects list" ), this );
+	aFilteredView = new QAction( QIcon( ":/Icons/Icons/helptesters.png" ), tr( "Filter project" ), this );
+	aProjectsList->setCheckable( true );
+	aProjectsList->setChecked( true );
+	aProjectsList->setToolTip( tr( "Show/Hide the projects list" ) );
+	aFilteredView->setCheckable( true );
+	aFilteredView->setToolTip( tr( "Filtered project view" ) );
+	//
+	tbActions->addAction( aProjectsList );
+	tbActions->addAction( MenuBar::self()->action( "mProject/aOpen" ) );
+	tbActions->addAction( aFilteredView );
+	tbActions->addActions( MenuBar::self()->menu( "mProject/mSave" )->actions() );
+	tbActions->addActions( MenuBar::self()->menu( "mProject/mClose" )->actions() );
+	tbActions->addAction( MenuBar::self()->action( "mProject/aSeparator2" ) );
+	tbActions->addAction( MenuBar::self()->action( "mProject/aSettings" ) );
+	// connections
+	connect( aProjectsList, SIGNAL( triggered( bool ) ), twProjects, SLOT( setVisible( bool ) ) );
+	connect( aFilteredView, SIGNAL( triggered( bool ) ), this, SLOT( setFilteredModel( bool ) ) );
+	// initialize actions
+	setCurrentProject( QModelIndex() );
 }
 //
 void ProjectsManager::showEvent( QShowEvent* e )
@@ -46,184 +64,297 @@ void ProjectsManager::closeEvent( QCloseEvent* e )
 	Settings::current()->setValue( "ProjectsManager/State", sProjects->saveState() );
 	QDockWidget::closeEvent( e );
 }
-QProxyList ProjectsManager::rootProxies() const
-{
-	QProxyList l;
-	for ( int i = 0; i < twProjects->topLevelItemCount(); i++ )
-		l << AbstractProjectProxy::byId( twProjects->topLevelItem( i )->data( 0, ProxyIdRole ).toInt() );
-	return l;
-}
 //
-QProjectList ProjectsManager::rootProjects() const
+QStringList ProjectsManager::projectsFilters() const
 {
-	QProjectList l;
-	foreach ( AbstractProjectProxy* p, rootProxies() )
-		l << p->project();
-	return l;
-}
-//
-void ProjectsManager::setCurrentProxy( AbstractProjectProxy* p )
-{
-	if ( p )
+	QStringList l;
+	foreach ( BasePlugin* bp, PluginsManager::self()->plugins() )
 	{
-		swProjects->setCurrentWidget( getViewByProxyId( p->id() ) );
-		QTreeWidgetItem* it = getItemByProxyId( p->id() );
-		if ( twProjects->currentItem() != it )
-			twProjects->setCurrentItem( it );
+		if ( bp->infos().Type == BasePlugin::iProject )
+		{
+			ProjectPlugin* pp = (ProjectPlugin*)bp;
+			if ( pp && pp->infos().Installed )
+				l << pp->filters();
+		}
 	}
-	// enable / disable, check / uncheck action according to proxy
-	MenuBar::self()->action( "mView/aComplexProject" )->setEnabled( p );
-	MenuBar::self()->action( "mView/aComplexProject" )->setChecked( p ? p->isComplexModel() : false );
-	MenuBar::self()->action( "mProject/mSave/aCurrent" )->setEnabled( p ? p->project()->isModified() : false );
-	MenuBar::self()->action( "mProject/mSave/aAll" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/mClose/aCurrent" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/mClose/aAll" )->setEnabled( p );
-	MenuBar::self()->action( "mProject/aSettings" )->setEnabled( p );
-	// emit change
-	emit currentProxyChanged( p );
+	return l;
+}
+//
+void ProjectsManager::newProject()
+{
+	qWarning( "ProjectsManager::newProject : not yet available" );
+}
+//
+bool ProjectsManager::openProject( const QString& s )
+{
+	bool b = false;
+	QString mFilePath = s;
+	// if no file ask to open one
+	if ( mFilePath.isNull() )
+	{
+		const QString mPath = Settings::current()->value( "Recents/ProjectOpenPath" ).toString();
+		QString mFilters = projectsFilters().join( ";;" );
+		mFilePath = QFileDialog::getOpenFileName( this, tr( "Choose the project to open" ), mPath, mFilters );
+	}
+	// if file, open it
+	if ( !mFilePath.isNull() )
+	{
+		const QFileInfo f( mFilePath );
+		mFilePath = f.canonicalFilePath();
+		if ( !f.exists() )
+		{
+			// remove it from recents projects
+			RecentsManager::self()->removeRecentProject( mFilePath );
+			return false;
+		}
+		else
+		{
+			QString mExtension = f.completeSuffix();
+			foreach ( BasePlugin* bp, PluginsManager::self()->plugins() )
+			{
+				if ( bp->infos().Type == BasePlugin::iProject )
+				{
+					ProjectPlugin* pp = (ProjectPlugin*)bp;
+					if ( pp && pp->infos().Installed && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
+					{
+						b =  pp->openProject( mFilePath );
+						break;
+					}
+				}
+			}
+			// if success
+			if ( b )
+			{
+				// save recent project open path
+				Settings::current()->setValue( "Recents/ProjectOpenPath", f.canonicalPath() );
+				// append it to recents
+				RecentsManager::self()->addRecentProject( mFilePath );
+			}
+		}
+	}
+	return b;
+}
+//
+void ProjectsManager::saveCurrent()
+{
+	AbstractProjectModel* m = currentModel();
+	if ( m )
+		m->save( currentProject() );
+}
+//
+void ProjectsManager::saveAll()
+{
+	foreach ( AbstractProjectModel* p, AbstractProjectModel::all() )
+		p->saveAll();
+}
+//
+void ProjectsManager::closeCurrent()
+{
+	closeProject( currentProject() );
+}
+//
+void ProjectsManager::closeAll()
+{
+	foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
+		closeProject( p->project()->rootProject() );
+}
+//
+void ProjectsManager::projectSettings()
+{
+	AbstractProjectProxy* p = currentProxy();
+	if ( p )
+		currentProxy()->projectSettings( currentProject() );
+}
+//
+void ProjectsManager::addProxy( AbstractProjectProxy* p )
+{
+	if ( !p )
+		return;
+	// build project tree list
+	buildProjectTreeItems( p, p->project()->rootProject() );
+	// create a view for proxy
+	QTreeView* tv = new QTreeView;
+	tv->setEditTriggers( QAbstractItemView::NoEditTriggers );
+	tv->setContextMenuPolicy( Qt::CustomContextMenu );
+	tv->setModel( p );
+	swProjects->addWidget( tv );
+	setCurrentProject( p->project()->rootProject() );
+	// if there is only one top project, hide projects list
+	bool b = twProjects->topLevelItemCount() > 1 || ( twProjects->topLevelItemCount() == 1 && twProjects->topLevelItem( 0 )->childCount() );
+	if ( twProjects->isVisible() != b )
+		aProjectsList->trigger();
+	// connect
+	connect( p->project(), SIGNAL( isModifiedChanged( bool, const QModelIndex& ) ), this, SLOT( projectIsModified( bool, const QModelIndex& ) ) );
+	connect( p->project(), SIGNAL( aboutToClose( const QModelIndex& ) ), this, SLOT( projectAboutToClose( const QModelIndex& ) ) );
+	//connect( tv, SIGNAL( doubleClicked( const QModelIndex& ) ), p, SLOT( doubleClicked( const QModelIndex& ) ) );
+	//connect( tv, SIGNAL( customContextMenuRequested( const QPoint& ) ), p, SLOT( customContextMenuRequested( const QPoint& ) ) );
+	//connect( p, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ), this, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ) );
+	// emit signal
+	emit proxyAdded( p );
+}
+//
+AbstractProjectModel* ProjectsManager::modelByIndex( const QModelIndex& i ) const
+{
+	return qobject_cast<AbstractProjectModel*>( const_cast<QAbstractItemModel*>( i.model() ) );
+}
+//
+AbstractProjectProxy* ProjectsManager::proxyByIndex( const QModelIndex& i ) const
+{
+	return qobject_cast<AbstractProjectProxy*>( const_cast<QAbstractItemModel*>( i.model() ) );
+}
+//
+QAbstractItemView* ProjectsManager::viewByProxy( AbstractProjectProxy* p ) const
+{
+	foreach ( QAbstractItemView* v, swProjects->findChildren<QAbstractItemView*>() )
+		if ( v->model() == p )
+			return v;
+	return 0;
 }
 //
 AbstractProjectProxy* ProjectsManager::currentProxy() const
 {
 	QAbstractItemView* v = qobject_cast<QAbstractItemView*>( swProjects->currentWidget() );
-	if ( v )
-		return qobject_cast<AbstractProjectProxy*>( v->model() );
-	return 0;
+	return v ? qobject_cast<AbstractProjectProxy*>( v->model() ) : 0;
 }
 //
-void ProjectsManager::setCurrentProject( AbstractProjectItemModel* p )
+AbstractProjectModel* ProjectsManager::currentModel() const
 {
-	foreach ( AbstractProjectProxy* py, AbstractProjectProxy::all() )
+	AbstractProjectProxy* p = currentProxy();
+	return p ? p->project() : 0;
+}
+//
+void ProjectsManager::setCurrentProject( const QModelIndex& i ) // index is not proxied
+{
+	// get proxy
+	AbstractProjectProxy* p = modelByIndex( i )->findChild<AbstractProjectProxy*>();
+	if ( p && currentProject() != i )
 	{
-		if ( py->project() == p )
+		QAbstractItemView* v = viewByProxy( p );
+		// if current proxy is different, change it
+		if ( currentProxy() != p )
+			swProjects->setCurrentWidget( v );
+		// set correct project
+		v->setCurrentIndex( p->mapFromSource( i ) );
+	}
+	// update actions
+	updateProjectActions( i );
+}
+//
+QModelIndex ProjectsManager::currentProject() const // return index is not proxied
+{
+	AbstractProjectModel* m = currentModel();	
+	if ( m )
+	{
+		AbstractProjectProxy* p = m->findChild<AbstractProjectProxy*>();
+		return m->project( p->mapToSource( viewByProxy( p )->currentIndex() ) );
+	}
+	return QModelIndex();
+}
+//
+void ProjectsManager::closeProject( const QModelIndex& i )
+{
+	AbstractProjectModel* m = i.isValid() ? modelByIndex( i ) : 0;
+	if ( m )
+		m->close( i );
+}
+//
+void ProjectsManager::projectIsModified( bool b, const QModelIndex& i )
+{
+	if ( !i.isValid() )
+		return;
+	MenuBar::self()->action( "mProject/mSave/aCurrent" )->setEnabled( b );
+	AbstractProjectModel* m = modelByIndex( i );
+	QFont f( i.data( Qt::FontRole ).value<QFont>() );
+	f.setBold( b );
+	m->setData( i, f, Qt::FontRole );
+	m->setData( i, b ? Qt::red : Qt::black, Qt::ForegroundRole );
+}
+//
+void ProjectsManager::projectAboutToClose( const QModelIndex& i )
+{
+	// get model
+	AbstractProjectModel* m = i.isValid() ? modelByIndex( i ) : 0;
+	if ( m )
+	{
+		// remove project item from project list
+		removeProjectItem( i );
+		// delete view if needed
+		if ( m->rootProject() == i )
+			delete viewByProxy( m->findChild<AbstractProjectProxy*>() );
+		// set new current project
+		updateProjectActions( currentProject() );
+	}
+}
+//
+void ProjectsManager::buildProjectTreeItems( AbstractProjectProxy* p, const QModelIndex& i, QTreeWidgetItem* twi )
+{
+	if ( !i.isValid() )
+		return;
+	twi = twi ? new QTreeWidgetItem( twi ) : new QTreeWidgetItem( twProjects );
+	twi->setText( 0, i.data().toString() );
+	twi->setIcon( 0, i.data( Qt::DecorationRole ).value<QPixmap>() );
+	twi->setData( 0, AbstractProjectModel::ProjectIdRole, p->project()->id() );
+	twi->setData( 0, AbstractProjectModel::ProxyIdRole, p->id() );
+	twi->setData( 0, AbstractProjectModel::AbsoluteFilePathRole, p->project()->filePath( i ) );
+	twi->setData( 0, AbstractProjectModel::FirstRole, QVariant::fromValue( i ) );
+	twi->setToolTip( 0, tr( "Proxy Id: %1\nProject Id: %2\nFile Path: %3" ).arg( p->id() ).arg( p->project()->id() ).arg( p->project()->filePath( i ) ) );
+	foreach ( QModelIndex j, p->project()->subProjects( i ) )
+		buildProjectTreeItems( p, j, twi );
+}
+//
+void ProjectsManager::updateProjectActions( const QModelIndex& i ) // index is not proxied
+{
+	AbstractProjectProxy* p = modelByIndex( i )->findChild<AbstractProjectProxy*>();
+	// enable / disable, check / uncheck action according to proxy
+	aFilteredView->setEnabled( p );
+	aFilteredView->setChecked( p ? p->isFiltering() : false );
+	MenuBar::self()->action( "mProject/mSave/aCurrent" )->setEnabled( p ? p->project()->isModified( i ) : false );
+	MenuBar::self()->action( "mProject/mSave/aAll" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mClose/aCurrent" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/mClose/aAll" )->setEnabled( p );
+	MenuBar::self()->action( "mProject/aSettings" )->setEnabled( p );
+	// set correct item in project list
+	if ( p )
+	{
+		foreach ( QModelIndex j, twProjects->model()->match( twProjects->model()->index( 0, 0 ), AbstractProjectModel::ProxyIdRole, p->id(), -1, Qt::MatchFixedString | Qt::MatchRecursive ) )
 		{
-			setCurrentProxy( py );
+			if ( j.data( AbstractProjectModel::FirstRole ).value<QModelIndex>() == i )
+			{
+				twProjects->setCurrentIndex( j );
+				break;
+			}
+		}
+	}
+}
+//
+void ProjectsManager::removeProjectItem( const QModelIndex& i )
+{
+	AbstractProjectProxy* p = modelByIndex( i )->findChild<AbstractProjectProxy*>();
+	if ( !p )
+		return;
+	foreach ( QModelIndex j, twProjects->model()->match( twProjects->model()->index( 0, 0 ), AbstractProjectModel::ProxyIdRole, p->id(), -1, Qt::MatchFixedString | Qt::MatchRecursive ) )
+	{
+		if ( j.data( AbstractProjectModel::FirstRole ).value<QModelIndex>() == i )
+		{
+			twProjects->model()->removeRow( j.row(), j.parent() );
 			return;
 		}
 	}
 }
 //
-AbstractProjectItemModel* ProjectsManager::currentProject() const
+void ProjectsManager::setFilteredModel( bool b )
 {
 	AbstractProjectProxy* p = currentProxy();
 	if ( p )
-		return p->project();
-	return 0;
+		p->setFiltering( b );
 }
 //
-QTreeWidgetItem* ProjectsManager::getItemByProxyId( int i )
+void ProjectsManager::on_twProjects_itemClicked( QTreeWidgetItem* it, int )
 {
-	AbstractProjectProxy* p = AbstractProjectProxy::byId( i );
-	if ( !p )
-		return 0;
-	QList<QTreeWidgetItem*> l = twProjects->findItems( p->project()->name(), Qt::MatchFixedString | Qt::MatchRecursive );
-	foreach ( QTreeWidgetItem* i, l )
-		if ( i->data( 0, ProxyIdRole ).toInt() == p->id() )
-			return i;
-	return 0;
-}
-//
-QAbstractItemView* ProjectsManager::getViewByProxyId( int i )
-{
-	QList<QAbstractItemView*> l = swProjects->findChildren<QAbstractItemView*>();
-	foreach ( QAbstractItemView* v, l )
-		if ( v->model() == AbstractProjectProxy::byId( i ) )
-			return v;
-	return 0;
-}
-//
-void ProjectsManager::closeProxy( AbstractProjectProxy* p )
-{
-	QTreeWidgetItem* twi;
-	if ( !p || !( twi = getItemByProxyId( p->id() ) ) )
-		return;
-	const QString s = p->project()->name();
-	// close childs
-	while ( twi->childCount() )
-		closeProxy( AbstractProjectProxy::byId( twi->child( 0 )->data( 0, ProxyIdRole ).toInt() ) );
-	// delete view, project, proxy and item
-	delete getViewByProxyId( p->id() );
-	delete p->sourceModel(); // as project is the sourceModel ( child ) of proxy, it delete proxy too
-	delete twi;
-	// update tool button if there is no project
-	p = 0;
-	if ( twProjects->topLevelItemCount() )
-		p = AbstractProjectProxy::byId( twProjects->topLevelItem( 0 )->data( 0, ProxyIdRole ).toInt() );
-	setCurrentProxy( p );	
-}
-//
-void ProjectsManager::closeProject( AbstractProjectItemModel* p )
-{
-	closeProxy( AbstractProjectProxy::getProxyByProject( p ) );
-}
-//
-void ProjectsManager::addProxy( AbstractProjectProxy* p, AbstractProjectProxy* pParent )
-{
-	if ( !p )
-		return;
-	// connect close signal with deletion 
-	connect( p->project(), SIGNAL( isModifiedChanged( bool ) ), MenuBar::self()->action( "mProject/mSave/aCurrent" ), SLOT( setEnabled( bool ) ) );
-	// create a view for proxy
-	QTreeView* tv = new QTreeView;
-	tv->setEditTriggers( QAbstractItemView::NoEditTriggers );
-	tv->setContextMenuPolicy( Qt::CustomContextMenu );
-	// connect view
-	connect( tv, SIGNAL( doubleClicked( const QModelIndex& ) ), p, SLOT( doubleClicked( const QModelIndex& ) ) );
-	connect( tv, SIGNAL( customContextMenuRequested( const QPoint& ) ), p, SLOT( customContextMenuRequested( const QPoint& ) ) );
-	connect( p, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ), this, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ) );
-	// set model
-	tv->setModel( p );
-	if ( p->rowCount() > 0 )
-		tv->setRootIndex( p->index( 0, 0 ) );
-	// set current view this one
-	swProjects->addWidget( tv );
-	// add entry on twProjects
-	QTreeWidgetItem* twi;
-	if ( pParent )
-		twi = new QTreeWidgetItem( getItemByProxyId( pParent->id() ) );
-	else
-		twi = new QTreeWidgetItem( twProjects );
-	twi->setText( 0, p->project()->name() );
-	twi->setIcon( 0, QIcon( ":/icons/icons/project.png" ) );
-	twi->setData( 0, ProxyIdRole, p->id() ); // proxy id
-	twi->setData( 0, ProjectFilePathRole, p->project()->filePath() ); // project file path
-	twi->setToolTip( 0, tr( "Proxy Id: %1\nProject Id: %2\nFile Path: %3" ).arg( p->id() ).arg( p->project()->id() ).arg( p->project()->filePath() ) );
-	// show the correct project
-	setCurrentProxy( p );
-	// emit signal
-	emit proxyAdded( p );
-}
-//
-void ProjectsManager::setTreeProjectsVisible( bool b )
-{
-	twProjects->setVisible( b );
-}
-//
-void ProjectsManager::setComplexModel( bool b )
-{
-	AbstractProjectProxy* p = currentProxy();
-	if ( p )
-		p->setComplexModel( b );
-}
-//
-void ProjectsManager::on_tbSave_clicked()
-{
-	QAction* a = MenuBar::self()->action( "mProject/mSave/aCurrent" );
-	if ( a->isEnabled() )
-		a->trigger();
-}
-//
-void ProjectsManager::on_tbClose_clicked()
-{
-	QAction* a = MenuBar::self()->action( "mProject/mClose/aCurrent" );
-	if ( a->isEnabled() )
-		a->trigger();
-}
-//
-void ProjectsManager::on_twProjects_itemClicked( QTreeWidgetItem* i, int )
-{
-	AbstractProjectProxy* p = 0;
-	if ( i )
-		p = AbstractProjectProxy::byId( i->data( 0, ProxyIdRole ).toInt() );
-	setCurrentProxy( p );
+	if ( it )
+	{
+		AbstractProjectProxy* p = AbstractProjectProxy::byId( it->data( 0, AbstractProjectModel::ProxyIdRole ).toInt() );
+		swProjects->setCurrentWidget( viewByProxy( p ) );
+		setCurrentProject( it->data( 0, AbstractProjectModel::FirstRole ).value<QModelIndex>() );
+	}
 }
