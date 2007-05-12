@@ -17,7 +17,8 @@ static QRegExp function_call("^((?:[a-zA-Z]+)\\((.*)\\):)?([a-zA-Z]+)\\((.*)\\)[
 static QRegExp bloc("^(\\})?[ \\t]*((?:[-a-zA-Z0-9*|_!+]+:)*[-a-zA-Z0-9*|_!+]+)[ \\t]*(?:\\((.*)\\))?[ \\t]*(\\{)[ \\t]*(#.*)?");
 static QRegExp variable("^((?:[-a-zA-Z0-9*!_|+]+:)*[a-zA-Z0-9*!_]+)[ \\t]*([*+-]?=)[ \\t]*([^\\\\#]*)[ \\t]*(\\\\)?[ \t]*(#.*)?"); 
 static QRegExp varLine("^[ \\t]*(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
-static QRegExp explodeVars("^[ \\t]*([^ ]+|\"[^\"]+\")(?:[ \\t]*([^ ]+|\"[^\"]+\"))*[ \\t]*");
+//static QRegExp explodeVars("^[ \\t]*([^ ]+|\"[^\"]+\")(?:[ \\t]*([^ ]+|\"[^\"]+\"))*[ \\t]*");
+static QRegExp explodeVars( "(\"?([][\\\\/\\w\\s]+\\.\\w+)\"?)" ); // ( "\"(\"[^\"]+\")" ); // \"[^\"]+\"
 static QRegExp end_bloc("^(\\})[ \t]*(#.*)?");
 static QRegExp comments("^#(.*)");
 //
@@ -40,7 +41,7 @@ QStringList QMakeProjectParser::explodeValue(const QString& s)
 		l.removeAll( QString::null );
 		return l;
 	}
-	return QStringList() << s;
+	return QStringList( s );
 	//
 	QStringList explode = s.split(QChar(' '));
 	QStringList returnValue;
@@ -235,40 +236,4 @@ void QMakeProjectParser::addEmpty( QMakeProjectItem* i )
 {
 	QMakeProjectItem* e = new QMakeProjectItem( AbstractProjectModel::EmptyType, i );
 	e->setData( QString(), AbstractProjectModel::ValueRole );
-}
-//
-void QMakeProjectParser::fakeProject( QMakeProjectItem* it )
-{
-	//return;
-	QMakeProjectItem* p, * i, * s;
-	// set app template
-	p = new QMakeProjectItem( AbstractProjectModel::VariableType, it );
-	p->setData( "TEMPLATE", AbstractProjectModel::ValueRole );
-	p->setData( "=", AbstractProjectModel::OperatorRole );
-	i = new QMakeProjectItem( AbstractProjectModel::ValueType, p );
-	i->setData( "app", AbstractProjectModel::ValueRole );
-	// set app version
-	p = new QMakeProjectItem( AbstractProjectModel::VariableType, it );
-	p->setData( "LANGUAGE", AbstractProjectModel::ValueRole );
-	p->setData( "=", AbstractProjectModel::OperatorRole );
-	i = new QMakeProjectItem( AbstractProjectModel::ValueType, p );
-	i->setData( "Qt4/C++", AbstractProjectModel::ValueRole );
-	// header
-	p = new QMakeProjectItem( AbstractProjectModel::VariableType, it );
-	p->setData( "HEADERS", AbstractProjectModel::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( AbstractProjectModel::ValueType, p );
-		i->setData( QString( "pouet%1.h" ).arg( j ), AbstractProjectModel::ValueRole );
-	}
-	// source
-	p = new QMakeProjectItem( AbstractProjectModel::VariableType, it );
-	p->setData( "SOURCES", AbstractProjectModel::ValueRole );
-	//
-	for ( int j = 0; j < 5; j++ )
-	{
-		i = new QMakeProjectItem( AbstractProjectModel::ValueType, p );
-		i->setData( QString( "pouet%1.cpp" ).arg( j ), AbstractProjectModel::ValueRole );
-	}
 }
