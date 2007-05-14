@@ -25,6 +25,7 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	: QDockWidget( p )
 {
 	setupUi( this );
+	setMinimumWidth( 225 );
 	sProjects->setStretchFactor( sProjects->indexOf( swProjects ), 1 );
 	twProjects->setMinimumHeight( 50 );
 	sProjects->setSizes( QList<int>() << twProjects->minimumHeight() );
@@ -37,12 +38,13 @@ ProjectsManager::ProjectsManager( QWidget* p )
 	aFilteredView->setCheckable( true );
 	aFilteredView->setToolTip( tr( "Filtered project view" ) );
 	//
+	tbActions->layout()->setAlignment( Qt::AlignRight );
 	tbActions->addAction( aProjectsList );
 	tbActions->addAction( MenuBar::self()->action( "mProject/aOpen" ) );
 	tbActions->addAction( aFilteredView );
 	tbActions->addActions( MenuBar::self()->menu( "mProject/mSave" )->actions() );
 	tbActions->addActions( MenuBar::self()->menu( "mProject/mClose" )->actions() );
-	tbActions->addAction( MenuBar::self()->action( "mProject/aSeparator2" ) );
+	tbActions->addSeparator();
 	tbActions->addAction( MenuBar::self()->action( "mProject/aSettings" ) );
 	// connections
 	connect( aProjectsList, SIGNAL( triggered( bool ) ), twProjects, SLOT( setVisible( bool ) ) );

@@ -24,6 +24,7 @@ public:
 		FirstRole = Qt::UserRole, // first role
 		TypeRole, // the item type
 		OperatorRole, // the item operator
+		NestedOperatorRole, // the item nested role
 		ValueRole, // the item value
 		CommentRole, // the item comment
 		ProjectIdRole, // the project id

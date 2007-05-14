@@ -19,7 +19,11 @@ protected:
 	QStringList explodeValue( const QString& );
 	bool loadFile( const QString&, QMakeProjectItem* );
 	int parseBuffer( int, QMakeProjectItem* );
+	
+	QMakeProjectItem* processNested( QString&, QMakeProjectItem* );
+	QMakeProjectItem* addScope( const QString&, const QString&, const QString&, bool, QMakeProjectItem* );
 	QMakeProjectItem* addVariable( const QString&, const QString&, QMakeProjectItem* );
+	QMakeProjectItem* addFunction( const QString&, const QString&, const QString&, const QString&, QMakeProjectItem* );
 	void addValues( const QStringList&, const QString&, QMakeProjectItem* );
 	void addComment( const QString&, QMakeProjectItem* );
 	void addEmpty( QMakeProjectItem* );

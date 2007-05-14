@@ -140,6 +140,8 @@ void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem*
 {
 	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
+		if ( ( p->type() == AbstractProjectModel::ScopeType || p->type() == AbstractProjectModel::NestedScopeType ) && i->type() != AbstractProjectModel::ScopeEndType )
+			j--;
 		beginInsertRows( p->index(), j, j );
 		i->setParent( p );
 		p->insertPrivateRow( j, i );

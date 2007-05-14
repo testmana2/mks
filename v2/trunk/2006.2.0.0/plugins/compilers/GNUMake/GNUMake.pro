@@ -15,9 +15,6 @@ SOURCES	= src/ui/UISettingsGNUMake.cpp \
 
 FORMS	= src/ui/UISettingsGNUMake.ui
 
-OPENEDFILES	= src/GNUMake.h \
-	src/GNUMake.cpp
-
 HEADERS	= src/ui/UISettingsGNUMake.h \
 	../../bridges/Console/src/ConsoleCommandParser.h \
 	src/GNUMakeParser.h \

@@ -7,15 +7,18 @@
 QMakeProjectItem::QMakeProjectItem( AbstractProjectModel::NodeType t, QMakeProjectItem* p, QMakeProjectItemPrivate* pp )
 	: mParent( 0 ), mModel( 0 ), d( 0 )
 {
+	// set data object
 	if ( pp )
 		setData( pp );
 	else
 		d = new QMakeProjectItemPrivate;
-	if ( p )
-		p->appendRow( this );
+	// set data
 	setFlags( QMakeProjectModel::defaultFlags() );
 	setData( t, AbstractProjectModel::TypeRole );
 	setData( true, AbstractProjectModel::DeleteRole );
+	// append to parent
+	if ( p )
+		p->appendRow( this );
 }
 //
 QMakeProjectItem::~QMakeProjectItem()
@@ -65,6 +68,8 @@ void QMakeProjectItem::setData( const QVariant& v, int r )
 {
 	if ( model() )
 		model()->setData( index(), v, r );
+	else
+		setPrivateData( v, r );
 }
 //
 void QMakeProjectItem::setData( QMakeProjectItemPrivate* p )

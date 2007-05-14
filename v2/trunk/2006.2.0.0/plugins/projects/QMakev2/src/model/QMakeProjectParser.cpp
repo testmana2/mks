@@ -13,12 +13,12 @@ static int prof = 0; // profondeur courrante
 static int this_prof = 0; // profondeur pr�c�dent
 // regex !!!
 static QVector<QString> content;
-static QRegExp function_call("^((?:[a-zA-Z]+)\\((.*)\\):)?([a-zA-Z]+)\\((.*)\\)[ \\t]*(#.*)?");
+static QRegExp function_call("^((?:[a-zA-Z0-9]+(?:\\((?:.*)\\))?:)+)?([a-zA-Z]+)\\((.*)\\)[ \\t]*(#.*)?");
 static QRegExp bloc("^(\\})?[ \\t]*((?:[-a-zA-Z0-9*|_!+]+:)*[-a-zA-Z0-9*|_!+]+)[ \\t]*(?:\\((.*)\\))?[ \\t]*(\\{)[ \\t]*(#.*)?");
-static QRegExp variable("^((?:[-a-zA-Z0-9*!_|+]+:)*[a-zA-Z0-9*!_]+)[ \\t]*([*+-]?=)[ \\t]*([^\\\\#]*)[ \\t]*(\\\\)?[ \t]*(#.*)?"); 
+static QRegExp variable("^(?:((?:[-a-zA-Z0-9*!_|+]+(?:\\((?:.*)\\))?(?:[\\t]+)?:(?:[\\t]+)?)+)?([a-zA-Z0-9*!_]+))[ \\t]*([*+-]?=)[ \\t]*([^\\\\#]*)[ \\t]*(\\\\)?[ \t]*(#.*)?");
 static QRegExp varLine("^[ \\t]*(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
-//static QRegExp explodeVars("^[ \\t]*([^ ]+|\"[^\"]+\")(?:[ \\t]*([^ ]+|\"[^\"]+\"))*[ \\t]*");
-static QRegExp explodeVars( "(\"?([][\\\\/\\w\\s]+\\.\\w+)\"?)" ); // ( "\"(\"[^\"]+\")" ); // \"[^\"]+\"
+static QRegExp explodeVars( "(\"?([][\\\\/\\w\\s]+\\.\\w+)\"?)" );
+static QRegExp explodeNested( "([^:\\|]+)+(:|\\|)" );
 static QRegExp end_bloc("^(\\})[ \t]*(#.*)?");
 static QRegExp comments("^#(.*)");
 //
@@ -34,32 +34,25 @@ QMakeProjectParser::~QMakeProjectParser()
 //
 QStringList QMakeProjectParser::explodeValue(const QString& s)
 {
-	if ( explodeVars.exactMatch( s ) )
-	{
-		QStringList l = explodeVars.capturedTexts();
-		l.removeFirst();
-		l.removeAll( QString::null );
-		return l;
-	}
-	return QStringList( s );
-	//
 	QStringList explode = s.split(QChar(' '));
 	QStringList returnValue;
 	QString temp;
 	bool inString = false;
-	
+
 	foreach(QString v,explode)
 	{
 		if(inString == true)
 		{
 			if(v.right(1) == "\"")
 			{
-				temp += v;
+				temp += " ";
+				temp += v.left(v.length()-1);
 				inString = false;
 				returnValue += temp;
 			}
 			else
 			{
+				temp += " ";
 				temp += v;
 			}
 		}
@@ -67,18 +60,18 @@ QStringList QMakeProjectParser::explodeValue(const QString& s)
 		{
 			if(v.left(1) == "\"")
 			{
-				temp = v;
+				temp = v.right(v.length()-1);
 				inString = true;
 			}
 			else
 			{
 				if(v != "")
-					returnValue += v;
+					returnValue += v.trimmed();
 			}
 		}
 	}
-	
-	return returnValue;
+ 
+        return returnValue;
 }
 //
 bool QMakeProjectParser::isOpen() const
@@ -118,11 +111,11 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 	{
 		// c'est une fonction du style :
 		// func_name(params)
-		if(function_call.exactMatch(content[ligne]))
+		if( function_call.exactMatch( content[ligne] ) )
 		{
-			QStringList liste = function_call.capturedTexts();
 			// ==================        1        ==================
-			qWarning() << "ligne : " << ligne << " function found !" << liste[1] << liste[2] << liste[3] << liste[4] << "end function !";
+			QStringList liste = function_call.capturedTexts();
+			addFunction( liste[1], liste[2], liste[3], liste[4], it );
 		}
 		// scope (nested compris)
 		// "truc(params) {" ou "xml:truc(params) {" ("{" facultatif)
@@ -160,58 +153,94 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 		}
 		// variable (nested compris)
 		// "HEADERS = ***" ou "win32:HEADERS = ***" ("+=" et "-=" sont aussi g�r�s)
-		else if(variable.exactMatch(content[ligne]))
+		else if( variable.exactMatch( content[ligne] ) )
 		{
 			// ==================        4         ==================
 			QStringList liste = variable.capturedTexts();
+			qWarning( "line: %d", ligne );
+			qDebug() << liste;
 			QMakeProjectItem * v = addVariable( liste[1], liste[2], it );
 			addValues( explodeValue( liste[3] ), liste[5], v );
-			qWarning() << "ligne : " << ligne << " variable found !" << liste[1] << liste[2] << liste[3] << liste[4] << "end variable !";
 			// si il y a un "\" � la fin de la ligne, lire la ligne suivante
-			if(liste[4].right(1) == "\\")
+			if ( liste[4].endsWith( "\\" ) )
 			{
 				ligne++;
 				// lire la ligne suivante tant que il y a un "\" � la fin de celle si (attention aux commentaires)
-				while(varLine.exactMatch(content[ligne]))
+				while( varLine.exactMatch( content[ligne] ) )
 				{
 					// ==================        5         ==================
 					liste = varLine.capturedTexts();
+					qWarning( "line: %d", ligne );
+					qDebug() << liste;
 					addValues( explodeValue( liste[1] ), liste[2], v );
-					qWarning() << "ligne : " << ligne << " multiligne found !" << liste[1] << liste[2] << "end multiligne !";
-					//
 					ligne++;
 				}
 				//
 				liste = content[ligne].split( "#" );
+				qWarning( "line: %d", ligne );
+				qDebug() << liste;
 				addValues( explodeValue( liste[0] ), liste.count() > 1 ? liste[1] : QString::null, v );
-				qWarning() << "ligne : " << ligne << " last multiligne found !" << content[ligne] << "end last multiligne !";
 			}
 		}
 		// ici les commentaires seuls sur la ligne
-		else if(comments.exactMatch(content[ligne]))
-		{
-			// ==================        6         ==================
+		else if ( comments.exactMatch( content[ligne] ) )
 			addComment( content[ligne], it );
-			qWarning() << "ligne : " << ligne << " comment found !" << content[ligne] << "end comment !";
-		}
 		// ici les lignes vides
-		else if(content[ligne] == "")
+		else if ( content[ligne].trimmed() == "" )
 			addEmpty( it );
 		// une erreur ? c'est horrible
 		else
-			qWarning("Error on line %d",(ligne+1));
+			qWarning( "Error on line %d: %s", ligne +1, qPrintable( content[ligne] ) );
 		ligne++;
 	}
-	
 	return 1;
+}
+//
+QMakeProjectItem* QMakeProjectParser::processNested( QString& s, QMakeProjectItem* i )
+{
+	QStringList l;
+	int p = 0;
+	while ( ( p = explodeNested.indexIn( s, p ) ) != -1 )
+	{
+		l = explodeNested.capturedTexts();
+		i = addScope( l.at( 1 ).trimmed(), l.at( 2 ).trimmed(), QString::null, true, i );
+		p += explodeNested.matchedLength();
+	}
+	if ( !s.isEmpty() )
+		s = s.split( ':', QString::SkipEmptyParts ).last();
+	return i;
+}
+//
+QMakeProjectItem* QMakeProjectParser::addScope( const QString& v, const QString& o, const QString& c, bool b, QMakeProjectItem* i )
+{
+	QMakeProjectItem* s = b ? new QMakeProjectItem( AbstractProjectModel::NestedScopeType, i ) : new QMakeProjectItem( AbstractProjectModel::ScopeType, i );
+	s->setData( v.trimmed(), AbstractProjectModel::ValueRole );
+	s->setData( o.trimmed(), AbstractProjectModel::NestedOperatorRole );
+	s->setData( c.trimmed(), AbstractProjectModel::CommentRole );
+	(void) new QMakeProjectItem( AbstractProjectModel::ScopeEndType, s );
+	return s;
 }
 //
 QMakeProjectItem* QMakeProjectParser::addVariable( const QString& s, const QString& o, QMakeProjectItem* i )
 {
-	QMakeProjectItem* v = new QMakeProjectItem( AbstractProjectModel::VariableType, i );
-	v->setData( s, AbstractProjectModel::ValueRole );
-	v->setData( o, AbstractProjectModel::OperatorRole );
+	QString n = s;
+	QMakeProjectItem* v = new QMakeProjectItem( AbstractProjectModel::VariableType, processNested( n, i ) );
+	v->setData( n.trimmed(), AbstractProjectModel::ValueRole );
+	v->setData( o.trimmed(), AbstractProjectModel::OperatorRole );
 	return v;
+}
+//
+//
+QMakeProjectItem* QMakeProjectParser::addFunction( const QString& n, const QString& s, const QString& v, const QString& c, QMakeProjectItem* i )
+{
+	//qDebug() << n << s << v << c;
+	QMakeProjectItem* f = new QMakeProjectItem( AbstractProjectModel::FunctionType, i );
+	f->setData( s.trimmed(), AbstractProjectModel::ValueRole );
+	f->setData( c.trimmed(), AbstractProjectModel::CommentRole );
+	//
+	addValues( explodeValue( v ), QString::null, f );
+	//
+	return f;
 }
 //
 void QMakeProjectParser::addValues( const QStringList& l, const QString& s, QMakeProjectItem* i )
@@ -220,16 +249,16 @@ void QMakeProjectParser::addValues( const QStringList& l, const QString& s, QMak
 	foreach ( QString v, l )
 	{
 		value = new QMakeProjectItem( AbstractProjectModel::ValueType, i );
-		value->setData( v, AbstractProjectModel::ValueRole );
+		value->setData( v.trimmed(), AbstractProjectModel::ValueRole );
 	}
 	if ( value )
-		value->setData( s, AbstractProjectModel::CommentRole );
+		value->setData( s.trimmed(), AbstractProjectModel::CommentRole );
 }
 //
 void QMakeProjectParser::addComment( const QString& s, QMakeProjectItem* i )
 {
 	QMakeProjectItem* c = new QMakeProjectItem( AbstractProjectModel::CommentType, i );
-	c->setData( s, AbstractProjectModel::ValueRole );
+	c->setData( s.trimmed(), AbstractProjectModel::ValueRole );
 }
 //
 void QMakeProjectParser::addEmpty( QMakeProjectItem* i )
