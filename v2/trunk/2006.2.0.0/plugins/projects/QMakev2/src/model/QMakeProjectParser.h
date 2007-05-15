@@ -16,17 +16,17 @@ public:
 	bool isOpen() const;
 	//
 protected:
-	QStringList explodeValue( const QString& );
 	bool loadFile( const QString&, QMakeProjectItem* );
 	int parseBuffer( int, QMakeProjectItem* );
 	
-	QMakeProjectItem* processNested( QString&, QMakeProjectItem* );
-	QMakeProjectItem* addScope( const QString&, const QString&, const QString&, bool, QMakeProjectItem* );
+	QMakeProjectItem* processNested( const QString&, QMakeProjectItem* );
+	QMakeProjectItem* processValues( const QString&, QMakeProjectItem* );
+	QMakeProjectItem* addScope( const QString&, const QString&, bool, QMakeProjectItem* );
 	QMakeProjectItem* addVariable( const QString&, const QString&, QMakeProjectItem* );
-	QMakeProjectItem* addFunction( const QString&, const QString&, const QString&, const QString&, QMakeProjectItem* );
-	void addValues( const QStringList&, const QString&, QMakeProjectItem* );
-	void addComment( const QString&, QMakeProjectItem* );
-	void addEmpty( QMakeProjectItem* );
+	QMakeProjectItem* addFunction( const QString&, const QString&, QMakeProjectItem* );
+	QMakeProjectItem* addValue( const QString&, QMakeProjectItem* );
+	QMakeProjectItem* addComment( const QString&, QMakeProjectItem* );
+	QMakeProjectItem* addEmpty( QMakeProjectItem* );
 	//
 	bool mIsOpen;
 	QMakeProjectItem* mRoot;

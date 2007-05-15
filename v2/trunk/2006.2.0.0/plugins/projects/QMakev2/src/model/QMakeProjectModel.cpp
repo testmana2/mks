@@ -69,7 +69,7 @@ bool QMakeProjectModel::setData( const QModelIndex& i, const QVariant& v, int r 
 					mItem->setPrivateData( QPixmap( ":/Icons/icons/line.png" ), Qt::DecorationRole );
 					break;
 				case AbstractProjectModel::CommentType:
-					mItem->setPrivateData( QPixmap( ":/Icons/icons/line.png" ), Qt::DecorationRole );
+					mItem->setPrivateData( QPixmap( ":/Icons/icons/comment.png" ), Qt::DecorationRole );
 					break;
 				case AbstractProjectModel::NestedScopeType:
 					mItem->setPrivateData( QPixmap( ":/Icons/icons/scope.png" ), Qt::DecorationRole );
@@ -140,7 +140,7 @@ void QMakeProjectModel::insertRow( int j, QMakeProjectItem* i, QMakeProjectItem*
 {
 	if ( i && ( p = p ? p : mRootItem ) && -1 < j && p->rowCount() +1 > j )
 	{
-		if ( ( p->type() == AbstractProjectModel::ScopeType || p->type() == AbstractProjectModel::NestedScopeType ) && i->type() != AbstractProjectModel::ScopeEndType )
+		if ( ( p->type() == AbstractProjectModel::ScopeType || p->type() == AbstractProjectModel::NestedScopeType || p->type() == AbstractProjectModel::FunctionType ) && i->type() != AbstractProjectModel::ScopeEndType )
 			j--;
 		beginInsertRows( p->index(), j, j );
 		i->setParent( p );
