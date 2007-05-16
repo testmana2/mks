@@ -52,7 +52,6 @@ bool QMakeProjectParser::loadFile( const QString& s, QMakeProjectItem* it )
 	while (!f.atEnd()) {
 		QByteArray line = f.readLine();
 		line = line.trimmed();
-		//if(line.size() > 0)
 			content += line;
 	}
 	// set project data
@@ -183,7 +182,6 @@ QMakeProjectItem* QMakeProjectParser::processValues( const QString& s, QMakeProj
 	while ( ( p = r->indexIn( s, p ) ) != -1 )
 	{
 		l = r->capturedTexts();
-		qDebug() << l;
 		l.removeAll( "" );
 		v = addValue( l.at( 1 ).trimmed(), i );
 		p += r->matchedLength();
