@@ -13,20 +13,16 @@ static int prof = 0; // profondeur courrante
 static int this_prof = 0; // profondeur precedent
 // regex !!!
 static QVector<QString> content;
+static bool mParseCommands = false;
 static QRegExp function_call("^((?:[a-zA-Z0-9]+(?:\\((?:.*)\\))?(?:[ \\t]+)?[|:](?:[ \\t]+)?)+)?([a-zA-Z]+)\\((.*)\\)[ \\t]*(#.*)?");
-static QRegExp bloc("^(\\})?[ \\t]*((?:[-a-zA-Z0-9*|_!+]+:)*[-a-zA-Z0-9*|_!+]+)[ \\t]*(?:\\((.*)\\))?[ \\t]*(\\{)[ \\t]*(#.*)?");
-static QRegExp variable("^(?:((?:[-a-zA-Z0-9*!_|+]+(?:\\((?:.*)\\))?(?:[ \\t]+)?[:|](?:[ \\t]+)?)+)?([a-zA-Z0-9*!_]+))[ \\t]*([~*+-]?=)[ \\t]*([^\\\\#]*)[ \\t]*(\\\\)?[ \t]*(#.*)?");
+static QRegExp bloc("^(\\})?[ \\t]*(?:([-a-zA-Z0-9*|_!+]+:)*([-a-zA-Z0-9*|_!+]+))[ \\t]*(?:\\((.*)\\))?[ \\t]*(\\{)[ \\t]*(#.*)?");
+static QRegExp variable("^(?:((?:[-a-zA-Z0-9*!_|+]+(?:\\((?:.*)\\))?(?:[ \\t]+)?[:|](?:[ \\t]+)?)+)?([\\.a-zA-Z0-9*!_]+))[ \\t]*([~*+-]?=)[ \\t]*([^\\\\#]*)[ \\t]*(\\\\)?[ \t]*(#.*)?");
 static QRegExp varLine("^[ \\t]*(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
 static QRegExp end_bloc("^(\\})[ \t]*(#.*)?");
-static QRegExp comments("^#(.*)");
-//
-const QString mSpaces = "\\s*";
-const QString mScope = "[^:|()]+";
-const QString mFunction = "\\w+\\(.*\\)";
-static QRegExp explodeNested( QString( "%1(%2|%3)%4(:|\\|)" ).arg( mSpaces ).arg( mScope ).arg( mFunction ).arg( mSpaces ) );
-const QString mDosFileName = "[^ \\\"]+";
-const QString mLonFileName = "\\\"(.*)\\\"";
-static QRegExp splitValues( QString( "(%1)|%2" ).arg( mDosFileName ).arg( mLonFileName ) );
+static QRegExp comments("^\\s*#(.*)");
+static QRegExp explodeNested( "\\s*([^:|()]+|\\w+\\(.*\\))\\s*(:|\\|)" );
+static QRegExp splitValues( "([^ \\\"]+)|\\\"(.*)\\\"" );
+static QRegExp splitCommands( "(\\([^;]*\\));?|(\\$\\(\\w+\\)[^;]*);?" );
 static QRegExp splitNested( "[:|\\|]" );
 //
 QMakeProjectParser::QMakeProjectParser( const QString& s, QMakeProjectItem* i )
@@ -74,9 +70,9 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 {
 	while(ligne < content.size())
 	{
-		// c'est une fonction du style :
-		// func_name(params), nested compris
-		if( function_call.exactMatch( content[ligne] ) )
+		// function like :
+		// func_name(params), nested optionnally
+		if ( function_call.exactMatch( content[ligne] ) )
 		{
 			// ==================        1        ==================
 			QStringList liste = function_call.capturedTexts();
@@ -87,41 +83,41 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 		}
 		// scope (nested compris)
 		// "truc(params) {" ou "xml:truc(params) {" ("{" facultatif)
-		else if(bloc.exactMatch(content[ligne]))
+		else if ( bloc.exactMatch( content[ligne] ) )
 		{
-			QStringList liste = bloc.capturedTexts();
-			// ==================        2         ==================
-			qWarning() << "ligne : " << (ligne+1) << " scope found !" << liste[1] << liste[2] << liste[3] << liste[4] << liste[5] << "end scope !";
-			
-			// si c'est la fin d'un bloc tout en tant le d�but d'un autre
-			if(content[ligne].left(1) == "}")
+			// if end block and start new one
+			if( content[ligne].left(1) == "}" )
 			{
-				// on �vite les r�cursions infinies ...
+				// drop infinite loop
 				if(this_prof != prof)
 				{
-					// ... car on renvoie sur la m�me ligne
-					qWarning() << "ligne : " << (ligne+1) << " DEBUG 1 ::: " << content[ligne];
+					this_prof = prof-1;
 					return ligne-1;
 				}
 			}
-			
+			// ==================        2         ==================
+			QStringList liste = bloc.capturedTexts();
+			QMakeProjectItem* i = processNested( liste[2], it );
+			QString s;
+			if ( liste[4].trimmed().isEmpty() )
+				s = liste[3].trimmed();
+			else
+				s = QString( "%1( %2 )" ).arg( liste[3].trimmed(), liste[4].trimmed() );
+			i = addScope( s, "", false, i );
+			if ( i )
+				i->setData( liste[6].trimmed(), AbstractProjectModel::CommentRole );
+			//
 			prof++;
-			// parse le bloc en le transmettant en parent
-			ligne = parseBuffer(ligne+1,it);
+			// parse block giving parent scope
+			ligne = parseBuffer( ligne+1, i );
 			prof--;
 		}
-		// fin de bloc seul
-		else if(end_bloc.exactMatch(content[ligne]))
-		{
-			// ==================        3         ==================
-			QStringList liste = end_bloc.capturedTexts();
-			qWarning() << "ligne : " << (ligne+1) << " end scope found !" << liste[1] << liste[2] << "end end scope !";
-			
+		// end of block
+		else if ( end_bloc.exactMatch( content[ligne] ) )
 			return ligne;
-		}
-		// variable (nested compris)
-		// "HEADERS = ***" ou "win32:HEADERS = ***" ("+=" et "-=" sont aussi g�r�s)
-		else if( variable.exactMatch( content[ligne] ) )
+		// variable ( nested optionnaly)
+		// "HEADERS = ***" or "win32:HEADERS = ***" ("+=" and "-=" managed)
+		else if ( variable.exactMatch( content[ligne] ) )
 		{
 			// ==================        4         ==================
 			QStringList liste = variable.capturedTexts();
@@ -130,11 +126,11 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 			i = processValues( liste[4], v );
 			if ( i )
 				i->setData( liste[6].trimmed(), AbstractProjectModel::CommentRole );
-			// si il y a un "\" � la fin de la ligne, lire la ligne suivante
+			// if last char is \ read next lines
 			if ( liste[5] == "\\" )
 			{
 				ligne++;
-				// lire la ligne suivante tant que il y a un "\" � la fin de celle si (attention aux commentaires)
+				// while last car of line is \ continue to read, be carrefull on comment
 				while( varLine.exactMatch( content[ligne] ) )
 				{
 					// ==================        5         ==================
@@ -144,20 +140,20 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 						i->setData( liste[2].trimmed(), AbstractProjectModel::CommentRole );
 					ligne++;
 				}
-				//
+				// last line , optionnally with comment
 				liste = content[ligne].split( "#" );
 				i = processValues( liste[0], v );
 				if ( i && liste.count() > 1 )
 					i->setData( liste[1], AbstractProjectModel::CommentRole );
 			}
 		}
-		// ici les commentaires seuls sur la ligne
+		// single line comment
 		else if ( comments.exactMatch( content[ligne] ) )
 			addComment( content[ligne], it );
-		// ici les lignes vides
+		// empty lines
 		else if ( content[ligne].trimmed() == "" )
 			addEmpty( it );
-		// une erreur ? c'est horrible
+		// error
 		else
 			qWarning( "Error on line %d: %s", (ligne+1), qPrintable( content[ligne] ) );
 		ligne++;
@@ -183,12 +179,14 @@ QMakeProjectItem* QMakeProjectParser::processValues( const QString& s, QMakeProj
 	QStringList l;
 	int p = 0;
 	QMakeProjectItem* v = 0;
-	while ( ( p = splitValues.indexIn( s, p ) ) != -1 )
+	QRegExp* r = mParseCommands ? &splitCommands : &splitValues;
+	while ( ( p = r->indexIn( s, p ) ) != -1 )
 	{
-		l = splitValues.capturedTexts();
+		l = r->capturedTexts();
+		qDebug() << l;
 		l.removeAll( "" );
 		v = addValue( l.at( 1 ).trimmed(), i );
-		p += splitValues.matchedLength();
+		p += r->matchedLength();
 	}
 	return v;
 }
@@ -207,7 +205,6 @@ QMakeProjectItem* QMakeProjectParser::addFunction( const QString& s, const QStri
 	QMakeProjectItem* f = new QMakeProjectItem( AbstractProjectModel::FunctionType, i );
 	f->setData( s.trimmed(), AbstractProjectModel::ValueRole );
 	f->setData( o.trimmed(), AbstractProjectModel::NestedOperatorRole );
-	//(void) new QMakeProjectItem( AbstractProjectModel::ScopeEndType, f );
 	return f;
 }
 // 100%
@@ -216,6 +213,7 @@ QMakeProjectItem* QMakeProjectParser::addVariable( const QString& s, const QStri
 	QMakeProjectItem* v = new QMakeProjectItem( AbstractProjectModel::VariableType, i );
 	v->setData( s.trimmed(), AbstractProjectModel::ValueRole );
 	v->setData( o.trimmed(), AbstractProjectModel::OperatorRole );
+	mParseCommands = s.trimmed().endsWith( ".commands", Qt::CaseInsensitive );
 	return v;
 }
 // 100%
@@ -229,7 +227,7 @@ QMakeProjectItem* QMakeProjectParser::addValue( const QString& s, QMakeProjectIt
 QMakeProjectItem* QMakeProjectParser::addComment( const QString& s, QMakeProjectItem* i )
 {
 	QMakeProjectItem* c = new QMakeProjectItem( AbstractProjectModel::CommentType, i );
-	c->setData( s.trimmed(), AbstractProjectModel::ValueRole );
+	c->setData( s, AbstractProjectModel::ValueRole );
 	return c;
 }
 // 100%
