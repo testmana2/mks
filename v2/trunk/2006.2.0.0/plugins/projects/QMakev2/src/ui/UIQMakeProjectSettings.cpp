@@ -270,7 +270,7 @@ void UIQMakeProjectSettings::loadSettings()
 	if ( cbEncodings->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
 		cbEncodings->addItem( s );
 	cbEncodings->setCurrentIndex( cbEncodings->findText( s, Qt::MatchExactly ) );
-	c = mProject->model()->getStringValues( "CONFIG", "+=" );
+	c = mProject->model()->getStringValues( "CONFIG", mProject->index(), "+=" );
 	if ( c.indexOf( "debug_and_release", 0, Qt::CaseInsensitive ) != -1 )
 		rbDebugRelease->setChecked( true );
 	else if ( c.indexOf( "debug", 0, Qt::CaseInsensitive ) != -1 )
@@ -528,13 +528,13 @@ void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& 
 	if ( mSettings.contains( QString( "%1|DESTDIR" ).arg( k ) ) )
 		leOutputPath->setText( mSettings[ QString( "%1|DESTDIR" ).arg( k ) ].join( " " ) );
 	else // got data
-		leOutputPath->setText( mProject->model()->getStringValues( "DESTDIR", s, cbScopes->currentText() ) );
+		leOutputPath->setText( mProject->model()->getStringValues( "DESTDIR", mProject->index(), s, cbScopes->currentText() ) );
 	leOutputPath->setModified( false );
 	// set backup data if available
 	if ( mSettings.contains( QString( "%1|TARGET" ).arg( k ) ) )
 		leOutputName->setText( mSettings[ QString( "%1|TARGET" ).arg( k ) ].join( " " ) );
 	else // got data
-		leOutputName->setText( mProject->model()->getStringValues( "TARGET", s, cbScopes->currentText() ) );
+		leOutputName->setText( mProject->model()->getStringValues( "TARGET", mProject->index(), s, cbScopes->currentText() ) );
 	leOutputName->setModified( false );
 	// load variables values
 	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
@@ -588,7 +588,7 @@ void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& 
 	if ( mSettings.contains( k ) )
 		lwValues->addItems( mSettings[ k ] );
 	else
-		lwValues->addItems( mProject->model()->getListValues( s, cbOperators->currentText(), cbScopes->currentText() ) );
+		lwValues->addItems( mProject->model()->getListValues( s, mProject->index(), cbOperators->currentText(), cbScopes->currentText() ) );
 }
 //
 void UIQMakeProjectSettings::on_pbAddValue_clicked()
@@ -793,7 +793,7 @@ void UIQMakeProjectSettings::accept()
 	// add other config
 	if ( !leConfig->text().isEmpty() )
 		s << leConfig->text().simplified().split( " " );
-	m->setListValues( s, "CONFIG", "+=" );
+	m->setListValues( s, "CONFIG", mProject->index(), "+=" );
 	m->setListValues( c, "QT" );
 	s.clear();
 	c.clear();
@@ -801,7 +801,7 @@ void UIQMakeProjectSettings::accept()
 	foreach ( QString v, mSettings.keys() )
 	{
 		QStringList l = v.split( "|" );
-		m->setListValues( mSettings.value( v ), l.at( 2 ), l.at( 1 ), l.at( 0 ) );
+		m->setListValues( mSettings.value( v ), l.at( 2 ), mProject->index(), l.at( 1 ), l.at( 0 ) );
 	}
 	// close dialog
 	QDialog::accept();

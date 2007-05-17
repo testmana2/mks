@@ -24,18 +24,16 @@ public:
 		FirstRole = Qt::UserRole, // first role
 		TypeRole, // the item type
 		OperatorRole, // the item operator
-		NestedOperatorRole, // the item nested role
 		ValueRole, // the item value
+		MultiLineRole, // bool telling if variable content is single ou multi line
 		CommentRole, // the item comment
 		ProjectIdRole, // the project id
 		ProxyIdRole, // project proxy id
 		ProjectOpenRole, // tell if project is open
 		ProjectModifiedRole, // tell if project is modified
+		ProjectReadOnlyRole, // tell if the project is readonly
 		AbsoluteFilePathRole, // the filepath of the current value if it s a file/path
 		FilterRole, // tell the level filter this item have ( only for no value type )
-		FileRole, // obsolete, tell if item is a file
-		FolderRole, // oblsolete, tell if item is a folder
-		ProjectRole, // obsolete project pointer
 		DeleteRole, // tell if item must be delete when remove from model
 		LastRole // last role
 	};
@@ -68,6 +66,8 @@ public:
 	virtual bool isOpen( const QModelIndex& = QModelIndex() ) const;
 	// project modified flag
 	virtual bool isModified( const QModelIndex& = QModelIndex() ) const;
+	// project readonly flag
+	virtual bool isReadOnly( const QModelIndex& = QModelIndex() ) const;
 	// project lexer
 	virtual QsciLexer* lexer() const;
 	// project apis
@@ -96,24 +96,28 @@ public:
 	virtual bool open() = 0;
 	// the root project item
 	virtual QModelIndex rootProject() const = 0;
-	// get variable content as stringlist
-	virtual QStringList getListValues( const QString&, const QString& = "=", const QString& = QString::null ) const = 0;
-	// get variable content as string
-	virtual QString getStringValues( const QString&, const QString& = "=", const QString& = QString::null ) const = 0;
-	// set variable content as stringlist
-	virtual void setListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
-	// get variable content as string
-	virtual void setStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
-	// add variable content as stringlist
-	virtual void addListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
-	// add variable content as string
-	virtual void addStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
+	// gett all variable content as modelindex list for project index
+	virtual QModelIndexList getIndexListValues( const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) const = 0;
+	// get variable content as stringlist for project index
+	virtual QStringList getListValues( const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) const = 0;
+	// get variable content as string for project index
+	virtual QString getStringValues( const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) const = 0;
+	// set variable content as stringlist for project index
+	virtual void setListValues( const QStringList&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) = 0;
+	// get variable content as string for project index
+	virtual void setStringValues( const QString&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) = 0;
+	// add variable content as stringlist for project index
+	virtual void addListValues( const QStringList&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) = 0;
+	// add variable content as string for project index
+	virtual void addStringValues( const QString&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) = 0;
 	//
 public slots:
 	// set project file path
 	virtual void setFilePath( const QString&, const QModelIndex& = QModelIndex() );
 	// set project modified flag
 	virtual void setModified( const QModelIndex& = QModelIndex(), bool = true );
+	// set project readonly flag
+	virtual void setReadOnly( const QModelIndex& = QModelIndex(), bool = true );
 	// set project lexer
 	virtual void setLexer( QsciLexer* );
 	// set project lexer
@@ -141,6 +145,8 @@ protected:
 signals:
 	// emit when modified state has changed
 	void isModifiedChanged( bool, const QModelIndex& );
+	// emit when modified state has changed
+	void isReadOnlyChanged( bool, const QModelIndex& );
 	// emit when a project is about to close
 	void aboutToClose( const QModelIndex& );
 	//

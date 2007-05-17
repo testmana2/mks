@@ -1,6 +1,7 @@
 #include "QMakeProjectItem.h"
 #include "QMakeProjectItemPrivate.h"
 #include "QMakeProjectModel.h"
+#include "Settings.h"
 //
 #include <QPixmap>
 //
@@ -212,7 +213,28 @@ void QMakeProjectItem::setPrivateModel( QMakeProjectModel* m )
 void QMakeProjectItem::setPrivateData( const QVariant& v, int r )
 {
 	if ( d )
+	{
 		d->mDatas[r] = v;
+		if ( r == AbstractProjectModel::ValueRole )
+		{
+			d->mDatas[Qt::DisplayRole] = v;
+			// if it s a file set the fullfilepath
+			QMakeProjectItem* pItem = parent();
+			if ( pItem && pItem->type() == AbstractProjectModel::VariableType )
+			{
+				QString pv = pItem->data( AbstractProjectModel::ValueRole ).toString().trimmed().toLower();
+				if ( Settings::current()->value( "Plugins/QMake/FileVariables", QStringList( "subdirs" ) ).toStringList().contains( pv, Qt::CaseInsensitive ) )
+				{
+					qWarning( "QMakeProjectItem::setPrivateData : don't forgot to create the file variable liste in the qmake plugin" );
+					if ( pv != "subdirs" )
+						pv = model()->filePath( v.toString(), index() );
+					else
+						pv = QString( "%1/%2.pro" ).arg( model()->filePath( v.toString(), index() ) ).arg( QFileInfo( v.toString() ).fileName() );
+					d->mDatas[AbstractProjectModel::AbsoluteFilePathRole] = pv;
+				}
+			}
+		}
+	}
 }
 //
 bool QMakeProjectItem::insertPrivateRow( int i, QMakeProjectItem* it )

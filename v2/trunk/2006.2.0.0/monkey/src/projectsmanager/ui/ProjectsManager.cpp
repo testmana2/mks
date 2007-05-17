@@ -288,6 +288,7 @@ void ProjectsManager::projectAboutToClose( const QModelIndex& i )
 	}
 }
 //
+#include <QDebug>
 void ProjectsManager::buildProjectTreeItems( AbstractProjectProxy* p, const QModelIndex& i, QTreeWidgetItem* twi )
 {
 	if ( !i.isValid() )

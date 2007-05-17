@@ -50,7 +50,7 @@ QWidget* QMakeProjectItemDelegate::createEditor( QWidget* w, const QStyleOptionV
 		case AbstractProjectModel::OperatorRole:
 		{
 			QComboBox* cb = new QComboBox( w );
-			cb->addItems( QStringList() << "" << "=" << "-=" << "+=" << "*=" << "~=" );
+			cb->addItems( QStringList() << "" << "=" << "-=" << "+=" << "*=" << "~=" << ":" << "|" );
 			cb->setCurrentIndex( cb->findText( i.data().toString() ) );
 			return cb;
 		}
@@ -64,10 +64,6 @@ QWidget* QMakeProjectItemDelegate::createEditor( QWidget* w, const QStyleOptionV
 			return cb;
 		}
 		*/
-		case AbstractProjectModel::ProjectRole:
-		{
-			break;
-		}
 	}
 	return 0;
 }
@@ -108,10 +104,6 @@ void QMakeProjectItemDelegate::setModelData( QWidget* w, QAbstractItemModel* m, 
 		{
 			QComboBox* cb = qobject_cast<QComboBox*>( w );
 			m->setData( i, cb->currentText(), Qt::DisplayRole );
-			return;
-		}
-		case AbstractProjectModel::ProjectRole:
-		{
 			return;
 		}
 	}

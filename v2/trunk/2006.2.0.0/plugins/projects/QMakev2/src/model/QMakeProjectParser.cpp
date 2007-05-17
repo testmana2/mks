@@ -1,5 +1,6 @@
 #include "QMakeProjectParser.h"
 #include "QMakeProjectItem.h"
+#include "QMakeProjectModel.h"
 //
 #include <QFileInfo>
 #include <QBuffer>
@@ -14,19 +15,18 @@ static int this_prof = 0; // profondeur precedent
 // regex !!!
 static QVector<QString> content;
 static bool mParseCommands = false;
-static QRegExp function_call("^((?:[a-zA-Z0-9]+(?:\\((?:.*)\\))?(?:[ \\t]+)?[|:](?:[ \\t]+)?)+)?([a-zA-Z]+)\\((.*)\\)[ \\t]*(#.*)?");
-static QRegExp bloc("^(\\})?[ \\t]*(?:([-a-zA-Z0-9*|_!+]+:)*([-a-zA-Z0-9*|_!+]+))[ \\t]*(?:\\((.*)\\))?[ \\t]*(\\{)[ \\t]*(#.*)?");
-static QRegExp variable("^(?:((?:[-a-zA-Z0-9*!_|+]+(?:\\((?:.*)\\))?(?:[ \\t]+)?[:|](?:[ \\t]+)?)+)?([\\.a-zA-Z0-9*!_]+))[ \\t]*([~*+-]?=)[ \\t]*([^\\\\#]*)[ \\t]*(\\\\)?[ \t]*(#.*)?");
+static QRegExp function_call("^((?:[a-zA-Z0-9\\.]+(?:\\((?:.*)\\))?(?:[ \\t]+)?[|:](?:[ \\t]+)?)+)?([a-zA-Z]+\\((.*)\\))[ \\t]*(#.*)?"); 
+static QRegExp bloc("^(\\})?[ \\t]*(?:((?:[-\\.a-zA-Z0-9*|_!+]+(?:\\((?:[^\\)]*)\\))?[:|])+)?([-a-zA-Z0-9*|_!+]+(?:\\((?:[^\\)]*)\\))?))[ \\t]*(\\{)[ \\t]*(#.*)?"); 
+static QRegExp variable("^(?:((?:[-\\.a-zA-Z0-9*!_|+]+(?:\\((?:.*)\\))?(?:[ \\t]+)?[:|](?:[ \\t]+)?)+)?([\\.a-zA-Z0-9*!_]+))[ \\t]*([~*+-]?=)[ \\t]*([^\\\\#]*)[ \\t]*(\\\\)?[ \t]*(#.*)?");
 static QRegExp varLine("^[ \\t]*(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
 static QRegExp end_bloc("^(\\})[ \t]*(#.*)?");
 static QRegExp comments("^\\s*#(.*)");
-static QRegExp explodeNested( "\\s*([^:|()]+|\\w+\\(.*\\))\\s*(:|\\|)" );
-static QRegExp splitValues( "([^ \\\"]+)|\\\"(.*)\\\"" );
+static QRegExp splitNested( "\\s*([^:|()]+|!?\\w+\\(.*\\))\\s*(:|\\|)" );
+static QRegExp splitValues( "([^ \"]+)|\\\"([^\"]+)\\\"|(\\${1,2}\\w+\\([^\\(\\)]+\\)[^ ]+)" );
 static QRegExp splitCommands( "(\\([^;]*\\));?|(\\$\\(\\w+\\)[^;]*);?" );
-static QRegExp splitNested( "[:|\\|]" );
 //
 QMakeProjectParser::QMakeProjectParser( const QString& s, QMakeProjectItem* i )
-	: QObject( i ), mIsOpen( false ), mRoot( i )
+	: QObject( i ), mIsOpen( false ), mRoot( i ), mModel( qobject_cast<QMakeProjectModel*>( mRoot->model() ) )
 {
 	loadFile( s, mRoot );
 }
@@ -55,13 +55,23 @@ bool QMakeProjectParser::loadFile( const QString& s, QMakeProjectItem* it )
 			content += line;
 	}
 	// set project data
-	if ( it != mRoot )
-		it = new QMakeProjectItem( AbstractProjectModel::ProjectType, it );
+	//if ( it != mRoot )
+		//it = new QMakeProjectItem( AbstractProjectModel::ProjectType, it );
 	it->setType( AbstractProjectModel::ProjectType );
 	it->setData( QFileInfo( s ).completeBaseName() );
 	it->setData( s, AbstractProjectModel::AbsoluteFilePathRole );
 	// parse buffer
 	mIsOpen = parseBuffer( 0, it );
+	// open subdirs project
+	if ( mIsOpen )
+		foreach ( QModelIndex i, mModel->getIndexListValues( "subdirs", it->index(), "" ) )
+		{
+			QString sp = i.data( AbstractProjectModel::AbsoluteFilePathRole ).toString();
+			if ( QFile::exists( sp ) )
+				loadFile( sp, new QMakeProjectItem( AbstractProjectModel::ProjectType, it ) );
+			else
+				qWarning( "Can't open subproject: %s", qPrintable( sp ) );
+		}
 	return mIsOpen;
 }
 // parser file
@@ -76,9 +86,9 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 			// ==================        1        ==================
 			QStringList liste = function_call.capturedTexts();
 			QMakeProjectItem* i = processNested( liste[1], it );
-			i = addFunction( QString( "%1( %2 )" ).arg( liste[2].trimmed(), liste[3].trimmed() ), "", i );
+			i = addFunction( liste[2].trimmed(), "", i );
 			if ( i )
-				i->setData( liste[4].trimmed(), AbstractProjectModel::CommentRole );
+				i->setData( liste[3].trimmed(), AbstractProjectModel::CommentRole );
 		}
 		// scope (nested compris)
 		// "truc(params) {" ou "xml:truc(params) {" ("{" facultatif)
@@ -97,14 +107,9 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 			// ==================        2         ==================
 			QStringList liste = bloc.capturedTexts();
 			QMakeProjectItem* i = processNested( liste[2], it );
-			QString s;
-			if ( liste[4].trimmed().isEmpty() )
-				s = liste[3].trimmed();
-			else
-				s = QString( "%1( %2 )" ).arg( liste[3].trimmed(), liste[4].trimmed() );
-			i = addScope( s, "", false, i );
+			i = addScope( liste[3].trimmed(), "", false, i );
 			if ( i )
-				i->setData( liste[6].trimmed(), AbstractProjectModel::CommentRole );
+				i->setData( liste[5].trimmed(), AbstractProjectModel::CommentRole );
 			//
 			prof++;
 			// parse block giving parent scope
@@ -122,6 +127,7 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 			QStringList liste = variable.capturedTexts();
 			QMakeProjectItem *i, *v = processNested( liste[1], it );
 			v = addVariable( liste[2], liste[3], v );
+			v->setData( liste[5].trimmed() == "\\", AbstractProjectModel::MultiLineRole );
 			i = processValues( liste[4], v );
 			if ( i )
 				i->setData( liste[6].trimmed(), AbstractProjectModel::CommentRole );
@@ -129,7 +135,7 @@ int QMakeProjectParser::parseBuffer( int ligne, QMakeProjectItem* it )
 			if ( liste[5] == "\\" )
 			{
 				ligne++;
-				// while last car of line is \ continue to read, be carrefull on comment
+				// while last char of line is \ continue to read, be carrefull on comment
 				while( varLine.exactMatch( content[ligne] ) )
 				{
 					// ==================        5         ==================
@@ -164,11 +170,11 @@ QMakeProjectItem* QMakeProjectParser::processNested( const QString& s, QMakeProj
 {
 	QStringList l;
 	int p = 0;
-	while ( ( p = explodeNested.indexIn( s, p ) ) != -1 )
+	while ( ( p = splitNested.indexIn( s, p ) ) != -1 )
 	{
-		l = explodeNested.capturedTexts();
-		i = addScope( l.at( 1 ).trimmed(), l.at( 2 ).trimmed(), true, i );
-		p += explodeNested.matchedLength();
+		l = splitNested.capturedTexts();
+		i = addScope( l.at( 1 ), l.at( 2 ), true, i );
+		p += splitNested.matchedLength();
 	}
 	return i;
 }
@@ -183,7 +189,7 @@ QMakeProjectItem* QMakeProjectParser::processValues( const QString& s, QMakeProj
 	{
 		l = r->capturedTexts();
 		l.removeAll( "" );
-		v = addValue( l.at( 1 ).trimmed(), i );
+		v = addValue( l.at( 1 ), i );
 		p += r->matchedLength();
 	}
 	return v;
@@ -193,7 +199,7 @@ QMakeProjectItem* QMakeProjectParser::addScope( const QString& v, const QString&
 {
 	QMakeProjectItem* s = new QMakeProjectItem( b ? AbstractProjectModel::NestedScopeType : AbstractProjectModel::ScopeType, i );
 	s->setData( v.trimmed(), AbstractProjectModel::ValueRole );
-	s->setData( o.trimmed(), AbstractProjectModel::NestedOperatorRole );
+	s->setData( o.trimmed(), AbstractProjectModel::OperatorRole );
 	(void) new QMakeProjectItem( AbstractProjectModel::ScopeEndType, s );
 	return s;
 }
@@ -202,7 +208,7 @@ QMakeProjectItem* QMakeProjectParser::addFunction( const QString& s, const QStri
 {
 	QMakeProjectItem* f = new QMakeProjectItem( AbstractProjectModel::FunctionType, i );
 	f->setData( s.trimmed(), AbstractProjectModel::ValueRole );
-	f->setData( o.trimmed(), AbstractProjectModel::NestedOperatorRole );
+	f->setData( o.trimmed(), AbstractProjectModel::OperatorRole );
 	return f;
 }
 // 100%
@@ -225,7 +231,7 @@ QMakeProjectItem* QMakeProjectParser::addValue( const QString& s, QMakeProjectIt
 QMakeProjectItem* QMakeProjectParser::addComment( const QString& s, QMakeProjectItem* i )
 {
 	QMakeProjectItem* c = new QMakeProjectItem( AbstractProjectModel::CommentType, i );
-	c->setData( s, AbstractProjectModel::ValueRole );
+	c->setData( s.trimmed(), AbstractProjectModel::ValueRole );
 	return c;
 }
 // 100%

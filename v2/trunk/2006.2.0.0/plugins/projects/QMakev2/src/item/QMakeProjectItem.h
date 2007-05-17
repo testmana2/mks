@@ -5,7 +5,7 @@
 #include <QModelIndex>
 #include <QPointer>
 //
-#include "AbstractProjectModel.h" // NodeItemRole NodeItemType
+#include "AbstractProjectModel.h"
 //
 class QMakeProjectItemPrivate;
 class QMakeProjectModel;

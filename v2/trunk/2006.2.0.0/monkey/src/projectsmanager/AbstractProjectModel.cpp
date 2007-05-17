@@ -52,6 +52,11 @@ bool AbstractProjectModel::isModified( const QModelIndex& i ) const
 	return project( i ).data( AbstractProjectModel::ProjectModifiedRole ).toBool();
 }
 //
+bool AbstractProjectModel::isReadOnly( const QModelIndex& i ) const
+{
+	return project( i ).data( AbstractProjectModel::ProjectReadOnlyRole ).toBool();
+}
+//
 QsciLexer* AbstractProjectModel::lexer() const
 {
 	return mLexer;
@@ -89,10 +94,11 @@ QString AbstractProjectModel::relativeFilePath( const QString& s, const QModelIn
 //
 QStringList AbstractProjectModel::absoluteFilesPath( const QModelIndex& i, bool b )
 {
+	qWarning( "AbstractProjectModel::absoluteFilesPath : may need fix, need to see with hlamer" );
 	QStringList l;
 	QString s;
 	Qt::MatchFlags f = b ? Qt::MatchWildcard | Qt::MatchRecursive : Qt::MatchWildcard;
-	foreach ( QModelIndex j, match( project( i ), AbstractProjectModel::AbsoluteFilePathRole, "*", -1, f ) )
+	foreach ( QModelIndex j, match( project( i ).child( 0, 0 ), AbstractProjectModel::AbsoluteFilePathRole, "*", -1, f ) )
 	{
 		s = j.data( AbstractProjectModel::AbsoluteFilePathRole ).toString();
 		if ( !s.isEmpty() )
@@ -119,10 +125,11 @@ QModelIndex AbstractProjectModel::project( const QModelIndex& i ) const
 	return j;
 }
 //
+#include <QDebug>
 QModelIndexList AbstractProjectModel::subProjects( const QModelIndex& i, bool b ) const
 {
 	Qt::MatchFlags f = b ? Qt::MatchFixedString | Qt::MatchRecursive : Qt::MatchFixedString;
-	return match( project( i ), AbstractProjectModel::TypeRole, AbstractProjectModel::ProjectType, -1, f );
+	return match( project( i ).child( 0, 0 ), AbstractProjectModel::TypeRole, AbstractProjectModel::ProjectType, -1, f );
 }
 //
 QModelIndex AbstractProjectModel::parentProject( const QModelIndex& i ) const
@@ -137,6 +144,7 @@ void AbstractProjectModel::setFilePath( const QString& s, const QModelIndex& i )
 	if ( !j.isValid() || isOpen( j ) || !QFile::exists( cfp ) )
 		return;
 	setData( j, cfp, AbstractProjectModel::AbsoluteFilePathRole );
+	qWarning( "AbstractProjectModel::setFilePath : Does it need to fill value, and item does the rest ?!" );
 }
 //
 void AbstractProjectModel::setModified( const QModelIndex& i, bool b )
@@ -146,6 +154,15 @@ void AbstractProjectModel::setModified( const QModelIndex& i, bool b )
 		return;
 	setData( j, b, AbstractProjectModel::ProjectModifiedRole );
 	emit isModifiedChanged( b, j );
+}
+//
+void AbstractProjectModel::setReadOnly( const QModelIndex& i, bool b )
+{
+	QModelIndex j = project( i );
+	if ( !j.isValid() )
+		return;
+	setData( j, b, AbstractProjectModel::ProjectReadOnlyRole );
+	emit isReadOnlyChanged( b, j );
 }
 //
 void AbstractProjectModel::setLexer( QsciLexer* l )

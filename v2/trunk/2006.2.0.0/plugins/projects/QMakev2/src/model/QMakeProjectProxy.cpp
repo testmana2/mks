@@ -26,7 +26,12 @@ bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 			return true;
 		QModelIndex index;
 		index = sourceModel()->index( r, 0, i );
-		if ( index.data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::VariableType )
+		int t = index.data( AbstractProjectModel::TypeRole ).toInt();
+		if ( t == AbstractProjectModel::ValueType )
+			return true;
+		else if ( t == AbstractProjectModel::ProjectType )
+			return true;
+		else if ( t == AbstractProjectModel::VariableType )
 		{
 			QStringList l = Settings::current()->value( "Plugins/QMake/Filters" ).toStringList();
 			if ( l.isEmpty() )
@@ -40,9 +45,7 @@ bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 				return true;
 			}
 		}
-		else if ( index.data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::ValueType )
-			return true;
-		else if ( mFilterRoles.contains( index.data( AbstractProjectModel::TypeRole ).toInt() ) )
+		else if ( mFilterRoles.contains( t ) )
 		{
 			for ( int j = 0; j < sourceModel()->rowCount( index ); j++ )
 				if ( filterAcceptsRow( j, index ) )

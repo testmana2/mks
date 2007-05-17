@@ -4,6 +4,7 @@
 #include <QObject>
 //
 class QMakeProjectItem;
+class QMakeProjectModel;
 //
 class QMakeProjectParser : public QObject
 {
@@ -18,7 +19,7 @@ public:
 protected:
 	bool loadFile( const QString&, QMakeProjectItem* );
 	int parseBuffer( int, QMakeProjectItem* );
-	
+	//
 	QMakeProjectItem* processNested( const QString&, QMakeProjectItem* );
 	QMakeProjectItem* processValues( const QString&, QMakeProjectItem* );
 	QMakeProjectItem* addScope( const QString&, const QString&, bool, QMakeProjectItem* );
@@ -30,6 +31,7 @@ protected:
 	//
 	bool mIsOpen;
 	QMakeProjectItem* mRoot;
+	QMakeProjectModel* mModel;
 	//
 };
 //
