@@ -36,7 +36,11 @@ public:
 	virtual QMakeProjectItem* takeRow( QMakeProjectItem*, QMakeProjectItem* = 0 );
 	virtual QVariant headerData( int, Qt::Orientation, int ) const;
 	//
+	virtual QString scopeOf( const QModelIndex& ) const;
+	virtual QString checkScope( const QString& ) const;
+	virtual bool isEqualScope( const QString&, const QString& ) const;
 	virtual QModelIndexList getIndexListValues( const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) const;
+	virtual QModelIndex getIndexVariable( const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) const;
 	virtual QStringList getListValues( const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) const;
 	virtual QString getStringValues( const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) const;
 	virtual void setListValues( const QStringList&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null );

@@ -18,10 +18,10 @@
 QString mTranslationMask = "translations/%1_%2.ts";
 //
 UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p )
-	: QDialog( p ), mReady( false ), mProject( m ), mDirs( new QDirModel( this ) )
+	: QDialog( p ), mReady( false ), mModel( m->model() ), mProject( m ), mProjectIndex( m->index() ), mDirs( new QDirModel( this ) )
 {
 	setupUi( this );
-	setWindowTitle( QString( "Project Settings - %1" ).arg( m->data().toString() ) );
+	setWindowTitle( QString( "Project Settings - %1" ).arg( projectName() ) );
 	dbbButtons->button( QDialogButtonBox::Ok )->setIcon( QPixmap( ":/Icons/Icons/buttonok.png" ) );
 	dbbButtons->button( QDialogButtonBox::Cancel )->setIcon( QPixmap( ":/Icons/Icons/buttoncancel.png" ) );
 	dbbButtons->button( QDialogButtonBox::Help )->setIcon( QPixmap( ":/Icons/Icons/helpkeyword.png" ) );
@@ -40,18 +40,18 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	//
 	setDir( mDirs->index( projectPath() ) );
 	// scopes
-	mScopesProxy = new QMakeProjectProxy( mProject->model(), false );
+	mScopesProxy = new QMakeProjectProxy( mModel, false );
 	mScopesProxy->setFilterRoles( QList<int>() << AbstractProjectModel::ValueType );
 	mScopesProxy->setFiltering( true );
 	tvScopes->setModel( mScopesProxy );
-	tvScopes->setRootIndex( mScopesProxy->mapFromSource( mProject->index().parent() ) );
+	tvScopes->setRootIndex( mScopesProxy->mapFromSource( mProjectIndex.parent() ) );
 	// scope content
-	mContentProxy = new QMakeProjectProxy( mProject->model(), false );
+	mContentProxy = new QMakeProjectProxy( mModel, false );
 	mContentProxy->setFilterRoles( QList<int>() << AbstractProjectModel::ValueType );
 	mContentProxy->setNegateFilter( false );
 	mContentProxy->setFiltering( true );
 	lvContents->setModel( mContentProxy );
-	setCurrentIndex( mProject->index().child( 0, 0 ) );
+	setCurrentIndex( mProjectIndex.child( 0, 0 ) );
 	// loading...
 	loadEncodings();
 	loadModules();
@@ -130,17 +130,17 @@ void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 //
 QString UIQMakeProjectSettings::projectName() const
 {
-	return mProject->model()->name( mProject->index() );
+	return mModel->name( mProjectIndex );
 }
 //
 QString UIQMakeProjectSettings::projectPath() const
 {
-	return mProject->model()->path( mProject->index() );
+	return mModel->path( mProjectIndex );
 }
 //
 QString UIQMakeProjectSettings::getFilePath( const QString& s )
 {
-	QString f = mProject->model()->filePath( s, mProject->index() );
+	QString f = mModel->filePath( s, mProjectIndex );
 	if ( !QFile::exists( f ) )
 		f = projectPath();
 	return f;
@@ -148,7 +148,27 @@ QString UIQMakeProjectSettings::getFilePath( const QString& s )
 //
 QString UIQMakeProjectSettings::getRelativeFilePath( const QString& s )
 {
-	return mProject->model()->relativeFilePath( s, mProject->index() );
+	return mModel->relativeFilePath( s, mProjectIndex );
+}
+//
+QString UIQMakeProjectSettings::getStringValues( const QString& v, const QString& o, const QString& s ) const
+{
+	return mModel->getStringValues( v, mProjectIndex, o, s );
+}
+//
+QStringList UIQMakeProjectSettings::getListValues( const QString& v, const QString& o, const QString& s ) const
+{
+	return mModel->getListValues( v, mProjectIndex, o, s );
+}
+//
+void UIQMakeProjectSettings::setStringValues( const QString& sv, const QString& v, const QString& o, const QString& s )
+{
+	mModel->setStringValues( sv, v, mProjectIndex, o, s );
+}
+//
+void UIQMakeProjectSettings::setListValues( const QStringList& lv, const QString& v, const QString& o, const QString& s )
+{
+	mModel->setListValues( lv, v, mProjectIndex, o, s );
 }
 //
 void UIQMakeProjectSettings::loadEncodings()
@@ -163,7 +183,6 @@ void UIQMakeProjectSettings::loadEncodings()
 void UIQMakeProjectSettings::loadModules()
 {
 	// load modules informations
-	// TODO: need to be add to qmake plugin properties, so user can add new if new qt release go out
 	mModules = UISettingsQMake::readQtModules();
 	// fill lwQtModules
 	foreach ( QtItem* i, mModules )
@@ -182,7 +201,6 @@ void UIQMakeProjectSettings::loadModules()
 void UIQMakeProjectSettings::loadConfigs()
 {
 	// load configs informations
-	// TODO: need to be add to qmake plugin properties, so user can add new if new qt release go out
 	mConfigs = UISettingsQMake::readSettings();
 	// fill lwCompilerFlags
 	QFont fo( lwCompilerFlags->font() );
@@ -235,17 +253,17 @@ void UIQMakeProjectSettings::loadSettings()
 	QString c, s;
 	QStringList l;
 	// Application
-	leTitle->setText( mProject->model()->getStringValues( "APP_TITLE" ) );
+	leTitle->setText( getStringValues( "APP_TITLE" ) );
 	leTitle->setModified( false );
-	leIcon->setText( mProject->model()->getStringValues( "APP_ICON" ) );
+	leIcon->setText( getStringValues( "APP_ICON" ) );
 	leIcon->setModified( false );
 	if ( !leIcon->text().isEmpty() )
 		lPixmap->setPixmap( QPixmap( QFileInfo( leIcon->text() ).isRelative() ? projectPath().append( "/" ).append( leIcon->text() ) : leIcon->text() ) );
-	leHelpFile->setText( mProject->model()->getStringValues( "APP_HELP_FILE" ) );
+	leHelpFile->setText( getStringValues( "APP_HELP_FILE" ) );
 	leHelpFile->setModified( false );
-	leAuthor->setText( mProject->model()->getStringValues( "APP_AUTHOR" ) );
+	leAuthor->setText( getStringValues( "APP_AUTHOR" ) );
 	leAuthor->setModified( false );
-	s = mProject->model()->getStringValues( "VERSION" );
+	s = getStringValues( "VERSION" );
 	if ( !s.isEmpty() )
 	{
 		gbVersion->setChecked( true );
@@ -254,23 +272,23 @@ void UIQMakeProjectSettings::loadSettings()
 		sbMinor->setValue( l.value( 1 ).toInt() );
 		sbRelease->setValue( l.value( 2 ).toInt() );
 		sbBuild->setValue( l.value( 3 ).toInt() );
-		cbBuildAutoIncrement->setChecked( mProject->model()->getStringValues( "APP_AUTO_INCREMENT" ).toInt() );
+		cbBuildAutoIncrement->setChecked( getStringValues( "APP_AUTO_INCREMENT" ).toInt() );
 	}
-	s = mProject->model()->getStringValues( "TEMPLATE" );
+	s = getStringValues( "TEMPLATE" );
 	if ( cbTemplate->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
 		cbTemplate->addItem( s );
 	cbTemplate->setCurrentIndex( cbTemplate->findText( s, Qt::MatchExactly ) );
-	s = mProject->model()->getStringValues( "LANGUAGE" );
+	s = getStringValues( "LANGUAGE" );
 	if ( cbLanguage->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
 		cbLanguage->addItem( s );
 	cbLanguage->setCurrentIndex( cbLanguage->findText( s, Qt::MatchExactly ) );
-	s = mProject->model()->getStringValues( "ENCODING" );
+	s = getStringValues( "ENCODING" );
 	if ( s.isEmpty() )
 		s = "UTF-8";
 	if ( cbEncodings->findText( s, Qt::MatchExactly ) == -1 && !s.isEmpty() )
 		cbEncodings->addItem( s );
 	cbEncodings->setCurrentIndex( cbEncodings->findText( s, Qt::MatchExactly ) );
-	c = mProject->model()->getStringValues( "CONFIG", mProject->index(), "+=" );
+	c = getStringValues( "CONFIG", "+=" );
 	if ( c.indexOf( "debug_and_release", 0, Qt::CaseInsensitive ) != -1 )
 		rbDebugRelease->setChecked( true );
 	else if ( c.indexOf( "debug", 0, Qt::CaseInsensitive ) != -1 )
@@ -298,8 +316,9 @@ void UIQMakeProjectSettings::loadSettings()
 	c.remove( "build_all", Qt::CaseInsensitive );
 	c.remove( "ordered", Qt::CaseInsensitive );
 	// Libraries
-	gbQtModules->setChecked( c.contains( "qt", Qt::CaseInsensitive ) );
-	s = mProject->model()->getStringValues( "QT" );
+	// TODO
+	//gbQtModules->setChecked( c.contains( "qt", Qt::CaseInsensitive ) );
+	s = getStringValues( "QT" );
 	foreach ( QListWidgetItem* it, lwQtModules->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 	{
 		if ( it->data( QtItem::VariableRole ).toString().toLower() == "config" )
@@ -326,12 +345,12 @@ void UIQMakeProjectSettings::loadSettings()
 //
 void UIQMakeProjectSettings::loadLanguages()
 {
-	QStringList t = mProject->model()->getListValues( "TRANSLATIONS" );
+	QStringList t = getListValues( "TRANSLATIONS" );
 	QListWidgetItem*  it;
-	for ( int i = QLocale::C; i < QLocale::Zulu +1; i++ )
+	for ( int i = QLocale::C +1; i < QLocale::Zulu +1; i++ )
 	{
 		QString s = QLocale::languageToString( ( QLocale::Language )i );
-		QString f = mTranslationMask.arg( mProject->data().toString() ).arg( s );
+		QString f = mTranslationMask.arg( projectName() ).arg( s );
 		it = new QListWidgetItem( s, lwTranslations );
 		it->setCheckState( t.contains( f, Qt::CaseInsensitive ) ? Qt::Checked : Qt::Unchecked );
 	}
@@ -368,9 +387,9 @@ void UIQMakeProjectSettings::addValue( const QString& s )
 	{
 		// add project translation if needed
 		// got language
-		QString f = QFileInfo( s ).baseName().remove( mProject->data().toString() +'_' );
+		QString f = QFileInfo( s ).baseName().remove( projectName() +'_' );
 		// look if it's a project translation
-		if ( s == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
+		if ( s == mTranslationMask.arg( projectName() ).arg( f ) )
 		{
 			// find item to check and check it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -397,9 +416,9 @@ void UIQMakeProjectSettings::editValue( const QString& s )
 		QString f;
 		// remove the edited translation if needed
 		// got language
-		f = QFileInfo( it->text() ).baseName().remove( mProject->data().toString() +'_' );
+		f = QFileInfo( it->text() ).baseName().remove( projectName() +'_' );
 		// look if it's a project translation
-		if ( it->text() == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
+		if ( it->text() == mTranslationMask.arg( projectName() ).arg( f ) )
 		{
 			// find item and uncheck it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -408,9 +427,9 @@ void UIQMakeProjectSettings::editValue( const QString& s )
 		}
 		// add project translation if needed
 		// got language
-		f = QFileInfo( s ).baseName().remove( mProject->data().toString() +'_' );
+		f = QFileInfo( s ).baseName().remove( projectName() +'_' );
 		// look if it's a project translation
-		if ( s == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
+		if ( s == mTranslationMask.arg( projectName() ).arg( f ) )
 		{
 			// find item to check and check it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -432,9 +451,9 @@ void UIQMakeProjectSettings::removeValue( const QString& s )
 	if ( cbVariables->currentText().toLower() == "translations" && cbScopes->currentText().isEmpty() && cbOperators->currentText() == "=" )
 	{
 		// got language
-		QString f = QFileInfo( cit->text() ).baseName().remove( mProject->data().toString() +'_' );
+		QString f = QFileInfo( cit->text() ).baseName().remove( projectName() +'_' );
 		// look if it's a project translation
-		if ( cit->text() == mTranslationMask.arg( mProject->data().toString() ).arg( f ) )
+		if ( cit->text() == mTranslationMask.arg( projectName() ).arg( f ) )
 		{
 			// find item and uncheck it
 			QListWidgetItem* it = lwTranslations->findItems( f, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 );
@@ -465,7 +484,7 @@ void UIQMakeProjectSettings::tb_clicked()
 	}
 	else if ( tb == tbHelpFile )
 	{
-		s = QFileDialog::getOpenFileName( this, tr( "Choose your application help root file" ), getFilePath( leHelpFile->text() ), tr( "HTMLs (*.htm *.html)" ) );
+		s = QFileDialog::getOpenFileName( this, tr( "Choose your application help root file" ), getFilePath( leHelpFile->text() ), tr( "HTMLs (*.htm *.html);;PDFs (*.pdf);;Windows Help Files (*.chm *.hlp)" ) );
 		if ( !s.isEmpty() )
 		{
 			leHelpFile->setText( getRelativeFilePath( s ) );
@@ -528,13 +547,13 @@ void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& 
 	if ( mSettings.contains( QString( "%1|DESTDIR" ).arg( k ) ) )
 		leOutputPath->setText( mSettings[ QString( "%1|DESTDIR" ).arg( k ) ].join( " " ) );
 	else // got data
-		leOutputPath->setText( mProject->model()->getStringValues( "DESTDIR", mProject->index(), s, cbScopes->currentText() ) );
+		leOutputPath->setText( getStringValues( "DESTDIR", s, cbScopes->currentText() ) );
 	leOutputPath->setModified( false );
 	// set backup data if available
 	if ( mSettings.contains( QString( "%1|TARGET" ).arg( k ) ) )
 		leOutputName->setText( mSettings[ QString( "%1|TARGET" ).arg( k ) ].join( " " ) );
 	else // got data
-		leOutputName->setText( mProject->model()->getStringValues( "TARGET", mProject->index(), s, cbScopes->currentText() ) );
+		leOutputName->setText( getStringValues( "TARGET", s, cbScopes->currentText() ) );
 	leOutputName->setModified( false );
 	// load variables values
 	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
@@ -552,6 +571,7 @@ void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )
 		return;
 	QFileInfo f( leDir->text().append( "/" ).append( i->text() ) );
 	QString s = f.completeSuffix().toLower();
+	// TODO : add entry to qmake plugin so user can configure list himself
 	QStringList libraries = QStringList() << "lib" << "dll" << "a" << "la" << "so" << "dylib";
 	QString v = cbVariables->currentText().toLower();
 	if ( v == "libs" && ( libraries.contains( s ) || s.startsWith( "so." ) ) )
@@ -588,7 +608,7 @@ void UIQMakeProjectSettings::on_cbVariables_currentIndexChanged( const QString& 
 	if ( mSettings.contains( k ) )
 		lwValues->addItems( mSettings[ k ] );
 	else
-		lwValues->addItems( mProject->model()->getListValues( s, mProject->index(), cbOperators->currentText(), cbScopes->currentText() ) );
+		lwValues->addItems( getListValues( s, cbOperators->currentText(), cbScopes->currentText() ) );
 }
 //
 void UIQMakeProjectSettings::on_pbAddValue_clicked()
@@ -601,10 +621,11 @@ void UIQMakeProjectSettings::on_pbAddValue_clicked()
 //
 void UIQMakeProjectSettings::on_pbEditValue_clicked()
 {
-	if ( !lwValues->currentItem() )
+	QListWidgetItem* it = lwValues->currentItem();
+	if ( !it )
 		return;
 	bool b;
-	QString s = QInputDialog::getText( this, tr( "Edit value..." ), tr( "Edit your value content :" ), QLineEdit::Normal, lwValues->currentItem()->text(), &b );
+	QString s = QInputDialog::getText( this, tr( "Edit value..." ), tr( "Edit your value content :" ), QLineEdit::Normal, it->text(), &b );
 	if ( b && !s.isEmpty() )
 		editValue( s );
 }
@@ -628,7 +649,7 @@ void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it 
 	if ( !it || !lwTranslations->isVisible() )
 		return;
 	// get translation file
-	QString s = mTranslationMask.arg( mProject->data().toString() ).arg( it->text() );
+	QString s = mTranslationMask.arg( projectName() ).arg( it->text() );
 	QString k = "|=|TRANSLATIONS";
 	// check translation
 	switch ( it->checkState() )
@@ -639,7 +660,7 @@ void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it 
 			else
 			{
 				if ( !mSettings.contains( k ) )
-					mSettings[ k ] = mProject->model()->getListValues( "TRANSLATIONS" );
+					mSettings[ k ] = getListValues( "TRANSLATIONS" );
 				if ( !mSettings.value( k ).contains( s, Qt::CaseInsensitive ) )
 					mSettings[ k ] << s;
 			}
@@ -650,7 +671,7 @@ void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it 
 			else
 			{
 				if ( !mSettings.contains( k ) )
-					mSettings[ k ] = mProject->model()->getListValues( "TRANSLATIONS" );
+					mSettings[ k ] = getListValues( "TRANSLATIONS" );
 				if ( mSettings.value( k ).contains( s, Qt::CaseInsensitive ) )
 					mSettings[ k ].removeAll( s );
 			}
@@ -662,48 +683,51 @@ void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it 
 //
 void UIQMakeProjectSettings::on_tvScopes_clicked( const QModelIndex& i )
 {
+	// TODO : Fix me
 	setCurrentIndex( mScopesProxy->mapToSource( i ) );
 }
 //
 void UIQMakeProjectSettings::on_tvScopes_doubleClicked( const QModelIndex& i )
 {
 	if ( i.isValid() )
-		UIItemSettings::edit( mProject->model(), mProject->model()->itemFromIndex( mScopesProxy->mapToSource( i ) ), this )->exec();
+		UIItemSettings::edit( mModel, mModel->itemFromIndex( mScopesProxy->mapToSource( i ) ), this )->exec();
 }
 //
 void UIQMakeProjectSettings::on_lvContents_doubleClicked( const QModelIndex& i )
 {
 	if ( i.isValid() )
-		UIItemSettings::edit( mProject->model(), mProject->model()->itemFromIndex( mContentProxy->mapToSource( i ) ), this )->exec();
+		UIItemSettings::edit( mModel, mModel->itemFromIndex( mContentProxy->mapToSource( i ) ), this )->exec();
 }
 //
 void UIQMakeProjectSettings::on_tbAdd_clicked()
 {
-	UIItemSettings::edit( mProject->model(), 0, this )->exec();
+	UIItemSettings::edit( mModel, 0, this )->exec();
 }
 //
 void UIQMakeProjectSettings::on_tbEdit_clicked()
 {
 	QModelIndex i = currentIndex();
 	if ( i.isValid() )
-		UIItemSettings::edit( mProject->model(), mProject->model()->itemFromIndex( i ), this )->exec();
+		UIItemSettings::edit( mModel, mModel->itemFromIndex( i ), this )->exec();
 }
 //
 void UIQMakeProjectSettings::on_tbRemove_clicked()
 {
+	// TODO : use pointer
 	QModelIndex i = currentIndex();
 	if ( i.isValid() )
-		mProject->model()->QAbstractItemModel::removeRow( i.row(), i.parent() );
+		mModel->QAbstractItemModel::removeRow( i.row(), i.parent() );
 }
 //
 void UIQMakeProjectSettings::on_tbClear_clicked()
 {
+	// TODO : use pointer
 	QModelIndex i = currentIndex();
 	if ( i.isValid() )
 	{
 		i = i.parent();
-		while ( mProject->model()->rowCount( i ) )
-			mProject->model()->QAbstractItemModel::removeRow( 0, i );
+		while ( mModel->rowCount( i ) )
+			mModel->QAbstractItemModel::removeRow( 0, i );
 	}
 }
 //
@@ -713,7 +737,7 @@ void UIQMakeProjectSettings::on_tbUp_clicked()
 	QModelIndex i = currentIndex();
 	// check if valid to move
 	if ( i.isValid() )
-		if ( mProject->model()->itemFromIndex( i )->moveUp() )
+		if ( mModel->itemFromIndex( i )->moveUp() )
 			setCurrentIndex( i.sibling( i.row() -1, i.column() ) );
 }
 //
@@ -723,7 +747,7 @@ void UIQMakeProjectSettings::on_tbDown_clicked()
 	QModelIndex i = currentIndex();
 	// check if valid to move
 	if ( i.isValid() )
-		if ( mProject->model()->itemFromIndex( i )->moveDown() )
+		if ( mModel->itemFromIndex( i )->moveDown() )
 			setCurrentIndex( i.sibling( i.row() +1, i.column() ) );
 }
 //
@@ -731,34 +755,32 @@ void UIQMakeProjectSettings::accept()
 {
 	// backup current settings state
 	cb_highlighted( 0 );
-	// get model
-	QMakeProjectModel* m = mProject->model();
 	// applications
 	QStringList s, c;
 	if ( leTitle->isModified() )
-		m->setStringValues( leTitle->text(), "APP_TITLE" );
+		setStringValues( leTitle->text(), "APP_TITLE" );
 	if ( leIcon->isModified() )
-		m->setStringValues( leIcon->text(), "APP_ICON" );
+		setStringValues( leIcon->text(), "APP_ICON" );
 	if ( leHelpFile->isModified() )
-		m->setStringValues( leHelpFile->text(), "APP_HELP_FILE" );
+		setStringValues( leHelpFile->text(), "APP_HELP_FILE" );
 	if ( leAuthor->isModified() )
-		m->setStringValues( leAuthor->text(), "APP_AUTHOR" );
+		setStringValues( leAuthor->text(), "APP_AUTHOR" );
 	if ( gbVersion->isChecked() )
 	{
-		m->setStringValues( QString( "%1.%2.%3.%4" ).arg( sbMajor->value() ).arg( sbMinor->value() ).arg( sbRelease->value() ).arg( sbBuild->value() ), "VERSION" );
-		m->setStringValues( QString::number( cbBuildAutoIncrement->isChecked() ), "APP_AUTO_INCREMENT" );
+		setStringValues( QString( "%1.%2.%3.%4" ).arg( sbMajor->value() ).arg( sbMinor->value() ).arg( sbRelease->value() ).arg( sbBuild->value() ), "VERSION" );
+		setStringValues( QString::number( cbBuildAutoIncrement->isChecked() ), "APP_AUTO_INCREMENT" );
 	}
 	else
 	{
-		m->setStringValues( QString::null, "VERSION" );
-		m->setStringValues( QString::null, "APP_AUTO_INCREMENT" );
+		setStringValues( QString::null, "VERSION" );
+		setStringValues( QString::null, "APP_AUTO_INCREMENT" );
 	}
 	if ( !cbTemplate->currentText().isEmpty() )
-		m->setStringValues( cbTemplate->currentText(), "TEMPLATE" );
+		setStringValues( cbTemplate->currentText(), "TEMPLATE" );
 	if ( !cbLanguage->currentText().isEmpty() )
-		m->setStringValues( cbLanguage->currentText(), "LANGUAGE" );
+		setStringValues( cbLanguage->currentText(), "LANGUAGE" );
 	if ( !cbEncodings->currentText().isEmpty() )
-		m->setStringValues( cbEncodings->currentText(), "ENCODING" );
+		setStringValues( cbEncodings->currentText(), "ENCODING" );
 	// reading config variable
 	if ( rbDebug->isChecked() )
 		s << "debug";
@@ -793,15 +815,15 @@ void UIQMakeProjectSettings::accept()
 	// add other config
 	if ( !leConfig->text().isEmpty() )
 		s << leConfig->text().simplified().split( " " );
-	m->setListValues( s, "CONFIG", mProject->index(), "+=" );
-	m->setListValues( c, "QT" );
+	setListValues( s, "CONFIG", "+=" );
+	setListValues( c, "QT" );
 	s.clear();
 	c.clear();
 	// settings
 	foreach ( QString v, mSettings.keys() )
 	{
 		QStringList l = v.split( "|" );
-		m->setListValues( mSettings.value( v ), l.at( 2 ), mProject->index(), l.at( 1 ), l.at( 0 ) );
+		setListValues( mSettings.value( v ), l.at( 2 ), l.at( 1 ), l.at( 0 ) );
 	}
 	// close dialog
 	QDialog::accept();

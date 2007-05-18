@@ -8,6 +8,7 @@
 #include <QHash>
 //
 class QMakeProjectProxy;
+class QMakeProjectModel;
 class QMakeProjectItem;
 class QDirModel;
 //
@@ -26,6 +27,10 @@ public:
 	QString projectPath() const;
 	QString getFilePath( const QString& );
 	QString getRelativeFilePath( const QString& );
+	QString getStringValues( const QString&, const QString& = "=", const QString& = QString::null ) const;
+	QStringList getListValues( const QString&, const QString& = "=", const QString& = QString::null ) const;
+	void setListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null );
+	void setStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null );
 	//
 protected:
 	UIQMakeProjectSettings( QMakeProjectItem*, QWidget* = 0 );
@@ -34,7 +39,10 @@ protected:
 	bool mReady;
 	QMakeProjectProxy* mScopesProxy;
 	QMakeProjectProxy* mContentProxy;
+	//
+	QMakeProjectModel* mModel;
 	QMakeProjectItem* mProject;
+	QModelIndex mProjectIndex;
 	QtItemList mModules;
 	QtItemList mConfigs;
 	QtSettings mSettings;
