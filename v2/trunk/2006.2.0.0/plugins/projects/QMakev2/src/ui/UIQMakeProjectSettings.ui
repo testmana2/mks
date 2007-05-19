@@ -1000,7 +1000,7 @@
        <item>
         <widget class="QGroupBox" name="gbTranslations" >
          <property name="title" >
-          <string>&amp;Translations</string>
+          <string>Translations</string>
          </property>
          <layout class="QVBoxLayout" >
           <property name="margin" >
@@ -1010,9 +1010,42 @@
            <number>3</number>
           </property>
           <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lTranslationsPath" >
+              <property name="text" >
+               <string>&amp;Translations Path :</string>
+              </property>
+              <property name="buddy" >
+               <cstring>tbTranslationsPath</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="leTranslationsPath" />
+            </item>
+            <item>
+             <widget class="QToolButton" name="tbTranslationsPath" >
+              <property name="icon" >
+               <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/folder_blue.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <widget class="QLabel" name="lTranslations" >
             <property name="text" >
-             <string>Tick the language you would like to add to your project</string>
+             <string>Tick the &amp;language you would like to add to your project</string>
+            </property>
+            <property name="buddy" >
+             <cstring>lwTranslations</cstring>
             </property>
            </widget>
           </item>
@@ -1547,12 +1580,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>306</x>
-     <y>347</y>
+     <x>424</x>
+     <y>388</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>481</x>
-     <y>305</y>
+     <x>622</x>
+     <y>359</y>
     </hint>
    </hints>
   </connection>

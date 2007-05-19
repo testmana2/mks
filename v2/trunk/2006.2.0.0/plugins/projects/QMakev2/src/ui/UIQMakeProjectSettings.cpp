@@ -14,8 +14,9 @@
 #include <QTextCodec>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QDebug>
 //
-QString mTranslationMask = "translations/%1_%2.ts";
+QString mTranslationMask = "$$TRANSLATIONS_PATH/%2_%3.ts";
 //
 UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p )
 	: QDialog( p ), mReady( false ), mModel( m->model() ), mProject( m ), mProjectIndex( m->index() ), mDirs( new QDirModel( this ) )
@@ -40,17 +41,19 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	//
 	setDir( mDirs->index( projectPath() ) );
 	// scopes
-	mScopesProxy = new QMakeProjectProxy( mModel, false );
+	mScopesProxy = new QMakeProjectProxy( mModel, false, mProjectIndex );
 	mScopesProxy->setFilterRoles( QList<int>() << AbstractProjectModel::ValueType );
 	mScopesProxy->setFiltering( true );
 	tvScopes->setModel( mScopesProxy );
-	tvScopes->setRootIndex( mScopesProxy->mapFromSource( mProjectIndex.parent() ) );
+	tvScopes->header()->hide();
+	tvScopes->setRootIndex( mScopesProxy->mapFromSource( mProjectIndex == mModel->rootProject() ? QModelIndex() : mProjectIndex ) );
 	// scope content
-	mContentProxy = new QMakeProjectProxy( mModel, false );
+	mContentProxy = new QMakeProjectProxy( mModel, false, mProjectIndex );
 	mContentProxy->setFilterRoles( QList<int>() << AbstractProjectModel::ValueType );
 	mContentProxy->setNegateFilter( false );
 	mContentProxy->setFiltering( true );
 	lvContents->setModel( mContentProxy );
+	// set currentindex
 	setCurrentIndex( mProjectIndex.child( 0, 0 ) );
 	// loading...
 	loadEncodings();
@@ -72,6 +75,7 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	connect( cbVariables, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( leDir, SIGNAL( textChanged( const QString& ) ), this, SLOT( setDir( const QString& ) ) );
 	connect( tvDirs, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
+	connect( tbTranslationsPath, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
 	mReady = true;
 	// settings
 	on_cbOperators_currentIndexChanged( cbOperators->currentText() );
@@ -109,6 +113,7 @@ QModelIndex UIQMakeProjectSettings::currentIndex()
 //
 void UIQMakeProjectSettings::setCurrentIndex( const QModelIndex& i )
 {
+	// TODO : need fix ( Qt Bug ?! ) calling setRootIndex on a index that have no child show all model
 	// clear selection
 	tvScopes->clearSelection();
 	lvContents->clearSelection();
@@ -345,14 +350,19 @@ void UIQMakeProjectSettings::loadSettings()
 //
 void UIQMakeProjectSettings::loadLanguages()
 {
+	leTranslationsPath->setText( getStringValues( "TRANSLATIONS_PATH" ) );
+	leTranslationsPath->setModified( false );
 	QStringList t = getListValues( "TRANSLATIONS" );
 	QListWidgetItem*  it;
+	bool b = false;
 	for ( int i = QLocale::C +1; i < QLocale::Zulu +1; i++ )
 	{
 		QString s = QLocale::languageToString( ( QLocale::Language )i );
 		QString f = mTranslationMask.arg( projectName() ).arg( s );
 		it = new QListWidgetItem( s, lwTranslations );
 		it->setCheckState( t.contains( f, Qt::CaseInsensitive ) ? Qt::Checked : Qt::Unchecked );
+		if ( !b )
+			b = it->checkState() == Qt::Checked;
 	}
 }
 //
@@ -500,6 +510,15 @@ void UIQMakeProjectSettings::tb_clicked()
 			leOutputPath->setModified( true );
 		}
 	}
+	else if ( tb == tbTranslationsPath )
+	{
+		s = QFileDialog::getExistingDirectory( this, tr( "Choose your translations path" ), getFilePath( tbTranslationsPath->text() ) );
+		if ( !s.isEmpty() )
+		{
+			leTranslationsPath->setText( getRelativeFilePath( s ) );
+			leTranslationsPath->setModified( true );
+		}
+	}
 }
 //
 void UIQMakeProjectSettings::sb_valueChanged( int )
@@ -509,8 +528,21 @@ void UIQMakeProjectSettings::sb_valueChanged( int )
 //
 void UIQMakeProjectSettings::on_cbTemplate_currentIndexChanged( const QString& s )
 {
-	if ( mReady )
-		cbOrdered->setEnabled( s.toLower() == "subdirs" );
+	// enable / disable widget according to template == subdirs
+	bool b = s.toLower() == "subdirs";
+	cbOrdered->setEnabled( b );
+	leTitle->setDisabled( b );
+	leIcon->setDisabled( b );
+	tbIcon->setDisabled( b );
+	leHelpFile->setDisabled( b );
+	tbHelpFile->setDisabled( b );
+	gbVersion->setDisabled( b );
+	fBuildType->setDisabled( b );
+	fWarn->setDisabled( b );
+	cbBuildAll->setDisabled( b ? b : !rbDebugRelease->isChecked() );
+	wLibraries->setDisabled( b );
+	wSettings->setDisabled( b );
+	wTranslations->setDisabled( b );
 }
 //
 void UIQMakeProjectSettings::lw_currentItemChanged( QListWidgetItem* it, QListWidgetItem* )
@@ -646,7 +678,15 @@ void UIQMakeProjectSettings::on_pbClearValues_clicked()
 //
 void UIQMakeProjectSettings::on_lwTranslations_itemChanged( QListWidgetItem* it )
 {
-	if ( !it || !lwTranslations->isVisible() )
+	if ( !it )
+		return;
+	// if translations checked and no translations path, set one
+	if ( leTranslationsPath->text().isEmpty() )
+	{
+		leTranslationsPath->setText( "translations" );
+		leTranslationsPath->setModified( true );
+	}
+	if ( !lwTranslations->isVisible() )
 		return;
 	// get translation file
 	QString s = mTranslationMask.arg( projectName() ).arg( it->text() );
@@ -757,14 +797,31 @@ void UIQMakeProjectSettings::accept()
 	cb_highlighted( 0 );
 	// applications
 	QStringList s, c;
+	// if subdirs only fill these and return
+	if ( !cbEncodings->currentText().isEmpty() )
+		setStringValues( cbEncodings->currentText(), "ENCODING" );
+	if ( !cbTemplate->currentText().isEmpty() )
+		setStringValues( cbTemplate->currentText(), "TEMPLATE" );
+	if ( !cbLanguage->currentText().isEmpty() )
+		setStringValues( cbLanguage->currentText(), "LANGUAGE" );
+	if ( leAuthor->isModified() )
+		setStringValues( leAuthor->text(), "APP_AUTHOR" );
+	if ( cbTemplate->currentText().toLower() == "subdirs" )
+	{
+		if ( cbOrdered->isChecked() )
+			s << "ordered";
+		setListValues( s, "CONFIG", "+=" );
+		// close dialog
+		QDialog::accept();
+		return;
+	}
+	//
 	if ( leTitle->isModified() )
 		setStringValues( leTitle->text(), "APP_TITLE" );
 	if ( leIcon->isModified() )
 		setStringValues( leIcon->text(), "APP_ICON" );
 	if ( leHelpFile->isModified() )
 		setStringValues( leHelpFile->text(), "APP_HELP_FILE" );
-	if ( leAuthor->isModified() )
-		setStringValues( leAuthor->text(), "APP_AUTHOR" );
 	if ( gbVersion->isChecked() )
 	{
 		setStringValues( QString( "%1.%2.%3.%4" ).arg( sbMajor->value() ).arg( sbMinor->value() ).arg( sbRelease->value() ).arg( sbBuild->value() ), "VERSION" );
@@ -775,12 +832,6 @@ void UIQMakeProjectSettings::accept()
 		setStringValues( QString::null, "VERSION" );
 		setStringValues( QString::null, "APP_AUTO_INCREMENT" );
 	}
-	if ( !cbTemplate->currentText().isEmpty() )
-		setStringValues( cbTemplate->currentText(), "TEMPLATE" );
-	if ( !cbLanguage->currentText().isEmpty() )
-		setStringValues( cbLanguage->currentText(), "LANGUAGE" );
-	if ( !cbEncodings->currentText().isEmpty() )
-		setStringValues( cbEncodings->currentText(), "ENCODING" );
 	// reading config variable
 	if ( rbDebug->isChecked() )
 		s << "debug";
@@ -796,8 +847,6 @@ void UIQMakeProjectSettings::accept()
 		s << "warn_off";
 	else if ( rbWarnOn->isChecked() )
 		s << "warn_on";
-	if ( cbTemplate->currentText().toLower() == "subdirs" && cbOrdered->isChecked() )
-		s << "ordered";
 	// read qt modules / lwCompilerFlags
 	QList<QListWidgetItem*> l = lwQtModules->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive );
 	l << lwCompilerFlags->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive );
@@ -819,6 +868,9 @@ void UIQMakeProjectSettings::accept()
 	setListValues( c, "QT" );
 	s.clear();
 	c.clear();
+	// translations
+	if ( leTranslationsPath->isModified() )
+		setStringValues( leTranslationsPath->text(), "TRANSLATIONS_PATH" );
 	// settings
 	foreach ( QString v, mSettings.keys() )
 	{

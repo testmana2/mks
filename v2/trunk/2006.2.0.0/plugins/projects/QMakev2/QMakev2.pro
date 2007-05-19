@@ -33,8 +33,6 @@ OPENEDFILES	= src/model/QMakeProjectModel.h \
 	src/QMake.cpp \
 	src/model/QMakeProjectParser.h \
 	src/model/QMakeProjectParser.cpp \
-	src/settings/QMakeProjectItemDelegate.h \
-	src/settings/QMakeProjectItemDelegate.cpp \
 	src/ui/UIQMakeProjectSettings.h \
 	src/ui/UIQMakeProjectSettings.cpp
 

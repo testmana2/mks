@@ -4,8 +4,8 @@
 #include "UIQMakeProjectSettings.h"
 #include "UISettingsQMake.h"
 //
-QMakeProjectProxy::QMakeProjectProxy( QMakeProjectModel* m, bool b )
-	: AbstractProjectProxy( m ), mProjectViewMode( b )
+QMakeProjectProxy::QMakeProjectProxy( QMakeProjectModel* m, bool b, const QModelIndex& i )
+	: AbstractProjectProxy( m ), mProjectViewMode( b ), mIndex( m->project( i ) ), mPIndex( project()->project( mIndex.parent() ) )
 {
 	if ( b )
 	{
@@ -18,14 +18,20 @@ QMakeProjectProxy::QMakeProjectProxy( QMakeProjectModel* m, bool b )
 //
 bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 {
+	QModelIndex index = sourceModel()->index( r, 0, i );
 	if ( !mProjectViewMode )
-		return AbstractProjectProxy::filterAcceptsRow( r, i );
+	{
+		QModelIndex j = project()->project( index );
+		bool b = AbstractProjectProxy::filterAcceptsRow( r, i );
+		if ( b && j != mIndex )
+			if ( j != mPIndex )
+				b = false;
+		return b;
+	}
 	else
 	{
 		if ( !mFiltering )
 			return true;
-		QModelIndex index;
-		index = sourceModel()->index( r, 0, i );
 		int t = index.data( AbstractProjectModel::TypeRole ).toInt();
 		if ( t == AbstractProjectModel::ValueType )
 			return true;

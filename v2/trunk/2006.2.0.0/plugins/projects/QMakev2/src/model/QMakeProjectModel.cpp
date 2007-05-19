@@ -211,6 +211,66 @@ QVariant QMakeProjectModel::headerData( int i, Qt::Orientation o, int r ) const
 	return o == Qt::Horizontal && i == 0 ? mRootItem->data( r ) : QVariant();
 }
 // 100%
+QModelIndexList QMakeProjectModel::getIndexList( const QModelIndex& i, AbstractProjectModel::NodeType t, const QString& v, const QString& o, const QString& s ) const
+{
+	QModelIndexList l;
+	QModelIndex p = project( i );
+	foreach ( QModelIndex index, match( p.child( 0, 0 ), AbstractProjectModel::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive ) )
+		if ( project( index ) == p )
+			if ( isEqualScope( scopeOf( index ), s ) )
+				if ( ( !o.isEmpty() && index.data( AbstractProjectModel::OperatorRole ).toString() == o ) || o.isEmpty() )
+					if ( index.data( AbstractProjectModel::TypeRole ).toInt() == t )
+						l << index;
+	return l;
+}
+// TODO : fix me
+QModelIndex QMakeProjectModel::getScope( const QModelIndex& i, const QString& s, bool c ) const
+{
+	// get project item
+	QModelIndex p = project( i );
+	QMakeProjectItem* sItem = itemFromIndex( p );
+	// it there is scope
+	if ( !s.trimmed().isEmpty() )
+	{
+		static QRegExp r( "([^:|]+)(\\:|\\|)?" );
+		int pos = 0;
+		QString cScope = checkScope( s );
+		// create scope is there are not existing
+		while ( ( pos = r.indexIn( cScope, pos ) ) != -1 )
+		{
+			QStringList l = r.capturedTexts();
+			QString s1 = l.at( 1 );
+			QString s2 = l.at( 2 );
+			QString sScope = cScope.left( pos ).append( s1 );
+			// search existing scope
+			QModelIndex fItem = ( getIndexList( p, AbstractProjectModel::ScopeType, s1, s2, sScope ) << getIndexList( p, AbstractProjectModel::NestedScopeType, s1, s2, sScope ) ).value( 0 );
+			// create scope
+			if ( ( !fItem.isValid() || project( fItem ) != p ) )
+			{
+				if ( c )
+				{
+					sItem = new QMakeProjectItem( l.at( 2 ).trimmed().isEmpty() ? AbstractProjectModel::ScopeType : AbstractProjectModel::NestedScopeType, sItem );
+					sItem->setData( s1, AbstractProjectModel::ValueRole );
+					sItem->setData( s2, AbstractProjectModel::OperatorRole );
+					(void) new QMakeProjectItem( AbstractProjectModel::ScopeEndType, sItem );
+				}
+				else
+					return indexFromItem( sItem );
+			}
+			else
+				sItem = itemFromIndex( fItem );
+			pos += r.matchedLength();
+		}
+		// if scope is nested, made it ScopeType
+		if ( sItem && sItem->type() == AbstractProjectModel::NestedScopeType )
+		{
+			sItem->setType( AbstractProjectModel::ScopeType );
+			sItem->setData( "", AbstractProjectModel::OperatorRole );
+		}
+	}
+	return indexFromItem( sItem );
+}
+// 100%
 QString QMakeProjectModel::scopeOf( const QModelIndex& i ) const
 {
 	QString s;
@@ -223,10 +283,10 @@ QString QMakeProjectModel::scopeOf( const QModelIndex& i ) const
 		QString v = j.data( AbstractProjectModel::ValueRole ).toString();
 		QString o = j.data( AbstractProjectModel::OperatorRole ).toString();
 		if ( t == AbstractProjectModel::ScopeType || t == AbstractProjectModel::NestedScopeType )
-			s.prepend( QString( "%1%2" ).arg( v, o.isEmpty() ? "/" : o ) );
+			s.prepend( QString( "%1%2" ).arg( v, o.isEmpty() ? ":" : o ) );
 		j = j.parent();
 	}
-	return /*checkScope(*/ s /*)*/;
+	return s ;
 }
 // 100%
 QString QMakeProjectModel::checkScope( const QString& s ) const
@@ -237,7 +297,7 @@ QString QMakeProjectModel::checkScope( const QString& s ) const
 		ss.chop( 1 );
 	return ss;
 }
-//
+// 100%
 bool QMakeProjectModel::isEqualScope( const QString& s1, const QString& s2 ) const
 {
 	QString ss1( s1.toLower() ), ss2( s2.toLower() );
@@ -248,45 +308,27 @@ bool QMakeProjectModel::isEqualScope( const QString& s1, const QString& s2 ) con
 // 100%
 QModelIndexList QMakeProjectModel::getIndexListValues( const QString& v, const QModelIndex& i, const QString& o, const QString& s ) const
 {
-	QModelIndex p = project( i );
-	QModelIndexList indexes = match( p.child( 0, 0 ), AbstractProjectModel::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
-	QModelIndexList l;
-	foreach ( QModelIndex index, indexes )
-		if ( project( index ) == p )
-			if ( isEqualScope( scopeOf( index ), s ) )
-				if ( ( !o.isEmpty() && index.data( AbstractProjectModel::OperatorRole ).toString() == o ) || o.isEmpty() )
-					for ( int j = 0; j < rowCount( index ); j++ )
-						if ( index.child( j, 0 ).data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::ValueType )
-							l << index.child( j, 0 );
-	return l;
+	QModelIndexList l = getIndexList( i, AbstractProjectModel::VariableType, v, o, s );
+	QModelIndexList ll;
+	foreach ( QModelIndex index, l )
+		for ( int j = 0; j < rowCount( index ); j++ )
+			if ( index.child( j, 0 ).data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::ValueType )
+				ll << index.child( j, 0 );
+	return ll;
 }
 // 100%
 QModelIndex QMakeProjectModel::getIndexVariable( const QString& v, const QModelIndex& i, const QString& o, const QString& s ) const
 {
-	QModelIndex p = project( i );
-	QModelIndexList indexes = match( p.child( 0, 0 ), AbstractProjectModel::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
-	QModelIndex it;
-	foreach ( QModelIndex index, indexes )
-		if ( project( index ) == p )
-			if ( isEqualScope( scopeOf( index ), s ) )
-				if ( ( !o.isEmpty() && index.data( AbstractProjectModel::OperatorRole ).toString() == o ) || o.isEmpty() )
-					if ( index.data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::VariableType )
-						it = index;
-	return it;
+	return getIndexList( i, AbstractProjectModel::VariableType, v, o, s ).value ( 0 );
 }
 // 100%
 QStringList QMakeProjectModel::getListValues( const QString& v, const QModelIndex& i, const QString& o, const QString& s ) const
 {
-	QModelIndex p = project( i );
-	QModelIndexList indexes = match( p.child( 0, 0 ), AbstractProjectModel::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
 	QStringList l;
-	foreach ( QModelIndex index, indexes )
-		if ( project( index ) == p )
-			if ( isEqualScope( scopeOf( index ), s ) )
-				if ( ( !o.isEmpty() && index.data( AbstractProjectModel::OperatorRole ).toString() == o ) || o.isEmpty() )
-					for ( int j = 0; j < rowCount( index ); j++ )
-						if ( index.child( j, 0 ).data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::ValueType )
-							l << index.child( j, 0 ).data( AbstractProjectModel::ValueRole ).toString();
+	foreach ( QModelIndex index, getIndexList( i, AbstractProjectModel::VariableType, v, o, s ) )
+		for ( int j = 0; j < rowCount( index ); j++ )
+			if ( index.child( j, 0 ).data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::ValueType )
+				l << index.child( j, 0 ).data( AbstractProjectModel::ValueRole ).toString();
 	return l;
 }
 // 100%
@@ -295,60 +337,24 @@ QString QMakeProjectModel::getStringValues( const QString& v, const QModelIndex&
 	return getListValues( v, i, o, s ).join( " " );
 }
 // 100%
-//extraire la creation de scope
 void QMakeProjectModel::setListValues( const QStringList& vl, const QString& v, const QModelIndex& i, const QString& o, const QString& s )
 {
 	QModelIndex p = project( i );
 	QModelIndex it = getIndexVariable( v, p, o, s );
-	QStringList l;
 	// create index if it not exists
 	if ( !it.isValid() )
 	{
 		// if nothing to add, return
 		if ( vl.isEmpty() )
 			return;
-		// get project item
-		QMakeProjectItem* sItem = itemFromIndex( p );
-		// it there is scope
-		if ( !s.trimmed().isEmpty() )
-		{
-			static QRegExp r( "([^:|]+)(\\:|\\|)?" );
-			int pos = 0;
-			QString scope = checkScope( s );
-			QMakeProjectItem* fItem = 0;
-			// create scop is there are not existing
-			// TODO : create a more clean scope creating member
-			while ( ( pos = r.indexIn( scope, pos ) ) != -1 )
-			{
-				l = r.capturedTexts();
-				// search existing scope
-				fItem = itemFromIndex( match( sItem->index().child( 0, 0 ), AbstractProjectModel::ValueRole, l.at( 1 ), 1, Qt::MatchFixedString | Qt::MatchRecursive ).value( 0 ) );
-				// create scope
-				if ( !fItem || project( fItem->index() ) != p || ( fItem->type() != AbstractProjectModel::ScopeType && fItem->type() != AbstractProjectModel::NestedScopeType ) )
-				{
-					sItem = new QMakeProjectItem( l.at( 2 ).trimmed().isEmpty() ? AbstractProjectModel::ScopeType : AbstractProjectModel::NestedScopeType, sItem );
-					sItem->setData( l.at( 1 ), AbstractProjectModel::ValueRole );
-					sItem->setData( l.at( 2 ), AbstractProjectModel::OperatorRole );
-					(void) new QMakeProjectItem( AbstractProjectModel::ScopeEndType, sItem );
-				}
-				else
-					sItem = fItem;
-				pos += r.matchedLength();
-			}
-			// if scope is nested, made it ScopeType
-			if ( sItem && sItem->type() == AbstractProjectModel::NestedScopeType )
-			{
-				sItem->setType( AbstractProjectModel::ScopeType );
-				sItem->setData( "", AbstractProjectModel::OperatorRole );
-			}
-		}
 		// create variable
-		QMakeProjectItem* vItem = new QMakeProjectItem( AbstractProjectModel::VariableType, sItem );
+		QMakeProjectItem* vItem = new QMakeProjectItem( AbstractProjectModel::VariableType, itemFromIndex( getScope( p, s, true ) ) );
 		vItem->setData( v, AbstractProjectModel::ValueRole );
 		vItem->setData( o, AbstractProjectModel::OperatorRole );
 		it = vItem->index();
 	}
-	l = vl;
+	// set values
+	QStringList l = vl;
 	// check all child of variable and remove from model/list unneeded index/value
 	for ( int j = rowCount( it ) -1; j > -1; j-- )
 	{
@@ -384,38 +390,26 @@ void QMakeProjectModel::setStringValues( const QString& val, const QString& v, c
 {
 	setListValues( val.isEmpty() ? QStringList() : QStringList( val ), v, i, o, s );
 }
-//
-void QMakeProjectModel::addListValues( const QStringList& val, const QString& v, const QModelIndex& i, const QString& o, const QString& s )
+// 100%
+void QMakeProjectModel::addListValues( const QStringList& vl, const QString& v, const QModelIndex& i, const QString& o, const QString& s )
 {
-	// TODO: Fix this member to allow scope to be like path, for imbriqued scopes, ie : win32/!debug/
-	QModelIndex p = i.isValid() ? project( i ) : rootProject();
-	QModelIndexList indexes = match( p.child( 0, 0 ), AbstractProjectModel::ValueRole, v, -1, Qt::MatchFixedString | Qt::MatchRecursive );
-	QModelIndex it;
-	foreach ( QModelIndex index, indexes )
-		if ( ( s.isEmpty() && i.parent().data( AbstractProjectModel::TypeRole ).toInt() != AbstractProjectModel::NestedScopeType && i.parent().data( AbstractProjectModel::TypeRole ).toInt() != AbstractProjectModel::ScopeType ) ||
-			( i.parent().parent() == QModelIndex() && ( i.parent().data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::NestedScopeType || i.parent().data( AbstractProjectModel::TypeRole ).toInt() == AbstractProjectModel::ScopeType ) && i.parent().data( AbstractProjectModel::ValueRole ).toString().toLower() == s.toLower() ) )
-			if ( i.data( AbstractProjectModel::OperatorRole ).toString() == o )
-				it = i;
-	// if no scope create it
+	QModelIndex p = project( i );
+	QModelIndex it = getIndexVariable( v, p, o, s );
+	// create index if it not exists
 	if ( !it.isValid() )
 	{
-		if ( val.isEmpty() )
+		// if nothing to add, return
+		if ( vl.isEmpty() )
 			return;
-		QMakeProjectItem* sItem = mRootItem;
-		if ( !s.isEmpty() )
-		{
-			sItem = new QMakeProjectItem( AbstractProjectModel::ScopeType, sItem );
-			sItem->setData( s, AbstractProjectModel::ValueRole );
-		}
-		QMakeProjectItem* vItem = new QMakeProjectItem( AbstractProjectModel::VariableType, sItem );
+		// create variable
+		QMakeProjectItem* vItem = new QMakeProjectItem( AbstractProjectModel::VariableType, itemFromIndex( getScope( p, s, true ) ) );
 		vItem->setData( v, AbstractProjectModel::ValueRole );
 		vItem->setData( o, AbstractProjectModel::OperatorRole );
-		if ( !s.isEmpty() )
-			sItem = new QMakeProjectItem( AbstractProjectModel::ScopeEndType, sItem );
 		it = vItem->index();
 	}
-	QStringList l = val;
-	// check all child of scope and remove from model/list unneeded index/value
+	// add values
+	QStringList l = vl;
+	// check all values of variable and remove from list already existing values
 	for ( int j = rowCount( it ) -1; j > -1; j-- )
 	{
 		QModelIndex c = it.child( j, 0 );
@@ -426,7 +420,7 @@ void QMakeProjectModel::addListValues( const QStringList& val, const QString& v,
 				l.removeAll( d );
 		}
 	}
-	// add require index
+	// add require values
 	QMakeProjectItem* pItem = static_cast<QMakeProjectItem*>( it.internalPointer() );
 	if ( pItem )
 	{

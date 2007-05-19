@@ -10,11 +10,13 @@ class QMakeProjectProxy : public AbstractProjectProxy
 	Q_OBJECT
 	//
 public:
-	QMakeProjectProxy( QMakeProjectModel*, bool = true );
+	QMakeProjectProxy( QMakeProjectModel*, bool = true, const QModelIndex& = QModelIndex() );
 	//
 protected:
 	bool filterAcceptsRow( int, const QModelIndex& ) const;
 	bool mProjectViewMode;
+	QModelIndex mIndex;
+	QModelIndex mPIndex;
 	//
 public slots:
 	virtual void setFiltering( bool );

@@ -49,9 +49,9 @@ bool AbstractProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 {
 	if ( !mFiltering )
 		return true;
-	QModelIndex index;
-	index = sourceModel()->index( r, 0, i );
-	bool b = mNegateFilter ? !mFilterRoles.contains( index.data( filterRole() ).toInt() ) : mFilterRoles.contains( index.data( filterRole() ).toInt() );
+	QModelIndex index = sourceModel()->index( r, 0, i );
+	int f = index.data( filterRole() ).toInt();
+	bool b = mNegateFilter ? !mFilterRoles.contains( f ) : mFilterRoles.contains( f );
 	if ( !b )
 		for ( int j = 0; j < sourceModel()->rowCount( index ); j++ )
 			if ( filterAcceptsRow( j, index ) )
