@@ -33,8 +33,12 @@ public:
 	//
 	void recursiveFiles( QDir );
 	void generateApi( const QString&, const QString& );
+	static QStringList defaultOperators();
+	static QStringList readOperators();
 	static QStringList defaultFilters();
 	static QStringList readFilters();
+	static QStringList defaultScopes();
+	static QStringList readScopes();
 	static QtItemList defaultQtModules();
 	static QtItemList readQtModules();
 	static QtItemList defaultSettings();
@@ -56,6 +60,8 @@ private slots:
 	void tbAdd_clicked();
 	void tbRemove_clicked();
 	void tbClear_clicked();
+	void tbUp_clicked();
+	void tbDown_clicked();
 	void on_bbDialog_clicked( QAbstractButton* );
 	//
 };

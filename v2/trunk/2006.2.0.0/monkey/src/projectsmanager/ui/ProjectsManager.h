@@ -32,6 +32,7 @@ public:
 	QAbstractItemView* viewByProxy( AbstractProjectProxy* ) const;
 	AbstractProjectProxy* currentProxy() const;
 	AbstractProjectModel* currentModel() const;
+	QAbstractItemView* currentView() const;
 	QModelIndex currentProject() const;
 	void setCurrentProject( const QModelIndex& );
 	void closeProject( const QModelIndex& );
@@ -57,6 +58,7 @@ private slots:
 	void updateProjectActions( const QModelIndex& );
 	void removeProjectItem( const QModelIndex& );
 	void on_twProjects_itemClicked( QTreeWidgetItem*, int );
+	void tv_clicked( const QModelIndex& );
 	//
 signals:
 	void proxyAdded( AbstractProjectProxy* );

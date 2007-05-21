@@ -7,7 +7,7 @@ int AbstractProjectProxy::mUniqueId = 0;
 QHashProxys AbstractProjectProxy::mProxysList = QHashProxys();
 //
 AbstractProjectProxy::AbstractProjectProxy( AbstractProjectModel* m )
-	: QSortFilterProxyModel( m ), mFiltering( false ), mNegateFilter( true )
+	: QSortFilterProxyModel( m ), mId( mUniqueId++ ), mFiltering( false ), mNegateFilter( true )
 {
 	mProxysList[ mId ] = this;
 	setDynamicSortFilter( true );

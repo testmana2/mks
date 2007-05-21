@@ -10,8 +10,6 @@
 #include <QFileDialog>
 #include <QTreeView>
 //
-Q_DECLARE_METATYPE( QModelIndex )
-//
 QPointer<ProjectsManager> ProjectsManager::mSelf = 0L;
 //
 ProjectsManager* ProjectsManager::self( QWidget* p )
@@ -119,7 +117,7 @@ bool ProjectsManager::openProject( const QString& s )
 					ProjectPlugin* pp = (ProjectPlugin*)bp;
 					if ( pp && pp->infos().Installed && pp->extensions().contains( mExtension, Qt::CaseInsensitive ) )
 					{
-						b =  pp->openProject( mFilePath );
+						b = pp->openProject( mFilePath );
 						break;
 					}
 				}
@@ -146,8 +144,9 @@ void ProjectsManager::saveCurrent()
 //
 void ProjectsManager::saveAll()
 {
-	foreach ( AbstractProjectModel* p, AbstractProjectModel::all() )
-		p->saveAll();
+	AbstractProjectModel* m = currentModel();
+	if ( m )
+		m->saveAll();
 }
 //
 void ProjectsManager::closeCurrent()
@@ -157,8 +156,9 @@ void ProjectsManager::closeCurrent()
 //
 void ProjectsManager::closeAll()
 {
-	foreach ( AbstractProjectProxy* p, AbstractProjectProxy::all() )
-		closeProject( p->project()->rootProject() );
+	AbstractProjectModel* m = currentModel();
+	if ( m )
+		closeProject( m->rootProject() );
 }
 //
 void ProjectsManager::projectSettings()
@@ -188,9 +188,10 @@ void ProjectsManager::addProxy( AbstractProjectProxy* p )
 	// connect
 	connect( p->project(), SIGNAL( isModifiedChanged( bool, const QModelIndex& ) ), this, SLOT( projectIsModified( bool, const QModelIndex& ) ) );
 	connect( p->project(), SIGNAL( aboutToClose( const QModelIndex& ) ), this, SLOT( projectAboutToClose( const QModelIndex& ) ) );
-	//connect( tv, SIGNAL( doubleClicked( const QModelIndex& ) ), p, SLOT( doubleClicked( const QModelIndex& ) ) );
-	//connect( tv, SIGNAL( customContextMenuRequested( const QPoint& ) ), p, SLOT( customContextMenuRequested( const QPoint& ) ) );
-	//connect( p, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ), this, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ) );
+	connect( tv, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( tv_clicked( const QModelIndex& ) ) );
+	connect( tv, SIGNAL( doubleClicked( const QModelIndex& ) ), p, SLOT( doubleClicked( const QModelIndex& ) ) );
+	connect( tv, SIGNAL( customContextMenuRequested( const QPoint& ) ), p, SLOT( customContextMenuRequested( const QPoint& ) ) );
+	connect( p, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ), this, SIGNAL( fileOpenRequested( const QString&, AbstractProjectProxy* ) ) );
 	// emit signal
 	emit proxyAdded( p );
 }
@@ -225,16 +226,22 @@ AbstractProjectModel* ProjectsManager::currentModel() const
 	return p ? p->project() : 0;
 }
 //
+QAbstractItemView* ProjectsManager::currentView() const
+{
+	return qobject_cast<QAbstractItemView*>( swProjects->currentWidget() );
+}
+//
 void ProjectsManager::setCurrentProject( const QModelIndex& i ) // index is not proxied
 {
 	// get proxy
 	AbstractProjectProxy* p = modelByIndex( i )->findChild<AbstractProjectProxy*>();
-	if ( p && currentProject() != i )
+	if ( p )
 	{
 		QAbstractItemView* v = viewByProxy( p );
 		// if current proxy is different, change it
-		if ( currentProxy() != p )
+		if ( currentView() != v )
 			swProjects->setCurrentWidget( v );
+		v->clearSelection();
 		// set correct project
 		v->setCurrentIndex( p->mapFromSource( i ) );
 	}
@@ -248,14 +255,17 @@ QModelIndex ProjectsManager::currentProject() const // return index is not proxi
 	if ( m )
 	{
 		AbstractProjectProxy* p = m->findChild<AbstractProjectProxy*>();
-		return m->project( p->mapToSource( viewByProxy( p )->currentIndex() ) );
+		QModelIndex i = m->project( p->mapToSource( viewByProxy( p )->currentIndex() ) );
+		if ( !i.isValid() )
+			i = m->rootProject();
+		return i;
 	}
 	return QModelIndex();
 }
 //
 void ProjectsManager::closeProject( const QModelIndex& i )
 {
-	AbstractProjectModel* m = i.isValid() ? modelByIndex( i ) : 0;
+	AbstractProjectModel* m = modelByIndex( i );
 	if ( m )
 		m->close( i );
 }
@@ -275,7 +285,7 @@ void ProjectsManager::projectIsModified( bool b, const QModelIndex& i )
 void ProjectsManager::projectAboutToClose( const QModelIndex& i )
 {
 	// get model
-	AbstractProjectModel* m = i.isValid() ? modelByIndex( i ) : 0;
+	AbstractProjectModel* m = modelByIndex( i );
 	if ( m )
 	{
 		// remove project item from project list
@@ -283,12 +293,11 @@ void ProjectsManager::projectAboutToClose( const QModelIndex& i )
 		// delete view if needed
 		if ( m->rootProject() == i )
 			delete viewByProxy( m->findChild<AbstractProjectProxy*>() );
-		// set new current project
-		updateProjectActions( currentProject() );
 	}
+	// TODO: Fix me, select correct item in the treewidget
+	updateProjectActions( currentProject() );
 }
 //
-#include <QDebug>
 void ProjectsManager::buildProjectTreeItems( AbstractProjectProxy* p, const QModelIndex& i, QTreeWidgetItem* twi )
 {
 	if ( !i.isValid() )
@@ -299,7 +308,6 @@ void ProjectsManager::buildProjectTreeItems( AbstractProjectProxy* p, const QMod
 	twi->setData( 0, AbstractProjectModel::ProjectIdRole, p->project()->id() );
 	twi->setData( 0, AbstractProjectModel::ProxyIdRole, p->id() );
 	twi->setData( 0, AbstractProjectModel::AbsoluteFilePathRole, p->project()->filePath( i ) );
-	twi->setData( 0, AbstractProjectModel::FirstRole, QVariant::fromValue( i ) );
 	twi->setToolTip( 0, tr( "Proxy Id: %1\nProject Id: %2\nFile Path: %3" ).arg( p->id() ).arg( p->project()->id() ).arg( p->project()->filePath( i ) ) );
 	foreach ( QModelIndex j, p->project()->subProjects( i ) )
 		buildProjectTreeItems( p, j, twi );
@@ -319,9 +327,10 @@ void ProjectsManager::updateProjectActions( const QModelIndex& i ) // index is n
 	// set correct item in project list
 	if ( p )
 	{
+		QString s = p->project()->filePath( i );
 		foreach ( QModelIndex j, twProjects->model()->match( twProjects->model()->index( 0, 0 ), AbstractProjectModel::ProxyIdRole, p->id(), -1, Qt::MatchFixedString | Qt::MatchRecursive ) )
 		{
-			if ( j.data( AbstractProjectModel::FirstRole ).value<QModelIndex>() == i )
+			if ( j.data( AbstractProjectModel::AbsoluteFilePathRole ).toString() == s )
 			{
 				twProjects->setCurrentIndex( j );
 				break;
@@ -330,14 +339,15 @@ void ProjectsManager::updateProjectActions( const QModelIndex& i ) // index is n
 	}
 }
 //
-void ProjectsManager::removeProjectItem( const QModelIndex& i )
+void ProjectsManager::removeProjectItem( const QModelIndex& i ) // i is not proxied
 {
 	AbstractProjectProxy* p = modelByIndex( i )->findChild<AbstractProjectProxy*>();
 	if ( !p )
 		return;
+	QString s = p->project()->filePath( i );
 	foreach ( QModelIndex j, twProjects->model()->match( twProjects->model()->index( 0, 0 ), AbstractProjectModel::ProxyIdRole, p->id(), -1, Qt::MatchFixedString | Qt::MatchRecursive ) )
 	{
-		if ( j.data( AbstractProjectModel::FirstRole ).value<QModelIndex>() == i )
+		if ( j.data( AbstractProjectModel::AbsoluteFilePathRole ).toString() == s )
 		{
 			twProjects->model()->removeRow( j.row(), j.parent() );
 			return;
@@ -357,7 +367,38 @@ void ProjectsManager::on_twProjects_itemClicked( QTreeWidgetItem* it, int )
 	if ( it )
 	{
 		AbstractProjectProxy* p = AbstractProjectProxy::byId( it->data( 0, AbstractProjectModel::ProxyIdRole ).toInt() );
-		swProjects->setCurrentWidget( viewByProxy( p ) );
-		setCurrentProject( it->data( 0, AbstractProjectModel::FirstRole ).value<QModelIndex>() );
+		QAbstractItemView* v = viewByProxy( p );
+		if ( p && v )
+		{
+			// show correct view
+			if ( currentView() != v )
+				swProjects->setCurrentWidget( v );
+			// check current project
+			QString s = it->data( 0, AbstractProjectModel::AbsoluteFilePathRole ).toString();
+			if ( p->project()->filePath( currentProject() ) != s )
+			{
+				
+				// show correct project
+				foreach ( QModelIndex j, p->project()->match( p->project()->rootProject(), AbstractProjectModel::TypeRole, AbstractProjectModel::ProjectType, -1, Qt::MatchFixedString | Qt::MatchRecursive ) )
+				{
+					if ( j.data( AbstractProjectModel::AbsoluteFilePathRole ).toString() == s )
+					{
+						setCurrentProject( j );
+						return;
+					}
+				}
+				// rootProject is not check in the match
+				setCurrentProject( p->project()->rootProject() );
+			}
+		}
+		else
+			delete it; // project no longer exists
 	}
+}
+//
+void ProjectsManager::tv_clicked( const QModelIndex& i )
+{
+	if ( !i.isValid() )
+		return;
+	setCurrentProject( currentProxy()->mapToSource( i ) );
 }

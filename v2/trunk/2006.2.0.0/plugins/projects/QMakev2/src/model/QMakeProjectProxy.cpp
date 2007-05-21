@@ -23,9 +23,8 @@ bool QMakeProjectProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 	{
 		QModelIndex j = project()->project( index );
 		bool b = AbstractProjectProxy::filterAcceptsRow( r, i );
-		if ( b && j != mIndex )
-			if ( j != mPIndex )
-				b = false;
+		if ( b && j != mIndex && j != mPIndex )
+			b = false;
 		return b;
 	}
 	else

@@ -28,16 +28,14 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	dbbButtons->button( QDialogButtonBox::Help )->setIcon( QPixmap( ":/Icons/Icons/helpkeyword.png" ) );
 	//
 	mDirs->setReadOnly( true );
-	mDirs->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
+	mDirs->setFilter( QDir::AllDirs );
 	mDirs->setSorting( QDir::Name );
 	leDir->setCompleter( new QCompleter( mDirs, leDir ) );
-	tvDirs->setModel( mDirs );
+	lvDirs->setModel( mDirs );
 #ifndef Q_WS_WIN
 	// all os except windows got only one root drive, so don't need to show root
-	tvDirs->setRootIndex( mDirs->index( "/" ) );
+	lvDirs->setRootIndex( mDirs->index( "/" ) );
 #endif
-	for ( int i = 1; i < tvDirs->header()->count(); i++ )
-		tvDirs->setColumnHidden( i, true );
 	//
 	setDir( mDirs->index( projectPath() ) );
 	// scopes
@@ -74,7 +72,7 @@ UIQMakeProjectSettings::UIQMakeProjectSettings( QMakeProjectItem* m, QWidget* p 
 	connect( tbOutputPath, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
 	connect( cbVariables, SIGNAL( highlighted( int ) ), this, SLOT( cb_highlighted( int ) ) );
 	connect( leDir, SIGNAL( textChanged( const QString& ) ), this, SLOT( setDir( const QString& ) ) );
-	connect( tvDirs, SIGNAL( clicked( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
+	connect( lvDirs, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( setDir( const QModelIndex& ) ) );
 	connect( tbTranslationsPath, SIGNAL( clicked() ), this, SLOT( tb_clicked() ) );
 	mReady = true;
 	// settings
@@ -236,24 +234,8 @@ void UIQMakeProjectSettings::loadConfigs()
 void UIQMakeProjectSettings::loadSettings()
 {
 	// load configs informations
-	// TODO: need to be add to qmake plugin properties, so user can add new if new qt release go out
-	QStringList list;
-	list = QStringList() << QString::null << "win32" << "unix" << "linux" << "mac" << "macx" << "aix-g++" << "aix-g++-64"
-	<< "aix-xlc" << "aix-xlc-64" << "darwin-g++" << "freebsd-g++" << "freebsd-g++34" << "freebsd-g++40" << "freebsd-icc"
-	<< "hpux-acc" << "hpux-acc-64" << "hpux-acc-o64" << "hpux-g++" << "hpux-g++-64" << "hpuxi-acc" << "hpuxi-acc-64"
-	<< "hurd-g++" << "irix-cc" << "irix-cc-64" << "irix-g++" << "irix-g++-64" << "linux-cxx" << "linux-ecc-64"
-	<< "linux-g++" << "linux-g++-32" << "linux-g++-64" << "linux-icc" << "linux-kcc" << "linux-lsb" << "linux-pgcc"
-	<< "lynxos-g++" << "macx-g++" << "macx-icc" << "macx-pbuilder" << "macx-xcode" << "macx-xlc" << "netbsd-g++"
-	<< "openbsd-g++" << "sco-cc" << "sco-g++" << "solaris-cc" << "solaris-cc-64" << "solaris-g++" << "solaris-g++-64"
-	<< "tru64-cxx" << "tru64-g++" << "unixware-cc" << "unixware-g++" << "win32-g++" << "win32-x-g++" << "default"
-	<< "freebsd-generic-g++" << "linux-arm-g++" << "linux-cellon-g++" << "linux-generic-g++" << "linux-generic-g++-32"
-	<< "linux-ipaq-g++" << "linux-mips-g++" << "linux-sharp-g++" << "linux-x86_64-g++" << "linux-x86-g++"
-	<< "linux-zylonite-g++" << "macx-generic-g++" << "solaris-generic-g++";
-	foreach ( QString s, list )
-		cbScopes->addItem( s );
-	list = QStringList() << "=" << "-=" << "+=" << "*=" << "~=";
-	foreach ( QString s, list )
-		cbOperators->addItem( s );
+	cbScopes->addItems( UISettingsQMake::readScopes() );
+	cbOperators->addItems( UISettingsQMake::readOperators() );
 	//
 	QString c, s;
 	QStringList l;
@@ -374,17 +356,19 @@ void UIQMakeProjectSettings::setDir( const QString& s )
 //
 void UIQMakeProjectSettings::setDir( const QModelIndex& i )
 {
-	if ( tvDirs->currentIndex() != i )
-		tvDirs->setCurrentIndex( i );
+	QString p = QDir( mDirs->filePath( i ) ).canonicalPath();
+	lvDirs->setRootIndex( mDirs->index( p ) );
 	QString s = leDir->text();
 	if ( s.endsWith( "/" ) )
 		s.chop( 1 );
-	if ( s != mDirs->filePath( i ) )
-		leDir->setText( mDirs->filePath( i ) );
-	lwFiles->clear();
-	QDir d( leDir->text() );
-	foreach ( QString s, d.entryList( QDir::Files, QDir::Name ) )
-		lwFiles->addItem( new QListWidgetItem( mDirs->iconProvider()->icon( QFileIconProvider::File ), s ) );
+	if ( s != p )
+	{
+		leDir->setText( p );
+		lwFiles->clear();
+		QDir d( p );
+		foreach ( s, d.entryList( QDir::Files, QDir::Name ) )
+			lwFiles->addItem( new QListWidgetItem( mDirs->iconProvider()->icon( QFileIconProvider::File ), s ) );
+	}
 }
 //
 void UIQMakeProjectSettings::addValue( const QString& s )
@@ -589,12 +573,6 @@ void UIQMakeProjectSettings::on_cbOperators_currentIndexChanged( const QString& 
 	leOutputName->setModified( false );
 	// load variables values
 	on_cbVariables_currentIndexChanged( cbVariables->currentText() );
-}
-//
-void UIQMakeProjectSettings::on_tvDirs_doubleClicked( const QModelIndex& i )
-{
-	if ( i.isValid() && cbVariables->currentText().toLower().contains( "path" ) )
-		addValue( getRelativeFilePath( mDirs->filePath( i ) ) );
 }
 //
 void UIQMakeProjectSettings::on_lwFiles_itemDoubleClicked( QListWidgetItem* i )

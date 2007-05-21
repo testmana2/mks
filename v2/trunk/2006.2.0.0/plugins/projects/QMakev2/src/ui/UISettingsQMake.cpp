@@ -29,15 +29,25 @@ UISettingsQMake::UISettingsQMake( QWidget* p )
 	// connect
 	connect( lwQtModules, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
 	connect( lwSettings, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
+	connect( tbAddOperator, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
 	connect( tbAddFilter, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
+	connect( tbAddScope, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
 	connect( tbAddQtModule, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
 	connect( tbAddSetting, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
+	connect( tbRemoveOperator, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
 	connect( tbRemoveFilter, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
+	connect( tbRemoveScope, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
 	connect( tbRemoveQtModule, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
 	connect( tbRemoveSetting, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
+	connect( tbClearOperators, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
 	connect( tbClearFilters, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
+	connect( tbClearScopes, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
 	connect( tbClearQtModules, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
 	connect( tbClearSettings, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
+	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbUp*" ) ) )
+		connect( tb, SIGNAL( clicked() ), this, SLOT( tbUp_clicked() ) );
+	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbDown*" ) ) )
+		connect( tb, SIGNAL( clicked() ), this, SLOT( tbDown_clicked() ) );
 }
 //
 void UISettingsQMake::recursiveFiles( QDir d )
@@ -81,22 +91,50 @@ void UISettingsQMake::generateApi( const QString& s1, const QString& s2 )
 	mAPI->prepare();
 }
 //
+QStringList UISettingsQMake::defaultOperators()
+{
+	return QStringList()
+	<< "=" << "-=" << "+=" << "*=" << "~=" << ":" << "|";
+}
+//
+QStringList UISettingsQMake::readOperators()
+{
+	QStringList l = Settings::current()->value( "Plugins/QMake/Operators" ).toStringList();
+	return l.isEmpty() ? defaultOperators() : l;
+}
+//
 QStringList UISettingsQMake::defaultFilters()
 {
 	return QStringList()
-	<< "FORMS"
-	<< "FORMS3"
-	<< "HEADERS"
-	<< "SOURCES"
-	<< "RESOURCES"
-	<< "IMAGES"
-	<< "TRANSLATIONS";
+	<< "FORMS" << "FORMS3" << "HEADERS" << "SOURCES" << "RESOURCES" << "IMAGES" << "TRANSLATIONS";
 }
 //
 QStringList UISettingsQMake::readFilters()
 {
 	QStringList l = Settings::current()->value( "Plugins/QMake/Filters" ).toStringList();
 	return l.isEmpty() ? defaultFilters() : l;
+}
+//
+QStringList UISettingsQMake::defaultScopes()
+{
+	return QStringList()
+	<< QString::null << "win32" << "unix" << "linux" << "mac" << "macx" << "aix-g++" << "aix-g++-64"
+	<< "aix-xlc" << "aix-xlc-64" << "darwin-g++" << "freebsd-g++" << "freebsd-g++34" << "freebsd-g++40" << "freebsd-icc"
+	<< "hpux-acc" << "hpux-acc-64" << "hpux-acc-o64" << "hpux-g++" << "hpux-g++-64" << "hpuxi-acc" << "hpuxi-acc-64"
+	<< "hurd-g++" << "irix-cc" << "irix-cc-64" << "irix-g++" << "irix-g++-64" << "linux-cxx" << "linux-ecc-64"
+	<< "linux-g++" << "linux-g++-32" << "linux-g++-64" << "linux-icc" << "linux-kcc" << "linux-lsb" << "linux-pgcc"
+	<< "lynxos-g++" << "macx-g++" << "macx-icc" << "macx-pbuilder" << "macx-xcode" << "macx-xlc" << "netbsd-g++"
+	<< "openbsd-g++" << "sco-cc" << "sco-g++" << "solaris-cc" << "solaris-cc-64" << "solaris-g++" << "solaris-g++-64"
+	<< "tru64-cxx" << "tru64-g++" << "unixware-cc" << "unixware-g++" << "win32-g++" << "win32-x-g++" << "default"
+	<< "freebsd-generic-g++" << "linux-arm-g++" << "linux-cellon-g++" << "linux-generic-g++" << "linux-generic-g++-32"
+	<< "linux-ipaq-g++" << "linux-mips-g++" << "linux-sharp-g++" << "linux-x86_64-g++" << "linux-x86-g++"
+	<< "linux-zylonite-g++" << "macx-generic-g++" << "solaris-generic-g++";
+}
+//
+QStringList UISettingsQMake::readScopes()
+{
+	QStringList l = Settings::current()->value( "Plugins/QMake/Scopes" ).toStringList();
+	return l.isEmpty() ? defaultScopes() : l;
 }
 //
 QtItemList UISettingsQMake::defaultQtModules()
@@ -198,7 +236,18 @@ void UISettingsQMake::loadSettings()
 		cbKeywords->setItemData( i, Settings::current()->value( QString( "Plugins/QMake/%1" ).arg( cbKeywords->itemText( i ) ) ).toString(), DataRole );
 	if ( cbKeywords->count() )
 		on_cbKeywords_currentIndexChanged( 0 );
+	lwOperators->addItems( readOperators() );
+	// filters & scopes
 	lwFilters->addItems( readFilters() );
+	lwScopes->addItems( readScopes() );
+	// set items editable
+	QList<QListWidgetItem*> items = QList<QListWidgetItem*> () 
+	<< lwOperators->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive )
+	<< lwFilters->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive )
+	<< lwScopes->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive );
+	foreach ( QListWidgetItem* it, items )
+		it->setFlags( it->flags() | Qt::ItemIsEditable );
+	items.clear();
 	//
 	QtItemList l;
 	// qt modules
@@ -339,11 +388,23 @@ void UISettingsQMake::lw_currentItemChanged( QListWidgetItem* c, QListWidgetItem
 //
 void UISettingsQMake::tbAdd_clicked()
 {
-	if ( sender() == tbAddFilter )
+	if ( sender() == tbAddOperator )
+	{
+		lwOperators->addItem( tr( "New operator" ) );
+		lwOperators->setCurrentItem( lwOperators->item( lwOperators->count() -1 ) );
+		lwOperators->scrollToItem( lwOperators->item( lwOperators->count() -1 ) );
+	}
+	else if ( sender() == tbAddFilter )
 	{
 		lwFilters->addItem( tr( "New filter" ) );
 		lwFilters->setCurrentItem( lwFilters->item( lwFilters->count() -1 ) );
 		lwFilters->scrollToItem( lwFilters->item( lwFilters->count() -1 ) );
+	}
+	else if ( sender() == tbAddScope )
+	{
+		lwScopes->addItem( tr( "New scope" ) );
+		lwScopes->setCurrentItem( lwScopes->item( lwScopes->count() -1 ) );
+		lwScopes->scrollToItem( lwScopes->item( lwScopes->count() -1 ) );
 	}
 	else if ( sender() == tbAddQtModule )
 	{
@@ -361,8 +422,12 @@ void UISettingsQMake::tbAdd_clicked()
 //
 void UISettingsQMake::tbRemove_clicked()
 {
-	if ( sender() == tbRemoveFilter )
+	if ( sender() == tbRemoveOperator )
+		delete lwOperators->currentItem();
+	else if ( sender() == tbRemoveFilter )
 		delete lwFilters->currentItem();
+	else if ( sender() == tbRemoveScope )
+		delete lwScopes->currentItem();
 	else if ( sender() == tbRemoveQtModule )
 		delete lwQtModules->currentItem();
 	else if ( sender() == tbRemoveSetting )
@@ -371,23 +436,90 @@ void UISettingsQMake::tbRemove_clicked()
 //
 void UISettingsQMake::tbClear_clicked()
 {
-	if ( sender() == tbClearFilters )
+	if ( sender() == tbClearOperators )
+		lwOperators->clear();
+	else if ( sender() == tbClearFilters )
 		lwFilters->clear();
+	else if ( sender() == tbClearScopes )
+		lwScopes->clear();
 	else if ( sender() == tbClearQtModules )
 		lwQtModules->clear();
 	else if ( sender() == tbClearSettings )
 		lwSettings->clear();
 }
 //
+void UISettingsQMake::tbUp_clicked()
+{
+	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
+	if ( !tb )
+		return;
+	QListWidget* lw = 0;
+	if ( tb == tbUpOperator )
+		lw = lwOperators;
+	else if ( tb == tbUpFilter )
+		lw = lwFilters;
+	else if ( tb == tbUpScope )
+		lw = lwScopes;
+	else if ( tb == tbUpQtModule )
+		lw = lwQtModules;
+	else if ( tb == tbUpSetting )
+		lw = lwSettings;
+	if ( !lw )
+		return;
+	QListWidgetItem* it = lw->currentItem();
+	int i = lw->row( it );
+	if ( !it )
+		return;
+	if ( i != 0 )
+		lw->insertItem( i -1, lw->takeItem( i ) );
+	lw->setCurrentItem( it );
+}
+//
+void UISettingsQMake::tbDown_clicked()
+{
+	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
+	if ( !tb )
+		return;
+	QListWidget* lw = 0;
+	if ( tb == tbDownOperator )
+		lw = lwOperators;
+	else if ( tb == tbDownFilter )
+		lw = lwFilters;
+	else if ( tb == tbDownScope )
+		lw = lwScopes;
+	else if ( tb == tbDownQtModule )
+		lw = lwQtModules;
+	else if ( tb == tbDownSetting )
+		lw = lwSettings;
+	if ( !lw )
+		return;
+	QListWidgetItem* it = lw->currentItem();
+	int i = lw->row( it );
+	if ( !it )
+		return;
+	if ( i != lw->count() -1 )
+		lw->insertItem( i +1, lw->takeItem( i ) );
+	lw->setCurrentItem( it );
+}
+//
 void UISettingsQMake::on_bbDialog_clicked( QAbstractButton* )
 {
+	QStringList l;
 	// general
 	for ( int i = 0; i < cbKeywords->count(); i++ )
 		Settings::current()->setValue( QString( "Plugins/QMake/%1" ).arg( cbKeywords->itemText( i ) ), cbKeywords->itemData( i, DataRole ).toString() );
-	QStringList l;
+	foreach ( QListWidgetItem* it, lwOperators->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
+		l << it->text();
+	Settings::current()->setValue( "Plugins/QMake/Operators", l );
+	// filters & scopes
+	l.clear();
 	foreach ( QListWidgetItem* it, lwFilters->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 		l << it->text();
 	Settings::current()->setValue( "Plugins/QMake/Filters", l );
+	l.clear();
+	foreach ( QListWidgetItem* it, lwScopes->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
+		l << it->text();
+	Settings::current()->setValue( "Plugins/QMake/Scopes", l );
 	// qt modules
 	lw_currentItemChanged( 0, lwQtModules->currentItem() );
 	Settings::current()->beginWriteArray( "Plugins/QMake/QtModules" );

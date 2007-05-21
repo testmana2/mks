@@ -66,7 +66,6 @@ protected slots:
 	void cb_highlighted( int );
 	void on_cbScopes_currentIndexChanged( const QString& );
 	void on_cbOperators_currentIndexChanged( const QString& );
-	void on_tvDirs_doubleClicked( const QModelIndex& );
 	void on_lwFiles_itemDoubleClicked( QListWidgetItem* );
 	void on_cbVariables_currentIndexChanged( const QString& );
 	void on_pbAddValue_clicked();

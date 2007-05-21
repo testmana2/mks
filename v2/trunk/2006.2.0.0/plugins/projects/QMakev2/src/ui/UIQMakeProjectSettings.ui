@@ -821,7 +821,7 @@
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
-         <widget class="QTreeView" name="tvDirs" />
+         <widget class="QListView" name="lvDirs" />
          <widget class="QListWidget" name="lwFiles" />
         </widget>
        </item>
