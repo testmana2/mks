@@ -6,29 +6,13 @@
     <x>0</x>
     <y>0</y>
     <width>206</width>
-    <height>349</height>
+    <height>479</height>
    </rect>
-  </property>
-  <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>5</hsizetype>
-    <vsizetype>7</vsizetype>
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="allowedAreas" >
    <set>Qt::LeftDockWidgetArea|Qt::NoDockWidgetArea|Qt::RightDockWidgetArea</set>
   </property>
   <widget class="QWidget" name="backWidget" >
-   <property name="sizePolicy" >
-    <sizepolicy>
-     <hsizetype>5</hsizetype>
-     <vsizetype>7</vsizetype>
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
    <property name="windowTitle" >
     <string>Projects Manager</string>
    </property>
@@ -37,7 +21,7 @@
    </property>
    <layout class="QVBoxLayout" >
     <property name="margin" >
-     <number>3</number>
+     <number>5</number>
     </property>
     <property name="spacing" >
      <number>3</number>
@@ -61,7 +45,7 @@
         <widget class="QToolBar" name="tbActions" >
          <property name="sizePolicy" >
           <sizepolicy>
-           <hsizetype>1</hsizetype>
+           <hsizetype>7</hsizetype>
            <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
@@ -82,46 +66,18 @@
      </widget>
     </item>
     <item>
-     <widget class="QSplitter" name="sProjects" >
+     <widget class="QToolBox" name="tbProjects" >
       <property name="sizePolicy" >
        <sizepolicy>
-        <hsizetype>7</hsizetype>
+        <hsizetype>5</hsizetype>
         <vsizetype>7</vsizetype>
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
-      <property name="orientation" >
-       <enum>Qt::Vertical</enum>
+      <property name="frameShape" >
+       <enum>QFrame::StyledPanel</enum>
       </property>
-      <widget class="QTreeWidget" name="twProjects" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>5</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="columnCount" >
-        <number>1</number>
-       </property>
-       <column>
-        <property name="text" >
-         <string>Projects List</string>
-        </property>
-       </column>
-      </widget>
-      <widget class="QStackedWidget" name="swProjects" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>7</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
      </widget>
     </item>
    </layout>

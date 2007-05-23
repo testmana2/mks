@@ -5,10 +5,10 @@
 #include "MonkeyExport.h"
 //
 #include <QPointer>
-#include <QAction>
+#include <QAbstractItemView>
 //
-class AbstractProjectProxy;
 class AbstractProjectModel;
+class AbstractProjectProxy;
 //
 class Q_MONKEY_EXPORT ProjectsManager : public QDockWidget, public Ui::ProjectsManager
 {
@@ -26,7 +26,7 @@ public:
 	void closeAll();
 	void projectSettings();
 	//
-	void addProxy( AbstractProjectProxy* );
+	void addProxy( AbstractProjectProxy*, QAbstractItemView* = 0 );
 	AbstractProjectModel* modelByIndex( const QModelIndex& ) const;
 	AbstractProjectProxy* proxyByIndex( const QModelIndex& ) const;
 	QAbstractItemView* viewByProxy( AbstractProjectProxy* ) const;
@@ -35,30 +35,19 @@ public:
 	QAbstractItemView* currentView() const;
 	QModelIndex currentProject() const;
 	void setCurrentProject( const QModelIndex& );
-	void closeProject( const QModelIndex& );
-	//
-protected:
-	void showEvent( QShowEvent* );
-	void closeEvent( QCloseEvent* );
 	//
 private:
 	ProjectsManager( QWidget* = 0 );
-	QAction* aProjectsList;
-	QAction* aFilteredView;
 	static QPointer<ProjectsManager> mSelf;
 	//
 public slots:
-	void setFilteredModel( bool );
+	void setFiltering( bool );
 	//
 private slots:
 	void projectIsModified( bool, const QModelIndex& );
 	void projectAboutToClose( const QModelIndex& );
-	//
-	void buildProjectTreeItems( AbstractProjectProxy*, const QModelIndex&, QTreeWidgetItem* = 0 );
 	void updateProjectActions( const QModelIndex& );
-	void removeProjectItem( const QModelIndex& );
-	void on_twProjects_itemClicked( QTreeWidgetItem*, int );
-	void tv_clicked( const QModelIndex& );
+	void view_clicked( const QModelIndex& );
 	//
 signals:
 	void proxyAdded( AbstractProjectProxy* );

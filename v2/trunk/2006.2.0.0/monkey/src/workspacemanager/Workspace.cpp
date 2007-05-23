@@ -337,21 +337,24 @@ void Workspace::openFile( const QString& s, AbstractProjectProxy* p )
 		qApp->setActiveWindow( window() );
 	//
 	const QFileInfo f( s );
+	QString v = f.canonicalFilePath();
 	if ( !f.exists() )
 	{
 		// remove it from recents files
-		recentsManager()->removeRecentFile( f.canonicalFilePath() );
+		recentsManager()->removeRecentFile( v );
 		return;
 	}
 	// open file
-	if ( pluginsManager()->childPluginOpenFile( f.canonicalFilePath(), p ) )
+	if ( pluginsManager()->childPluginOpenFile( v, p ) )
 	{
 		// save recent file path
 		settings()->setValue( "Recents/FileOpenPath", f.canonicalPath() );
 		// append it to recents
 		if ( !p )
-			recentsManager()->addRecentFile( f.canonicalFilePath() );
+			recentsManager()->addRecentFile( v );
 	}
+	//else
+		//qWarning( qPrintable( tr( "Can't open file (or already open) :\n%1" ).arg( v ) ) );
 }
 //
 void Workspace::openProject( const QString& s )

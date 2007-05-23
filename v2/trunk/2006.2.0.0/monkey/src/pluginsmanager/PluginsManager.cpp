@@ -10,6 +10,8 @@
 //
 #include <QPluginLoader>
 #include <QApplication>
+#include <QDesktopServices>
+#include <QUrl>
 //
 QPointer<PluginsManager> PluginsManager::mSelf = 0L;
 //
@@ -148,7 +150,7 @@ bool PluginsManager::childPluginOpenFile( const QString& s, AbstractProjectProxy
 				return cp->openFile( s, p );
 		}
 	}
-	return false;
+	return QDesktopServices::openUrl( s );
 }
 //
 QStringList PluginsManager::childsFilters() const

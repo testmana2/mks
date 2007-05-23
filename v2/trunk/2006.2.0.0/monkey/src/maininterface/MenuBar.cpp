@@ -65,6 +65,7 @@ void MenuBar::initialize()
 		menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );
 		action( "aNext", tr( "&Next tab" ), QIcon( ":/Icons/Icons/buttonnext.png" ), tr( "Alt+Right" ), tr( "Active the next tab" ) )->setEnabled( false );
 		action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/Icons/Icons/buttonprevious.png" ), tr( "Alt+Left" ), tr( "Active the previous tab" ) )->setEnabled( false );
+		action( "aFilteredView", tr( "&Filtered view" ), QIcon( ":/Icons/Icons/helptesters.png" ), tr( "" ), tr( "Filtered project view" ) )->setEnabled( false );	
 	endGroup();
 	menu( "mProject", tr( "&Project" ) );
 	beginGroup( "mProject" );
