@@ -2,6 +2,7 @@
 #include "QMakeProjectItem.h"
 #include "QMakeProjectItemPrivate.h"
 #include "QMakeProjectParser.h"
+#include "UISettingsQMake.h"
 ///
 #include <QPixmap>
 #include <QFileInfo>
@@ -300,6 +301,8 @@ QString QMakeProjectModel::checkScope( const QString& s ) const
 // 100%
 bool QMakeProjectModel::isEqualScope( const QString& s1, const QString& s2 ) const
 {
+	if ( s2 == "*" )
+		return true;
 	QString ss1( s1.toLower() ), ss2( s2.toLower() );
 	ss1.replace( '/', ':' );
 	ss2.replace( '/', ':' );
@@ -443,7 +446,13 @@ void QMakeProjectModel::addStringValues( const QString& val, const QString& v, c
 bool QMakeProjectModel::open()
 {
 	QMakeProjectParser p( mRootFilePath, mRootItem );
-	return p.isOpen();
+	if ( p.isOpen() )
+	{
+		// check all value that can be path or file and fill their absolutefilepath role
+		processAbsoluteFilesPath();
+		return true;
+	}
+	return false;
 }
 //
 QModelIndex QMakeProjectModel::rootProject() const
@@ -485,29 +494,35 @@ void QMakeProjectModel::prepareCompletion()
 	qWarning( "QMakeProjectModel::prepareCompletion() : Not yet available" );
 }
 //
-/*
-***********************************************************
-//
-bool QMakeProjectModel::openProject( const QString& s )
+void QMakeProjectModel::processAbsoluteFilesPath()
 {
-	QMakeProjectParser parser( s, mRootItem );
-	mOpen = parser.isOpen();
-	return mOpen;
+	QString s;
+	QStringList l, ls = QStringList() << "DEPENDPATH" << "VPATH" << "INCLUDEPATH";
+	QModelIndex p;
+	QModelIndexList il = match( rootProject().child( 0, 0 ), AbstractProjectModel::TypeRole, AbstractProjectModel::ValueType, -1, Qt::MatchFixedString | Qt::MatchRecursive );
+	// got all path to chekc file in if it not exists
+	foreach ( QModelIndex i, il )
+	{
+		if ( ls.contains( i.parent().data( AbstractProjectModel::ValueRole ).toString(), Qt::CaseInsensitive ) )
+		{
+			// get value
+			s = i.data( AbstractProjectModel::ValueRole ).toString();
+			// make it absolute
+			s = filePath( s, i );
+			// append it to path list
+			if ( QFile::exists( s ) && !l.contains( s ) )
+				l << s;
+		}
+	}
+	// set absolutefile path of items
+	foreach ( QModelIndex i, il )
+	{
+		s = i.parent().data( AbstractProjectModel::ValueRole ).toString();
+		if ( UISettingsQMake::defaultPathFiles().contains( s, Qt::CaseInsensitive ) )
+		{
+			s = i.data( AbstractProjectModel::ValueRole ).toString();
+			s = filePath( s, i );
+			setData( i, s, AbstractProjectModel::AbsoluteFilePathRole );
+		}
+	}
 }
-//
-bool QMakeProjectModel::isOpen() const
-{
-	return mOpen;
-}
-//
-QMakeProjectItem* QMakeProjectModel::project( const QModelIndex& i )
-{
-	if ( !i.isValid() )
-		return isOpen() ? mRootItem : 0;
-	QMakeProjectItem* it = static_cast<QMakeProjectItem*>( i.internalPointer() );
-	while ( it && it->data( QMakeAbstractProjectModel::TypeRole ).toInt() != QMakeAbstractProjectModel::ProjectType )
-		it = it->parent();
-	return it;
-}
-***********************************************************
-*/

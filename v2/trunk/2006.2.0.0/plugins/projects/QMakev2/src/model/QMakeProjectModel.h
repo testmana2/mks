@@ -60,6 +60,8 @@ public slots:
 	virtual void prepareCompletion();
 	//
 protected:
+	void processAbsoluteFilesPath();
+	//
 	QMakeProjectItem* mRootItem;
 	//
 };

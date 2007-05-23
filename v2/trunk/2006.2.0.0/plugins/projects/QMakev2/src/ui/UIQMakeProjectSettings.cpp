@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QDebug>
+#include <QWhatsThis>
 //
 QString mTranslationMask = "$$TRANSLATIONS_PATH/%2_%3.ts";
 //
@@ -767,6 +768,31 @@ void UIQMakeProjectSettings::on_tbDown_clicked()
 	if ( i.isValid() )
 		if ( mModel->itemFromIndex( i )->moveDown() )
 			setCurrentIndex( i.sibling( i.row() +1, i.column() ) );
+}
+//
+void UIQMakeProjectSettings::on_dbbButtons_helpRequested()
+{
+	QString s;
+	switch ( lwMenu->currentRow() )
+	{
+		case 0:
+			s = tr( "<b>Application</b>: Here you can configure global project settings." );
+			break;
+		case 1:
+			s = tr( "<b>Libraries</b>: Here you can easily check the Qt module you want, and add differents configuration flag." );
+			break;
+		case 2:
+			s = tr( "<b>Settings</b>: Here you can configure differents settings for many scopes and operators." );
+			break;
+		case 3:
+			s = tr( "<b>Translations</b>: Here you can easily check the languages you want to provide for your project." );
+			break;
+		case 4:
+			s = tr( "<b>Advanced</b>: This is a direct access to the project model, be carrefull while editing items as you can break your project." );
+			break;
+	}
+	if ( !s.isEmpty() )
+		QWhatsThis::showText( dbbButtons->button( QDialogButtonBox::Help )->mapToGlobal( QPoint( 0, 0 ) ), s );
 }
 //
 void UIQMakeProjectSettings::accept()

@@ -83,6 +83,7 @@ bool QMake::openProject( const QString& s )
 	// if we can open project
 	if ( mProject->open() )
 	{
+		// create proxy
 		QMakeProjectProxy* mProxy = new QMakeProjectProxy( mProject );
 		// add it to projects manager
 		mWorkspace->projectsManager()->addProxy( mProxy );

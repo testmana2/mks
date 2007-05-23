@@ -6,6 +6,7 @@
 //
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QWhatsThis>
 //
 UISettingsQMake::UISettingsQMake( QWidget* p )
 	: QWidget( p )
@@ -29,21 +30,12 @@ UISettingsQMake::UISettingsQMake( QWidget* p )
 	// connect
 	connect( lwQtModules, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
 	connect( lwSettings, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this, SLOT( lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ) );
-	connect( tbAddOperator, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
-	connect( tbAddFilter, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
-	connect( tbAddScope, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
-	connect( tbAddQtModule, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
-	connect( tbAddSetting, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
-	connect( tbRemoveOperator, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
-	connect( tbRemoveFilter, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
-	connect( tbRemoveScope, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
-	connect( tbRemoveQtModule, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
-	connect( tbRemoveSetting, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
-	connect( tbClearOperators, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
-	connect( tbClearFilters, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
-	connect( tbClearScopes, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
-	connect( tbClearQtModules, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
-	connect( tbClearSettings, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
+	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbAdd*" ) ) )
+		connect( tb, SIGNAL( clicked() ), this, SLOT( tbAdd_clicked() ) );
+	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbRemove*" ) ) )
+		connect( tb, SIGNAL( clicked() ), this, SLOT( tbRemove_clicked() ) );
+	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbClear*" ) ) )
+		connect( tb, SIGNAL( clicked() ), this, SLOT( tbClear_clicked() ) );
 	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbUp*" ) ) )
 		connect( tb, SIGNAL( clicked() ), this, SLOT( tbUp_clicked() ) );
 	foreach ( QToolButton* tb, findChildren<QToolButton*>( QRegExp( "tbDown*" ) ) )
@@ -135,6 +127,21 @@ QStringList UISettingsQMake::readScopes()
 {
 	QStringList l = Settings::current()->value( "Plugins/QMake/Scopes" ).toStringList();
 	return l.isEmpty() ? defaultScopes() : l;
+}
+//
+QStringList UISettingsQMake::defaultPathFiles()
+{
+	return QStringList()
+	<< "FORMS" << "FORMS3" << "HEADERS" << "SOURCES" << "RESOURCES" << "IMAGES" << "TRANSLATIONS" << "DEF_FILE"
+	<< "DEPENDPATH" << "DESTDIR" << "DESTDIR_TARGET" << "DLLDESTDIR" << "DISTFILES" << "INCLUDEPATH" << "MOC_DIR"
+	<< "OBJECTS_DIR" << "RC_FILE" << "RCC_DIR" << "RES_FILE" << "TARGET" << "UI_DIR" << "VPATH" << "YACCSOURCES"
+	<< "LEXSOURCES" << "SUBDIRS";
+}
+//
+QStringList UISettingsQMake::readPathFiles()
+{
+	QStringList l = Settings::current()->value( "Plugins/QMake/PathFiles" ).toStringList();
+	return l.isEmpty() ? defaultPathFiles() : l;
 }
 //
 QtItemList UISettingsQMake::defaultQtModules()
@@ -240,11 +247,13 @@ void UISettingsQMake::loadSettings()
 	// filters & scopes
 	lwFilters->addItems( readFilters() );
 	lwScopes->addItems( readScopes() );
+	lwPathFiles->addItems( readPathFiles() );
 	// set items editable
 	QList<QListWidgetItem*> items = QList<QListWidgetItem*> () 
 	<< lwOperators->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive )
 	<< lwFilters->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive )
-	<< lwScopes->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive );
+	<< lwScopes->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive )
+	<< lwPathFiles->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive );
 	foreach ( QListWidgetItem* it, items )
 		it->setFlags( it->flags() | Qt::ItemIsEditable );
 	items.clear();
@@ -305,7 +314,7 @@ void UISettingsQMake::on_tbBrowse_clicked()
 void UISettingsQMake::on_pbGenerate_clicked()
 {
 	// apply settings in case of user set path but not yet click on apply
-	on_bbDialog_clicked( 0 );
+	on_bbDialog_clicked( bbDialog->button( QDialogButtonBox::Apply ) );
 	// clear label
 	lInformations->clear();
 	// if no checked box cancel
@@ -388,35 +397,25 @@ void UISettingsQMake::lw_currentItemChanged( QListWidgetItem* c, QListWidgetItem
 //
 void UISettingsQMake::tbAdd_clicked()
 {
+	QListWidget* lw = 0;
 	if ( sender() == tbAddOperator )
-	{
-		lwOperators->addItem( tr( "New operator" ) );
-		lwOperators->setCurrentItem( lwOperators->item( lwOperators->count() -1 ) );
-		lwOperators->scrollToItem( lwOperators->item( lwOperators->count() -1 ) );
-	}
+		lw = lwOperators;
 	else if ( sender() == tbAddFilter )
-	{
-		lwFilters->addItem( tr( "New filter" ) );
-		lwFilters->setCurrentItem( lwFilters->item( lwFilters->count() -1 ) );
-		lwFilters->scrollToItem( lwFilters->item( lwFilters->count() -1 ) );
-	}
+		lw = lwFilters;
 	else if ( sender() == tbAddScope )
-	{
-		lwScopes->addItem( tr( "New scope" ) );
-		lwScopes->setCurrentItem( lwScopes->item( lwScopes->count() -1 ) );
-		lwScopes->scrollToItem( lwScopes->item( lwScopes->count() -1 ) );
-	}
+		lw = lwScopes;
+	else if ( sender() == tbAddPathFile )
+		lw = lwPathFiles;
 	else if ( sender() == tbAddQtModule )
-	{
-		lwQtModules->addItem( tr( "New QtModule" ) );
-		lwQtModules->setCurrentItem( lwQtModules->item( lwQtModules->count() -1 ) );
-		lwQtModules->scrollToItem( lwQtModules->item( lwQtModules->count() -1 ) );
-	}
+		lw = lwQtModules;
 	else if ( sender() == tbAddSetting )
+		lw = lwSettings;
+	if ( lw )
 	{
-		lwSettings->addItem( tr( "New Setting" ) );
-		lwSettings->setCurrentItem( lwSettings->item( lwSettings->count() -1 ) );
-		lwSettings->scrollToItem( lwSettings->item( lwSettings->count() -1 ) );
+		lw->addItem( tr( "New value" ) );
+		lw->setCurrentItem( lw->item( lw->count() -1 ) );
+		lw->scrollToItem( lw->item( lw->count() -1 ) );
+		lw->currentItem()->setFlags( lw->currentItem()->flags() | Qt::ItemIsEditable );
 	}
 }
 //
@@ -428,6 +427,8 @@ void UISettingsQMake::tbRemove_clicked()
 		delete lwFilters->currentItem();
 	else if ( sender() == tbRemoveScope )
 		delete lwScopes->currentItem();
+	else if ( sender() == tbRemovePathFile )
+		delete lwPathFiles->currentItem();
 	else if ( sender() == tbRemoveQtModule )
 		delete lwQtModules->currentItem();
 	else if ( sender() == tbRemoveSetting )
@@ -442,6 +443,8 @@ void UISettingsQMake::tbClear_clicked()
 		lwFilters->clear();
 	else if ( sender() == tbClearScopes )
 		lwScopes->clear();
+	else if ( sender() == tbClearPathFiles )
+		lwPathFiles->clear();
 	else if ( sender() == tbClearQtModules )
 		lwQtModules->clear();
 	else if ( sender() == tbClearSettings )
@@ -460,6 +463,8 @@ void UISettingsQMake::tbUp_clicked()
 		lw = lwFilters;
 	else if ( tb == tbUpScope )
 		lw = lwScopes;
+	else if ( tb == tbUpPathFile )
+		lw = lwPathFiles;
 	else if ( tb == tbUpQtModule )
 		lw = lwQtModules;
 	else if ( tb == tbUpSetting )
@@ -487,6 +492,8 @@ void UISettingsQMake::tbDown_clicked()
 		lw = lwFilters;
 	else if ( tb == tbDownScope )
 		lw = lwScopes;
+	else if ( tb == tbDownPathFile )
+		lw = lwPathFiles;
 	else if ( tb == tbDownQtModule )
 		lw = lwQtModules;
 	else if ( tb == tbDownSetting )
@@ -502,8 +509,35 @@ void UISettingsQMake::tbDown_clicked()
 	lw->setCurrentItem( it );
 }
 //
-void UISettingsQMake::on_bbDialog_clicked( QAbstractButton* )
+void UISettingsQMake::on_bbDialog_helpRequested()
 {
+	QString s;
+	switch ( twQMake->currentIndex() )
+	{
+		case 0:
+			s = tr( "Here you can configure the path/filename for the differents Qt tools, generate Qt api for auto completion.<br>"
+				"<b>Operators</b>: The operators are used in project settings, so you can easily configure your project with differents operators." );
+			break;
+		case 1:
+			s = tr( "<b>Filters</b>: Are the variables names that are shown when the project view is filtered.<br/>"
+				"<b>Scopes</b>: scopes are used in projects settings so you can configure variable for differents scopes easily.<br/>"
+				"<b>Path/Files</b>: This list is used to let plugin know about witch variable names are based on path or files for there contents." 	);
+			break;
+		case 2:
+			s = tr( "<b>Qt Modules</b>: This list contains differents modules available with Qt, you can add your own module if you want, so you can easily check them in project settings." );
+			break;
+		case 3:
+			s = tr( "<b>Settings</b>: This list contains differents settings available with Qt, you can add your own if you want, so you can easily check them in project settings." );
+			break;
+	}
+	if ( !s.isEmpty() )
+		QWhatsThis::showText( bbDialog->button( QDialogButtonBox::Help )->mapToGlobal( QPoint( 0, 0 ) ), s );
+}
+//
+void UISettingsQMake::on_bbDialog_clicked( QAbstractButton* b )
+{
+	if ( bbDialog->standardButton( b )  != QDialogButtonBox::Apply )
+		return;
 	QStringList l;
 	// general
 	for ( int i = 0; i < cbKeywords->count(); i++ )
@@ -520,6 +554,10 @@ void UISettingsQMake::on_bbDialog_clicked( QAbstractButton* )
 	foreach ( QListWidgetItem* it, lwScopes->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 		l << it->text();
 	Settings::current()->setValue( "Plugins/QMake/Scopes", l );
+	l.clear();
+	foreach ( QListWidgetItem* it, lwPathFiles->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
+		l << it->text();
+	Settings::current()->setValue( "Plugins/QMake/PathFiles", l );
 	// qt modules
 	lw_currentItemChanged( 0, lwQtModules->currentItem() );
 	Settings::current()->beginWriteArray( "Plugins/QMake/QtModules" );

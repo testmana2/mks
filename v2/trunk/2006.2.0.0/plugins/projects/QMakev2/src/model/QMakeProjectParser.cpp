@@ -22,7 +22,7 @@ static QRegExp varLine("^[ \\t]*(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
 static QRegExp end_bloc("^(\\})[ \t]*(#.*)?");
 static QRegExp comments("^\\s*#(.*)");
 static QRegExp splitNested( "\\s*([^:|()]+|!?\\w+\\(.*\\))\\s*(:|\\|)" );
-static QRegExp splitValues( "([^ \"]+)|\\\"([^\"]+)\\\"|(\\${1,2}\\w+\\([^\\(\\)]+\\)[^ ]+)" );
+static QRegExp splitValues( "([^\\s\"]+)|\\\"([^\"]+)\\\"|(\\${1,2}\\w+\\([^\\(\\)]+\\)[^\\s]+)" );
 static QRegExp splitCommands( "(\\([^;]*\\));?|(\\$\\(\\w+\\)[^;]*);?" );
 //
 QMakeProjectParser::QMakeProjectParser( const QString& s, QMakeProjectItem* i )
@@ -55,20 +55,24 @@ bool QMakeProjectParser::loadFile( const QString& s, QMakeProjectItem* it )
 			content += line;
 	}
 	// set project data
-	//if ( it != mRoot )
-		//it = new QMakeProjectItem( AbstractProjectModel::ProjectType, it );
 	it->setType( AbstractProjectModel::ProjectType );
 	it->setData( QFileInfo( s ).completeBaseName() );
 	it->setData( s, AbstractProjectModel::AbsoluteFilePathRole );
+	it->setData( false, AbstractProjectModel::ProjectModifiedRole );
 	// parse buffer
 	mIsOpen = parseBuffer( 0, it );
 	// open subdirs project
 	if ( mIsOpen )
 		foreach ( QModelIndex i, mModel->getIndexListValues( "subdirs", it->index(), "" ) )
 		{
-			QString sp = i.data( AbstractProjectModel::AbsoluteFilePathRole ).toString();
+			// get subproject filepath and stock it
+			QString sp  = i.data( AbstractProjectModel::ValueRole ).toString();
+			sp = QString( "%1/%2.pro" ).arg( mModel->filePath( sp, i ) ).arg( QFileInfo( sp ).fileName() );
 			if ( QFile::exists( sp ) )
+			{
+				mModel->setData( i, sp, AbstractProjectModel::AbsoluteFilePathRole );
 				loadFile( sp, new QMakeProjectItem( AbstractProjectModel::ProjectType, it ) );
+			}
 			else
 				qWarning( "Can't open subproject: %s", qPrintable( sp ) );
 		}

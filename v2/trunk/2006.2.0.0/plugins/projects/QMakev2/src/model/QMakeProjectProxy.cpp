@@ -79,8 +79,13 @@ void QMakeProjectProxy::setFiltering( bool b )
 	filterChanged();
 }
 //
-void QMakeProjectProxy::doubleClicked( const QModelIndex& )
+void QMakeProjectProxy::doubleClicked( const QModelIndex& i )
 {
+	QString s = i.data( AbstractProjectModel::AbsoluteFilePathRole ).toString();
+	if ( QFile::exists( s ) )
+		emit fileOpenRequested( s, this );
+	else
+		qWarning( "Can't open file: %s", qPrintable( s ) );
 }
 //
 void QMakeProjectProxy::customContextMenuRequested( const QPoint& )

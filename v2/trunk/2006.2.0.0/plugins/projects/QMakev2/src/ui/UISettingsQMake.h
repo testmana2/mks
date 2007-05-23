@@ -39,6 +39,8 @@ public:
 	static QStringList readFilters();
 	static QStringList defaultScopes();
 	static QStringList readScopes();
+	static QStringList defaultPathFiles();
+	static QStringList readPathFiles();
 	static QtItemList defaultQtModules();
 	static QtItemList readQtModules();
 	static QtItemList defaultSettings();
@@ -62,6 +64,7 @@ private slots:
 	void tbClear_clicked();
 	void tbUp_clicked();
 	void tbDown_clicked();
+	void on_bbDialog_helpRequested();
 	void on_bbDialog_clicked( QAbstractButton* );
 	//
 };

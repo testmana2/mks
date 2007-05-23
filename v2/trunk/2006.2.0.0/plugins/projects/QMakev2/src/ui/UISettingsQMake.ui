@@ -235,9 +235,9 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="wFilterScope" >
+     <widget class="QWidget" name="wFilterScopeFile" >
       <attribute name="title" >
-       <string>&amp;Filter &amp;&amp; Scope</string>
+       <string>&amp;Filter &amp;&amp; Scope &amp;&amp; Path/File</string>
       </attribute>
       <layout class="QHBoxLayout" >
        <property name="margin" >
@@ -247,7 +247,7 @@
         <number>3</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="gbViewFilter" >
+        <widget class="QGroupBox" name="gbFilter" >
          <property name="title" >
           <string>&amp;Accepted View Filter</string>
          </property>
@@ -337,7 +337,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="gbScopes" >
+        <widget class="QGroupBox" name="gbScope" >
          <property name="title" >
           <string>S&amp;copes</string>
          </property>
@@ -400,6 +400,96 @@
           </item>
           <item row="1" column="0" colspan="6" >
            <widget class="QListWidget" name="lwScopes" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>13</hsizetype>
+              <vsizetype>7</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>331</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gbPathFile" >
+         <property name="title" >
+          <string>&amp;Path/Files</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>3</number>
+          </property>
+          <item row="0" column="1" >
+           <widget class="QToolButton" name="tbRemovePathFile" >
+            <property name="text" >
+             <string>Remove</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/editremove.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
+           <widget class="QToolButton" name="tbClearPathFiles" >
+            <property name="text" >
+             <string>Clear</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/editclear.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" >
+           <widget class="QToolButton" name="tbUpPathFile" >
+            <property name="text" >
+             <string>Up</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/buttonup.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QToolButton" name="tbAddPathFile" >
+            <property name="text" >
+             <string>Add</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/editadd.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4" >
+           <widget class="QToolButton" name="tbDownPathFile" >
+            <property name="text" >
+             <string>Down</string>
+            </property>
+            <property name="icon" >
+             <iconset resource="../../../../../monkey/src/resources/resources.qrc" >:/Icons/Icons/buttondown.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="6" >
+           <widget class="QListWidget" name="lwPathFiles" >
             <property name="sizePolicy" >
              <sizepolicy>
               <hsizetype>13</hsizetype>
@@ -741,48 +831,25 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+    <widget class="QDialogButtonBox" name="bbDialog" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>7</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="spacing" >
-      <number>0</number>
+     <property name="cursor" >
+      <cursor>13</cursor>
      </property>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>301</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="bbDialog" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>4</hsizetype>
-         <vsizetype>0</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="cursor" >
-        <cursor>13</cursor>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons" >
-        <set>QDialogButtonBox::Apply</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Help|QDialogButtonBox::NoButton</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

@@ -82,6 +82,7 @@ protected slots:
 	void on_tbClear_clicked();
 	void on_tbUp_clicked();
 	void on_tbDown_clicked();
+	void on_dbbButtons_helpRequested();
 	void accept();
 	void reject();
 	//
