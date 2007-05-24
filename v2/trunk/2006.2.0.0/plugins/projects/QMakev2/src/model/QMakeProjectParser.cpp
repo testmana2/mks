@@ -3,7 +3,8 @@
 #include "QMakeProjectModel.h"
 //
 #include <QFileInfo>
-#include <QBuffer>
+#include <QTextStream>
+#include <QTextCodec>
 // pj
 #include <QVector>
 #include <QRegExp>
@@ -24,6 +25,7 @@ static QRegExp comments("^\\s*#(.*)");
 static QRegExp splitNested( "\\s*([^:|()]+|!?\\w+\\(.*\\))\\s*(:|\\|)" );
 static QRegExp splitValues( "([^\\s\"]+)|\\\"([^\"]+)\\\"|(\\${1,2}\\w+\\([^\\(\\)]+\\)[^\\s]+)" );
 static QRegExp splitCommands( "(\\([^;]*\\));?|(\\$\\(\\w+\\)[^;]*);?" );
+static QRegExp encoding( "[ \\t]*ENCODING[ \\t]*=[ \\t]*([^ ]+)[ \\t]*(?:#.*)?", Qt::CaseInsensitive );
 //
 QMakeProjectParser::QMakeProjectParser( const QString& s, QMakeProjectItem* i )
 	: QObject( i ), mIsOpen( false ), mRoot( i ), mModel( qobject_cast<QMakeProjectModel*>( mRoot->model() ) )
@@ -48,12 +50,20 @@ bool QMakeProjectParser::loadFile( const QString& s, QMakeProjectItem* it )
 	QFile f( s );
 	if ( !f.exists() || !f.open( QFile::ReadOnly | QFile::Text ) )
 		return false;
+	// loking for encoding
+	QTextCodec* c = 0;
+	if ( encoding.indexIn( f.readAll() ) != -1 )
+		c = QTextCodec::codecForName( encoding.capturedTexts().at( 1 ).trimmed().toAscii() );
+	if ( !c )
+		c = mModel->defaultCodec();
+	// reset file
+	f.reset();
+	// get decoded stream
+	QTextStream t( &f );
+	t.setCodec( c );
 	// trim file
-	while (!f.atEnd()) {
-		QByteArray line = f.readLine();
-		line = line.trimmed();
-			content += line;
-	}
+	while ( !t.atEnd() )
+		content += t.readLine().trimmed();
 	// set project data
 	it->setType( AbstractProjectModel::ProjectType );
 	it->setData( QFileInfo( s ).completeBaseName() );

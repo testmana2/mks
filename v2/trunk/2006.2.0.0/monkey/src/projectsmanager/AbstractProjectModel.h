@@ -92,6 +92,8 @@ public:
 	virtual QModelIndexList subProjects( const QModelIndex& = QModelIndex(), bool = false ) const;
 	// get the parent project
 	virtual QModelIndex parentProject( const QModelIndex& = QModelIndex() ) const;
+	// get default codec
+	virtual QTextCodec* defaultCodec() const;
 	// open base project
 	virtual bool open() = 0;
 	// the root project item
@@ -110,6 +112,8 @@ public:
 	virtual void addListValues( const QStringList&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) = 0;
 	// add variable content as string for project index
 	virtual void addStringValues( const QString&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null ) = 0;
+	// get the codec used by this project and its files
+	virtual QTextCodec* codec( const QModelIndex& = QModelIndex() ) const = 0;
 	//
 public slots:
 	// set project file path

@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include <QFileInfo>
 #include <QDir>
+#include <QTextCodec>
 #include <QDebug>
 //
 QMakeProjectModel::QMakeProjectModel( const QString& s, QObject* p )
@@ -441,6 +442,16 @@ void QMakeProjectModel::addListValues( const QStringList& vl, const QString& v, 
 void QMakeProjectModel::addStringValues( const QString& val, const QString& v, const QModelIndex& i, const QString& o, const QString& s )
 {
 	addListValues( QStringList( val ), v, i, o, s );
+}
+//
+QTextCodec* QMakeProjectModel::codec( const QModelIndex& i ) const
+{
+	QTextCodec* c = QTextCodec::codecForName( getStringValues( "ENCODING", i ).toAscii() );
+	if ( !c )
+		c = QTextCodec::codecForName( "UTF-8" );
+	if ( !c )
+		c = AbstractProjectModel::defaultCodec();
+	return c;
 }
 //
 bool QMakeProjectModel::open()

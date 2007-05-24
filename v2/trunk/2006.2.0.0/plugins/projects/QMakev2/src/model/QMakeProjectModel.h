@@ -49,6 +49,7 @@ public:
 	virtual void setStringValues( const QString&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null );
 	virtual void addListValues( const QStringList&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null );
 	virtual void addStringValues( const QString&, const QString&, const QModelIndex& = QModelIndex(), const QString& = "=", const QString& = QString::null );
+	virtual QTextCodec* codec( const QModelIndex& = QModelIndex() ) const;
 	//
 	virtual bool open();
 	virtual QModelIndex rootProject() const;

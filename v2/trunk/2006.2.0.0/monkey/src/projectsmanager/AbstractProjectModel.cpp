@@ -2,6 +2,7 @@
 //
 #include <QHash>
 #include <QFileInfo>
+#include <QTextCodec>
 //
 #include <qscilexer.h>
 #include <qsciapis.h>
@@ -135,6 +136,11 @@ QModelIndexList AbstractProjectModel::subProjects( const QModelIndex& i, bool b 
 QModelIndex AbstractProjectModel::parentProject( const QModelIndex& i ) const
 {
 	return project( project( i ).parent() );
+}
+//
+QTextCodec* AbstractProjectModel::defaultCodec() const
+{
+	return QTextCodec::codecForName( "System" );
 }
 //
 void AbstractProjectModel::setFilePath( const QString& s, const QModelIndex& i )

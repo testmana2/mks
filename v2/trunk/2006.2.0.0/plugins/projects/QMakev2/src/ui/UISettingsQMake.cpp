@@ -60,7 +60,7 @@ void UISettingsQMake::recursiveFiles( QDir d )
 	}
 }
 //
-void UISettingsQMake::generateApi( const QString& s1, const QString& s2 )
+void UISettingsQMake::generateApi( const QString& s1, const QString& s2 ) // qtversion, include path
 {
 	// disable window
 	window()->setEnabled( false );
