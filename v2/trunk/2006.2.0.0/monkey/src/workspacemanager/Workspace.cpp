@@ -1,5 +1,6 @@
 #include "Workspace.h"
 #include "Settings.h"
+#include "UISettings.h"
 #include "MenuBar.h"
 #include "TabToolBar.h"
 #include "ProjectsManager.h"
@@ -62,6 +63,7 @@ void Workspace::initialize()
 	connect( menuBar()->action( "mFile/aPrint" ), SIGNAL( triggered() ), this, SLOT( filePrint_triggered() ) );
 	connect( menuBar()->action( "mFile/aExit" ), SIGNAL( triggered() ), this, SLOT( fileExit_triggered() ) );
 	// edit connection
+	connect( menuBar()->action( "mEdit/aSettings" ), SIGNAL( triggered() ), this, SLOT( editSettings_triggered() ) );
 	connect( menuBar()->action( "mEdit/aUndo" ), SIGNAL( triggered() ), this, SLOT( editUndo_triggered() ) );
 	connect( menuBar()->action( "mEdit/aRedo" ), SIGNAL( triggered() ), this, SLOT( editRedo_triggered() ) );
 	connect( menuBar()->action( "mEdit/aCut" ), SIGNAL( triggered() ), this, SLOT( editCut_triggered() ) );
@@ -227,7 +229,7 @@ void Workspace::fileExit_triggered()
 // edit menu
 void Workspace::editSettings_triggered()
 {
-	qWarning( "Not yet implemented" );
+	UISettings::self( window() )->exec();
 }
 //
 void Workspace::editUndo_triggered()

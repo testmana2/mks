@@ -82,7 +82,8 @@ SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/Monkey.cpp \
 	src/main.cpp \
 	src/pluginsmanager/ui/UIPluginsSettings.cpp  \
-	src/3rdparty/coveragemeter/ui/UITestReport.cpp
+	src/3rdparty/coveragemeter/ui/UITestReport.cpp \
+	src/maininterface/ui/UISettings.cpp
 
 
 FORMS	= src/maininterface/ui/UITranslator.ui \
@@ -92,7 +93,8 @@ FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/monkeyeditor/ui/qscintillaSearch.ui \
 	src/projectsmanager/ui/ProjectsManager.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui \
-	src/3rdparty/coveragemeter/ui/UITestReport.ui
+	src/3rdparty/coveragemeter/ui/UITestReport.ui \
+	src/maininterface/ui/UISettings.ui
 
 HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/widgets/pMenuBar/pMenuBar.h \
@@ -131,5 +133,6 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/Monkey.h \
 	src/main.h \
 	src/pluginsmanager/ui/UIPluginsSettings.h \
-	src/3rdparty/coveragemeter/ui/UITestReport.h
+	src/3rdparty/coveragemeter/ui/UITestReport.h \
+	src/maininterface/ui/UISettings.h
 

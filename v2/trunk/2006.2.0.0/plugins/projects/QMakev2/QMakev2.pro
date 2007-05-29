@@ -28,7 +28,9 @@ FORMS	= src/ui/UIItemSettings.ui \
 OPENEDFILES	= src/model/QMakeProjectModel.h \
 	src/model/QMakeProjectModel.cpp \
 	src/model/QMakeProjectParser.h \
-	src/model/QMakeProjectParser.cpp
+	src/model/QMakeProjectParser.cpp \
+	src/ui/UISettingsQMake.h \
+	src/ui/UISettingsQMake.cpp
 
 HEADERS	= src/item/QMakeProjectItem.h \
 	src/item/QMakeProjectItemPrivate.h \
