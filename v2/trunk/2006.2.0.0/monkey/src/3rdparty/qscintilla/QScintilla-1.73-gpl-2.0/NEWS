@@ -1,0 +1,5 @@
+v2.0 26th May 2007
+  - A revised API, incompatible with QScintilla v1.
+  - Hugely improved autocompletion and call tips support.
+  - Supports both Qt v3 and Qt v4.
+  - Includes Python bindings.
