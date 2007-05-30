@@ -20,7 +20,7 @@ void Text::initialize( Workspace* w )
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.Installed = false;
 	//
-	mExtensions = QStringList() << "txt" << "cfg" << "ini" << "conf";
+	mExtensions = QStringList() << "txt";
 }
 //
 bool Text::install()

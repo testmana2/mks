@@ -11,6 +11,9 @@ DESTDIR	= $$MONKEY_PLUGINS_DIR/childs
 SOURCES	= src/Text.cpp \
 	src/TextChild.cpp
 
+OPENEDFILES	= src/Text.h \
+	src/Text.cpp
+
 HEADERS	= src/Text.h \
 	src/TextChild.h
 
