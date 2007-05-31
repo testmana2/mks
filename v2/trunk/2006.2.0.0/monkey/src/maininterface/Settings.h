@@ -14,6 +14,9 @@
 //
 #include <QStringList>
 //
+class QTextCodec;
+class QsciLexer;
+//
 class Q_MONKEY_EXPORT Settings : public pSettings
 {
 	Q_OBJECT
@@ -23,7 +26,12 @@ public:
 	//
 	virtual void setDefaultSettings();
 	//
-	QStringList languages() const;
+	static QTextCodec* defaultCodec();
+	static QsciLexer* lexerForLanguage( const QString& );
+	static QsciLexer* lexerForFilename( const QString& );
+	static QString languageForFilename( const QString& );
+	static QStringList lexersFilters();
+	static QString dialogLexersFilters();
 	//
 private:
 	Settings();

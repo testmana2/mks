@@ -31,6 +31,7 @@ private:
 	QButtonGroup* bgExternalChanges;
 	QButtonGroup* bgAPISource;
 	QButtonGroup* bgEOLMode;
+	QButtonGroup* bgPythonIndentationWarning;
 	//
 public slots:
 	void accept();

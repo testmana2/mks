@@ -1,6 +1,9 @@
 #include "MonkeyEditor.h"
 #include "qscintillaSearch.h"
 //
+#include "qscilexer.h"
+#include "qsciprinter.h"
+//
 #include <QApplication>
 #include <QClipboard>
 #include <QMenu>
@@ -12,12 +15,11 @@
 #include <QFile>
 #include <QTextStream>
 #include <QKeyEvent>
-// qscintilla include
-#include <qsciprinter.h>
 //
 MonkeyEditor::MonkeyEditor( QWidget* p )
 	: QsciScintilla( p ), mCopyAvailable( false ), mCodec( 0 )
 {
+/*
 	// defined default font for OSs
 	QFont f( font() );
 #if defined( Q_OS_UNIX )
@@ -64,6 +66,7 @@ MonkeyEditor::MonkeyEditor( QWidget* p )
 	mActions << new pAction( tr( "Search - Replace..." ), this, SLOT( searchReplace() ), pAction::TextLength, tr( "Ctrl+F" ) );
 	// set sensitivity margin for mouse click
 	setMarginSensitivity( 0, true );
+*/
 }
 //
 MonkeyEditor::~MonkeyEditor()
@@ -75,9 +78,18 @@ MonkeyEditor::~MonkeyEditor()
 	}
 	mBookmarks.clear();
 	//
-	foreach ( pAction* a, mActions )
-		delete a;
-	mActions.clear();
+	qDeleteAll( mActions );
+}
+//
+MonkeyEditor* MonkeyEditor::createEditorForFilename( const QString& s, const QPoint& p, QTextCodec* c, QWidget* w )
+{
+	MonkeyEditor* e = 0;
+	if ( QFile::exists( s ) )
+	{
+		e = new MonkeyEditor( w );
+		e->openFile( s, p, c );
+	}
+	return e;
 }
 //
 void MonkeyEditor::focusInEvent( QFocusEvent* e )
@@ -165,7 +177,7 @@ void MonkeyEditor::keyPressEvent( QKeyEvent* e )
 		switch ( e->key() )
 		{
 		case Qt::Key_B:
-			emit toggleBreakPoint( l, false );
+			//emit toggleBreakPoint( l, false );
 			break;
 		case Qt::Key_0:
 			l = markerLine( mBookmarks[bm0]->Handle );
@@ -321,7 +333,8 @@ void MonkeyEditor::marginClicked( int m, int l,  Qt::KeyboardModifiers k )
 {
 	Q_UNUSED( m );
 	Q_UNUSED( k );
-	emit toggleBreakPoint( l, false );
+	Q_UNUSED( l );
+	//emit toggleBreakPoint( l, false );
 }
 //
 void MonkeyEditor::selectNone()
@@ -345,10 +358,10 @@ void MonkeyEditor::goToLine()
 	getCursorPosition( &l, &i );
 	int j = QInputDialog::getInteger( this, tr( "Go To Line..." ), tr( "Enter the line you want to go:" ), l +1, 1, lines(), 1, &b );
 	if ( b )
-		setCursorPosition( j -1, 0/*i < lineLength( j -1 ) ? i : lineLength( j -1 ) -1*/  );
+		setCursorPosition( j -1, 0 );
 }
 //
-bool MonkeyEditor::openFile( const QString& s, QTextCodec* c )
+bool MonkeyEditor::openFile( const QString& s, const QPoint& p, QTextCodec* c )
 {
 	if ( isModified() )
 		return false;
@@ -363,12 +376,21 @@ bool MonkeyEditor::openFile( const QString& s, QTextCodec* c )
 	}
 	// load file with c codec
 	setCursor( Qt::WaitCursor );
+	// remind properties
 	mFilePath = fp;
 	mCodec = c;
+	// set correct lexer
+	QString l = Settings::languageForFilename( mFilePath );
+	if ( lexer() && lexer()->language() != l )
+		delete lexer();
+	setLexer( Settings::lexerForLanguage( l ) );
+	// load fiel with correct codec
 	QTextStream ts( &f );
 	if ( c )
 		ts.setCodec( c );
 	setText( ts.readAll() );
+	if ( !p.isNull() )
+		setCursorPosition( p.y(), p.x() );
 	setModified( false );
 	unsetCursor();
 	emit fileOpened( true );
