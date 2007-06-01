@@ -1,4 +1,5 @@
 #include "MonkeyEditor.h"
+#include "Settings.h"
 #include "qscintillaSearch.h"
 //
 #include "qscilexer.h"
@@ -15,25 +16,14 @@
 #include <QFile>
 #include <QTextStream>
 #include <QKeyEvent>
+#include <QDateTime>
 //
 MonkeyEditor::MonkeyEditor( QWidget* p )
-	: QsciScintilla( p ), mCopyAvailable( false ), mCodec( 0 )
+	: QsciScintilla( p ), mCopyAvailable( false ), mCodec( 0 ), mTimer( new QTimer( this ) )
 {
+	connect( mTimer, SIGNAL( timeout() ), this, SLOT( saveFile() ) );
+	readSettings();
 /*
-	// defined default font for OSs
-	QFont f( font() );
-#if defined( Q_OS_UNIX )
-	f.setFamily( "Monospace" );
-#endif
-	setFont( f );
-	// settings some default qscintilla settings
-	setMarginsFont( f );
-	setMarginWidth( 0, "00000" );
-	setMarginLineNumbers( 0, true );
-	setEolMode( EolWindows );
-	setEdgeMode( EdgeLine );
-	setEdgeColor( Qt::red );
-	setEdgeColumn( 140 );
 	// register bookmarks icons
 	pBookmark* b;
 	for ( int i = bm0; i < bm9 +1; i++ )
@@ -90,6 +80,78 @@ MonkeyEditor* MonkeyEditor::createEditorForFilename( const QString& s, const QPo
 		e->openFile( s, p, c );
 	}
 	return e;
+}
+//
+void MonkeyEditor::readSettings()
+{
+	Settings* s = Settings::current();
+	QString sp = "Settings/Editor/AutoCompletion";
+	// auto completion
+	if ( s->value( sp +"/Enabled", true ).toBool() )
+	{
+		setAutoCompletionCaseSensitivity( s->value( sp +"/CaseSensitive", true ).toBool() );
+		setAutoCompletionReplaceWord( s->value( sp +"/ReplaceWord", false ).toBool() );
+		setAutoCompletionShowSingle( s->value( sp +"/ShowSingle", false ).toBool() );
+		setAutoCompletionSource( (QsciScintilla::AutoCompletionSource)s->value( sp +"/APISource", QsciScintilla::AcsAPIs ).toInt() );
+		setAutoCompletionThreshold( s->value( sp +"/Threshold", 0 ).toInt() );
+	}
+	// calltips
+	sp = "Settings/Editor/Calltips";
+	if ( s->value( sp +"/Enabled", true ).toBool() )
+	{
+		setCallTipsStyle( (QsciScintilla::CallTipsStyle)s->value( sp +"/Style", QsciScintilla::CallTipsNoContext ).toInt() );
+		setCallTipsVisible( s->value( sp +"/Visible", -1 ).toInt() );
+	}
+	else
+		setCallTipsStyle( (QsciScintilla::CallTipsStyle)s->value( sp +"/Style", QsciScintilla::CallTipsNone ).toInt() );
+	// colours
+	sp = QString( "Settings/Editor/Colours" );
+	setCallTipsBackgroundColor( s->value( sp +"/CalltipsBackground", Qt::white ).value<QColor>() );
+	setCallTipsForegroundColor( s->value( sp +"/CalltipsForeground", Qt::lightGray ).value<QColor>() );
+	setCallTipsHighlightColor( s->value( sp +"/CalltipsHighlight", Qt::darkBlue ).value<QColor>() );
+	setMatchedBraceBackgroundColor( s->value( sp +"/MatchedBracesBackground", Qt::white ).value<QColor>() );
+	setMatchedBraceForegroundColor( s->value( sp +"/MatchedBraces", Qt::red ).value<QColor>() );
+	setUnmatchedBraceBackgroundColor( s->value( sp +"/UnmatchedBracesBackground", Qt::white ).value<QColor>() );
+	setUnmatchedBraceForegroundColor( s->value( sp +"/UnmatchedBraces", Qt::blue ).value<QColor>() );
+	setCaretForegroundColor( s->value( sp +"/CaretForeground", Qt::black ).value<QColor>() );
+	setCaretLineBackgroundColor( s->value( sp +"/CaretLineBackground", Qt::white ).value<QColor>() );
+	// general
+	// margin 0 = line numbers
+	// margin 2 = fold
+	sp = QString( "Settings/Editor/General" );
+	setTabWidth( s->value( sp +"/TabWidth", 4 ).toInt() );
+	setIndentationWidth( s->value( sp +"/IndentationWidth", 1 ).toInt() );
+	setMarginWidth( 0, 0 );
+	if ( s->value( sp +"/ShowLineNumbersMargin", true ).toBool() )
+	{
+		setMarginWidth( 0, QString().fill( '0', s->value( sp +"/LineNumbersWidth", 4 ).toInt() ) );
+		setMarginLineNumbers( 0, s->value( sp +"/ShowLineNumbersMargin", true ).toBool() );
+	}
+	if ( !s->value( sp +"/ShowFoldMargin", true ).toBool() )
+		setMarginWidth( 2, 0 );
+	setWhitespaceVisibility( WsInvisible );
+	if ( s->value( sp +"/ShowWhitespace", false ).toBool() )
+		setWhitespaceVisibility( WsVisible );
+	setEolVisibility( s->value( sp +"/ShowEndOfLine", false ).toBool() );
+	setIndentationGuides( s->value( sp +"/ShowIndentationGuides", true ).toBool() );
+	setIndentationsUseTabs( s->value( sp +"/UseTabsForIndentations", false ).toBool() );
+	setTabIndents( s->value( sp +"/TabKeyIndents", true ).toBool() );
+	setAutoIndent( s->value( sp +"/AutoIndentation", true ).toBool() );
+	// style
+	sp = QString( "Settings/Editor/Style" );
+	setEolMode( (QsciScintilla::EolMode)s->value( sp +"/EOLMode", QsciScintilla::EolWindows ).toInt() );
+	setEdgeMode( (QsciScintilla::EdgeMode)s->value( sp +"/FoldingStyle", QsciScintilla::NoFoldStyle ).toInt() );
+	QFont f;
+	if ( f.fromString( s->value( sp +"/LineNumbersFont" ).toString() ) )
+		setMarginsFont( f );
+	if ( f.fromString( s->value( sp +"/MonospacedFont" ).toString() ) )
+		setFont( f );
+	setCaretLineVisible( s->value( sp +"/CaretLineVisible", false ).toBool() );
+	// s->value( sp +"/ColourizeSelectedText", false ).toBool()
+	setCaretWidth( s->value( sp +"/CaretWidth", 1 ).toInt() );
+	setEdgeMode( (QsciScintilla::EdgeMode)s->value( sp +"/EdgeMode", QsciScintilla::EdgeNone ).toInt() );
+	setEdgeColor( s->value( sp +"/EdgeModeBackground", Qt::gray ).value<QColor>() );
+	setEdgeColumn( s->value( sp +"/EdgeModeColumnNumber", 80 ).toInt() );
 }
 //
 void MonkeyEditor::focusInEvent( QFocusEvent* e )
@@ -384,14 +446,29 @@ bool MonkeyEditor::openFile( const QString& s, const QPoint& p, QTextCodec* c )
 	if ( lexer() && lexer()->language() != l )
 		delete lexer();
 	setLexer( Settings::lexerForLanguage( l ) );
-	// load fiel with correct codec
+	// load file with correct codec
 	QTextStream ts( &f );
 	if ( c )
 		ts.setCodec( c );
 	setText( ts.readAll() );
+	setModified( false );
+	// read settings
+	readSettings();
+	// do backup
+	if ( Settings::current()->value( "Settings/Editor/General/CreateBackupFileUponOpen", true ).toBool() )
+		QFile::copy( fp, fp +QDateTime::currentDateTime().toString( ".yyyyMMdd_hhmm.backup" ) );
+	// convert eol
+	if ( Settings::current()->value( "Settings/Editor/General/AutomaticEndOfLineConversion", true ).toBool() )
+		convertEols( eolMode() );
+	// convert tabs
+	if ( Settings::current()->value( "Settings/Editor/General/ConvertTabsUponOpen", false ).toBool() )
+		convertTabs();
+	// set auto save interval
+	setAutoSaveInterval( Settings::current()->value( "Settings/Editor/General/AutoSaveInterval", 0 ).toInt() );
+	// set cursor position
 	if ( !p.isNull() )
 		setCursorPosition( p.y(), p.x() );
-	setModified( false );
+	// s->value( "Settings/Editor/General/AutomaticSyntaxCheck", true ).toBool()
 	unsetCursor();
 	emit fileOpened( true );
 	return true;
@@ -428,5 +505,33 @@ void MonkeyEditor::closeFile()
 	clear();
 	unsetCursor();
 	setModified( false );
+	setAutoSaveInterval( 0 );
 	emit fileOpened( false );
+}
+//
+void MonkeyEditor::setAutoSaveInterval( int i )
+{
+	mTimer->stop();
+	if ( i > 0 )
+	{
+		mTimer->setInterval( 1000 *i *60 );
+		mTimer->start();
+	}
+}
+//
+void MonkeyEditor::convertTabs( int i )
+{
+	int x, y;
+	getCursorPosition( &y, &x );
+	if ( i == -1 )
+		i = tabWidth();
+	bool b = findFirst( "\t", false, true, false, true, true );
+	if ( b )
+	{
+		QString r = QString().fill( ' ', i );
+		replace( r );
+		while ( findNext() )
+			replace( r );
+	}
+	setCursorPosition( y, x );
 }

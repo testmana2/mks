@@ -7,6 +7,7 @@
 #include "Settings.h"
 //
 #include <QHash>
+#include <QTimer>
 //
 struct Q_MONKEY_EXPORT pAction
 {
@@ -56,6 +57,7 @@ public:
 	virtual QString filePath() const { return mFilePath; }
 	//
 protected:
+	virtual void readSettings();
 	virtual void focusInEvent( QFocusEvent* );
 	virtual void focusOutEvent( QFocusEvent* );
 	virtual void contextMenuEvent( QContextMenuEvent* );
@@ -68,6 +70,7 @@ private:
 	QTextCodec* mCodec;
 	QString mFilePath;
 	QHash<Bookmarks, pBookmark*> mBookmarks;
+	QTimer* mTimer;
 	//
 private slots:
 	virtual void clipboard_dataChanged();
@@ -83,6 +86,8 @@ public slots:
 	virtual bool openFile( const QString&, const QPoint& = QPoint(), QTextCodec* = Settings::defaultCodec() );
 	virtual void saveFile();
 	virtual void closeFile();
+	virtual void setAutoSaveInterval( int );
+	virtual void convertTabs( int = -1 );
 	//
 signals:
 	void cursorPositionChanged( const QPoint& );

@@ -30,6 +30,7 @@ private:
 	QButtonGroup* bgDesigner;
 	QButtonGroup* bgExternalChanges;
 	QButtonGroup* bgAPISource;
+	QButtonGroup* bgCallTipsStyle;
 	QButtonGroup* bgEOLMode;
 	QButtonGroup* bgPythonIndentationWarning;
 	//

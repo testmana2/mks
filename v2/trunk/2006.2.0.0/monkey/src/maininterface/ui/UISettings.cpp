@@ -62,6 +62,11 @@ UISettings::UISettings( QWidget* p )
 	bgAPISource->addButton( rbAutoCompletionDocument, QsciScintilla::AcsDocument );
 	bgAPISource->addButton( rbAutoCompletionAPI, QsciScintilla::AcsAPIs );
 	bgAPISource->addButton( rbAutoCompletionAll, QsciScintilla::AcsAll );
+	// calltips style
+	bgCallTipsStyle = new QButtonGroup( gbAutoCompletionCalltips );
+	bgCallTipsStyle->addButton( rbAutoCompletionNoContext, QsciScintilla::CallTipsNoContext );
+	bgCallTipsStyle->addButton( rbAutoCompletionNoAutoCompletionContext, QsciScintilla::CallTipsNoAutoCompletionContext );
+	bgCallTipsStyle->addButton( rbAutoCompletionContext, QsciScintilla::CallTipsContext );
 	// loads text codecs
 	QStringList l;
 	foreach ( QByteArray a, QTextCodec::availableCodecs() )
@@ -84,7 +89,6 @@ UISettings::UISettings( QWidget* p )
 	bgEOLMode->addButton( rbStyleMacintosh, QsciScintilla::EolMac );
 	bgEOLMode->addButton( rbStyleWindowsDOS, QsciScintilla::EolWindows );
 	// fold style
-	cbStyleFoldingStyle->addItem( tr( "Disabled" ), QsciScintilla::NoFoldStyle );
 	cbStyleFoldingStyle->addItem( tr( "Plain" ), QsciScintilla::PlainFoldStyle );
 	cbStyleFoldingStyle->addItem( tr( "Circled" ), QsciScintilla::CircledFoldStyle );
 	cbStyleFoldingStyle->addItem( tr( "Boxed" ), QsciScintilla::BoxedFoldStyle );
@@ -125,22 +129,25 @@ void UISettings::loadSettings()
 	cbAutoCompletionCaseSensitive->setChecked( s->value( sp +"/CaseSensitive", true ).toBool() );
 	cbAutoCompletionShowSingle->setChecked( s->value( sp +"/ShowSingle", false ).toBool() );
 	cbAutoCompletionReplaceWord->setChecked( s->value( sp +"/ReplaceWord", false ).toBool() );
-	sAutoCompletionThreshold->setValue( s->value( sp +"/Threshold", 2 ).toInt() );
+	sAutoCompletionThreshold->setValue( s->value( sp +"/Threshold", 0 ).toInt() );
 	bgAPISource->button( s->value( sp +"/APISource", QsciScintilla::AcsAPIs ).toInt() )->setChecked( true );
 	//  Calltips
 	sp = QString( "%1/Editor/Calltips" ).arg( SettingsPath );
 	gbAutoCompletionCalltips->setEnabled( s->value( sp +"/Enabled", true ).toBool() );
-	sAutoCompletionCalltips->setValue( s->value( sp +"/Visible", 4 ).toInt() );
+	sAutoCompletionCalltips->setValue( s->value( sp +"/Visible", -1 ).toInt() );
+	bgCallTipsStyle->button( s->value( sp +"/Style", QsciScintilla::CallTipsNoContext ).toInt() )->setChecked( true );
 	//  Colours
 	sp = QString( "%1/Editor/Colours" ).arg( SettingsPath );
 	tbColoursCurrentLineMarker->setIcon( colourizedPixmap( s->value( sp +"/CurrentLineMarker", Qt::yellow ).value<QColor>() ) );
 	tbColoursErrorLineMarker->setIcon( colourizedPixmap( s->value( sp +"/ErrorLineMarker", Qt::red ).value<QColor>() ) );
-	tbColoursMatchedBraces->setIcon( colourizedPixmap( s->value( sp +"/MatchedBraces", Qt::blue ).value<QColor>() ) );
+	tbColoursMatchedBraces->setIcon( colourizedPixmap( s->value( sp +"/MatchedBraces", Qt::red ).value<QColor>() ) );
 	tbColoursMatchedBracesBackground->setIcon( colourizedPixmap( s->value( sp +"/MatchedBracesBackground", Qt::white ).value<QColor>() ) );
 	tbColoursCalltipsBackground->setIcon( colourizedPixmap( s->value( sp +"/CalltipsBackground", Qt::white ).value<QColor>() ) );
+	tbColoursCalltipsForeground->setIcon( colourizedPixmap( s->value( sp +"/CalltipsForeground", Qt::lightGray ).value<QColor>() ) );
+	tbColoursCalltipsHighlight->setIcon( colourizedPixmap( s->value( sp +"/CalltipsHighlight", Qt::darkBlue ).value<QColor>() ) );
 	tbColoursCaretForeground->setIcon( colourizedPixmap( s->value( sp +"/CaretForeground", Qt::black ).value<QColor>() ) );
 	tbColoursCaretLineBackground->setIcon( colourizedPixmap( s->value( sp +"/CaretLineBackground", Qt::white ).value<QColor>() ) );
-	tbColoursUnmatchedBraces->setIcon( colourizedPixmap( s->value( sp +"/UnmatchedBraces", Qt::red ).value<QColor>() ) );
+	tbColoursUnmatchedBraces->setIcon( colourizedPixmap( s->value( sp +"/UnmatchedBraces", Qt::blue ).value<QColor>() ) );
 	tbColoursUnmatchedBracesBackground->setIcon( colourizedPixmap( s->value( sp +"/UnmatchedBracesBackground", Qt::white ).value<QColor>() ) );
 	//  General
 	sp = QString( "%1/Editor/General" ).arg( SettingsPath );
@@ -153,9 +160,7 @@ void UISettings::loadSettings()
 	cbGeneralShowWhitespace->setChecked( s->value( sp +"/ShowWhitespace", false ).toBool() );
 	cbGeneralShowEndOfLine->setChecked( s->value( sp +"/ShowEndOfLine", false ).toBool() );
 	cbGeneralShowIndentationGuides->setChecked( s->value( sp +"/ShowIndentationGuides", true ).toBool() );
-	cbGeneralHighlightBraces->setChecked( s->value( sp +"/HighlightBraces", true ).toBool() );
 	cbGeneralAutomaticSyntaxCheck->setChecked( s->value( sp +"/AutomaticSyntaxCheck", true ).toBool() );
-	cbGeneralWrapLongLines->setChecked( s->value( sp +"/WrapLongLines", true ).toBool() );
 	cbGeneralUseTabsForIndentations->setChecked( s->value( sp +"/UseTabsForIndentations", false ).toBool() );
 	cbGeneralConvertTabsUponOpen->setChecked( s->value( sp +"/ConvertTabsUponOpen", false ).toBool() );
 	cbGeneralTabKeyIndents->setChecked( s->value( sp +"/TabKeyIndents", true ).toBool() );
@@ -318,6 +323,7 @@ void UISettings::saveSettings()
 	sp = QString( "%1/Editor/Calltips" ).arg( SettingsPath );
 	s->setValue( sp +"/Enabled", gbAutoCompletionCalltips->isEnabled() );
 	s->setValue( sp +"/Visible", sAutoCompletionCalltips->value() );
+	s->setValue( sp +"/Style", bgCallTipsStyle->checkedId() );
 	//  Colours
 	sp = QString( "%1/Editor/Colours" ).arg( SettingsPath );
 	s->setValue( sp +"/CurrentLineMarker", iconBackgroundColor( tbColoursCurrentLineMarker->icon() ) );
@@ -325,6 +331,8 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/MatchedBraces", iconBackgroundColor( tbColoursMatchedBraces->icon() ) );
 	s->setValue( sp +"/MatchedBracesBackground", iconBackgroundColor( tbColoursMatchedBracesBackground->icon() ) );
 	s->setValue( sp +"/CalltipsBackground", iconBackgroundColor( tbColoursCalltipsBackground->icon() ) );
+	s->setValue( sp +"/CalltipsForeground", iconBackgroundColor( tbColoursCalltipsForeground->icon() ) );
+	s->setValue( sp +"/CalltipsHighlight", iconBackgroundColor( tbColoursCalltipsHighlight->icon() ) );
 	s->setValue( sp +"/CaretForeground", iconBackgroundColor( tbColoursCaretForeground->icon() ) );
 	s->setValue( sp +"/CaretLineBackground", iconBackgroundColor( tbColoursCaretLineBackground->icon() ) );
 	s->setValue( sp +"/UnmatchedBraces", iconBackgroundColor( tbColoursUnmatchedBraces->icon() ) );
@@ -340,9 +348,7 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/ShowWhitespace", cbGeneralShowWhitespace->isChecked() );
 	s->setValue( sp +"/ShowEndOfLine", cbGeneralShowEndOfLine->isChecked() );
 	s->setValue( sp +"/ShowIndentationGuides", cbGeneralShowIndentationGuides->isChecked() );
-	s->setValue( sp +"/HighlightBraces", cbGeneralHighlightBraces->isChecked() );
 	s->setValue( sp +"/AutomaticSyntaxCheck", cbGeneralAutomaticSyntaxCheck->isChecked() );
-	s->setValue( sp +"/WrapLongLines", cbGeneralWrapLongLines->isChecked() );
 	s->setValue( sp +"/UseTabsForIndentations", cbGeneralUseTabsForIndentations->isChecked() );
 	s->setValue( sp +"/ConvertTabsUponOpen", cbGeneralConvertTabsUponOpen->isChecked() );
 	s->setValue( sp +"/TabKeyIndents", cbGeneralTabKeyIndents->isChecked() );

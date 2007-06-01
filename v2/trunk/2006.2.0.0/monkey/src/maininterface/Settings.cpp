@@ -180,6 +180,7 @@ QsciLexer* Settings::lexerForLanguage( const QString& s )
 		QsciLexerLua* sl = new QsciLexerLua( current() );
 		sl->readSettings( *ss, c );
 		sl->setFoldCompact( ss->value( sp +"/AllFoldCompact", true ).toBool() );
+		return sl;
 	}
 	else if ( l == "makefile" )
 	{
