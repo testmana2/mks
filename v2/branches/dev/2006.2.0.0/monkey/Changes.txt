@@ -1,0 +1,10 @@
+2007/01/17
+
+* Fixed task #5, #7, #8, #9 and #10
+* Tools Manager: Added working path, and now use QDesktopServices, allowing us to add link tool ( html files etc )
+
+2007/01/14
+
+* Add Plugins Manager configuration box
+
+--EOF
