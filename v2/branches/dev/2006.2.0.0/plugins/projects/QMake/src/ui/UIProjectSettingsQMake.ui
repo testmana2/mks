@@ -1,0 +1,386 @@
+<ui version="4.0" >
+ <class>UIProjectSettingsQMake</class>
+ <widget class="QDialog" name="UIProjectSettingsQMake" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>594</width>
+    <height>353</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Settings</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
+   <property name="spacing" >
+    <number>3</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="twTabs" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>7</hsizetype>
+       <vsizetype>7</vsizetype>
+       <horstretch>10</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex" >
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tSimple" >
+      <attribute name="title" >
+       <string>Simple Editor</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
+       <property name="spacing" >
+        <number>3</number>
+       </property>
+       <item row="7" column="0" colspan="3" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>401</width>
+           <height>8</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="1" colspan="2" >
+        <widget class="QLineEdit" name="leVersion" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="lSystem" >
+         <property name="text" >
+          <string>System :</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
+        <widget class="QLabel" name="lDestination" >
+         <property name="text" >
+          <string>Destination :</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2" >
+        <widget class="QComboBox" name="cbTemplate" >
+         <property name="editable" >
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text" >
+           <string>app</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>lib</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>vcapp</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>vclib</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>subdirs</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="lTarget" >
+         <property name="text" >
+          <string>Target :</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" >
+        <widget class="QLabel" name="lVersion" >
+         <property name="text" >
+          <string>Version :</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2" >
+        <widget class="QToolButton" name="tbDestination" >
+         <property name="text" >
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" >
+        <widget class="QLineEdit" name="leDestination" />
+       </item>
+       <item row="2" column="1" colspan="2" >
+        <widget class="QComboBox" name="cbSystem" >
+         <property name="editable" >
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text" >
+           <string>(all)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>unix</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>win32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>mac</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="lLanguage" >
+         <property name="text" >
+          <string>Language :</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2" >
+        <widget class="QLineEdit" name="leTarget" />
+       </item>
+       <item row="1" column="1" colspan="2" >
+        <widget class="QComboBox" name="cbLanguage" >
+         <property name="editable" >
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text" >
+           <string>C++</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>C++/Qt4</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>C++/Qt3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>C++/Qt2</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>C++/Qt1</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lTemplate" >
+         <property name="text" >
+          <string>Template :</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" >
+        <widget class="QCheckBox" name="cbTop" >
+         <property name="text" >
+          <string>Add at top of project file.</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tComplex" >
+      <attribute name="title" >
+       <string>Complex Editor</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
+       <property name="spacing" >
+        <number>3</number>
+       </property>
+       <item rowspan="8" row="1" column="1" >
+        <widget class="QListView" name="lvContents" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>5</hsizetype>
+           <vsizetype>7</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lScopes" >
+         <property name="text" >
+          <string>Scopes Explorer :</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="2" >
+        <widget class="QPushButton" name="pbAdd" >
+         <property name="text" >
+          <string>Add</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" >
+        <widget class="QPushButton" name="pbEdit" >
+         <property name="text" >
+          <string>Edit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2" >
+        <widget class="QPushButton" name="pbRemove" >
+         <property name="text" >
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2" >
+        <widget class="QPushButton" name="pbClear" >
+         <property name="text" >
+          <string>Clear</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2" >
+        <widget class="Line" name="lSeparator" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2" >
+        <widget class="QPushButton" name="pbUp" >
+         <property name="text" >
+          <string>Up</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="2" >
+        <widget class="QPushButton" name="pbDown" >
+         <property name="text" >
+          <string>Down</string>
+         </property>
+        </widget>
+       </item>
+       <item rowspan="8" row="1" column="0" >
+        <widget class="QTreeView" name="tvScopes" />
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLabel" name="lContents" >
+         <property name="text" >
+          <string>Contents :</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tTranslation" >
+      <attribute name="title" >
+       <string>Translations</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>5</number>
+       </property>
+       <property name="spacing" >
+        <number>3</number>
+       </property>
+       <item>
+        <widget class="QListWidget" name="lwTranslations" />
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="dbbButtons" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>dbbButtons</sender>
+   <signal>accepted()</signal>
+   <receiver>UIProjectSettingsQMake</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dbbButtons</sender>
+   <signal>rejected()</signal>
+   <receiver>UIProjectSettingsQMake</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
