@@ -1,8 +1,0 @@
-UIItemSettings
-==============
-* When adding item, verify parent for validatinf or not the insertion
-
-UIQMakeProjectSettings
-======================
-
-* Add an option to compact multiple scope
