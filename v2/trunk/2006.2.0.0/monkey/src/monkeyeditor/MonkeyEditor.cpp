@@ -287,6 +287,32 @@ void MonkeyEditor::keyPressEvent( QKeyEvent* e )
 	}
 	else
 		QsciScintilla::keyPressEvent( e );
+	/*
+	void CppMonkeyEditor::keyPressEvent( QKeyEvent* e )
+{
+	if ( !e->isAutoRepeat() && !isListActive() && e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_Space )
+	{
+		switch ( autoCompletionSource() )
+		{
+		case AcsAll:
+			autoCompleteFromAll();
+			break;
+		case AcsDocument:
+			autoCompleteFromDocument();
+			break;
+		case AcsAPIs:
+			autoCompleteFromAPIs();
+			break;
+		case AcsNone:
+		default:
+			MonkeyEditor::keyPressEvent( e );
+			break;
+		}
+	}
+	else
+		MonkeyEditor::keyPressEvent( e );
+}
+	*/
 }
 //
 void MonkeyEditor::checkBookmarks( Bookmarks b, int l )
