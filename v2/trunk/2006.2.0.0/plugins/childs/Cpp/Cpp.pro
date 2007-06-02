@@ -13,6 +13,9 @@ SOURCES	= src/Cpp.cpp \
 	src/CppChild.cpp \
 	src/CppCornerWidget.cpp
 
+OPENEDFILES	= src/CppMonkeyEditor.h \
+	src/CppMonkeyEditor.cpp
+
 HEADERS	= src/Cpp.h \
 	src/CppMonkeyEditor.h \
 	src/CppChild.h \

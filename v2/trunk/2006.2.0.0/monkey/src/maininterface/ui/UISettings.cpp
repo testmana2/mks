@@ -285,7 +285,7 @@ void UISettings::initLexers()
 		// get language name
 		ll << sl->language();
 		// load its settings
-		sl->readSettings( *Settings::current(), QString( "%1/Editor/Scintilla" ).arg( SettingsPath ).toLocal8Bit() );
+		sl->readSettings( *Settings::current(), qPrintable( QString( "%1/Editor/Scintilla" ).arg( SettingsPath ) ) );
 	}
 	ll.sort();
 	cbAPIsLanguages->addItems( ll );
@@ -363,7 +363,9 @@ void UISettings::saveSettings()
 		QTreeWidgetItem* it = twHighlighterAssociations->topLevelItem( i );
 		s->setValue( sp +it->text( 0 ), it->text( 1 ) );
 	}
-	//  SyntaxHighlighting // TODO: fix me
+	//  SyntaxHighlighting
+	foreach ( QsciLexer* sl, mLexers )
+		sl->writeSettings( *s, qPrintable( QString( "%1/Editor/Scintilla" ).arg( SettingsPath ) ) );
 	//  Properties
 	sp = QString( "%1/Editor/Properties" ).arg( SettingsPath );
 	s->setValue( sp +"/CppFoldComments", cbPropertiesCppFoldComments->isChecked() );
