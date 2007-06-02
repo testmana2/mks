@@ -4,7 +4,6 @@
 #include <QTabWidget>
 #include<QDebug>
 
-#if 0
 #include "ClassBrouser.h"
 #include "TabToolBar.h"
 #include "Ctags.h"
@@ -45,7 +44,7 @@ void ClassBrouser::initialize( Workspace* w )
 	dockwgt->setWidget ( tabw);
 	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->appendTab( dockwgt,  QPixmap( ":/icons/ClassBrouser.png" ), tr( "Class Brouser" ) );
 
-	connect ( ProjectsManager::self(), SIGNAL (currentProxyChanged( AbstractProjectProxy* )) , this, SLOT (changeProjectView()));
+	connect ( ProjectsManager::self(), SIGNAL (currentProjectChanged( AbstractProjectModel* )) , this, SLOT (changeProjectView(AbstractProjectModel*)));
 	connect ( ProjectsManager::self(), SIGNAL (itemModelWillBeClosed( AbstractProjectItemModel* )) , this, SLOT (freeProjectView(AbstractProjectItemModel*)));	
 };
 //
@@ -67,13 +66,13 @@ bool ClassBrouser::uninstall()
 	return true;
 };
 
-void ClassBrouser::changeProjectView()
+void ClassBrouser::changeProjectView(AbstractProjectModel* aim)
 {
+	qDebug ("trying to change project view");
 	pTabToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
 	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
 		return;  //do not need do something, if tab not active
 	EntityContainer* oldWidget = currProjectTreew;
-	AbstractProjectItemModel* aim = ProjectsManager::self()->currentProject();
 	if ( aim == NULL)
 		return;
 	currProjectTreew = projectTrees.take ( aim );
@@ -82,7 +81,7 @@ void ClassBrouser::changeProjectView()
 		currProjectTreew = new EntityContainer ( NULL, "", true );
 		projectTrees.insert ( aim,currProjectTreew );
 	}
-	QStringList list =  aim->absoluteFilesPath(  false );
+	QStringList list =  aim->absoluteFilesPath();
 	QString fileName;
 	foreach ( fileName, list)
 	{
@@ -101,7 +100,7 @@ void ClassBrouser::changeProjectView()
 	projectWidget->setUpdatesEnabled(true);
 }
 
-void ClassBrouser::freeProjectView(AbstractProjectItemModel* p)
+void ClassBrouser::freeProjectView(AbstractProjectModel* p)
 {
 	if ( not projectTrees.contains ( p))
 		return;
@@ -152,4 +151,3 @@ void ClassBrouser::changeFileView()
 
 //
 Q_EXPORT_PLUGIN2( WorkspaceClassBrouser, ClassBrouser )
-#endif
