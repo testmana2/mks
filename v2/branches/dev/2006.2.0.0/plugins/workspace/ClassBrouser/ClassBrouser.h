@@ -8,11 +8,10 @@
 #include <QTabWidget>
 #include <QTreeWidget>
 
-/*  Not compiling with current monkey version
 #include "WorkspacePlugin.h"
 #include "Ctags.h"
 #include "EntityContainer.h"
-#include "AbstractProjectItemModel.h"
+#include "AbstractProjectModel.h"
 
 // I am not sure with the English language terminology, if you ( reader) know it better, correct it
 
@@ -22,8 +21,8 @@ class ClassBrouser : public WorkspacePlugin
 	Q_INTERFACES( BasePlugin WorkspacePlugin )
 	//
 private:
-	QHash <AbstractProjectItemModel* , EntityContainer*> projectTrees;
-	QHash <AbstractProjectItemModel* , EntityContainer*> fileTrees;
+	QHash <AbstractProjectModel* , EntityContainer*> projectTrees;
+	QHash <AbstractProjectModel* , EntityContainer*> fileTrees;
 	QDockWidget* dockwgt;
 	QTabWidget* tabw;
 	QWidget* projectWidget ;
@@ -39,10 +38,10 @@ public:
 	virtual bool uninstall();
 	//
 public slots:
-	void changeProjectView();
-	void freeProjectView(AbstractProjectItemModel*);
+	void changeProjectView(AbstractProjectModel*);
+	void freeProjectView(AbstractProjectModel*);
 	void changeFileView();
 };
 //
-*/
+
 #endif //  CLASSBROUSER_H
