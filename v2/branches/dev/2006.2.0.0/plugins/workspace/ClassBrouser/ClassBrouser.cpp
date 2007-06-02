@@ -2,12 +2,15 @@
 #include <QString>
 #include<QStringList>
 #include <QTabWidget>
+#include <QFileInfo>
 #include<QDebug>
+#include<QModelIndex>
 
 #include "ClassBrouser.h"
 #include "TabToolBar.h"
 #include "Ctags.h"
 #include "ProjectsManager.h"
+#include "AbstractProjectProxy.h"
 
 
 //
@@ -43,9 +46,7 @@ void ClassBrouser::initialize( Workspace* w )
 	tabw->addTab ( fileWidget, "File Tree");
 	dockwgt->setWidget ( tabw);
 	mWorkspace->tabToolBar()->bar( TabToolBar::Right )->appendTab( dockwgt,  QPixmap( ":/icons/ClassBrouser.png" ), tr( "Class Brouser" ) );
-
-	connect ( ProjectsManager::self(), SIGNAL (currentProjectChanged( AbstractProjectModel* )) , this, SLOT (changeProjectView(AbstractProjectModel*)));
-	connect ( ProjectsManager::self(), SIGNAL (itemModelWillBeClosed( AbstractProjectItemModel* )) , this, SLOT (freeProjectView(AbstractProjectItemModel*)));	
+	connect ( ProjectsManager::self(), SIGNAL (proxyAdded( AbstractProjectProxy* )) , this, SLOT (proxyAdded( AbstractProjectProxy* )));	
 };
 //
 bool ClassBrouser::install()
@@ -66,41 +67,7 @@ bool ClassBrouser::uninstall()
 	return true;
 };
 
-void ClassBrouser::changeProjectView(AbstractProjectModel* aim)
-{
-	qDebug ("trying to change project view");
-	pTabToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
-	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
-		return;  //do not need do something, if tab not active
-	EntityContainer* oldWidget = currProjectTreew;
-	if ( aim == NULL)
-		return;
-	currProjectTreew = projectTrees.take ( aim );
-	if ( currProjectTreew == NULL )
-	{
-		currProjectTreew = new EntityContainer ( NULL, "", true );
-		projectTrees.insert ( aim,currProjectTreew );
-	}
-	QStringList list =  aim->absoluteFilesPath();
-	QString fileName;
-	foreach ( fileName, list)
-	{
-		currProjectTreew->updateFileInfo ( fileName );	
-	}
-	currProjectTreew->setHeaderLabel ( aim->name() );
-	projectWidget->setUpdatesEnabled(false);
-	projectBox->removeWidget (oldWidget );
-	oldWidget->hide();
-	projectBox->addWidget ( currProjectTreew);
-	currProjectTreew->show();
-	if ( currProjectTreew->topLevelItemCount () == 0 )
-		dockwgt->hide();
-	else
-		dockwgt->show();
-	projectWidget->setUpdatesEnabled(true);
-}
-
-void ClassBrouser::freeProjectView(AbstractProjectModel* p)
+/*void ClassBrouser::freeProjectView(AbstractProjectModel* p)
 {
 	if ( not projectTrees.contains ( p))
 		return;
@@ -122,14 +89,30 @@ void ClassBrouser::freeProjectView(AbstractProjectModel* p)
 	projectTrees.remove ( p);
 	qDebug ( "Project was deleted");
 }
-
-void ClassBrouser::changeFileView()
+*/
+void ClassBrouser::proxyAdded( AbstractProjectProxy* proxy)
 {
-/*	pTabToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
+	connect ( proxy, SIGNAL (fileSelected( QString )) , this, SLOT (showFile( QString )));
+ 	connect ( proxy, SIGNAL (projectSelected( AbstractProjectModel*)) , this, SLOT (showProject(AbstractProjectModel*)));
+}
+
+void ClassBrouser::showProject(AbstractProjectModel* aim)
+{
+	qDebug ("trying to change project view");
+	pTabToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
 	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
 		return;  //do not need do something, if tab not active
-	EntityContainer* oldWidget = currFileTreew;
-	
+	EntityContainer* oldWidget = currProjectTreew;
+	if ( aim == NULL)
+		return;
+	currProjectTreew = projectTrees[ aim];
+	if ( currProjectTreew == NULL )
+	{
+		currProjectTreew = new EntityContainer ( NULL, "", true );
+		projectTrees.insert ( aim,currProjectTreew );
+	}
+	QStringList list =  aim->absoluteFilesPath(QModelIndex(), true);
+	QString fileName;
 	foreach ( fileName, list)
 	{
 		currProjectTreew->updateFileInfo ( fileName );	
@@ -137,16 +120,49 @@ void ClassBrouser::changeFileView()
 	currProjectTreew->setHeaderLabel ( aim->name() );
 	projectWidget->setUpdatesEnabled(false);
 	projectBox->removeWidget (oldWidget );
-	if ( oldWidget != NULL )
-		oldWidget->hide();
+	oldWidget->hide();
 	projectBox->addWidget ( currProjectTreew);
 	currProjectTreew->show();
-	if ( currProjectTreew->topLevelItemCount () == 0 )
+//	if ( currProjectTreew->topLevelItemCount () == 0 )
+//		dockwgt->hide();
+//	else
+//		dockwgt->show();
+ //
+	projectWidget->setUpdatesEnabled(true);
+}
+
+void ClassBrouser::showFile ( QString absPath)
+{
+ 	pTabToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
+	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
+		return;  //do not need do something, if tab not active
+	EntityContainer* oldWidget = currFileTreew; //save current TreeView
+ 	currFileTreew = fileTrees [absPath]; //Try to find Treew for requested file in the cache
+    qDebug ("hash size (start) %i", fileTrees.size ());
+    qDebug ( qPrintable ( QString("unique key1(start):")+fileTrees.uniqueKeys ()[0]));
+	if ( currFileTreew == NULL ) //not finded
+	{
+        qDebug ( "Not finded widget, creating");
+		currFileTreew = new EntityContainer ( NULL, "", false );
+		fileTrees.insert ( absPath, currFileTreew );
+	}//OK, not currFileTreew - actual for requested file
+    else
+            qDebug ( "Finded widget");
+	currFileTreew->updateFileInfo ( absPath );	
+	currFileTreew->setHeaderLabel ( QFileInfo (absPath).fileName() );
+	fileWidget->setUpdatesEnabled(false);
+	fileBox->removeWidget (oldWidget );
+	oldWidget->hide();
+	fileBox->addWidget ( currFileTreew);
+	currFileTreew->show();
+/*	if ( currFileTreew->topLevelItemCount () == 0 )
 		dockwgt->hide();
 	else
 		dockwgt->show();
-	projectWidget->setUpdatesEnabled(true);
-*/
+ */
+	fileWidget->setUpdatesEnabled(true);
+    qDebug ("hash size (end) %i", fileTrees.size ());
+    qDebug ( qPrintable ( QString("unique key1(end):")+fileTrees.uniqueKeys ()[0]));
 }
 
 //

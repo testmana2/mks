@@ -167,6 +167,7 @@ void ProjectsManager::addProxy( AbstractProjectProxy* p, QAbstractItemView* v )
 		v->setModel( p );
 		// connect
 		connect( v, SIGNAL( doubleClicked( const QModelIndex& ) ), p, SLOT( doubleClicked( const QModelIndex& ) ) );
+ 		connect( v, SIGNAL( clicked (const QModelIndex)),p, SLOT ( clicked (const QModelIndex)));
 		connect( v, SIGNAL( customContextMenuRequested( const QPoint& ) ), p, SLOT( customContextMenuRequested( const QPoint& ) ) );
 	}
 	// connect
@@ -207,7 +208,7 @@ AbstractProjectProxy* ProjectsManager::currentProxy() const
 //
 AbstractProjectModel* ProjectsManager::currentModel() const
 {
-	AbstractProjectProxy* p = currentProxy();
+    AbstractProjectProxy* p = currentProxy();
 	return p ? p->project() : 0;
 }
 //
@@ -296,3 +297,4 @@ void ProjectsManager::view_clicked( const QModelIndex& i )
 	m->setData( i, f, Qt::FontRole );
 	m->setData( i, b ? Qt::red : Qt::black, Qt::ForegroundRole );
 */
+

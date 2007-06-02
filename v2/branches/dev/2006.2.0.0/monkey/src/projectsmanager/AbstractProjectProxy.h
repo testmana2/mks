@@ -43,6 +43,7 @@ public slots:
 	virtual void setFilterRoles( const QList<int>& );
 	//
 	virtual void doubleClicked( const QModelIndex& ) = 0;
+ 	virtual void clicked( const QModelIndex& ) = 0;
 	virtual void customContextMenuRequested( const QPoint& ) = 0;
 	virtual void projectSettings( const QModelIndex& = QModelIndex() ) = 0;
 	//
@@ -53,6 +54,10 @@ signals:
 	void negateFilterChanged( bool );
 	// emit when a file request to be open
 	void fileOpenRequested( const QString&, AbstractProjectProxy* );
+    //emit when file selected in the TreeView
+    void fileSelected ( QString absPath );
+    //emit when project selected in the TreeView
+    void projectSelected ( AbstractProjectModel* );
 	//
 };
 //
