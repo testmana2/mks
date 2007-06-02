@@ -99,6 +99,7 @@ QStringList AbstractProjectModel::absoluteFilesPath( const QModelIndex& i, bool 
 	QStringList l;
 	QString s;
 	Qt::MatchFlags f = b ? Qt::MatchWildcard | Qt::MatchRecursive : Qt::MatchWildcard;
+    qWarning ("AbstractProjectModel::absoluteFilesPath Segfault if QModelIndex i presented");
 	foreach ( QModelIndex j, match( project( i ).child( 0, 0 ), AbstractProjectModel::AbsoluteFilePathRole, "*", -1, f ) )
 	{
 		s = j.data( AbstractProjectModel::AbsoluteFilePathRole ).toString();

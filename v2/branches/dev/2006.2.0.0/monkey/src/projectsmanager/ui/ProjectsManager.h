@@ -39,7 +39,7 @@ public:
 private:
 	ProjectsManager( QWidget* = 0 );
 	static QPointer<ProjectsManager> mSelf;
-	//
+	//  
 public slots:
 	void setFiltering( bool );
 	//
@@ -52,7 +52,7 @@ private slots:
 signals:
 	void proxyAdded( AbstractProjectProxy* );
 	void currentProxyChanged( AbstractProjectProxy* );
-	void currentProjectChanged( AbstractProjectModel* );
+	void currentProjectChanged( AbstractProjectModel*);
 	void fileOpenRequested( const QString&, AbstractProjectProxy* );
 	//
 };

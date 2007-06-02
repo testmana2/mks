@@ -21,9 +21,12 @@ protected:
 public slots:
 	virtual void setFiltering( bool );
 	virtual void doubleClicked( const QModelIndex& );
+ 	virtual void clicked( const QModelIndex& );
 	virtual void customContextMenuRequested( const QPoint& );
 	virtual void projectSettings( const QModelIndex& = QModelIndex() );
 	//
+ signals:
+    void fileSelected ( QString absPath );
 };
 //
 #endif // QMAKEPROJECTPROXY_H

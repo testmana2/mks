@@ -3,6 +3,7 @@
 #include "Settings.h"
 #include "UIQMakeProjectSettings.h"
 #include "UISettingsQMake.h"
+#include "ProjectsManager.h"
 //
 QMakeProjectProxy::QMakeProjectProxy( QMakeProjectModel* m, bool b, const QModelIndex& i )
 	: AbstractProjectProxy( m ), mProjectViewMode( b ), mIndex( m->project( i ) ), mPIndex( project()->project( mIndex.parent() ) )
@@ -86,6 +87,18 @@ void QMakeProjectProxy::doubleClicked( const QModelIndex& i )
 		emit fileOpenRequested( s, this );
 	else
 		qWarning( "Can't open file: %s", qPrintable( s ) );
+}
+//
+void QMakeProjectProxy::clicked( const QModelIndex& i )
+{
+    QString s = i.data( AbstractProjectModel::AbsoluteFilePathRole ).toString();
+    if ( s.endsWith (".pro"))
+    {
+        emit projectSelected ( ProjectsManager::self()->currentModel() ); //  FIXME  fix this code
+        qWarning ("QMakeProjectProxy::clicked  PasNox - FIXME");
+     }
+    else
+        emit fileSelected (s);
 }
 //
 void QMakeProjectProxy::customContextMenuRequested( const QPoint& )

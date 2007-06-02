@@ -22,7 +22,7 @@ class ClassBrouser : public WorkspacePlugin
 	//
 private:
 	QHash <AbstractProjectModel* , EntityContainer*> projectTrees;
-	QHash <AbstractProjectModel* , EntityContainer*> fileTrees;
+	QHash <QString , EntityContainer*> fileTrees;
 	QDockWidget* dockwgt;
 	QTabWidget* tabw;
 	QWidget* projectWidget ;
@@ -38,9 +38,12 @@ public:
 	virtual bool uninstall();
 	//
 public slots:
-	void changeProjectView(AbstractProjectModel*);
-	void freeProjectView(AbstractProjectModel*);
-	void changeFileView();
+	//void changeProjectView(AbstractProjectModel*, QModelIndex);
+	//void freeProjectView(AbstractProjectModel*);
+	//void changeFileView();
+    void showFile ( QString absPath);
+    void showProject (  AbstractProjectModel*);
+    void proxyAdded( AbstractProjectProxy* );
 };
 //
 
