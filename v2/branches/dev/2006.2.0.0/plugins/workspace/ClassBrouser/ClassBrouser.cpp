@@ -133,23 +133,29 @@ void ClassBrouser::showProject(AbstractProjectModel* aim)
 
 void ClassBrouser::showFile ( QString absPath)
 {
+    QStringList files (absPath); //  'files' contains list of all paths
+    QFileInfo finfo (absPath);
+    QString nameWithoutDot = finfo.path()+"/"+finfo.completeBaseName ();
+    //if .cpp for the .h exists
+    if ( ( absPath.endsWith (".h") and ( QFileInfo(nameWithoutDot+".cpp").exists() )))
+        files.append (nameWithoutDot+".cpp");
+     //if .h for the .cpp exists
+    else if ( ( absPath.endsWith (".cpp") and ( QFileInfo(nameWithoutDot+".h").exists() )))
+        files.append (nameWithoutDot+".h");
  	pTabToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
 	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
 		return;  //do not need do something, if tab not active
 	EntityContainer* oldWidget = currFileTreew; //save current TreeView
- 	currFileTreew = fileTrees [absPath]; //Try to find Treew for requested file in the cache
-    qDebug ("hash size (start) %i", fileTrees.size ());
-    qDebug ( qPrintable ( QString("unique key1(start):")+fileTrees.uniqueKeys ()[0]));
+ 	currFileTreew = fileTrees [nameWithoutDot]; //Try to find Treew for requested file in the cache
 	if ( currFileTreew == NULL ) //not finded
 	{
-        qDebug ( "Not finded widget, creating");
 		currFileTreew = new EntityContainer ( NULL, "", false );
-		fileTrees.insert ( absPath, currFileTreew );
+		fileTrees.insert ( nameWithoutDot, currFileTreew );
 	}//OK, not currFileTreew - actual for requested file
     else
-            qDebug ( "Finded widget");
-	currFileTreew->updateFileInfo ( absPath );	
-	currFileTreew->setHeaderLabel ( QFileInfo (absPath).fileName() );
+    for ( int i = 0; i< files.size(); i++)
+        currFileTreew->updateFileInfo ( files[i] );	
+	currFileTreew->setHeaderLabel ( QFileInfo (absPath).baseName() );
 	fileWidget->setUpdatesEnabled(false);
 	fileBox->removeWidget (oldWidget );
 	oldWidget->hide();
@@ -161,8 +167,6 @@ void ClassBrouser::showFile ( QString absPath)
 		dockwgt->show();
  */
 	fileWidget->setUpdatesEnabled(true);
-    qDebug ("hash size (end) %i", fileTrees.size ());
-    qDebug ( qPrintable ( QString("unique key1(end):")+fileTrees.uniqueKeys ()[0]));
 }
 
 //
