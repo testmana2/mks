@@ -1,0 +1,12 @@
+<RCC>
+    <qresource >
+        <file>icons/ClassBrouser.png</file>
+        <file>icons/CLASS.png</file>
+        <file>icons/ENUM.png</file>
+        <file>icons/FUNCTION.png</file>
+        <file>icons/MEMBER.png</file>
+        <file>icons/NAMESPACE.png</file>
+        <file>icons/STRUCT.png</file>
+        <file>icons/TYPEDEF.png</file>
+    </qresource>
+</RCC>
