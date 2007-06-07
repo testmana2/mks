@@ -1,12 +1,15 @@
 #include "pTabbedWorkspaceCorner.h"
 #include "pTabbedWorkspace.h"
 
-#include <QToolButton>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QStyle>
+#include <QStyleOptionToolButton>
 
-pTabbedWorkspaceCorner::pTabbedWorkspaceCorner( pTabbedWorkspace* w, const QSize& s )
-	: QWidget( w ), mWorkspace( w ), mLayout( new QBoxLayout( QBoxLayout::LeftToRight, this ) ), mSize( s )
+#include <QDebug>
+
+pTabbedWorkspaceCorner::pTabbedWorkspaceCorner( pTabbedWorkspace* w )
+	: QWidget( w ), mWorkspace( w ), mLayout( new QBoxLayout( QBoxLayout::LeftToRight, this ) )
 {
 	/*
 	QBoxLayout::LeftToRight
@@ -17,6 +20,7 @@ pTabbedWorkspaceCorner::pTabbedWorkspaceCorner( pTabbedWorkspace* w, const QSize
 
 	mLayout->setSpacing( 3 );
 	mLayout->setMargin( 0 );
+	resize( 0, 0 );
 }
 
 pTabbedWorkspaceCorner::~pTabbedWorkspaceCorner()
@@ -34,25 +38,55 @@ bool pTabbedWorkspaceCorner::eventFilter( QObject* o, QEvent* e )
 		{
 			QPaintEvent* pe = dynamic_cast<QPaintEvent*>( e );
 			if ( pe )
-			{
-				QPainter p( tb );
-				switch ( mLayout->direction() )
-				{
-				case QBoxLayout::LeftToRight:
-				case QBoxLayout::RightToLeft:
-					break;
-				case QBoxLayout::TopToBottom:
-				case QBoxLayout::BottomToTop:
-					p.rotate( 90 );
-					bool b = QWidget::eventFilter( o, e );
-					return b;
-					break;
-				}
-			}
+				drawButton( tb, pe );
+			return true;
 		}
 	}
+	
 	// return default filter event
 	return QWidget::eventFilter( o, e );
+}
+
+void pTabbedWorkspaceCorner::drawButton( QToolButton* b, QPaintEvent* e )
+{
+	QPainter painter( b );
+	
+	QStyleOptionToolButton options;
+	qobject_cast<pTabbedWorkspaceCornerButton*>( b )->getStyleOption( &options );
+	
+	QSize sh = QSize( b->size() );
+	
+	if ( mLayout->direction() == QBoxLayout::TopToBottom || mLayout->direction() == QBoxLayout::BottomToTop )
+		sh.transpose();
+
+	int h = mWorkspace->tabBar()->sizeHint().width();
+	qWarning( "height: %d", h );
+	if ( sh.height() > h )
+		sh.setHeight( h );
+		
+qWarning() << sh;
+	
+	options.rect.setSize( sh );
+	
+	QPixmap pixmap( sh );
+	pixmap.fill( QColor( 0, 0, 0, 0 ) );
+	QPainter pixpainter( &pixmap );
+	b->style()->drawComplexControl( QStyle::CC_ToolButton, &options, &pixpainter, b );
+	
+	switch ( mLayout->direction() )
+	{
+	case QBoxLayout::TopToBottom:
+		painter.rotate( -90 );
+		painter.drawPixmap( 1 -pixmap.width(), 0, pixmap );
+		break;
+	case QBoxLayout::BottomToTop:
+		painter.rotate( 90 );
+		painter.drawPixmap( 0, 1 -pixmap.height(), pixmap );
+		break;
+	default:
+		painter.drawPixmap( 0, 0, pixmap );
+		break;
+	}
 }
 
 QBoxLayout::Direction pTabbedWorkspaceCorner::direction() const
@@ -65,37 +99,50 @@ void pTabbedWorkspaceCorner::clearActions()
 	qDeleteAll( findChildren<QToolButton*>() );
 }
 
-void pTabbedWorkspaceCorner::setButtonSize( const QSize& s )
-{
-	mSize = s;
-	foreach ( QToolButton* tb, findChildren<QToolButton*>() )
-		tb->setFixedSize( mSize );
-}
-
 void pTabbedWorkspaceCorner::setDirection( QBoxLayout::Direction d )
 {
-	mLayout->setDirection( d );
-	switch ( mLayout->direction() )
+	QBoxLayout::Direction cd = mLayout->direction();
+
+	// resize corner
+	QSize s = size().isNull() ? sizeHint() : size();
+
+	if ( ( cd == QBoxLayout::LeftToRight || cd == QBoxLayout::RightToLeft ) &&
+		( d != QBoxLayout::LeftToRight && d != QBoxLayout::RightToLeft ) )
+		s.transpose();
+
+	if ( ( cd == QBoxLayout::TopToBottom || cd == QBoxLayout::BottomToTop ) &&
+		( d != QBoxLayout::TopToBottom && d != QBoxLayout::BottomToTop ) )
+		s.transpose();
+
+	//setFixedSize( s );
+	
+	// resize buttons
+	foreach ( QToolButton* tb, findChildren<QToolButton*>() )
 	{
-	case QBoxLayout::LeftToRight:
-	case QBoxLayout::RightToLeft:
-		mSize.transpose();
-		break;
-	case QBoxLayout::TopToBottom:
-	case QBoxLayout::BottomToTop:
-		mSize.transpose();
-		break;
+		QSize ts = tb->size().isNull() ? tb->sizeHint() : tb->size();
+
+		if ( ( cd == QBoxLayout::LeftToRight || cd == QBoxLayout::RightToLeft ) &&
+			( d != QBoxLayout::LeftToRight && d != QBoxLayout::RightToLeft ) )
+			ts.transpose();
+
+		if ( ( cd == QBoxLayout::TopToBottom || cd == QBoxLayout::BottomToTop ) &&
+			( d != QBoxLayout::TopToBottom && d != QBoxLayout::BottomToTop ) )
+			ts.transpose();
+
+		//tb->setFixedSize( ts );
 	}
-	setButtonSize( mSize );
+
+	mLayout->setDirection( d );
 }
 
 void pTabbedWorkspaceCorner::addAction( QAction* a )
 {
-	QToolButton* tb = new QToolButton( this );
+	pTabbedWorkspaceCornerButton* tb = new pTabbedWorkspaceCornerButton( this );
 	tb->installEventFilter( this );
-	tb->setFixedSize( mSize );
+	tb->setToolButtonStyle( Qt::ToolButtonTextOnly );
 	tb->setDefaultAction( a );
 	mLayout->addWidget( tb );
+	setDirection( direction() );
 }
 
 void pTabbedWorkspaceCorner::setActions( QList<QAction*> l )

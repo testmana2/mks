@@ -5,16 +5,29 @@
 
 #include <QWidget>
 #include <QBoxLayout>
+#include <QToolButton>
 
+class QPaintEvent;
 class pTabbedWorkspace;
 class QAction;
+
+class Q_MONKEY_EXPORT pTabbedWorkspaceCornerButton : public QToolButton
+{
+	Q_OBJECT
+
+public:
+	pTabbedWorkspaceCornerButton( QWidget* p ) : QToolButton( p ) {}
+
+	void getStyleOption( QStyleOptionToolButton* s ) const { initStyleOption( s ); }
+
+};
 
 class Q_MONKEY_EXPORT pTabbedWorkspaceCorner : public QWidget
 {
 	Q_OBJECT
 
 public:
-	pTabbedWorkspaceCorner( pTabbedWorkspace*, const QSize& = QSize( 24, 24 ) );
+	pTabbedWorkspaceCorner( pTabbedWorkspace* );
 	~pTabbedWorkspaceCorner();
 
 	virtual bool eventFilter( QObject*, QEvent* );
@@ -23,15 +36,14 @@ public:
 
 public slots:
 	void clearActions();
-	void setButtonSize( const QSize& );
 	void setDirection( QBoxLayout::Direction );
 	void addAction( QAction* );
 	void setActions( QList<QAction*> );
 
 protected:
+	void drawButton( QToolButton*, QPaintEvent* );
 	pTabbedWorkspace* mWorkspace;
 	QBoxLayout* mLayout;
-	QSize mSize;
 	QList<QAction*> mActions;
 
 };
