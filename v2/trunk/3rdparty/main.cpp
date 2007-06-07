@@ -4,10 +4,13 @@
 #include <QMenuBar>
 #include "pTabbedWorkspace.h"
 #include <QTextEdit>
+
+#include <QErrorMessage>
 //
 int main( int argc, char** argv )
 {
 	QApplication app( argc, argv );
+	app.setStyle( "plastique" );
 	//
 	QMainWindow* m = new QMainWindow;
 	m->setAttribute( Qt::WA_DeleteOnClose );
@@ -16,10 +19,11 @@ int main( int argc, char** argv )
 	m->setCentralWidget( tw );
 	m->show();
 	//
+	tw->setTabShape( QTabBar::RoundedWest );
 	tw->setTabMode( pTabbedWorkspace::tmSDI );
 	tw->setDocumentMode( pTabbedWorkspace::dmMaximized );
 	//
-	for ( int i = 0; i < 20; i++ )
+	for ( int i = 0; i < 5; i++ )
 	{
 		QTextEdit* e = new QTextEdit;
 		e->setWindowTitle( QString( "Tab: %1" ).arg( i ) );

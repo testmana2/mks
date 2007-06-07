@@ -10,10 +10,9 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	// need workspace
 	Q_ASSERT( p != 0 );
 
-	setButtonSize( QSize( 36, 24 ) );
-
 	// create menu
 	QMenu* menu = new QMenu( this );
+	menu->menuAction()->setText( "Close Me" );
 	menu->menuAction()->setIcon( QIcon( ":/Icons/Icons/fileclose.png" ) );
 
 	// create action group
