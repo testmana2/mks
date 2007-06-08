@@ -18,8 +18,7 @@ class pTabbedWorkspaceCorner;
 class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
 {
 	Q_OBJECT
-	Q_ENUMS( TabMode )
-	Q_ENUMS( DocumentMode )
+	Q_ENUMS( TabMode DocumentMode )
 	
 public:
 	enum TabMode { tmSDI = 0, tmMDI, tmTopLevel };

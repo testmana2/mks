@@ -30,9 +30,11 @@ HEADERS	+= QSingleton.h
 # widgets
 # pTabbedWorkspace
 HEADERS	+= pTabbedWorkspaceCorner.h \
+	pTabbedWorkspaceCornerButton.h \
 	pTabbedWorkspace.h \
 	pTabbedWorkspaceRightCorner.h
 SOURCES	+= pTabbedWorkspaceCorner.cpp \
+	pTabbedWorkspaceCornerButton.cpp \
 	pTabbedWorkspace.cpp \
 	pTabbedWorkspaceRightCorner.cpp
 
