@@ -53,10 +53,14 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 		a->setData( i );
 	}
 
+	QAction* a = new QAction( tr( "Close All" ), menu );
+
 	// add entries
 	menu->addMenu( tr( "Tab Shape" ) )->addActions( agTabShape->actions() );
 	menu->addMenu( tr( "Tab Mode" ) )->addActions( agTabMode->actions() );
 	menu->addMenu( tr( "Document Mode" ) )->addActions( agDocumentMode->actions() );
+	menu->addSeparator();
+	menu->addAction( a );
 
 	connect( menu->menuAction(), SIGNAL( triggered() ), p, SLOT( closeCurrentTab() ) );
 
@@ -71,6 +75,8 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	connect( p, SIGNAL( tabShapeChanged( QTabBar::Shape ) ), this, SLOT( tabShapeChanged( QTabBar::Shape ) ) );
 	connect( p, SIGNAL( tabModeChanged( pTabbedWorkspace::TabMode ) ), this, SLOT( tabModeChanged( pTabbedWorkspace::TabMode ) ) );
 	connect( p, SIGNAL( documentModeChanged( pTabbedWorkspace::DocumentMode ) ), this, SLOT( documentModeChanged( pTabbedWorkspace::DocumentMode ) ) );
+
+	connect( a, SIGNAL( triggered() ), p, SLOT( closeAllTabs() ) );
 
 	setActions( QList<QAction*>() << menu->menuAction() );
 }
