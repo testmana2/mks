@@ -20,9 +20,8 @@ pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	mTabLayout = new QBoxLayout( QBoxLayout::LeftToRight );
 	mTabLayout->setSpacing( 3 );
 	mTabLayout->setMargin( 0 );
-	mTabLayout->insertWidget( 0, new pTabbedWorkspaceCorner( this ) );
-	mTabLayout->insertWidget( 1, ( mTabBar = new QTabBar ) );
-	mTabLayout->insertWidget( 2, new pTabbedWorkspaceCorner( this ) );
+	mTabLayout->addWidget( ( mTabBar = new QTabBar ) );
+	mTabLayout->addStretch( 100 );
 
 	// document widget
 	mStackedLayout = new QStackedLayout;
@@ -43,6 +42,7 @@ pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 
 	// init view
 	mTabBar->setDrawBase( false );
+	mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Maximum ) );
 	setAttribute( Qt::WA_DeleteOnClose );
 	setCornerWidget( pTabbedWorkspaceRightCorner::instance( this ) );
 	setTabMode( m );
@@ -273,39 +273,46 @@ QList<TABBED_DOCUMENT*> pTabbedWorkspace::documents() const
 //
 pTabbedWorkspaceCorner* pTabbedWorkspace::cornerWidget( Qt::Corner c ) const
 {
+	// if only one it s tabbar, no need to check
+	if ( mTabLayout->count() == 1 )
+		return 0;
+
+	// get corner
 	switch ( c )
 	{
 	case Qt::TopLeftCorner:
 	case Qt::BottomLeftCorner:
-		if ( mTabLayout->itemAt( 0 ) )
-			return qobject_cast<pTabbedWorkspaceCorner*>( mTabLayout->itemAt( 0 )->widget() );
+		if ( mTabLayout->indexOf( mTabBar ) == 0 )
+			return 0;
+		return qobject_cast<pTabbedWorkspaceCorner*>( mTabLayout->itemAt( 0 )->widget() );
 		break;
 	case Qt::TopRightCorner:
 	case Qt::BottomRightCorner:
-		if ( mTabLayout->itemAt( 2 ) )
-			return qobject_cast<pTabbedWorkspaceCorner*>( mTabLayout->itemAt( 2 )->widget() );
+		if ( mTabLayout->indexOf( mTabBar ) == mTabLayout->count() -1 )
+			return 0;
+		return qobject_cast<pTabbedWorkspaceCorner*>( mTabLayout->itemAt( mTabLayout->count() -1 )->widget() );
 		break;
 	}
+
+	// shut up gcc warning
 	return 0;
 }
 
 void pTabbedWorkspace::setCornerWidget( pTabbedWorkspaceCorner* w, Qt::Corner c )
 {
-	if ( !w )
-		w = new pTabbedWorkspaceCorner( 0 );
 	switch ( c )
 	{
 	case Qt::TopLeftCorner:
 	case Qt::BottomLeftCorner:
-		if ( mTabLayout->itemAt( 0 ) )
+		if ( mTabLayout->indexOf( mTabBar ) == 1 )
 			delete mTabLayout->itemAt( 0 )->widget();
 		mTabLayout->insertWidget( 0, w );
 		break;
 	case Qt::TopRightCorner:
 	case Qt::BottomRightCorner:
-		if ( mTabLayout->itemAt( 2 ) )
-			delete mTabLayout->itemAt( 2 )->widget();
-		mTabLayout->insertWidget( 2, w );
+		if ( mTabLayout->indexOf( mTabBar ) != mTabLayout->count() -1 )
+			delete mTabLayout->itemAt( mTabLayout->count() -1 )->widget();
+		mTabLayout->addWidget( w );
 		break;
 	}
 }

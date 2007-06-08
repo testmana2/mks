@@ -12,7 +12,7 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 
 	// create menu
 	QMenu* menu = new QMenu( this );
-	menu->menuAction()->setText( "Close Me" );
+	menu->menuAction()->setText( "Close" );
 	menu->menuAction()->setIcon( QIcon( ":/Icons/Icons/fileclose.png" ) );
 
 	// create action group
@@ -75,7 +75,7 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	connect( p, SIGNAL( tabModeChanged( pTabbedWorkspace::TabMode ) ), this, SLOT( tabModeChanged( pTabbedWorkspace::TabMode ) ) );
 	connect( p, SIGNAL( documentModeChanged( pTabbedWorkspace::DocumentMode ) ), this, SLOT( documentModeChanged( pTabbedWorkspace::DocumentMode ) ) );
 
-	setActions( QList<QAction*>() << menu->menuAction() );
+	setActions( QList<QAction*>() << menu->menuAction() << new QAction( "Yes!", this ) );
 }
 
 void pTabbedWorkspaceRightCorner::agTabShape_triggered( QAction* a )
