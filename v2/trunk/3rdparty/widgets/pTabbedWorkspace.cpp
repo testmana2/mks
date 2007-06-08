@@ -5,6 +5,8 @@
 #include <QStackedLayout>
 #include <QStackedWidget>
 #include <QWorkspace>
+#include <QIcon>
+#include <QCloseEvent>
 
 pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	: QWidget( p )
@@ -52,8 +54,7 @@ pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 pTabbedWorkspace::~pTabbedWorkspace()
 {
 	// close all document
-	foreach ( TABBED_DOCUMENT* d, mDocuments )
-		d->close();
+	closeAllTabs( true );
 
 	// delete all unclose document, if user click cancel
 	qDeleteAll( mDocuments );
@@ -66,7 +67,7 @@ pTabbedWorkspace::~pTabbedWorkspace()
 bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 {
 	// get document
-	TABBED_DOCUMENT* d = qobject_cast<TABBED_DOCUMENT*>( o );
+	TABBED_DOCUMENT* td = qobject_cast<TABBED_DOCUMENT*>( o );
 
 	// get event type
 	QEvent::Type t = e->type();
@@ -74,16 +75,25 @@ bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 	// if mode is toplevel and event is activate, activate correct window if needed
 	if ( mTabMode == tmTopLevel && t == QEvent::WindowActivate )
 	{
-		if ( d && d != currentDocument() )
-			setCurrentDocument( d );
+		if ( td && td != currentDocument() )
+			setCurrentDocument( td );
 	}
 
 	// remove document from workspace
-	else if ( t == QEvent::Close && d )
+	else if ( t == QEvent::Close && td )
 	{
-		emit aboutToRemoveTab( indexOf( d ) );
-		removeTab( qobject_cast<TABBED_DOCUMENT*>( o ) );
-		o->deleteLater();
+		// get closeevent
+		QCloseEvent* ce = static_cast<QCloseEvent*>( e );
+
+		// emit that document will be close, giving event so user can cancel it
+		emit aboutToCloseTab( indexOf( td ), ce );
+		emit aboutToCloseDocument( td, ce );
+		
+		// close document if accepted
+		if ( ce->isAccepted() )
+			td->deleteLater();
+		else // else cancel
+			return true;
 	}
 
 	// return default event filter
@@ -93,6 +103,11 @@ bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 void pTabbedWorkspace::workspaceWidget_windowActivated( QWidget* w )
 {
 	setCurrentDocument( w );
+}
+
+void pTabbedWorkspace::removeDocument( QObject* o )
+{
+	removeDocument( qobject_cast<TABBED_DOCUMENT*>( o ) );
 }
 
 QTabBar* pTabbedWorkspace::tabBar() const
@@ -117,45 +132,78 @@ pTabbedWorkspace::DocumentMode pTabbedWorkspace::documentMode() const
 
 void pTabbedWorkspace::setTabShape( QTabBar::Shape s )
 {
-	switch ( s )
+	if ( tabShape() != s )
 	{
-	case QTabBar::RoundedNorth:
-	case QTabBar::TriangularNorth:
-		mTabLayout->setDirection( QBoxLayout::LeftToRight );
-		mLayout->setDirection( QBoxLayout::TopToBottom );
-		break;
-	case QTabBar::RoundedSouth:
-	case QTabBar::TriangularSouth:
-		mTabLayout->setDirection( QBoxLayout::LeftToRight );
-		mLayout->setDirection( QBoxLayout::BottomToTop );
-		break;
-	case QTabBar::RoundedWest:
-	case QTabBar::TriangularWest:
-		mTabLayout->setDirection( QBoxLayout::BottomToTop );
-		mLayout->setDirection( QBoxLayout::LeftToRight );
-		break;
-	case QTabBar::RoundedEast:
-	case QTabBar::TriangularEast:
-		mTabLayout->setDirection( QBoxLayout::TopToBottom );
-		mLayout->setDirection( QBoxLayout::RightToLeft );
-		break;
+		// apply tab shape
+		mTabBar->setShape( s );
+	
+		// update view layout
+		switch ( s )
+		{
+		case QTabBar::RoundedNorth:
+		case QTabBar::TriangularNorth:
+			mTabLayout->setDirection( QBoxLayout::LeftToRight );
+			mLayout->setDirection( QBoxLayout::TopToBottom );
+			break;
+		case QTabBar::RoundedSouth:
+		case QTabBar::TriangularSouth:
+			mTabLayout->setDirection( QBoxLayout::LeftToRight );
+			mLayout->setDirection( QBoxLayout::BottomToTop );
+			break;
+		case QTabBar::RoundedWest:
+		case QTabBar::TriangularWest:
+			mTabLayout->setDirection( QBoxLayout::BottomToTop );
+			mLayout->setDirection( QBoxLayout::LeftToRight );
+			break;
+		case QTabBar::RoundedEast:
+		case QTabBar::TriangularEast:
+			mTabLayout->setDirection( QBoxLayout::TopToBottom );
+			mLayout->setDirection( QBoxLayout::RightToLeft );
+			break;
+		}
+	
+		// update corners
+		updateCorners();
+	
+		// emit shape changed
+		emit tabShapeChanged( s );
 	}
-
-	// update corners
-	updateCorners();
-
-	mTabBar->setShape( s );
-	emit tabShapeChanged( s );
 }
 
 void pTabbedWorkspace::setTabMode( pTabbedWorkspace::TabMode t )
 {
 	if ( mTabMode != t )
 	{
-		int i = currentIndex();
+		// retain tab mode
 		mTabMode = t;
+
+		// retain current index
+		int i = currentIndex();
+
+		// show correct workspace
+		switch ( mTabMode )
+		{
+		case tmSDI:
+			if ( mStackedLayout->currentWidget() != mStackedWidget )
+				mStackedLayout->setCurrentWidget( mStackedWidget );
+			break;
+		case tmMDI:
+			if ( mStackedLayout->currentWidget() != mWorkspaceWidget )
+				mStackedLayout->setCurrentWidget( mWorkspaceWidget );
+			break;
+		case tmTopLevel:
+			if ( mStackedLayout->currentIndex() != -1 )
+				mStackedLayout->setCurrentIndex( -1 );
+			break;
+		}
+
+		// update view
 		updateView();
+
+		// restore current index
 		setCurrentIndex( i );
+
+		// emit tab mode changed
 		emit tabModeChanged( mTabMode );
 	}
 }
@@ -164,11 +212,16 @@ void pTabbedWorkspace::setDocumentMode( pTabbedWorkspace::DocumentMode d )
 {
 	if ( mTabMode == pTabbedWorkspace::tmMDI /*&& mDocumentMode != d*/ )
 	{
-		switch( d )
+		// retain document mode
+		mDocumentMode = d;
+
+		// apply document layout
+		switch( mDocumentMode )
 		{
 		case dmMaximized:
-			foreach ( TABBED_DOCUMENT* d, documents() )
-				d->showMaximized();
+			foreach ( TABBED_DOCUMENT* td, documents() )
+				if ( !td->isMaximized() )
+					td->showMaximized();
 			break;
 		case dmCascade:
 			mWorkspaceWidget->cascade();
@@ -180,15 +233,18 @@ void pTabbedWorkspace::setDocumentMode( pTabbedWorkspace::DocumentMode d )
 			mWorkspaceWidget->arrangeIcons();
 			break;
 		case dmMinimizeAll:
-			foreach ( TABBED_DOCUMENT* d, documents() )
-				d->showMinimized();
+			foreach ( TABBED_DOCUMENT* td, documents() )
+				if ( !td->isMinimized() )
+					td->showMinimized();
 			break;
 		case dmRestoreAll:
-			foreach ( TABBED_DOCUMENT* d, documents() )
-				d->showNormal();
+			foreach ( TABBED_DOCUMENT* td, documents() )
+				if ( td->isMaximized() || td->isMinimized() )
+					td->showNormal();
 			break;
 		}
-		mDocumentMode = d;
+
+		// emit document mode changed
 		emit documentModeChanged( mDocumentMode );
 	}
 }
@@ -201,12 +257,13 @@ int pTabbedWorkspace::currentIndex() const
 void pTabbedWorkspace::setCurrentIndex( int i )
 {
 	if ( mTabBar->currentIndex() != i )
-	{
 		mTabBar->setCurrentIndex( i );
-	}
 	else
 	{
-		TABBED_DOCUMENT* d = document( i );
+		// get document
+		TABBED_DOCUMENT* td = document( i );
+
+		// set correct document visible
 		switch ( mTabMode )
 		{
 		case tmSDI:
@@ -217,21 +274,19 @@ void pTabbedWorkspace::setCurrentIndex( int i )
 			}
 			break;
 		case tmMDI:
-			if ( mWorkspaceWidget->activeWindow() != d )
+			if ( mWorkspaceWidget->activeWindow() != td )
 			{
-				mWorkspaceWidget->setActiveWindow( d );
+				mWorkspaceWidget->setActiveWindow( td );
 				emit currentChanged( i );
 			}
 			break;
 		case tmTopLevel:
-			if ( d )
+			if ( td )
 			{
-				d->raise();
-				d->activateWindow();
+				td->raise();
+				td->activateWindow();
 				emit currentChanged( i );
 			}
-			break;
-		default:
 			break;
 		}
 	}
@@ -315,12 +370,17 @@ void pTabbedWorkspace::setCornerWidget( pTabbedWorkspaceCorner* w, Qt::Corner c 
 
 void pTabbedWorkspace::updateCorners()
 {
+	// temp corner
 	pTabbedWorkspaceCorner* c;
+
+	// check left corner
 	if ( ( c = cornerWidget( Qt::TopLeftCorner ) ) )
 	{
 		c->setDirection( mTabLayout->direction() );
 		c->setEnabled( count() );
 	}
+
+	// check right corner
 	if ( ( c = cornerWidget( Qt::TopRightCorner ) ) )
 	{
 		c->setDirection( mTabLayout->direction() );
@@ -328,127 +388,151 @@ void pTabbedWorkspace::updateCorners()
 	}
 }
 
-void pTabbedWorkspace::updateView()
+void pTabbedWorkspace::updateView( TABBED_DOCUMENT* nd )
 {
+	// tmp list
+	QList<TABBED_DOCUMENT*> l;
+	if ( nd )
+		l << nd;
+	else
+		l << mDocuments;
+
 	// add document to correct workspace
-	foreach ( TABBED_DOCUMENT* d, documents() )
+	foreach ( TABBED_DOCUMENT* td, l )
 	{
+		// add to correct container
 		switch ( mTabMode )
 		{
 		case tmSDI:
-			mStackedWidget->addWidget( d );
+			mStackedWidget->addWidget( td );
 			break;
 		case tmMDI:
-			mWorkspaceWidget->addWindow( d );
+			mWorkspaceWidget->addWindow( td );
+			mWorkspaceWidget->setActiveWindow( td );
 			switch ( mDocumentMode )
 			{
 			case dmMaximized:
-				if ( !d->isMaximized() )
-					d->showMaximized();
+				if ( !nd->isMaximized() )
+					nd->showMaximized();
 				break;
 			case dmCascade:
-				if ( d == documents().last() )
-					mWorkspaceWidget->cascade();
+				mWorkspaceWidget->cascade();
 				break;
 			case dmTile:
-				if ( d == documents().last() )
-					mWorkspaceWidget->tile();
+				mWorkspaceWidget->tile();
 				break;
 			case dmIcons:
-				if ( d == documents().last() )
-					mWorkspaceWidget->arrangeIcons();
+				mWorkspaceWidget->arrangeIcons();
 				break;
 			case dmMinimizeAll:
-				if ( !d->isMinimized() )
-					d->showMinimized();
+				if ( !nd->isMinimized() )
+					nd->showMinimized();
 				break;
 			case dmRestoreAll:
-				d->showNormal();
+				if ( nd->isMaximized() || nd->isMinimized() )
+					nd->showNormal();
+				break;
+			default:
+				if ( !nd->isVisible() )
+					nd->show();
 				break;
 			}
 			break;
 		case tmTopLevel:
-			d->setParent( 0 );
-			if ( !d->isVisible() )
-				d->show();
+			// remove from container
+			if ( td->parent() )
+				td->setParent( 0 );
+			if ( !td->isVisible() )
+				td->show();
 			break;
 		}	
-	}
-
-	// show correct workspace
-	switch ( mTabMode )
-	{
-	case tmSDI:
-		mStackedLayout->setCurrentWidget( mStackedWidget );
-		break;
-	case tmMDI:
-		mStackedLayout->setCurrentWidget( mWorkspaceWidget );
-		break;
-	case tmTopLevel:
-		mStackedLayout->setCurrentWidget( 0 );
-		break;
 	}
 
 	// update corners
 	updateCorners();
 }
 
-void pTabbedWorkspace::addDocument( TABBED_DOCUMENT* d, int i )
+void pTabbedWorkspace::addDocument( TABBED_DOCUMENT* td, int i )
 {
 	if ( i == -1 )
 		i = count();
-	d->setAttribute( Qt::WA_DeleteOnClose, false );
-	d->installEventFilter( this );
-	mDocuments.insert( i, d );
-	updateView();
+
+	// set auto delete false
+	td->setAttribute( Qt::WA_DeleteOnClose, false );
+
+	// auto remove itself on delete
+	connect( td, SIGNAL( destroyed( QObject* ) ), this, SLOT( removeDocument( QObject* ) ) );
+
+	// filter the document
+	td->installEventFilter( this );
+
+	// append to document list
+	mDocuments.insert( i, td );
+
+	// update view
+	updateView( td );
+
+	// emit tab inserted
+	emit tabInserted( i );
 }
 
-int pTabbedWorkspace::addTab( TABBED_DOCUMENT* d, const QString& l )
+int pTabbedWorkspace::addTab( TABBED_DOCUMENT* td, const QString& l )
 {
-	return insertTab( count(), d, l );
+	return insertTab( count(), td, l );
 }
 
-int pTabbedWorkspace::addTab( TABBED_DOCUMENT* d, const QIcon& i, const QString& l )
+int pTabbedWorkspace::addTab( TABBED_DOCUMENT* td, const QIcon& i, const QString& l )
 {
-	return insertTab( count(), d, i, l );
+	return insertTab( count(), td, i, l );
 }
 
-int pTabbedWorkspace::insertTab( int i, TABBED_DOCUMENT* d, const QString& l )
+int pTabbedWorkspace::insertTab( int i, TABBED_DOCUMENT* td, const QString& l )
 {
-	if ( !d || mDocuments.contains( d ) )
+	return insertTab( i, td, QIcon(), l );
+}
+
+int pTabbedWorkspace::insertTab( int j, TABBED_DOCUMENT* td, const QIcon& i, const QString& l )
+{
+	// if already in or not existing d, cancel
+	if ( !td || mDocuments.contains( td ) )
 		return -1;
-	int j = mTabBar->insertTab( i, l );
-	addDocument( d, i );
-	if ( j != -1 )
-		emit tabInserted( j );
-	return j;
-}
 
-int pTabbedWorkspace::insertTab( int j, TABBED_DOCUMENT* d, const QIcon& i, const QString& l )
-{
-	int k = insertTab( j, d, l );
-	if ( k != -1 )
-		mTabBar->setTabIcon( k, i );
-	return k;
+	// insert document
+	j = mTabBar->insertTab( j, l );
+	addDocument( td, j );
+
+	// set icon if available
+	if ( !i.isNull() )
+		mTabBar->setTabIcon( j, i );
+
+	// return true index of the new document
+	return j;
 }
 
 void pTabbedWorkspace::removeTab( int i )
 {
-	removeTab( document( i ) );
+	removeDocument( document( i ) );
 }
 
-void pTabbedWorkspace::removeTab( TABBED_DOCUMENT* d )
+void pTabbedWorkspace::removeDocument( TABBED_DOCUMENT* td )
 {
-	if ( !d )
+	if ( !td )
 		return;
-	int i = indexOf( d );
+
+	// get document index
+	int i = indexOf( td );
+
+	// remove document from list
+	mDocuments.removeAll( td );
+
+	// remove from stacked to avoid crash
+	if ( mTabMode == tmSDI )
+		mStackedWidget->removeWidget( td );
+
+	// remove tab an position to new index
 	if ( i != -1 )
 	{
-		mDocuments.removeAll( d );
 		mTabBar->removeTab( i );
-		// remove document from container
-		if ( mTabMode == tmSDI )
-			mStackedWidget->removeWidget( d );
 		updateCorners();
 		emit tabRemoved( i );
 		setCurrentIndex( currentIndex() );
@@ -457,7 +541,17 @@ void pTabbedWorkspace::removeTab( TABBED_DOCUMENT* d )
 
 void pTabbedWorkspace::closeCurrentTab()
 {
-	TABBED_DOCUMENT* d = currentDocument();
-	if ( d )
-		d->close();
+	TABBED_DOCUMENT* td = currentDocument();
+	if ( td )
+		td->close();
+}
+
+void pTabbedWorkspace::closeAllTabs( bool b )
+{
+	foreach ( TABBED_DOCUMENT* td, mDocuments )
+	{
+		td->close();
+		if ( b )
+			td->deleteLater();
+	}
 }

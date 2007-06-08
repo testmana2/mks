@@ -20,18 +20,19 @@ int main( int argc, char** argv )
 	m->show();
 	//
 	tw->setTabShape( QTabBar::RoundedNorth );
-	tw->setTabMode( pTabbedWorkspace::tmSDI );
+	tw->setTabMode( pTabbedWorkspace::tmMDI );
 	tw->setDocumentMode( pTabbedWorkspace::dmMaximized );
 	//
-	for ( int i = 0; i < 5; i++ )
+	for ( int i = 0; i < 10; i++ )
 	{
 		QTextEdit* e = new QTextEdit;
 		e->setWindowTitle( QString( "Tab: %1" ).arg( i ) );
 		e->setPlainText( e->windowTitle() );
 		tw->addTab( e, e->windowTitle() );
 	}
-	tw->setCurrentIndex( 4 );
-	//tw->document( 3 )->close();
+	tw->setCurrentIndex( 5 );
+	tw->document( 3 )->close();
+	delete tw->document( 4 );
 	//
 	return app.exec();
 }

@@ -53,12 +53,13 @@ public slots:
 	void setCurrentDocument( TABBED_DOCUMENT* );
 	void setCornerWidget( pTabbedWorkspaceCorner*, Qt::Corner = Qt::TopRightCorner );
 	void removeTab( int );
-	void removeTab( TABBED_DOCUMENT* );
+	void removeDocument( TABBED_DOCUMENT* );
 	void closeCurrentTab();
+	void closeAllTabs( bool = false );
 
 protected:
 	void updateCorners();
-	void updateView();
+	void updateView( TABBED_DOCUMENT* = 0 );
 	void addDocument( TABBED_DOCUMENT* d, int = -1 );
 
 	pTabbedWorkspace::TabMode mTabMode;
@@ -76,10 +77,12 @@ protected:
 
 protected slots:
 	void workspaceWidget_windowActivated( QWidget* );
+	void removeDocument( QObject* );
 
 signals:
 	void tabInserted( int );
-	void aboutToRemoveTab( int );
+	void aboutToCloseTab( int, QCloseEvent* );
+	void aboutToCloseDocument( TABBED_DOCUMENT*, QCloseEvent* );
 	void tabRemoved( int );
 	void currentChanged( int );
 	void tabShapeChanged( QTabBar::Shape );
