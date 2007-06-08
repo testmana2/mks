@@ -50,9 +50,6 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	for ( int i = 0; i < e.keyCount(); i++ )
 	{
 		QAction* a = new QAction( e.key( i ), agDocumentMode );
-		a->setCheckable( true );
-		if ( p->documentMode() == e.value( i ) )
-			a->setChecked( true );
 		a->setData( i );
 	}
 
@@ -75,7 +72,7 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	connect( p, SIGNAL( tabModeChanged( pTabbedWorkspace::TabMode ) ), this, SLOT( tabModeChanged( pTabbedWorkspace::TabMode ) ) );
 	connect( p, SIGNAL( documentModeChanged( pTabbedWorkspace::DocumentMode ) ), this, SLOT( documentModeChanged( pTabbedWorkspace::DocumentMode ) ) );
 
-	setActions( QList<QAction*>() << menu->menuAction() << new QAction( "Yes!", this ) );
+	setActions( QList<QAction*>() << menu->menuAction() );
 }
 
 void pTabbedWorkspaceRightCorner::agTabShape_triggered( QAction* a )
@@ -127,11 +124,10 @@ void pTabbedWorkspaceRightCorner::documentModeChanged( pTabbedWorkspace::Documen
 	QList<QAction*> l = agDocumentMode->actions();
 	foreach ( QAction* a, l )
 	{
+		QFont f( a->font() );
+		f.setBold( false );
 		if ( a->data().toInt() == m )
-		{
-			if ( !a->isChecked() )
-				a->setChecked( true );
-			return;
-		}
+			f.setBold( true );
+		a->setFont( f );
 	}
 }

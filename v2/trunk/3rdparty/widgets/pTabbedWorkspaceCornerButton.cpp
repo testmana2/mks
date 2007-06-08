@@ -6,11 +6,10 @@
 #include <QToolBar>
 #include <QMenu>
 #include <QPainter>
-
-#include <QDebug>
+#include <QApplication>
 
 pTabbedWorkspaceCornerButton::pTabbedWorkspaceCornerButton( QWidget* p, QBoxLayout::Direction d )
-	: QToolButton( p ), mVisibleMenu( false )
+	: QToolButton( p ), mMenuDown( false )
 {
 	/*
 	QBoxLayout::LeftToRight
@@ -24,7 +23,6 @@ pTabbedWorkspaceCornerButton::pTabbedWorkspaceCornerButton( QWidget* p, QBoxLayo
 
 void pTabbedWorkspaceCornerButton::paintEvent( QPaintEvent* e )
 {
-qWarning( "paint" );
 	// calcul angle rotation
 	QSize s = QToolButton::sizeHint();
 	int r = 0;
@@ -58,6 +56,12 @@ qWarning( "paint" );
 	QStyleOptionToolButton o;
 	setStyleOption( &o );
 
+	// mousepress bug
+	if ( QApplication::mouseButtons() & Qt::LeftButton &&
+		hitButton( mapFromGlobal( QCursor::pos() ) ) &&
+		( !mMenuDown /*|| popupMode() != QToolButton::MenuButtonPopup*/ ) )
+		o.state |= QStyle::State_On;
+
 	// force to do horizontal paint
 	o.rect.setSize( s );
 
@@ -74,24 +78,78 @@ qWarning( "paint" );
 void pTabbedWorkspaceCornerButton::mousePressEvent( QMouseEvent* e )
 {
 #ifndef QT_NO_MENU
-	// test if we can check popup
-	bool b = e->button() == Qt::LeftButton && popupMode() == QToolButton::MenuButtonPopup;
 
-	if ( b )
+	switch ( mDirection )
+	{
+	case QBoxLayout::TopToBottom:
+	case QBoxLayout::BottomToTop:
+	{
+		// chekc is click on arrow
+		if ( hitArrow() )
+		{
+			mMenuDown = true;
+			showMenu();
+		}
+
+		// update
+		update();
+		break;
+	}
+	default:
+		// return default mousepressevent
+		QToolButton::mousePressEvent( e );
+		break;
+	}
+
+#else
+	// return default mousepressevent
+	QToolButton::mousePressEvent( e );
+#endif
+}
+
+void pTabbedWorkspaceCornerButton::mouseReleaseEvent( QMouseEvent* e )
+{
+	
+	switch ( mDirection )
+	{
+	case QBoxLayout::TopToBottom:
+	case QBoxLayout::BottomToTop:
+		// process button click
+		if ( hitButton( e->pos() ) && !hitArrow( false ) )
+			click();
+
+		// update
+		update();
+		break;
+	default:
+		QToolButton::mouseReleaseEvent( e );
+		break;
+	}
+
+	// reset menudown value
+	mMenuDown = false;
+}
+
+bool pTabbedWorkspaceCornerButton::hitArrow( bool b ) const
+{
+	// test if arrow button and click
+	if ( !b ||
+		( b && ( QApplication::mouseButtons() & Qt::LeftButton &&
+		popupMode() == QToolButton::MenuButtonPopup ) ) )
 	{
 		// get bounding rectangle
 		QRect r = rect();
-
+	
 		// get style options
 		QStyleOptionToolButton opt;
 		setStyleOption( &opt );
-
+	
 		// force to do horizontal calcul
 		opt.rect.setSize( QToolButton::sizeHint() );
-	
+
 		// get arraow bounding rectangle
 		QSize s = style()->subControlRect( QStyle::CC_ToolButton, &opt, QStyle::SC_ToolButtonMenu, this ).size();
-	
+		
 		// transpose for vertical
 		s.transpose();
 	
@@ -102,47 +160,12 @@ void pTabbedWorkspaceCornerButton::mousePressEvent( QMouseEvent* e )
 		if ( mDirection == QBoxLayout::TopToBottom )
 			r.moveTop( rect().height() -r.height() );
 
-		// check menu show validity
-		if ( r.isValid() && r.contains( e->pos() ) )
-		{
-			mVisibleMenu = true;
-			showMenu();
-			mVisibleMenu = false;
-		}
-
-		// update
-		update();
-
-		// return
-		return;
-
+		// return is arrow clicked
+		return r.isValid() && r.contains( mapFromGlobal( QCursor::pos() ) );
 	}
 
-	// return default mousepressevent
-	QToolButton::mousePressEvent( e );
-#else
-	// return default mousepressevent
-	QToolButton::mousePressEvent( e );
-#endif
-}
-
-void pTabbedWorkspaceCornerButton::mouseReleaseEvent( QMouseEvent* e )
-{
-	switch ( mDirection )
-	{
-	case QBoxLayout::TopToBottom:
-	case QBoxLayout::BottomToTop:
-		if ( hitButton( e->pos() ) && !mVisibleMenu )
-		{
-	update();
-			click();
-			
-		}
-		break;
-	default:
-		QToolButton::mouseReleaseEvent( e );
-		break;
-	}
+	// return default
+	return false;
 }
 
 QMenu* pTabbedWorkspaceCornerButton::hasMenu() const
@@ -156,7 +179,7 @@ QMenu* pTabbedWorkspaceCornerButton::hasMenu() const
 bool pTabbedWorkspaceCornerButton::menuButtonDown() const
 {
 #ifndef QT_NO_MENU
-	return hasMenu() && mVisibleMenu;
+	return hasMenu() && mMenuDown;
 #else
 	return false;
 #endif
@@ -168,8 +191,9 @@ void pTabbedWorkspaceCornerButton::setStyleOption( QStyleOptionToolButton* optio
 		return;
 
 #if QT_VERSION >= 0x040300
-	initStyleOption( o );
+	initStyleOption( option );
 #else
+	// backported from Qt 4.3
 	option->initFrom( this );
 	bool forceNoText = false;
  
@@ -202,6 +226,7 @@ void pTabbedWorkspaceCornerButton::setStyleOption( QStyleOptionToolButton* optio
 	option->arrowType = arrowType();
 	if ( isDown() )
 		option->state |= QStyle::State_Sunken;
+
 	if ( isChecked() )
 		option->state |= QStyle::State_On;
 	if ( autoRaise() )
@@ -211,8 +236,8 @@ void pTabbedWorkspaceCornerButton::setStyleOption( QStyleOptionToolButton* optio
  
 	option->subControls = QStyle::SC_ToolButton;
 	option->activeSubControls = QStyle::SC_None;
-//	if ( isDown() && !menuButtonDown())
-//		option->activeSubControls |= QStyle::SC_ToolButton;
+	//if ( isDown() && !menuButtonDown() )
+		//option->activeSubControls |= QStyle::SC_ToolButton;
  
 	option->features = QStyleOptionToolButton::None;
 	if ( popupMode() == QToolButton::MenuButtonPopup )
@@ -258,7 +283,7 @@ void pTabbedWorkspaceCornerButton::setStyleOption( QStyleOptionToolButton* optio
 		if ( text().isEmpty() && option->toolButtonStyle != Qt::ToolButtonIconOnly )
 			option->toolButtonStyle = Qt::ToolButtonIconOnly;
 	}
- 
+
 	option->pos = pos();
 	option->font = font();
 #endif // QT_VERSION >= 0x040300

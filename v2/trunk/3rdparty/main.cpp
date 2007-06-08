@@ -10,7 +10,7 @@
 int main( int argc, char** argv )
 {
 	QApplication app( argc, argv );
-	app.setStyle( "plastique" );
+	//app.setStyle( "plastique" );
 	//
 	QMainWindow* m = new QMainWindow;
 	m->setAttribute( Qt::WA_DeleteOnClose );
@@ -19,7 +19,7 @@ int main( int argc, char** argv )
 	m->setCentralWidget( tw );
 	m->show();
 	//
-	tw->setTabShape( QTabBar::RoundedWest );
+	tw->setTabShape( QTabBar::RoundedNorth );
 	tw->setTabMode( pTabbedWorkspace::tmSDI );
 	tw->setDocumentMode( pTabbedWorkspace::dmMaximized );
 	//

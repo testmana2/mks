@@ -27,12 +27,13 @@ protected:
 	virtual void mousePressEvent( QMouseEvent* );
 	virtual void mouseReleaseEvent( QMouseEvent* );
 
+	bool hitArrow( bool = true ) const; // bool check button state
 	QMenu* hasMenu() const;
 	bool menuButtonDown() const;
 	void setStyleOption( QStyleOptionToolButton* ) const;
 
 	QBoxLayout::Direction mDirection;
-	bool mVisibleMenu;
+	bool mMenuDown;
 
 };
 
