@@ -41,9 +41,9 @@ pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	connect( mWorkspaceWidget, SIGNAL( windowActivated( QWidget* ) ), this, SLOT( workspaceWidget_windowActivated( QWidget* ) ) );
 
 	// init view
+	setAttribute( Qt::WA_DeleteOnClose );
 	mTabBar->setDrawBase( false );
 	mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Maximum ) );
-	setAttribute( Qt::WA_DeleteOnClose );
 	setCornerWidget( pTabbedWorkspaceRightCorner::instance( this ) );
 	setTabMode( m );
 	setDocumentMode( pTabbedWorkspace::dmMaximized );
@@ -122,25 +122,21 @@ void pTabbedWorkspace::setTabShape( QTabBar::Shape s )
 	case QTabBar::RoundedNorth:
 	case QTabBar::TriangularNorth:
 		mTabLayout->setDirection( QBoxLayout::LeftToRight );
-		mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Maximum ) );
 		mLayout->setDirection( QBoxLayout::TopToBottom );
 		break;
 	case QTabBar::RoundedSouth:
 	case QTabBar::TriangularSouth:
 		mTabLayout->setDirection( QBoxLayout::LeftToRight );
-		mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Maximum ) );
 		mLayout->setDirection( QBoxLayout::BottomToTop );
 		break;
 	case QTabBar::RoundedWest:
 	case QTabBar::TriangularWest:
 		mTabLayout->setDirection( QBoxLayout::BottomToTop );
-		mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Expanding ) );
 		mLayout->setDirection( QBoxLayout::LeftToRight );
 		break;
 	case QTabBar::RoundedEast:
 	case QTabBar::TriangularEast:
 		mTabLayout->setDirection( QBoxLayout::TopToBottom );
-		mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Expanding ) );
 		mLayout->setDirection( QBoxLayout::RightToLeft );
 		break;
 	}
@@ -166,7 +162,7 @@ void pTabbedWorkspace::setTabMode( pTabbedWorkspace::TabMode t )
 
 void pTabbedWorkspace::setDocumentMode( pTabbedWorkspace::DocumentMode d )
 {
-	if ( mTabMode == pTabbedWorkspace::tmMDI && mDocumentMode != d )
+	if ( mTabMode == pTabbedWorkspace::tmMDI /*&& mDocumentMode != d*/ )
 	{
 		switch( d )
 		{
