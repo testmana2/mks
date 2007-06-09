@@ -1,6 +1,7 @@
 #ifndef MONKEYACTGROUP_H
 #define MONKEYACTGROUP_H
 #include <QActionGroup>
+#include <QWidget>
 
 class MonkeyAction;
 
@@ -11,7 +12,7 @@ class MonkeyActGroup : public QActionGroup
 private:
 	QList <MonkeyAction*> actions;
 public:
-	MonkeyActGroup ( const QString & name, QObject * parent );
+	MonkeyActGroup ( const QString & name, QWidget * parentWidget );
 	~MonkeyActGroup ();
 
 	void appendAction ( MonkeyAction*);

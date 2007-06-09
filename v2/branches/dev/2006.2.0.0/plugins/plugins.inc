@@ -38,4 +38,5 @@ INCLUDEPATH	= . \
 	../../../monkey/src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci \
 	../../../monkey/src/projectsmanager \
 	../../../monkey/src/projectsmanager/ui \
-	../../../monkey/src
+	../../../monkey/src \
+	../../../monkey/src/actionmanager
