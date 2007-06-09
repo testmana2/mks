@@ -40,7 +40,8 @@ INCLUDEPATH	= . src src/ui \
 	src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4/Qsci \
 	src/3rdparty/qscintilla/$$QSCINTILLAVERSION/Qt4 \
 	src/3rdparty/coveragemeter/ui \
-	src/3rdparty/exuberantCtags
+	src/3rdparty/exuberantCtags  \
+	src/actionmanager
 
 CONFIG	+= qt warn_on release app_bundle thread x11 windows console
 DESTDIR	= ../bin
@@ -85,8 +86,10 @@ SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/pluginsmanager/ui/UIPluginsSettings.cpp  \
 	src/3rdparty/coveragemeter/ui/UITestReport.cpp \
 	src/maininterface/ui/UISettings.cpp \
-	src/ctags/Ctags.cpp
-
+	src/ctags/Ctags.cpp \
+	src/actionmanager/ActionManager.cpp \
+	src/actionmanager/MonkeyAction.cpp \
+	src/actionmanager/MonkeyActGroup.cpp
 
 FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/toolsmanager/ui/UIToolsEdit.ui \
@@ -137,5 +140,7 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/pluginsmanager/ui/UIPluginsSettings.h \
 	src/3rdparty/coveragemeter/ui/UITestReport.h \
 	src/maininterface/ui/UISettings.h \
-	src/ctags/Ctags.h
-
+	src/ctags/Ctags.h \
+	src/actionmanager/ActionManager.cpp \
+	src/actionmanager/MonkeyAction.cpp \
+	src/actionmanager/MonkeyActGroup.cpp

@@ -2,21 +2,19 @@
 #include "MonkeyActGroup.h"
 #include "ActionManager.h"
 
-MonkeyAction::MonkeyAction ( MonkeyActGroup * parent, const QString & text, const QKeySequence & defaultShortcut ): QAction (text, parent)
+MonkeyAction::MonkeyAction ( MonkeyActGroup * parent, const QString & text, const QKeySequence & defaultShortcut ): QAction (parent)
 {
-	parent->appendAction ( this);
+	setShortcutContext( Qt::ApplicationShortcut );
+    setShortcut ( defaultShortcut);
+    setText (text);
+    parent->appendAction ( this);
 	setObjectName ( text);
 	setData ( QVariant (defaultShortcut.toString()));
-	setShortcut ( ActionManager::getShortCut ( this) );
+	//setShortcut ( ActionManager::getShortCut ( this) );
 }
 
 MonkeyAction::~MonkeyAction ()
 {
 	MonkeyActGroup* group = (MonkeyActGroup*)actionGroup ();
 	group->removeAction ( this);
-}
-
-void MonkeyAction::setShortcut ( const QKeySequence & shortcut )
-{
-//just for make method private
 }
