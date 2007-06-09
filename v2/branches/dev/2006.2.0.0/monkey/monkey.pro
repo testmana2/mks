@@ -89,7 +89,8 @@ SOURCES	= src/3rdparty/objects/pSettings/pSettings.cpp \
 	src/ctags/Ctags.cpp \
 	src/actionmanager/ActionManager.cpp \
 	src/actionmanager/MonkeyAction.cpp \
-	src/actionmanager/MonkeyActGroup.cpp
+	src/actionmanager/MonkeyActGroup.cpp \
+	src/actionmanager/KeySequenceInput.cpp
 
 FORMS	= src/maininterface/ui/UITranslator.ui \
 	src/toolsmanager/ui/UIToolsEdit.ui \
@@ -141,6 +142,7 @@ HEADERS	= src/3rdparty/objects/pSettings/pSettings.h \
 	src/3rdparty/coveragemeter/ui/UITestReport.h \
 	src/maininterface/ui/UISettings.h \
 	src/ctags/Ctags.h \
-	src/actionmanager/ActionManager.cpp \
-	src/actionmanager/MonkeyAction.cpp \
-	src/actionmanager/MonkeyActGroup.cpp
+	src/actionmanager/ActionManager.h \
+	src/actionmanager/MonkeyAction.h \
+	src/actionmanager/MonkeyActGroup.h \
+	src/actionmanager/KeySequenceInput.h
