@@ -1,5 +1,9 @@
-#ifndef _KEY_INPUT_H
+#ifndef _KEY_SEQUENCE_INPUT_H
 #define _KEY_INPUT_H
+#include <QLineEdit>
+
+#include <QWidget>
+#include <QKeyEvent>
 #include <QLineEdit>
 
 class KeySequenceInput : public QLineEdit
@@ -11,10 +15,10 @@ private:
 	bool shiftPressed;
 
 public:
-	KeySequenceInput ();
+	KeySequenceInput (QWidget*);
 	
 protected:
 	//maybe possible just overload QObject::event (), but there is some problems	
 	bool eventFilter(QObject *obj, QEvent *event);
 };
-#endif //_KEY_INPUT_H
+#endif //_KEY_SEQUENCE_INPUT_H

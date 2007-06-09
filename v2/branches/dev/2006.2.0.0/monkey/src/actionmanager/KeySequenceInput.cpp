@@ -1,7 +1,12 @@
-#include "KeyInput.h"
+#include "KeySequenceInput.h"
+
+#include <QWidget>
+#include <QKeySequence>
+#include <QLineEdit>
+#include <QKeyEvent>
 
 
-KeySequenceInput::KeySequenceInput ()
+KeySequenceInput::KeySequenceInput (QWidget* p) : QLineEdit (p)
 {
 	controlPressed = false;
 	altPressed = false;
@@ -13,7 +18,6 @@ KeySequenceInput::KeySequenceInput ()
 
 bool KeySequenceInput::eventFilter(QObject *obj, QEvent *event)
 {
-	qDebug ("adfasdfasdf");
 	if (event->type() == QEvent::KeyPress) 
 	{
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
