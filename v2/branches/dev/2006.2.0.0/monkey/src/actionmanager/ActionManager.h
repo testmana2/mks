@@ -8,8 +8,9 @@
 #include "MonkeyAction.h"
 #include "MonkeyActGroup.h"
 
-class ActionManager
+class ActionManager : public QObject
 {
+Q_OBJECT
 private:
 
 	QList <MonkeyActGroup*> actionGroups;
@@ -18,11 +19,14 @@ private:
 
 public:
 	static ActionManager* self ();
-
+    
+    ActionManager ();
 	void addActGroup ( MonkeyActGroup* grp);
 	void deleteActGroup ( MonkeyActGroup* grp);
-
+    
 	static QKeySequence getShortCut ( MonkeyAction* );
-
 	QDialog* shotcutsConfig ();
+    
+public slots:
+    void showSettings ();
 };
