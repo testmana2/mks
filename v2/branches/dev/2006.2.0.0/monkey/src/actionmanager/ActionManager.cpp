@@ -1,10 +1,19 @@
 #ifndef ACTIONMANAGER_H
 #define ACTIONMANAGER_H
 #include <QDebug>
+#include <QDialog>
+#include <QListWidget>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QMenu>
+#include <QAction>
 
 #include "ActionManager.h"
 #include "Settings.h"
-
+#include "Workspace.h"
+#include "MenuBar.h"
+#include "KeyInput.h"
 
 ActionManager* ActionManager::mSelf = 0L;
 
@@ -13,6 +22,15 @@ ActionManager* ActionManager::self()
 	if ( !mSelf )
 		mSelf = new ActionManager();
 	return mSelf;
+}
+
+ActionManager::ActionManager ()
+{
+    //Can't use MonkeyAction there, because MonkeyAction use ActionManager. It's reqursion
+    QMenu* menu = Workspace::self()->menuBar()->menu ("Tools");
+    QAction * act = new QAction ("Shortcut settings", this);
+    menu->addAction ( act);
+    connect ( act, SIGNAL ( triggered()), this, SLOT ( showSettings ()));
 }
 
 void ActionManager::addActGroup ( MonkeyActGroup* grp)
@@ -43,6 +61,22 @@ QDialog* ActionManager::shotcutsConfig ()
 			qDebug ( qPrintable ( actions[actn]->text())); 
 	}
 	return NULL;
+}
+
+void ActionManager::showSettings ()
+{
+    QDialog wgt;
+    QVBoxLayout vbox ( &wgt);
+    QListWidget list ( &wgt);
+    vbox.addWidget ( &list);
+    QHBoxLayout confbox (&wgt);
+    KeyInput 
+    QHBoxLayout hbox (&wgt);
+    vbox.addLayout ( &hbox);
+     hbox.addSpacing (60);
+    QPushButton okButton (&wgt);
+    hbox.addWidget ( &okButton);
+    wgt.exec ();
 }
 
 #endif //ACTIONMANAGER_HK
