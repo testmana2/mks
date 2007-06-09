@@ -13,7 +13,7 @@
 #include "Settings.h"
 #include "Workspace.h"
 #include "MenuBar.h"
-#include "KeyInput.h"
+#include "KeySequenceInput.h"
 
 ActionManager* ActionManager::mSelf = 0L;
 
@@ -70,11 +70,17 @@ void ActionManager::showSettings ()
     QListWidget list ( &wgt);
     vbox.addWidget ( &list);
     QHBoxLayout confbox (&wgt);
-    KeyInput 
+    vbox.addLayout (&confbox);
+    KeySequenceInput kinput (&wgt);
+    confbox.addWidget ( &kinput);
+    QPushButton clearbtn ("Clear", &wgt);
+    confbox.addWidget ( &clearbtn);
+    QPushButton defaultbtn ("Set default", &wgt);
+    confbox.addWidget ( &defaultbtn);
     QHBoxLayout hbox (&wgt);
     vbox.addLayout ( &hbox);
-     hbox.addSpacing (60);
-    QPushButton okButton (&wgt);
+     hbox.addSpacing (90);
+    QPushButton okButton ("OK", &wgt);
     hbox.addWidget ( &okButton);
     wgt.exec ();
 }
