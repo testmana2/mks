@@ -21,7 +21,7 @@ pTabbedWorkspaceCornerButton::pTabbedWorkspaceCornerButton( QWidget* p, QBoxLayo
 	setDirection( d );
 }
 
-void pTabbedWorkspaceCornerButton::paintEvent( QPaintEvent* e )
+void pTabbedWorkspaceCornerButton::paintEvent( QPaintEvent* )
 {
 	// calcul angle rotation
 	QSize s = QToolButton::sizeHint();
@@ -40,13 +40,6 @@ void pTabbedWorkspaceCornerButton::paintEvent( QPaintEvent* e )
 	default:
 		break;
 	}
-	
-	// if r = 0, do normal paintevent and return
-	if ( r == 0 )
-	{
-		QToolButton::paintEvent( e );
-		return;
-	}
 
 	// do rotated button
 	QPixmap pixmap( s );
@@ -56,14 +49,30 @@ void pTabbedWorkspaceCornerButton::paintEvent( QPaintEvent* e )
 	QStyleOptionToolButton o;
 	setStyleOption( &o );
 
-	// mousepress bug
-	if ( QApplication::mouseButtons() & Qt::LeftButton &&
-		hitButton( mapFromGlobal( QCursor::pos() ) ) &&
-		( !mMenuDown /*|| popupMode() != QToolButton::MenuButtonPopup*/ ) )
-		o.state |= QStyle::State_On;
-
 	// force to do horizontal paint
 	o.rect.setSize( s );
+
+	// fix backport bugs :|
+	switch ( cursorArea() )
+	{
+	case pTabbedWorkspaceCornerButton::caArrow:
+		break;
+	case pTabbedWorkspaceCornerButton::caButton:
+		break;
+	case pTabbedWorkspaceCornerButton::caArrowClicked:
+		break;
+	case pTabbedWorkspaceCornerButton::caButtonClicked:
+		o.activeSubControls |= QStyle::SC_ToolButton;
+		if ( popupMode() == QToolButton::MenuButtonPopup )
+		{
+			o.state |= QStyle::State_MouseOver;
+			o.activeSubControls |= QStyle::SC_ToolButtonMenu;
+		}
+		break;
+	case pTabbedWorkspaceCornerButton::caNone:
+	default:
+		break;
+	}
 
 	// draw button to pixmap
 	QPainter pixpainter( &pixmap );
@@ -77,65 +86,65 @@ void pTabbedWorkspaceCornerButton::paintEvent( QPaintEvent* e )
 
 void pTabbedWorkspaceCornerButton::mousePressEvent( QMouseEvent* e )
 {
-#ifndef QT_NO_MENU
-
-	switch ( mDirection )
+	switch ( cursorArea( e->pos() ) )
 	{
-	case QBoxLayout::TopToBottom:
-	case QBoxLayout::BottomToTop:
-	{
-		// chekc is click on arrow
-		if ( hitArrow() )
-		{
-			mMenuDown = true;
-			showMenu();
-		}
-
-		// update
-		update();
+	case pTabbedWorkspaceCornerButton::caArrowClicked:
+		mMenuDown = true;
+		showMenu();
+		
 		break;
-	}
+	case pTabbedWorkspaceCornerButton::caButtonClicked:
+		break;
+	case pTabbedWorkspaceCornerButton::caNone:
+		break;
 	default:
-		// return default mousepressevent
-		QToolButton::mousePressEvent( e );
+		QAbstractButton::mousePressEvent( e );
 		break;
 	}
 
-#else
-	// return default mousepressevent
-	QToolButton::mousePressEvent( e );
-#endif
+	// update button
+	update();
 }
 
 void pTabbedWorkspaceCornerButton::mouseReleaseEvent( QMouseEvent* e )
 {
-	
-	switch ( mDirection )
-	{
-	case QBoxLayout::TopToBottom:
-	case QBoxLayout::BottomToTop:
-		// process button click
-		if ( hitButton( e->pos() ) && !hitArrow( false ) )
-			click();
+	mMenuDown = false;
 
-		// update
-		update();
+	switch ( cursorArea( e->pos() ) )
+	{
+	case pTabbedWorkspaceCornerButton::caArrow:
+		break;
+	case pTabbedWorkspaceCornerButton::caButton:
+		click();
+		break;
+	case pTabbedWorkspaceCornerButton::caNone:
 		break;
 	default:
-		QToolButton::mouseReleaseEvent( e );
+		QAbstractButton::mouseReleaseEvent( e );
 		break;
 	}
 
-	// reset menudown value
-	mMenuDown = false;
+	// update button
+	update();
 }
 
-bool pTabbedWorkspaceCornerButton::hitArrow( bool b ) const
+pTabbedWorkspaceCornerButton::CursorArea pTabbedWorkspaceCornerButton::cursorArea( const QPoint& pos ) const
 {
-	// test if arrow button and click
-	if ( !b ||
-		( b && ( QApplication::mouseButtons() & Qt::LeftButton &&
-		popupMode() == QToolButton::MenuButtonPopup ) ) )
+	// cursor pos
+	const QPoint p = pos.isNull() ? mapFromGlobal( QCursor::pos() ) : pos;
+
+	// if not contain is button return none
+	if ( !hitButton( p ) )
+		return pTabbedWorkspaceCornerButton::caNone;
+
+	// is arrow type
+	bool a = popupMode() == QToolButton::MenuButtonPopup;
+
+	// is mouse pressed ?!
+	bool m = QApplication::mouseButtons() & Qt::LeftButton;
+
+	// check if we are a arrow button
+	if ( a )
 	{
 		// get bounding rectangle
 		QRect r = rect();
@@ -149,23 +158,31 @@ bool pTabbedWorkspaceCornerButton::hitArrow( bool b ) const
 
 		// get arraow bounding rectangle
 		QSize s = style()->subControlRect( QStyle::CC_ToolButton, &opt, QStyle::SC_ToolButtonMenu, this ).size();
-		
-		// transpose for vertical
-		s.transpose();
+
+		switch ( mDirection )
+		{
+		case QBoxLayout::BottomToTop:
+			s.transpose();
+			break;
+		case QBoxLayout::TopToBottom:
+			s.transpose();
+			r.setY( r.height() -s.height() );
+			break;
+		default:
+			r.setX( r.width() -s.width() );
+			break;
+		}
 	
 		// get valid bounding rectangle size
 		r.setSize( s );
 
-		// move top
-		if ( mDirection == QBoxLayout::TopToBottom )
-			r.moveTop( rect().height() -r.height() );
-
-		// return is arrow clicked
-		return r.isValid() && r.contains( mapFromGlobal( QCursor::pos() ) );
+		// in arrow bounding rect
+		if ( r.isValid() && r.contains( p ) )
+			return m ? pTabbedWorkspaceCornerButton::caArrowClicked : pTabbedWorkspaceCornerButton::caArrow;
 	}
 
-	// return default
-	return false;
+	// in button
+	return m ? pTabbedWorkspaceCornerButton::caButtonClicked : pTabbedWorkspaceCornerButton::caButton;
 }
 
 QMenu* pTabbedWorkspaceCornerButton::hasMenu() const
@@ -262,11 +279,10 @@ void pTabbedWorkspaceCornerButton::setStyleOption( QStyleOptionToolButton* optio
 	if ( popupMode() == QToolButton::DelayedPopup )
 		option->features |= QStyleOptionToolButton::PopupDelay;
 #ifndef QT_NO_MENU
-#if QT_VERSION >= 0x040300
 	if ( hasMenu() )
+#if QT_VERSION >= 0x040300
 		option->features |= QStyleOptionToolButton::HasMenu;
 #else
-	if ( hasMenu() )
 		option->features |= QStyleOptionToolButton::Menu;
 #endif
 #endif

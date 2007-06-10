@@ -13,6 +13,8 @@ class Q_MONKEY_EXPORT pTabbedWorkspaceCornerButton : public QToolButton
 	Q_OBJECT
 
 public:
+	enum CursorArea { caNone = 0, caArrow, caButton, caArrowClicked, caButtonClicked };
+
 	pTabbedWorkspaceCornerButton( QWidget* p, QBoxLayout::Direction = QBoxLayout::LeftToRight );
 
 	virtual QSize sizeHint() const;
@@ -27,7 +29,8 @@ protected:
 	virtual void mousePressEvent( QMouseEvent* );
 	virtual void mouseReleaseEvent( QMouseEvent* );
 
-	bool hitArrow( bool = true ) const; // bool check button state
+	pTabbedWorkspaceCornerButton::CursorArea cursorArea( const QPoint& = QPoint() ) const;
+
 	QMenu* hasMenu() const;
 	bool menuButtonDown() const;
 	void setStyleOption( QStyleOptionToolButton* ) const;
