@@ -9,13 +9,13 @@ class ActionManager;
 
 class MonkeyActGroup : public QActionGroup
 {
-private:
-	QList <MonkeyAction*> actions;
 public:
+//	QList <MonkeyAction*> actions;
+
 	MonkeyActGroup ( const QString & name, QWidget * parentWidget );
 	~MonkeyActGroup ();
 
-	void appendAction ( MonkeyAction*);
-	void removeAction ( MonkeyAction* );
+//	void appendAction ( MonkeyAction*);
+//	void removeAction ( MonkeyAction* );
 };
 #endif //MONKEYACTGROUP_H

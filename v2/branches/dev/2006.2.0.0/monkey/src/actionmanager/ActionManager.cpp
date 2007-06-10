@@ -2,7 +2,8 @@
 #define ACTIONMANAGER_H
 #include <QDebug>
 #include <QDialog>
-#include <QListWidget>
+#include <QTreeWidget>
+#include <QHeaderView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -65,21 +66,41 @@ QDialog* ActionManager::shotcutsConfig ()
 
 void ActionManager::showSettings ()
 {
-    QDialog wgt;
+    QDialog wgt (NULL,Qt::Dialog);
+    wgt.setFixedSize ( 400, 480);
     QVBoxLayout vbox ( &wgt);
-    QListWidget list ( &wgt);
+    QTreeWidget list ( &wgt);
+    list.setColumnCount (2);
+    list.header()->hide();
+    //list.setHeaderLabels ( QStringList()<<"Action"<<Shortcut);
+    list.header()->setResizeMode(QHeaderView::ResizeToContents);
+    MonkeyActGroup* actgrp;
+    QString grpName;
+    QList<QAction*> actions;
+    for ( int grpn = 0; grpn< actionGroups.size (); grpn++ )
+	{
+        QTreeWidgetItem* grpitem = new QTreeWidgetItem (&list, QStringList (actionGroups[grpn]->objectName()));
+        grpitem->setExpanded ( true);
+        list.addTopLevelItem ( grpitem);
+		actions = actionGroups[grpn]->actions();
+		for (int actn = 0; actn < actions.size(); actn ++)
+			grpitem->addChild ( new QTreeWidgetItem ( QStringList ()<<( grpName+ actions[actn]->text())<<(actions[actn]->property("Default shortcut").toString()))); 
+	}
+    
     vbox.addWidget ( &list);
+    //actions[actn]->property("Default shortcut").toString()
     QHBoxLayout confbox (&wgt);
     vbox.addLayout (&confbox);
-    KeySequenceInput kinput (&wgt);
-    confbox.addWidget ( &kinput);
+    QPushButton defaultbtn ("Set to default", &wgt);
+    confbox.addWidget ( &defaultbtn);
     QPushButton clearbtn ("Clear", &wgt);
     confbox.addWidget ( &clearbtn);
-    QPushButton defaultbtn ("Set default", &wgt);
-    confbox.addWidget ( &defaultbtn);
+    KeySequenceInput kinput (&wgt);
+    kinput.setEnabled (false);
+    confbox.addWidget ( &kinput);
     QHBoxLayout hbox (&wgt);
     vbox.addLayout ( &hbox);
-     hbox.addSpacing (90);
+     hbox.addSpacing (290);
     QPushButton okButton ("OK", &wgt);
     hbox.addWidget ( &okButton);
     wgt.exec ();

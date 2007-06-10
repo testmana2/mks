@@ -4,8 +4,6 @@
 #include "PluginsManager.h"
 #include "TabToolBar.h"
 #include "Console.h"
-#include "MonkeyActGroup.h"
-#include "MonkeyAction.h"
 
 //
 #include <QScrollBar>
@@ -32,10 +30,10 @@ bool MessageBox::install()
 	mMessageBox = UIMessageBox::self( mWorkspace );
 	// create actions
 	mWorkspace->menuBar()->action( "aSeparator3" );
-    MonkeyActGroup* actGroup  = new MonkeyActGroup("Message Box plugin", mMessageBox);
-	MonkeyAction* aShowListBox  = new MonkeyAction( actGroup, "Show ListBox",QKeySequence("F11"));
+    actGroup  = new MonkeyActGroup("Message Box plugin", mMessageBox);
+	aShowListBox  = new MonkeyAction( actGroup, "Show ListBox",QKeySequence("F11"));
     aShowListBox->setIcon ( QIcon( ":/icons/builderrorR.png" ));
- 	MonkeyAction* aShowConsole  = new MonkeyAction( actGroup, "Show Console",QKeySequence("F12"));
+ 	aShowConsole  = new MonkeyAction( actGroup, "Show Console",QKeySequence("F12"));
     aShowConsole->setIcon ( QIcon( ":/icons/tabconsole.png" ));
  	mWorkspace->menuBar()->action( "aSeparator3" );
     QMenu* menu = mWorkspace->menuBar()->menu ("View");
@@ -68,13 +66,12 @@ bool MessageBox::uninstall()
 	if ( !isInstalled() )
 		return true;
 	// disconnect actions
-	QAction* aShowConsole = mWorkspace->menuBar()->action( "mView/aShowConsole" );
-	QAction* aShowListBox = mWorkspace->menuBar()->action( "mView/aShowListBox" );
 	disconnect( aShowConsole, SIGNAL( triggered() ), this, SLOT( showConsole() ) );
 	disconnect( aShowListBox, SIGNAL( triggered() ), this, SLOT( showListBox() ) );
 	// delete actions
 	delete aShowConsole;
 	delete aShowListBox;
+    delete actGroup;
 	// connect to Console bridge
 	BasePlugin* bp = mWorkspace->pluginsManager()->plugin( "Console" );
 	if ( bp )

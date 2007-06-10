@@ -8,9 +8,9 @@ MonkeyAction::MonkeyAction ( MonkeyActGroup * parent, const QString & text, cons
     setShortcut ( defaultShortcut);
  	//setShortcut ( ActionManager::getShortCut ( this) );
     setText (text);
-    parent->appendAction ( this);
+    parent->addAction ( this);
 	setObjectName ( text);
-	setData ( QVariant (defaultShortcut.toString()));
+	setProperty ("Default shortcut", QVariant (defaultShortcut.toString()));
 }
 
 MonkeyAction::~MonkeyAction ()
