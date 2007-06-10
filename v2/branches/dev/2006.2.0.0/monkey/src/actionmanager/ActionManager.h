@@ -4,9 +4,11 @@
 #include <QString>
 #include <QDialog>
 #include <QKeySequence>
+#include <QTreeWidget>
 
 #include "MonkeyAction.h"
 #include "MonkeyActGroup.h"
+#include "KeySequenceInput.h"
 
 class ActionManager : public QObject
 {
@@ -16,7 +18,17 @@ private:
 	QList <MonkeyActGroup*> actionGroups;
 
 	static ActionManager* mSelf;	
+    
+    MonkeyAction* selectedAction;
+    KeySequenceInput* kinput;
+    QTreeWidget * list;
+    QPushButton* defaultbtn;
+    QPushButton* clearbtn;
+     QPushButton* setbtn;
 
+    //returns QString("OK") if all OK, and name of shortcut, with it are conflict, if are conflict
+    QString setShortcutForAction ( MonkeyAction* action, QKeySequence shortcut);
+    
 public:
 	static ActionManager* self ();
     
@@ -29,5 +41,8 @@ public:
     
 public slots:
     void showSettings ();
-//    void shortcutSelected ();
+    void shortcutSelected ();
+    void setDefaultClicked ();
+    void changeShortcut ();
+    void shortcutEdited ();
 };
