@@ -13,7 +13,7 @@ MonkeyActGroup::~MonkeyActGroup ()
 	ActionManager::self()->deleteActGroup (this);
 }
 
-void MonkeyActGroup::appendAction ( MonkeyAction* act)
+/*void MonkeyActGroup::appendAction ( MonkeyAction* act)
 {
 	actions.append (act);
     ((QWidget*)parent())->addAction ( act );
@@ -23,3 +23,4 @@ void MonkeyActGroup::removeAction ( MonkeyAction* act)
 {
 	actions.removeAll ( act);
 }
+*/

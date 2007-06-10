@@ -29,4 +29,5 @@ public:
     
 public slots:
     void showSettings ();
+//    void shortcutSelected ();
 };

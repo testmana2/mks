@@ -4,6 +4,9 @@
 #include "WorkspacePlugin.h"
 #include "ConsoleCommandParser.h"
 //
+#include "MonkeyActGroup.h"
+#include "MonkeyAction.h"
+//
 #include <QPointer>
 //
 class UIMessageBox;
@@ -32,6 +35,9 @@ private slots:
 	//
 private:
 	QPointer<UIMessageBox> mMessageBox;
+    MonkeyActGroup* actGroup;
+    MonkeyAction* aShowListBox;
+    MonkeyAction* aShowConsole;
 	//
 signals:
 	void gotoFile( const QString&, const QPoint& );
