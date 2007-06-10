@@ -9,7 +9,7 @@ CONFIG	+= warn_on debug lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR/workspace
 INCLUDEPATH += ../../../monkey/src/ctags
 INCLUDEPATH += ../../../monkey/src/3rdparty/exuberantCtags
-RESOURCES	= resources/classbrouser_resources.qrc
+#RESOURCES	= resources/classbrouser_resources.qrc
 
 SOURCES	= ClassBrouser.cpp  \
 		Entity.cpp  \
