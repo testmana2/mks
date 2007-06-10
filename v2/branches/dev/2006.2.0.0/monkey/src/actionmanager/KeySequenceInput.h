@@ -1,5 +1,5 @@
-#ifndef _KEY_SEQUENCE_INPUT_H
-#define _KEY_INPUT_H
+#ifndef _KEY_SEQUENCE_INPUT
+#define _KEY_SEQUENCE_INPUT
 #include <QLineEdit>
 
 #include <QWidget>
@@ -21,4 +21,4 @@ protected:
 	//maybe possible just overload QObject::event (), but there is some problems	
 	bool eventFilter(QObject *obj, QEvent *event);
 };
-#endif //_KEY_SEQUENCE_INPUT_H
+#endif //_KEY_SEQUENCE_INPUT

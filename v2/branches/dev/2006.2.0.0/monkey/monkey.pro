@@ -43,7 +43,7 @@ INCLUDEPATH	= . src src/ui \
 	src/3rdparty/exuberantCtags  \
 	src/actionmanager
 
-CONFIG	+= qt warn_on release app_bundle thread x11 windows console
+CONFIG	+= qt warn_on debug app_bundle thread x11 windows console
 DESTDIR	= ../bin
 win32:RC_FILE	+= monkey.rc
 RESOURCES	= src/resources/resources.qrc
