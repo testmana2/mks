@@ -36,7 +36,7 @@ bool MessageBox::install()
  	aShowConsole  = new MonkeyAction( actGroup, "Show Console",QKeySequence("F12"));
     aShowConsole->setIcon ( QIcon( ":/icons/tabconsole.png" ));
  	mWorkspace->menuBar()->action( "aSeparator3" );
-    QMenu* menu = mWorkspace->menuBar()->menu ("View");
+    QMenu* menu = mWorkspace->menuBar()->menu ("mView");
     menu->addAction ( aShowListBox);
     menu->addAction (aShowConsole);
 	// connections
