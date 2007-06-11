@@ -26,6 +26,9 @@ HEADER	= MonkeyExport.h
 # objects
 # QSingleton
 HEADERS	+= QSingleton.h
+# psettings
+HEADERS	+= pSettings.h
+SOURCES	+= pSettings.cpp
 
 # widgets
 # pTabbedWorkspace
@@ -37,5 +40,17 @@ SOURCES	+= pTabbedWorkspaceCorner.cpp \
 	pTabbedWorkspaceCornerButton.cpp \
 	pTabbedWorkspace.cpp \
 	pTabbedWorkspaceRightCorner.cpp
+# action manager
+HEADERS	+= pAction.h \
+	pActionGroup.h \
+	pActionManager.h \
+	pKeySequenceInput.h
+SOURCES	+= pAction.cpp \
+	pActionGroup.cpp \
+	pActionManager.cpp \
+	pKeySequenceInput.cpp
+# pmenubar
+HEADERS	+= pMenuBar.h
+SOURCES	+= pMenuBar.cpp
 
 contains( TEMPLATE, app ):SOURCES	+= main.cpp

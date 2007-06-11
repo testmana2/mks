@@ -4,6 +4,8 @@
 #include <QMenuBar>
 #include "pTabbedWorkspace.h"
 #include <QTextEdit>
+#include "pMenuBar.h"
+#include "pActionManager.h"
 
 #include <QErrorMessage>
 //
@@ -14,9 +16,17 @@ int main( int argc, char** argv )
 	//
 	QMainWindow* m = new QMainWindow;
 	m->setAttribute( Qt::WA_DeleteOnClose );
-	m->menuBar()->addMenu( new QMenu( "File", m ) );
+	m->setMenuBar( pMenuBar::instance( m ) );
 	pTabbedWorkspace* tw = new pTabbedWorkspace( m );
 	m->setCentralWidget( tw );
+	// construct menu
+	pMenuBar* b = pMenuBar::instance();
+	QMenu* mn = b->menu( "mFile" );
+	mn->setTitle( "Titi" );
+	QAction* a = b->action( "mFile/aShortcuts" );
+	a->setText( "Edit shortcuts..." );
+	QObject::connect( a, SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
+	//
 	m->show();
 	//
 	tw->setTabShape( QTabBar::RoundedNorth );
