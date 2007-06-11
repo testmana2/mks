@@ -5,7 +5,7 @@
 #include <QMetaEnum>
 
 pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
-	: pTabbedWorkspaceCorner( p ), QSingleton<pTabbedWorkspaceRightCorner>()
+	: pTabbedWorkspaceCorner( p )
 {
 	// need workspace
 	Q_ASSERT( p != 0 );

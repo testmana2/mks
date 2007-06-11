@@ -108,6 +108,8 @@ void pTabbedWorkspaceCornerButton::mousePressEvent( QMouseEvent* e )
 
 void pTabbedWorkspaceCornerButton::mouseReleaseEvent( QMouseEvent* e )
 {
+	mMenuDown = false;
+
 	switch ( cursorArea( e->pos() ) )
 	{
 	case pTabbedWorkspaceCornerButton::caArrow:
