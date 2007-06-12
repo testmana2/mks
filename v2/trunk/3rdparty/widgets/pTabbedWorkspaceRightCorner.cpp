@@ -78,7 +78,7 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 
 	connect( a, SIGNAL( triggered() ), p, SLOT( closeAllTabs() ) );
 
-	setActions( QList<QAction*>() << menu->menuAction() << new QAction( "X", this ) );
+	setActions( QList<QAction*>() << menu->menuAction() );
 }
 
 void pTabbedWorkspaceRightCorner::agTabShape_triggered( QAction* a )

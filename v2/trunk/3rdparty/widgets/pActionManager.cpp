@@ -17,7 +17,7 @@ pActionManager::pActionManager( QObject* o )
 {
 }
 
-void pActionManager::setSetting( QSettings* s, bool b )
+void pActionManager::setSettings( QSettings* s, bool b )
 {
 	mSettings = s;
 	if ( b )

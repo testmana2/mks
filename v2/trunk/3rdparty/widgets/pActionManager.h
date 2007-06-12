@@ -36,7 +36,7 @@ private:
 public:
 	pActionManager( QObject* = QApplication::instance() );
 
-	void setSetting( QSettings*, bool = true );
+	void setSettings( QSettings*, bool = true );
 	QSettings* settings() const;
 	void reloadSettings();
 
