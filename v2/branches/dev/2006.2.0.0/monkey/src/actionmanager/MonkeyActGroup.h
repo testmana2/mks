@@ -12,7 +12,7 @@ class MonkeyActGroup : public QActionGroup
 public:
 //	QList <MonkeyAction*> actions;
 
-	MonkeyActGroup ( const QString & name, QWidget * parentWidget );
+	MonkeyActGroup ( const QString text, const QString & name, QWidget * parentWidget );
 	~MonkeyActGroup ();
 
 //	void appendAction ( MonkeyAction*);
