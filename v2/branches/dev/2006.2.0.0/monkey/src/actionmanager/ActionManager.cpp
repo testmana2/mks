@@ -17,6 +17,7 @@
 #include "KeySequenceInput.h"
 
 ActionManager* ActionManager::mSelf = 0L;
+QSettings* ActionManager::settings;
 
 ActionManager* ActionManager::self()
 {
@@ -44,14 +45,6 @@ void ActionManager::deleteActGroup ( MonkeyActGroup* grp)
 	actionGroups.removeAll (grp);
 }
 
-QKeySequence ActionManager::getShortCut ( MonkeyAction* act)
-{
-	QString shortcutName = "Shortcuts";//\\"+act->actionGroup()->objectName ()+'\\'+act->objectName();
-	qDebug ( qPrintable ( shortcutName));
-	qDebug ( qPrintable (Settings::current()->value( "shortcutName").toString ()+"kj"));
-	return QKeySequence ( Settings::current()->value( "shortcutName").toString () );
-}
-
 void ActionManager::shortcutSelected ()
 {
   QTreeWidgetItem * item = list->selectedItems()[0]; //do not need select more then one :D
@@ -63,20 +56,21 @@ void ActionManager::shortcutSelected ()
    }
  defaultbtn->setEnabled (true);
  clearbtn->setEnabled (true);
- QString groupName = item->parent()->text(0);
+ QString groupText = item->parent()->text(0);
   MonkeyActGroup* group;
  QTreeWidget* tree = item->treeWidget();
  for ( int i = 0; i< actionGroups.size(); i++)
-  if (  actionGroups[i]->objectName() == groupName)
+  if (  actionGroups[i]->property("text").toString() == groupText)
   {
    group = actionGroups[i];
    break;
   }
-  //now maybe group is finded ;)
+  //now maybe group is finded :D
  for ( int i = 0; i< group->actions().size(); i++)
   if ( group->actions()[i]->text() == item->text(0)) //
   {
    selectedAction = (MonkeyAction*)group->actions()[i];
+	 break;
   }
  if ( not selectedAction)
   qDebug ("What the fuck!");
@@ -100,7 +94,7 @@ void ActionManager::showSettings ()
     QList<QAction*> actions;
     for ( int grpn = 0; grpn< actionGroups.size (); grpn++ )
 	{
-        QTreeWidgetItem* grpitem = new QTreeWidgetItem (list, QStringList (actionGroups[grpn]->objectName()));
+        QTreeWidgetItem* grpitem = new QTreeWidgetItem (list, QStringList (actionGroups[grpn]->property("text").toString()));
         grpitem->setExpanded ( true);
 		actions = actionGroups[grpn]->actions();
 		for (int actn = 0; actn < actions.size(); actn ++)
@@ -144,8 +138,19 @@ void ActionManager::showSettings ()
 void ActionManager::setDefaultClicked ()
 {
 QString newShortcut = selectedAction->property("Default shortcut").toString();
-kinput->setText ( newShortcut );
-list->selectedItems()[0]->setText (1,newShortcut);
+QString result = setShortcutForAction ( selectedAction, QKeySequence (newShortcut));
+ if ( result == "OK")
+ {
+     list->selectedItems()[0]->setText (1,newShortcut);
+     kinput->setText (newShortcut);
+	 settings->remove ("ActionManarer/Shortcuts/"+selectedAction->actionGroup()->objectName()+'/'+selectedAction->objectName());
+     setbtn->setEnabled (false);
+  }
+ else
+ {
+    QMessageBox::warning ( kinput, "Error","Key sequence "+newShortcut+" already assigned to the \'"+result+'\"',QMessageBox::Close);
+    kinput->setText ( selectedAction->shortcut().toString());
+  }
 }
 
 void ActionManager::changeShortcut ()
@@ -155,13 +160,16 @@ void ActionManager::changeShortcut ()
  if ( result == "OK")
  {
      list->selectedItems()[0]->setText (1,newShortcut);
+     kinput->setText (newShortcut);
      setbtn->setEnabled (false);
-  }
+	 settings->setValue ("ActionManarer/Shortcuts/"+selectedAction->actionGroup()->objectName()+'/'+selectedAction->objectName(),newShortcut);
+	 qWarning ( qPrintable ("setted value"+selectedAction->actionGroup()->objectName()+'/'+selectedAction->objectName()));
+ }
  else
  {
     QMessageBox::warning ( kinput, "Error","Key sequence "+newShortcut+" already assigned to the \'"+result+'\"',QMessageBox::Close);
     kinput->setText ( selectedAction->shortcut().toString());
-  }  
+  }
  }
  
  QString ActionManager::setShortcutForAction ( MonkeyAction* action, QKeySequence shortcut)
@@ -177,7 +185,7 @@ void ActionManager::changeShortcut ()
             if ((actions[actn] != action) and (actions[actn]->shortcut() == shortcut) and (shortcut!=QKeySequence()))
             {
                 existWithSameShortcut = true;
-                actionName = actionGroups[grpn]->objectName()+'/'+actions[actn]->text();
+                actionName = actionGroups[grpn]->property("text").toString()+'/'+actions[actn]->text();
                 break;
             }
         }   
@@ -199,6 +207,37 @@ void ActionManager::changeShortcut ()
  void ActionManager::shortcutEdited ()
  {
    setbtn->setEnabled ( true);
+ }
+ 
+ void ActionManager::setSettings ( QSettings* newsettings, bool needToReload)
+ {
+	if ( settings == newsettings )
+		return;
+	settings = newsettings;
+	if ( needToReload)
+		reloadSettings ();
+ }
+ 
+ QSettings* ActionManager::getSettings ()
+ {
+	 return settings;
+ }
+ 
+ void ActionManager::reloadSettings ()
+ {
+	 QList<QAction*> actions;
+	 for ( int i = 0; i< actionGroups.size(); i++)
+	 {
+		actions = actionGroups[i]->actions ();
+		 for ( int j = 0; j< actions.size(); j ++)
+			 actions[j]->setShortcut ( QKeySequence (settings->value("ActionManarer/Shortcuts/"+actionGroups[i]->objectName()+'/'+actions[j]->objectName(), actions[j]->property("Default shortcut")).toString()));
+	 }
+ }
+ 
+ QKeySequence ActionManager::getShortCut ( QString groupName, QString actionName, QKeySequence defaultShortcut)
+ {
+	QKeySequence result  (settings->value("ActionManarer/Shortcuts/"+groupName+'/'+actionName, defaultShortcut).toString());
+	return result;
  }
  
 #endif //_ACTIONMANAGER_H

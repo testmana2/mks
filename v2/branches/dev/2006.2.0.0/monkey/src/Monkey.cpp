@@ -7,6 +7,8 @@
 #include "RecentsManager.h"
 #include "PluginsManager.h"
 #include "StatusBar.h"
+#include "ActionManager.h"
+#include "Settings.h"
 //
 #include <QSplashScreen>
 #include <QLibraryInfo>
@@ -80,6 +82,9 @@ void Monkey::initialize()
 	// init main window
 	showMessage( &splash, tr( "Initializing Main Window..." ) );
 	UIMain::self()->setWindowTitle( QString( "%1 v%2 - %3" ).arg( PROGRAM_TITLE, PROGRAM_VERSION, COPYRIGHTS ) );
+	// init action namager
+	showMessage( &splash, tr( "Initializing Action Manager..." ) );
+	ActionManager::self()->setSettings ( Settings::current(), false);
 	// menu tools
 	showMessage( &splash, tr( "Initializing Tools Manager..." ) );
 	ToolsManager::self( UIMain::self() );
