@@ -52,5 +52,10 @@ SOURCES	+= pAction.cpp \
 # pmenubar
 HEADERS	+= pMenuBar.h
 SOURCES	+= pMenuBar.cpp
+# docktoolbar
+HEADERS	+= pDockToolBar.h \
+	pDockToolBarManager.h
+SOURCES	+= pDockToolBar.cpp \
+	pDockToolBarManager.cpp
 
 contains( TEMPLATE, app ):SOURCES	+= main.cpp
