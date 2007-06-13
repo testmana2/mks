@@ -9,7 +9,6 @@
 
 class QDockWidget;
 class QAbstractButton;
-class QButtonGroup;
 class QFrame;
 class QBoxLayout;
 class pDockToolBarManager;
@@ -36,23 +35,26 @@ public:
 	QAbstractButton* button( QDockWidget* ) const;
 	QList<QAbstractButton*> buttons() const;
 	int count() const;
+	
+	void setExclusive( bool );
+	bool exclusive() const;
 
 	void checkVisibility();
 
 private:
 	pDockToolBarManager* mManager;
 	int mUniqueId;
-	QButtonGroup* mButtons;
+	bool mExclusive;
 	QFrame* mFrame;
 	QBoxLayout* mLayout;
+	QHash<int, QAbstractButton*> mButtons;
 	QHash<int, QDockWidget*> mDocks;
-	int mOldId;
 
 private slots:
 	void internal_orientationChanged( Qt::Orientation );
 	void internal_dockChanged();
 	void internal_dockDestroyed( QObject* );
-	void internal_buttonClicked( int );
+	void internal_buttonClicked( bool );
 
 signals:
 	void buttonClicked( int );
