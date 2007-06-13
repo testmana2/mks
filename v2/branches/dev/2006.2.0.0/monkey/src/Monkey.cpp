@@ -8,6 +8,7 @@
 #include "PluginsManager.h"
 #include "StatusBar.h"
 #include "ActionManager.h"
+#include "MenuBar.h"
 #include "Settings.h"
 //
 #include <QSplashScreen>
@@ -84,6 +85,11 @@ void Monkey::initialize()
 	UIMain::self()->setWindowTitle( QString( "%1 v%2 - %3" ).arg( PROGRAM_TITLE, PROGRAM_VERSION, COPYRIGHTS ) );
 	// init action namager
 	showMessage( &splash, tr( "Initializing Action Manager..." ) );
+    //Can't use MonkeyAction there, because MonkeyAction use ActionManager. It's reqursion
+    QMenu* menu = Workspace::self()->menuBar()->menu ("Tools");
+    QAction * act = new QAction ("Shortcut settings", ActionManager::self());
+    menu->addAction ( act);
+    connect ( act, SIGNAL ( triggered()), ActionManager::self(), SLOT ( showSettings ()));
 	ActionManager::self()->setSettings ( Settings::current(), false);
 	// menu tools
 	showMessage( &splash, tr( "Initializing Tools Manager..." ) );

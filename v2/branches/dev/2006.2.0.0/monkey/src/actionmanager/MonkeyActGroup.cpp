@@ -1,6 +1,5 @@
 #include "MonkeyActGroup.h"
 #include "ActionManager.h"
-#include <QWidget>
 
 MonkeyActGroup::MonkeyActGroup ( const QString text, const QString & name, QWidget * parentWidget ) : QActionGroup ( parentWidget)
 {
@@ -14,14 +13,7 @@ MonkeyActGroup::~MonkeyActGroup ()
 	ActionManager::self()->deleteActGroup (this);
 }
 
-/*void MonkeyActGroup::appendAction ( MonkeyAction* act)
+MonkeyAction*  MonkeyActGroup::addAction ( MonkeyAction * action )
 {
-	actions.append (act);
-    ((QWidget*)parent())->addAction ( act );
-}
-
-void MonkeyActGroup::removeAction ( MonkeyAction* act)
-{
-	actions.removeAll ( act);
-}
-*/
+	return (MonkeyAction*)QActionGroup::addAction ( action);
+};
