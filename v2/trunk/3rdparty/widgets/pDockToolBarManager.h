@@ -4,8 +4,8 @@
 #include "MonkeyExport.h"
 #include "QSingleton.h"
 
-#include <QToolBar>
 #include <QHash>
+#include <QBoxLayout>
 
 class QMainWindow;
 class pDockToolBar;
@@ -19,20 +19,25 @@ class Q_MONKEY_EXPORT pDockToolBarManager : public QObject, public QSingleton<pD
 
 public:
 	QMainWindow* mainWindow() const;
+	QSettings* settings() const;
 	pDockToolBar* bar( Qt::ToolBarArea );
+
 	static Qt::ToolBarArea dockWidgetAreaToToolBarArea( Qt::DockWidgetArea );
-	static Qt::DockWidgetArea ToolBarAreaToDockWidgetArea( Qt::ToolBarArea );
-	virtual void restoreState( QSettings* );
-	virtual void saveState( QSettings* );
+	static Qt::DockWidgetArea toolBarAreaToDockWidgetArea( Qt::ToolBarArea );
+	static QBoxLayout::Direction toolBarAreaToBoxLayoutDirection( Qt::ToolBarArea );
 
 private:
 	pDockToolBarManager( QMainWindow* );
 
 	QMainWindow* mMain;
 	QHash<Qt::ToolBarArea, pDockToolBar*> mBars;
+	QSettings* mSettings;
 
 public slots:
 	void dockWidgetAreaChanged( QDockWidget*, pDockToolBar* );
+	void setSettings( QSettings*, bool = false );
+	virtual void restoreState( pDockToolBar* = 0 );
+	virtual void saveState( pDockToolBar* = 0 );
 
 };
 

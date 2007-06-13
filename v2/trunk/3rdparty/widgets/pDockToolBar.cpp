@@ -1,21 +1,32 @@
 #include "pDockToolBar.h"
 #include "pDockToolBarManager.h"
+#include "pTabbedWorkspaceCornerButton.h"
 
 #include <QButtonGroup>
 #include <QFrame>
 #include <QBoxLayout>
 #include <QEvent>
 #include <QDockWidget>
-#include <QPushButton>
 #include <QAction>
 #include <QMainWindow>
 
 pDockToolBar::pDockToolBar( pDockToolBarManager* t, Qt::Orientation o )
-	: mManager( t ), mUniqueId( 0 ), mExclusive( true )
+	: mManager( t ), mUniqueId( 0 ), mExclusive( false )
 {
 	// need docktoolbar manager
 	Q_ASSERT( t != 0 );
 	Q_UNUSED( t );
+
+	// toolbar is not movable
+	setMovable( false );
+
+	// change font
+	QFont f( font() );
+	f.setPointSize( 8 );
+	setFont( f );
+
+	// set icon size
+	setIconSize( QSize( 16, 16 ) );
 
 	// create button frame
 	mFrame = new QFrame;
@@ -28,6 +39,7 @@ pDockToolBar::pDockToolBar( pDockToolBarManager* t, Qt::Orientation o )
 	// add frame to toolbar
 	addWidget( mFrame );
 
+	// connect orientation change
 	connect( this, SIGNAL( orientationChanged( Qt::Orientation ) ), this, SLOT( internal_orientationChanged( Qt::Orientation ) ) );
 
 	// set toolbar/layout orientation
@@ -42,24 +54,44 @@ bool pDockToolBar::eventFilter( QObject* o, QEvent* e )
 	QDockWidget* d = qobject_cast<QDockWidget*>( o );
 
 	// if it s a dock widget
-	if ( d && ( t == QEvent::Show || t == QEvent::Close || t == QEvent::Hide ) )
+	if ( d && ( t == QEvent::Show || t == QEvent::Hide ) )
 	{
-		button( d )->setChecked( t == QEvent::Show );
+		// if exclusive, hide all except this one
+		if ( t == QEvent::Show && mExclusive )
+		{
+			foreach ( QDockWidget* dw, docks() )
+			{
+				if ( dw != d && dw->isVisible() )
+					dw->hide();
+			}
+		}
+
+		// get dock button
+		QAbstractButton* b = button( d );
+
+		// check the dock button
+		b->setChecked( t == QEvent::Show );
+
+		// check button text
+		internal_checkButtonText( b );
+
+		// check toolbar visibility
+		internal_checkVisibility();
 	}
 
 	// deturn default event filter
 	return QToolBar::eventFilter( o, e );
 }
 
-int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QPixmap& p )
+int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QIcon& i )
 {
-	// cancel if no dock
-	if ( !d || mDocks.values().contains( d ) )
+	// cancel if no dock or dock already managed
+	if ( !d || id( d ) != -1 )
 		return -1;
 
 	// check if this dock is already in another bar, and remove it
 	pDockToolBar* tb = mManager->bar( mManager->dockWidgetAreaToToolBarArea( mManager->mainWindow()->dockWidgetArea( d ) ) );
-	if ( tb && tb->docks().contains( d ) )
+	if ( tb && tb->id( d ) != -1 )
 		tb->removeDock( d );
 
 	// set dock title
@@ -71,39 +103,44 @@ int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QPixmap& p )
 		d->setObjectName( QString( "QDockWidget_%1" ).arg( s ).replace( " ", "_" ).trimmed() );
 
 	// set dock icon
-	if ( !p.isNull() )
-		d->setWindowIcon( p );
+	if ( !i.isNull() )
+		d->setWindowIcon( i );
 
 	// create button
-	QPushButton* pb = new QPushButton( this );
+	pTabbedWorkspaceCornerButton* pb = new pTabbedWorkspaceCornerButton( this, mManager->toolBarAreaToBoxLayoutDirection( mManager->mainWindow()->toolBarArea( this ) ) );
 	pb->setCheckable( true );
+	pb->setFont( font() );
 	pb->setText( d->windowTitle() );
-	pb->setIcon( p );
+	pb->setToolTip( pb->text() );
+	pb->setProperty( "Caption", pb->text() );
+	pb->setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
+	pb->setIconSize( iconSize() );
+	pb->setIcon( i );
 
 	// add button to layout
 	mLayout->addWidget( pb );
 
 	// add dock to correct area
 	Qt::DockWidgetArea da = mManager->mainWindow()->dockWidgetArea( d );
-	Qt::DockWidgetArea ta = mManager->ToolBarAreaToDockWidgetArea( mManager->mainWindow()->toolBarArea( this ) );
+	Qt::DockWidgetArea ta = mManager->toolBarAreaToDockWidgetArea( mManager->mainWindow()->toolBarArea( this ) );
 	if ( da != ta )
 		mManager->mainWindow()->addDockWidget( ta, d, orientation() );
 
-	// if exclusive, hide current dock
-	/*
-	if ( mExclusive )
+	// if exclusive, hide all dock except this one
+	if ( mExclusive && count() )
 	{
-		QDockWidget* dw = dock( mButtons->checkedId() );
-		if ( dw )
-			dw->hide();
+		foreach ( QDockWidget* dw, docks() )
+		{
+			if ( dw->isVisible() )
+				dw->hide();
+		}
 	}
-	*/
-
-	// set dock visibility according to window visibility
-	d->setVisible( window()->isVisible() );
 
 	// check button according to dock visibility
 	pb->setChecked( d->isVisible() );
+
+	// check button text
+	internal_checkButtonText( pb );
 
 	// add dock/button to list
 	mButtons[mUniqueId] = pb;
@@ -118,16 +155,24 @@ int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QPixmap& p )
 	connect( pb, SIGNAL( clicked( bool ) ), this, SLOT( internal_buttonClicked( bool ) ) );
 
 	// check if we need to hide/show the toolbar
-	checkVisibility();
+	internal_checkVisibility();
 
 	// return unique auto increment id of the dock
 	return mUniqueId++;
 }
 
+void pDockToolBar::removeDock( int i )
+{
+	removeDock( dock( i ) );
+}
+
 void pDockToolBar::removeDock( QDockWidget* d )
 {
+	// get dock id
+	int i = id( d );
+
 	// cancel if dock is not acutally own by this toolbar
-	if ( !mDocks.values().contains( d ) )
+	if ( i == -1 )
 		return;
 
 	// disconnect
@@ -139,33 +184,14 @@ void pDockToolBar::removeDock( QDockWidget* d )
 
 	// delete button
 	QAbstractButton* b = button( d );
-	mButtons.remove( id( d ) );
+	mButtons.remove( i );
 	b->deleteLater();
 
 	// remove dock from list
-	mDocks.remove( id( d ) );
+	mDocks.remove( i );
 
 	// check if we need to hide/show the toolbar
-	checkVisibility();
-}
-
-void pDockToolBar::removeDock( int i )
-{
-	removeDock( dock( i ) );
-}
-
-bool pDockToolBar::isDockVisible( QDockWidget* d ) const
-{
-	// cancel if no dock
-	if ( !d )
-		return false;
-
-	// if dock is in internal list
-	if ( mDocks.values().contains( d ) )
-		return mButtons->button( id( d ) )->isChecked();
-
-	// else return widget visibility
-	return d->isVisible();
+	internal_checkVisibility();
 }
 
 bool pDockToolBar::isDockVisible( int i ) const
@@ -173,9 +199,52 @@ bool pDockToolBar::isDockVisible( int i ) const
 	return isDockVisible( dock( i ) );
 }
 
+bool pDockToolBar::isDockVisible( QDockWidget* d ) const
+{
+	// if dock is in internal list
+	if ( id( d ) != -1 )
+		return button( d )->isChecked();
+
+	// else return widget visibility
+	return d ? d->isVisible() : false;
+}
+
+void pDockToolBar::setDockVisible( QDockWidget* d, bool b )
+{
+	d->setVisible( b );
+}
+
+bool pDockToolBar::exclusive() const
+{
+	return mExclusive;
+}
+
+void pDockToolBar::setExclusive( bool b )
+{
+	if ( mExclusive == b )
+		return;
+	mExclusive = b;
+
+	// if exclusive, hide all
+	if ( mExclusive && count() )
+	{
+		foreach ( QDockWidget* dw, docks() )
+		{
+			if ( dw->isVisible() )
+				dw->hide();
+		}
+	}
+
+}
+
 int pDockToolBar::id( QDockWidget* d ) const
 {
 	return mDocks.values().contains( d ) ? mDocks.key( d ) : -1;
+}
+
+int pDockToolBar::id( QAbstractButton* b ) const
+{
+	return mButtons.values().contains( b ) ? mButtons.key( b ) : -1;
 }
 
 QDockWidget* pDockToolBar::dock( int i ) const
@@ -185,7 +254,17 @@ QDockWidget* pDockToolBar::dock( int i ) const
 
 QDockWidget* pDockToolBar::dock( QAbstractButton* b ) const
 {
-	return mDocks.value( mButtons->id( b ) );
+	return dock( id( b ) );
+}
+
+QAbstractButton* pDockToolBar::button( int i ) const
+{
+	return mButtons.value( i );
+}
+
+QAbstractButton* pDockToolBar::button( QDockWidget* d ) const
+{
+	return button( id( d ) );
 }
 
 QList<QDockWidget*> pDockToolBar::docks() const
@@ -193,41 +272,40 @@ QList<QDockWidget*> pDockToolBar::docks() const
 	return mDocks.values();
 }
 
-QAbstractButton* pDockToolBar::button( QDockWidget* d ) const
-{
-	return mButtons->button( id( d ) );
-}
-
 QList<QAbstractButton*> pDockToolBar::buttons() const
 {
-	return mButtons->buttons();
+	return mButtons.values();
 }
 
 int pDockToolBar::count() const
 {
-	return mButtons->buttons().count();
+	return docks().count();
 }
 
-void pDockToolBar::checkVisibility()
+void pDockToolBar::internal_checkVisibility()
 {
-	if ( !isVisible() && count() )
+	// count toolbar actions, if 1 it s dockframe
+	int i = actions().count();
+
+	// need show ?!
+	if ( !isVisible() && ( i > 1 || ( i == 1 && count() ) ) )
 		show();
-	else if ( isVisible() && !count() )
+	// need hide ?!
+	else if ( isVisible() && ( i == 1 && !count() ) )
 		hide();
 }
 
-void pDockToolBar::setExclusive( bool b )
+void pDockToolBar::internal_checkButtonText( QAbstractButton* b )
 {
-	if ( mExclusive == b )
+	// cancel if no button
+	if ( !b )
 		return;
-	mExclusive = b;
 
-	// need hide all except last checked
-}
-
-bool pDockToolBar::exclusive() const
-{
-	return mExclusive;
+	// show text when checked, else not
+	if ( b->isChecked() && b->text().isEmpty() )
+		b->setText( b->property( "Caption" ).toString() );
+	else if ( !b->isChecked() && !b->text().isEmpty() )
+		b->setText( QString() );
 }
 
 void pDockToolBar::internal_orientationChanged( Qt::Orientation o )
@@ -243,7 +321,7 @@ void pDockToolBar::internal_orientationChanged( Qt::Orientation o )
 			break;
 	}
 
-	// move docks
+	// layout docks
 	foreach ( QDockWidget* d, mDocks )
 		mManager->mainWindow()->addDockWidget( mManager->mainWindow()->dockWidgetArea( d ), d, o );
 }
@@ -268,53 +346,34 @@ void pDockToolBar::internal_dockDestroyed( QObject* o )
 	removeDock( qobject_cast<QDockWidget*>( o ) );
 }
 
-void pDockToolBar::internal_buttonClicked( int i )
+void pDockToolBar::internal_buttonClicked( bool b )
 {
-qWarning( "clicked 1: id %d, old id: %d, d: %d", i, mOldId, mButtons->button( i )->isChecked() );
+	// get button
+	QAbstractButton* ab = qobject_cast<QAbstractButton*>( sender() );
 
-	if ( mButtons->exclusive() )
+	// get dock
+	QDockWidget* d = dock( ab );
+
+	// return if no dock
+	if ( !d )
+		return;
+
+	if ( mExclusive )
 	{
-		if ( mOldId == i && mButtons->button( i )->isChecked() )
+		foreach ( QDockWidget* dw, docks() )
 		{
-qWarning( "forcing button change state" );
-			mButtons->setExclusive( false );
-			mButtons->button( i )->setChecked( !mButtons->button( i )->isChecked() );
-			mButtons->setExclusive( true );
-
+			if ( dw != d && dw->isVisible() )
+				dw->hide();
 		}
 	}
 
-qWarning( "clicked 2: id %d, old id: %d, d: %d", i, mOldId, mButtons->button( i )->isChecked() );
+	// update button text
+	internal_checkButtonText( ab );
 
-qWarning( "button checked: %s", mButtons->checkedButton() ? qPrintable( mButtons->checkedButton()->text() ) : "none" );
-
-mOldId = i;
-
-return;
-
-	// if last button was same, need switch current visibility
-	if ( mButtons->exclusive() && mOldId == i )
-	{
-		dock( i )->hide();
-		return;
-	}
-
-	// set dock visibility according to button visibility
-	qWarning( "e: %d", mButtons->button( i )->isChecked() );
-	dock( i )->setVisible( mButtons->button( i )->isChecked() );
-
-	// if exclusive, hide current dock
-	if ( mButtons->exclusive() && mOldId != i )
-	{
-	/*
-		QDockWidget* d = dock( mOldId );
-		if ( d )
-			d->hide();
-	*/
-	}
-
-	mOldId = i;
+	// show/hide dock according to b
+	if ( d->isVisible() != b )
+		d->setVisible( b );
 
 	// emit button clicked
-	emit buttonClicked( i );
+	emit buttonClicked( id( dock( ab ) ) );
 }

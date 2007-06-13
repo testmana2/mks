@@ -17,6 +17,11 @@ QMainWindow* pDockToolBarManager::mainWindow() const
 	return mMain;
 }
 
+QSettings* pDockToolBarManager::settings() const
+{
+	return mSettings;
+}
+
 pDockToolBar* pDockToolBarManager::bar( Qt::ToolBarArea a )
 {
 	// if toolbar not exists, create it
@@ -52,9 +57,6 @@ pDockToolBar* pDockToolBarManager::bar( Qt::ToolBarArea a )
 		// add toolbar to mainwindow
 		mMain->addToolBar( a, mBars[a] );
 
-		// toolbar is not movable
-		mBars[a]->setMovable( false );
-
 		// hide
 		mBars[a]->hide();
 
@@ -89,7 +91,7 @@ Qt::ToolBarArea pDockToolBarManager::dockWidgetAreaToToolBarArea( Qt::DockWidget
 	}
 }
 
-Qt::DockWidgetArea pDockToolBarManager::ToolBarAreaToDockWidgetArea( Qt::ToolBarArea a )
+Qt::DockWidgetArea pDockToolBarManager::toolBarAreaToDockWidgetArea( Qt::ToolBarArea a )
 {
 	// convert toolbar area to dock widget area
 	switch ( a )
@@ -112,53 +114,24 @@ Qt::DockWidgetArea pDockToolBarManager::ToolBarAreaToDockWidgetArea( Qt::ToolBar
 	}
 }
 
-void pDockToolBarManager::restoreState( QSettings* s )
+QBoxLayout::Direction pDockToolBarManager::toolBarAreaToBoxLayoutDirection( Qt::ToolBarArea a )
 {
-	// if no settings cancel
-	if ( !s )
-		return;
-
-	QVariantList mList;
-
-	// for each docktoolbar
-	for ( int i = Qt::LeftToolBarArea; i < Qt::AllToolBarAreas; i++ )
+	// convert toolbar area to dock widget area
+	switch ( a )
 	{
-		// get datas
-		mList = s->value( QString( "DockToolBar/Tabs/%1" ).arg( i ) ).toList();
-
-		// for each datas
-		foreach ( QVariant v, mList )
-		{
-			foreach ( QDockWidget* d, bar( (Qt::ToolBarArea)i )->docks() )
-			{
-				if ( d->objectName() == v.toString().section( '|', 0, 0 ) )
-					bar( (Qt::ToolBarArea)i )->button( d )->setChecked( v.toString().section( '|', 1, 1 ).toInt() );
-			}
-		}
-	}
-}
-
-void pDockToolBarManager::saveState( QSettings* s )
-{
-	// cancel if no settings
-	if ( !s )
-		return;
-
-	// list to stock checked button
-	QVariantList mList;
-
-	// for each docktoolbar
-	for ( int i = Qt::LeftToolBarArea; i < Qt::AllToolBarAreas; i++ )
-	{
-		// clear variant list
-		mList.clear();
-
-		// for each button in docktoolbar
-		foreach ( QAbstractButton* b, bar( (Qt::ToolBarArea)i )->buttons() )
-			mList << QString( "%1|%2" ).arg( bar( (Qt::ToolBarArea)i )->dock( b )->objectName(), b->isChecked() );
-
-		// write datas
-		s->setValue( QString( "DockToolBar/Tabs/%1" ).arg( i ), mList );
+	case Qt::LeftToolBarArea:
+		return QBoxLayout::BottomToTop;
+		break;
+	case Qt::RightToolBarArea:
+		return QBoxLayout::TopToBottom;
+		break;
+	case Qt::TopToolBarArea:
+	case Qt::BottomToolBarArea:
+		return QBoxLayout::LeftToRight;
+		break;
+	default:
+		return QBoxLayout::LeftToRight;
+		break;
 	}
 }
 
@@ -169,4 +142,97 @@ void pDockToolBarManager::dockWidgetAreaChanged( QDockWidget* d, pDockToolBar* f
 
 	// add dock to new toolbar
 	bar( dockWidgetAreaToToolBarArea( mMain->dockWidgetArea( d ) ) )->addDock( d, d->windowTitle(), d->windowIcon().pixmap( QSize( 24, 24 ), QIcon::Normal, QIcon::On ) );
+}
+
+void pDockToolBarManager::setSettings( QSettings* s, bool b )
+{
+	// if same settings cancel
+	if ( mSettings == s )
+		return;
+
+	// remember settings pointer
+	mSettings = s;
+
+	// restore state according to b
+	if ( b )
+		restoreState();
+}
+
+void pDockToolBarManager::restoreState( pDockToolBar* p )
+{
+	// if no settings cancel
+	if ( !mSettings )
+		return;
+
+	// get the bar to restore
+	QStringList l;
+	if ( p )
+		l << QString::number( mMain->toolBarArea( p ) );
+	else
+	{
+		mSettings->beginGroup( "DockToolBar/Docks" );
+		l = mSettings->childKeys();
+		mSettings->endGroup();
+	}
+
+	// for docktoolbar
+	foreach ( QString i, l )
+	{
+		// get bar
+		p = bar( (Qt::ToolBarArea)i.toInt() );
+
+		// if got bar
+		if ( p )
+		{
+			// bar datas
+			QStringList mList = mSettings->value( QString( "DockToolBar/Docks/%1" ).arg( i ), QStringList() ).toStringList();
+
+			// for each entry
+			foreach ( QString e, mList )
+			{
+				QString n = e.section( '|', 0, 0 );
+				int c = e.section( '|', 1, 1 ).toInt();
+				QSize s = QSize( e.section( '|', 2, 2 ).toInt(), e.section( '|', 3, 3 ).toInt() );
+
+				// get dock
+				QDockWidget* d = mMain->findChild<QDockWidget*>( n );
+
+				// restore dock area / proprety
+				if ( d )
+				{
+					p->addDock( d, d->windowTitle(), d->windowIcon() );
+					p->setDockVisible( d, c );
+					p->resize( s );
+				}
+			}
+		}
+	}
+}
+
+void pDockToolBarManager::saveState( pDockToolBar* p )
+{
+	// cancel if no settings
+	if ( !mSettings )
+		return;
+
+	// get the bar to save
+	QList<pDockToolBar*> l;
+	if ( p )
+		l << p;
+	else
+		l << mBars.values();
+
+	// for each docktoolbar
+	foreach ( pDockToolBar* tb, l )
+	{
+		// list to stock checked button
+		QStringList mList;
+
+		// for each dock in docktoolbar
+		foreach ( QDockWidget* d, tb->docks() )
+			mList << QString( "%1|%2|%3|%4" ).arg( d->objectName() ).arg( tb->isDockVisible( d ) ).arg( d->width() ).arg( d->height() );
+
+		// write datas
+		mSettings->setValue( QString( "DockToolBar/Docks/%1" ).arg( mMain->toolBarArea( tb ) ), mList );
+	}
 }

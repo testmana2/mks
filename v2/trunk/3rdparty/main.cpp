@@ -7,6 +7,7 @@
 #include "pMenuBar.h"
 #include "pActionManager.h"
 #include "pSettings.h"
+#include "pAction.h"
 
 #include "pDockToolBar.h"
 #include "pDockToolBarManager.h"
@@ -20,7 +21,6 @@ int main( int argc, char** argv )
 	//app.setStyle( "plastique" );
 	// main window
 	QMainWindow* m = new QMainWindow;
-	m->setAttribute( Qt::WA_DeleteOnClose );
 
 	// main window menu bar
 	m->setMenuBar( pMenuBar::instance( m ) );
@@ -57,9 +57,13 @@ int main( int argc, char** argv )
 	m->setCentralWidget( tw );
 	m->show();
 
+	// create dock toolbar manager
 	pDockToolBarManager* tm = pDockToolBarManager::instance( m );
+	tm->setSettings( pSettings::instance() );
+
+	// add content to docktoolbar manager
 	for ( int i = 0; i < 5; i++ )
-		tm->bar( Qt::TopToolBarArea )->addDock( new QDockWidget, QString( "Dock %1" ).arg( i ) );
+		tm->bar( Qt::TopToolBarArea )->addDock( new QDockWidget, QString( "Qt Assistant %1" ).arg( i ), QPixmap( "icon.png" ) );
 
 	// some testing members
 	tw->setCurrentIndex( 5 );
@@ -67,9 +71,22 @@ int main( int argc, char** argv )
 	delete tw->document( 4 );
 	tw->document( 2 )->deleteLater();
 
-	foreach ( QDockWidget* d, tm->bar( Qt::TopToolBarArea )->docks() )
-		tm->bar( Qt::RightToolBarArea )->addDock( d, d->windowTitle() );
+	// add action to pdocktoolbar
+	pAction* pa = new pAction( "Action", QKeySequence( "Ctrl+S" ) );
+	pa->setIcon( QPixmap( "icon.png" ) );
+	tm->bar( Qt::TopToolBarArea )->addAction( pa );
+
+	tm->restoreState();
+
+	
+
+	//foreach ( QDockWidget* d, tm->bar( Qt::TopToolBarArea )->docks() )
+		//tm->bar( Qt::RightToolBarArea )->addDock( d, d->windowTitle() );
 
 	// execute application
-	return app.exec();
+	int r = app.exec();
+
+	tm->saveState();
+
+	return r;
 }
