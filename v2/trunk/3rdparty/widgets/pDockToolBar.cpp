@@ -11,15 +11,11 @@
 #include <QMainWindow>
 
 pDockToolBar::pDockToolBar( pDockToolBarManager* t, Qt::Orientation o )
-	: mManager( t ), mUniqueId( 0 ), mOldId( 0 )
+	: mManager( t ), mUniqueId( 0 ), mExclusive( true )
 {
 	// need docktoolbar manager
 	Q_ASSERT( t != 0 );
 	Q_UNUSED( t );
-
-	// create button group
-	mButtons = new QButtonGroup( this );
-	//mButtons->setExclusive( false );
 
 	// create button frame
 	mFrame = new QFrame;
@@ -33,7 +29,6 @@ pDockToolBar::pDockToolBar( pDockToolBarManager* t, Qt::Orientation o )
 	addWidget( mFrame );
 
 	connect( this, SIGNAL( orientationChanged( Qt::Orientation ) ), this, SLOT( internal_orientationChanged( Qt::Orientation ) ) );
-	connect( mButtons, SIGNAL( buttonClicked( int ) ), this, SLOT( internal_buttonClicked( int ) ) );
 
 	// set toolbar/layout orientation
 	setOrientation( o );
@@ -47,8 +42,10 @@ bool pDockToolBar::eventFilter( QObject* o, QEvent* e )
 	QDockWidget* d = qobject_cast<QDockWidget*>( o );
 
 	// if it s a dock widget
-	if ( d && ( t == QEvent::Show || t == QEvent::Close ) )
+	if ( d && ( t == QEvent::Show || t == QEvent::Close || t == QEvent::Hide ) )
+	{
 		button( d )->setChecked( t == QEvent::Show );
+	}
 
 	// deturn default event filter
 	return QToolBar::eventFilter( o, e );
@@ -83,8 +80,7 @@ int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QPixmap& p )
 	pb->setText( d->windowTitle() );
 	pb->setIcon( p );
 
-	// add button to layout and button group
-	mButtons->addButton( pb, mUniqueId );
+	// add button to layout
 	mLayout->addWidget( pb );
 
 	// add dock to correct area
@@ -94,12 +90,14 @@ int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QPixmap& p )
 		mManager->mainWindow()->addDockWidget( ta, d, orientation() );
 
 	// if exclusive, hide current dock
-	if ( mButtons->exclusive() )
+	/*
+	if ( mExclusive )
 	{
 		QDockWidget* dw = dock( mButtons->checkedId() );
 		if ( dw )
 			dw->hide();
 	}
+	*/
 
 	// set dock visibility according to window visibility
 	d->setVisible( window()->isVisible() );
@@ -107,11 +105,9 @@ int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QPixmap& p )
 	// check button according to dock visibility
 	pb->setChecked( d->isVisible() );
 
-	// add dock to dock list
+	// add dock/button to list
+	mButtons[mUniqueId] = pb;
 	mDocks[mUniqueId] = d;
-
-	// set old id this one
-	mOldId = mUniqueId;
 
 	// filter the dock
 	d->installEventFilter( this );
@@ -119,6 +115,7 @@ int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QPixmap& p )
 	// connect
 	connect( d->toggleViewAction(), SIGNAL( changed() ), this, SLOT( internal_dockChanged() ) );
 	connect( d, SIGNAL( destroyed( QObject* ) ), this, SLOT( internal_dockDestroyed( QObject* ) ) );
+	connect( pb, SIGNAL( clicked( bool ) ), this, SLOT( internal_buttonClicked( bool ) ) );
 
 	// check if we need to hide/show the toolbar
 	checkVisibility();
@@ -141,8 +138,8 @@ void pDockToolBar::removeDock( QDockWidget* d )
 	d->removeEventFilter( this );
 
 	// delete button
-	QAbstractButton* b = mButtons->button( id( d ) );
-	mButtons->removeButton( b );
+	QAbstractButton* b = button( d );
+	mButtons.remove( id( d ) );
 	b->deleteLater();
 
 	// remove dock from list
@@ -219,6 +216,20 @@ void pDockToolBar::checkVisibility()
 		hide();
 }
 
+void pDockToolBar::setExclusive( bool b )
+{
+	if ( mExclusive == b )
+		return;
+	mExclusive = b;
+
+	// need hide all except last checked
+}
+
+bool pDockToolBar::exclusive() const
+{
+	return mExclusive;
+}
+
 void pDockToolBar::internal_orientationChanged( Qt::Orientation o )
 {
 	// change layout direction
@@ -259,24 +270,50 @@ void pDockToolBar::internal_dockDestroyed( QObject* o )
 
 void pDockToolBar::internal_buttonClicked( int i )
 {
-	// if exclusive, hide current dock
-	if ( mButtons->exclusive() && mOldId != i )
+qWarning( "clicked 1: id %d, old id: %d, d: %d", i, mOldId, mButtons->button( i )->isChecked() );
+
+	if ( mButtons->exclusive() )
 	{
-		QDockWidget* d = dock( mOldId );
-		if ( d )
-			d->hide();
-		mOldId = i;
+		if ( mOldId == i && mButtons->button( i )->isChecked() )
+		{
+qWarning( "forcing button change state" );
+			mButtons->setExclusive( false );
+			mButtons->button( i )->setChecked( !mButtons->button( i )->isChecked() );
+			mButtons->setExclusive( true );
+
+		}
 	}
 
+qWarning( "clicked 2: id %d, old id: %d, d: %d", i, mOldId, mButtons->button( i )->isChecked() );
+
+qWarning( "button checked: %s", mButtons->checkedButton() ? qPrintable( mButtons->checkedButton()->text() ) : "none" );
+
+mOldId = i;
+
+return;
+
 	// if last button was same, need switch current visibility
-	if ( mOldId == i )
+	if ( mButtons->exclusive() && mOldId == i )
 	{
-	qWarning( "same as old" );
-		mButtons->button( i )->setChecked( !mButtons->button( i )->isChecked() );
+		dock( i )->hide();
+		return;
 	}
 
 	// set dock visibility according to button visibility
+	qWarning( "e: %d", mButtons->button( i )->isChecked() );
 	dock( i )->setVisible( mButtons->button( i )->isChecked() );
+
+	// if exclusive, hide current dock
+	if ( mButtons->exclusive() && mOldId != i )
+	{
+	/*
+		QDockWidget* d = dock( mOldId );
+		if ( d )
+			d->hide();
+	*/
+	}
+
+	mOldId = i;
 
 	// emit button clicked
 	emit buttonClicked( i );
