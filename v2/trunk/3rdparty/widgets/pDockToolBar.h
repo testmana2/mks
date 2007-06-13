@@ -46,6 +46,7 @@ private:
 	QFrame* mFrame;
 	QBoxLayout* mLayout;
 	QHash<int, QDockWidget*> mDocks;
+	int mOldId;
 
 private slots:
 	void internal_orientationChanged( Qt::Orientation );

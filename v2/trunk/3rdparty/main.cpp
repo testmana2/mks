@@ -59,15 +59,16 @@ int main( int argc, char** argv )
 
 	pDockToolBarManager* tm = pDockToolBarManager::instance( m );
 	for ( int i = 0; i < 5; i++ )
-		tm->bar( Qt::LeftToolBarArea )->addDock( new QDockWidget, QString( "My Dock %1" ).arg( i ) );
-
-	
+		tm->bar( Qt::TopToolBarArea )->addDock( new QDockWidget, QString( "Dock %1" ).arg( i ) );
 
 	// some testing members
 	tw->setCurrentIndex( 5 );
 	tw->document( 3 )->close();
 	delete tw->document( 4 );
 	tw->document( 2 )->deleteLater();
+
+	foreach ( QDockWidget* d, tm->bar( Qt::TopToolBarArea )->docks() )
+		tm->bar( Qt::RightToolBarArea )->addDock( d, d->windowTitle() );
 
 	// execute application
 	return app.exec();
