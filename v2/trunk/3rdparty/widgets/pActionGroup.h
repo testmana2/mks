@@ -10,6 +10,8 @@ class QWidget;
 
 class Q_MONKEY_EXPORT pActionGroup : public QActionGroup
 {
+	Q_OBJECT
+
 public:
 	pActionGroup( const QString&, QWidget* );
 	~pActionGroup();

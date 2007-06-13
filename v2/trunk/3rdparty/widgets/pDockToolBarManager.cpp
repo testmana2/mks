@@ -6,15 +6,14 @@
 #include <QSettings>
 #include <QAbstractButton>
 
-pDockToolBarManager::pDockToolBarManager( QMainWindow* p )
-	: QObject( p ), mMain( p )
+pDockToolBarManager::pDockToolBarManager( QMainWindow* w )
+	: QObject( w ), mMain( w )
 {
-	Q_ASSERT( p != 0 );
+	Q_ASSERT( w != 0 );
 }
 
 QMainWindow* pDockToolBarManager::mainWindow() const
 {
-qWarning( "mainWindow: %d", mMain );
 	return mMain;
 }
 
@@ -55,6 +54,9 @@ pDockToolBar* pDockToolBarManager::bar( Qt::ToolBarArea a )
 
 		// toolbar is not movable
 		mBars[a]->setMovable( false );
+
+		// hide
+		mBars[a]->hide();
 
 		// track dock bar changed
 		connect( mBars[a], SIGNAL( dockWidgetAreaChanged( QDockWidget*, pDockToolBar* ) ), this, SLOT( dockWidgetAreaChanged( QDockWidget*, pDockToolBar* ) ) );
@@ -162,11 +164,9 @@ void pDockToolBarManager::saveState( QSettings* s )
 
 void pDockToolBarManager::dockWidgetAreaChanged( QDockWidget* d, pDockToolBar* f )
 {
-	QAbstractButton* b = f->button( d );
-	if ( !b )
-		return;
-	QPixmap p = b->icon().pixmap( QSize( 24, 24 ), QIcon::Normal, QIcon::On );
-	QString s = b->text();
+	// remove dock from old toolbar
 	f->removeDock( d );
-	bar( dockWidgetAreaToToolBarArea( mMain->dockWidgetArea( d ) ) )->addDock( d, s, p );
+
+	// add dock to new toolbar
+	bar( dockWidgetAreaToToolBarArea( mMain->dockWidgetArea( d ) ) )->addDock( d, d->windowTitle(), d->windowIcon().pixmap( QSize( 24, 24 ), QIcon::Normal, QIcon::On ) );
 }
