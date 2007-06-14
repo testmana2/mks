@@ -29,16 +29,28 @@ QString pSettings::programVersion() const
 
 void pSettings::restoreState( QMainWindow* w )
 {
-	if ( !value( "MainWindow/Maximized", true ).toBool() )
-		w->setGeometry( value( "MainWindow/Geometry" ).toRect() );
-	else
+	if ( !w )
+		return;
+
+	QPoint p = value( "MainWindow/Position" ).toPoint();
+	QSize s = value( "MainWindow/Size" ).toSize();
+	if ( !p.isNull() && !s.isNull() )
+	{
+		w->resize( s );
+		w->move( p );
+	}
+	if ( value( "MainWindow/Maximized", true ).toBool() )
 		w->showMaximized();
 	w->restoreState( value( "MainWindow/State" ).toByteArray() );
 }
 
 void pSettings::saveState( QMainWindow* w )
 {
+	if ( !w )
+		return;
+
 	setValue( "MainWindow/Maximized", w->isMaximized() );
-	setValue( "MainWindow/Geometry", w->geometry() );
+	setValue( "MainWindow/Position", w->pos() );
+	setValue( "MainWindow/Size", w->size() );
 	setValue( "MainWindow/State", w->saveState() );
 }

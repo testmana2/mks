@@ -11,7 +11,7 @@
 #include <QMainWindow>
 
 pDockToolBar::pDockToolBar( pDockToolBarManager* t, Qt::Orientation o )
-	: mManager( t ), mUniqueId( 0 ), mExclusive( false )
+	: mManager( t ), mUniqueId( 0 ), mExclusive( true )
 {
 	// need docktoolbar manager
 	Q_ASSERT( t != 0 );

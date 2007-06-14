@@ -57,5 +57,11 @@ HEADERS	+= pDockToolBar.h \
 	pDockToolBarManager.h
 SOURCES	+= pDockToolBar.cpp \
 	pDockToolBarManager.cpp
+# pMainWindow
+HEADERS	+= pMainWindow.h
+SOURCES	+= pMainWindow.cpp
+# pTabbedMainWindow
+HEADERS	+= pTabbedMainWindow.h
+SOURCES	+= pTabbedMainWindow.cpp
 
 contains( TEMPLATE, app ):SOURCES	+= main.cpp

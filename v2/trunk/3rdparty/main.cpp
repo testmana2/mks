@@ -1,23 +1,56 @@
 #include <QApplication>
-//
+#include <QErrorMessage>
+#include <QDockWidget>
+#include <QTextEdit>
+
+/*
 #include <QMainWindow>
 #include <QMenuBar>
-#include "pTabbedWorkspace.h"
-#include <QTextEdit>
-#include "pMenuBar.h"
+
 #include "pActionManager.h"
 #include "pSettings.h"
 #include "pAction.h"
+*/
 
+#include "pTabbedMainWindow.h"
 #include "pDockToolBar.h"
 #include "pDockToolBarManager.h"
-#include <QDockWidget>
+#include "pTabbedWorkspace.h"
+#include "pMenuBar.h"
 
-#include <QErrorMessage>
-//
 int main( int argc, char** argv )
 {
 	QApplication app( argc, argv );
+
+	pTabbedMainWindow p;
+	p.show();
+
+	// set tabbed sample settings
+	p.tabbedWorkspace()->setTabShape( QTabBar::RoundedNorth );
+	p.tabbedWorkspace()->setTabMode( pTabbedWorkspace::tmMDI );
+	p.tabbedWorkspace()->setDocumentMode( pTabbedWorkspace::dmMaximized );
+
+	// set sample menu
+	p.menuBar()->menu( "mTools" )->setTitle( "Tools" );
+	p.menuBar()->action( "mTools/aTest" )->setText( "Test" );
+
+	// add sample dock widget
+	for ( int i = 0; i < 5; i++ )
+		p.dockToolBar( Qt::TopToolBarArea )->addDock( new QDockWidget, QString( "Qt Assistant %1" ).arg( i ), QPixmap( "icon.png" ) );
+
+	// add sample document
+	for ( int i = 0; i < 10; i++ )
+	{
+		QTextEdit* e = new QTextEdit;
+		e->setWindowTitle( QString( "Tab: %1" ).arg( i ) );
+		e->setPlainText( e->windowTitle() );
+		p.tabbedWorkspace()->addTab( e, e->windowTitle() );
+	}
+
+	// restore window state
+	p.restoreState();
+
+/*
 	//app.setStyle( "plastique" );
 	// main window
 	QMainWindow* m = new QMainWindow;
@@ -44,14 +77,7 @@ int main( int argc, char** argv )
 	tw->setTabShape( QTabBar::RoundedNorth );
 	tw->setTabMode( pTabbedWorkspace::tmMDI );
 	tw->setDocumentMode( pTabbedWorkspace::dmMaximized );
-	// add sample document to document manager
-	for ( int i = 0; i < 10; i++ )
-	{
-		QTextEdit* e = new QTextEdit;
-		e->setWindowTitle( QString( "Tab: %1" ).arg( i ) );
-		e->setPlainText( e->windowTitle() );
-		tw->addTab( e, e->windowTitle() );
-	}
+	
 
 	// show main window
 	m->setCentralWidget( tw );
@@ -87,6 +113,6 @@ int main( int argc, char** argv )
 	int r = app.exec();
 
 	tm->saveState();
-
-	return r;
+*/
+	return app.exec();
 }
