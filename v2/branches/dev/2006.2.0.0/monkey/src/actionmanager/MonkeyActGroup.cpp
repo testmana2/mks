@@ -17,3 +17,7 @@ MonkeyAction*  MonkeyActGroup::addAction ( MonkeyAction * action )
 {
 	return (MonkeyAction*)QActionGroup::addAction ( action);
 };
+
+QAction* MonkeyActGroup:: addAction ( QAction * action ) {};
+QAction * MonkeyActGroup::addAction ( const QString & text ) {};
+QAction * MonkeyActGroup::addAction ( const QIcon & icon, const QString & text ) {};

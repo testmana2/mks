@@ -30,10 +30,10 @@ bool MessageBox::install()
 	mMessageBox = UIMessageBox::self( mWorkspace );
 	// create actions
 	mWorkspace->menuBar()->action( "aSeparator3" );
-    actGroup  = new MonkeyActGroup("Message Box plugin", mMessageBox);
-	aShowListBox  = new MonkeyAction( actGroup, "Show ListBox",QKeySequence("F11"));
+    actGroup  = new MonkeyActGroup("Message Box plugin","message_box", mMessageBox);
+	aShowListBox  = new MonkeyAction( actGroup, "Show ListBox","show_listbox", QKeySequence("F11"));
     aShowListBox->setIcon ( QIcon( ":/icons/builderrorR.png" ));
- 	aShowConsole  = new MonkeyAction( actGroup, "Show Console",QKeySequence("F12"));
+ 	aShowConsole  = new MonkeyAction( actGroup, "Show Console","show_console",QKeySequence("F12"));
     aShowConsole->setIcon ( QIcon( ":/icons/tabconsole.png" ));
  	mWorkspace->menuBar()->action( "aSeparator3" );
     QMenu* menu = mWorkspace->menuBar()->menu ("mView");

@@ -102,22 +102,22 @@ void ActionManager::showSettings ()
 	
 	vbox.addWidget ( actListWidget );
 	QHBoxLayout confBox ( &wgt );
-	defaultBtn = new QPushButton ( "Restore default", &wgt );
+	defaultBtn = new QPushButton ( tr("Restore default"), &wgt );
 	defaultBtn->setEnabled ( false );
 	confBox.addWidget ( defaultBtn );
-	clearBtn = new QPushButton ( "Clear", &wgt );
+	clearBtn = new QPushButton ( tr("Clear"), &wgt );
 	clearBtn->setEnabled ( false );
 	confBox.addWidget ( clearBtn );
 	keyInput = new KeySequenceInput ( &wgt );
 	keyInput->setEnabled ( false );
 	confBox.addWidget ( keyInput );
-	setBtn = new QPushButton ( "Set", &wgt );
+	setBtn = new QPushButton ( tr("Set"), &wgt );
 	setBtn->setEnabled ( false );
 	confBox.addWidget ( setBtn );
 	vbox.addLayout ( &confBox );
 	QHBoxLayout hbox ( &wgt );
 	vbox.addLayout ( &hbox );
-	QPushButton closeBtn ( "Close", &wgt );
+	QPushButton closeBtn ( tr("Close"), &wgt );
 	hbox.addWidget ( &closeBtn );
 	connect ( &closeBtn, SIGNAL ( clicked() ), &wgt, SLOT ( close() ) );
 	connect ( clearBtn, SIGNAL ( clicked() ), keyInput, SLOT ( clear() ) );
@@ -149,7 +149,7 @@ void ActionManager::setDefaultClicked ()
 	
 	else
 	{
-		QMessageBox::warning ( keyInput, "Error", "Key sequence " + newShortcut + " already assigned to the \'" + result + '\"', QMessageBox::Close );
+		QMessageBox::warning ( keyInput, tr("Error"), tr("Key sequence ") + newShortcut + tr(" already assigned to the \'") + result + '\"', QMessageBox::Close );
 		keyInput->setText ( selectedAction->shortcut().toString() );
 	}
 }
@@ -170,7 +170,7 @@ void ActionManager::changeShortcut ()
 	
 	else
 	{
-		QMessageBox::warning ( keyInput, "Error", "Key sequence " + newShortcutText + " already assigned to the \'" + result + '\"', QMessageBox::Close );
+		QMessageBox::warning ( keyInput, tr("Error"), tr("Key sequence ") + newShortcutText + tr(" already assigned to the \'") + result + '\"', QMessageBox::Close );
 		keyInput->setText ( selectedAction->shortcut().toString() );
 	}
 }
