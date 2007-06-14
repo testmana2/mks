@@ -13,10 +13,10 @@
 */
 
 #include "pTabbedMainWindow.h"
-#include "pDockToolBar.h"
-#include "pDockToolBarManager.h"
-#include "pTabbedWorkspace.h"
 #include "pMenuBar.h"
+#include "pDockToolBar.h"
+#include "pTabbedWorkspace.h"
+
 
 int main( int argc, char** argv )
 {
@@ -51,12 +51,6 @@ int main( int argc, char** argv )
 	p.restoreState();
 
 /*
-	//app.setStyle( "plastique" );
-	// main window
-	QMainWindow* m = new QMainWindow;
-
-	// main window menu bar
-	m->setMenuBar( pMenuBar::instance( m ) );
 	// fill menu bar
 	pMenuBar* b = pMenuBar::instance();
 	QMenu* mn = b->menu( "mFile" );
@@ -70,49 +64,6 @@ int main( int argc, char** argv )
 
 	// connect for showinf shortcut manager
 	QObject::connect( a, SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
-
-	// main window document manager
-	pTabbedWorkspace* tw = new pTabbedWorkspace( m );
-	// set document manager settings
-	tw->setTabShape( QTabBar::RoundedNorth );
-	tw->setTabMode( pTabbedWorkspace::tmMDI );
-	tw->setDocumentMode( pTabbedWorkspace::dmMaximized );
-	
-
-	// show main window
-	m->setCentralWidget( tw );
-	m->show();
-
-	// create dock toolbar manager
-	pDockToolBarManager* tm = pDockToolBarManager::instance( m );
-	tm->setSettings( pSettings::instance() );
-
-	// add content to docktoolbar manager
-	for ( int i = 0; i < 5; i++ )
-		tm->bar( Qt::TopToolBarArea )->addDock( new QDockWidget, QString( "Qt Assistant %1" ).arg( i ), QPixmap( "icon.png" ) );
-
-	// some testing members
-	tw->setCurrentIndex( 5 );
-	tw->document( 3 )->close();
-	delete tw->document( 4 );
-	tw->document( 2 )->deleteLater();
-
-	// add action to pdocktoolbar
-	pAction* pa = new pAction( "Action", QKeySequence( "Ctrl+S" ) );
-	pa->setIcon( QPixmap( "icon.png" ) );
-	tm->bar( Qt::TopToolBarArea )->addAction( pa );
-
-	tm->restoreState();
-
-	
-
-	//foreach ( QDockWidget* d, tm->bar( Qt::TopToolBarArea )->docks() )
-		//tm->bar( Qt::RightToolBarArea )->addDock( d, d->windowTitle() );
-
-	// execute application
-	int r = app.exec();
-
-	tm->saveState();
 */
 	return app.exec();
 }
