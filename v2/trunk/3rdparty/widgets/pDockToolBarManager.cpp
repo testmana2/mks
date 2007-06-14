@@ -170,7 +170,7 @@ void pDockToolBarManager::restoreState( pDockToolBar* p )
 		l << QString::number( mMain->toolBarArea( p ) );
 	else
 	{
-		mSettings->beginGroup( "DockToolBar/Docks" );
+		mSettings->beginGroup( "MainWindow/Docks" );
 		l = mSettings->childKeys();
 		mSettings->endGroup();
 	}
@@ -185,25 +185,17 @@ void pDockToolBarManager::restoreState( pDockToolBar* p )
 		if ( p )
 		{
 			// bar datas
-			QStringList mList = mSettings->value( QString( "DockToolBar/Docks/%1" ).arg( i ), QStringList() ).toStringList();
+			QStringList mList = mSettings->value( QString( "MainWindow/Docks/%1" ).arg( i ), QStringList() ).toStringList();
 
 			// for each entry
 			foreach ( QString e, mList )
 			{
-				QString n = e.section( '|', 0, 0 );
-				int c = e.section( '|', 1, 1 ).toInt();
-				QSize s = QSize( e.section( '|', 2, 2 ).toInt(), e.section( '|', 3, 3 ).toInt() );
-
 				// get dock
-				QDockWidget* d = mMain->findChild<QDockWidget*>( n );
+				QDockWidget* d = mMain->findChild<QDockWidget*>( e );
 
-				// restore dock area / proprety
+				// restore dock area
 				if ( d )
-				{
 					p->addDock( d, d->windowTitle(), d->windowIcon() );
-					p->setDockVisible( d, c );
-					p->resize( s );
-				}
 			}
 		}
 	}
@@ -230,9 +222,9 @@ void pDockToolBarManager::saveState( pDockToolBar* p )
 
 		// for each dock in docktoolbar
 		foreach ( QDockWidget* d, tb->docks() )
-			mList << QString( "%1|%2|%3|%4" ).arg( d->objectName() ).arg( tb->isDockVisible( d ) ).arg( d->width() ).arg( d->height() );
+			mList << d->objectName();
 
 		// write datas
-		mSettings->setValue( QString( "DockToolBar/Docks/%1" ).arg( mMain->toolBarArea( tb ) ), mList );
+		mSettings->setValue( QString( "MainWindow/Docks/%1" ).arg( mMain->toolBarArea( tb ) ), mList );
 	}
 }
