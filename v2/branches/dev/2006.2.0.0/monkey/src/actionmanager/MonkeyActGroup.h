@@ -34,8 +34,8 @@ public:
 	MonkeyAction* addAction ( MonkeyAction * action );
 	
 protected: //just for disabling of using methods.
-	virtual QAction* addAction ( QAction * action ) = 0;
-	virtual QAction * addAction ( const QString & text ) = 0;
-	virtual QAction * addAction ( const QIcon & icon, const QString & text ) = 0;
+	virtual QAction* addAction ( QAction * action ) ;
+	virtual QAction * addAction ( const QString & text ) ;
+	virtual QAction * addAction ( const QIcon & icon, const QString & text ) ;
 };
 #endif //MONKEYACTGROUP_H
