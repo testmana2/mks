@@ -31,10 +31,11 @@ void pActionManager::reloadSettings()
 	if ( !mSettings )
 		return;
 
+	// restore shortcut for each action
 	foreach ( pActionGroup* ag, actionGroups )
 	{
 		foreach ( QAction* a, ag->actions() )
-			a->setShortcut( QKeySequence( mSettings->value( QString( "MainWindow/Shortcuts/%1/%2" ).arg( ag->objectName() ).arg( a->objectName() ), a->property( "Default Shortcut" ) ).toString() ) );
+			a->setShortcut( QKeySequence( mSettings->value( QString( "ShortcutsManager/%1/%2" ).arg( ag->objectName() ).arg( a->objectName() ), a->property( "Default Shortcut" ) ).toString() ) );
 	}
 }
 
@@ -51,9 +52,10 @@ void pActionManager::removeGroup( pActionGroup* g )
 QKeySequence pActionManager::getShortCut( const QString& on, const QString& an, const QKeySequence& sc )
 {
 	if ( !instance()->settings() )
-		return QKeySequence();
+		return sc;
 
-	return QKeySequence( instance()->settings()->value( QString( "MainWindow/Shortcuts/%1/%2" ).arg( on ).arg( an ), sc ).toString() );
+	// return defined shortcuts or the default one
+	return QKeySequence( instance()->settings()->value( QString( "ShortcutsManager/%1/%2" ).arg( on ).arg( an ), sc ).toString() );
 }
 
 void pActionManager::showSettings()
@@ -63,32 +65,23 @@ void pActionManager::showSettings()
 
 QString pActionManager::setShortcutForAction( pAction* action, const QKeySequence& sc )
 {
-	bool existWithSameShortcut = false;
 	QString s;
 
+	// try to found already used shortcut
 	foreach ( pActionGroup* ag, actionGroups )
 	{
 		foreach ( QAction* a, ag->actions() )
 		{
-			if ( a != action && a->shortcut() != sc && !sc.isEmpty() ) // != QKeySequence()
+			if ( a != action && a->shortcut() == sc && !sc.isEmpty() )
 			{
-				existWithSameShortcut = true;
 				s = QString( "%1/%2" ).arg( ag->property( "Caption" ).toString() ).arg( a->text() );
-				break;
+				qDebug( qPrintable( QString( "Action with shortcut '%1' already exist(%2)" ).arg( sc.toString() ).arg( s ) ) );
+				return s;
 			}
 		}
-		if ( existWithSameShortcut )
-			break;
 	}
 
-	if ( existWithSameShortcut )
-	{
-		qDebug( qPrintable( QString( "Action with shortcut %1 already exist(%2)" ).arg( sc.toString() ).arg( s ) ) );
-		return s;
-	}
-	else
-	{
-		action->setShortcut( sc );
-		return "OK";
-	}
+	// set new shortcut to action
+	action->setShortcut( sc );
+	return "OK";
 }

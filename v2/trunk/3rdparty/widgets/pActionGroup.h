@@ -24,6 +24,7 @@ public:
 private:
 	static QPointer<pActionGroup> mDefaultGroup;
 
+	// disable default addAction
 protected:
 	virtual QAction* addAction( QAction* );
 	virtual QAction* addAction( const QString& );

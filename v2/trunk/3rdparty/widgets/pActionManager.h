@@ -17,18 +17,6 @@ class Q_MONKEY_EXPORT pActionManager : public QObject, public QSingleton<pAction
 	friend class QSingleton<pActionManager>;
 	friend class pShortcutsEditor;
 
-private:
-	QList <pActionGroup*> actionGroups;
-
-	QSettings* mSettings;
-
-	//returns QString("OK") if all OK, and name of shortcut, with it are conflict, if are conflict
-	QString setShortcutForAction( pAction*, const QKeySequence& );
-
-	//internal functions for access to QSettings
-	QKeySequence readFromSettings( const QString&);
-	void writeToSettings( const QString&, const QKeySequence& );
-
 public:
 	pActionManager( QObject* = QApplication::instance() );
 
@@ -40,6 +28,18 @@ public:
 	void removeGroup( pActionGroup* );
 
 	static QKeySequence getShortCut( const QString&, const QString&, const QKeySequence& );
+
+private:
+	// return OK or the conflicting action name and shortcut
+	QString setShortcutForAction( pAction*, const QKeySequence& );
+
+	// internal functions for access to QSettings
+	// FIXME: P@sNox: hlamer what is this for ?!
+	QKeySequence readFromSettings( const QString& );
+	void writeToSettings( const QString&, const QKeySequence& );
+
+	QList <pActionGroup*> actionGroups;
+	QSettings* mSettings;
 
 public slots:
 	void showSettings();
