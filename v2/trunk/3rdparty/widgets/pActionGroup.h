@@ -7,19 +7,27 @@
 #include <QPointer>
 
 class QWidget;
+class pAction;
 
 class Q_MONKEY_EXPORT pActionGroup : public QActionGroup
 {
 	Q_OBJECT
 
 public:
-	pActionGroup( const QString&, QWidget* );
+	pActionGroup( const QString&, const QString&, QWidget* );
 	~pActionGroup();
+
+	pAction* addAction( pAction* );
 
 	static pActionGroup* defaultGroup();
 
 private:
 	static QPointer<pActionGroup> mDefaultGroup;
+
+protected:
+	virtual QAction* addAction( QAction* );
+	virtual QAction* addAction( const QString& );
+	virtual QAction* addAction( const QIcon&, const QString& );
 
 };
 

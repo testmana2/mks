@@ -15,7 +15,10 @@ pKeySequenceInput::pKeySequenceInput( QWidget* w )
 
 bool pKeySequenceInput::eventFilter( QObject* o, QEvent* e )
 {
+	// get type
 	int i = e->type();
+
+	// if keypress
 	if ( i == QEvent::KeyPress )
 	{
 		QKeyEvent* ke = static_cast<QKeyEvent*>( e );
@@ -50,7 +53,8 @@ bool pKeySequenceInput::eventFilter( QObject* o, QEvent* e )
 			setText( s );
 		}
 	}
-	else if( i == QEvent::KeyRelease )
+	// if keyrelease
+	else if ( i == QEvent::KeyRelease )
 	{
 		QKeyEvent* ke = static_cast<QKeyEvent*>( e );
 		switch ( ke->key() )
@@ -72,6 +76,7 @@ bool pKeySequenceInput::eventFilter( QObject* o, QEvent* e )
 			break;
 		}
 	}
+
 	// standard event processing
 	return QLineEdit::eventFilter( o, e );
 }

@@ -44,11 +44,13 @@ SOURCES	+= pTabbedWorkspaceCorner.cpp \
 HEADERS	+= pAction.h \
 	pActionGroup.h \
 	pActionManager.h \
-	pKeySequenceInput.h
+	pKeySequenceInput.h \
+	pShortcutsEditor.h
 SOURCES	+= pAction.cpp \
 	pActionGroup.cpp \
 	pActionManager.cpp \
-	pKeySequenceInput.cpp
+	pKeySequenceInput.cpp \
+	pShortcutsEditor.cpp
 # pmenubar
 HEADERS	+= pMenuBar.h
 SOURCES	+= pMenuBar.cpp

@@ -3,20 +3,11 @@
 #include <QDockWidget>
 #include <QTextEdit>
 
-/*
-#include <QMainWindow>
-#include <QMenuBar>
-
-#include "pActionManager.h"
-#include "pSettings.h"
-#include "pAction.h"
-*/
-
 #include "pTabbedMainWindow.h"
 #include "pMenuBar.h"
 #include "pDockToolBar.h"
 #include "pTabbedWorkspace.h"
-
+#include "pActionManager.h"
 
 int main( int argc, char** argv )
 {
@@ -32,7 +23,8 @@ int main( int argc, char** argv )
 
 	// set sample menu
 	p.menuBar()->menu( "mTools" )->setTitle( "Tools" );
-	p.menuBar()->action( "mTools/aTest" )->setText( "Test" );
+	QAction* a = p.menuBar()->action( "mTools/aShortcutsEditor", "Shortcuts Editor" );
+	QObject::connect( a, SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
 
 	// add sample dock widget
 	for ( int i = 0; i < 5; i++ )
