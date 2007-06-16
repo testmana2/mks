@@ -15,7 +15,6 @@
  ********************************************************************************************************/
 #include "pMenuBar.h"
 #include "pAction.h"
-#include "pActionGroup.h"
 
 pMenuBar::pMenuBar( QWidget* p )
 	: QMenuBar( p ), mMenuGroup( tr( "Main Menu" ) )

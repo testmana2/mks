@@ -412,7 +412,7 @@ void pTabbedWorkspace::updateView( TABBED_DOCUMENT* nd )
 			switch ( mDocumentMode )
 			{
 			case dmMaximized:
-				if ( !nd->isMaximized() )
+				if ( nd->isVisible() && !nd->isMaximized() )
 					nd->showMaximized();
 				break;
 			case dmCascade:
