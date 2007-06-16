@@ -1,7 +1,6 @@
 #include "pShortcutsEditor.h"
 #include "pKeySequenceInput.h"
 #include "pActionManager.h"
-#include "pActionGroup.h"
 #include "pAction.h"
 
 #include <QBoxLayout>
@@ -16,7 +15,7 @@ pShortcutsEditor::pShortcutsEditor( QWidget* w )
 {
 	setAttribute( Qt::WA_DeleteOnClose );
 	setWindowTitle( tr( "Shortcuts Editor" ) );
-	setFixedSize ( 400, 480 );
+	resize( 400, 480 );
 
 	twShortcuts = new QTreeWidget( this );
 	twShortcuts->setObjectName( "twShortcuts" );
@@ -59,14 +58,36 @@ pShortcutsEditor::pShortcutsEditor( QWidget* w )
 	vl->addWidget( pbClose );
 
 	// fill tree
-	foreach ( pActionGroup* g, pActionManager::instance()->actionGroups )
+	foreach ( pActionList al, pActionManager::instance()->mActions )
 	{
 		// group item
-		QTreeWidgetItem* gi = new QTreeWidgetItem( twShortcuts );
-		gi->setText( 0, g->property( "Caption" ).toString() );
-		gi->setExpanded( true );
+		QTreeWidgetItem* gi = 0;
+		if ( al.count() )
+		{
+			QString g = al.at( 0 )->property( pAction::_GROUP_PROPERTY_ ).toString();
+			int c = g.split( '/' ).count();
 
-		foreach ( QAction* a, g->actions() )
+			// create sub group items
+			for ( int i = 0; i < c; i++ )
+			{
+				QString s = g.section( '/', 0, i );
+				QTreeWidgetItem* ci = mItems.value( s );
+				if ( !ci )
+				{
+					if ( i == 0 )
+						gi = new QTreeWidgetItem( twShortcuts );
+					else
+						gi = new QTreeWidgetItem( gi );
+					mItems[s] = gi;
+					gi->setText( 0, g.section( '/', i, i ) );
+					gi->setExpanded( true );
+				}
+				else
+					gi = ci;
+			}
+		}
+
+		foreach ( QAction* a, al )
 		{
 			// action item
 			QTreeWidgetItem* it = new QTreeWidgetItem( gi );
@@ -80,6 +101,8 @@ pShortcutsEditor::pShortcutsEditor( QWidget* w )
 
 	// connections
 	connect( pbClear, SIGNAL( clicked() ), leShortcut, SLOT( clear() ) );
+	connect( pbRestore, SIGNAL( clicked() ), this, SLOT( pbRestore_pbSet_clicked() ) );
+	connect( pbSet, SIGNAL( clicked() ), this, SLOT( pbRestore_pbSet_clicked() ) );
 	connect( pbClose, SIGNAL( clicked() ), this, SLOT( close() ) );
 	QMetaObject::connectSlotsByName( this );
 }
@@ -88,7 +111,7 @@ void pShortcutsEditor::on_twShortcuts_itemSelectionChanged()
 {
 	// get selected item
 	QTreeWidgetItem* it = twShortcuts->selectedItems().value( 0 );
-	bool b = it && it->parent();
+	bool b = it && it->data( 0, Qt::UserRole ).toUInt() != 0;
 
 	// set button state according to item is an action
 	pbRestore->setEnabled( b );
@@ -106,11 +129,12 @@ void pShortcutsEditor::on_twShortcuts_itemSelectionChanged()
 	{
 		leShortcut->setEnabled( true );
 		leShortcut->setText( a->shortcut().toString() );
+		leShortcut->setFocus();
 		pbSet->setEnabled( false );
 	}
 }
 
-void pShortcutsEditor::on_pbRestore_clicked()
+void pShortcutsEditor::pbRestore_pbSet_clicked()
 {
 	// get selected item
 	QTreeWidgetItem* it = twShortcuts->selectedItems().value( 0 );
@@ -121,26 +145,19 @@ void pShortcutsEditor::on_pbRestore_clicked()
 	if ( a )
 	{
 		// get default action shortcut
-		QString s = a->property( "Default Shortcut" ).toString();
+		QString s = sender() == pbRestore ? a->property( pAction::_DEFAULT_SHORTCUT_PROPERTY_ ).toString() : leShortcut->text();
 
-		// try assigning new shortcut
-		QString r = pActionManager::instance()->setShortcutForAction( a, QKeySequence( s ) );
-
-		// if assigned ok
-		if ( r.toLower() == "ok" )
+		// try asigning new shortcut
+		if ( pActionManager::instance()->setShortcut( a, QKeySequence( s ) ) )
 		{
 			it->setText( 1, s );
 			leShortcut->setText( s );
 			pbSet->setEnabled( false );
-
-			// remove old shortcut entry
-			if ( pActionManager::instance()->settings() )
-				pActionManager::instance()->settings()->remove( QString( "ShortcutsManager/%1/%2" ).arg( a->actionGroup()->objectName() ).arg( a->objectName() ) );
 		}
 		// show warning
 		else
 		{
-			QMessageBox::warning( window(), tr( "Error" ), tr( "Key Sequence '%1' already assigned to the '%2'" ).arg( s ).arg( r ), QMessageBox::Close );
+			QMessageBox::warning( window(), tr( "Error" ), pActionManager::lastError(), QMessageBox::Close );
 			leShortcut->setText( a->shortcut().toString() );
 		}
 	}
@@ -149,32 +166,4 @@ void pShortcutsEditor::on_pbRestore_clicked()
 void pShortcutsEditor::on_leShortcut_textChanged( const QString& )
 {
 	pbSet->setEnabled( true );
-}
-
-void pShortcutsEditor::on_pbSet_clicked()
-{
-	// get selected item
-	QTreeWidgetItem* it = twShortcuts->selectedItems().value( 0 );
-
-	// get action
-	QAction* a = reinterpret_cast<QAction*>( it->data( 0, Qt::UserRole ).toUInt() );
-
-	if ( a )
-	{
-		QString s = leShortcut->text();
-		QString r = pActionManager::instance()->setShortcutForAction( qobject_cast<pAction*>( a ), QKeySequence( s ) );
-
-		if ( r.toLower() == "ok" )
-		{
-			it->setText( 1, s );
-			leShortcut->setText( s );
-			pActionManager::instance()->settings()->setValue( QString( "ShortcutsManager/%1/%2" ).arg( a->actionGroup()->objectName() ).arg( a->objectName() ), s );
-			pbSet->setEnabled( false );
-		}
-		else
-		{
-			QMessageBox::warning( window(), tr( "Error" ), tr( "Key Sequence '%1' already assigned to the '%2'" ).arg( s ).arg( r ), QMessageBox::Close );
-			leShortcut->setText( a->shortcut().toString() );
-		}
-	}
 }

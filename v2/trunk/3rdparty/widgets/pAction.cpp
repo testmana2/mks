@@ -1,25 +1,42 @@
 #include "pAction.h"
-#include "pActionManager.h"
 
-pAction::pAction( const QString& n, const QString& s, const QKeySequence& sc, pActionGroup* o )
-	: QAction( o )
+const char* pAction::_DEFAULT_SHORTCUT_PROPERTY_ = "Default Shortcut";
+const char* pAction::_GROUP_PROPERTY_ = "Group";
+const char* pAction::_SETTINGS_SCOPE_ = "Shortcuts Manager";
+
+pAction::pAction( const QString& n, const QString& s, const QKeySequence& sc, const QString& g )
+	: QAction( pActionManager::instance() )
 {
-	// action group is require
-	Q_ASSERT( o != 0 );
-
-	// action name is require
-	Q_ASSERT( !n.isEmpty() );
-
 	// set object name
 	setObjectName( n );
 
 	// add to group
-	o->addAction( this );
+	pActionManager::addAction( g, this );
 
 	// set action text
 	setText( s );
 
 	// set action shortcut
-	setProperty( "Default Shortcut", sc.toString() );
-	setShortcut( pActionManager::getShortCut( o->objectName(), n, sc ) );
+	setProperty( _DEFAULT_SHORTCUT_PROPERTY_, sc.toString() );
+	setShortcut( pActionManager::getShortcut( g, this, sc ) );
+}
+
+pAction::pAction( const QString& n, const QIcon& i, const QString& s, const QKeySequence& sc, const QString& g )
+	: QAction( pActionManager::instance() )
+{
+	// set object name
+	setObjectName( n );
+
+	// add to group
+	pActionManager::addAction( g, this );
+
+	// set icon
+	setIcon( i );
+
+	// set action text
+	setText( s );
+
+	// set action shortcut
+	setProperty( _DEFAULT_SHORTCUT_PROPERTY_, sc.toString() );
+	setShortcut( pActionManager::getShortcut( g, this, sc ) );
 }

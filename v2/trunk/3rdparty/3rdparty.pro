@@ -42,12 +42,12 @@ SOURCES	+= pTabbedWorkspaceCorner.cpp \
 	pTabbedWorkspaceRightCorner.cpp
 # action manager
 HEADERS	+= pAction.h \
-	pActionGroup.h \
+#	pActionGroup.h \
 	pActionManager.h \
 	pKeySequenceInput.h \
 	pShortcutsEditor.h
 SOURCES	+= pAction.cpp \
-	pActionGroup.cpp \
+#	pActionGroup.cpp \
 	pActionManager.cpp \
 	pKeySequenceInput.cpp \
 	pShortcutsEditor.cpp

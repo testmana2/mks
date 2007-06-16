@@ -26,8 +26,6 @@
 #include <QAction>
 #include <QIcon>
 
-class pActionGroup;
-
 class Q_MONKEY_EXPORT pMenuBarGroup
 {
 public:
@@ -87,7 +85,7 @@ private:
 
 	QAction* searchAction( QMenu*, const QString& );
 
-	pActionGroup* mActionGroup;
+	QString mMenuGroup;
 	QHash<QString, QMenu*> mMenus;
 	QStack<pMenuBarGroup> groupStack;
 	QString groupPrefix;
