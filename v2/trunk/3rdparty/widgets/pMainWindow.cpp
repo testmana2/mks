@@ -1,5 +1,6 @@
 #include "pMainWindow.h"
 #include "pSettings.h"
+#include "pActionManager.h"
 #include "pMenuBar.h"
 #include "pDockToolBarManager.h"
 #include "pDockToolBar.h"
@@ -9,6 +10,9 @@ pMainWindow::pMainWindow( QWidget* w, Qt::WindowFlags f )
 {
 	// init settings
 	settings();
+
+	// init action manager
+	pActionManager::instance()->setSettings( settings() );
 
 	// init menubar
 	setMenuBar( menuBar() );
@@ -50,6 +54,11 @@ pDockToolBar* pMainWindow::dockToolBar( Qt::ToolBarArea a )
 
 void pMainWindow::saveState()
 {
+#if QT_VERSION >= 0x040300
+	// there is a bug when restoring visible dock with qt 4.3.0
+	foreach ( QDockWidget* d, findChildren<QDockWidget*>() )
+		d->hide();
+#endif
 	dockToolBarManager()->saveState();
 	settings()->saveState( this );
 }

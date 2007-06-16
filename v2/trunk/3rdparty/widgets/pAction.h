@@ -12,8 +12,7 @@ class Q_MONKEY_EXPORT pAction : public QAction
 	Q_OBJECT
 
 public:
-	pAction( const QString&, const QKeySequence&, pActionGroup* = pActionGroup::defaultGroup() );
-	~pAction();
+	pAction( const QString&, const QString&, const QKeySequence&, pActionGroup* = pActionGroup::defaultGroup() );
 
 };
 
