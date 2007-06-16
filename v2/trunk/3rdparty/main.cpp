@@ -14,7 +14,6 @@ int main( int argc, char** argv )
 	QApplication app( argc, argv );
 
 	pTabbedMainWindow p;
-	p.show();
 
 	// set tabbed sample settings
 	p.tabbedWorkspace()->setTabShape( QTabBar::RoundedNorth );
@@ -42,20 +41,9 @@ int main( int argc, char** argv )
 	// restore window state
 	p.restoreState();
 
-/*
-	// fill menu bar
-	pMenuBar* b = pMenuBar::instance();
-	QMenu* mn = b->menu( "mFile" );
-	mn->setTitle( "Titi" );
-	QAction* a = b->action( "mFile/aShortcuts" );
-	a->setText( "Edit shortcuts..." );
+	// show mainwindow
+	p.show();
 
-	// init action manager
-	pActionManager::instance( &app );
-	pActionManager::instance()->setSettings( pSettings::instance() );
-
-	// connect for showinf shortcut manager
-	QObject::connect( a, SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
-*/
+	// execute application
 	return app.exec();
 }

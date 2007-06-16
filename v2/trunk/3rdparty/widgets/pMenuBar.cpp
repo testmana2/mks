@@ -18,7 +18,7 @@
 #include "pActionGroup.h"
 
 pMenuBar::pMenuBar( QWidget* p )
-	: QMenuBar( p ), mActionGroup( new pActionGroup( "agMainMenu", tr( "Main Menu" ), this ) )
+	: QMenuBar( p ), mMenuGroup( tr( "Main Menu" ) )
 {
 }
 
@@ -34,7 +34,9 @@ QAction* pMenuBar::searchAction( QMenu* m, const QString& s )
 	if ( s.contains( QRegExp( tr( "^aseparator\\d{1,2}$" ), Qt::CaseInsensitive ) ) )
 		return m->addSeparator();
 
-	pAction* a = new pAction( s, QString::null, QKeySequence(), mActionGroup );
+	// get group
+	QString g = m->title().isEmpty() ? mMenuGroup : QString( "%1/%2" ).arg( mMenuGroup, m->title() );
+	pAction* a = new pAction( s, QString::null, QKeySequence(), g );
 	m->addAction( a );
 	return a;
 }

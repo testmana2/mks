@@ -4,12 +4,16 @@
 #include "MonkeyExport.h"
 #include "QSingleton.h"
 
-class pActionGroup;
-class pAction;
+#include <QHash>
+
+class QAction;
 class pKeySequenceInput;
 class QTreeWidget;
 class QPushButton;
 class QSettings;
+
+typedef QList<QAction*> pActionList;
+typedef QHash<QString, pActionList> pHashActionList;
 
 class Q_MONKEY_EXPORT pActionManager : public QObject, public QSingleton<pActionManager>
 {
@@ -18,28 +22,31 @@ class Q_MONKEY_EXPORT pActionManager : public QObject, public QSingleton<pAction
 	friend class pShortcutsEditor;
 
 public:
-	pActionManager( QObject* = QApplication::instance() );
+	static void setSettings( QSettings*, bool = true );
+	static QSettings* settings();
+	static void reloadSettings();
 
-	void setSettings( QSettings*, bool = true );
-	QSettings* settings() const;
-	void reloadSettings();
+	static QAction* addAction( const QString&, QAction* );
+	static pHashActionList actions();
 
-	void addGroup( pActionGroup* );
-	void removeGroup( pActionGroup* );
+	static QString globalGroup();
 
-	static QKeySequence getShortCut( const QString&, const QString&, const QKeySequence& );
+	static QKeySequence getShortcut( const QString&, QAction*, const QKeySequence& );
+	static bool setShortcut( QAction*, const QKeySequence& );
+
+	static QString lastError();
 
 private:
-	// return OK or the conflicting action name and shortcut
-	QString setShortcutForAction( pAction*, const QKeySequence& );
+	pActionManager( QObject* = QApplication::instance() );
 
 	// internal functions for access to QSettings
 	// FIXME: P@sNox: hlamer what is this for ?!
 	QKeySequence readFromSettings( const QString& );
 	void writeToSettings( const QString&, const QKeySequence& );
 
-	QList <pActionGroup*> actionGroups;
 	QSettings* mSettings;
+	pHashActionList mActions;
+	QString mError;
 
 public slots:
 	void showSettings();

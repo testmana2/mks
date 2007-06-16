@@ -5,14 +5,19 @@
 
 #include <QAction>
 
-#include "pActionGroup.h"
+#include "pActionManager.h"
 
 class Q_MONKEY_EXPORT pAction : public QAction
 {
 	Q_OBJECT
 
 public:
-	pAction( const QString&, const QString&, const QKeySequence&, pActionGroup* = pActionGroup::defaultGroup() );
+	pAction( const QString&, const QString&, const QKeySequence&, const QString& = pActionManager::globalGroup() );
+	pAction( const QString&, const QIcon&, const QString&, const QKeySequence&, const QString& = pActionManager::globalGroup() );
+
+	static const char* _DEFAULT_SHORTCUT_PROPERTY_;
+	static const char* _GROUP_PROPERTY_;
+	static const char* _SETTINGS_SCOPE_;
 
 };
 

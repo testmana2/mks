@@ -1,5 +1,4 @@
 #include "pTabbedWorkspaceRightCorner.h"
-#include "pActionGroup.h"
 #include "pAction.h"
 
 #include <QMenu>
@@ -21,9 +20,6 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	agTabMode = new QActionGroup( menu );
 	agDocumentMode = new QActionGroup( menu );
 
-	// action group for shortcuts manager
-	pActionGroup* agRightCorner = new pActionGroup( "agRightCorner", tr( "Tabbed Workspace" ), this );
-
 	// fill enums in menu
 	QMetaEnum e;
 
@@ -31,7 +27,7 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	e = p->tabBar()->metaObject()->enumerator( p->tabBar()->metaObject()->indexOfEnumerator( "Shape" ) );
 	for ( int i = 0; i < e.keyCount(); i++ )
 	{
-		pAction* a = new pAction( e.key( i ), e.key( i ), QKeySequence(), agRightCorner );
+		pAction* a = new pAction( e.key( i ), e.key( i ), QKeySequence(), tr( "Tabbed Workspace/Shape Mode" ) );
 		agTabShape->addAction( a );
 		a->setCheckable( true );
 		if ( p->tabShape() == e.value( i ) )
@@ -43,7 +39,7 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	e = p->metaObject()->enumerator( p->metaObject()->indexOfEnumerator( "TabMode" ) );
 	for ( int i = 0; i < e.keyCount(); i++ )
 	{
-		pAction* a = new pAction( e.key( i ), e.key( i ), QKeySequence(), agRightCorner );
+		pAction* a = new pAction( e.key( i ), e.key( i ), QKeySequence(), tr( "Tabbed Workspace/Tab Mode" ) );
 		agTabMode->addAction( a );
 		a->setCheckable( true );
 		if ( p->tabMode() == e.value( i ) )
@@ -55,12 +51,12 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	e = p->metaObject()->enumerator( p->metaObject()->indexOfEnumerator( "DocumentMode" ) );
 	for ( int i = 0; i < e.keyCount(); i++ )
 	{
-		pAction* a = new pAction( e.key( i ), e.key( i ), QKeySequence(), agRightCorner );
+		pAction* a = new pAction( e.key( i ), e.key( i ), QKeySequence(), tr( "Tabbed Workspace/Document Mode" ) );
 		agDocumentMode->addAction( a );
 		a->setData( i );
 	}
 
-	pAction* a = new pAction( "aTabbedCloseAll", tr( "&Close All" ), QKeySequence( tr( "Ctrl+Alt+F4" ) ), agRightCorner );
+	pAction* a = new pAction( "aTabbedCloseAll", tr( "&Close All" ), QKeySequence(), tr( "Tabbed Workspace" ) );
 
 	// add entries
 	menu->addMenu( tr( "Tab Shape" ) )->addActions( agTabShape->actions() );

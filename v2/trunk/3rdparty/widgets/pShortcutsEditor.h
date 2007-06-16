@@ -5,8 +5,10 @@
 #include "QSingleton.h"
 
 #include <QDialog>
+#include <QHash>
 
 class QTreeWidget;
+class QTreeWidgetItem;
 class QPushButton;
 class QLineEdit;
 
@@ -19,6 +21,7 @@ public:
 	pShortcutsEditor( QWidget* = 0 );
 
 private:
+	QHash<QString, QTreeWidgetItem*> mItems;
 	QTreeWidget* twShortcuts;
 	QPushButton* pbRestore;
 	QPushButton* pbClear;
@@ -28,9 +31,8 @@ private:
 
 private slots:
 	void on_twShortcuts_itemSelectionChanged();
-	void on_pbRestore_clicked();
+	void pbRestore_pbSet_clicked();
 	void on_leShortcut_textChanged( const QString& );
-	void on_pbSet_clicked();
 
 };
 
