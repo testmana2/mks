@@ -12,7 +12,7 @@ pMainWindow::pMainWindow( QWidget* w, Qt::WindowFlags f )
 	settings();
 
 	// init action manager
-	pActionManager::instance()->setSettings( settings() );
+	pActionManager::instance()->setSettings( settings(), false );
 
 	// init menubar
 	setMenuBar( menuBar() );

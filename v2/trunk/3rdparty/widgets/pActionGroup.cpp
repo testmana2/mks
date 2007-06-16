@@ -9,6 +9,7 @@ QPointer<pActionGroup> pActionGroup::mDefaultGroup = 0L;
 
 pActionGroup* pActionGroup::defaultGroup()
 {
+	// return unique default constructed Global action group
 	if ( !mDefaultGroup )
 		mDefaultGroup = new pActionGroup( "agGlobal", tr( "Global" ), QApplication::desktop() );
 	return mDefaultGroup;
@@ -26,11 +27,14 @@ pActionGroup::pActionGroup( const QString& n, const QString& s, QWidget* w )
 	// set object name
 	setObjectName( n );
 
-	// set group name
+	// set group caption
 	setProperty( "Caption", s );
 
 	// add group to groupmanager
 	pActionManager::instance()->addGroup( this );
+
+	// set not exclusive
+	setExclusive( false );
 }
 
 pActionGroup::~pActionGroup()
@@ -46,10 +50,10 @@ pAction* pActionGroup::addAction( pAction * a )
 }
 
 QAction* pActionGroup::addAction( QAction* )
-{ /*Q_ASSERT( 0 );*/ }
+{ Q_ASSERT( 0 ); return 0; }
 
 QAction* pActionGroup::addAction( const QString& )
-{ /*Q_ASSERT( 0 );*/ }
+{ Q_ASSERT( 0 ); return 0; }
 
 QAction* pActionGroup::addAction( const QIcon&, const QString& )
-{ /*Q_ASSERT( 0 );*/ }
+{ Q_ASSERT( 0 ); return 0; }
