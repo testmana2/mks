@@ -3,7 +3,7 @@
 TEMPLATE	= app
 
 # comment for build as debug
-CONFIG	+= release console
+CONFIG	+= debug console
 
 BUILD_PATH	 = ./build
 
