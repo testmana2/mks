@@ -15,6 +15,7 @@
 #include <QWorkspace>
 #include <QIcon>
 #include <QCloseEvent>
+#include <QFile>
 
 pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	: QWidget( p )
@@ -136,6 +137,18 @@ pTabbedWorkspace::TabMode pTabbedWorkspace::tabMode() const
 pTabbedWorkspace::DocumentMode pTabbedWorkspace::documentMode() const
 {
 	return mDocumentMode;
+}
+
+void pTabbedWorkspace::setBackground( const QPixmap& p )
+{
+	if ( !p.isNull() )
+		mWorkspaceWidget->setBackground( QBrush( p ) );
+}
+
+void pTabbedWorkspace::setBackground( const QString& s )
+{
+	if ( QFile::exists( s ) )
+		mWorkspaceWidget->setBackground( QBrush( QPixmap( s ) ) );
 }
 
 void pTabbedWorkspace::setTabShape( QTabBar::Shape s )
