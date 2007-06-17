@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pMainWindow.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class herits from QMainWindow and add some lib features
+ ********************************************************************************************************/
 #include "pMainWindow.h"
 #include "pSettings.h"
 #include "pActionManager.h"

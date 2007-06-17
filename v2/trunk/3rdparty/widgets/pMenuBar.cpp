@@ -1,6 +1,6 @@
 /********************************************************************************************************
- * PROGRAM      : monkey
- * DATE - TIME  : samedi 08 juillet 2006 - 01h14
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
  * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
  * FILENAME     : pMenuBar.cpp
  * LICENSE      : GPL

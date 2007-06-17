@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pshortcutsEditor.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class allow to edit pAction shortcuts
+ ********************************************************************************************************/
 #ifndef PSHORTCUTSEDITOR_H
 #define PSHORTCUTSEDITOR_H
 

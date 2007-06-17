@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pKeySequenceInput.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class allow to track shortcut and write them
+ ********************************************************************************************************/
 #include "pKeySequenceInput.h"
 
 #include <QKeySequence>

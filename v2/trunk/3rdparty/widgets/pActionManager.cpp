@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com ), Kopats Andrei ( hlamer@tut.by )
+ * FILENAME     : pActionManager.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class manage the pAction so we can ease change action's shortcuts
+ ********************************************************************************************************/
 #include "pActionManager.h"
 #include "pAction.h"
 #include "pShortcutsEditor.h"

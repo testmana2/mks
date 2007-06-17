@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pDockToolBar.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class is a toolbar that can track docwidget and create buttons
+ ********************************************************************************************************/
 #ifndef PDOCKTOOLBAR_H
 #define PDOCKTOOLBAR_H
 

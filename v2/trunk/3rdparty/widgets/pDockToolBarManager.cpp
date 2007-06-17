@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pDockToolBarManager.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class manage pDockToolBar
+ ********************************************************************************************************/
 #include "pDockToolBarManager.h"
 #include "pDockToolBar.h"
 

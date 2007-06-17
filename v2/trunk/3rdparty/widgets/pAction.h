@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com ), Kopats Andrei ( hlamer@tut.by )
+ * FILENAME     : pAction.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class allow to create action that can be manage by the shortcut manager
+ ********************************************************************************************************/
 #ifndef PACTION_H
 #define PACTION_H
 
