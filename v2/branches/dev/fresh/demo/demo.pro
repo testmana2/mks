@@ -2,6 +2,16 @@
 
 TEMPLATE	= app
 
-include( fresh.pro )
+TARGET	= fresh_demo
 
-contains( TEMPLATE, app ):SOURCES	+= main.cpp
+BUILD_PATH	 = build
+unix:OBJECTS_DIR	= $$BUILD_PATH/.o/unix
+win32:OBJECTS_DIR	= $$BUILD_PATH/.o/win32
+mac:OBJECTS_DIR	= $$BUILD_PATH/.o/mac
+UI_DIR	= $$BUILD_PATH/.ui
+MOC_DIR	= $$BUILD_PATH/.moc
+RCC_DIR	= $$BUILD_PATH/.rcc
+
+include( ../fresh.pro )
+
+SOURCES	+= main.cpp
