@@ -4,7 +4,7 @@
 DEFINES	+= MONKEY_CORE_BUILD
 
 # include path
-INCLUDEPATH	= .
+INCLUDEPATH	+= .
 
 # Objects
 INCLUDEPATH	+= objects
@@ -13,4 +13,4 @@ INCLUDEPATH	+= objects
 INCLUDEPATH	+= widgets
 
 # dependpath as includepath
-DEPENDPATH	= $$INCLUDEPATH
+DEPENDPATH	+= $$INCLUDEPATH
