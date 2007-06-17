@@ -1,9 +1,12 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com ), klorydryk ( benoit.piedallu@free.fr ), lud42fr, IrmatDen
+ * FILENAME     : QSingleton.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This template class allow to singletonize QObject herited classes
+ ********************************************************************************************************/
 /*
-	Autors :
-	pasnox, pasnox@gmail.com
-	klorydryk, benoit.piedallu@free.fr
-	lud42fr, IrmatDen
-
 	How to use :
 
 	// single sur un QPushButton

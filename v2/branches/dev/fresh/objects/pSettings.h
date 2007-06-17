@@ -1,10 +1,10 @@
 /********************************************************************************************************
- * PROGRAM      : monkey
- * DATE - TIME  : lundi 30 janvier 2006 - 17h47
- * AUTHOR       : Nox P@sNox ( pasnox@hotmail.com )
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
  * FILENAME     : pSettings.h
  * LICENSE      : GPL
- * COMMENTARY   : 
+ * COMMENTARY   : This class allow a singletonized QSettings for your application
  ********************************************************************************************************/
 #ifndef PSETTINGS_H
 #define PSETTINGS_H
