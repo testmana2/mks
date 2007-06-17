@@ -5,7 +5,7 @@ include( qscintilla.pri )
 include( $$QSCINTILLAVERSION/Qt4/qscintilla.pro )
 
 # give defaul path
-BUILD_PATH	= ../../build
+BUILD_PATH	= ../build
 
 unix:OBJECTS_DIR	= $$BUILD_PATH/.o/unix/qscintilla
 win32:OBJECTS_DIR	= $$BUILD_PATH/.o/win32/qscintilla
@@ -21,12 +21,3 @@ DEPENDPATH	+= $$QSCINTILLAVERSION/Qt4
 INCLUDEPATH	+= $$QSCINTILLAVERSION/Qt4 $$QSCINTILLAVERSION/include $$QSCINTILLAVERSION/src
 DEFINES	-= QSCINTILLA_MAKE_DLL
 DESTDIR	= $$BUILD_PATH/.lib
-
-CoverageMeter {
-	# Configuration for code coverage using 
-	# CoverageMeter (http://www.coveragemeter.com)
-	QMAKE_CXX=cs$$QMAKE_CXX
-	QMAKE_LINK=cs$$QMAKE_LINK
-	QMAKE_CC=cs$$QMAKE_CC
-}
-
