@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pTabbedWorkspace.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class provide a workspace that can at run time be switched in SDI / MDI or Top Level
+ ********************************************************************************************************/
 #ifndef PTABBEDWORKSPACE_H
 #define PTABBEDWORKSPACE_H
 

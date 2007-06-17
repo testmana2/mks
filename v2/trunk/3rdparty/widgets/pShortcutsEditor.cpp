@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pshortcutsEditor.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class allow to edit pAction shortcuts
+ ********************************************************************************************************/
 #include "pShortcutsEditor.h"
 #include "pKeySequenceInput.h"
 #include "pActionManager.h"
@@ -111,27 +119,25 @@ void pShortcutsEditor::on_twShortcuts_itemSelectionChanged()
 {
 	// get selected item
 	QTreeWidgetItem* it = twShortcuts->selectedItems().value( 0 );
-	bool b = it && it->data( 0, Qt::UserRole ).toUInt() != 0;
+	// get action
+	QAction* a = it ? reinterpret_cast<QAction*>( it->data( 0, Qt::UserRole ).toUInt() ) : 0;
 
 	// set button state according to item is an action
-	pbRestore->setEnabled( b );
-	pbClear->setEnabled( b );
+	pbRestore->setEnabled( a );
+	pbClear->setEnabled( a );
+	leShortcut->setEnabled( a );
+	leShortcut->clear();
+	pbSet->setEnabled( a );
 
-	// if not an action cancel
-	if ( !b )
+	// return if no action
+	if ( !a )
 		return;
 
-	// get action
-	QAction* a = reinterpret_cast<QAction*>( it->data( 0, Qt::UserRole ).toUInt() );
+	// set shortcut
+	leShortcut->setText( a->shortcut().toString() );
 
-	// show action information
-	if ( a )
-	{
-		leShortcut->setEnabled( true );
-		leShortcut->setText( a->shortcut().toString() );
-		leShortcut->setFocus();
-		pbSet->setEnabled( false );
-	}
+	// give focus to lineedit
+	leShortcut->setFocus();
 }
 
 void pShortcutsEditor::pbRestore_pbSet_clicked()

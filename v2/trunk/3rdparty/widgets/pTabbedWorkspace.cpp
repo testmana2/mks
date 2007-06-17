@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pTabbedWorkspace.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class provide a workspace that can at run time be switched in SDI / MDI or Top Level
+ ********************************************************************************************************/
 #include "pTabbedWorkspace.h"
 #include "pTabbedWorkspaceRightCorner.h"
 
@@ -412,29 +420,34 @@ void pTabbedWorkspace::updateView( TABBED_DOCUMENT* nd )
 			switch ( mDocumentMode )
 			{
 			case dmMaximized:
-				if ( nd->isVisible() && !nd->isMaximized() )
-					nd->showMaximized();
+				if ( !td->isMaximized() )
+					td->showMaximized();
 				break;
 			case dmCascade:
-				mWorkspaceWidget->cascade();
+				if ( !td->isVisible() )
+					td->show();
+				if ( !l.isEmpty() && td == l.last() )
+					mWorkspaceWidget->cascade();
 				break;
 			case dmTile:
-				mWorkspaceWidget->tile();
+				if ( !td->isVisible() )
+					td->show();
+				if ( !l.isEmpty() && td == l.last() )
+					mWorkspaceWidget->tile();
 				break;
 			case dmIcons:
-				mWorkspaceWidget->arrangeIcons();
+				if ( !td->isMinimized() )
+					td->showMinimized();
+				if ( !l.isEmpty() && td == l.last() )
+					mWorkspaceWidget->arrangeIcons();
 				break;
 			case dmMinimizeAll:
-				if ( !nd->isMinimized() )
-					nd->showMinimized();
+				if ( !td->isMinimized() )
+					td->showMinimized();
 				break;
 			case dmRestoreAll:
-				if ( nd->isMaximized() || nd->isMinimized() )
+				if ( td->isMaximized() || td->isMinimized() )
 					nd->showNormal();
-				break;
-			default:
-				if ( !nd->isVisible() )
-					nd->show();
 				break;
 			}
 			break;

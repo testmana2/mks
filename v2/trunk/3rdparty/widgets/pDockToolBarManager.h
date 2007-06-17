@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pDockToolBarManager.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class manage pDockToolBar
+ ********************************************************************************************************/
 #ifndef PDOCKTOOLBARMANAGER_H
 #define PDOCKTOOLBARMANAGER_H
 

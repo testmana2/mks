@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pTabbedWorkspaceRightCorner.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class provide the default right corner of pTabbedWorkspace
+ ********************************************************************************************************/
 #ifndef PTABBEDWORKSPACERIGHTCORNER_H
 #define PTABBEDWORKSPACERIGHTCORNER_H
 

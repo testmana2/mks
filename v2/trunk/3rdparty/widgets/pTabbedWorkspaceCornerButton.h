@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pTabbedWorkspaceCornerButton.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class provide a QToolButton that can be rotated
+ ********************************************************************************************************/
 #ifndef PTABBEDWORKSPACECORNERBUTTON_H
 #define PTABBEDWORKSPACECORNERBUTTON_H
 

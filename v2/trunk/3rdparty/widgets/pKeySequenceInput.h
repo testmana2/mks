@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pKeySequenceInput.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class allow to track shortcut and write them
+ ********************************************************************************************************/
 #ifndef KEYSEQUENCEINPUT_H
 #define KEYSEQUENCEINPUT_H
 

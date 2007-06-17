@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com ), Kopats Andrei ( hlamer@tut.by )
+ * FILENAME     : pAction.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class allow to create action that can be manage by the shortcut manager
+ ********************************************************************************************************/
 #include "pAction.h"
 
 const char* pAction::_DEFAULT_SHORTCUT_PROPERTY_ = "Default Shortcut";

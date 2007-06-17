@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pTabbedWorkspaceCorner.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class provide a QWidget that can be put as corner in a pTabbedWorkspace
+ ********************************************************************************************************/
 #ifndef PTABBEDWORKSPACECORNER_H
 #define PTABBEDWORKSPACECORNER_H
 

@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com ), Kopats Andrei ( hlamer@tut.by )
+ * FILENAME     : pActionManager.h
+ * LICENSE      : GPL
+ * COMMENTARY   : This class manage the pAction so we can ease change action's shortcuts
+ ********************************************************************************************************/
 #ifndef PACTIONMANAGER_H
 #define PACTIONMANAGER_H
 
@@ -38,11 +46,6 @@ public:
 
 private:
 	pActionManager( QObject* = QApplication::instance() );
-
-	// internal functions for access to QSettings
-	// FIXME: P@sNox: hlamer what is this for ?!
-	QKeySequence readFromSettings( const QString& );
-	void writeToSettings( const QString&, const QKeySequence& );
 
 	QSettings* mSettings;
 	pHashActionList mActions;
