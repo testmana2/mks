@@ -3,14 +3,17 @@
 # for normal build, comment for build plugins
 DEFINES	+= MONKEY_CORE_BUILD
 
+# get relative path
+QPRO_PWD   = $$PWD
+
 # include path
-INCLUDEPATH	+= .
+INCLUDEPATH	+= $${QPRO_PWD}
 
 # Objects
-INCLUDEPATH	+= objects
+INCLUDEPATH	+= $${QPRO_PWD}/objects
 
 # Widgets
-INCLUDEPATH	+= widgets
+INCLUDEPATH	+= $${QPRO_PWD}/widgets
 
 # dependpath as includepath
 DEPENDPATH	+= $$INCLUDEPATH
