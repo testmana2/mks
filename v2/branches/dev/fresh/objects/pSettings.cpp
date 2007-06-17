@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/06/17
+ * AUTHOR       : Nox PasNox ( pasnox@gmail.com )
+ * FILENAME     : pSettings.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : This class allow a singletonized QSettings for your application
+ ********************************************************************************************************/
 #include "pSettings.h"
 
 #include <QDir>
