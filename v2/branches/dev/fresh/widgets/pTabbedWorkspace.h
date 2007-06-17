@@ -54,6 +54,8 @@ public:
 	int insertTab( int, TABBED_DOCUMENT*, const QIcon&, const QString& );
 
 public slots:
+	void setBackground( const QPixmap& );
+	void setBackground( const QString& );
 	void setTabShape( QTabBar::Shape );
 	void setTabMode( pTabbedWorkspace::TabMode );
 	void setDocumentMode( pTabbedWorkspace::DocumentMode );
