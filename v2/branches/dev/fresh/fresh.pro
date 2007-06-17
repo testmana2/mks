@@ -1,11 +1,11 @@
-# 3rd party project file
+# fresh lib project file
 
 TEMPLATE	= app
 
 # comment for build as debug
 #CONFIG	+= debug console
 
-BUILD_PATH	 = ./build
+BUILD_PATH	 = ../build
 
 unix:OBJECTS_DIR	= $$BUILD_PATH/.o/unix
 win32:OBJECTS_DIR	= $$BUILD_PATH/.o/win32
@@ -14,14 +14,9 @@ UI_DIR	= $$BUILD_PATH/.ui
 MOC_DIR	= $$BUILD_PATH/.moc
 RCC_DIR	= $$BUILD_PATH/.rcc
 
-include( 3rdparty.pri )
+include( fresh.pri )
 
 HEADER	= MonkeyExport.h
-
-# coveragemeter
-#FORMS	+= UITestReport.ui
-#HEADERS	+= UITestReport.h
-#SOURCES	+= UITestReport.cpp
 
 # objects
 # QSingleton
