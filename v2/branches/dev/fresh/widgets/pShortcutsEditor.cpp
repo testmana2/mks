@@ -103,7 +103,7 @@ pShortcutsEditor::pShortcutsEditor( QWidget* w )
 			it->setText( 1, a->shortcut().toString() );
 			it->setIcon( 0, a->icon() );
 			// stock pointer action in data
-			it->setData( 0, Qt::UserRole, reinterpret_cast<uint>( a ) );
+			it->setData( 0, Qt::UserRole, reinterpret_cast<quintptr>( a ) );
 		}
 	}
 
@@ -120,7 +120,7 @@ void pShortcutsEditor::on_twShortcuts_itemSelectionChanged()
 	// get selected item
 	QTreeWidgetItem* it = twShortcuts->selectedItems().value( 0 );
 	// get action
-	QAction* a = it ? reinterpret_cast<QAction*>( it->data( 0, Qt::UserRole ).toUInt() ) : 0;
+	QAction* a = it ? reinterpret_cast<QAction*>( it->data( 0, Qt::UserRole ).toULongLong() ) : 0;
 
 	// set button state according to item is an action
 	pbRestore->setEnabled( a );
@@ -146,7 +146,7 @@ void pShortcutsEditor::pbRestore_pbSet_clicked()
 	QTreeWidgetItem* it = twShortcuts->selectedItems().value( 0 );
 
 	// get action
-	pAction* a = reinterpret_cast<pAction*>( it->data( 0, Qt::UserRole ).toUInt() );
+	pAction* a = reinterpret_cast<pAction*>( it->data( 0, Qt::UserRole ).toULongLong() );
 
 	if ( a )
 	{
