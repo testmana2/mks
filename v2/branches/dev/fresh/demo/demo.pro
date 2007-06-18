@@ -14,4 +14,6 @@ RCC_DIR	= $$BUILD_PATH/.rcc
 
 include( ../fresh.pro )
 
+CONFIG	+= release
+
 SOURCES	+= main.cpp
