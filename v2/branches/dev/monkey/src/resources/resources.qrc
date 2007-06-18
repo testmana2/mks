@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/application" >
+        <file>icons/application/background.png</file>
+        <file>icons/application/monkey2.gif</file>
+        <file>icons/application/monkey2.icns</file>
+        <file>icons/application/monkey2.ico</file>
+        <file>icons/application/monkey2.png</file>
+        <file>icons/application/splashscreen.png</file>
+    </qresource>
+</RCC>
