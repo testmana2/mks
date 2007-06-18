@@ -62,11 +62,6 @@ pDockToolBar* pMainWindow::dockToolBar( Qt::ToolBarArea a )
 
 void pMainWindow::saveState()
 {
-#if QT_VERSION >= 0x040300
-	// there is a bug when restoring visible dock with qt 4.3.0
-	foreach ( QDockWidget* d, findChildren<QDockWidget*>() )
-		d->hide();
-#endif
 	dockToolBarManager()->saveState();
 	settings()->saveState( this );
 }
