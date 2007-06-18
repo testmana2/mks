@@ -73,8 +73,16 @@ pHashActionList pActionManager::actions()
 	return instance()->mActions;
 }
 
+QString pActionManager::globalGroup()
+{
+	return ( "Global" );
+}
+
 QKeySequence pActionManager::getShortcut( const QString& g, QAction* a, const QKeySequence& sc )
 {
+	// need group
+	Q_ASSERT( !g.isEmpty() );
+
 	// need action
 	Q_ASSERT( a != 0 );
 

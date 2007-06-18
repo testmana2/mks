@@ -23,21 +23,14 @@ pMenuBar::pMenuBar( QWidget* p )
 
 QAction* pMenuBar::searchAction( QMenu* m, const QString& s )
 {
-	QList<QAction*> mActions = m->findChildren<QAction*>();
-	foreach ( QAction* mAction, mActions )
-	{
-		if ( mAction->objectName().toLower() == s.toLower() )
-			return mAction;
-	}
+	foreach ( QAction* a, m->actions() )
+		if ( a->objectName().toLower() == s.toLower() )
+			return a;
 
 	if ( s.contains( QRegExp( tr( "^aseparator\\d{1,2}$" ), Qt::CaseInsensitive ) ) )
 		return m->addSeparator();
 
-	// get group
-	QString g = m->title().isEmpty() ? mMenuGroup : QString( "%1/%2" ).arg( mMenuGroup, m->title() );
-	pAction* a = new pAction( s, QString::null, QKeySequence(), g );
-	m->addAction( a );
-	return a;
+	return 0;
 }
 
 QString pMenuBar::normalizedKey( const QString& s )
@@ -128,20 +121,32 @@ QAction* pMenuBar::action( const QString& s, const QString& l, const QIcon& i, c
 	QString mString = fixedPath( s );
 	QString mText = mString.mid( mString.lastIndexOf( '/' ) +1 );
 	QString mPath;
+
 	if ( mString.contains( '/' ) )
 		mPath = mString.mid( 0, mString.lastIndexOf( '/' ) );
-	QAction* mAction = searchAction( menu( mPath ), mText );
-	if ( !l.isEmpty() && mAction->text() != l )
-		mAction->setText( l );
-	if ( !i.isNull() && mAction->icon().serialNumber() != i.serialNumber() )
-		mAction->setIcon( i );
-	if ( !c.isEmpty() && mAction->shortcut() != c )
-		mAction->setShortcut( c );
-	if ( !t.isEmpty() && mAction->statusTip() != t )
-		mAction->setStatusTip( t );
-	if ( !t.isEmpty() && mAction->toolTip() != t )
-		mAction->setToolTip( t );
-	return mAction;
+
+	QMenu* m = menu( mPath );
+	QAction* a = searchAction( m, mText );
+
+	// create action if needed
+	if ( !a )
+	{
+		// get group
+		QString g = m->title().isEmpty() ? mMenuGroup : QString( "%1/%2" ).arg( mMenuGroup, m->title() );
+
+		// create action
+		a = new pAction( s, i, l, QKeySequence( c ), g );
+		m->addAction( a );
+
+		if ( !t.isEmpty() )
+			a->setStatusTip( t );
+
+		if ( !t.isEmpty() )
+			a->setToolTip( t );
+	}
+
+	// return action
+	return a;
 }
 
 QMenu* pMenuBar::menu( const QString& s, const QString& l, const QIcon& i )
@@ -169,6 +174,7 @@ QMenu* pMenuBar::menu( const QString& s, const QString& l, const QIcon& i )
 		mMenu->setTitle( l );
 	if ( !i.isNull() && mMenu->icon().serialNumber() != i.serialNumber() )
 		mMenu->setIcon( i );
+
 	return mMenu;
 }
 
