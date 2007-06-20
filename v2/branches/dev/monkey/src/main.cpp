@@ -6,7 +6,6 @@
 
 #include "UITranslator.h"
 #include "UIMain.h"
-#include "pTabbedWorkspace.h"
 #include "pSettings.h"
 
 void showMessage( QSplashScreen* s, const QString& m )
@@ -73,7 +72,6 @@ int main( int argc, char** argv )
 	// init main window
 	showMessage( &splash, QObject::tr( "Initializing Main Window..." ) );
 	UIMain::instance()->setWindowTitle( QObject::tr( "%1 v%2 - %3, The Monkey Studio Team" ).arg( PROGRAM_NAME, PROGRAM_VERSION, PROGRAM_COPYRIGHTS ) );
-	UIMain::instance()->tabbedWorkspace()->setBackground( ":/application/icons/application/background.png" );
 
 /*
 	// menu tools

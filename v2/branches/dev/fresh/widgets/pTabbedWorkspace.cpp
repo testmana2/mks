@@ -76,7 +76,7 @@ pTabbedWorkspace::~pTabbedWorkspace()
 bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 {
 	// get document
-	TABBED_DOCUMENT* td = qobject_cast<TABBED_DOCUMENT*>( o );
+	QWidget* td = qobject_cast<QWidget*>( o );
 
 	// get event type
 	QEvent::Type t = e->type();
@@ -116,7 +116,7 @@ void pTabbedWorkspace::workspaceWidget_windowActivated( QWidget* w )
 
 void pTabbedWorkspace::removeDocument( QObject* o )
 {
-	removeDocument( qobject_cast<TABBED_DOCUMENT*>( o ) );
+	removeDocument( qobject_cast<QWidget*>( o ) );
 }
 
 QTabBar* pTabbedWorkspace::tabBar() const
@@ -240,7 +240,7 @@ void pTabbedWorkspace::setDocumentMode( pTabbedWorkspace::DocumentMode d )
 		switch( mDocumentMode )
 		{
 		case dmMaximized:
-			foreach ( TABBED_DOCUMENT* td, documents() )
+			foreach ( QWidget* td, documents() )
 				if ( !td->isMaximized() )
 					td->showMaximized();
 			break;
@@ -254,12 +254,12 @@ void pTabbedWorkspace::setDocumentMode( pTabbedWorkspace::DocumentMode d )
 			mWorkspaceWidget->arrangeIcons();
 			break;
 		case dmMinimizeAll:
-			foreach ( TABBED_DOCUMENT* td, documents() )
+			foreach ( QWidget* td, documents() )
 				if ( !td->isMinimized() )
 					td->showMinimized();
 			break;
 		case dmRestoreAll:
-			foreach ( TABBED_DOCUMENT* td, documents() )
+			foreach ( QWidget* td, documents() )
 				if ( td->isMaximized() || td->isMinimized() )
 					td->showNormal();
 			break;
@@ -282,7 +282,7 @@ void pTabbedWorkspace::setCurrentIndex( int i )
 	else
 	{
 		// get document
-		TABBED_DOCUMENT* td = document( i );
+		QWidget* td = document( i );
 
 		// set correct document visible
 		switch ( mTabMode )
@@ -313,22 +313,22 @@ void pTabbedWorkspace::setCurrentIndex( int i )
 	}
 }
 
-TABBED_DOCUMENT* pTabbedWorkspace::currentDocument() const
+QWidget* pTabbedWorkspace::currentDocument() const
 {
 	return document( currentIndex() );
 }
 
-void pTabbedWorkspace::setCurrentDocument( TABBED_DOCUMENT* d )
+void pTabbedWorkspace::setCurrentDocument( QWidget* d )
 {
 	setCurrentIndex( indexOf( d ) );
 }
 
-int pTabbedWorkspace::indexOf( TABBED_DOCUMENT* d ) const
+int pTabbedWorkspace::indexOf( QWidget* d ) const
 {
 	return mDocuments.indexOf( d );
 }
 
-TABBED_DOCUMENT* pTabbedWorkspace::document( int i ) const
+QWidget* pTabbedWorkspace::document( int i ) const
 {
 	return mDocuments.value( i );
 }
@@ -338,7 +338,7 @@ int pTabbedWorkspace::count() const
 	return mDocuments.count();
 }
 
-QList<TABBED_DOCUMENT*> pTabbedWorkspace::documents() const
+QList<QWidget*> pTabbedWorkspace::documents() const
 {
 	return mDocuments;
 }
@@ -409,17 +409,17 @@ void pTabbedWorkspace::updateCorners()
 	}
 }
 
-void pTabbedWorkspace::updateView( TABBED_DOCUMENT* nd )
+void pTabbedWorkspace::updateView( QWidget* nd )
 {
 	// tmp list
-	QList<TABBED_DOCUMENT*> l;
+	QList<QWidget*> l;
 	if ( nd )
 		l << nd;
 	else
 		l << mDocuments;
 
 	// add document to correct workspace
-	foreach ( TABBED_DOCUMENT* td, l )
+	foreach ( QWidget* td, l )
 	{
 		// add to correct container
 		switch ( mTabMode )
@@ -478,7 +478,7 @@ void pTabbedWorkspace::updateView( TABBED_DOCUMENT* nd )
 	updateCorners();
 }
 
-void pTabbedWorkspace::addDocument( TABBED_DOCUMENT* td, int i )
+void pTabbedWorkspace::addDocument( QWidget* td, int i )
 {
 	if ( i == -1 )
 		i = count();
@@ -500,24 +500,27 @@ void pTabbedWorkspace::addDocument( TABBED_DOCUMENT* td, int i )
 
 	// emit tab inserted
 	emit tabInserted( i );
+
+	// emit tab current changed
+	emit currentChanged( i );
 }
 
-int pTabbedWorkspace::addTab( TABBED_DOCUMENT* td, const QString& l )
+int pTabbedWorkspace::addTab( QWidget* td, const QString& l )
 {
 	return insertTab( count(), td, l );
 }
 
-int pTabbedWorkspace::addTab( TABBED_DOCUMENT* td, const QIcon& i, const QString& l )
+int pTabbedWorkspace::addTab( QWidget* td, const QIcon& i, const QString& l )
 {
 	return insertTab( count(), td, i, l );
 }
 
-int pTabbedWorkspace::insertTab( int i, TABBED_DOCUMENT* td, const QString& l )
+int pTabbedWorkspace::insertTab( int i, QWidget* td, const QString& l )
 {
 	return insertTab( i, td, QIcon(), l );
 }
 
-int pTabbedWorkspace::insertTab( int j, TABBED_DOCUMENT* td, const QIcon& i, const QString& l )
+int pTabbedWorkspace::insertTab( int j, QWidget* td, const QIcon& i, const QString& l )
 {
 	// if already in or not existing d, cancel
 	if ( !td || mDocuments.contains( td ) )
@@ -540,7 +543,7 @@ void pTabbedWorkspace::removeTab( int i )
 	removeDocument( document( i ) );
 }
 
-void pTabbedWorkspace::removeDocument( TABBED_DOCUMENT* td )
+void pTabbedWorkspace::removeDocument( QWidget* td )
 {
 	if ( !td )
 		return;
@@ -555,26 +558,29 @@ void pTabbedWorkspace::removeDocument( TABBED_DOCUMENT* td )
 	if ( mTabMode == tmSDI )
 		mStackedWidget->removeWidget( td );
 
-	// remove tab an position to new index
+	// remove tab and position to new index
 	if ( i != -1 )
 	{
 		mTabBar->removeTab( i );
 		updateCorners();
 		emit tabRemoved( i );
 		setCurrentIndex( currentIndex() );
+
+		// emit current changed
+		emit currentChanged( currentIndex() );
 	}
 }
 
 void pTabbedWorkspace::closeCurrentTab()
 {
-	TABBED_DOCUMENT* td = currentDocument();
+	QWidget* td = currentDocument();
 	if ( td )
 		td->close();
 }
 
 void pTabbedWorkspace::closeAllTabs( bool b )
 {
-	foreach ( TABBED_DOCUMENT* td, mDocuments )
+	foreach ( QWidget* td, mDocuments )
 	{
 		td->close();
 		if ( b )

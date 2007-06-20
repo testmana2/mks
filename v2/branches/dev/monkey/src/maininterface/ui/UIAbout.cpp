@@ -4,7 +4,7 @@
 #include <QDesktopServices>
 #include <QTabBar>
 
-QString mInformations =
+const QString mInformations =
 "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"font-size:small;\">"
 "	<tr>"
 "		<td align=\"center\"><br /><img src=\":/application/icons/application/monkey2.png\" width=\"32\" height=\"32\"></td>"
@@ -12,22 +12,30 @@ QString mInformations =
 "	</tr>"
 "</table>";
 
-QList<pAuthorInformations> mAuthors = QList<pAuthorInformations>()
-	<< pAuthorInformations( "Filipe Azevedo", "Nox P@sNox", QObject::tr( "France" ), "pasnox@gmail.com", QObject::tr( "Creator && Principal Developer" ) )
-	<< pAuthorInformations( "Manuel Schmidt", "oversize", QObject::tr( "Germany" ), "manuel@schmidtman.de", QObject::tr( "Web Developer & Web Designer" ) )
-	<< pAuthorInformations( "Yannick", "xiantia", QObject::tr( "France" ), "xiantia@gmail.com", QObject::tr( "GDB Driver Integration" ) )
-	<< pAuthorInformations( "Julien Decologne", "Judd", QObject::tr( "France" ), "judd@hotmail.com", QObject::tr( "Splashscreen & Icons Designer" ) );
-
-QString mAuthorMask =
+const QString mDatasMask =
 "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"font-size:small;\">"
 "	<tr>"
 "		<td>"
 "			<b>%1</b><br />"
-"			%2 aka %3<br />"
-"			%4 (<a href=\"%5\">%5</a>)<br />"
+"			%2 - %3<br />"
+"			%4 (<a href=\"%5\">%6</a>)<br />"
 "		</td>"
 "	</tr>"
 "</table>";
+
+const QList<pDatas> mTeamates = QList<pDatas>()
+	<< pDatas( "Filipe Azevedo", "Nox P@sNox", QObject::tr( "France" ), "pasnox@gmail.com", QObject::tr( "Creator && Principal Developer" ) )
+	<< pDatas( "Manuel Schmidt", "oversize", QObject::tr( "Germany" ), "manuel@schmidtman.de", QObject::tr( "Web Developer & Web Designer" ) )
+	<< pDatas( "Yannick", "xiantia", QObject::tr( "France" ), "xiantia@gmail.com", QObject::tr( "GDB Driver Integration" ) )
+	<< pDatas( "Julien Decologne", "Judd", QObject::tr( "France" ), "judd@hotmail.com", QObject::tr( "Splashscreen & Icons Designer" ) );
+
+const QList<pDatas> mDonors = QList<pDatas>()
+	<< pDatas( "Filipe Azevedo", "Nox P@sNox", QObject::tr( "France" ), "pasnox@gmail.com", QObject::tr( "No donations for now, you can use this <a href=\"http://sourceforge.net/project/project_donations.php?group_id=163493\">link</a> to make donation. Donations will help paying host/domain, and relatives things about the projects ( may need a mac book for better mac version :p )." ) );
+
+const QList<pDatas> mBugs = QList<pDatas>()
+	<< pDatas( "", "", QObject::tr( "Location" ), "http://trac.monkeystudio.org/newticket", QObject::tr( "You can send bug/patch/ideas/what ever you want to our tracker." ) )
+	<< pDatas( "", "", QObject::tr( "Location" ), "http://forums.monkeystudio.org", QObject::tr( "A forum is at your disposition." ) )
+	<< pDatas( "", "", QObject::tr( "Location" ), "http://www.monkeystudio.org/feeds/latest", QObject::tr( "Get the latest news using the rss url." ) );
 
 UIAbout::UIAbout( QWidget* p )
 	: QDialog( p )
@@ -50,30 +58,27 @@ UIAbout::UIAbout( QWidget* p )
 	lInformations->setTextInteractionFlags( Qt::TextBrowserInteraction | Qt::TextSelectableByKeyboard );
 	lInformations->setText( mInformations.arg( PROGRAM_NAME ).arg( PROGRAM_VERSION ).arg( PROGRAM_COPYRIGHTS ).arg( PROGRAM_DOMAIN ) );
 
-	foreach ( pAuthorInformations i, mAuthors )
-		tbTeam->append( mAuthorMask.arg( i.Comment ).arg( i.Name ).arg( i.Login ).arg( i.Pays ).arg( i.Email ) );
-
-	QFile file;
-
-	// about team license donations bugs
-
-	// bugs / wishes
-	file.setFileName( ":/About/About/greetings.html" );
-	file.open( QFile::ReadOnly );
-	tbBugs->setHtml( file.readAll() );
-	file.close();
-
-	// donations
-	file.setFileName( ":/About/About/greetings.html" );
-	file.open( QFile::ReadOnly );
-	tbDonations->setHtml( file.readAll() );
-	file.close();
+	// team
+	foreach ( pDatas i, mTeamates )
+		tbTeam->append( mDatasMask.arg( i.Comment ).arg( i.Name ).arg( i.Login ).arg( i.Pays ).arg( QString( "mailto:" ).append( i.Email ) ).arg( i.Email ) );
+	tbTeam->moveCursor( QTextCursor::Start );
 
 	// license
-	file.setFileName( ":/Licenses/Licenses/license.gpl" );
+	QFile file( ":/licenses/texts/license.gpl" );
 	file.open( QFile::ReadOnly );
 	tbLicense->setPlainText( file.readAll() );
 	file.close();
+	tbLicense->moveCursor( QTextCursor::Start );
+
+	// donors
+	foreach ( pDatas i, mDonors )
+		tbDonations->append( mDatasMask.arg( i.Comment ).arg( i.Name ).arg( i.Login ).arg( i.Pays ).arg( QString( "mailto:" ).append( i.Email ) ).arg( i.Email ) );
+	tbDonations->moveCursor( QTextCursor::Start );
+
+	// bugs / wishes
+	foreach ( pDatas i, mBugs )
+		tbBugs->append( mDatasMask.arg( i.Comment ).arg( i.Name ).arg( i.Login ).arg( i.Pays ).arg( i.Email ).arg( i.Email ) );
+	tbBugs->moveCursor( QTextCursor::Start );
 
 	// connections
 	foreach ( QTextBrowser* b, twAbout->findChildren<QTextBrowser*>() )

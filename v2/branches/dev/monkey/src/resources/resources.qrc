@@ -7,4 +7,31 @@
         <file>icons/application/monkey2.png</file>
         <file>icons/application/splashscreen.png</file>
     </qresource>
+    <qresource prefix="/edit" >
+        <file>icons/edit/copy.png</file>
+        <file>icons/edit/cut.png</file>
+        <file>icons/edit/goto.png</file>
+        <file>icons/edit/paste.png</file>
+        <file>icons/edit/redo.png</file>
+        <file>icons/edit/search.png</file>
+        <file>icons/edit/settings.png</file>
+        <file>icons/edit/shortcuts.png</file>
+        <file>icons/edit/undo.png</file>
+    </qresource>
+    <qresource prefix="/file" >
+        <file>icons/file/clear.png</file>
+        <file>icons/file/close.png</file>
+        <file>icons/file/closeall.png</file>
+        <file>icons/file/open.png</file>
+        <file>icons/file/print.png</file>
+        <file>icons/file/quickprint.png</file>
+        <file>icons/file/quit.png</file>
+        <file>icons/file/recentsfiles.png</file>
+        <file>icons/file/save.png</file>
+        <file>icons/file/saveall.png</file>
+        <file>icons/file/saveas.png</file>
+    </qresource>
+    <qresource prefix="/licenses" >
+        <file>texts/license.gpl</file>
+    </qresource>
 </RCC>

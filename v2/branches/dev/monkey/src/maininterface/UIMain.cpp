@@ -7,10 +7,13 @@
  * COMMENTARY   : 
  ********************************************************************************************************/
 #include "UIMain.h"
+#include "pWorkspace.h"
 #include "pMenuBar.h"
+#include "pRecentsManager.h"
 #include "pActionManager.h"
 #include "pSettings.h"
 #include "UIAbout.h"
+#include "pDockToolBar.h"
 
 /*
 #include "Settings.h"
@@ -18,11 +21,7 @@
 #include "MenuBar.h"
 #include "Workspace.h"
 #include "StatusBar.h"
-
 #include "UITestReport.h"
-
-
-
 #include <QCloseEvent>
 
 */
@@ -32,60 +31,65 @@
 #include <QStatusBar>
 
 UIMain::UIMain( QWidget* p )
-	: pTabbedMainWindow( p )
+	: pMainWindow( p )
 {
 	// create menubar
 	initMenuBar();
 
-	// init connections
-	initConnections();
+	// init toolbar
+	initToolBar();
 
 	// init gui
 	initGui();
+
+	// init connections
+	initConnections();
+}
+
+pWorkspace* UIMain::workspace()
+{
+	return pWorkspace::instance( this );
 }
 
 void UIMain::initMenuBar()
 {
-	// set icon size for toolbar
-	setIconSize( QSize( 16, 16 ) );
-
 	// create menubar menus and actions
 	pMenuBar* mb = menuBar();
 	mb->menu( "mFile", tr( "&File" ) );
 	mb->beginGroup( "mFile" );
-		mb->action( "aOpen", tr( "&Open" ), QIcon( ":/Icons/Icons/fileopen.png" ), tr( "Ctrl+O" ), tr( "Open a file" ) );
-		mb->menu( "mRecents", tr( "&Recents" ), QIcon( ":/Icons/Icons/recentsfiles.png" ) );
-		mb->action( "mRecents/aClear", tr( "&Clear" ), QIcon( ":/Icons/Icons/filecloseall.png" ), QString::null, tr( "Clear the recents files list" ) );
+		mb->action( "aOpen", tr( "&Open" ), QIcon( ":/file/icons/file/open.png" ), tr( "Ctrl+O" ), tr( "Open a file" ) );
+		mb->menu( "mRecents", tr( "&Recents" ), QIcon( ":/file/icons/file/recentsfiles.png" ) );
+		mb->action( "mRecents/aClear", tr( "&Clear" ), QIcon( ":/file/icons/file/clear.png" ), QString::null, tr( "Clear the recents files list" ) );
 		mb->action( "mRecents/aSeparator1" );
 		mb->action( "aSeparator1" );
-		mb->menu( "mSave", tr( "&Save" ), QIcon( ":/Icons/Icons/filesave.png" ) );
-		mb->action( "mSave/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/filesave.png" ), tr( "Ctrl+S" ), tr( "Save the current file" ) )->setEnabled( false );
-		mb->action( "mSave/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/filesaveall.png" ), tr( "Ctrl+Shift+S" ), tr( "Save all files" ) )->setEnabled( false );
-		mb->menu( "mClose", tr( "&Close" ), QIcon( ":/Icons/Icons/fileclose.png" ) );
-		mb->action( "mClose/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/fileclose.png" ), tr( "Ctrl+W" ), tr( "Close the current file" ) )->setEnabled( false );
-		mb->action( "mClose/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/filecloseall.png" ), tr( "Ctrl+Shift+W" ), tr( "Close all files" ) )->setEnabled( false );
+		mb->menu( "mSave", tr( "&Save" ), QIcon( ":/file/icons/file/save.png" ) );
+		mb->action( "mSave/aCurrent", tr( "&Current" ), QIcon( ":/file/icons/file/save.png" ), tr( "Ctrl+S" ), tr( "Save the current file" ) )->setEnabled( false );
+		mb->action( "mSave/aAll", tr( "&All" ), QIcon( ":/file/icons/file/saveall.png" ), QString::null, tr( "Save all files" ) )->setEnabled( false );
+		mb->menu( "mClose", tr( "&Close" ), QIcon( ":/file/icons/file/close.png" ) );
+		mb->action( "mClose/aCurrent", tr( "&Current" ), QIcon( ":/file/icons/file/close.png" ), tr( "Ctrl+W" ), tr( "Close the current file" ) )->setEnabled( false );
+		mb->action( "mClose/aAll", tr( "&All" ), QIcon( ":/file/icons/file/closeall.png" ), QString::null, tr( "Close all files" ) )->setEnabled( false );
 		mb->action( "aSeparator2" );
-		mb->action( "aSaveAsTemplate", tr( "Save As &Template" ), QIcon( ":/Icons/Icons/filesaveastemplate.png" ), tr( "Ctrl+T" ), tr( "Save the current file as template" ) )->setEnabled( false );
+		//mb->action( "aSaveAsTemplate", tr( "Save As &Template" ), QIcon( ":/Icons/Icons/filesaveastemplate.png" ), tr( "Ctrl+T" ), tr( "Save the current file as template" ) )->setEnabled( false );
 		mb->action( "aSeparator3" );
-		mb->action( "aQuickPrint", tr( "Quic&k Print" ), QIcon( ":/Icons/Icons/fileprint.png" ), tr( "Ctrl+k" ), tr( "Quick print the current file" ) )->setEnabled( false );
-		mb->action( "aPrint", tr( "&Print" ), QIcon( ":/Icons/Icons/fileprint.png" ), tr( "Ctrl+P" ), tr( "Print the current file" ) )->setEnabled( false );
+		mb->action( "aQuickPrint", tr( "Quic&k Print" ), QIcon( ":/file/icons/file/quickprint.png" ), QString::null, tr( "Quick print the current file" ) )->setEnabled( false );
+		mb->action( "aPrint", tr( "&Print" ), QIcon( ":/file/icons/file/print.png" ), tr( "Ctrl+P" ), tr( "Print the current file" ) )->setEnabled( false );
 		mb->action( "aSeparator4" );
-		mb->action( "aQuit", tr( "&Quit" ), QIcon( ":/Icons/Icons/quit.png" ), tr( "Ctrl+Q" ), tr( "Quit the application" ) );
+		mb->action( "aQuit", tr( "&Quit" ), QIcon( ":/file/icons/file/quit.png" ), tr( "Ctrl+Q" ), tr( "Quit the application" ) );
 	mb->endGroup();
 	mb->menu( "mEdit", tr( "&Edit" ) );
 	mb->beginGroup( "mEdit" );
-		mb->action( "aSettings", tr( "Settings..." ), QIcon( ":/Icons/Icons/editsettings.png" ) );
-		mb->action( "aShortcutsEditor", tr( "Shortcuts Editor..." ), QIcon(), tr( "Ctrl+E" ), tr( "Edit the application shortcuts" ) );
+		mb->action( "aSettings", tr( "Settings..." ), QIcon( ":/edit/icons/edit/settings.png" ) );
+		mb->action( "aShortcutsEditor", tr( "Shortcuts Editor..." ), QIcon( ":/edit/icons/edit/shortcuts.png" ), tr( "Ctrl+E" ), tr( "Edit the application shortcuts" ) );
 		mb->action( "aSeparator1" );
-		mb->action( "aUndo", tr( "&Undo" ), QIcon( ":/Icons/Icons/editundo.png" ), tr( "Ctrl+Z" ), tr( "Undo" ) )->setEnabled( false );
-		mb->action( "aRedo", tr( "&Redo" ), QIcon( ":/Icons/Icons/editredo.png" ), tr( "Ctrl+Y" ), tr( "Redo" ) )->setEnabled( false );
+		mb->action( "aUndo", tr( "&Undo" ), QIcon( ":/edit/icons/edit/undo.png" ), tr( "Ctrl+Z" ), tr( "Undo" ) )->setEnabled( false );
+		mb->action( "aRedo", tr( "&Redo" ), QIcon( ":/edit/icons/edit/redo.png" ), tr( "Ctrl+Y" ), tr( "Redo" ) )->setEnabled( false );
 		mb->action( "aSeparator2" );
-		mb->action( "aCopy", tr( "&Copy" ), QIcon( ":/Icons/Icons/editcopy.png" ), tr( "Ctrl+C" ), tr( "Copy" ) )->setEnabled( false );
-		mb->action( "aCut", tr( "Cu&t" ), QIcon( ":/Icons/Icons/editcut.png" ), tr( "Ctrl+X" ), tr( "Cut" ) )->setEnabled( false );
-		mb->action( "aPaste", tr( "&Paste" ), QIcon( ":/Icons/Icons/editpaste.png" ), tr( "Ctrl+V" ), tr( "Paste" ) )->setEnabled( false );
+		mb->action( "aCopy", tr( "&Copy" ), QIcon( ":/edit/icons/edit/copy.png" ), tr( "Ctrl+C" ), tr( "Copy" ) )->setEnabled( false );
+		mb->action( "aCut", tr( "Cu&t" ), QIcon( ":/edit/icons/edit/cut.png" ), tr( "Ctrl+X" ), tr( "Cut" ) )->setEnabled( false );
+		mb->action( "aPaste", tr( "&Paste" ), QIcon( ":/edit/icons/edit/paste.png" ), tr( "Ctrl+V" ), tr( "Paste" ) )->setEnabled( false );
 		mb->action( "aSeparator3" );
-		mb->action( "aSearchReplace", tr( "&Search - Replace..." ), QIcon( ":/Icons/Icons/editreplace.png" ), tr( "Ctrl+F" ), tr( "Search - Replace..." ) )->setEnabled( false );
-		mb->action( "aGoTo", tr( "&Go To..." ), QIcon( ":/Icons/Icons/editgoto.png" ), tr( "Ctrl+G" ), tr( "Go To..." ) )->setEnabled( false );
+		mb->action( "aSearchReplace", tr( "&Search - Replace..." ), QIcon( ":/edit/icons/edit/search.png" ), tr( "Ctrl+F" ), tr( "Search - Replace..." ) )->setEnabled( false );
+		mb->action( "aGoTo", tr( "&Go To..." ), QIcon( ":edit/icons/edit/goto.png" ), tr( "Ctrl+G" ), tr( "Go To..." ) )->setEnabled( false );
 	mb->endGroup();
 	mb->menu( "mView", tr( "&View" ) );
 	mb->beginGroup( "mView" );
@@ -154,7 +158,7 @@ void UIMain::initMenuBar()
 		mb->action( "aAbout", tr( "&About..." ), QIcon( ":/Icons/Icons/icon.png" ), QString::null, tr( "About application..." ) );
 		mb->action( "aAboutQt", tr( "About &Qt..." ), QIcon( ":/Icons/Icons/helpqt.png" ), QString::null, tr( "About Qt..." ) );
 #ifdef __COVERAGESCANNER__
-		action( "aTestReport", tr( "&Test Report" ), QIcon( ) , tr( "Pause" ), tr( "Coverage Meter Test Report..." ) );
+		mb->action( "aTestReport", tr( "&Test Report" ), QIcon( ) , tr( "Pause" ), tr( "Coverage Meter Test Report..." ) );
 #endif
 	mb->endGroup();
 
@@ -170,12 +174,90 @@ void UIMain::initMenuBar()
 
 	// add styles action to menu
 	menuBar()->menu( "mView/mStyle" )->addActions( agStyles->actions() );
+
+	// init recents manager
+	pRecentsManager::instance( this );
+}
+
+void UIMain::initToolBar()
+{
+	// recents
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->menu( "mFile/mRecents" )->menuAction() );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->menu( "mProject/mRecents" )->menuAction() );
+	dockToolBar( Qt::TopToolBarArea )->addAction();
+
+	// file action
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mFile/aOpen" ) );
+	dockToolBar( Qt::TopToolBarArea )->addActions( menuBar()->menu( "mFile/mSave" )->actions() );
+	dockToolBar( Qt::TopToolBarArea )->addActions( menuBar()->menu( "mFile/mClose" )->actions() );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mFile/aQuickPrint" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction();
+
+	// edit action
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aUndo" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aRedo" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction();
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aCut" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aCopy" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aPaste" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction();
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aSearchReplace" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aGoTo" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction();
+
+	// build action
+/*
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mBuild/aDistCleanBuildExecute" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mBuild/aBuildExecute" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mBuild/mBuild/aCurrent" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mBuild/aExecute" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mBuild/aStop" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction();
+*/
+
+	// help action
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mHelp/aAbout" ) );
 }
 
 void UIMain::initConnections()
 {
-	connect( agStyles, SIGNAL( triggered( QAction* ) ), this, SLOT( agStyles_triggered( QAction* ) ) );
+	// file connection
+	connect( menuBar()->action( "mFile/aOpen" ), SIGNAL( triggered() ), workspace(), SLOT( fileOpen_triggered() ) );
+	connect( pRecentsManager::instance(), SIGNAL( openFileRequested( const QString& ) ), workspace(), SLOT( openFile( const QString& ) ) );
+	connect( menuBar()->action( "mFile/mSave/aCurrent" ), SIGNAL( triggered() ), workspace(), SLOT( fileSaveCurrent_triggered() ) );
+	connect( menuBar()->action( "mFile/mSave/aAll" ), SIGNAL( triggered() ), workspace(), SLOT( fileSaveAll_triggered() ) );
+	connect( menuBar()->action( "mFile/mClose/aCurrent" ), SIGNAL( triggered() ), workspace(), SLOT( fileCloseCurrent_triggered() ) );
+	connect( menuBar()->action( "mFile/mClose/aAll" ), SIGNAL( triggered() ), workspace(), SLOT( fileCloseAll_triggered() ) );
+	//connect( menuBar()->action( "mFile/aSaveAsTemplate" ), SIGNAL( triggered() ), workspace(), SLOT( fileSaveAsTemplate_triggered() ) );
+	connect( menuBar()->action( "mFile/aQuickPrint" ), SIGNAL( triggered() ), workspace(), SLOT( fileQuickPrint_triggered() ) );
+	connect( menuBar()->action( "mFile/aPrint" ), SIGNAL( triggered() ), workspace(), SLOT( filePrint_triggered() ) );
+	connect( menuBar()->action( "mFile/aQuit" ), SIGNAL( triggered() ), workspace(), SLOT( fileExit_triggered() ) );
+	// edit connection
+	connect( menuBar()->action( "mEdit/aSettings" ), SIGNAL( triggered() ), workspace(), SLOT( editSettings_triggered() ) );
 	connect( menuBar()->action( "mEdit/aShortcutsEditor" ), SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
+	connect( menuBar()->action( "mEdit/aUndo" ), SIGNAL( triggered() ), workspace(), SLOT( editUndo_triggered() ) );
+	connect( menuBar()->action( "mEdit/aRedo" ), SIGNAL( triggered() ), workspace(), SLOT( editRedo_triggered() ) );
+	connect( menuBar()->action( "mEdit/aCut" ), SIGNAL( triggered() ), workspace(), SLOT( editCut_triggered() ) );
+	connect( menuBar()->action( "mEdit/aCopy" ), SIGNAL( triggered() ), workspace(), SLOT( editCopy_triggered() ) );
+	connect( menuBar()->action( "mEdit/aPaste" ), SIGNAL( triggered() ), workspace(), SLOT( editPaste_triggered() ) );
+	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), workspace(), SLOT( editSearchReplace_triggered() ) );
+	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), workspace(), SLOT( editGoTo_triggered() ) );
+	// view connection
+	connect( agStyles, SIGNAL( triggered( QAction* ) ), this, SLOT( agStyles_triggered( QAction* ) ) );
+	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), workspace(), SLOT( viewNext_triggered() ) );
+	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), workspace(), SLOT( viewPrevious_triggered() ) );
+	// project connection
+	connect( menuBar()->action( "mProject/aNew" ), SIGNAL( triggered() ), workspace(), SLOT( projectNew_triggered() ) );
+	connect( menuBar()->action( "mProject/aOpen" ), SIGNAL( triggered() ), workspace(), SLOT( projectOpen_triggered() ) );
+	connect( menuBar()->action( "mProject/mSave/aCurrent" ), SIGNAL( triggered() ), workspace(), SLOT( projectSaveCurrent_triggered() ) );
+	connect( menuBar()->action( "mProject/mSave/aAll" ), SIGNAL( triggered() ), workspace(), SLOT( projectSaveAll_triggered() ) );
+	connect( menuBar()->action( "mProject/mClose/aCurrent" ), SIGNAL( triggered() ), workspace(), SLOT( projectCloseCurrent_triggered() ) );
+	connect( menuBar()->action( "mProject/mClose/aAll" ), SIGNAL( triggered() ), workspace(), SLOT( projectCloseAll_triggered() ) );
+	connect( menuBar()->action( "mProject/aSettings" ), SIGNAL( triggered() ), workspace(), SLOT( projectSettings_triggered() ) );
+	connect( pRecentsManager::instance(), SIGNAL( openProjectRequested( const QString& ) ), workspace(), SLOT( openProject( const QString& ) ) );
+	// plugins menu
+	//connect( menuBar()->action( "mPlugins/aManage" ), SIGNAL( triggered() ), pluginsManager(), SLOT( manageRequested() ) );
+	// help menu
 	connect( menuBar()->action( "mHelp/aAbout" ), SIGNAL( triggered() ), this, SLOT( aboutApplication_triggered() ) );
 	connect( menuBar()->action( "mHelp/aAboutQt" ), SIGNAL( triggered() ), this, SLOT( aboutQt_triggered() ) );
 #ifdef __COVERAGESCANNER__
@@ -185,6 +267,13 @@ void UIMain::initConnections()
 
 void UIMain::initGui()
 {
+	// set icon size for toolbar
+	setIconSize( QSize( 16, 16 ) );
+
+	// set central widget
+	setCentralWidget( workspace() );
+
+	// create statusbar
 	statusBar()->show();
 }
 

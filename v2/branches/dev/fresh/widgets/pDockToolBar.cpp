@@ -45,7 +45,7 @@ pDockToolBar::pDockToolBar( pDockToolBarManager* t, Qt::Orientation o )
 	mLayout->setSpacing( 0 );
 
 	// add frame to toolbar
-	addWidget( mFrame );
+	aDockFrame = addWidget( mFrame );
 
 	// connect orientation change
 	connect( this, SIGNAL( orientationChanged( Qt::Orientation ) ), this, SLOT( internal_orientationChanged( Qt::Orientation ) ) );
@@ -89,6 +89,33 @@ bool pDockToolBar::eventFilter( QObject* o, QEvent* e )
 
 	// deturn default event filter
 	return QToolBar::eventFilter( o, e );
+}
+
+void pDockToolBar::addAction( QAction* a, bool b )
+{
+	// create a separator if no action
+	if ( !a )
+	{
+		a = new QAction( this );
+		a->setSeparator( true );
+	}
+
+	if ( b )
+		QToolBar::insertAction( aDockFrame, a );
+	else
+		QToolBar::addAction( a );
+
+	internal_checkVisibility();
+}
+
+void pDockToolBar::addActions( QList<QAction*> a, bool b )
+{
+	if ( b )
+		QToolBar::insertActions( aDockFrame, a );
+	else
+		QToolBar::addActions( a );
+
+	internal_checkVisibility();
 }
 
 int pDockToolBar::addDock( QDockWidget* d, const QString& s, const QIcon& i )
