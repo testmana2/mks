@@ -11,18 +11,23 @@
 
 #include "MonkeyExport.h"
 #include "QSingleton.h"
-#include "pTabbedMainWindow.h"
+#include "pMainWindow.h"
 
 class QActionGroup;
+class pWorkspace;
 
-class Q_MONKEY_EXPORT UIMain : public pTabbedMainWindow, public QSingleton<UIMain>
+class Q_MONKEY_EXPORT UIMain : public pMainWindow, public QSingleton<UIMain>
 {
 	Q_OBJECT
 	friend class QSingleton<UIMain>;
 
+public:
+	pWorkspace* workspace();
+
 private:
 	UIMain( QWidget* = 0 );
 	void initMenuBar();
+	void initToolBar();
 	void initConnections();
 	void initGui();
 

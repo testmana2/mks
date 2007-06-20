@@ -135,7 +135,7 @@ QAction* pMenuBar::action( const QString& s, const QString& l, const QIcon& i, c
 		QString g = m->title().isEmpty() ? mMenuGroup : QString( "%1/%2" ).arg( mMenuGroup, m->title() );
 
 		// create action
-		a = new pAction( s, i, l, QKeySequence( c ), g );
+		a = new pAction( mText, i, l, QKeySequence( c ), g );
 		m->addAction( a );
 
 		if ( !t.isEmpty() )

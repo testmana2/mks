@@ -30,6 +30,9 @@ public:
 
 	virtual bool eventFilter( QObject*, QEvent* );
 
+	void addAction( QAction* = 0, bool = true );
+	void addActions( QList<QAction*>, bool = true );
+
 	int addDock( QDockWidget*, const QString& = QString(), const QIcon& = QIcon() );
 
 	bool isDockVisible( int ) const;
@@ -57,6 +60,7 @@ private:
 	bool mExclusive;
 	QFrame* mFrame;
 	QBoxLayout* mLayout;
+	QAction* aDockFrame;
 	QHash<int, QAbstractButton*> mButtons;
 	QHash<int, QDockWidget*> mDocks;
 

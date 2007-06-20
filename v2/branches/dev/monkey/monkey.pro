@@ -33,7 +33,7 @@ linux-g++:LIBS	+= -rdynamic
 win32-msvc:LIBS	+= /IMPLIB:../build/.lib/monkey.lib
 win32-g++:LIBS	+= -Wl,--out-implib,../build/.lib/libmonkey.a
 
-INCLUDEPATH	+= . src src/maininterface src/maininterface/ui
+INCLUDEPATH	+= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager
 
 # include fresh framework
 include( ../fresh/fresh.pro )
@@ -45,9 +45,16 @@ FORMS	+= src/maininterface/ui/UITranslator.ui \
 
 HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/maininterface/ui/UIAbout.h \
+	src/recentsmanager/pRecentsManager.h \
+	src/workspace/pAbstractChild.h \
+	src/workspace/pChild.h \
+	src/workspace/pWorkspace.h \
 	src/maininterface/UIMain.h
 
 SOURCES	+= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
+	src/recentsmanager/pRecentsManager.cpp \
+	src/workspace/pChild.cpp \
+	src/workspace/pWorkspace.cpp \
 	src/maininterface/UIMain.cpp \
 	src/main.cpp

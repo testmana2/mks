@@ -5,9 +5,9 @@
 #include "MonkeyExport.h"
 #include "QSingleton.h"
 
-struct pAuthorInformations
+struct pDatas
 {
-	pAuthorInformations( const QString& n, const QString& l, const QString& p, const QString& e, const QString& c )
+	pDatas( const QString& n, const QString& l, const QString& p, const QString& e, const QString& c )
 		: Name( n ), Login( l ), Pays( p ), Email( e ), Comment( c )
 	{}
 

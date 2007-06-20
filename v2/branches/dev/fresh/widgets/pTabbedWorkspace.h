@@ -21,8 +21,6 @@ class QStackedWidget;
 class QWorkspace;
 class pTabbedWorkspaceCorner;
 
-#define TABBED_DOCUMENT QWidget
-
 class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
 {
 	Q_OBJECT
@@ -42,16 +40,16 @@ public:
 	pTabbedWorkspace::TabMode tabMode() const;
 	pTabbedWorkspace::DocumentMode documentMode() const;
 	int currentIndex() const;
-	TABBED_DOCUMENT* currentDocument() const;
-	int indexOf( TABBED_DOCUMENT* ) const;
-	TABBED_DOCUMENT* document( int ) const;
+	QWidget* currentDocument() const;
+	int indexOf( QWidget* ) const;
+	QWidget* document( int ) const;
 	int count() const;
-	QList<TABBED_DOCUMENT*> documents() const;
+	QList<QWidget*> documents() const;
 	pTabbedWorkspaceCorner* cornerWidget( Qt::Corner = Qt::TopRightCorner ) const;
-	int addTab( TABBED_DOCUMENT*, const QString& );
-	int addTab( TABBED_DOCUMENT*, const QIcon&, const QString& );
-	int insertTab( int, TABBED_DOCUMENT*, const QString& );
-	int insertTab( int, TABBED_DOCUMENT*, const QIcon&, const QString& );
+	int addTab( QWidget*, const QString& );
+	int addTab( QWidget*, const QIcon&, const QString& );
+	int insertTab( int, QWidget*, const QString& );
+	int insertTab( int, QWidget*, const QIcon&, const QString& );
 
 public slots:
 	void setBackground( const QPixmap& );
@@ -60,23 +58,23 @@ public slots:
 	void setTabMode( pTabbedWorkspace::TabMode );
 	void setDocumentMode( pTabbedWorkspace::DocumentMode );
 	void setCurrentIndex( int );
-	void setCurrentDocument( TABBED_DOCUMENT* );
+	void setCurrentDocument( QWidget* );
 	void setCornerWidget( pTabbedWorkspaceCorner*, Qt::Corner = Qt::TopRightCorner );
 	void removeTab( int );
-	void removeDocument( TABBED_DOCUMENT* );
+	void removeDocument( QWidget* );
 	void closeCurrentTab();
 	void closeAllTabs( bool = false );
 
 protected:
 	void updateCorners();
-	void updateView( TABBED_DOCUMENT* = 0 );
-	void addDocument( TABBED_DOCUMENT* d, int = -1 );
+	void updateView( QWidget* = 0 );
+	void addDocument( QWidget* d, int = -1 );
 
 	pTabbedWorkspace::TabMode mTabMode;
 	pTabbedWorkspace::DocumentMode mDocumentMode;
 	// main layout
 	QBoxLayout* mLayout;
-	QList<TABBED_DOCUMENT*> mDocuments;
+	QList<QWidget*> mDocuments;
 	// tab widget
 	QTabBar* mTabBar;
 	QBoxLayout* mTabLayout;
@@ -92,7 +90,7 @@ protected slots:
 signals:
 	void tabInserted( int );
 	void aboutToCloseTab( int, QCloseEvent* );
-	void aboutToCloseDocument( TABBED_DOCUMENT*, QCloseEvent* );
+	void aboutToCloseDocument( QWidget*, QCloseEvent* );
 	void tabRemoved( int );
 	void currentChanged( int );
 	void tabShapeChanged( QTabBar::Shape );
