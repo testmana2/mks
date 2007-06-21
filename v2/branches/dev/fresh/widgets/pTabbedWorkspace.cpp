@@ -278,7 +278,10 @@ int pTabbedWorkspace::currentIndex() const
 void pTabbedWorkspace::setCurrentIndex( int i )
 {
 	if ( mTabBar->currentIndex() != i )
+	{
 		mTabBar->setCurrentIndex( i );
+		emit currentChanged( i );
+	}
 	else
 	{
 		// get document
