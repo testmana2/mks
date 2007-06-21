@@ -10,10 +10,12 @@
 #include "pAbstractChild.h"
 #include "pMenuBar.h"
 #include "pRecentsManager.h"
+#include "UISaveFiles.h"
 
 #include "pChild.h"
 
 #include <QFileDialog>
+#include <QCloseEvent>
 
 pWorkspace::pWorkspace( QWidget* p )
 	: pTabbedWorkspace( p )
@@ -22,6 +24,7 @@ pWorkspace::pWorkspace( QWidget* p )
 
 	// connections
 	connect( this, SIGNAL( currentChanged( int ) ), this, SLOT( internal_currentChanged( int ) ) );
+	connect( this, SIGNAL( aboutToCloseTab( int, QCloseEvent* ) ), this, SLOT( internal_aboutToCloseTab( int, QCloseEvent* ) ) );
 }
 
 pAbstractChild* pWorkspace::currentChild() const
@@ -78,6 +81,15 @@ void pWorkspace::internal_currentChanged( int i )
 
 	// left corner widget
 	//
+}
+
+void pWorkspace::internal_aboutToCloseTab( int i, QCloseEvent* e )
+{
+	// get child
+	pAbstractChild* c = child( i );
+
+	// check if need to save files
+	UISaveFiles::execute( c, e );
 }
 
 void pWorkspace::openFile( const QString& s, pAbstractProjectProxy* pp, const QPoint& p )

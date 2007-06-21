@@ -24,6 +24,9 @@ class Q_MONKEY_EXPORT UIMain : public pMainWindow, public QSingleton<UIMain>
 public:
 	pWorkspace* workspace();
 
+protected:
+	void closeEvent( QCloseEvent* );
+
 private:
 	UIMain( QWidget* = 0 );
 	void initMenuBar();

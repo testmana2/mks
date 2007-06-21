@@ -37,6 +37,7 @@ private:
 
 private slots:
 	void internal_currentChanged( int );
+	void internal_aboutToCloseTab( int, QCloseEvent* );
 
 public slots:
 	//
