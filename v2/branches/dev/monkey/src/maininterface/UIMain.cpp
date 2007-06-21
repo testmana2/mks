@@ -98,10 +98,10 @@ void UIMain::initMenuBar()
 	mb->endGroup();
 	mb->menu( "mView", tr( "&View" ) );
 	mb->beginGroup( "mView" );
-		mb->menu( "mStyle", tr( "&Style" ), QIcon( ":/Icons/Icons/viewstyle.png" ) );
-		mb->action( "aNext", tr( "&Next tab" ), QIcon( ":/Icons/Icons/buttonnext.png" ), tr( "Alt+Right" ), tr( "Active the next tab" ) )->setEnabled( false );
-		mb->action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/Icons/Icons/buttonprevious.png" ), tr( "Alt+Left" ), tr( "Active the previous tab" ) )->setEnabled( false );
-		mb->action( "aFilteredView", tr( "&Filtered view" ), QIcon( ":/Icons/Icons/helptesters.png" ), tr( "" ), tr( "Filtered project view" ) )->setEnabled( false );	
+		mb->menu( "mStyle", tr( "&Style" ), QIcon( ":/view/icons/view/style.png" ) );
+		mb->action( "aNext", tr( "&Next tab" ), QIcon( ":/view/icons/view/next.png" ), tr( "Alt+Right" ), tr( "Active the next tab" ) )->setEnabled( false );
+		mb->action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/view/icons/view/previous.png" ), tr( "Alt+Left" ), tr( "Active the previous tab" ) )->setEnabled( false );
+		//mb->action( "aFilteredView", tr( "&Filtered view" ), QIcon( "" ), tr( "" ), tr( "Filtered project view" ) )->setEnabled( false );	
 	mb->endGroup();
 	mb->menu( "mProject", tr( "&Project" ) );
 	mb->beginGroup( "mProject" );
@@ -249,8 +249,8 @@ void UIMain::initConnections()
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), workspace(), SLOT( editGoTo_triggered() ) );
 	// view connection
 	connect( agStyles, SIGNAL( triggered( QAction* ) ), this, SLOT( agStyles_triggered( QAction* ) ) );
-	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), workspace(), SLOT( viewNext_triggered() ) );
-	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), workspace(), SLOT( viewPrevious_triggered() ) );
+	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), workspace(), SLOT( activateNextDocument() ) );
+	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), workspace(), SLOT( activatePreviousDocument() ) );
 	// project connection
 	connect( menuBar()->action( "mProject/aNew" ), SIGNAL( triggered() ), workspace(), SLOT( projectNew_triggered() ) );
 	connect( menuBar()->action( "mProject/aOpen" ), SIGNAL( triggered() ), workspace(), SLOT( projectOpen_triggered() ) );

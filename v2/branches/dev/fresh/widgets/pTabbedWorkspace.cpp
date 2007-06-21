@@ -590,3 +590,19 @@ void pTabbedWorkspace::closeAllTabs( bool b )
 			td->deleteLater();
 	}
 }
+
+void pTabbedWorkspace::activateNextDocument()
+{
+	if ( currentIndex() +1 == count() )
+		setCurrentIndex( 0 );
+	else
+		setCurrentIndex( currentIndex() +1 );
+}
+
+void pTabbedWorkspace::activatePreviousDocument()
+{
+	if ( currentIndex() -1 == -1 )
+		setCurrentIndex( count() -1 );
+	else
+		setCurrentIndex( currentIndex() -1 );
+}

@@ -34,7 +34,7 @@ QT	= gui core
 
 LIBS	= -L$${BUILD_PATH}/.lib #-lqscintilla2
 linux-g++:LIBS	+= -rdynamic
-win32-msvc:LIBS	+= /IMPLIB:$${BUILD_PATH}/.lib/monkey.lib
+win32-msvc:LIBS	+= /IMPLIB:$${BUILD_PATH}/monkey.lib
 win32-g++:LIBS	+= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
 
 INCLUDEPATH	+= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager

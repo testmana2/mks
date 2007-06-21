@@ -65,8 +65,6 @@ public slots:
 	void editGoTo_triggered();
 
 	// view menu
-	void viewNext_triggered();
-	void viewPrevious_triggered();
 
 	// project menu
 	void projectNew_triggered();
