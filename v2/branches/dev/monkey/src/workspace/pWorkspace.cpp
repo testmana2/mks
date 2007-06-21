@@ -11,16 +11,22 @@
 #include "pMenuBar.h"
 #include "pRecentsManager.h"
 #include "UISaveFiles.h"
+#include "pTabbedWorkspaceCorner.h"
 
 #include "pChild.h"
 
+#include <QToolButton>
 #include <QFileDialog>
 #include <QCloseEvent>
 
 pWorkspace::pWorkspace( QWidget* p )
 	: pTabbedWorkspace( p )
 {
+	// set background
 	setBackground( ":/application/icons/application/background.png" );
+
+	// set right corner button pixmap
+	cornerWidget()->findChild<QToolButton*>()->defaultAction()->setIcon( QPixmap( ":/application/icons/application/closetab.png" ) );
 
 	// connections
 	connect( this, SIGNAL( currentChanged( int ) ), this, SLOT( internal_currentChanged( int ) ) );
@@ -273,25 +279,6 @@ void pWorkspace::editGoTo_triggered()
 }
 
 // view menu
-void pWorkspace::viewNext_triggered()
-{
-/*
-	if ( currentIndex() +1 == count() )
-		setCurrentIndex( 0 );
-	else
-		setCurrentIndex( currentIndex() +1 );
-*/
-}
-
-void pWorkspace::viewPrevious_triggered()
-{
-/*
-	if ( currentIndex() -1 == -1 )
-		setCurrentIndex( count() -1 );
-	else
-		setCurrentIndex( currentIndex() -1 );
-*/
-}
 
 // project menu
 void pWorkspace::projectNew_triggered()

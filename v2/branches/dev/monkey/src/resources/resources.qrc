@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/application" >
+        <file>icons/application/addtab.png</file>
         <file>icons/application/background.png</file>
+        <file>icons/application/closetab.png</file>
         <file>icons/application/monkey2.gif</file>
         <file>icons/application/monkey2.icns</file>
         <file>icons/application/monkey2.ico</file>
@@ -33,5 +35,10 @@
     </qresource>
     <qresource prefix="/licenses" >
         <file>texts/license.gpl</file>
+    </qresource>
+    <qresource prefix="/view" >
+        <file>icons/view/next.png</file>
+        <file>icons/view/previous.png</file>
+        <file>icons/view/style.png</file>
     </qresource>
 </RCC>
