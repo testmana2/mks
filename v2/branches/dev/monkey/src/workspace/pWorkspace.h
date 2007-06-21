@@ -55,7 +55,6 @@ public slots:
 	void fileExit_triggered();
 
 	// edit menu
-	void editSettings_triggered();
 	void editUndo_triggered();
 	void editRedo_triggered();
 	void editCut_triggered();

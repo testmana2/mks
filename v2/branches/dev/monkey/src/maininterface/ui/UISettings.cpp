@@ -1,6 +1,6 @@
 #include "UISettings.h"
-#include "Settings.h"
-//
+#include "pSettings.h"
+
 #include "qsciscintilla.h"
 #include "qscilexerbash.h"
 #include "qscilexerbatch.h"
@@ -24,98 +24,105 @@
 #include "qscilexersql.h"
 #include "qscilexertex.h"
 #include "qscilexervhdl.h"
-//
+
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QTextCodec>
 #include <QMetaProperty>
-//
+
 const QString SettingsPath = "Settings";
-//
-QPointer<UISettings> UISettings::mSelf = 0L;
-//
-UISettings* UISettings::self( QWidget* p )
-{
-	if ( !mSelf )
-		mSelf = new UISettings( p );
-	return mSelf;
-}
-//
+
 UISettings::UISettings( QWidget* p )
 	: QDialog( p )
 {
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
+
 	// designer
 	bgDesigner = new QButtonGroup( gbUIDesignerIntegration );
 	bgDesigner->addButton( rbUseEmbeddedUIDesigner, Embedded );
 	bgDesigner->addButton( rbRunQtDesigner, External );
+
 	// externalchanges
 	bgExternalChanges = new QButtonGroup( gbOnExternalChanges );
 	bgExternalChanges->addButton( rbDoNothing, Nothing );
 	bgExternalChanges->addButton( rbAlertUser, Alert );
 	bgExternalChanges->addButton( rbReloadAutomatically, Reload );
+
 	// api source
 	bgAPISource = new QButtonGroup( gbAutoCompletionSource );
 	bgAPISource->addButton( rbAutoCompletionDocument, QsciScintilla::AcsDocument );
 	bgAPISource->addButton( rbAutoCompletionAPI, QsciScintilla::AcsAPIs );
 	bgAPISource->addButton( rbAutoCompletionAll, QsciScintilla::AcsAll );
+
 	// calltips style
 	bgCallTipsStyle = new QButtonGroup( gbAutoCompletionCalltips );
 	bgCallTipsStyle->addButton( rbAutoCompletionNoContext, QsciScintilla::CallTipsNoContext );
 	bgCallTipsStyle->addButton( rbAutoCompletionNoAutoCompletionContext, QsciScintilla::CallTipsNoAutoCompletionContext );
 	bgCallTipsStyle->addButton( rbAutoCompletionContext, QsciScintilla::CallTipsContext );
+
 	// loads text codecs
 	QStringList l;
 	foreach ( QByteArray a, QTextCodec::availableCodecs() )
 		l << a;
 	l.sort();
 	cbGeneralEncoding->addItems( l );
+
 	// resize column
 	twHighlighterAssociations->setColumnWidth( 0, 200 );
+
 	// init lexers
 	initLexers();
+
 	// python indentation warning
 	cbPythonIndentationwarning->addItem( tr( "No warning" ), QsciLexerPython::NoWarning );
 	cbPythonIndentationwarning->addItem( tr( "Inconsistent" ), QsciLexerPython::Inconsistent );
 	cbPythonIndentationwarning->addItem( tr( "Tabs after spaces" ), QsciLexerPython::TabsAfterSpaces );
 	cbPythonIndentationwarning->addItem( tr( "Spaces" ), QsciLexerPython::Spaces );
 	cbPythonIndentationwarning->addItem( tr( "Tabs" ), QsciLexerPython::Tabs );
+
 	// eol mode
 	bgEOLMode = new QButtonGroup( gbStyleLineEndCharacters );
 	bgEOLMode->addButton( rbStyleUnix, QsciScintilla::EolUnix );
 	bgEOLMode->addButton( rbStyleMacintosh, QsciScintilla::EolMac );
 	bgEOLMode->addButton( rbStyleWindowsDOS, QsciScintilla::EolWindows );
+
 	// fold style
 	cbStyleFoldingStyle->addItem( tr( "Plain" ), QsciScintilla::PlainFoldStyle );
 	cbStyleFoldingStyle->addItem( tr( "Circled" ), QsciScintilla::CircledFoldStyle );
 	cbStyleFoldingStyle->addItem( tr( "Boxed" ), QsciScintilla::BoxedFoldStyle );
 	cbStyleFoldingStyle->addItem( tr( "Circled Tree" ), QsciScintilla::CircledTreeFoldStyle );
 	cbStyleFoldingStyle->addItem( tr( "Boxed Tree" ), QsciScintilla::BoxedTreeFoldStyle );
+
 	// edge mode
 	cbStyleEdgeMode->addItem( tr( "Disabled" ), QsciScintilla::EdgeNone );
 	cbStyleEdgeMode->addItem( tr( "Draw Line" ), QsciScintilla::EdgeLine );
 	cbStyleEdgeMode->addItem( tr( "Change Background Color" ), QsciScintilla::EdgeBackground );
+
 	// read settings
 	loadSettings();
+
 	// connections
 	foreach ( QToolButton* tb, wEditorColours->findChildren<QToolButton*>() )
 		connect( tb, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbStyleEdgeModeBackgroundColour, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 }
-//
+
 void UISettings::loadSettings()
 {
-	Settings* s = Settings::current();
+	pSettings* s = pSettings::instance();
 	QString sp;
+
 	// general
 	cbLoadLastProject->setChecked( s->value( "Settings/General/LoadLastProject", true ).toBool() );	
 	leDefaultProjectsDirectory->setText( s->value( "Settings/General/DefaultProjectsDirectory", "%HOME/Projects%" ).toString() );
 	bgDesigner->button( s->value( "Settings/General/Designer", Embedded ).toInt() )->setChecked( true );
+
 	// user interface
 	bgExternalChanges->button( s->value( "Settings/UserInterface/ExternalChanges", Alert ).toInt() )->setChecked( true );
+
 	// File Templates
 	// Editor
 	//	APIs
@@ -123,6 +130,7 @@ void UISettings::loadSettings()
 		cbAPIsLanguages->setItemData( i, s->value( QString( "%1/Editor/APIs/%2" ).arg( SettingsPath, cbAPIsLanguages->itemText( i ) ) ).toStringList() );
 	if ( cbAPIsLanguages->count() > 0 )
 		cbAPIsLanguages->setCurrentIndex( 0 );
+
 	//  Auto Completion
 	sp = QString( "%1/Editor/AutoCompletion" ).arg( SettingsPath );
 	gbAutoCompletion->setEnabled( s->value( sp +"/Enabled", true ).toBool() );
@@ -131,11 +139,13 @@ void UISettings::loadSettings()
 	cbAutoCompletionReplaceWord->setChecked( s->value( sp +"/ReplaceWord", false ).toBool() );
 	sAutoCompletionThreshold->setValue( s->value( sp +"/Threshold", 0 ).toInt() );
 	bgAPISource->button( s->value( sp +"/APISource", QsciScintilla::AcsAPIs ).toInt() )->setChecked( true );
+
 	//  Calltips
 	sp = QString( "%1/Editor/Calltips" ).arg( SettingsPath );
 	gbAutoCompletionCalltips->setEnabled( s->value( sp +"/Enabled", true ).toBool() );
 	sAutoCompletionCalltips->setValue( s->value( sp +"/Visible", -1 ).toInt() );
 	bgCallTipsStyle->button( s->value( sp +"/Style", QsciScintilla::CallTipsNoContext ).toInt() )->setChecked( true );
+
 	//  Colours
 	sp = QString( "%1/Editor/Colours" ).arg( SettingsPath );
 	tbColoursCurrentLineMarker->setIcon( colourizedPixmap( s->value( sp +"/CurrentLineMarker", Qt::yellow ).value<QColor>() ) );
@@ -149,6 +159,7 @@ void UISettings::loadSettings()
 	tbColoursCaretLineBackground->setIcon( colourizedPixmap( s->value( sp +"/CaretLineBackground", Qt::white ).value<QColor>() ) );
 	tbColoursUnmatchedBraces->setIcon( colourizedPixmap( s->value( sp +"/UnmatchedBraces", Qt::blue ).value<QColor>() ) );
 	tbColoursUnmatchedBracesBackground->setIcon( colourizedPixmap( s->value( sp +"/UnmatchedBracesBackground", Qt::white ).value<QColor>() ) );
+
 	//  General
 	sp = QString( "%1/Editor/General" ).arg( SettingsPath );
 	sGeneralAutosaveInterval->setValue( s->value( sp +"/AutoSaveInterval", 0 ).toInt() );
@@ -168,6 +179,7 @@ void UISettings::loadSettings()
 	cbGeneralAutomaticEndOfLineConversion->setChecked( s->value( sp +"/AutomaticEndOfLineConversion", true ).toBool() );
 	cbGeneralCreateBackupFileUponOpen->setChecked( s->value( sp +"/CreateBackupFileUponOpen", true ).toBool() );
 	cbGeneralEncoding->setCurrentIndex( cbGeneralEncoding->findText( s->value( sp +"/DefaultEncoding", "UTF-8" ).toString() ) );
+
 	//  Highlighter Association
 	sp = QString( "%1/Editor/HighlighterAssociation" ).arg( SettingsPath );
 	s->beginGroup( sp );
@@ -178,9 +190,11 @@ void UISettings::loadSettings()
 		it->setText( 1, s->value( l ).toString() );
 	}
 	s->endGroup();
+
 	//  SyntaxHighlighting
 	if ( cbSyntaxHighlightingLexerLanguage->count() )
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( cbSyntaxHighlightingLexerLanguage->itemText( 0 ) );
+
 	//  Properties
 	sp = QString( "%1/Editor/Properties" ).arg( SettingsPath );
 	cbPropertiesCppFoldComments->setChecked( s->value( sp +"/CppFoldComments", true ).toBool() );
@@ -209,6 +223,7 @@ void UISettings::loadSettings()
 	cbPropertiesVHDLFoldAtBegin->setChecked( s->value( sp +"/VHDLFoldAtBegin", false ).toBool() );
 	cbPropertiesVHDLFoldAtParenthesis->setChecked( s->value( sp +"/VHDLFoldAtParenthesis", false ).toBool() );
 	cbPropertiesAllFoldCompact->setChecked( s->value( sp +"/AllFoldCompact", true ).toBool() );
+
 	//  Style
 	sp = QString( "%1/Editor/Style" ).arg( SettingsPath );
 	bgEOLMode->button( s->value( sp +"/EOLMode", QsciScintilla::EolWindows ).toInt() )->setChecked( true );
@@ -225,12 +240,13 @@ void UISettings::loadSettings()
 	cbStyleEdgeMode->setCurrentIndex( cbStyleEdgeMode->findData( s->value( sp +"/EdgeMode", QsciScintilla::EdgeNone ).toInt() ) );
 	sStyleEdgeModeColumnNumber->setValue( s->value( sp +"/EdgeModeColumnNumber", 80 ).toInt() );
 	tbStyleEdgeModeBackgroundColour->setIcon( colourizedPixmap( s->value( sp +"/EdgeModeBackground", Qt::gray ).value<QColor>() ) );
+
 	// Abbreviations
 	// Tools Menu
 	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
 	//qWarning( qPrintable( m ) );
 }
-//
+
 void UISettings::initLexers()
 {
 	QsciLexer* l;
@@ -278,6 +294,7 @@ void UISettings::initLexers()
 	mLexers[l->language()] = l;
 	l = new QsciLexerVHDL( this );
 	mLexers[l->language()] = l;
+
 	// fill combobox
 	QStringList ll;
 	foreach ( QsciLexer* sl, mLexers )
@@ -285,32 +302,37 @@ void UISettings::initLexers()
 		// get language name
 		ll << sl->language();
 		// load its settings
-		sl->readSettings( *Settings::current(), qPrintable( QString( "%1/Editor/Scintilla" ).arg( SettingsPath ) ) );
+		sl->readSettings( *pSettings::instance(), qPrintable( QString( "%1/Editor/Scintilla" ).arg( SettingsPath ) ) );
 	}
+
 	ll.sort();
 	cbAPIsLanguages->addItems( ll );
 	cbHighlighterAssociationLexerLanguage->addItems( ll );
 	cbSyntaxHighlightingLexerLanguage->addItems( ll );
 }
-//
+
 void UISettings::saveSettings()
 {
-	Settings* s = Settings::current();
+	pSettings* s = pSettings::instance();
 	QString sp;
+
 	// general
 	sp = QString( "%1/Editor/AutoCompletion" ).arg( SettingsPath );
 	s->setValue( sp +"/LoadLastProject", cbLoadLastProject->isChecked() );
 	s->setValue( sp +"/DefaultProjectsDirectory", leDefaultProjectsDirectory->text() );
 	s->setValue( sp +"/Designer", bgDesigner->checkedId() );
+
 	// user interface
 	sp = QString( "%1/Editor/UserInterface" ).arg( SettingsPath );
 	s->setValue( sp +"/ExternalChanges", bgExternalChanges->checkedId() );
+
 	// File Templates
 	// Editor
 	//	APIs
 	sp = QString( "%1/Editor/APIs/" ).arg( SettingsPath );
 	for ( int i = 0; i < cbAPIsLanguages->count(); i++ )
 		s->setValue( sp +cbAPIsLanguages->itemText( i ), cbAPIsLanguages->itemData( i ).toStringList() );
+
 	//  Auto Completion
 	sp = QString( "%1/Editor/AutoCompletion" ).arg( SettingsPath );
 	s->setValue( sp +"/Enabled", gbAutoCompletion->isEnabled() );
@@ -319,11 +341,13 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/ReplaceWord", cbAutoCompletionReplaceWord->isChecked() );
 	s->setValue( sp +"/Threshold", sAutoCompletionThreshold->value() );
 	s->setValue( sp +"/APISource", bgAPISource->checkedId() );
+
 	//  Calltips
 	sp = QString( "%1/Editor/Calltips" ).arg( SettingsPath );
 	s->setValue( sp +"/Enabled", gbAutoCompletionCalltips->isEnabled() );
 	s->setValue( sp +"/Visible", sAutoCompletionCalltips->value() );
 	s->setValue( sp +"/Style", bgCallTipsStyle->checkedId() );
+
 	//  Colours
 	sp = QString( "%1/Editor/Colours" ).arg( SettingsPath );
 	s->setValue( sp +"/CurrentLineMarker", iconBackgroundColor( tbColoursCurrentLineMarker->icon() ) );
@@ -337,6 +361,7 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/CaretLineBackground", iconBackgroundColor( tbColoursCaretLineBackground->icon() ) );
 	s->setValue( sp +"/UnmatchedBraces", iconBackgroundColor( tbColoursUnmatchedBraces->icon() ) );
 	s->setValue( sp +"/UnmatchedBracesBackground", iconBackgroundColor( tbColoursUnmatchedBracesBackground->icon() ) );
+
 	//  General
 	sp = QString( "%1/Editor/General" ).arg( SettingsPath );
 	s->setValue( sp +"/AutoSaveInterval", sGeneralAutosaveInterval->value() );
@@ -356,6 +381,7 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/AutomaticEndOfLineConversion", cbGeneralAutomaticEndOfLineConversion->isChecked() );
 	s->setValue( sp +"/CreateBackupFileUponOpen", cbGeneralCreateBackupFileUponOpen->isChecked() );
 	s->setValue( sp +"/DefaultEncoding", cbGeneralEncoding->currentText() );
+
 	//  Highlighter Association
 	sp = QString( "%1/Editor/HighlighterAssociation/" ).arg( SettingsPath );
 	for ( int i = 0; i < twHighlighterAssociations->topLevelItemCount(); i++ )
@@ -363,9 +389,11 @@ void UISettings::saveSettings()
 		QTreeWidgetItem* it = twHighlighterAssociations->topLevelItem( i );
 		s->setValue( sp +it->text( 0 ), it->text( 1 ) );
 	}
+
 	//  SyntaxHighlighting
 	foreach ( QsciLexer* sl, mLexers )
 		sl->writeSettings( *s, qPrintable( QString( "%1/Editor/Scintilla" ).arg( SettingsPath ) ) );
+
 	//  Properties
 	sp = QString( "%1/Editor/Properties" ).arg( SettingsPath );
 	s->setValue( sp +"/CppFoldComments", cbPropertiesCppFoldComments->isChecked() );
@@ -394,6 +422,7 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/VHDLFoldAtBegin", cbPropertiesVHDLFoldAtBegin->isChecked() );
 	s->setValue( sp +"/VHDLFoldAtParenthesis", cbPropertiesVHDLFoldAtParenthesis->isChecked() );
 	s->setValue( sp +"/AllFoldCompact", cbPropertiesAllFoldCompact->isChecked() );
+
 	//  Style
 	sp = QString( "%1/Editor/Style" ).arg( SettingsPath );
 	s->setValue( sp +"/EOLMode", bgEOLMode->checkedId() );
@@ -407,24 +436,25 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/EdgeMode", cbStyleEdgeMode->itemData( cbStyleEdgeMode->currentIndex() ).toInt() );
 	s->setValue( sp +"/EdgeModeColumnNumber", sStyleEdgeModeColumnNumber->value() );
 	s->setValue( sp +"/EdgeModeBackground", iconBackgroundColor( tbStyleEdgeModeBackgroundColour->icon() ) );
+
 	// Abbreviations
 	// Tools Menu
 	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
 	//qWarning( qPrintable( m ) );
 }
-//
+
 QPixmap UISettings::colourizedPixmap( const QColor& c ) const
 {
 	QPixmap p( 48, 16 );
 	p.fill( c );
 	return p;
 }
-//
+
 QColor UISettings::iconBackgroundColor( const QIcon& i ) const
 {
 	return QColor( i.pixmap( QSize( 5, 5 ) ).toImage().pixel( QPoint( 0, 0 ) ) );
 }
-//
+
 void UISettings::cbAPIsLanguages_beforeChanged( int i )
 {
 	if ( i == cbAPIsLanguages->currentIndex() )
@@ -435,13 +465,13 @@ void UISettings::cbAPIsLanguages_beforeChanged( int i )
 		cbAPIsLanguages->setItemData( i, l );
 	}
 }
-//
+
 void UISettings::on_cbAPIsLanguages_currentIndexChanged( int i )
 {
 	lwAPIs->clear();
 	lwAPIs->addItems( cbAPIsLanguages->itemData( i ).toStringList() );
 }
-//
+
 void UISettings::on_pbAPIsDelete_clicked()
 {
 	QListWidgetItem* it = lwAPIs->currentItem();
@@ -451,7 +481,7 @@ void UISettings::on_pbAPIsDelete_clicked()
 		cbAPIsLanguages_beforeChanged( cbAPIsLanguages->currentIndex() );
 	}
 }
-//
+
 void UISettings::on_pbAPIsAdd_clicked()
 {
 	QString s = leAPIs->text();
@@ -461,14 +491,14 @@ void UISettings::on_pbAPIsAdd_clicked()
 		cbAPIsLanguages_beforeChanged( cbAPIsLanguages->currentIndex() );
 	}
 }
-//
+
 void UISettings::on_pbAPIsBrowse_clicked()
 {
 	QString s = QFileDialog::getOpenFileName( window(), tr( "Select API file" ), QString::null, tr( "API Files (*.api);;All Files (*)" ) );
 	if ( !s.isNull() )
 		leAPIs->setText( s );
 }
-//
+
 void UISettings::tbColours_clicked()
 {
 	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
@@ -476,7 +506,7 @@ void UISettings::tbColours_clicked()
 	if ( c.isValid() )
 		tb->setIcon( colourizedPixmap( c ) );
 }
-//
+
 void UISettings::on_twHighlighterAssociations_itemClicked( QTreeWidgetItem* it, int )
 {
 	if ( it )
@@ -485,7 +515,7 @@ void UISettings::on_twHighlighterAssociations_itemClicked( QTreeWidgetItem* it, 
 		cbHighlighterAssociationLexerLanguage->setCurrentIndex( cbHighlighterAssociationLexerLanguage->findText( it->text( 1 ) ) );
 	}
 }
-//
+
 void UISettings::on_pbHighlighterAssociationAddChange_clicked()
 {
 	QString f = leHighlighterAssociationFilenamePattern->text();
@@ -509,7 +539,7 @@ void UISettings::on_pbHighlighterAssociationAddChange_clicked()
 	leHighlighterAssociationFilenamePattern->clear();
 	cbHighlighterAssociationLexerLanguage->setCurrentIndex( -1 );
 }
-//
+
 void UISettings::on_pbHighlighterAssociationDelete_clicked()
 {
 	QTreeWidgetItem* it = twHighlighterAssociations->currentItem();
@@ -522,7 +552,7 @@ void UISettings::on_pbHighlighterAssociationDelete_clicked()
 		cbHighlighterAssociationLexerLanguage->setCurrentIndex( -1 );
 	}
 }
-//
+
 void UISettings::on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( const QString& s )
 {
 	QsciLexer* l = mLexers[s];
@@ -542,7 +572,7 @@ void UISettings::on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( const
 		}
 	}
 }
-//
+
 void UISettings::on_lwSyntaxHighlightingStyleElements_itemClicked( QListWidgetItem* it )
 {
 	if ( it )
@@ -557,7 +587,7 @@ void UISettings::on_lwSyntaxHighlightingStyleElements_itemClicked( QListWidgetIt
 		cbSyntaxHighlightingFillToEndOfLine->setChecked( it->data( EolFill ).toBool() );
 	}
 }
-//
+
 void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
 {
 	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
@@ -572,7 +602,7 @@ void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
 		}
 	}
 }
-//
+
 void UISettings::on_pbSyntaxHighlightingBackgroundColour_clicked()
 {
 	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
@@ -587,7 +617,7 @@ void UISettings::on_pbSyntaxHighlightingBackgroundColour_clicked()
 		}
 	}
 }
-//
+
 void UISettings::on_pbSyntaxHighlightingFont_clicked()
 {
 	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
@@ -603,7 +633,7 @@ void UISettings::on_pbSyntaxHighlightingFont_clicked()
 		}
 	}
 }
-//
+
 void UISettings::on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool b )
 {
 	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
@@ -613,7 +643,7 @@ void UISettings::on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool b )
 		mLexers[cbSyntaxHighlightingLexerLanguage->currentText()]->setEolFill( b, it->data( Id ).toInt() );
 	}
 }
-//
+
 void UISettings::on_pbSyntaxHighlightingAllBackgroundColours_clicked()
 {
 	QsciLexer* l = mLexers[cbSyntaxHighlightingLexerLanguage->currentText()];
@@ -624,7 +654,7 @@ void UISettings::on_pbSyntaxHighlightingAllBackgroundColours_clicked()
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( l->language() );
 	}
 }
-//
+
 void UISettings::on_pbSyntaxHighlightingAllFonts_clicked()
 {
 	QsciLexer* l = mLexers[cbSyntaxHighlightingLexerLanguage->currentText()];
@@ -636,7 +666,7 @@ void UISettings::on_pbSyntaxHighlightingAllFonts_clicked()
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( l->language() );
 	}
 }
-//
+
 void UISettings::on_pbStyleLineNumbersFont_clicked()
 {
 	bool b;
@@ -644,7 +674,7 @@ void UISettings::on_pbStyleLineNumbersFont_clicked()
 	if ( b )
 		leStyleLineNumbersFont->setFont( f );
 }
-//
+
 void UISettings::on_pbStyleMonospacedFont_clicked()
 {
 	bool b;
@@ -652,7 +682,7 @@ void UISettings::on_pbStyleMonospacedFont_clicked()
 	if ( b )
 		leStyleMonospacedFont->setFont( f );
 }
-//
+
 void UISettings::accept()
 {
 	saveSettings();

@@ -224,11 +224,6 @@ void pWorkspace::fileExit_triggered()
 }
 
 // edit menu
-void pWorkspace::editSettings_triggered()
-{
-	//UISettings::self( window() )->exec();
-}
-
 void pWorkspace::editUndo_triggered()
 {
 	pAbstractChild* c = currentChild();

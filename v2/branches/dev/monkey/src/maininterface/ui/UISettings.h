@@ -1,23 +1,22 @@
 #ifndef UISETTINGS_H
 #define UISETTINGS_H
-//
+
+#include "MonkeyExport.h"
+#include "QSingleton.h"
 #include "ui_UISettings.h"
-//
-#include <QPointer>
-//
+
 class QsciLexer;
-//
-class UISettings : public QDialog, public Ui::UISettings
+
+class Q_MONKEY_EXPORT UISettings : public QDialog, public Ui::UISettings, public QSingleton<UISettings>
 {
 	Q_OBJECT
-	//
+	friend class QSingleton<UISettings>;
+
 public:
-	static UISettings* self( QWidget* = 0 );
-	//
 	enum Designer { Embedded = 0, External };
 	enum ExternalChanges { Nothing = 0, Alert, Reload };
 	enum Lexer { Id = Qt::UserRole, EolFill };
-	//
+
 private:
 	UISettings( QWidget* = 0 );
 	void loadSettings();
@@ -33,10 +32,10 @@ private:
 	QButtonGroup* bgCallTipsStyle;
 	QButtonGroup* bgEOLMode;
 	QButtonGroup* bgPythonIndentationWarning;
-	//
+
 public slots:
 	void accept();
-	//
+
 private slots:
 	void cbAPIsLanguages_beforeChanged( int );
 	void on_cbAPIsLanguages_currentIndexChanged( int );
@@ -57,7 +56,7 @@ private slots:
 	void on_pbSyntaxHighlightingAllFonts_clicked();
 	void on_pbStyleLineNumbersFont_clicked();
 	void on_pbStyleMonospacedFont_clicked();
-	//
+
 };
-//
+
 #endif // UISETTINGS_H
