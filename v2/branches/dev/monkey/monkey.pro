@@ -52,6 +52,7 @@ HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/recentsmanager/pRecentsManager.h \
 	src/workspace/pAbstractChild.h \
 	src/workspace/pChild.h \
+	src/workspace/UISaveFiles.h \
 	src/workspace/pWorkspace.h \
 	src/maininterface/UIMain.h
 
@@ -59,6 +60,7 @@ SOURCES	+= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
 	src/recentsmanager/pRecentsManager.cpp \
 	src/workspace/pChild.cpp \
+	src/workspace/UISaveFiles.cpp \
 	src/workspace/pWorkspace.cpp \
 	src/maininterface/UIMain.cpp \
 	src/main.cpp

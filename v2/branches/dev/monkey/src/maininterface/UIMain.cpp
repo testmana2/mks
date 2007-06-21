@@ -46,6 +46,11 @@ UIMain::UIMain( QWidget* p )
 	initConnections();
 }
 
+void UIMain::closeEvent( QCloseEvent* e )
+{
+	workspace()->fileCloseAll_triggered();
+}
+
 pWorkspace* UIMain::workspace()
 {
 	return pWorkspace::instance( this );
