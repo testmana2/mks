@@ -10,6 +10,7 @@
 #include "pWorkspace.h"
 #include "pMenuBar.h"
 #include "pRecentsManager.h"
+#include "UISettings.h"
 #include "pActionManager.h"
 #include "pSettings.h"
 #include "UIAbout.h"
@@ -238,7 +239,7 @@ void UIMain::initConnections()
 	connect( menuBar()->action( "mFile/aPrint" ), SIGNAL( triggered() ), workspace(), SLOT( filePrint_triggered() ) );
 	connect( menuBar()->action( "mFile/aQuit" ), SIGNAL( triggered() ), workspace(), SLOT( fileExit_triggered() ) );
 	// edit connection
-	connect( menuBar()->action( "mEdit/aSettings" ), SIGNAL( triggered() ), workspace(), SLOT( editSettings_triggered() ) );
+	connect( menuBar()->action( "mEdit/aSettings" ), SIGNAL( triggered() ), this, SLOT( editSettings_triggered() ) );
 	connect( menuBar()->action( "mEdit/aShortcutsEditor" ), SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
 	connect( menuBar()->action( "mEdit/aUndo" ), SIGNAL( triggered() ), workspace(), SLOT( editUndo_triggered() ) );
 	connect( menuBar()->action( "mEdit/aRedo" ), SIGNAL( triggered() ), workspace(), SLOT( editRedo_triggered() ) );
@@ -280,6 +281,11 @@ void UIMain::initGui()
 
 	// create statusbar
 	statusBar()->show();
+}
+
+void UIMain::editSettings_triggered()
+{
+	UISettings::instance( this )->exec();
 }
 
 void UIMain::agStyles_triggered( QAction* a )

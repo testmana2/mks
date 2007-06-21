@@ -37,6 +37,7 @@ private:
 	QActionGroup* agStyles;
 
 public slots:
+	void editSettings_triggered();
 	void agStyles_triggered( QAction* );
 	void aboutApplication_triggered();
 	void aboutQt_triggered();
