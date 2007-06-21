@@ -18,7 +18,7 @@
 #include <QFile>
 
 pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
-	: QWidget( p )
+	: QWidget( p ), mTabsHaveShortcut( true )
 {
 	/*
 	QBoxLayout::LeftToRight
@@ -537,6 +537,10 @@ int pTabbedWorkspace::insertTab( int j, QWidget* td, const QIcon& i, const QStri
 	if ( !i.isNull() )
 		mTabBar->setTabIcon( j, i );
 
+	// set chortcut if needed
+	if ( mTabsHaveShortcut )
+		updateTabsNumber( j );
+
 	// return true index of the new document
 	return j;
 }
@@ -566,6 +570,11 @@ void pTabbedWorkspace::removeDocument( QWidget* td )
 	{
 		mTabBar->removeTab( i );
 		updateCorners();
+
+		// set chortcut if needed
+		if ( mTabsHaveShortcut )
+			updateTabsNumber( i );
+
 		emit tabRemoved( i );
 		setCurrentIndex( currentIndex() );
 
@@ -605,4 +614,49 @@ void pTabbedWorkspace::activatePreviousDocument()
 		setCurrentIndex( count() -1 );
 	else
 		setCurrentIndex( currentIndex() -1 );
+}
+
+bool pTabbedWorkspace::tabsHaveShortcut() const
+{
+	return mTabsHaveShortcut;
+}
+
+void pTabbedWorkspace::setTabsHaveShortcut( bool b )
+{
+	// if same state, cancel
+	if ( mTabsHaveShortcut == b )
+		return;
+
+	// store tabs have shortcut
+	mTabsHaveShortcut = b;
+
+	// update tabs text
+	updateTabsNumber();
+}
+
+void pTabbedWorkspace::updateTabsNumber( int i )
+{
+	// fill i if i = -1 for complete update
+	if ( i == -1 )
+		i = 0;
+
+	// loop documents starting at id i
+	for ( int j = i; j < count(); j++ )
+	{
+		// only 10 tabs can have shortcut
+		if ( j > 9 )
+			return;
+
+		// got tab text
+		QString s = mTabBar->tabText( j );
+
+		// look index of cut part
+		int k = s.indexOf( ":" );
+
+		// set new tab caption
+		if ( mTabsHaveShortcut )
+			mTabBar->setTabText( j, QString( "&%1: %2" ).arg( j ).arg( s.mid( k != -1 ? k +2 : 0 ) ) );
+		else
+			mTabBar->setTabText( j, s.mid( k != -1 ? k +2 : 0 ) );
+	}
 }

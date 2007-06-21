@@ -46,7 +46,7 @@ UIMain::UIMain( QWidget* p )
 	initConnections();
 }
 
-void UIMain::closeEvent( QCloseEvent* e )
+void UIMain::closeEvent( QCloseEvent* )
 {
 	workspace()->fileCloseAll_triggered();
 }
@@ -99,8 +99,8 @@ void UIMain::initMenuBar()
 	mb->menu( "mView", tr( "&View" ) );
 	mb->beginGroup( "mView" );
 		mb->menu( "mStyle", tr( "&Style" ), QIcon( ":/view/icons/view/style.png" ) );
-		mb->action( "aNext", tr( "&Next tab" ), QIcon( ":/view/icons/view/next.png" ), tr( "Alt+Right" ), tr( "Active the next tab" ) )->setEnabled( false );
-		mb->action( "aPrevious", tr( "&Previous tab" ), QIcon( ":/view/icons/view/previous.png" ), tr( "Alt+Left" ), tr( "Active the previous tab" ) )->setEnabled( false );
+		mb->action( "aNext", tr( "&Next Tab" ), QIcon( ":/view/icons/view/next.png" ), tr( "Alt+Right" ), tr( "Active the next tab" ) )->setEnabled( false );
+		mb->action( "aPrevious", tr( "&Previous Tab" ), QIcon( ":/view/icons/view/previous.png" ), tr( "Alt+Left" ), tr( "Active the previous tab" ) )->setEnabled( false );
 		//mb->action( "aFilteredView", tr( "&Filtered view" ), QIcon( "" ), tr( "" ), tr( "Filtered project view" ) )->setEnabled( false );	
 	mb->endGroup();
 	mb->menu( "mProject", tr( "&Project" ) );

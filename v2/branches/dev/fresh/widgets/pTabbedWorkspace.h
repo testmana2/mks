@@ -50,6 +50,7 @@ public:
 	int addTab( QWidget*, const QIcon&, const QString& );
 	int insertTab( int, QWidget*, const QString& );
 	int insertTab( int, QWidget*, const QIcon&, const QString& );
+	bool tabsHaveShortcut() const;
 
 public slots:
 	void setBackground( const QPixmap& );
@@ -66,12 +67,16 @@ public slots:
 	void closeAllTabs( bool = false );
 	void activateNextDocument();
 	void activatePreviousDocument();
+	void setTabsHaveShortcut( bool );
 
 protected:
 	void updateCorners();
 	void updateView( QWidget* = 0 );
 	void addDocument( QWidget* d, int = -1 );
 
+	// tell if tabs have shortcuts
+	bool mTabsHaveShortcut;
+	// workspace properties
 	pTabbedWorkspace::TabMode mTabMode;
 	pTabbedWorkspace::DocumentMode mDocumentMode;
 	// main layout
@@ -88,6 +93,7 @@ protected:
 protected slots:
 	void workspaceWidget_windowActivated( QWidget* );
 	void removeDocument( QObject* );
+	void updateTabsNumber( int = -1 );
 
 signals:
 	void tabInserted( int );

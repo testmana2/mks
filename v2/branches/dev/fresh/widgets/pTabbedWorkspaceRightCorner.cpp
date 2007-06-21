@@ -64,14 +64,18 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 		a->setData( i );
 	}
 
-	pAction* a = new pAction( "aTabbedCloseAll", tr( "&Close All" ), QKeySequence(), tr( "Tabbed Workspace" ) );
+	pAction* aTabbedTabsHaveShortcut = new pAction( "aTabbedTabsHaveShortcut", tr( "&Tabs Have Shortcut" ), QKeySequence(), tr( "Tabbed Workspace" ) );
+	aTabbedTabsHaveShortcut->setCheckable( true );
+	aTabbedTabsHaveShortcut->setChecked( p->tabsHaveShortcut() );
+	pAction* aTabbedCloseAll = new pAction( "aTabbedCloseAll", tr( "&Close All" ), QKeySequence(), tr( "Tabbed Workspace" ) );
 
 	// add entries
 	menu->addMenu( tr( "Tab Shape" ) )->addActions( agTabShape->actions() );
 	menu->addMenu( tr( "Tab Mode" ) )->addActions( agTabMode->actions() );
 	menu->addMenu( tr( "Document Mode" ) )->addActions( agDocumentMode->actions() );
 	menu->addSeparator();
-	menu->addAction( a );
+	menu->addAction( aTabbedTabsHaveShortcut );
+	menu->addAction( aTabbedCloseAll );
 
 	connect( menu->menuAction(), SIGNAL( triggered() ), p, SLOT( closeCurrentTab() ) );
 
@@ -87,7 +91,8 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 	connect( p, SIGNAL( tabModeChanged( pTabbedWorkspace::TabMode ) ), this, SLOT( tabModeChanged( pTabbedWorkspace::TabMode ) ) );
 	connect( p, SIGNAL( documentModeChanged( pTabbedWorkspace::DocumentMode ) ), this, SLOT( documentModeChanged( pTabbedWorkspace::DocumentMode ) ) );
 
-	connect( a, SIGNAL( triggered() ), p, SLOT( closeAllTabs() ) );
+	connect( aTabbedTabsHaveShortcut, SIGNAL( toggled( bool ) ), p, SLOT( setTabsHaveShortcut( bool ) ) );
+	connect( aTabbedCloseAll, SIGNAL( triggered() ), p, SLOT( closeAllTabs() ) );
 
 	setActions( QList<QAction*>() << menu->menuAction() );
 }

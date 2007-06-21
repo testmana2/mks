@@ -24,7 +24,7 @@ const QString mDatasMask =
 "</table>";
 
 const QList<pDatas> mTeamates = QList<pDatas>()
-	<< pDatas( "Filipe Azevedo", "Nox P@sNox", QObject::tr( "France" ), "pasnox@gmail.com", QObject::tr( "Creator && Principal Developer" ) )
+	<< pDatas( "Filipe Azevedo", "Nox P@sNox", QObject::tr( "France" ), "pasnox@gmail.com", QObject::tr( "Creator & Principal Developer" ) )
 	<< pDatas( "Manuel Schmidt", "oversize", QObject::tr( "Germany" ), "manuel@schmidtman.de", QObject::tr( "Web Developer & Web Designer" ) )
 	<< pDatas( "Yannick", "xiantia", QObject::tr( "France" ), "xiantia@gmail.com", QObject::tr( "GDB Driver Integration" ) )
 	<< pDatas( "Julien Decologne", "Judd", QObject::tr( "France" ), "judd@hotmail.com", QObject::tr( "Splashscreen & Icons Designer" ) );
@@ -32,10 +32,11 @@ const QList<pDatas> mTeamates = QList<pDatas>()
 const QList<pDatas> mDonors = QList<pDatas>()
 	<< pDatas( "Filipe Azevedo", "Nox P@sNox", QObject::tr( "France" ), "pasnox@gmail.com", QObject::tr( "No donations for now, you can use this <a href=\"http://sourceforge.net/project/project_donations.php?group_id=163493\">link</a> to make donation. Donations will help paying host/domain, and relatives things about the projects ( may need a mac book for better mac version :p )." ) );
 
-const QList<pDatas> mBugs = QList<pDatas>()
-	<< pDatas( "", "", QObject::tr( "Location" ), "http://trac.monkeystudio.org/newticket", QObject::tr( "You can send bug/patch/ideas/what ever you want to our tracker." ) )
+const QList<pDatas> mLinks = QList<pDatas>()
+	<< pDatas( "", "", QObject::tr( "Location" ), "http://www.trolltech.com", QObject::tr( "Trolltech's Qt homepage" ) )
+	<< pDatas( "", "", QObject::tr( "Location" ), "http://trac.monkeystudio.org", QObject::tr( "You can send bug/patch/ideas/what ever you want to our tracker." ) )
 	<< pDatas( "", "", QObject::tr( "Location" ), "http://forums.monkeystudio.org", QObject::tr( "A forum is at your disposition." ) )
-	<< pDatas( "", "", QObject::tr( "Location" ), "http://www.monkeystudio.org/feeds/latest", QObject::tr( "Get the latest news using the rss url." ) );
+	<< pDatas( "", "", QObject::tr( "Location" ), "http://www.monkeystudio.org/feeds/latest", QObject::tr( "Get the latest news using the rss feed." ) );
 
 UIAbout::UIAbout( QWidget* p )
 	: QDialog( p )
@@ -75,10 +76,10 @@ UIAbout::UIAbout( QWidget* p )
 		tbDonations->append( mDatasMask.arg( i.Comment ).arg( i.Name ).arg( i.Login ).arg( i.Pays ).arg( QString( "mailto:" ).append( i.Email ) ).arg( i.Email ) );
 	tbDonations->moveCursor( QTextCursor::Start );
 
-	// bugs / wishes
-	foreach ( pDatas i, mBugs )
-		tbBugs->append( mDatasMask.arg( i.Comment ).arg( i.Name ).arg( i.Login ).arg( i.Pays ).arg( i.Email ).arg( i.Email ) );
-	tbBugs->moveCursor( QTextCursor::Start );
+	// links
+	foreach ( pDatas i, mLinks )
+		tbLinks->append( mDatasMask.arg( i.Comment ).arg( i.Name ).arg( i.Login ).arg( i.Pays ).arg( i.Email ).arg( i.Email ) );
+	tbLinks->moveCursor( QTextCursor::Start );
 
 	// connections
 	foreach ( QTextBrowser* b, twAbout->findChildren<QTextBrowser*>() )
