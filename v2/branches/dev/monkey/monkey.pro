@@ -1,12 +1,12 @@
 # Monkey Studio 2 project file
 
 BUILD_PATH	 = ../build
-unix:OBJECTS_DIR	= $$BUILD_PATH/.o/unix
-win32:OBJECTS_DIR	= $$BUILD_PATH/.o/win32
-mac:OBJECTS_DIR	= $$BUILD_PATH/.o/mac
-UI_DIR	= $$BUILD_PATH/.ui
-MOC_DIR	= $$BUILD_PATH/.moc
-RCC_DIR	= $$BUILD_PATH/.rcc
+unix:OBJECTS_DIR	= $${BUILD_PATH}/.o/unix
+win32:OBJECTS_DIR	= $${BUILD_PATH}/.o/win32
+mac:OBJECTS_DIR	= $${BUILD_PATH}/.o/mac
+UI_DIR	= $${BUILD_PATH}/.ui
+MOC_DIR	= $${BUILD_PATH}/.moc
+RCC_DIR	= $${BUILD_PATH}/.rcc
 
 unix:ICON	= src/resources/Icons/icon.png
 mac:ICON	= src/resources/Icons/icon.icns
@@ -26,12 +26,16 @@ win32:RC_FILE	+= monkey.rc
 RESOURCES	= src/resources/resources.qrc
 
 CONFIG	+= qt warn_on debug app_bundle thread x11 windows console
+win32{
+	CONFIG -= debug
+	CONFIG += release
+}
 QT	= gui core
 
-LIBS	= -L../build/.lib #-lqscintilla2
+LIBS	= -L$${BUILD_PATH}/.lib #-lqscintilla2
 linux-g++:LIBS	+= -rdynamic
-win32-msvc:LIBS	+= /IMPLIB:../build/.lib/monkey.lib
-win32-g++:LIBS	+= -Wl,--out-implib,../build/.lib/libmonkey.a
+win32-msvc:LIBS	+= /IMPLIB:$${BUILD_PATH}/.lib/monkey.lib
+win32-g++:LIBS	+= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
 
 INCLUDEPATH	+= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager
 
