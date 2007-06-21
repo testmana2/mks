@@ -99,12 +99,12 @@
        <string>Donations</string>
       </attribute>
      </widget>
-     <widget class="QTextBrowser" name="tbBugs" >
+     <widget class="QTextBrowser" name="tbLinks" >
       <property name="horizontalScrollBarPolicy" >
        <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
       <attribute name="title" >
-       <string>Bugs</string>
+       <string>Links</string>
       </attribute>
      </widget>
     </widget>
