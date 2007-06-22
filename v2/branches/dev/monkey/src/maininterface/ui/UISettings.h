@@ -57,6 +57,7 @@ private slots:
 	void on_pbSyntaxHighlightingBackgroundColour_clicked();
 	void on_pbSyntaxHighlightingFont_clicked();
 	void on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool );
+	void cbProperties_toggled( bool );
 	void on_pbSyntaxHighlightingAllBackgroundColours_clicked();
 	void on_pbSyntaxHighlightingAllFonts_clicked();
 	void on_pbStyleLineNumbersFont_clicked();

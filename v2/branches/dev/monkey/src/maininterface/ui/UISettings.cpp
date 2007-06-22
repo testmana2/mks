@@ -112,6 +112,9 @@ UISettings::UISettings( QWidget* p )
 	foreach ( QToolButton* tb, pEditorColours->findChildren<QToolButton*>() )
 		connect( tb, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbStyleEdgeModeBackgroundColour, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	foreach ( QCheckBox* cb, gbSyntaxHighlightingStyleElement->findChildren<QCheckBox*>() )
+		if ( cb != cbSyntaxHighlightingFillToEndOfLine )
+			connect( cb, SIGNAL( toggled( bool ) ), this, SLOT( cbProperties_toggled( bool ) ) );
 }
 
 void UISettings::loadSettings()
@@ -623,98 +626,128 @@ void UISettings::on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( const
 
 	// fold comments
 	i = mo->indexOfSlot( "setFoldComments(bool)" );
-	cbFoldComments->setEnabled( i != -1 );
-	cbFoldComments->setChecked( false );
-	if ( cbFoldComments->isEnabled() )
+	cbFoldComments->setVisible( i != -1 );
+	if ( cbFoldComments->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldComments", Q_RETURN_ARG( bool, b ) );
-		cbFoldComments->setChecked( b );
+		cbFoldComments->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldComments() );
+		// cpp, bash, css, d, perl, pov, python, sql, vhdl
 	}
 
 	// fold compact
 	i = mo->indexOfSlot( "setFoldCompact(bool)" );
-	cbFoldCompact->setEnabled( i != -1 );
-	cbFoldCompact->setChecked( false );
-	if ( cbFoldCompact->isEnabled() )
+	cbFoldCompact->setVisible( i != -1 );
+	if ( cbFoldCompact->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldCompact", Q_RETURN_ARG( bool, b ) );
-		cbFoldCompact->setChecked( b );
+		cbFoldCompact->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldCompact() );
+		// cpp, bash, css, d, html, lua, perl,pov, properties, sql, vhdl
 	}
 
 	// fold quotes
 	i = mo->indexOfSlot( "setFoldQuotes(bool)" );
-	cbFoldQuotes->setEnabled( i != -1 );
-	cbFoldQuotes->setChecked( false );
-	if ( cbFoldQuotes->isEnabled() )
+	cbFoldQuotes->setVisible( i != -1 );
+	if ( cbFoldQuotes->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldQuotes", Q_RETURN_ARG( bool, b ) );
-		cbFoldQuotes->setChecked( b );
+		cbFoldQuotes->setChecked( ( qobject_cast<QsciLexerPython*>( l ) )->foldQuotes() );
 	}
 
 	// fold directives
 	i = mo->indexOfSlot( "setFoldDirectives(bool)" );
-	cbFoldDirectives->setEnabled( i != -1 );
-	cbFoldDirectives->setChecked( false );
-	if ( cbFoldDirectives->isEnabled() )
+	cbFoldDirectives->setVisible( i != -1 );
+	if ( cbFoldDirectives->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldDirectives", Q_RETURN_ARG( bool, b ) );
-		cbFoldDirectives->setChecked( b );
+		cbFoldDirectives->setChecked( ( qobject_cast<QsciLexerPOV*>( l ) )->foldDirectives() );
 	}
 
 	// fold at begin
 	i = mo->indexOfSlot( "setFoldAtBegin(bool)" );
-	cbFoldAtBegin->setEnabled( i != -1 );
-	cbFoldAtBegin->setChecked( false );
-	if ( cbFoldAtBegin->isEnabled() )
+	cbFoldAtBegin->setVisible( i != -1 );
+	if ( cbFoldAtBegin->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldAtBegin", Q_RETURN_ARG( bool, b ) );
-		cbFoldAtBegin->setChecked( b );
+		cbFoldAtBegin->setChecked( ( qobject_cast<QsciLexerVHDL*>( l ) )->foldAtBegin() );
 	}
 
 	// fold at parenthesis
 	i = mo->indexOfSlot( "setFoldAtParenthesis(bool)" );
-	cbFoldAtParenthesis->setEnabled( i != -1 );
-	cbFoldAtParenthesis->setChecked( false );
-	if ( cbFoldAtParenthesis->isEnabled() )
+	cbFoldAtParenthesis->setVisible( i != -1 );
+	if ( cbFoldAtParenthesis->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldAtParenthesis", Q_RETURN_ARG( bool, b ) );
-		cbFoldAtParenthesis->setChecked( b );
+		cbFoldAtParenthesis->setChecked( ( qobject_cast<QsciLexerVHDL*>( l ) )->foldAtParenthesis() );
 	}
 
 	// fold at else
 	i = mo->indexOfSlot( "setFoldAtElse(bool)" );
-	cbFoldAtElse->setEnabled( i != -1 );
-	cbFoldAtElse->setChecked( false );
-	if ( cbFoldAtElse->isEnabled() )
+	cbFoldAtElse->setVisible( i != -1 );
+	if ( cbFoldAtElse->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldAtElse", Q_RETURN_ARG( bool, b ) );
-		cbFoldAtElse->setChecked( b );
+		cbFoldAtElse->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldAtElse() );
+		// cpp, vhdl, cmake, d
 	}
 
 	// fold preprocessor
 	i = mo->indexOfSlot( "setFoldPreprocessor(bool)" );
-	cbFoldPreprocessor->setEnabled( i != -1 );
-	cbFoldPreprocessor->setChecked( false );
-	if ( cbFoldPreprocessor->isEnabled() )
+	cbFoldPreprocessor->setVisible( i != -1 );
+	if ( cbFoldPreprocessor->isVisible() )
 	{
 		QMetaObject::invokeMethod( l, "foldPreprocessor", Q_RETURN_ARG( bool, b ) );
-		cbFoldPreprocessor->setChecked( b );
+		cbFoldPreprocessor->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldPreprocessor() );
+		// html, cpp
+	}
+
+	// style preprocessor
+	i = mo->indexOfSlot( "setStylePreprocessor(bool)" );
+	cbStylePreprocessor->setVisible( i != -1 );
+	if ( cbStylePreprocessor->isVisible() )
+	{
+		QMetaObject::invokeMethod( l, "stylePreprocessor", Q_RETURN_ARG( bool, b ) );
+		cbStylePreprocessor->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->stylePreprocessor() );
+	}
+
+	// indent opening brace
+	cbIndentOpeningBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiOpening );
+
+	// indent closing brace
+	cbIndentClosingBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiClosing );
+
+	// case sensitive tags
+	i = mo->indexOfSlot( "setCaseSensitiveTags(bool)" );
+	cbCaseSensitiveTags->setVisible( i != -1 );
+	if ( cbCaseSensitiveTags->isVisible() )
+	{
+		QMetaObject::invokeMethod( l, "caseSensitiveTags", Q_RETURN_ARG( bool, b ) );
+		cbCaseSensitiveTags->setChecked( ( qobject_cast<QsciLexerHTML*>( l ) )->caseSensitiveTags() );
+	}
+
+	// backslash escapes
+	i = mo->indexOfSlot( "setBackslashEscapes(bool)" );
+	cbBackslashEscapes->setVisible( i != -1 );
+	if ( cbBackslashEscapes->isVisible() )
+	{
+		QMetaObject::invokeMethod( l, "backslashEscapes", Q_RETURN_ARG( bool, b ) );
+		cbBackslashEscapes->setChecked( ( qobject_cast<QsciLexerSQL*>( l ) )->backslashEscapes() );
+	}
+
+	// indentation warning
+	i = mo->indexOfSlot( "setIndentationWarning(IndentationWarning)" );
+	lIndentationWarning->setVisible( i != -1 );
+	cbIndentationWarning->setVisible( lIndentationWarning->isVisible() );
+	if ( lIndentationWarning->isVisible() )
+	{
+		QsciLexerPython* p = qobject_cast<QsciLexerPython*>( l );
+		cbIndentationWarning->setCurrentIndex( cbIndentationWarning->findData( p->indentationWarning() ) );
 	}
 }
 
 void UISettings::on_lwSyntaxHighlightingStyleElements_itemClicked( QListWidgetItem* it )
 {
 	if ( it )
-	{
-		//QsciLexer* l = mLexers[it->text()];
-		//int i = it->data( Id ).toInt();
-		QPalette p( leSyntaxHighlightingSampleText->palette() );
-		p.setColor( QPalette::Base, it->background().color() );
-		p.setColor( QPalette::Text, it->foreground().color() );
-		leSyntaxHighlightingSampleText->setPalette( p );
-		leSyntaxHighlightingSampleText->setFont( it->font() );
 		cbSyntaxHighlightingFillToEndOfLine->setChecked( it->data( EolFill ).toBool() );
-	}
 }
 
 void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
@@ -771,6 +804,18 @@ void UISettings::on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool b )
 		it->setData( EolFill, b );
 		mLexers[cbSyntaxHighlightingLexerLanguage->currentText()]->setEolFill( b, it->data( Id ).toInt() );
 	}
+}
+
+void UISettings::cbProperties_toggled( bool b )
+{
+	QCheckBox* cb = qobject_cast<QCheckBox*>( sender() );
+	if ( !cb )
+		return;
+
+	QsciLexer* l = mLexers[cbSyntaxHighlightingLexerLanguage->currentText()];
+
+	if ( !cb->statusTip().isEmpty() )
+		QMetaObject::invokeMethod( l, cb->statusTip().toLocal8Bit(), Q_ARG( bool, b ) );
 }
 
 void UISettings::on_pbSyntaxHighlightingAllBackgroundColours_clicked()
