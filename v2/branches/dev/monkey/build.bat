@@ -1,3 +1,3 @@
 qmake
 mingw32-make
-pause
+..\bin\monkey.exe
