@@ -5,118 +5,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>601</height>
+    <width>730</width>
+    <height>739</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Settings</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>5</number>
    </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <property name="horizontalSpacing" >
+   <property name="spacing" >
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" colspan="2" >
-    <widget class="QLabel" name="lInformations" >
-     <property name="palette" >
-      <palette>
-       <active>
-        <colorrole role="Base" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </active>
-       <inactive>
-        <colorrole role="Base" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </inactive>
-       <disabled>
-        <colorrole role="Base" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window" >
-         <brush brushstyle="SolidPattern" >
-          <color alpha="255" >
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </disabled>
-      </palette>
-     </property>
-     <property name="font" >
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="autoFillBackground" >
-      <bool>true</bool>
-     </property>
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="text" >
-      <string>General</string>
-     </property>
-     <property name="alignment" >
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="2" >
     <widget class="QDialogButtonBox" name="dbbButtons" >
      <property name="orientation" >
@@ -127,107 +29,18 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QTreeWidget" name="twMenu" >
-     <property name="minimumSize" >
-      <size>
-       <width>180</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>150</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="rootIsDecorated" >
-      <bool>true</bool>
-     </property>
-     <column>
-      <property name="text" >
-       <string>Properties</string>
-      </property>
-     </column>
-     <item>
-      <property name="text" >
-       <string>General</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>File Template</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Editor</string>
-      </property>
-      <item>
-       <property name="text" >
-        <string>Auto Completion</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Colours</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>General</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Associations</string>
-       </property>
-      </item>
-      <item>
-       <property name="text" >
-        <string>Highlighting</string>
-       </property>
-      </item>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Abbreviations</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Tools Menu</string>
-      </property>
-     </item>
-    </widget>
-   </item>
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
      <property name="currentIndex" >
       <number>6</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
        <property name="spacing" >
         <number>3</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
        </property>
        <item>
         <widget class="QGroupBox" name="gbProjectSettings" >
@@ -235,22 +48,10 @@
           <string>Project Settings</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
+          <property name="margin" >
            <number>5</number>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>3</number>
-          </property>
-          <property name="verticalSpacing" >
+          <property name="spacing" >
            <number>3</number>
           </property>
           <item row="0" column="0" colspan="2" >
@@ -293,20 +94,11 @@
           <string>UI Designer Integration</string>
          </property>
          <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
           <property name="spacing" >
            <number>3</number>
-          </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
           </property>
           <item>
            <widget class="QRadioButton" name="rbUseEmbeddedUIDesigner" >
@@ -334,20 +126,11 @@
           <string>On External Changes</string>
          </property>
          <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
           <property name="spacing" >
            <number>3</number>
-          </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
           </property>
           <item>
            <widget class="QRadioButton" name="rbDoNothing" >
@@ -394,20 +177,11 @@
      <widget class="QWidget" name="pFileTemplates" />
      <widget class="QWidget" name="pEditorAutoCompletion" >
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
        <property name="spacing" >
         <number>3</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
        </property>
        <item>
         <widget class="QGroupBox" name="gbAutoCompletion" >
@@ -418,22 +192,10 @@
           <bool>true</bool>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
+          <property name="margin" >
            <number>5</number>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>3</number>
-          </property>
-          <property name="verticalSpacing" >
+          <property name="spacing" >
            <number>3</number>
           </property>
           <item row="3" column="0" colspan="2" >
@@ -442,20 +204,11 @@
              <string>Source</string>
             </property>
             <layout class="QHBoxLayout" >
+             <property name="margin" >
+              <number>5</number>
+             </property>
              <property name="spacing" >
               <number>3</number>
-             </property>
-             <property name="leftMargin" >
-              <number>5</number>
-             </property>
-             <property name="topMargin" >
-              <number>5</number>
-             </property>
-             <property name="rightMargin" >
-              <number>5</number>
-             </property>
-             <property name="bottomMargin" >
-              <number>5</number>
              </property>
              <item>
               <widget class="QRadioButton" name="rbAutoCompletionDocument" >
@@ -510,25 +263,18 @@
           </item>
           <item row="2" column="0" colspan="2" >
            <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
             <property name="spacing" >
-             <number>6</number>
-            </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
+             <number>3</number>
             </property>
             <item>
              <widget class="QLabel" name="lAutoCompletionThreshold" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <sizepolicy>
+                <hsizetype>0</hsizetype>
+                <vsizetype>0</vsizetype>
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -590,40 +336,19 @@
           <bool>true</bool>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
+          <property name="margin" >
            <number>5</number>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>3</number>
-          </property>
-          <property name="verticalSpacing" >
+          <property name="spacing" >
            <number>3</number>
           </property>
           <item row="1" column="0" colspan="3" >
            <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
             <property name="spacing" >
              <number>3</number>
-            </property>
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
             </property>
             <item>
              <widget class="QRadioButton" name="rbAutoCompletionNoContext" >
@@ -654,7 +379,9 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="lAutoCompletionCalltips" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -707,54 +434,16 @@
        </item>
        <item>
         <widget class="QGroupBox" name="gbAPIs" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="title" >
           <string>APIs</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
+          <property name="margin" >
            <number>5</number>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
+          <property name="spacing" >
            <number>3</number>
           </property>
-          <property name="verticalSpacing" >
-           <number>3</number>
-          </property>
-          <item row="0" column="2" colspan="2" >
-           <widget class="QComboBox" name="cbAPIsLanguages" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip" >
-             <string>Select language to be configured.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2" >
-           <widget class="QLabel" name="lAPIsLanguage" >
-            <property name="text" >
-             <string>Language :</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0" colspan="4" >
            <widget class="QListWidget" name="lwAPIs" >
             <property name="statusTip" >
@@ -775,7 +464,9 @@
           <item row="2" column="3" >
            <widget class="QPushButton" name="pbAPIsBrowse" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -792,6 +483,20 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QLabel" name="lAPIsLanguage" >
+            <property name="text" >
+             <string>Language :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" colspan="2" >
+           <widget class="QComboBox" name="cbAPIsLanguages" >
+            <property name="toolTip" >
+             <string>Select language to be configured.</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -799,23 +504,11 @@
      </widget>
      <widget class="QWidget" name="pEditorColours" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>5</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>5</number>
+       <property name="spacing" >
+        <number>3</number>
        </property>
        <item row="11" column="0" colspan="2" >
         <spacer>
@@ -840,7 +533,9 @@
        <item row="3" column="1" >
         <widget class="QToolButton" name="tbColoursMatchedBracesBackground" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -856,7 +551,9 @@
        <item row="6" column="1" >
         <widget class="QToolButton" name="tbColoursCalltipsHighlight" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -879,7 +576,9 @@
        <item row="8" column="1" >
         <widget class="QToolButton" name="tbColoursCaretLineBackground" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -895,7 +594,9 @@
        <item row="0" column="1" >
         <widget class="QToolButton" name="tbColoursCurrentLineMarker" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -918,7 +619,9 @@
        <item row="1" column="1" >
         <widget class="QToolButton" name="tbColoursErrorLineMarker" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -955,7 +658,9 @@
        <item row="4" column="1" >
         <widget class="QToolButton" name="tbColoursCalltipsBackground" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -971,7 +676,9 @@
        <item row="2" column="1" >
         <widget class="QToolButton" name="tbColoursMatchedBraces" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1001,7 +708,9 @@
        <item row="5" column="1" >
         <widget class="QToolButton" name="tbColoursCalltipsForeground" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1017,7 +726,9 @@
        <item row="10" column="1" >
         <widget class="QToolButton" name="tbColoursUnmatchedBracesBackground" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1033,7 +744,9 @@
        <item row="9" column="1" >
         <widget class="QToolButton" name="tbColoursUnmatchedBraces" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1063,7 +776,9 @@
        <item row="7" column="1" >
         <widget class="QToolButton" name="tbColoursCaretForeground" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1087,22 +802,10 @@
      </widget>
      <widget class="QWidget" name="pEditorGeneral" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>3</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>3</number>
        </property>
        <item row="4" column="0" colspan="6" >
@@ -1111,22 +814,10 @@
           <string>Options</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
+          <property name="margin" >
            <number>5</number>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>3</number>
-          </property>
-          <property name="verticalSpacing" >
+          <property name="spacing" >
            <number>3</number>
           </property>
           <item row="1" column="1" >
@@ -1254,7 +945,9 @@
        <item row="0" column="1" colspan="4" >
         <widget class="QSlider" name="sGeneralAutosaveInterval" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1292,20 +985,11 @@
           <string>Line End Characters</string>
          </property>
          <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
           <property name="spacing" >
            <number>3</number>
-          </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
           </property>
           <item>
            <widget class="QRadioButton" name="rbStyleUnix" >
@@ -1340,22 +1024,10 @@
           <string>Edge Mode</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
+          <property name="margin" >
            <number>5</number>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>3</number>
-          </property>
-          <property name="verticalSpacing" >
+          <property name="spacing" >
            <number>3</number>
           </property>
           <item row="2" column="0" >
@@ -1374,6 +1046,14 @@
           </item>
           <item row="1" column="2" >
            <widget class="QLCDNumber" name="lnStyleEdgeColumnNumber" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="numDigits" >
              <number>3</number>
             </property>
@@ -1387,6 +1067,14 @@
           </item>
           <item row="1" column="1" >
            <widget class="QSlider" name="sStyleEdgeModeColumnNumber" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximum" >
              <number>160</number>
             </property>
@@ -1417,7 +1105,9 @@
           <item row="2" column="1" colspan="2" >
            <widget class="QToolButton" name="tbStyleEdgeModeBackgroundColour" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -1436,7 +1126,9 @@
        <item row="1" column="5" >
         <widget class="QLCDNumber" name="lnGeneralTabWidth" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Minimum" hsizetype="Fixed" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1455,7 +1147,9 @@
        <item row="2" column="5" >
         <widget class="QLCDNumber" name="lnGeneralIndentationWidth" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Minimum" hsizetype="Fixed" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1474,7 +1168,9 @@
        <item row="3" column="5" >
         <widget class="QLCDNumber" name="lnGeneralLineNumbersWidth" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Minimum" hsizetype="Fixed" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1493,7 +1189,9 @@
        <item row="0" column="5" >
         <widget class="QLCDNumber" name="lnGeneralAutosaveInterval" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Minimum" hsizetype="Fixed" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1512,20 +1210,11 @@
           <string>Default encoding</string>
          </property>
          <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
           <property name="spacing" >
            <number>3</number>
-          </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
           </property>
           <item>
            <widget class="QComboBox" name="cbGeneralEncoding" />
@@ -1539,30 +1228,14 @@
           <string>Folding style</string>
          </property>
          <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
           <property name="spacing" >
            <number>3</number>
           </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <item>
-           <widget class="QComboBox" name="cbStyleFoldingStyle" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
+           <widget class="QComboBox" name="cbStyleFoldingStyle" />
           </item>
          </layout>
         </widget>
@@ -1573,28 +1246,19 @@
           <string>Caret width</string>
          </property>
          <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
           <property name="spacing" >
            <number>3</number>
           </property>
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <item>
            <widget class="QSpinBox" name="sbStyleCaretWidth" >
-            <property name="minimum" >
-             <number>1</number>
-            </property>
             <property name="maximum" >
              <number>3</number>
+            </property>
+            <property name="minimum" >
+             <number>1</number>
             </property>
             <property name="value" >
              <number>1</number>
@@ -1606,22 +1270,10 @@
        </item>
        <item rowspan="2" row="6" column="3" colspan="3" >
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>3</number>
-         </property>
-         <property name="verticalSpacing" >
+         <property name="spacing" >
           <number>3</number>
          </property>
          <item row="1" column="1" >
@@ -1676,7 +1328,9 @@
        <item row="1" column="1" colspan="4" >
         <widget class="QSlider" name="sGeneralTabWidth" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1704,7 +1358,9 @@
        <item row="2" column="1" colspan="4" >
         <widget class="QSlider" name="sGeneralIndentationWidth" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1729,7 +1385,9 @@
        <item row="3" column="1" colspan="4" >
         <widget class="QSlider" name="sGeneralLineNumbersWidth" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1757,7 +1415,9 @@
        <item row="0" column="0" >
         <widget class="QLabel" name="lGeneralAutosaveInterval" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1792,22 +1452,10 @@
      </widget>
      <widget class="QWidget" name="pEditorAssociations" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>3</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>3</number>
        </property>
        <item row="0" column="0" colspan="3" >
@@ -1877,86 +1525,153 @@
      </widget>
      <widget class="QWidget" name="pEditorSyntaxHighlighting" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
+       <property name="spacing" >
         <number>3</number>
        </property>
-       <property name="verticalSpacing" >
-        <number>3</number>
-       </property>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lSyntaxHighlightingLexerLanguage" >
+         <property name="text" >
+          <string>Lexer Language :</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0" colspan="2" >
         <widget class="QGroupBox" name="gbSyntaxHighlightingStyleElement" >
          <property name="title" >
           <string>Style Element</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
+          <property name="margin" >
            <number>5</number>
           </property>
-          <property name="topMargin" >
-           <number>5</number>
+          <property name="spacing" >
+           <number>6</number>
           </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>3</number>
-          </property>
-          <property name="verticalSpacing" >
-           <number>3</number>
-          </property>
-          <item row="20" column="1" >
-           <spacer>
+          <item rowspan="23" row="0" column="0" >
+           <widget class="QListWidget" name="lwSyntaxHighlightingStyleElements" />
+          </item>
+          <item row="11" column="1" >
+           <widget class="QCheckBox" name="cbFoldAtElse" >
+            <property name="text" >
+             <string>Fold at else</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="Line" name="line" >
             <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>16</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="3" column="1" >
-           <widget class="QCheckBox" name="cbSyntaxHighlightingFillToEndOfLine" >
-            <property name="text" >
-             <string>Fill to end of line</string>
+             <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="QPushButton" name="pbSyntaxHighlightingFont" >
+          <item row="7" column="1" >
+           <widget class="QCheckBox" name="cbFoldQuotes" >
             <property name="text" >
-             <string>Font</string>
+             <string>Fold quotes</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="QPushButton" name="pbSyntaxHighlightingForegroundColour" >
+          <item row="6" column="1" >
+           <widget class="QCheckBox" name="cbFoldCompact" >
             <property name="text" >
-             <string>Foreground Colour</string>
+             <string>Fold compact</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QPushButton" name="pbSyntaxHighlightingBackgroundColour" >
+          <item row="10" column="1" >
+           <widget class="QCheckBox" name="cbFoldAtParenthesis" >
             <property name="text" >
-             <string>Background Colour</string>
+             <string>Fold at parenthesis</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1" >
+           <widget class="QCheckBox" name="cbFoldDirectives" >
+            <property name="text" >
+             <string>Fold directives</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1" >
+           <widget class="QCheckBox" name="cbFoldAtBegin" >
+            <property name="text" >
+             <string>Fold at begin</string>
+            </property>
+           </widget>
+          </item>
+          <item row="19" column="1" >
+           <widget class="QComboBox" name="cbIndentationWarning" />
+          </item>
+          <item row="18" column="1" >
+           <widget class="QLabel" name="lIndentationWarning" >
+            <property name="text" >
+             <string>Indentation warning :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="17" column="1" >
+           <widget class="QCheckBox" name="cbBackslashEscapes" >
+            <property name="text" >
+             <string>Backslash escapes</string>
+            </property>
+           </widget>
+          </item>
+          <item row="16" column="1" >
+           <widget class="QCheckBox" name="cbCaseSensitivesTags" >
+            <property name="text" >
+             <string>Case sensitive tags</string>
+            </property>
+           </widget>
+          </item>
+          <item row="15" column="1" >
+           <widget class="QCheckBox" name="cbIndentClosingBrace" >
+            <property name="text" >
+             <string>Indent closing brace</string>
+            </property>
+           </widget>
+          </item>
+          <item row="14" column="1" >
+           <widget class="QCheckBox" name="cbIndentOpeningBrace" >
+            <property name="text" >
+             <string>Indent opening brace</string>
+            </property>
+           </widget>
+          </item>
+          <item row="13" column="1" >
+           <widget class="QCheckBox" name="cbStylePreprocessor" >
+            <property name="text" >
+             <string>Style preprocessor</string>
+            </property>
+           </widget>
+          </item>
+          <item row="12" column="1" >
+           <widget class="QCheckBox" name="cbFoldPreprocessor" >
+            <property name="text" >
+             <string>Fold preprocessor</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" >
+           <widget class="QCheckBox" name="cbFoldComments" >
+            <property name="text" >
+             <string>Fold comments</string>
+            </property>
+           </widget>
+          </item>
+          <item row="21" column="1" >
+           <widget class="QPushButton" name="pbSyntaxHighlightingAllBackgroundColours" >
+            <property name="text" >
+             <string>All Background Colours</string>
+            </property>
+           </widget>
+          </item>
+          <item row="22" column="1" >
+           <widget class="QPushButton" name="pbSyntaxHighlightingAllFonts" >
+            <property name="text" >
+             <string>All Fonts</string>
             </property>
            </widget>
           </item>
@@ -1973,130 +1688,46 @@
             </property>
            </widget>
           </item>
-          <item rowspan="21" row="0" column="0" >
-           <widget class="QListWidget" name="lwSyntaxHighlightingStyleElements" />
-          </item>
-          <item row="22" column="1" >
-           <widget class="QPushButton" name="pbSyntaxHighlightingAllFonts" >
+          <item row="1" column="1" >
+           <widget class="QPushButton" name="pbSyntaxHighlightingBackgroundColour" >
             <property name="text" >
-             <string>All Fonts</string>
+             <string>Background Colour</string>
             </property>
            </widget>
           </item>
-          <item row="21" column="1" >
-           <widget class="QPushButton" name="pbSyntaxHighlightingAllBackgroundColours" >
+          <item row="0" column="1" >
+           <widget class="QPushButton" name="pbSyntaxHighlightingForegroundColour" >
             <property name="text" >
-             <string>All Background Colours</string>
+             <string>Foreground Colour</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1" >
-           <widget class="QCheckBox" name="cbFoldComments" >
+          <item row="2" column="1" >
+           <widget class="QPushButton" name="pbSyntaxHighlightingFont" >
             <property name="text" >
-             <string>Fold comments</string>
+             <string>Font</string>
             </property>
            </widget>
           </item>
-          <item row="12" column="1" >
-           <widget class="QCheckBox" name="cbFoldPreprocessor" >
+          <item row="3" column="1" >
+           <widget class="QCheckBox" name="cbSyntaxHighlightingFillToEndOfLine" >
             <property name="text" >
-             <string>Fold preprocessor</string>
+             <string>Fill to end of line</string>
             </property>
            </widget>
           </item>
-          <item row="13" column="1" >
-           <widget class="QCheckBox" name="cbStylePreprocessor" >
-            <property name="text" >
-             <string>Style preprocessor</string>
-            </property>
-           </widget>
-          </item>
-          <item row="14" column="1" >
-           <widget class="QCheckBox" name="cbIndentOpeningBrace" >
-            <property name="text" >
-             <string>Indent opening brace</string>
-            </property>
-           </widget>
-          </item>
-          <item row="15" column="1" >
-           <widget class="QCheckBox" name="cbIndentClosingBrace" >
-            <property name="text" >
-             <string>Indent closing brace</string>
-            </property>
-           </widget>
-          </item>
-          <item row="16" column="1" >
-           <widget class="QCheckBox" name="cbCaseSensitivesTags" >
-            <property name="text" >
-             <string>Case sensitive tags</string>
-            </property>
-           </widget>
-          </item>
-          <item row="17" column="1" >
-           <widget class="QCheckBox" name="cbBackslashEscapes" >
-            <property name="text" >
-             <string>Backslash escapes</string>
-            </property>
-           </widget>
-          </item>
-          <item row="18" column="1" >
-           <widget class="QLabel" name="lIndentationWarning" >
-            <property name="text" >
-             <string>Indentation warning :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="19" column="1" >
-           <widget class="QComboBox" name="cbIndentationWarning" />
-          </item>
-          <item row="9" column="1" >
-           <widget class="QCheckBox" name="cbFoldAtBegin" >
-            <property name="text" >
-             <string>Fold at begin</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="1" >
-           <widget class="QCheckBox" name="cbFoldDirectives" >
-            <property name="text" >
-             <string>Fold directives</string>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="1" >
-           <widget class="QCheckBox" name="cbFoldAtParenthesis" >
-            <property name="text" >
-             <string>Fold at parenthesis</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1" >
-           <widget class="QCheckBox" name="cbFoldCompact" >
-            <property name="text" >
-             <string>Fold compact</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1" >
-           <widget class="QCheckBox" name="cbFoldQuotes" >
-            <property name="text" >
-             <string>Fold quotes</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" >
-           <widget class="Line" name="line" >
+          <item row="20" column="1" >
+           <spacer>
             <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Vertical</enum>
             </property>
-           </widget>
-          </item>
-          <item row="11" column="1" >
-           <widget class="QCheckBox" name="cbFoldAtElse" >
-            <property name="text" >
-             <string>Fold at else</string>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>16</height>
+             </size>
             </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -2104,17 +1735,12 @@
        <item row="0" column="1" >
         <widget class="QComboBox" name="cbSyntaxHighlightingLexerLanguage" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="lSyntaxHighlightingLexerLanguage" >
-         <property name="text" >
-          <string>Lexer Language :</string>
          </property>
         </widget>
        </item>
@@ -2122,20 +1748,11 @@
      </widget>
      <widget class="QWidget" name="pAbbreviations" >
       <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
        <property name="spacing" >
         <number>3</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
        </property>
        <item>
         <widget class="QCheckBox" name="cbEnableWordCompletion" >
@@ -2153,22 +1770,10 @@
        </item>
        <item>
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
+         <property name="margin" >
           <number>0</number>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>3</number>
-         </property>
-         <property name="verticalSpacing" >
+         <property name="spacing" >
           <number>3</number>
          </property>
          <item row="1" column="1" >
@@ -2233,22 +1838,10 @@
      </widget>
      <widget class="QWidget" name="pToolsMenu" >
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
+       <property name="margin" >
         <number>0</number>
        </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>3</number>
-       </property>
-       <property name="verticalSpacing" >
+       <property name="spacing" >
         <number>3</number>
        </property>
        <item row="3" column="1" >
@@ -2256,10 +1849,13 @@
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>61</height>
+           <height>30</height>
           </size>
          </property>
         </spacer>
@@ -2332,6 +1928,166 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QTreeWidget" name="twMenu" >
+     <property name="minimumSize" >
+      <size>
+       <width>180</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>150</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="rootIsDecorated" >
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Properties</string>
+      </property>
+     </column>
+     <item>
+      <property name="text" >
+       <string>General</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>File Template</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Editor</string>
+      </property>
+      <item>
+       <property name="text" >
+        <string>Auto Completion</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Colours</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>General</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Associations</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Highlighting</string>
+       </property>
+      </item>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Abbreviations</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Tools Menu</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2" >
+    <widget class="QLabel" name="lInformations" >
+     <property name="palette" >
+      <palette>
+       <active>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="font" >
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="text" >
+      <string>General</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
    </item>
   </layout>
