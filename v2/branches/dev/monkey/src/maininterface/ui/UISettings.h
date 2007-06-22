@@ -7,6 +7,10 @@
 
 class QsciLexer;
 
+struct LexerProperties
+{
+};
+
 class Q_MONKEY_EXPORT UISettings : public QDialog, public Ui::UISettings, public QSingleton<UISettings>
 {
 	Q_OBJECT
@@ -37,6 +41,7 @@ public slots:
 	void accept();
 
 private slots:
+	void on_twMenu_itemClicked( QTreeWidgetItem*, int );
 	void cbAPIsLanguages_beforeChanged( int );
 	void on_cbAPIsLanguages_currentIndexChanged( int );
 	void on_pbAPIsDelete_clicked();

@@ -12,26 +12,26 @@ UI_DIR	= $${BUILD_PATH}/.ui
 MOC_DIR	= $${BUILD_PATH}/.moc
 RCC_DIR	= $${BUILD_PATH}/.rcc
 
-unix:ICON	= src/resources/Icons/icon.png
-mac:ICON	= src/resources/Icons/icon.icns
-win32:ICON	= src/resources/Icons/icon.ico
+unix:ICON	= src/resources/icons/application/monkey2.png
+mac:ICON	= src/resources/icons/application/monkey2.icns
+win32:ICON	= src/resources/icons/application/monkey2.ico
 
 TEMPLATE	= app
 LANGUAGE	= C++
 DESTDIR	= ../bin
-TARGET	= monkey2
+TARGET	= monkey
 
 COPYRIGHTS	= "(c) 2005 - 2007 Azevedo Filipe"
 DOMAIN	= "www.monkeystudio.org"
 VERSION	= "1.7.0"
 PROGRAM_NAME	= "Monkey Studio"
 
-DEFINES	+= MONKEY_CORE_BUILD "PROGRAM_NAME=\"\\\"$${PROGRAM_NAME}\\\"\"" "PROGRAM_VERSION=\"\\\"$${VERSION}\\\"\"" "PROGRAM_DOMAIN=\"\\\"$${DOMAIN}\\\"\"" "PROGRAM_COPYRIGHTS=\"\\\"$${COPYRIGHTS}\\\"\""
+DEFINES	*= MONKEY_CORE_BUILD "PROGRAM_NAME=\"\\\"$${PROGRAM_NAME}\\\"\"" "PROGRAM_VERSION=\"\\\"$${VERSION}\\\"\"" "PROGRAM_DOMAIN=\"\\\"$${DOMAIN}\\\"\"" "PROGRAM_COPYRIGHTS=\"\\\"$${COPYRIGHTS}\\\"\""
 
-win32:RC_FILE	+= monkey.rc
-RESOURCES	+= src/resources/resources.qrc
+win32:RC_FILE	*= monkey.rc
+RESOURCES	*= src/resources/resources.qrc
 
-CONFIG	+= qt warn_on release app_bundle thread x11 windows console
+CONFIG	*= qt warn_on release app_bundle thread x11 windows console
 win32{
 	CONFIG -= debug
 	CONFIG *= release
