@@ -188,50 +188,28 @@ void UISettings::loadSettings()
 	cbStyleUseMonospacedAsDefault->setChecked( s->value( sp +"/UseMonospacedAsDefault", false ).toBool() );
 
 	//  Associations
-	sp = QString( "%1/Editor/Associations" ).arg( SettingsPath );
-	s->beginGroup( sp );
-	foreach ( QString l, s->childKeys() )
+	QHash<QString, QStringList> l = pQScintilla::instance()->suffixes();
+	foreach ( QString k, l.keys() )
 	{
-		QTreeWidgetItem* it = new QTreeWidgetItem( twHighlighterAssociations );
-		it->setText( 0, l );
-		it->setText( 1, s->value( l ).toString() );
+		foreach ( QString e, l.value( k ) )
+		{
+			QTreeWidgetItem* it = new QTreeWidgetItem( twHighlighterAssociations );
+			it->setText( 0, e );
+			it->setText( 1, k );
+		}
 	}
-	s->endGroup();
 
 	//  Highlighting
+	pQScintilla::instance()->readSettings();
+
+QsciLexerBash* lb = qobject_cast<QsciLexerBash*>( pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() ) );
+qWarning( "color: %s", qPrintable( lb->color( 0 ).name() ) );
+qWarning( "default color: %s", qPrintable( lb->defaultColor( 0 ).name() ) );
+
 	if ( cbSyntaxHighlightingLexerLanguage->count() )
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( cbSyntaxHighlightingLexerLanguage->itemText( 0 ) );
 
 /*
-	//  Properties
-	sp = QString( "%1/Editor/Properties" ).arg( SettingsPath );
-	cbPropertiesCppFoldComments->setChecked( s->value( sp +"/CppFoldComments", true ).toBool() );
-	cbPropertiesCppFoldAtElse->setChecked( s->value( sp +"/CppFoldAtElse", false ).toBool() );
-	cbPropertiesCppFoldPreprocessorDirectives->setChecked( s->value( sp +"/CppFoldPreprocessorDirectives", false ).toBool() );
-	cbPropertiesCppStylePreprocessorDirectives->setChecked( s->value( sp +"/CppStylePreprocessorDirectives", false ).toBool() );
-	cbPropertiesCppIndentOpeningBrace->setChecked( s->value( sp +"/CppIndentOpeningBrace", false ).toBool() );
-	cbPropertiesCppIndentClosingBrace->setChecked( s->value( sp +"/CppIndentClosingBrace", false ).toBool() );
-	cbPropertiesHTMLFoldPreprocessorDirectives->setChecked( s->value( sp +"/HTMLFoldPreprocessorDirectives", false ).toBool() );
-	cbPropertiesHTMLCaseSensitivesTags->setChecked( s->value( sp +"/HTMLCaseSensitivesTags", false ).toBool() );
-	cbPropertiesPythonFoldComments->setChecked( s->value( sp +"/PythonFoldComments", true ).toBool() );
-	cbPropertiesPythonFoldStrings->setChecked( s->value( sp +"/PythonFoldStrings", true ).toBool() );
-	cbPythonIndentationwarning->setCurrentIndex( cbPythonIndentationwarning->findData( s->value( sp +"/PythonIndentationwarning", QsciLexerPython::NoWarning ).toInt() ) );
-	cbPropertiesSQLFoldComments->setChecked( s->value( sp +"/SQLFoldComments", true ).toBool() );
-	cbPropertiesSQLBackslashEscapes->setChecked( s->value( sp +"/SQLBackslashEscapes", false ).toBool() );
-	cbPropertiesBashFoldComments->setChecked( s->value( sp +"/BashFoldComments", true ).toBool() );
-	cbPropertiesCSSFoldComments->setChecked( s->value( sp +"/CSSFoldComments", true ).toBool() );
-	cbPropertiesPerlFoldComments->setChecked( s->value( sp +"/PerlFoldComments", true ).toBool() );
-	cbPropertiesDFoldComments->setChecked( s->value( sp +"/DFoldComments", true ).toBool() );
-	cbPropertiesDFoldAtElse->setChecked( s->value( sp +"/DFoldAtElse", false ).toBool() );
-	cbPropertiesCMakeFoldAtElse->setChecked( s->value( sp +"/CMakeFoldAtElse", false ).toBool() );
-	cbPropertiesPOVFoldComments->setChecked( s->value( sp +"/POVFoldComments", true ).toBool() );
-	cbPropertiesPOVFoldPreprocessorDirectives->setChecked( s->value( sp +"/POVFoldPreprocessorDirectives", false ).toBool() );
-	cbPropertiesVHDLFoldComments->setChecked( s->value( sp +"/VHDLFoldComments", true ).toBool() );
-	cbPropertiesVHDLFoldAtElse->setChecked( s->value( sp +"/VHDLFoldAtElse", false ).toBool() );
-	cbPropertiesVHDLFoldAtBegin->setChecked( s->value( sp +"/VHDLFoldAtBegin", false ).toBool() );
-	cbPropertiesVHDLFoldAtParenthesis->setChecked( s->value( sp +"/VHDLFoldAtParenthesis", false ).toBool() );
-	cbPropertiesAllFoldCompact->setChecked( s->value( sp +"/AllFoldCompact", true ).toBool() );
-
 	// Abbreviations
 	// Tools Menu
 	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
@@ -340,35 +318,6 @@ void UISettings::saveSettings()
 	pQScintilla::instance()->writeSettings();
 
 /*
-	//  Properties
-	sp = QString( "%1/Editor/Properties" ).arg( SettingsPath );
-	s->setValue( sp +"/CppFoldComments", cbPropertiesCppFoldComments->isChecked() );
-	s->setValue( sp +"/CppFoldAtElse", cbPropertiesCppFoldAtElse->isChecked() );
-	s->setValue( sp +"/CppFoldPreprocessorDirectives", cbPropertiesCppFoldPreprocessorDirectives->isChecked() );
-	s->setValue( sp +"/CppStylePreprocessorDirectives", cbPropertiesCppStylePreprocessorDirectives->isChecked() );
-	s->setValue( sp +"/CppIndentOpeningBrace", cbPropertiesCppIndentOpeningBrace->isChecked() );
-	s->setValue( sp +"/CppIndentClosingBrace", cbPropertiesCppIndentClosingBrace->isChecked() );
-	s->setValue( sp +"/HTMLFoldPreprocessorDirectives", cbPropertiesHTMLFoldPreprocessorDirectives->isChecked() );
-	s->setValue( sp +"/HTMLCaseSensitivesTags", cbPropertiesHTMLCaseSensitivesTags->isChecked() );
-	s->setValue( sp +"/PythonFoldComments", cbPropertiesPythonFoldComments->isChecked() );
-	s->setValue( sp +"/PythonFoldStrings", cbPropertiesPythonFoldStrings->isChecked() );
-	s->setValue( sp +"/PythonIndentationwarning", cbPythonIndentationwarning->itemData( cbPythonIndentationwarning->currentIndex() ) );
-	s->setValue( sp +"/SQLFoldComments", cbPropertiesSQLFoldComments->isChecked() );
-	s->setValue( sp +"/SQLBackslashEscapes", cbPropertiesSQLBackslashEscapes->isChecked() );
-	s->setValue( sp +"/BashFoldComments", cbPropertiesBashFoldComments->isChecked() );
-	s->setValue( sp +"/CSSFoldComments", cbPropertiesCSSFoldComments->isChecked() );
-	s->setValue( sp +"/PerlFoldComments", cbPropertiesPerlFoldComments->isChecked() );
-	s->setValue( sp +"/DFoldComments", cbPropertiesDFoldComments->isChecked() );
-	s->setValue( sp +"/DFoldAtElse", cbPropertiesDFoldAtElse->isChecked() );
-	s->setValue( sp +"/CMakeFoldAtElse", cbPropertiesCMakeFoldAtElse->isChecked() );
-	s->setValue( sp +"/POVFoldComments", cbPropertiesPOVFoldComments->isChecked() );
-	s->setValue( sp +"/POVFoldPreprocessorDirectives", cbPropertiesPOVFoldPreprocessorDirectives->isChecked() );
-	s->setValue( sp +"/VHDLFoldComments", cbPropertiesVHDLFoldComments->isChecked() );
-	s->setValue( sp +"/VHDLFoldAtElse", cbPropertiesVHDLFoldAtElse->isChecked() );
-	s->setValue( sp +"/VHDLFoldAtBegin", cbPropertiesVHDLFoldAtBegin->isChecked() );
-	s->setValue( sp +"/VHDLFoldAtParenthesis", cbPropertiesVHDLFoldAtParenthesis->isChecked() );
-	s->setValue( sp +"/AllFoldCompact", cbPropertiesAllFoldCompact->isChecked() );
-
 	// Abbreviations
 	// Tools Menu
 	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
@@ -417,6 +366,13 @@ void UISettings::on_twMenu_itemSelectionChanged()
 	}
 }
 
+void UISettings::on_tbDefaultProjectsDirectory_clicked()
+{
+	QString s = QFileDialog::getExistingDirectory( window(), tr( "Select default projects directory" ), leDefaultProjectsDirectory->text() );
+	if ( !s.isNull() )
+		leDefaultProjectsDirectory->setText( s );
+}
+
 void UISettings::cbAPIsLanguages_beforeChanged( int i )
 {
 	if ( i == cbAPIsLanguages->currentIndex() )
@@ -450,6 +406,7 @@ void UISettings::on_pbAPIsAdd_clicked()
 	if ( !s.isEmpty() && lwAPIs->findItems( s, Qt::MatchFixedString ).count() == 0 )
 	{
 		lwAPIs->addItem( s );
+		leAPIs->clear();
 		cbAPIsLanguages_beforeChanged( cbAPIsLanguages->currentIndex() );
 	}
 }
@@ -632,7 +589,6 @@ void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
 		{
 			it->setForeground( c );
 			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setColor( c, it->data( Id ).toInt() );
-			on_lwSyntaxHighlightingStyleElements_itemClicked( it );
 		}
 	}
 }
@@ -647,7 +603,6 @@ void UISettings::on_pbSyntaxHighlightingBackgroundColour_clicked()
 		{
 			it->setBackground( c );
 			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setPaper( c, it->data( Id ).toInt() );
-			on_lwSyntaxHighlightingStyleElements_itemClicked( it );
 		}
 	}
 }

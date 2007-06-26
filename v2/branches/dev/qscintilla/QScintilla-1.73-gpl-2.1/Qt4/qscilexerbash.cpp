@@ -283,7 +283,7 @@ bool QsciLexerBash::readProperties(QSettings &qs, const QString &prefix)
 {
     int rc = true;
 
-    fold_compact = qs.value(prefix + "foldcomments", false).toBool();
+    fold_comments = qs.value(prefix + "foldcomments", false).toBool();
     fold_compact = qs.value(prefix + "foldcompact", true).toBool();
 
     return rc;

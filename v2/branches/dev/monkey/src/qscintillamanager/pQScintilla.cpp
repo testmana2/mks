@@ -47,14 +47,16 @@ QHash<QString,QsciLexer*> pQScintilla::lexers() const
 
 void pQScintilla::readSettings()
 {
-	// write settings
+qWarning( "reading from: %s", qPrintable( pSettings::instance()->group() ) );
+	// read settings
 	foreach ( QsciLexer* l, mLexers )
 		l->readSettings( *pSettings::instance() );
 }
 
 void pQScintilla::writeSettings()
 {
-	// read settings
+qWarning( "saving to: %s", qPrintable( pSettings::instance()->group() ) );
+	// write settings
 	foreach ( QsciLexer* l, mLexers )
 		l->writeSettings( *pSettings::instance() );
 }
@@ -102,7 +104,7 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldComments();
 		else if ( l->language() == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldComments();
-		else if ( l->language() == "CSharp" )
+		else if ( l->language() == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldComments();
 		else if ( l->language() == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldComments();
@@ -133,7 +135,7 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldCompact();
 		else if ( l->language() == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldCompact();
-		else if ( l->language() == "CSharp" )
+		else if ( l->language() == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldCompact();
 		else if ( l->language() == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldCompact();
@@ -170,7 +172,7 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldAtElse();
 		else if ( l->language() == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldAtElse();
-		else if ( l->language() == "CSharp" )
+		else if ( l->language() == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldAtElse();
 		else if ( l->language() == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldAtElse();
@@ -183,7 +185,7 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldPreprocessor();
 		else if ( l->language() == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldPreprocessor();
-		else if ( l->language() == "CSharp" )
+		else if ( l->language() == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldPreprocessor();
 		else if ( l->language() == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldPreprocessor();
@@ -194,7 +196,7 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 			return qobject_cast<QsciLexerJavaScript*>( l )->stylePreprocessor();
 		else if ( l->language() == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->stylePreprocessor();
-		else if ( l->language() == "CSharp" )
+		else if ( l->language() == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->stylePreprocessor();
 		else if ( l->language() == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->stylePreprocessor();
@@ -217,4 +219,118 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 
 	// default return value
 	return QVariant();
+}
+
+QHash<QString, QStringList> pQScintilla::defaultSuffixes() const
+{
+	// suffixes list
+	QHash<QString, QStringList> l;
+
+	// Bash
+	l["Bash"] << "*.sh";
+	// Batch
+	l["Bash"] << "*.bat";
+	l["Bash"] << "*.cmd";
+	// C#
+	l["C#"] << "*.cs";
+	// C++
+	l["C++"] << "*.c";
+	l["C++"] << "*.cc";
+	l["C++"] << "*.cpp";
+	l["C++"] << "*.cxx";
+	l["C++"] << "*.c++";
+	l["C++"] << "*.h";
+	l["C++"] << "*.hh";
+	l["C++"] << "*.hpp";
+	l["C++"] << "*.hxx";
+	l["C++"] << "*.h++";
+	// CMake
+	// CSS
+	l["CSS"] << "*.css";
+	// D
+	// Diff
+	l["Diff"] << "*.diff";
+	l["Diff"] << "*.patch";
+	// HTML
+	l["HTML"] << "*.asp";
+	l["HTML"] << "*.xml";
+	l["HTML"] << "*.xsd";
+	l["HTML"] << "*.xsl";
+	l["HTML"] << "*.xslt";
+	l["HTML"] << "*.docbook";
+	l["HTML"] << "*.dtd";
+	l["HTML"] << "*.htm";
+	l["HTML"] << "*.html";
+	l["HTML"] << "*.php";
+	l["HTML"] << "*.php3";
+	l["HTML"] << "*.php4";
+	l["HTML"] << "*.php5";
+	l["HTML"] << "*.phtml";
+	l["HTML"] << "*.rdf";
+	l["HTML"] << "*.svg";
+	l["HTML"] << "*.shtml";
+	// IDL
+	l["IDL"] << "*.idl";
+	// Java
+	l["Java"] << "*.java";
+	// JavaScript
+	l["JavaScript"] << "*.js";
+	// Lua
+	l["Lua"] << "*.lua";
+	// Makefile
+	l["Makefile"] << "*.mak";
+	l["Makefile"] << "*makefile";
+	l["Makefile"] << "Makefile*";
+	// POV
+	// Perl
+	l["Perl"] << "*.ph";
+	l["Perl"] << "*.pl";
+	l["Perl"] << "*.pm";
+	// Properties
+	l["Properties"] << "*.cfg";
+	l["Properties"] << "*.cnf";
+	l["Properties"] << "*.inf";
+	l["Properties"] << "*.ini";
+	l["Properties"] << "*.properties";
+	l["Properties"] << "*.rc";
+	l["Properties"] << "*.reg";
+	// Python
+	l["Python"] << "*.ptl";
+	l["Python"] << "*.py";
+	l["Python"] << "*.pyw";
+	l["Python"] << "*.pyx";
+	// Ruby
+	l["Ruby"] << "*.rb";
+	l["Ruby"] << "*.rbw";
+	// SQL
+	l["SQL"] << "*.sql";
+	// TeX
+	l["TeX"] << "*.aux";
+	l["TeX"] << "*.idx";
+	l["TeX"] << "*.sty";
+	l["TeX"] << "*.toc";
+	// VHDL
+
+	// return list
+	return l;
+}
+
+QHash<QString, QStringList> pQScintilla::suffixes() const
+{
+	// suffixes list
+	QHash<QString, QStringList> l;
+
+	// get settings
+	pSettings* s = pSettings::instance();
+
+	// get associations from settings
+	s->beginGroup( "Settings/Editor/Associations" );
+	foreach ( QString k, s->childKeys() )
+		l[s->value( k ).toString()] << k;
+	s->endGroup();
+
+	if ( l.isEmpty() )
+		l = defaultSuffixes();
+
+	return l;
 }
