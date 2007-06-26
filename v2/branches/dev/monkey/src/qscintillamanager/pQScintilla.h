@@ -44,6 +44,8 @@ public:
 	void writeSettings();
 	bool setProperty( const QString&, QsciLexer*, const QVariant& );
 	QVariant property( const QString&, QsciLexer* ) const;
+	QHash<QString, QStringList> defaultSuffixes() const;
+	QHash<QString, QStringList> suffixes() const;
 
 private:
 	pQScintilla( QObject* = QApplication::instance() );
