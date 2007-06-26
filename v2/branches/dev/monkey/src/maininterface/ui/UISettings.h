@@ -7,10 +7,6 @@
 
 class QsciLexer;
 
-struct LexerProperties
-{
-};
-
 class Q_MONKEY_EXPORT UISettings : public QDialog, public Ui::UISettings, public QSingleton<UISettings>
 {
 	Q_OBJECT
@@ -24,12 +20,9 @@ public:
 private:
 	UISettings( QWidget* = 0 );
 	void loadSettings();
-	void initLexers();
 	void saveSettings();
 	QPixmap colourizedPixmap( const QColor& ) const;
 	QColor iconBackgroundColor( const QIcon& ) const;
-	static QPointer<UISettings> mSelf;
-	QHash<QString,QsciLexer*> mLexers;
 	QButtonGroup* bgDesigner;
 	QButtonGroup* bgExternalChanges;
 	QButtonGroup* bgAPISource;
@@ -41,7 +34,7 @@ public slots:
 	void accept();
 
 private slots:
-	void on_twMenu_itemClicked( QTreeWidgetItem*, int );
+	void on_twMenu_itemSelectionChanged();
 	void cbAPIsLanguages_beforeChanged( int );
 	void on_cbAPIsLanguages_currentIndexChanged( int );
 	void on_pbAPIsDelete_clicked();
