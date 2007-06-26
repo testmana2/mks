@@ -42,7 +42,7 @@ public:
 	QStringList languages() const;
 	void readSettings();
 	void writeSettings();
-	void setProperty( const QString&, QsciLexer*, const QVariant& );
+	bool setProperty( const QString&, QsciLexer*, const QVariant& );
 	QVariant property( const QString&, QsciLexer* ) const;
 
 private:

@@ -59,134 +59,162 @@ void pQScintilla::writeSettings()
 		l->writeSettings( *pSettings::instance() );
 }
 
-void pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant v )
+bool pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant& v )
 {
-	l->metaObject()->invokeMethod( l, s, Q_ARG( bool, v ) );
+	// cancel f variant is not valid
+	if ( !v.isValid() )
+		return false;
+
+	if ( v.type() == QVariant::Bool )
+		return QMetaObject::invokeMethod( l, qPrintable( s ), Q_ARG( bool, v.toBool() ) );
+	else if ( v.type() == QVariant::Int )
+		return QMetaObject::invokeMethod( l, qPrintable( s ), Q_ARG( int, v.toInt() ) );
+
+	// return default value
+	return false;
 }
 
 QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 {
-	// found lexer properties
-	const QMetaObject* mo = l->metaObject();
-	int i;
-	bool b;
+	// if no member or lexer return null variant
+	if ( s.trimmed().isEmpty() || !l )
+		return QVariant();
 
-	// fold comments
-	i = mo->indexOfSlot( "setFoldComments(bool)" );
-	cbFoldComments->setVisible( i != -1 );
-	if ( cbFoldComments->isVisible() )
+	if ( s == "foldComments" )
 	{
-		QMetaObject::invokeMethod( l, "foldComments", Q_RETURN_ARG( bool, b ) );
-		cbFoldComments->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldComments() );
-		// cpp, bash, css, d, perl, pov, python, sql, vhdl
+		if ( l->language() == "Bash" )
+			return qobject_cast<QsciLexerBash*>( l )->foldComments();
+		else if ( l->language() == "CSS" )
+			return qobject_cast<QsciLexerCSS*>( l )->foldComments();
+		else if ( l->language() == "D" )
+			return qobject_cast<QsciLexerD*>( l )->foldComments();
+		else if ( l->language() == "Perl" )
+			return qobject_cast<QsciLexerPerl*>( l )->foldComments();
+		else if ( l->language() == "POV" )
+			return qobject_cast<QsciLexerPOV*>( l )->foldComments();
+		else if ( l->language() == "Python" )
+			return qobject_cast<QsciLexerPython*>( l )->foldComments();
+		else if ( l->language() == "SQL" )
+			return qobject_cast<QsciLexerSQL*>( l )->foldComments();
+		else if ( l->language() == "VHDL" )
+			return qobject_cast<QsciLexerVHDL*>( l )->foldComments();
+		else if ( l->language() == "JavaScript" )
+			return qobject_cast<QsciLexerJavaScript*>( l )->foldComments();
+		else if ( l->language() == "Java" )
+			return qobject_cast<QsciLexerJava*>( l )->foldComments();
+		else if ( l->language() == "CSharp" )
+			return qobject_cast<QsciLexerCSharp*>( l )->foldComments();
+		else if ( l->language() == "C++" )
+			return qobject_cast<QsciLexerCPP*>( l )->foldComments();
+	}
+	else if ( s == "foldCompact" )
+	{
+		if ( l->language() == "Bash" )
+			return qobject_cast<QsciLexerBash*>( l )->foldCompact();
+		else if ( l->language() == "CSS" )
+			return qobject_cast<QsciLexerCSS*>( l )->foldCompact();
+		else if ( l->language() == "D" )
+			return qobject_cast<QsciLexerD*>( l )->foldCompact();
+		else if ( l->language() == "HTML" )
+			return qobject_cast<QsciLexerHTML*>( l )->foldCompact();
+		else if ( l->language() == "Lua" )
+			return qobject_cast<QsciLexerLua*>( l )->foldCompact();
+		else if ( l->language() == "Perl" )
+			return qobject_cast<QsciLexerPerl*>( l )->foldCompact();
+		else if ( l->language() == "POV" )
+			return qobject_cast<QsciLexerPOV*>( l )->foldCompact();
+		else if ( l->language() == "Properties" )
+			return qobject_cast<QsciLexerProperties*>( l )->foldCompact();
+		else if ( l->language() == "SQL" )
+			return qobject_cast<QsciLexerSQL*>( l )->foldCompact();
+		else if ( l->language() == "VHDL" )
+			return qobject_cast<QsciLexerVHDL*>( l )->foldCompact();
+		else if ( l->language() == "JavaScript" )
+			return qobject_cast<QsciLexerJavaScript*>( l )->foldCompact();
+		else if ( l->language() == "Java" )
+			return qobject_cast<QsciLexerJava*>( l )->foldCompact();
+		else if ( l->language() == "CSharp" )
+			return qobject_cast<QsciLexerCSharp*>( l )->foldCompact();
+		else if ( l->language() == "C++" )
+			return qobject_cast<QsciLexerCPP*>( l )->foldCompact();
+	}
+	else if ( s == "foldQuotes" )
+	{
+		if ( l->language() == "Python" )
+			return qobject_cast<QsciLexerPython*>( l )->foldQuotes();
+	}
+	else if ( s == "foldDirectives" )
+	{
+		if ( l->language() == "POV" )
+			return qobject_cast<QsciLexerPOV*>( l )->foldDirectives();
+	}
+	else if ( s == "foldAtBegin" )
+	{
+		if ( l->language() == "VHDL" )
+			return qobject_cast<QsciLexerVHDL*>( l )->foldAtBegin();
+	}
+	else if ( s == "foldAtParenthesis" )
+	{
+		if ( l->language() == "VHDL" )
+			return qobject_cast<QsciLexerVHDL*>( l )->foldAtParenthesis();
+	}
+	else if ( s == "foldAtElse" )
+	{
+		if ( l->language() == "CMake" )
+			return qobject_cast<QsciLexerCMake*>( l )->foldAtElse();
+		else if ( l->language() == "D" )
+			return qobject_cast<QsciLexerD*>( l )->foldAtElse();
+		else if ( l->language() == "VHDL" )
+			return qobject_cast<QsciLexerVHDL*>( l )->foldAtElse();
+		else if ( l->language() == "JavaScript" )
+			return qobject_cast<QsciLexerJavaScript*>( l )->foldAtElse();
+		else if ( l->language() == "Java" )
+			return qobject_cast<QsciLexerJava*>( l )->foldAtElse();
+		else if ( l->language() == "CSharp" )
+			return qobject_cast<QsciLexerCSharp*>( l )->foldAtElse();
+		else if ( l->language() == "C++" )
+			return qobject_cast<QsciLexerCPP*>( l )->foldAtElse();
+	}
+	else if ( s == "foldPreprocessor" )
+	{
+		if ( l->language() == "HTML" )
+			return qobject_cast<QsciLexerHTML*>( l )->foldPreprocessor();
+		else if ( l->language() == "JavaScript" )
+			return qobject_cast<QsciLexerJavaScript*>( l )->foldPreprocessor();
+		else if ( l->language() == "Java" )
+			return qobject_cast<QsciLexerJava*>( l )->foldPreprocessor();
+		else if ( l->language() == "CSharp" )
+			return qobject_cast<QsciLexerCSharp*>( l )->foldPreprocessor();
+		else if ( l->language() == "C++" )
+			return qobject_cast<QsciLexerCPP*>( l )->foldPreprocessor();
+	}
+	else if ( s == "stylePreprocessor" )
+	{
+		if ( l->language() == "JavaScript" )
+			return qobject_cast<QsciLexerJavaScript*>( l )->stylePreprocessor();
+		else if ( l->language() == "Java" )
+			return qobject_cast<QsciLexerJava*>( l )->stylePreprocessor();
+		else if ( l->language() == "CSharp" )
+			return qobject_cast<QsciLexerCSharp*>( l )->stylePreprocessor();
+		else if ( l->language() == "C++" )
+			return qobject_cast<QsciLexerCPP*>( l )->stylePreprocessor();
+	}
+	else if ( s == "caseSensitiveTags" )
+	{
+		if ( l->language() == "HTML" )
+			return qobject_cast<QsciLexerHTML*>( l )->caseSensitiveTags();
+	}
+	else if ( s == "backslashEscapes" )
+	{
+		if ( l->language() == "SQL" )
+			return qobject_cast<QsciLexerSQL*>( l )->backslashEscapes();
+	}
+	else if ( s == "indentationWarning" )
+	{
+		if ( l->language() == "Python" )
+			return qobject_cast<QsciLexerPython*>( l )->indentationWarning();
 	}
 
-	// fold compact
-	i = mo->indexOfSlot( "setFoldCompact(bool)" );
-	cbFoldCompact->setVisible( i != -1 );
-	if ( cbFoldCompact->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "foldCompact", Q_RETURN_ARG( bool, b ) );
-		cbFoldCompact->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldCompact() );
-		// cpp, bash, css, d, html, lua, perl,pov, properties, sql, vhdl
-	}
-
-	// fold quotes
-	i = mo->indexOfSlot( "setFoldQuotes(bool)" );
-	cbFoldQuotes->setVisible( i != -1 );
-	if ( cbFoldQuotes->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "foldQuotes", Q_RETURN_ARG( bool, b ) );
-		cbFoldQuotes->setChecked( ( qobject_cast<QsciLexerPython*>( l ) )->foldQuotes() );
-	}
-
-	// fold directives
-	i = mo->indexOfSlot( "setFoldDirectives(bool)" );
-	cbFoldDirectives->setVisible( i != -1 );
-	if ( cbFoldDirectives->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "foldDirectives", Q_RETURN_ARG( bool, b ) );
-		cbFoldDirectives->setChecked( ( qobject_cast<QsciLexerPOV*>( l ) )->foldDirectives() );
-	}
-
-	// fold at begin
-	i = mo->indexOfSlot( "setFoldAtBegin(bool)" );
-	cbFoldAtBegin->setVisible( i != -1 );
-	if ( cbFoldAtBegin->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "foldAtBegin", Q_RETURN_ARG( bool, b ) );
-		cbFoldAtBegin->setChecked( ( qobject_cast<QsciLexerVHDL*>( l ) )->foldAtBegin() );
-	}
-
-	// fold at parenthesis
-	i = mo->indexOfSlot( "setFoldAtParenthesis(bool)" );
-	cbFoldAtParenthesis->setVisible( i != -1 );
-	if ( cbFoldAtParenthesis->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "foldAtParenthesis", Q_RETURN_ARG( bool, b ) );
-		cbFoldAtParenthesis->setChecked( ( qobject_cast<QsciLexerVHDL*>( l ) )->foldAtParenthesis() );
-	}
-
-	// fold at else
-	i = mo->indexOfSlot( "setFoldAtElse(bool)" );
-	cbFoldAtElse->setVisible( i != -1 );
-	if ( cbFoldAtElse->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "foldAtElse", Q_RETURN_ARG( bool, b ) );
-		cbFoldAtElse->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldAtElse() );
-		// cpp, vhdl, cmake, d
-	}
-
-	// fold preprocessor
-	i = mo->indexOfSlot( "setFoldPreprocessor(bool)" );
-	cbFoldPreprocessor->setVisible( i != -1 );
-	if ( cbFoldPreprocessor->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "foldPreprocessor", Q_RETURN_ARG( bool, b ) );
-		cbFoldPreprocessor->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->foldPreprocessor() );
-		// html, cpp
-	}
-
-	// style preprocessor
-	i = mo->indexOfSlot( "setStylePreprocessor(bool)" );
-	cbStylePreprocessor->setVisible( i != -1 );
-	if ( cbStylePreprocessor->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "stylePreprocessor", Q_RETURN_ARG( bool, b ) );
-		cbStylePreprocessor->setChecked( ( qobject_cast<QsciLexerCPP*>( l ) )->stylePreprocessor() );
-	}
-
-	// indent opening brace
-	cbIndentOpeningBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiOpening );
-
-	// indent closing brace
-	cbIndentClosingBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiClosing );
-
-	// case sensitive tags
-	i = mo->indexOfSlot( "setCaseSensitiveTags(bool)" );
-	cbCaseSensitiveTags->setVisible( i != -1 );
-	if ( cbCaseSensitiveTags->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "caseSensitiveTags", Q_RETURN_ARG( bool, b ) );
-		cbCaseSensitiveTags->setChecked( ( qobject_cast<QsciLexerHTML*>( l ) )->caseSensitiveTags() );
-	}
-
-	// backslash escapes
-	i = mo->indexOfSlot( "setBackslashEscapes(bool)" );
-	cbBackslashEscapes->setVisible( i != -1 );
-	if ( cbBackslashEscapes->isVisible() )
-	{
-		QMetaObject::invokeMethod( l, "backslashEscapes", Q_RETURN_ARG( bool, b ) );
-		cbBackslashEscapes->setChecked( ( qobject_cast<QsciLexerSQL*>( l ) )->backslashEscapes() );
-	}
-
-	// indentation warning
-	i = mo->indexOfSlot( "setIndentationWarning(IndentationWarning)" );
-	lIndentationWarning->setVisible( i != -1 );
-	cbIndentationWarning->setVisible( lIndentationWarning->isVisible() );
-	if ( lIndentationWarning->isVisible() )
-	{
-		QsciLexerPython* p = qobject_cast<QsciLexerPython*>( l );
-		cbIndentationWarning->setCurrentIndex( cbIndentationWarning->findData( p->indentationWarning() ) );
-	}
+	// default return value
+	return QVariant();
 }

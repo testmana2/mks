@@ -1905,6 +1905,9 @@
             </item>
             <item>
              <widget class="QLabel" name="lIndentationWarning" >
+              <property name="statusTip" >
+               <string>setIndentationWarning</string>
+              </property>
               <property name="text" >
                <string>Indentation warning :</string>
               </property>
