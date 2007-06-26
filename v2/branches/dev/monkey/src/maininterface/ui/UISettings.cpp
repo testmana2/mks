@@ -1,29 +1,6 @@
 #include "UISettings.h"
 #include "pSettings.h"
-
-#include "qsciscintilla.h"
-#include "qscilexerbash.h"
-#include "qscilexerbatch.h"
-#include "qscilexercmake.h"
-#include "qscilexercpp.h"
-#include "qscilexercsharp.h"
-#include "qscilexercss.h"
-#include "qscilexerd.h"
-#include "qscilexerdiff.h"
-#include "qscilexerhtml.h"
-#include "qscilexeridl.h"
-#include "qscilexerjava.h"
-#include "qscilexerjavascript.h"
-#include "qscilexerlua.h"
-#include "qscilexermakefile.h"
-#include "qscilexerperl.h"
-#include "qscilexerpov.h"
-#include "qscilexerproperties.h"
-#include "qscilexerpython.h"
-#include "qscilexerruby.h"
-#include "qscilexersql.h"
-#include "qscilexertex.h"
-#include "qscilexervhdl.h"
+#include "pQScintilla.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
@@ -42,8 +19,7 @@ UISettings::UISettings( QWidget* p )
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	twMenu->topLevelItem( 2 )->setExpanded( true );
-	on_twMenu_itemClicked( twMenu->topLevelItem( 0 ), 0 );
-
+	twMenu->setCurrentItem( twMenu->topLevelItem( 0 ) );
 	// designer
 	bgDesigner = new QButtonGroup( gbUIDesignerIntegration );
 	bgDesigner->addButton( rbUseEmbeddedUIDesigner, Embedded );
@@ -77,8 +53,12 @@ UISettings::UISettings( QWidget* p )
 	// resize column
 	twHighlighterAssociations->setColumnWidth( 0, 200 );
 
-	// init lexers
-	initLexers();
+	// fill lexers combo
+	l = pQScintilla::instance()->languages();
+	l.sort();
+	cbAPIsLanguages->addItems( l );
+	cbHighlighterAssociationLexerLanguage->addItems( l );
+	cbSyntaxHighlightingLexerLanguage->addItems( l );
 
 	// python indentation warning
 	cbIndentationWarning->addItem( tr( "No warning" ), QsciLexerPython::NoWarning );
@@ -262,70 +242,6 @@ void UISettings::loadSettings()
 */
 }
 
-void UISettings::initLexers()
-{
-	QsciLexer* l;
-	l = new QsciLexerBash( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerBatch( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerCMake( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerCPP( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerCSharp( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerCSS( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerD( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerDiff( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerHTML( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerIDL( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerJava( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerJavaScript( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerLua( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerMakefile( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerPerl( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerPOV( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerProperties( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerPython( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerRuby( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerSQL( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerTeX( this );
-	mLexers[l->language()] = l;
-	l = new QsciLexerVHDL( this );
-	mLexers[l->language()] = l;
-
-	// fill combobox
-	QStringList ll;
-	foreach ( QsciLexer* sl, mLexers )
-	{
-		// get language name
-		ll << sl->language();
-		// load its settings
-		sl->readSettings( *pSettings::instance(), qPrintable( QString( "%1/Editor/Scintilla" ).arg( SettingsPath ) ) );
-	}
-
-	ll.sort();
-	cbAPIsLanguages->addItems( ll );
-	cbHighlighterAssociationLexerLanguage->addItems( ll );
-	cbSyntaxHighlightingLexerLanguage->addItems( ll );
-}
-
 void UISettings::saveSettings()
 {
 	pSettings* s = pSettings::instance();
@@ -424,8 +340,7 @@ void UISettings::saveSettings()
 	}
 
 	//  Highlighting
-	foreach ( QsciLexer* sl, mLexers )
-		sl->writeSettings( *s, qPrintable( QString( "%1/Editor/Scintilla" ).arg( SettingsPath ) ) );
+	pQScintilla::instance()->writeSettings();
 
 /*
 	//  Properties
@@ -476,8 +391,11 @@ QColor UISettings::iconBackgroundColor( const QIcon& i ) const
 	return QColor( i.pixmap( QSize( 5, 5 ) ).toImage().pixel( QPoint( 0, 0 ) ) );
 }
 
-void UISettings::on_twMenu_itemClicked( QTreeWidgetItem* it, int )
+void UISettings::on_twMenu_itemSelectionChanged()
 {
+	// get item
+	QTreeWidgetItem* it = twMenu->selectedItems().value( 0 );
+
 	if ( it )
 	{
 		lInformations->setText( it->text( 0 ) );
@@ -602,7 +520,7 @@ void UISettings::on_pbHighlighterAssociationDelete_clicked()
 
 void UISettings::on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( const QString& s )
 {
-	QsciLexer* l = mLexers[s];
+	QsciLexer* l = pQScintilla::instance()->lexers().value( s );
 	lwSyntaxHighlightingStyleElements->clear();
 	for ( int i = 0; i < 128; i++ )
 	{
@@ -759,7 +677,7 @@ void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
 		if ( c.isValid() )
 		{
 			it->setForeground( c );
-			mLexers[cbSyntaxHighlightingLexerLanguage->currentText()]->setColor( c, it->data( Id ).toInt() );
+			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setColor( c, it->data( Id ).toInt() );
 			on_lwSyntaxHighlightingStyleElements_itemClicked( it );
 		}
 	}
@@ -774,7 +692,7 @@ void UISettings::on_pbSyntaxHighlightingBackgroundColour_clicked()
 		if ( c.isValid() )
 		{
 			it->setBackground( c );
-			mLexers[cbSyntaxHighlightingLexerLanguage->currentText()]->setPaper( c, it->data( Id ).toInt() );
+			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setPaper( c, it->data( Id ).toInt() );
 			on_lwSyntaxHighlightingStyleElements_itemClicked( it );
 		}
 	}
@@ -790,7 +708,7 @@ void UISettings::on_pbSyntaxHighlightingFont_clicked()
 		if ( b )
 		{
 			it->setFont( f );
-			mLexers[cbSyntaxHighlightingLexerLanguage->currentText()]->setFont( f, it->data( Id ).toInt());
+			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setFont( f, it->data( Id ).toInt());
 			on_lwSyntaxHighlightingStyleElements_itemClicked( it );
 		}
 	}
@@ -802,7 +720,7 @@ void UISettings::on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool b )
 	if ( it )
 	{
 		it->setData( EolFill, b );
-		mLexers[cbSyntaxHighlightingLexerLanguage->currentText()]->setEolFill( b, it->data( Id ).toInt() );
+		pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setEolFill( b, it->data( Id ).toInt() );
 	}
 }
 
@@ -812,7 +730,7 @@ void UISettings::cbProperties_toggled( bool b )
 	if ( !cb )
 		return;
 
-	QsciLexer* l = mLexers[cbSyntaxHighlightingLexerLanguage->currentText()];
+	QsciLexer* l = pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() );
 
 	if ( !cb->statusTip().isEmpty() )
 		QMetaObject::invokeMethod( l, cb->statusTip().toLocal8Bit(), Q_ARG( bool, b ) );
@@ -820,7 +738,7 @@ void UISettings::cbProperties_toggled( bool b )
 
 void UISettings::on_pbSyntaxHighlightingAllBackgroundColours_clicked()
 {
-	QsciLexer* l = mLexers[cbSyntaxHighlightingLexerLanguage->currentText()];
+	QsciLexer* l = pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() );
 	QColor c = QColorDialog::getColor( l->defaultPaper(), window() );
 	if ( c.isValid() )
 	{
@@ -831,7 +749,7 @@ void UISettings::on_pbSyntaxHighlightingAllBackgroundColours_clicked()
 
 void UISettings::on_pbSyntaxHighlightingAllFonts_clicked()
 {
-	QsciLexer* l = mLexers[cbSyntaxHighlightingLexerLanguage->currentText()];
+	QsciLexer* l = pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() );
 	bool b;
 	QFont f = QFontDialog::getFont( &b, l->defaultFont(), window() );
 	if ( b )
