@@ -1,0 +1,132 @@
+<ui version="4.0" >
+ <class>UIEditTemplate</class>
+ <widget class="QDialog" name="UIEditTemplate" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>574</width>
+    <height>170</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>File Type</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="3" column="0" colspan="5" >
+    <widget class="QLineEdit" name="leFilename" />
+   </item>
+   <item row="3" column="5" >
+    <widget class="QToolButton" name="tbFilename" >
+     <property name="text" >
+      <string>...</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="6" >
+    <widget class="QLabel" name="lFilename" >
+     <property name="text" >
+      <string>Set template content from file :</string>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="2" row="0" column="4" colspan="2" >
+    <widget class="QToolButton" name="tbIcon" >
+     <property name="minimumSize" >
+      <size>
+       <width>64</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="iconSize" >
+      <size>
+       <width>54</width>
+       <height>54</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="3" >
+    <widget class="QLineEdit" name="leDescription" />
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="lDescription" >
+     <property name="text" >
+      <string>Description :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3" >
+    <widget class="QLineEdit" name="leName" />
+   </item>
+   <item row="0" column="2" >
+    <widget class="QLabel" name="lName" >
+     <property name="text" >
+      <string>Name :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="lLanguage" >
+     <property name="text" >
+      <string>Language :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="QComboBox" name="cbLanguages" />
+   </item>
+   <item row="4" column="0" colspan="6" >
+    <widget class="QDialogButtonBox" name="dbbButtons" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>dbbButtons</sender>
+   <signal>accepted()</signal>
+   <receiver>UIEditTemplate</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dbbButtons</sender>
+   <signal>rejected()</signal>
+   <receiver>UIEditTemplate</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
