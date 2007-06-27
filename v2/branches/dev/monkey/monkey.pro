@@ -50,11 +50,15 @@ include( ../fresh/fresh.pro )
 
 FORMS	+= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UIAbout.ui \
+	src/maininterface/ui/UIEditTemplate.ui \
+	src/maininterface/ui/UIAddAbbreviation.ui \
 	src/maininterface/ui/UISettings.ui
 
 HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/maininterface/ui/UIAbout.h \
 	src/qscintillamanager/pQScintilla.h \
+	src/maininterface/ui/UIEditTemplate.h \
+	src/maininterface/ui/UIAddAbbreviation.h \
 	src/maininterface/ui/UISettings.h \
 	src/recentsmanager/pRecentsManager.h \
 	src/workspace/pAbstractChild.h \
@@ -66,6 +70,8 @@ HEADERS	+= src/maininterface/ui/UITranslator.h \
 SOURCES	+= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
 	src/qscintillamanager/pQScintilla.cpp \
+	src/maininterface/ui/UIEditTemplate.cpp \
+	src/maininterface/ui/UIAddAbbreviation.cpp \
 	src/maininterface/ui/UISettings.cpp \
 	src/recentsmanager/pRecentsManager.cpp \
 	src/workspace/pChild.cpp \

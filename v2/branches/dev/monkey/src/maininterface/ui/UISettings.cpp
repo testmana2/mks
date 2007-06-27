@@ -1,12 +1,15 @@
 #include "UISettings.h"
 #include "pSettings.h"
 #include "pQScintilla.h"
+#include "UIEditTemplate.h"
+#include "UIAddAbbreviation.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QTextCodec>
+#include <QDir>
 
 const QString SettingsPath = "Settings";
 
@@ -28,6 +31,10 @@ UISettings::UISettings( QWidget* p )
 	bgExternalChanges->addButton( rbDoNothing, Nothing );
 	bgExternalChanges->addButton( rbAlertUser, Alert );
 	bgExternalChanges->addButton( rbReloadAutomatically, Reload );
+
+	// resize column
+	twTemplatesType->setColumnWidth( 0, 100 );
+	twTemplatesType->setColumnWidth( 1, 100 );
 
 	// api source
 	bgAPISource = new QButtonGroup( gbAutoCompletionSource );
@@ -83,6 +90,10 @@ UISettings::UISettings( QWidget* p )
 	cbStyleEdgeMode->addItem( tr( "Draw Line" ), QsciScintilla::EdgeLine );
 	cbStyleEdgeMode->addItem( tr( "Change Background Color" ), QsciScintilla::EdgeBackground );
 
+	// resize column
+	twAbbreviations->setColumnWidth( 0, 100 );
+	twAbbreviations->setColumnWidth( 1, 300 );
+
 	// read settings
 	loadSettings();
 
@@ -112,8 +123,23 @@ void UISettings::loadSettings()
 	// user interface
 	sp = QString( "%1/Editor/UserInterface" ).arg( SettingsPath );
 	bgExternalChanges->button( s->value( sp +"/ExternalChanges", Alert ).toInt() )->setChecked( true );
-
+//finir remove et edit template
 	// File Templates
+	sp = QString( "%1/Editor/Templates" ).arg( SettingsPath );
+	leTemplatesPath->setText( s->value( sp +"/DefaultDirectory", "%HOME%/.Monkey Studio/Templates" ).toString() );
+	int size = s->beginReadArray( sp );
+	for ( int i = 0; i < size; i++ )
+	{
+		s->setArrayIndex( i );
+		QTreeWidgetItem* it = new QTreeWidgetItem( twTemplatesType );
+		it->setText( 0, s->value( "Language" ).toString() );
+		it->setText( 1, s->value( "Name" ).toString() );
+		it->setText( 2, s->value( "Description" ).toString() );
+		it->setData( 0, Qt::UserRole, s->value( "Icon" ).toString() );
+		it->setData( 0, Qt::UserRole +1, s->value( "Filename" ).toString() );
+		it->setIcon( 0, QIcon( s->value( "Icon" ).toString() ) );
+	}
+	s->endArray();
 
 	// Editor
 	//  Auto Completion
@@ -205,16 +231,25 @@ void UISettings::loadSettings()
 
 	//  Highlighting
 	pQScintilla::instance()->readSettings();
-
-QsciLexerBash* lb = qobject_cast<QsciLexerBash*>( pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() ) );
-qWarning( "color: %s", qPrintable( lb->color( 1 ).name() ) );
-qWarning( "default color: %s", qPrintable( lb->defaultColor( 1 ).name() ) );
-
 	if ( cbSyntaxHighlightingLexerLanguage->count() )
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( cbSyntaxHighlightingLexerLanguage->itemText( 0 ) );
 
+	//  Abbreviations
+	sp = QString( "%1/Editor/Abbreviations" ).arg( SettingsPath );
+	cbAbbreviations->setChecked( s->value( sp +"/Enabled", false ).toBool() );
+	size = s->beginReadArray( sp );
+	for ( int i = 0; i < size; i++ )
+	{
+		s->setArrayIndex( i );
+		QTreeWidgetItem* it = new QTreeWidgetItem( twAbbreviations );
+		it->setText( 0, s->value( "Template" ).toString() );
+		it->setText( 1, s->value( "Description" ).toString() );
+		it->setText( 2, s->value( "Language" ).toString() );
+		it->setData( 0, Qt::UserRole, s->value( "Code" ).toString() );
+	}
+	s->endArray();
+
 /*
-	// Abbreviations
 	// Tools Menu
 	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
 	//qWarning( qPrintable( m ) );
@@ -237,6 +272,25 @@ void UISettings::saveSettings()
 	s->setValue( sp +"/ExternalChanges", bgExternalChanges->checkedId() );
 
 	// File Templates
+	sp = QString( "%1/Editor/Templates" ).arg( SettingsPath );
+	// remove key
+	s->remove( sp );
+	// default templates path
+	s->setValue( sp +"/DefaultDirectory", leTemplatesPath->text() );
+	// write new ones
+	s->beginWriteArray( sp );
+	for ( int i = 0; i < twTemplatesType->topLevelItemCount(); i++ )
+	{
+		s->setArrayIndex( i );
+		QTreeWidgetItem* it = twTemplatesType->topLevelItem( i );
+
+		s->setValue( "Language", it->text( 0 ) );
+		s->setValue( "Name", it->text( 1 ) );
+		s->setValue( "Description", it->text( 2 ) );
+		s->setValue( "Icon", it->data( 0, Qt::UserRole ).toString() );
+		s->setValue( "Filename", it->data( 0, Qt::UserRole +1 ).toString() );
+	}
+	s->endArray();
 
 	// Editor
 	//  Auto Completion
@@ -324,8 +378,27 @@ void UISettings::saveSettings()
 	//  Highlighting
 	pQScintilla::instance()->writeSettings();
 
+	//  Abbreviations
+	sp = QString( "%1/Editor/Abbreviations" ).arg( SettingsPath );
+	// remove key
+	s->remove( sp );
+	// enable abbreviations
+	s->setValue( sp +"/Enabled", cbAbbreviations->isChecked() );
+	// write new ones
+	s->beginWriteArray( sp );
+	for ( int i = 0; i < twAbbreviations->topLevelItemCount(); i++ )
+	{
+		s->setArrayIndex( i );
+		QTreeWidgetItem* it = twAbbreviations->topLevelItem( i );
+
+		s->setValue( "Template", it->text( 0 ) );
+		s->setValue( "Description", it->text( 1 ) );
+		s->setValue( "Language", it->text( 2 ) );
+		s->setValue( "Code", it->data( 0, Qt::UserRole ).toString() );
+	}
+	s->endArray();
+
 /*
-	// Abbreviations
 	// Tools Menu
 	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
 	//qWarning( qPrintable( m ) );
@@ -380,6 +453,28 @@ void UISettings::on_tbDefaultProjectsDirectory_clicked()
 		leDefaultProjectsDirectory->setText( s );
 }
 
+void UISettings::on_tbTemplatesPath_clicked()
+{
+	const QString d = leTemplatesPath->text().replace( "%HOME%", QDir::homePath() );
+	QString s = QFileDialog::getExistingDirectory( window(), tr( "Select default templates directory" ), d );
+	if ( !s.isNull() )
+	{
+		if ( s.endsWith( "/" ) )
+			s.chop( 1 );
+		leTemplatesPath->setText( s.replace( QDir::homePath(), "%HOME%" ) );
+	}
+}
+
+void UISettings::on_pbAddTemplateType_clicked()
+{
+	UIEditTemplate::edit( twTemplatesType, 0, leTemplatesPath->text() );
+}
+
+void UISettings::on_pbEditTemplateType_clicked()
+{
+	UIEditTemplate::edit( twTemplatesType, twTemplatesType->selectedItems().value( 0 ), leTemplatesPath->text() );
+}
+
 void UISettings::cbAPIsLanguages_beforeChanged( int i )
 {
 	if ( i == cbAPIsLanguages->currentIndex() )
@@ -399,7 +494,9 @@ void UISettings::on_cbAPIsLanguages_currentIndexChanged( int i )
 
 void UISettings::on_pbAPIsDelete_clicked()
 {
-	QListWidgetItem* it = lwAPIs->currentItem();
+	// get selected item
+	QListWidgetItem* it = lwAPIs->selectedItems().value( 0 );
+
 	if ( it )
 	{
 		delete it;
@@ -433,8 +530,9 @@ void UISettings::tbColours_clicked()
 		tb->setIcon( colourizedPixmap( c ) );
 }
 
-void UISettings::on_twHighlighterAssociations_itemClicked( QTreeWidgetItem* it, int )
+void UISettings::on_twHighlighterAssociations_itemSelectionChanged()
 {
+	QTreeWidgetItem* it = twHighlighterAssociations->selectedItems().value( 0 );
 	if ( it )
 	{
 		leHighlighterAssociationFilenamePattern->setText( it->text( 0 ) );
@@ -448,7 +546,7 @@ void UISettings::on_pbHighlighterAssociationAddChange_clicked()
 	QString l = cbHighlighterAssociationLexerLanguage->currentText();
 	if ( f.isEmpty() || l.isEmpty() )
 		return;
-	QTreeWidgetItem* it = twHighlighterAssociations->currentItem();
+	QTreeWidgetItem* it = twHighlighterAssociations->selectedItems().value( 0 );
 	if ( !it || it->text( 0 ) != f )
 	{
 		// check if item with same parameters already exists
@@ -468,7 +566,7 @@ void UISettings::on_pbHighlighterAssociationAddChange_clicked()
 
 void UISettings::on_pbHighlighterAssociationDelete_clicked()
 {
-	QTreeWidgetItem* it = twHighlighterAssociations->currentItem();
+	QTreeWidgetItem* it = twHighlighterAssociations->selectedItems().value( 0 );
 	if ( it )
 	{
 		delete it;
@@ -579,15 +677,16 @@ void UISettings::on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( const
 		cbIndentationWarning->setCurrentIndex( cbIndentationWarning->findData( v.toInt() ) );
 }
 
-void UISettings::on_lwSyntaxHighlightingStyleElements_itemClicked( QListWidgetItem* it )
+void UISettings::on_lwSyntaxHighlightingStyleElements_itemSelectionChanged()
 {
+	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->selectedItems().value( 0 );
 	if ( it )
 		cbSyntaxHighlightingFillToEndOfLine->setChecked( pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
 }
 
 void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
 {
-	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
+	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->selectedItems().value( 0 );
 	if ( it )
 	{
 		QColor c = QColorDialog::getColor( it->foreground().color(), window() );
@@ -601,7 +700,7 @@ void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
 
 void UISettings::on_pbSyntaxHighlightingBackgroundColour_clicked()
 {
-	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
+	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->selectedItems().value( 0 );
 	if ( it )
 	{
 		QColor c = QColorDialog::getColor( it->background().color(), window() );
@@ -615,7 +714,7 @@ void UISettings::on_pbSyntaxHighlightingBackgroundColour_clicked()
 
 void UISettings::on_pbSyntaxHighlightingFont_clicked()
 {
-	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
+	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->selectedItems().value( 0 );
 	if ( it )
 	{
 		bool b;
@@ -623,15 +722,14 @@ void UISettings::on_pbSyntaxHighlightingFont_clicked()
 		if ( b )
 		{
 			it->setFont( f );
-			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt());
-			on_lwSyntaxHighlightingStyleElements_itemClicked( it );
+			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt() );
 		}
 	}
 }
 
 void UISettings::on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool b )
 {
-	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
+	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->selectedItems().value( 0 );
 	if ( it )
 		pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
 }
@@ -687,6 +785,60 @@ void UISettings::on_pbStyleMonospacedFont_clicked()
 	QFont f = QFontDialog::getFont( &b, leStyleMonospacedFont->font(), window() );
 	if ( b )
 		leStyleMonospacedFont->setFont( f );
+}
+
+void UISettings::on_twAbbreviations_itemSelectionChanged()
+{
+	// get item
+	QTreeWidgetItem* it = twAbbreviations->selectedItems().value( 0 );
+
+	if ( it )
+		teAbbreviation->setPlainText( it->data( 0, Qt::UserRole ).toString() );
+
+	// enable/disable according to selection
+	teAbbreviation->setEnabled( it );
+}
+
+void UISettings::on_pbAddAbbreviation_clicked()
+{
+	// get languages
+	QStringList l = pQScintilla::instance()->languages();
+	l.sort();
+
+	// create window
+	UIAddAbbreviation d( this );
+
+	// fill combo with language
+	d.cbLanguages->addItems( l );
+
+	// add code template
+	if ( d.exec() )
+	{
+		QTreeWidgetItem* it = twAbbreviations->findItems( d.leTemplate->text(), Qt::MatchFixedString ).value( 0 );
+		if ( !it || it->data( 0, Qt::UserRole ).toString() != d.cbLanguages->currentText() )
+		{
+			QTreeWidgetItem* it = new QTreeWidgetItem( twAbbreviations );
+			it->setText( 0, d.leTemplate->text() );
+			it->setText( 1, d.leDescription->text() );
+			it->setText( 2, d.cbLanguages->currentText() );
+			it->setData( 0, Qt::UserRole, QString() );
+		}
+	}
+}
+
+void UISettings::on_pbRemoveAbbreviation_clicked()
+{
+	delete twAbbreviations->selectedItems().value( 0 );
+	teAbbreviation->clear();
+}
+
+void UISettings::on_teAbbreviation_textChanged()
+{
+	// get item
+	QTreeWidgetItem* it = twAbbreviations->selectedItems().value( 0 );
+
+	if ( it )
+		it->setData( 0, Qt::UserRole, teAbbreviation->toPlainText() );
 }
 
 void UISettings::accept()
