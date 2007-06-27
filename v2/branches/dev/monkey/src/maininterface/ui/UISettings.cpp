@@ -17,6 +17,7 @@ UISettings::UISettings( QWidget* p )
 	setAttribute( Qt::WA_DeleteOnClose );
 	twMenu->topLevelItem( 2 )->setExpanded( true );
 	twMenu->setCurrentItem( twMenu->topLevelItem( 0 ) );
+
 	// designer
 	bgDesigner = new QButtonGroup( gbUIDesignerIntegration );
 	bgDesigner->addButton( rbUseEmbeddedUIDesigner, Embedded );
@@ -92,6 +93,9 @@ UISettings::UISettings( QWidget* p )
 	foreach ( QCheckBox* cb, gbSyntaxHighlightingStyleElement->findChildren<QCheckBox*>() )
 		if ( cb != cbSyntaxHighlightingFillToEndOfLine )
 			connect( cb, SIGNAL( toggled( bool ) ), this, SLOT( cbProperties_toggled( bool ) ) );
+
+	// resize to minimum size
+	resize( minimumSizeHint() );
 }
 
 void UISettings::loadSettings()
@@ -203,8 +207,8 @@ void UISettings::loadSettings()
 	pQScintilla::instance()->readSettings();
 
 QsciLexerBash* lb = qobject_cast<QsciLexerBash*>( pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() ) );
-qWarning( "color: %s", qPrintable( lb->color( 0 ).name() ) );
-qWarning( "default color: %s", qPrintable( lb->defaultColor( 0 ).name() ) );
+qWarning( "color: %s", qPrintable( lb->color( 1 ).name() ) );
+qWarning( "default color: %s", qPrintable( lb->defaultColor( 1 ).name() ) );
 
 	if ( cbSyntaxHighlightingLexerLanguage->count() )
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( cbSyntaxHighlightingLexerLanguage->itemText( 0 ) );
@@ -308,6 +312,9 @@ void UISettings::saveSettings()
 
 	//  Associations
 	sp = QString( "%1/Editor/Associations/" ).arg( SettingsPath );
+	// remove old associations
+	s->remove( sp );
+	// write new ones
 	for ( int i = 0; i < twHighlighterAssociations->topLevelItemCount(); i++ )
 	{
 		QTreeWidgetItem* it = twHighlighterAssociations->topLevelItem( i );
@@ -486,8 +493,7 @@ void UISettings::on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( const
 			it->setForeground( l->color( i ) );
 			it->setBackground( l->paper( i ) );
 			it->setFont( l->font( i ) );
-			it->setData( Id, i );
-			it->setData( EolFill, l->eolFill( i ) );
+			it->setData( Qt::UserRole, i );
 		}
 	}
 
@@ -576,7 +582,7 @@ void UISettings::on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( const
 void UISettings::on_lwSyntaxHighlightingStyleElements_itemClicked( QListWidgetItem* it )
 {
 	if ( it )
-		cbSyntaxHighlightingFillToEndOfLine->setChecked( it->data( EolFill ).toBool() );
+		cbSyntaxHighlightingFillToEndOfLine->setChecked( pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
 }
 
 void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
@@ -588,7 +594,7 @@ void UISettings::on_pbSyntaxHighlightingForegroundColour_clicked()
 		if ( c.isValid() )
 		{
 			it->setForeground( c );
-			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setColor( c, it->data( Id ).toInt() );
+			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setColor( c, it->data( Qt::UserRole ).toInt() );
 		}
 	}
 }
@@ -602,7 +608,7 @@ void UISettings::on_pbSyntaxHighlightingBackgroundColour_clicked()
 		if ( c.isValid() )
 		{
 			it->setBackground( c );
-			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setPaper( c, it->data( Id ).toInt() );
+			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setPaper( c, it->data( Qt::UserRole ).toInt() );
 		}
 	}
 }
@@ -617,7 +623,7 @@ void UISettings::on_pbSyntaxHighlightingFont_clicked()
 		if ( b )
 		{
 			it->setFont( f );
-			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setFont( f, it->data( Id ).toInt());
+			pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt());
 			on_lwSyntaxHighlightingStyleElements_itemClicked( it );
 		}
 	}
@@ -627,10 +633,7 @@ void UISettings::on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool b )
 {
 	QListWidgetItem* it = lwSyntaxHighlightingStyleElements->currentItem();
 	if ( it )
-	{
-		it->setData( EolFill, b );
-		pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setEolFill( b, it->data( Id ).toInt() );
-	}
+		pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
 }
 
 void UISettings::cbProperties_toggled( bool b )

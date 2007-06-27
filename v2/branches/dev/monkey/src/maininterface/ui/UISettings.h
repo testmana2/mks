@@ -15,7 +15,6 @@ class Q_MONKEY_EXPORT UISettings : public QDialog, public Ui::UISettings, public
 public:
 	enum Designer { Embedded = 0, External };
 	enum ExternalChanges { Nothing = 0, Alert, Reload };
-	enum Lexer { Id = Qt::UserRole, EolFill };
 
 private:
 	UISettings( QWidget* = 0 );

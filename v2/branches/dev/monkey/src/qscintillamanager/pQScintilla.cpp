@@ -47,7 +47,6 @@ QHash<QString,QsciLexer*> pQScintilla::lexers() const
 
 void pQScintilla::readSettings()
 {
-qWarning( "reading from: %s", qPrintable( pSettings::instance()->group() ) );
 	// read settings
 	foreach ( QsciLexer* l, mLexers )
 		l->readSettings( *pSettings::instance() );
@@ -55,7 +54,6 @@ qWarning( "reading from: %s", qPrintable( pSettings::instance()->group() ) );
 
 void pQScintilla::writeSettings()
 {
-qWarning( "saving to: %s", qPrintable( pSettings::instance()->group() ) );
 	// write settings
 	foreach ( QsciLexer* l, mLexers )
 		l->writeSettings( *pSettings::instance() );
@@ -82,138 +80,140 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 	if ( s.trimmed().isEmpty() || !l )
 		return QVariant();
 
+	const QString lng = QString( l->language() );
+
 	if ( s == "foldComments" )
 	{
-		if ( l->language() == "Bash" )
+		if ( lng == "Bash" )
 			return qobject_cast<QsciLexerBash*>( l )->foldComments();
-		else if ( l->language() == "CSS" )
+		else if ( lng == "CSS" )
 			return qobject_cast<QsciLexerCSS*>( l )->foldComments();
-		else if ( l->language() == "D" )
+		else if ( lng == "D" )
 			return qobject_cast<QsciLexerD*>( l )->foldComments();
-		else if ( l->language() == "Perl" )
+		else if ( lng == "Perl" )
 			return qobject_cast<QsciLexerPerl*>( l )->foldComments();
-		else if ( l->language() == "POV" )
+		else if ( lng == "POV" )
 			return qobject_cast<QsciLexerPOV*>( l )->foldComments();
-		else if ( l->language() == "Python" )
+		else if ( lng == "Python" )
 			return qobject_cast<QsciLexerPython*>( l )->foldComments();
-		else if ( l->language() == "SQL" )
+		else if ( lng == "SQL" )
 			return qobject_cast<QsciLexerSQL*>( l )->foldComments();
-		else if ( l->language() == "VHDL" )
+		else if ( lng == "VHDL" )
 			return qobject_cast<QsciLexerVHDL*>( l )->foldComments();
-		else if ( l->language() == "JavaScript" )
+		else if ( lng == "JavaScript" )
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldComments();
-		else if ( l->language() == "Java" )
+		else if ( lng == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldComments();
-		else if ( l->language() == "C#" )
+		else if ( lng == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldComments();
-		else if ( l->language() == "C++" )
+		else if ( lng == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldComments();
 	}
 	else if ( s == "foldCompact" )
 	{
-		if ( l->language() == "Bash" )
+		if ( lng == "Bash" )
 			return qobject_cast<QsciLexerBash*>( l )->foldCompact();
-		else if ( l->language() == "CSS" )
+		else if ( lng == "CSS" )
 			return qobject_cast<QsciLexerCSS*>( l )->foldCompact();
-		else if ( l->language() == "D" )
+		else if ( lng == "D" )
 			return qobject_cast<QsciLexerD*>( l )->foldCompact();
-		else if ( l->language() == "HTML" )
+		else if ( lng == "HTML" )
 			return qobject_cast<QsciLexerHTML*>( l )->foldCompact();
-		else if ( l->language() == "Lua" )
+		else if ( lng == "Lua" )
 			return qobject_cast<QsciLexerLua*>( l )->foldCompact();
-		else if ( l->language() == "Perl" )
+		else if ( lng == "Perl" )
 			return qobject_cast<QsciLexerPerl*>( l )->foldCompact();
-		else if ( l->language() == "POV" )
+		else if ( lng == "POV" )
 			return qobject_cast<QsciLexerPOV*>( l )->foldCompact();
-		else if ( l->language() == "Properties" )
+		else if ( lng == "Properties" )
 			return qobject_cast<QsciLexerProperties*>( l )->foldCompact();
-		else if ( l->language() == "SQL" )
+		else if ( lng == "SQL" )
 			return qobject_cast<QsciLexerSQL*>( l )->foldCompact();
-		else if ( l->language() == "VHDL" )
+		else if ( lng == "VHDL" )
 			return qobject_cast<QsciLexerVHDL*>( l )->foldCompact();
-		else if ( l->language() == "JavaScript" )
+		else if ( lng == "JavaScript" )
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldCompact();
-		else if ( l->language() == "Java" )
+		else if ( lng == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldCompact();
-		else if ( l->language() == "C#" )
+		else if ( lng == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldCompact();
-		else if ( l->language() == "C++" )
+		else if ( lng == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldCompact();
 	}
 	else if ( s == "foldQuotes" )
 	{
-		if ( l->language() == "Python" )
+		if ( lng == "Python" )
 			return qobject_cast<QsciLexerPython*>( l )->foldQuotes();
 	}
 	else if ( s == "foldDirectives" )
 	{
-		if ( l->language() == "POV" )
+		if ( lng == "POV" )
 			return qobject_cast<QsciLexerPOV*>( l )->foldDirectives();
 	}
 	else if ( s == "foldAtBegin" )
 	{
-		if ( l->language() == "VHDL" )
+		if ( lng == "VHDL" )
 			return qobject_cast<QsciLexerVHDL*>( l )->foldAtBegin();
 	}
 	else if ( s == "foldAtParenthesis" )
 	{
-		if ( l->language() == "VHDL" )
+		if ( lng == "VHDL" )
 			return qobject_cast<QsciLexerVHDL*>( l )->foldAtParenthesis();
 	}
 	else if ( s == "foldAtElse" )
 	{
-		if ( l->language() == "CMake" )
+		if ( lng == "CMake" )
 			return qobject_cast<QsciLexerCMake*>( l )->foldAtElse();
-		else if ( l->language() == "D" )
+		else if ( lng == "D" )
 			return qobject_cast<QsciLexerD*>( l )->foldAtElse();
-		else if ( l->language() == "VHDL" )
+		else if ( lng == "VHDL" )
 			return qobject_cast<QsciLexerVHDL*>( l )->foldAtElse();
-		else if ( l->language() == "JavaScript" )
+		else if ( lng == "JavaScript" )
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldAtElse();
-		else if ( l->language() == "Java" )
+		else if ( lng == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldAtElse();
-		else if ( l->language() == "C#" )
+		else if ( lng == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldAtElse();
-		else if ( l->language() == "C++" )
+		else if ( lng == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldAtElse();
 	}
 	else if ( s == "foldPreprocessor" )
 	{
-		if ( l->language() == "HTML" )
+		if ( lng == "HTML" )
 			return qobject_cast<QsciLexerHTML*>( l )->foldPreprocessor();
-		else if ( l->language() == "JavaScript" )
+		else if ( lng == "JavaScript" )
 			return qobject_cast<QsciLexerJavaScript*>( l )->foldPreprocessor();
-		else if ( l->language() == "Java" )
+		else if ( lng == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->foldPreprocessor();
-		else if ( l->language() == "C#" )
+		else if ( lng == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->foldPreprocessor();
-		else if ( l->language() == "C++" )
+		else if ( lng == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->foldPreprocessor();
 	}
 	else if ( s == "stylePreprocessor" )
 	{
-		if ( l->language() == "JavaScript" )
+		if ( lng == "JavaScript" )
 			return qobject_cast<QsciLexerJavaScript*>( l )->stylePreprocessor();
-		else if ( l->language() == "Java" )
+		else if ( lng == "Java" )
 			return qobject_cast<QsciLexerJava*>( l )->stylePreprocessor();
-		else if ( l->language() == "C#" )
+		else if ( lng == "C#" )
 			return qobject_cast<QsciLexerCSharp*>( l )->stylePreprocessor();
-		else if ( l->language() == "C++" )
+		else if ( lng == "C++" )
 			return qobject_cast<QsciLexerCPP*>( l )->stylePreprocessor();
 	}
 	else if ( s == "caseSensitiveTags" )
 	{
-		if ( l->language() == "HTML" )
+		if ( lng == "HTML" )
 			return qobject_cast<QsciLexerHTML*>( l )->caseSensitiveTags();
 	}
 	else if ( s == "backslashEscapes" )
 	{
-		if ( l->language() == "SQL" )
+		if ( lng == "SQL" )
 			return qobject_cast<QsciLexerSQL*>( l )->backslashEscapes();
 	}
 	else if ( s == "indentationWarning" )
 	{
-		if ( l->language() == "Python" )
+		if ( lng == "Python" )
 			return qobject_cast<QsciLexerPython*>( l )->indentationWarning();
 	}
 
