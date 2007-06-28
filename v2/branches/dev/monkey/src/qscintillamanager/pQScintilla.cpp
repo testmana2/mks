@@ -67,8 +67,8 @@ bool pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant& v
 
 	if ( v.type() == QVariant::Bool )
 		return QMetaObject::invokeMethod( l, qPrintable( s ), Q_ARG( bool, v.toBool() ) );
-	else if ( v.type() == QVariant::Int )
-		return QMetaObject::invokeMethod( l, qPrintable( s ), Q_ARG( int, v.toInt() ) );
+	else if ( v.userType() == QVariant::Int )
+		return QMetaObject::invokeMethod( l, qPrintable( s ), Q_ARG( QsciLexerPython::IndentationWarning, (QsciLexerPython::IndentationWarning)v.toInt() ) );
 
 	// return default value
 	return false;

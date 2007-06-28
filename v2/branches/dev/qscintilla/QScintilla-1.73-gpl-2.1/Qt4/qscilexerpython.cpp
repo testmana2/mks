@@ -370,7 +370,7 @@ QsciLexerPython::IndentationWarning QsciLexerPython::indentationWarning() const
 
 
 // Set the indentation warning.
-void QsciLexerPython::setIndentationWarning(IndentationWarning warn)
+void QsciLexerPython::setIndentationWarning(QsciLexerPython::IndentationWarning warn)
 {
     indent_warn = warn;
 

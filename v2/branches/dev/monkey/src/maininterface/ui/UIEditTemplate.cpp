@@ -4,38 +4,19 @@
 #include <QTreeWidget>
 #include <QImageReader>
 #include <QFileDialog>
+#include <QMessageBox>
 
 void UIEditTemplate::edit( QTreeWidget* t, QTreeWidgetItem* i, const QString& s )
 {
-	// create window
+	// create dialog
 	UIEditTemplate d( t->window(), t, i, s );
 
-	// add code template
-	if ( d.exec() )
-	{
-		QTreeWidgetItem* it = t->findItems( d.leName->text(), Qt::MatchFixedString, 1 ).value( 0 );
-		if ( !it || it == i )
-		{
-			if ( !i )
-				i = new QTreeWidgetItem( t );
-			i->setText( 0, d.cbLanguages->currentText() );
-			i->setIcon( 0, d.tbIcon->icon() );
-			i->setText( 1, d.leName->text() );
-			i->setText( 2, d.leDescription->text() );
-			// remember icon file
-			i->setData( 0, Qt::UserRole, d.tbIcon->toolTip() );
-			// remember template file
-			const QString t = QString( s ).replace( "%HOME%", QDir::homePath() );
-			QString f = d.leFilename->text();
-			if ( f.contains( t ) )
-				f.replace( t, "%TEMPLATE_PATH%" );
-			i->setData( 0, Qt::UserRole +1, f );
-		}
-	}
+	// execute dialog
+	d.exec();
 }
 
 UIEditTemplate::UIEditTemplate( QWidget* w, QTreeWidget* t, QTreeWidgetItem* i, const QString& s )
-	: QDialog( w )
+	: QDialog( w ), mTree( t ), mItem( i ), mString( s )
 {
 	setupUi( this );
 
@@ -43,6 +24,9 @@ UIEditTemplate::UIEditTemplate( QWidget* w, QTreeWidget* t, QTreeWidgetItem* i, 
 	QStringList l = pQScintilla::instance()->languages();
 	l.sort();
 	cbLanguages->addItems( l );
+
+	// get correct full path
+	mString.replace( "%HOME%", QDir::homePath() );
 
 	// fill infos
 	if ( i )
@@ -52,8 +36,11 @@ UIEditTemplate::UIEditTemplate( QWidget* w, QTreeWidget* t, QTreeWidgetItem* i, 
 		leDescription->setText( i->text( 2 ) );
 		tbIcon->setIcon( i->icon( 0 ) );
 		tbIcon->setToolTip( i->data( 0, Qt::UserRole ).toString() );
-		leFilename->setText( i->data( 0, Qt::UserRole +1 ).toString().replace( "%TEMPLATE_PATH%", QString( s ).replace( "%HOME%", QDir::homePath() ) ) );
+		leFilename->setText( i->data( 0, Qt::UserRole +1 ).toString().replace( "%TEMPLATE_PATH%", mString ) );
 	}
+
+	// set focus on name lineedit
+	leName->setFocus();
 }
 
 UIEditTemplate::~UIEditTemplate()
@@ -91,4 +78,38 @@ void UIEditTemplate::on_tbFilename_clicked()
 	// remember it
 	if ( !s.isNull() )
 		leFilename->setText( s );
+}
+
+void UIEditTemplate::accept()
+{
+	// check if item already exists for same name
+	QTreeWidgetItem* it = mTree->findItems( leName->text(), Qt::MatchFixedString, 1 ).value( 0 );
+
+	// if not, create/update it
+	if ( !it || it == mItem )
+	{
+		// create item if needed
+		if ( !mItem )
+			mItem = new QTreeWidgetItem( mTree );
+
+		// fill item
+		mItem->setText( 0, cbLanguages->currentText() );
+		mItem->setIcon( 0, tbIcon->icon() );
+		mItem->setText( 1, leName->text() );
+		mItem->setText( 2, leDescription->text() );
+		// remember icon file
+		mItem->setData( 0, Qt::UserRole, tbIcon->toolTip() );
+		QString f = leFilename->text();
+		if ( f.contains( mString ) )
+			f.replace( mString, "%TEMPLATE_PATH%" );
+		mItem->setData( 0, Qt::UserRole +1, f );
+
+		// set current item new one
+		mTree->setCurrentItem( mItem );
+
+		// accept
+		QDialog::accept();
+	}
+	else
+		QMessageBox::warning( window(), tr( "Warning..." ), tr( "This template name is already used." ) );
 }
