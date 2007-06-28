@@ -192,7 +192,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -2052,16 +2052,17 @@
             </item>
             <item>
              <widget class="QLabel" name="lIndentationWarning" >
-              <property name="statusTip" >
-               <string>setIndentationWarning</string>
-              </property>
               <property name="text" >
                <string>Indentation warning :</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="cbIndentationWarning" />
+             <widget class="QComboBox" name="cbIndentationWarning" >
+              <property name="statusTip" >
+               <string>setIndentationWarning</string>
+              </property>
+             </widget>
             </item>
             <item>
              <spacer>

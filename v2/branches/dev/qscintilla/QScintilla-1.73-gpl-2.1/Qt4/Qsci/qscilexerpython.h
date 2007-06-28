@@ -183,7 +183,7 @@ public:
     //! displayed.
     //!
     //! \sa setIndentationWarning()
-    IndentationWarning indentationWarning() const;
+    QsciLexerPython::IndentationWarning indentationWarning() const;
 
 public slots:
     //! If \a fold is true then indented comment blocks can be folded.  The
@@ -202,7 +202,7 @@ public slots:
     //! displayed.
     //!
     //! \sa indentationWarning()
-    virtual void setIndentationWarning(IndentationWarning warn);
+    virtual void setIndentationWarning(QsciLexerPython::IndentationWarning warn);
 
 protected:
     //! The lexer's properties are read from the settings \a qs.  \a prefix

@@ -103,7 +103,7 @@ UISettings::UISettings( QWidget* p )
 	connect( tbStyleEdgeModeBackgroundColour, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	foreach ( QCheckBox* cb, gbSyntaxHighlightingStyleElement->findChildren<QCheckBox*>() )
 		if ( cb != cbSyntaxHighlightingFillToEndOfLine )
-			connect( cb, SIGNAL( toggled( bool ) ), this, SLOT( cbProperties_toggled( bool ) ) );
+			connect( cb, SIGNAL( clicked( bool ) ), this, SLOT( cbProperties_clicked( bool ) ) );
 
 	// resize to minimum size
 	resize( minimumSizeHint() );
@@ -123,7 +123,7 @@ void UISettings::loadSettings()
 	// user interface
 	sp = QString( "%1/Editor/UserInterface" ).arg( SettingsPath );
 	bgExternalChanges->button( s->value( sp +"/ExternalChanges", Alert ).toInt() )->setChecked( true );
-//finir remove et edit template
+
 	// File Templates
 	sp = QString( "%1/Editor/Templates" ).arg( SettingsPath );
 	leTemplatesPath->setText( s->value( sp +"/DefaultDirectory", "%HOME%/.Monkey Studio/Templates" ).toString() );
@@ -475,6 +475,30 @@ void UISettings::on_pbEditTemplateType_clicked()
 	UIEditTemplate::edit( twTemplatesType, twTemplatesType->selectedItems().value( 0 ), leTemplatesPath->text() );
 }
 
+void UISettings::on_pbRemoveTemplateType_clicked()
+{
+	delete twTemplatesType->selectedItems().value( 0 );
+}
+
+void UISettings::on_pbEditTemplate_clicked()
+{
+	// get item
+	QTreeWidgetItem* it = twTemplatesType->selectedItems().value( 0 );
+
+	// open template file
+	if ( it )
+	{
+		// get correct full path
+		const QString t = leTemplatesPath->text().replace( "%HOME%", QDir::homePath() );
+		const QString f = it->data( 0, Qt::UserRole +1 ).toString().replace( "%TEMPLATE_PATH%", t );
+
+		// open template file
+		//pFileManager::instance()->openFile( f );
+
+		qWarning( "edit tempalte require: %s", qPrintable( f ) );
+	}
+}
+
 void UISettings::cbAPIsLanguages_beforeChanged( int i )
 {
 	if ( i == cbAPIsLanguages->currentIndex() )
@@ -734,7 +758,7 @@ void UISettings::on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool b )
 		pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
 }
 
-void UISettings::cbProperties_toggled( bool b )
+void UISettings::cbProperties_clicked( bool b )
 {
 	// get check box
 	QCheckBox* cb = qobject_cast<QCheckBox*>( sender() );
@@ -745,7 +769,28 @@ void UISettings::cbProperties_toggled( bool b )
 	QsciLexer* l = pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() );
 
 	// set lexer properties
-	pQScintilla::instance()->setProperty( cb->statusTip(), l, b );
+	if ( cb == cbIndentOpeningBrace || cb == cbIndentClosingBrace )
+	{
+		if ( cbIndentOpeningBrace->isChecked() && cbIndentClosingBrace->isChecked() )
+			l->setAutoIndentStyle( QsciScintilla::AiOpening | QsciScintilla::AiClosing );
+		else if ( cbIndentOpeningBrace->isChecked() )
+			l->setAutoIndentStyle( QsciScintilla::AiOpening );
+		else if ( cbIndentClosingBrace->isChecked() )
+			l->setAutoIndentStyle( QsciScintilla::AiClosing );
+		else
+			l->setAutoIndentStyle( QsciScintilla::AiMaintain );
+	}
+	else
+		pQScintilla::instance()->setProperty( cb->statusTip(), l, b );
+}
+
+void UISettings::on_cbIndentationWarning_currentIndexChanged( int i )
+{
+	// get lexer
+	QsciLexer* l = pQScintilla::instance()->lexers().value( cbSyntaxHighlightingLexerLanguage->currentText() );
+
+	// set lexer properties
+	pQScintilla::instance()->setProperty( cbIndentationWarning->statusTip(), l, cbIndentationWarning->itemData( i ) );
 }
 
 void UISettings::on_pbSyntaxHighlightingAllBackgroundColours_clicked()
@@ -801,29 +846,7 @@ void UISettings::on_twAbbreviations_itemSelectionChanged()
 
 void UISettings::on_pbAddAbbreviation_clicked()
 {
-	// get languages
-	QStringList l = pQScintilla::instance()->languages();
-	l.sort();
-
-	// create window
-	UIAddAbbreviation d( this );
-
-	// fill combo with language
-	d.cbLanguages->addItems( l );
-
-	// add code template
-	if ( d.exec() )
-	{
-		QTreeWidgetItem* it = twAbbreviations->findItems( d.leTemplate->text(), Qt::MatchFixedString ).value( 0 );
-		if ( !it || it->data( 0, Qt::UserRole ).toString() != d.cbLanguages->currentText() )
-		{
-			QTreeWidgetItem* it = new QTreeWidgetItem( twAbbreviations );
-			it->setText( 0, d.leTemplate->text() );
-			it->setText( 1, d.leDescription->text() );
-			it->setText( 2, d.cbLanguages->currentText() );
-			it->setData( 0, Qt::UserRole, QString() );
-		}
-	}
+	UIAddAbbreviation::edit( twAbbreviations );
 }
 
 void UISettings::on_pbRemoveAbbreviation_clicked()

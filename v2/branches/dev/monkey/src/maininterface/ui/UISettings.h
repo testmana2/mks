@@ -38,6 +38,8 @@ private slots:
 	void on_tbTemplatesPath_clicked();
 	void on_pbAddTemplateType_clicked();
 	void on_pbEditTemplateType_clicked();
+	void on_pbRemoveTemplateType_clicked();
+	void on_pbEditTemplate_clicked();
 	void cbAPIsLanguages_beforeChanged( int );
 	void on_cbAPIsLanguages_currentIndexChanged( int );
 	void on_pbAPIsDelete_clicked();
@@ -53,7 +55,8 @@ private slots:
 	void on_pbSyntaxHighlightingBackgroundColour_clicked();
 	void on_pbSyntaxHighlightingFont_clicked();
 	void on_cbSyntaxHighlightingFillToEndOfLine_clicked( bool );
-	void cbProperties_toggled( bool );
+	void cbProperties_clicked( bool );
+	void on_cbIndentationWarning_currentIndexChanged( int );
 	void on_pbSyntaxHighlightingAllBackgroundColours_clicked();
 	void on_pbSyntaxHighlightingAllFonts_clicked();
 	void on_pbStyleLineNumbersFont_clicked();
