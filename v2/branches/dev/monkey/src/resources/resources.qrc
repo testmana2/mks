@@ -10,11 +10,15 @@
         <file>icons/application/splashscreen.png</file>
     </qresource>
     <qresource prefix="/edit" >
+        <file>icons/edit/close.png</file>
         <file>icons/edit/copy.png</file>
         <file>icons/edit/cut.png</file>
         <file>icons/edit/goto.png</file>
+        <file>icons/edit/next.png</file>
         <file>icons/edit/paste.png</file>
+        <file>icons/edit/previous.png</file>
         <file>icons/edit/redo.png</file>
+        <file>icons/edit/replace.png</file>
         <file>icons/edit/search.png</file>
         <file>icons/edit/settings.png</file>
         <file>icons/edit/shortcuts.png</file>
@@ -32,6 +36,11 @@
         <file>icons/file/save.png</file>
         <file>icons/file/saveall.png</file>
         <file>icons/file/saveas.png</file>
+    </qresource>
+    <qresource prefix="/help" >
+        <file>icons/help/assistant.png</file>
+        <file>icons/help/keyword.png</file>
+        <file>icons/help/qt.png</file>
     </qresource>
     <qresource prefix="/licenses" >
         <file>texts/license.gpl</file>

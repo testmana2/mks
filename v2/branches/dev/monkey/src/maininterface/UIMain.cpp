@@ -14,6 +14,7 @@
 #include "pActionManager.h"
 #include "pSettings.h"
 #include "pDockToolBar.h"
+#include "pSearch.h"
 
 /*
 #include "Settings.h"
@@ -163,10 +164,10 @@ void UIMain::initMenuBar()
 	mb->endGroup();
 	mb->menu( "mHelp", tr( "&Help" ) );
 	mb->beginGroup( "mHelp" );
-		mb->action( "aManual", tr( "&Manual" ), QIcon( ":/Icons/Icons/helpassistant.png" ), QString::null, tr( "Manual" ) );
+		mb->action( "aManual", tr( "&Manual" ), QIcon( ":/help/icons/help/assistant.png" ), QString::null, tr( "Manual" ) );
 		mb->action( "aSeparator1" );
-		mb->action( "aAbout", tr( "&About..." ), QIcon( ":/Icons/Icons/icon.png" ), QString::null, tr( "About application..." ) );
-		mb->action( "aAboutQt", tr( "About &Qt..." ), QIcon( ":/Icons/Icons/helpqt.png" ), QString::null, tr( "About Qt..." ) );
+		mb->action( "aAbout", tr( "&About..." ), QIcon( ":/application/icons/application/monkey2.png" ), QString::null, tr( "About application..." ) );
+		mb->action( "aAboutQt", tr( "About &Qt..." ), QIcon( ":/help/icons/help/qt.png" ), QString::null, tr( "About Qt..." ) );
 #ifdef __COVERAGESCANNER__
 		mb->action( "aTestReport", tr( "&Test Report" ), QIcon( ) , tr( "Pause" ), tr( "Coverage Meter Test Report..." ) );
 #endif
@@ -277,8 +278,14 @@ void UIMain::initConnections()
 
 void UIMain::initGui()
 {
+	// window icon
+	setWindowIcon( menuBar()->action( "mHelp/aAbout" )->icon() );
+
 	// set icon size for toolbar
 	setIconSize( QSize( 16, 16 ) );
+
+	// add qscintilla search dock
+	dockToolBar( Qt::BottomToolBarArea )->addDock( pSearch::instance(), tr( "Search - Replace" ), QIcon( ":/edit/icons/edit/search.png" ) );
 
 	// set central widget
 	setCentralWidget( workspace() );

@@ -43,7 +43,7 @@ linux-g++:LIBS	*= -rdynamic
 win32-msvc:LIBS	*= /IMPLIB:$${BUILD_PATH}/monkey.lib
 win32-g++:LIBS	*= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
 
-INCLUDEPATH	*= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager
+INCLUDEPATH	*= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager src/qscintillamanager/ui
 
 # include fresh framework
 include( ../fresh/fresh.pro )
@@ -52,7 +52,8 @@ FORMS	+= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UIAbout.ui \
 	src/maininterface/ui/UIEditTemplate.ui \
 	src/maininterface/ui/UIAddAbbreviation.ui \
-	src/maininterface/ui/UISettings.ui
+	src/maininterface/ui/UISettings.ui \
+	src/qscintillamanager/ui/pSearch.ui
 
 HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/maininterface/ui/UIAbout.h \
@@ -62,6 +63,7 @@ HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/maininterface/ui/UISettings.h \
 	src/recentsmanager/pRecentsManager.h \
 	src/workspace/pAbstractChild.h \
+	src/qscintillamanager/ui/pSearch.h \
 	src/workspace/pChild.h \
 	src/workspace/UISaveFiles.h \
 	src/workspace/pFileManager.h \
@@ -75,6 +77,7 @@ SOURCES	+= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAddAbbreviation.cpp \
 	src/maininterface/ui/UISettings.cpp \
 	src/recentsmanager/pRecentsManager.cpp \
+	src/qscintillamanager/ui/pSearch.cpp \
 	src/workspace/pChild.cpp \
 	src/workspace/UISaveFiles.cpp \
 	src/workspace/pFileManager.cpp \
