@@ -1,10 +1,9 @@
-#include "MonkeyEditor.h"
-#include "Settings.h"
-#include "qscintillaSearch.h"
-//
+#include "pEditor.h"
+#include "pSearch.h"
+
 #include "qscilexer.h"
 #include "qsciprinter.h"
-//
+
 #include <QApplication>
 #include <QClipboard>
 #include <QMenu>
@@ -17,11 +16,10 @@
 #include <QTextStream>
 #include <QKeyEvent>
 #include <QDateTime>
-//
-MonkeyEditor::MonkeyEditor( QWidget* p )
-	: QsciScintilla( p ), mCopyAvailable( false ), mCodec( 0 ), mTimer( new QTimer( this ) )
+
+pEditor::pEditor( QWidget* p )
+	: QsciScintilla( p ), mCopyAvailable( false ), mCodec( 0 )
 {
-	connect( mTimer, SIGNAL( timeout() ), this, SLOT( saveFile() ) );
 	readSettings();
 /*
 	// register bookmarks icons
@@ -59,31 +57,36 @@ MonkeyEditor::MonkeyEditor( QWidget* p )
 */
 }
 //
-MonkeyEditor::~MonkeyEditor()
+pEditor::~pEditor()
 {
+	/*
 	foreach ( pBookmark* b, mBookmarks )
 	{
 		delete b->Pixmap;
 		delete b;
 	}
 	mBookmarks.clear();
-	//
+
 	qDeleteAll( mActions );
+	*/
 }
 //
-MonkeyEditor* MonkeyEditor::createEditorForFilename( const QString& s, const QPoint& p, QTextCodec* c, QWidget* w )
+pEditor* pEditor::createEditorForFilename( const QString& s, const QPoint& p, QTextCodec* c, QWidget* w )
 {
-	MonkeyEditor* e = 0;
+	/*
+	pEditor* e = 0;
 	if ( QFile::exists( s ) )
 	{
-		e = new MonkeyEditor( w );
+		e = new pEditor( w );
 		e->openFile( s, p, c );
 	}
 	return e;
+	*/
 }
 //
-void MonkeyEditor::readSettings()
+void pEditor::readSettings()
 {
+	/*
 	Settings* s = Settings::current();
 	QString sp = "Settings/Editor/AutoCompletion";
 	// auto completion
@@ -152,23 +155,29 @@ void MonkeyEditor::readSettings()
 	setEdgeMode( (QsciScintilla::EdgeMode)s->value( sp +"/EdgeMode", QsciScintilla::EdgeNone ).toInt() );
 	setEdgeColor( s->value( sp +"/EdgeModeBackground", Qt::gray ).value<QColor>() );
 	setEdgeColumn( s->value( sp +"/EdgeModeColumnNumber", 80 ).toInt() );
+	*/
 }
 //
-void MonkeyEditor::focusInEvent( QFocusEvent* e )
+void pEditor::focusInEvent( QFocusEvent* e )
 {
+	/*
 	QsciScintilla::focusInEvent( e );
 	qscintillaSearch::self()->setEditor( this );
 	emit focused( true );
+	*/
 }
 //
-void MonkeyEditor::focusOutEvent( QFocusEvent* e )
+void pEditor::focusOutEvent( QFocusEvent* e )
 {
+	/*
 	QsciScintilla::focusOutEvent( e );
 	emit focused( false );
+	*/
 }
 //
-void MonkeyEditor::contextMenuEvent( QContextMenuEvent* e )
+void pEditor::contextMenuEvent( QContextMenuEvent* e )
 {
+	/*
 	QMenu m( this );
 	foreach ( pAction* a, mActions )
 	{
@@ -178,10 +187,12 @@ void MonkeyEditor::contextMenuEvent( QContextMenuEvent* e )
 			m.addAction( QIcon( a->Pixmap ), a->Caption, a->Receiver, a->Slot, a->Shortcut )->setEnabled( getState( a->State ) );
 	}
 	m.exec( e->globalPos() );
+	*/
 }
 //
-void MonkeyEditor::keyPressEvent( QKeyEvent* e )
+void pEditor::keyPressEvent( QKeyEvent* e )
 {
+	/*
 	// if auto repeat, process and quit
 	if ( e->isAutoRepeat() )
 	{
@@ -287,7 +298,7 @@ void MonkeyEditor::keyPressEvent( QKeyEvent* e )
 	}
 	else
 		QsciScintilla::keyPressEvent( e );
-	/*
+	/
 	void CppMonkeyEditor::keyPressEvent( QKeyEvent* e )
 {
 	if ( !e->isAutoRepeat() && !isListActive() && e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_Space )
@@ -305,18 +316,20 @@ void MonkeyEditor::keyPressEvent( QKeyEvent* e )
 			break;
 		case AcsNone:
 		default:
-			MonkeyEditor::keyPressEvent( e );
+			pEditor::keyPressEvent( e );
 			break;
 		}
 	}
 	else
-		MonkeyEditor::keyPressEvent( e );
+		pEditor::keyPressEvent( e );
 }
+	/
 	*/
 }
 //
-void MonkeyEditor::checkBookmarks( Bookmarks b, int l )
+void pEditor::checkBookmarks( Bookmarks b, int l )
 {
+	/*
 	if ( markerLine( mBookmarks[b]->Handle ) == l )
 	{
 		markerDeleteAll( mBookmarks[b]->Index );
@@ -327,19 +340,20 @@ void MonkeyEditor::checkBookmarks( Bookmarks b, int l )
 		markerDeleteAll( mBookmarks[b]->Index );
 		mBookmarks[b]->Handle = markerAdd( l, b );
 	}
+	*/
 }
 //
-bool MonkeyEditor::pasteAvailable() const
+bool pEditor::pasteAvailable() const
 {
 	return QApplication::clipboard()->text( QClipboard::Clipboard ).length();
 }
 //
-bool MonkeyEditor::copyAvailable() const
+bool pEditor::copyAvailable() const
 {
 	return mCopyAvailable;
 }
-//
-bool MonkeyEditor::getState( pAction::StateType s )
+/*
+bool pEditor::getState( pAction::StateType s )
 {
 	switch ( s )
 	{
@@ -371,8 +385,8 @@ bool MonkeyEditor::getState( pAction::StateType s )
 		break;
 	}
 }
-//
-void MonkeyEditor::print( bool b )
+*/
+void pEditor::print( bool b )
 {
 	QsciPrinter p;
 	p.setWrapMode( WrapWord );
@@ -391,33 +405,33 @@ void MonkeyEditor::print( bool b )
 	}
 }
 //
-void MonkeyEditor::quickPrint()
+void pEditor::quickPrint()
 {
 	print( true );
 }
 //
-void MonkeyEditor::cursorPositionChanged( int l, int p )
+void pEditor::cursorPositionChanged( int l, int p )
 {
 	emit cursorPositionChanged( QPoint( p, l ) );
 }
 //
-void MonkeyEditor::textChanged()
+void pEditor::textChanged()
 {
 	emit undoAvailable( isUndoAvailable() );
 	emit redoAvailable( isRedoAvailable() );
 }
 //
-void MonkeyEditor::clipboard_dataChanged()
+void pEditor::clipboard_dataChanged()
 {
 	emit ( pasteAvailable() );
 }
 //
-void MonkeyEditor::setCopyAvailable( bool b )
+void pEditor::setCopyAvailable( bool b )
 {
 	mCopyAvailable = b;
 }
 //
-void MonkeyEditor::marginClicked( int m, int l,  Qt::KeyboardModifiers k )
+void pEditor::marginClicked( int m, int l,  Qt::KeyboardModifiers k )
 {
 	Q_UNUSED( m );
 	Q_UNUSED( k );
@@ -425,32 +439,37 @@ void MonkeyEditor::marginClicked( int m, int l,  Qt::KeyboardModifiers k )
 	//emit toggleBreakPoint( l, false );
 }
 //
-void MonkeyEditor::selectNone()
+void pEditor::selectNone()
 {
 	selectAll( false );
 }
 //
-void MonkeyEditor::searchReplace()
+void pEditor::searchReplace()
 {
+	/*
 	qscintillaSearch::self()->setEditor( this );
 	qscintillaSearch::self()->leSearch->setFocus();
 	qscintillaSearch::self()->leSearch->selectAll();
 	if ( !qscintillaSearch::self()->isVisible() )
 		qscintillaSearch::self()->setVisible( true );
+	*/
 }
 //
-void MonkeyEditor::goToLine()
+void pEditor::goToLine()
 {
+	/*
 	bool b;
 	int l, i;
 	getCursorPosition( &l, &i );
 	int j = QInputDialog::getInteger( this, tr( "Go To Line..." ), tr( "Enter the line you want to go:" ), l +1, 1, lines(), 1, &b );
 	if ( b )
 		setCursorPosition( j -1, 0 );
+	*/
 }
 //
-bool MonkeyEditor::openFile( const QString& s, const QPoint& p, QTextCodec* c )
+bool pEditor::openFile( const QString& s, const QPoint& p, QTextCodec* c )
 {
+	/*
 	if ( isModified() )
 		return false;
 	//
@@ -458,7 +477,7 @@ bool MonkeyEditor::openFile( const QString& s, const QPoint& p, QTextCodec* c )
 	QFile f( fp );
 	if ( !f.open( QFile::ReadOnly | QFile::Text ) )
 	{
-		QMessageBox::warning( this, tr( "MonkeyEditor" ),
+		QMessageBox::warning( this, tr( "pEditor" ),
 			tr( "Cannot read file %1:\n%2." ).arg( fp ).arg( f.errorString() ) );
 		return false;
 	}
@@ -498,10 +517,12 @@ bool MonkeyEditor::openFile( const QString& s, const QPoint& p, QTextCodec* c )
 	unsetCursor();
 	emit fileOpened( true );
 	return true;
+	*/
 }
 //
-void MonkeyEditor::saveFile()
+void pEditor::saveFile()
 {
+	/*
 	// if no filename abort
 	if ( mFilePath.isEmpty() || ! isModified() )
 		return;
@@ -509,7 +530,7 @@ void MonkeyEditor::saveFile()
 	QFile f( mFilePath );
 	if ( !f.open( QFile::WriteOnly | QFile::Text ) )
 	{
-		QMessageBox::warning( this, tr( "MonkeyEditor" ),
+		QMessageBox::warning( this, tr( "pEditor" ),
 			tr( "Cannot write file %1:\n%2." ).arg( mFilePath ).arg( f.errorString() ) );
 		return;
 	}
@@ -521,10 +542,12 @@ void MonkeyEditor::saveFile()
 	ts << text();
 	unsetCursor();
 	setModified( false );
+	*/
 }
 //
-void MonkeyEditor::closeFile()
+void pEditor::closeFile()
 {
+	/*
 	setCursor( Qt::WaitCursor );
 	mFilePath.clear();
 	mCodec = 0;
@@ -533,20 +556,13 @@ void MonkeyEditor::closeFile()
 	setModified( false );
 	setAutoSaveInterval( 0 );
 	emit fileOpened( false );
+	*/
 }
+
 //
-void MonkeyEditor::setAutoSaveInterval( int i )
+void pEditor::convertTabs( int i )
 {
-	mTimer->stop();
-	if ( i > 0 )
-	{
-		mTimer->setInterval( 1000 *i *60 );
-		mTimer->start();
-	}
-}
-//
-void MonkeyEditor::convertTabs( int i )
-{
+	/*
 	int x, y;
 	getCursorPosition( &y, &x );
 	if ( i == -1 )
@@ -560,4 +576,5 @@ void MonkeyEditor::convertTabs( int i )
 			replace( r );
 	}
 	setCursorPosition( y, x );
+	*/
 }
