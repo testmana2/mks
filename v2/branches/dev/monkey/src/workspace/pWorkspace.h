@@ -14,7 +14,6 @@
 #include "pTabbedWorkspace.h"
 
 class pAbstractChild;
-class pAbstractProjectProxy;
 
 class Q_MONKEY_EXPORT pWorkspace : public pTabbedWorkspace, public QSingleton<pWorkspace>
 {
@@ -26,12 +25,6 @@ public:
 	pAbstractChild* child( int ) const;
 	QList<pAbstractChild*> children() const;
 
-	/*
-	void openProject( const QString& );
-	int addChild( AbstractChild*, const QString& );
-	void childCloseEvent( AbstractChild*, QCloseEvent* );
-	*/
-
 private:
 	pWorkspace( QWidget* = 0 );
 
@@ -40,9 +33,6 @@ private slots:
 	void internal_aboutToCloseTab( int, QCloseEvent* );
 
 public slots:
-	//
-	void openFile( const QString&, pAbstractProjectProxy* = 0, const QPoint& = QPoint() );
-
 	// file menu
 	void fileOpen_triggered();
 	void fileSaveCurrent_triggered();
@@ -55,6 +45,7 @@ public slots:
 	void fileExit_triggered();
 
 	// edit menu
+	void editSettings_triggered();
 	void editUndo_triggered();
 	void editRedo_triggered();
 	void editCut_triggered();
@@ -64,6 +55,7 @@ public slots:
 	void editGoTo_triggered();
 
 	// view menu
+	void agStyles_triggered( QAction* );
 
 	// project menu
 	void projectNew_triggered();
@@ -73,6 +65,13 @@ public slots:
 	void projectCloseCurrent_triggered();
 	void projectCloseAll_triggered();
 	void projectSettings_triggered();
+
+	// help menu
+	void helpAboutApplication_triggered();
+	void helpAboutQt_triggered();
+#ifdef __COVERAGESCANNER__
+	void helpTestReport_triggered();
+#endif
 
 };
 

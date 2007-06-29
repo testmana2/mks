@@ -14,6 +14,7 @@
 #include "pMainWindow.h"
 
 class QActionGroup;
+class pFileManager;
 class pWorkspace;
 
 class Q_MONKEY_EXPORT UIMain : public pMainWindow, public QSingleton<UIMain>
@@ -22,6 +23,7 @@ class Q_MONKEY_EXPORT UIMain : public pMainWindow, public QSingleton<UIMain>
 	friend class QSingleton<UIMain>;
 
 public:
+	pFileManager* fileManager();
 	pWorkspace* workspace();
 
 protected:
@@ -35,15 +37,6 @@ private:
 	void initGui();
 
 	QActionGroup* agStyles;
-
-public slots:
-	void editSettings_triggered();
-	void agStyles_triggered( QAction* );
-	void aboutApplication_triggered();
-	void aboutQt_triggered();
-#ifdef __COVERAGESCANNER__
-	void testReport_triggered();
-#endif
 
 };
 
