@@ -1,12 +1,12 @@
 <ui version="4.0" >
- <class>qscintillaSearch</class>
- <widget class="QDockWidget" name="qscintillaSearch" >
+ <class>pSearch</class>
+ <widget class="QDockWidget" name="pSearch" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>636</width>
-    <height>79</height>
+    <height>93</height>
    </rect>
   </property>
   <property name="allowedAreas" >
@@ -15,54 +15,18 @@
   <widget class="QWidget" name="wCentral" >
    <layout class="QGridLayout" >
     <property name="margin" >
-     <number>3</number>
+     <number>5</number>
     </property>
     <property name="spacing" >
-     <number>3</number>
+     <number>6</number>
     </property>
-    <item row="1" column="4" >
-     <widget class="QCheckBox" name="cbWrap" >
+    <item row="1" column="6" >
+     <widget class="QToolButton" name="tbClose" >
       <property name="toolTip" >
-       <string>If it's checked then the search wraps around the end of the text.</string>
-      </property>
-      <property name="text" >
-       <string>Wrap</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3" >
-     <widget class="QCheckBox" name="cbCaseSensitive" >
-      <property name="toolTip" >
-       <string>If it's checked then the search is case sensitive.</string>
-      </property>
-      <property name="text" >
-       <string>Case Sensitive</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3" >
-     <widget class="QCheckBox" name="cbRegExp" >
-      <property name="toolTip" >
-       <string>If it's checked then expr is interpreted as a regular expression rather than a simple string.</string>
-      </property>
-      <property name="text" >
-       <string>RegExp</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2" >
-     <widget class="QToolButton" name="tbNext" >
-      <property name="toolTip" >
-       <string>Search next.</string>
-      </property>
-      <property name="text" >
-       <string>Next</string>
+       <string>Close</string>
       </property>
       <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/helpnext.png</iconset>
-      </property>
-      <property name="toolButtonStyle" >
-       <enum>Qt::ToolButtonTextBesideIcon</enum>
+       <iconset resource="../../resources/resources.qrc" >:/edit/icons/edit/close.png</iconset>
       </property>
       <property name="autoRaise" >
        <bool>true</bool>
@@ -85,43 +49,13 @@
       </property>
      </spacer>
     </item>
-    <item row="1" column="6" >
-     <widget class="QToolButton" name="tbClose" >
+    <item row="1" column="1" >
+     <widget class="QToolButton" name="tbReplaceAll" >
       <property name="toolTip" >
-       <string>Close</string>
+       <string>Replace All</string>
       </property>
       <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/buttoncancel.png</iconset>
-      </property>
-      <property name="autoRaise" >
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" >
-     <widget class="QLineEdit" name="leReplace" >
-      <property name="toolTip" >
-       <string>Replace the current selection with this string</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0" >
-     <widget class="QLineEdit" name="leSearch" >
-      <property name="toolTip" >
-       <string>Enter the string or regular expression to find.</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="QToolButton" name="tbPrevious" >
-      <property name="toolTip" >
-       <string>Search previous.</string>
-      </property>
-      <property name="text" >
-       <string>Previous</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/helpprev.png</iconset>
+       <iconset resource="../../resources/resources.qrc" >:/edit/icons/edit/replace.png</iconset>
       </property>
       <property name="toolButtonStyle" >
        <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -131,16 +65,45 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="1" >
+    <item row="1" column="0" >
      <widget class="QToolButton" name="tbReplace" >
       <property name="toolTip" >
-       <string>Replace next.</string>
-      </property>
-      <property name="text" >
        <string>Replace</string>
       </property>
       <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/editreplace.png</iconset>
+       <iconset resource="../../resources/resources.qrc" >:/edit/icons/edit/search.png</iconset>
+      </property>
+      <property name="toolButtonStyle" >
+       <enum>Qt::ToolButtonTextBesideIcon</enum>
+      </property>
+      <property name="autoRaise" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QToolButton" name="tbNext" >
+      <property name="toolTip" >
+       <string>Search Next</string>
+      </property>
+      <property name="icon" >
+       <iconset resource="../../resources/resources.qrc" >:/edit/icons/edit/next.png</iconset>
+      </property>
+      <property name="toolButtonStyle" >
+       <enum>Qt::ToolButtonTextBesideIcon</enum>
+      </property>
+      <property name="autoRaise" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" >
+     <widget class="QToolButton" name="tbPrevious" >
+      <property name="toolTip" >
+       <string>Search Previous</string>
+      </property>
+      <property name="icon" >
+       <iconset resource="../../resources/resources.qrc" >:/edit/icons/edit/previous.png</iconset>
       </property>
       <property name="toolButtonStyle" >
        <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -151,25 +114,47 @@
      </widget>
     </item>
     <item row="1" column="2" >
-     <widget class="QToolButton" name="tbReplaceAll" >
+     <widget class="QLineEdit" name="leReplace" >
       <property name="toolTip" >
-       <string>Replace all.</string>
+       <string>Replace the current selection with this string</string>
       </property>
-      <property name="text" >
-       <string>Replace All</string>
-      </property>
-      <property name="icon" >
-       <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/filefind.png</iconset>
-      </property>
-      <property name="toolButtonStyle" >
-       <enum>Qt::ToolButtonTextBesideIcon</enum>
-      </property>
-      <property name="autoRaise" >
-       <bool>true</bool>
+     </widget>
+    </item>
+    <item row="0" column="2" >
+     <widget class="QLineEdit" name="leSearch" >
+      <property name="toolTip" >
+       <string>Enter the string or regular expression to find.</string>
       </property>
      </widget>
     </item>
     <item row="0" column="4" >
+     <widget class="QCheckBox" name="cbCaseSensitive" >
+      <property name="toolTip" >
+       <string>If it's checked then the search is case sensitive.</string>
+      </property>
+      <property name="text" >
+       <string>Case Sensitive</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3" >
+     <widget class="QCheckBox" name="cbFromStart" >
+      <property name="text" >
+       <string>From Start</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="3" >
+     <widget class="QCheckBox" name="cbWrap" >
+      <property name="toolTip" >
+       <string>If it's checked then the search wraps around the end of the text.</string>
+      </property>
+      <property name="text" >
+       <string>Wrap</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4" >
      <widget class="QCheckBox" name="cbWholeWords" >
       <property name="toolTip" >
        <string>If it's checked then the search looks for whole word matches only, otherwise it searches for any matching text.</string>
@@ -180,9 +165,12 @@
      </widget>
     </item>
     <item row="0" column="5" colspan="2" >
-     <widget class="QCheckBox" name="cbFromStart" >
+     <widget class="QCheckBox" name="cbRegExp" >
+      <property name="toolTip" >
+       <string>If it's checked then expr is interpreted as a regular expression rather than a simple string.</string>
+      </property>
       <property name="text" >
-       <string>From Start</string>
+       <string>RegExp</string>
       </property>
      </widget>
     </item>
@@ -196,7 +184,7 @@
   <connection>
    <sender>tbClose</sender>
    <signal>clicked()</signal>
-   <receiver>qscintillaSearch</receiver>
+   <receiver>pSearch</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >

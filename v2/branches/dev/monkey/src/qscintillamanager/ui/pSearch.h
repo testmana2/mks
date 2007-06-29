@@ -1,33 +1,35 @@
-#ifndef QSCINTILLASEARCH_H
-#define QSCINTILLASEARCH_H
-//
-#include "ui_qscintillaSearch.h"
+#ifndef PSEARCH_H
+#define PSEARCH_H
+
 #include "MonkeyExport.h"
-//
+#include "ui_pSearch.h"
+#include "QSingleton.h"
+
 #include <QPointer>
-//
+
 class QsciScintilla;
-//
-class Q_MONKEY_EXPORT qscintillaSearch : public QDockWidget, public Ui::qscintillaSearch
+
+class Q_MONKEY_EXPORT pSearch : public QDockWidget, public Ui::pSearch, public QSingleton<pSearch>
 {
 	Q_OBJECT
-	//
+	friend class QSingleton<pSearch>;
+
 public:
-	static qscintillaSearch* self( QsciScintilla* = 0 );
 	QsciScintilla* editor() const;
 	void setEditor( QsciScintilla* );
-	//
+
 public slots:
 	bool on_tbPrevious_clicked();
 	bool on_tbNext_clicked();
 	bool on_tbReplace_clicked();
 	void on_tbReplaceAll_clicked();
-private:
-	qscintillaSearch( QsciScintilla* = 0 );
+
+protected:
+	pSearch( QsciScintilla* = 0 );
 	bool checkEditor();
-	static QPointer<qscintillaSearch> mSelf;
+
 	QPointer<QsciScintilla> mEditor;
-	//
+
 };
-//
-#endif // QSCINTILLASEARCH_H
+
+#endif // PSEARCH_H

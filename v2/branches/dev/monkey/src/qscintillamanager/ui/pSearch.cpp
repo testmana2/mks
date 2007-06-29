@@ -1,104 +1,131 @@
-#include "qscintillaSearch.h"
-#include "main.h"
-//
+#include "pSearch.h"
+
 #include <qsciscintilla.h>
 #include <QMessageBox>
-//
-QPointer<qscintillaSearch> qscintillaSearch::mSelf = 0L;
-//
-qscintillaSearch* qscintillaSearch::self( QsciScintilla* p )
-{
-	if ( !mSelf )
-		mSelf = new qscintillaSearch( p );
-	return mSelf;
-}
-//
-qscintillaSearch::qscintillaSearch( QsciScintilla* p )
+
+pSearch::pSearch( QsciScintilla* p )
 	: QDockWidget( p )
 {
+	// setup dock
 	setupUi( this );
-	setMaximumHeight( 80 );
+
+	// set maximum height
+	setMaximumHeight( minimumSizeHint().height() );
+
+	// set current editor manage for search
 	setEditor( p );
 }
-//
-bool qscintillaSearch::checkEditor()
+
+bool pSearch::checkEditor()
 {
+	// enable/disable dock accoding to editor
 	QList<QWidget*> l = wCentral->findChildren<QWidget*>();
 	foreach ( QWidget* w, l )
 		if ( w != tbClose )
 			w->setEnabled( mEditor );
 	return mEditor;
 }
-//
-QsciScintilla* qscintillaSearch::editor() const
+
+QsciScintilla* pSearch::editor() const
 {
 	return mEditor;
 }
-//
-void qscintillaSearch::setEditor( QsciScintilla* e )
+
+void pSearch::setEditor( QsciScintilla* e )
 {
 	mEditor = e;
 	checkEditor();
 };
-//
-bool qscintillaSearch::on_tbPrevious_clicked()
+
+bool pSearch::on_tbPrevious_clicked()
 {
+	// cancel if no editor
 	if ( !checkEditor() )
 		return false;
-	//
+
+	// get cursor position
 	int x, y;
 	mEditor->getCursorPosition( &y, &x );
+
+	// reset position if search from start
 	if ( cbFromStart->isChecked() )
 	{
 		x = 0;
 		y = 0;
 	}
+
+	// search
 	bool b = mEditor->findFirst( leSearch->text(), cbRegExp->isChecked(), cbCaseSensitive->isChecked(), cbWholeWords->isChecked(), cbWrap->isChecked(), false, y, x -mEditor->selectedText().length() );
+
+	// uncheck from start if needed
 	if ( cbFromStart->isChecked() )
 		cbFromStart->setChecked( false );
+
+	// change background acording to found or not
 	QPalette p = leSearch->palette();
 	p.setColor( leSearch->backgroundRole(), b ? Qt::white : Qt::red );
 	leSearch->setPalette( p );
+
+	// return found state
 	return b;
 }
-//
-bool qscintillaSearch::on_tbNext_clicked()
+
+bool pSearch::on_tbNext_clicked()
 {
+	// cancel if no editor
 	if ( !checkEditor() )
 		return false;
-	//
+
+	// get cursor position
 	int x, y;
 	mEditor->getCursorPosition( &y, &x );
+
+	// reset position if search from start
 	if ( cbFromStart->isChecked() )
 	{
 		x = 0;
 		y = 0;
 	}
+
+	// search
 	bool b = mEditor->findFirst( leSearch->text(), cbRegExp->isChecked(), cbCaseSensitive->isChecked(), cbWholeWords->isChecked(), cbWrap->isChecked(), true, y, x );
+
+	// uncheck from start if needed
 	if ( cbFromStart->isChecked() )
 		cbFromStart->setChecked( false );
+
+	// change background acording to found or not
 	QPalette p = leSearch->palette();
 	p.setColor( leSearch->backgroundRole(), b ? Qt::white : Qt::red );
 	leSearch->setPalette( p );
+
+	// return found state
 	return b;
 }
 //
-bool qscintillaSearch::on_tbReplace_clicked()
+bool pSearch::on_tbReplace_clicked()
 {
+	// cancel if no editor
 	if ( !checkEditor() )
 		return false;
-	//
+
+	// cancel if no replace text
 	if ( leReplace->text().isEmpty() )
 		return false;
+
+	// if no selection and not found cancel
 	if ( mEditor->selectedText().isEmpty()	&& !on_tbNext_clicked() )
 		return false;
+
 	//
 	QString mSelection = mEditor->selectedText();
 	QString mSearch = leSearch->text();
 	bool b = false;
-	//
+
+	// if not regexp replace
 	if ( !cbRegExp->isChecked() )
 	{
+		// replace and go next
 		if ( cbCaseSensitive->isChecked() && mSelection == mSearch )
 		{
 			mEditor->replace( leReplace->text() );
@@ -112,8 +139,10 @@ bool qscintillaSearch::on_tbReplace_clicked()
 			on_tbNext_clicked();
 		}
 	}
+	// regexp replace
 	else
 	{
+		// repalce and go next
 		if ( QRegExp( mSearch, cbCaseSensitive->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive ).exactMatch( mSelection ) )
 		{
 			mEditor->replace( leReplace->text() );
@@ -121,17 +150,23 @@ bool qscintillaSearch::on_tbReplace_clicked()
 			on_tbNext_clicked();
 		}
 	}
+
+	// return replace state
 	return b;
 }
 //
-void qscintillaSearch::on_tbReplaceAll_clicked()
+void pSearch::on_tbReplaceAll_clicked()
 {
+	// cancel if no editor
 	if ( !checkEditor() )
 		return;
-	//
+
+	// while o, repalce
 	int i = 0;
 	while ( on_tbReplace_clicked() )
 		i++;
-	if ( i != 0 )
-		QMessageBox::information( this, INFORMATION, tr( "%1 occurences replaced" ).arg( i ) );
+
+	// show occurence number replaced
+	if ( i )
+		QMessageBox::information( this, tr( "Information..." ), tr( "%1 occurences replaced" ).arg( i ) );
 }
