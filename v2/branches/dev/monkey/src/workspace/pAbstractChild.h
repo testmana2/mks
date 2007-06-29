@@ -171,29 +171,29 @@ signals:
 	// emit when the child document mode has changed
 	void documentModeChanged( pAbstractChild::DocumentMode );
 	// emit when cursor position changed
-	void cursorPositionChanged( const QPoint& );
+	void cursorPositionChanged( const QPoint& ); // ok
 	// emit when current file changed
 	void currentFileChanged( const QString& );
 	// emit when a file is modified
-	void modifiedChanged( bool );
+	void modifiedChanged( bool ); // ok
 	// emit when undo has changed
-	void undoAvailableChanged( bool );
+	void undoAvailableChanged( bool ); // ok
 	// emit when undo has changed
-	void redoAvailableChanged( bool );
+	void redoAvailableChanged( bool ); // ok
 	// emit when a file paste available change
-	void pasteAvailableChanged( bool );
+	void pasteAvailableChanged( bool ); // ok
 	// emit when a file copy available change
-	void copyAvailableChanged( bool );
+	void copyAvailableChanged( bool ); // ok
 	// emit when search/replace is available
-	void searchReplaceAvailableChanged( bool );
+	//void searchReplaceAvailableChanged( bool );
 	// emit when goto is available
-	void goToAvailableChanged( bool );
+	//void goToAvailableChanged( bool );
 	// emit when requesting search in editor
-	void requestSearchReplace();
+	//void requestSearchReplace();
 	// emit when request go to line
-	void requestGoTo();
+	//void requestGoTo();
 	// emit when a child require to update workspace
-	void updateWorkspaceRequested();
+	//void updateWorkspaceRequested();
 
 };
 

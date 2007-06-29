@@ -64,6 +64,7 @@ HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/recentsmanager/pRecentsManager.h \
 	src/workspace/pAbstractChild.h \
 	src/qscintillamanager/ui/pSearch.h \
+	src/qscintillamanager/pEditor.h \
 	src/workspace/pChild.h \
 	src/workspace/UISaveFiles.h \
 	src/workspace/pFileManager.h \
@@ -78,6 +79,7 @@ SOURCES	+= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UISettings.cpp \
 	src/recentsmanager/pRecentsManager.cpp \
 	src/qscintillamanager/ui/pSearch.cpp \
+	src/qscintillamanager/pEditor.cpp \
 	src/workspace/pChild.cpp \
 	src/workspace/UISaveFiles.cpp \
 	src/workspace/pFileManager.cpp \

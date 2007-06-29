@@ -7,18 +7,20 @@
  * COMMENTARY   : 
  ********************************************************************************************************/
 #include "pChild.h"
+#include "pEditor.h"
 
 #include <QVBoxLayout>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QTextCodec>
 #include <QApplication>
 
 pChild::pChild()
 	: pAbstractChild()
 {
 	// create textedit
-	mEdit = new QTextEdit;
+	mEditor = new pEditor;
 
 	// create layout
 	QVBoxLayout* vl = new QVBoxLayout( this );
@@ -26,14 +28,15 @@ pChild::pChild()
 	vl->setSpacing( 0 );
 
 	// add textedit
-	vl->addWidget( mEdit );
+	vl->addWidget( mEditor );
 
 	// connections
-	connect( mEdit, SIGNAL( cursorPositionChanged() ), this, SLOT( cursorPositionChanged() ) );
-	connect( mEdit->document(), SIGNAL( modificationChanged( bool ) ), this, SIGNAL( modifiedChanged( bool ) ) );
-	connect( mEdit, SIGNAL( undoAvailable( bool ) ), this, SIGNAL( undoAvailableChanged( bool ) ) );
-	connect( mEdit, SIGNAL( redoAvailable( bool ) ), this, SIGNAL( redoAvailableChanged( bool ) ) );
-	connect( mEdit, SIGNAL( copyAvailable( bool ) ), this, SIGNAL( copyAvailableChanged( bool ) ) );
+	connect( mEditor, SIGNAL( cursorPositionChanged( const QPoint& ) ), this, SIGNAL( cursorPositionChanged( const QPoint& ) ) );
+	connect( mEditor, SIGNAL( undoAvailable( bool ) ), this, SIGNAL( undoAvailableChanged( bool ) ) );
+	connect( mEditor, SIGNAL( redoAvailable( bool ) ), this, SIGNAL( redoAvailableChanged( bool ) ) );
+	connect( mEditor, SIGNAL( copyAvailable( bool ) ), this, SIGNAL( copyAvailableChanged( bool ) ) );
+	connect( mEditor, SIGNAL( pasteAvailable( bool ) ), this, SIGNAL( pasteAvailableChanged( bool ) ) );
+	connect( mEditor, SIGNAL( modificationChanged( bool ) ), this, SIGNAL( modifiedChanged( bool ) ) );
 }
 
 pChild::~pChild()
@@ -66,42 +69,42 @@ QString pChild::currentFileName() const
 
 bool pChild::isModified() const
 {
-	return mEdit->document()->isModified();
+	return mEditor->isModified();
 }
 
 bool pChild::isUndoAvailable() const
 {
-	return mEdit->document()->isUndoAvailable();
+	return mEditor->isUndoAvailable();
 }
 
 void pChild::undo()
 {
-	mEdit->undo();
+	mEditor->undo();
 }
 
 bool pChild::isRedoAvailable() const
 {
-	return mEdit->document()->isRedoAvailable();
+	return mEditor->isRedoAvailable();
 }
 
 void pChild::redo()
 {
-	mEdit->redo();
+	mEditor->redo();
 }
 
 void pChild::cut()
 {
-	mEdit->cut();
+	mEditor->cut();
 }
 
 void pChild::copy()
 {
-	mEdit->copy();
+	mEditor->copy();
 }
 
 void pChild::paste()
 {
-	mEdit->paste();
+	mEditor->paste();
 }
 
 void pChild::searchReplace()
@@ -115,12 +118,12 @@ void pChild::goTo( const QString&, const QPoint&, bool )
 
 bool pChild::isCopyAvailable() const
 {
-	return mEdit->textCursor().selectedText().length();
+	return mEditor->selectedText().length();
 }
 
 bool pChild::isPasteAvailable() const
 {
-	return mEdit->canPaste();
+	return mEditor->canPaste();
 }
 
 bool pChild::isSearchReplaceAvailable() const
@@ -149,19 +152,7 @@ void pChild::saveFile( const QString& s )
 	if ( !mFiles.contains( s ) )
 		return;
 
-	QFile f( s );
-	if ( !f.open( QFile::WriteOnly | QFile::Text ) )
-	{
-		QMessageBox::warning( this, tr( "Application" ), tr( "Cannot write file %1:\n%2." ).arg( s ).arg( f.errorString() ) );
-		return;
-	}
-
-	// writing file
-	QApplication::setOverrideCursor( Qt::WaitCursor );
-	QTextStream o( &f );
-	o << mEdit->toPlainText();
-	mEdit->document()->setModified( false );
-	QApplication::restoreOverrideCursor();
+	mEditor->saveFile( s );
 }
 
 void pChild::saveFiles()
@@ -176,29 +167,8 @@ void pChild::openFile( const QString& s, const QPoint&, QTextCodec* c )
 	// add filename to list
 	mFiles.append( s );
 
-	// open file
-	QFile f( s );
-	if ( !f.open( QFile::ReadOnly | QFile::Text ) )
-	{
-		QMessageBox::warning( this, tr( "Application" ), tr( "Cannot read file %1:\n%2." ).arg( s ).arg( f.errorString() ) );
-		return;
-	}
-
 	// change window title
 	setWindowTitle( s );
-
-	// get textcodec
-	/*
-	if ( !c && mProxy )
-		c = mProxy
-	*/
-
-	// load file
-	QApplication::setOverrideCursor( Qt::WaitCursor );
-	QTextStream i( &f );
-	mEdit->setPlainText( i.readAll() );
-	mEdit->document()->setModified( false );
-	QApplication::restoreOverrideCursor();
 
 	emit fileOpened( s, mProxy );
 }
@@ -210,8 +180,8 @@ void pChild::closeFile( const QString& s )
 		return;
 
 	// reset editor
-	mEdit->clear();
-	mEdit->document()->setModified( false );
+	mEditor->clear();
+	//mEditor->document()->setModified( false );
 
 	// change window title
 	setWindowTitle( tr( "[No Name]" ) );
