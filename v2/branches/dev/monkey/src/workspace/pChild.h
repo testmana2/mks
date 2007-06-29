@@ -12,14 +12,14 @@
 #include "MonkeyExport.h"
 #include "pAbstractChild.h"
 
-#include <QTextEdit>
+class pEditor;
 
 class pChild : public pAbstractChild
 {
 	Q_OBJECT
 
-private:
-	QTextEdit* mEdit;
+protected:
+	pEditor* mEditor;
 
 public:
 	pChild();
@@ -109,7 +109,7 @@ public:
 	// ask to quick print this file
 	virtual void quickPrintFile( const QString& );
 
-private slots:
+protected slots:
 	void cursorPositionChanged();
 
 };
