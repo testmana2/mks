@@ -51,7 +51,7 @@ void pChild::cursorPositionChanged()
 
 QPoint pChild::cursorPosition() const
 {
-	return QPoint();
+	return mEditor->cursorPosition();
 }
 
 void pChild::showFile( const QString& )
@@ -108,17 +108,28 @@ void pChild::paste()
 }
 
 void pChild::searchReplace()
-{}
+{
+	mEditor->invokeSearchReplace();
+}
 
 void pChild::goTo()
-{}
+{
+	mEditor->invokeGoToLine();
+}
 
-void pChild::goTo( const QString&, const QPoint&, bool )
-{}
+void pChild::goTo( const QString& s, const QPoint& p, bool b )
+{
+	// if not exists cancel
+	if ( !mFiles.contains( s ) )
+		return;
+
+
+	mEditor->setCursorPosition( p.y(), p.x() );
+}
 
 bool pChild::isCopyAvailable() const
 {
-	return mEditor->selectedText().length();
+	return mEditor->copyAvailable();
 }
 
 bool pChild::isPasteAvailable() const
@@ -128,12 +139,12 @@ bool pChild::isPasteAvailable() const
 
 bool pChild::isSearchReplaceAvailable() const
 {
-	return false;
+	return true;
 }
 
 bool pChild::isGoToAvailable() const
 {
-	return false;
+	return true;
 }
 
 bool pChild::isModified( const QString& ) const
@@ -143,7 +154,7 @@ bool pChild::isModified( const QString& ) const
 
 bool pChild::isPrintAvailable() const
 {
-	return false;
+	return true;
 }
 
 void pChild::saveFile( const QString& s )
@@ -164,6 +175,10 @@ void pChild::openFile( const QString& s, const QPoint&, QTextCodec* c )
 	if ( !currentFile().isNull() )
 		return;
 
+	// open file
+	if ( !mEditor->openFile( s ) )
+		return;
+
 	// add filename to list
 	mFiles.append( s );
 
@@ -179,15 +194,13 @@ void pChild::closeFile( const QString& s )
 	if ( !mFiles.contains( s ) )
 		return;
 
-	// reset editor
-	mEditor->clear();
-	//mEditor->document()->setModified( false );
-
-	// change window title
-	setWindowTitle( tr( "[No Name]" ) );
+	mEditor->closeFile();
 
 	// remove from files list
 	mFiles.removeAll( s );
+
+	// change window title
+	setWindowTitle( tr( "[No Name]" ) );
 
 	emit fileClosed( s, mProxy );
 }
@@ -195,8 +208,22 @@ void pChild::closeFile( const QString& s )
 void pChild::closeFiles()
 { closeCurrentFile(); }
 
-void pChild::printFile( const QString& )
-{}
+void pChild::printFile( const QString& s )
+{
+	// if not exists cancel
+	if ( !mFiles.contains( s ) )
+		return;
 
-void pChild::quickPrintFile( const QString& )
-{}
+	// print file
+	mEditor->print();
+}
+
+void pChild::quickPrintFile( const QString& s )
+{
+	// if not exists cancel
+	if ( !mFiles.contains( s ) )
+		return;
+
+	// print file
+	mEditor->quickPrint();
+}

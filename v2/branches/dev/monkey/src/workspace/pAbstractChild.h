@@ -163,9 +163,9 @@ protected:
 
 signals:
 	// emit when a file is opened
-	void fileOpened( const QString&, pAbstractProjectProxy* );
+	void fileOpened( const QString&, pAbstractProjectProxy* ); // ok
 	// emit when a file is closed
-	void fileClosed( const QString&, pAbstractProjectProxy* );
+	void fileClosed( const QString&, pAbstractProjectProxy* ); // ok
 	// emit when the child layout mode has changed
 	void layoutModeChanged( pAbstractChild::LayoutMode );
 	// emit when the child document mode has changed

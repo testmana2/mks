@@ -1,7 +1,6 @@
 #include "pEditor.h"
 #include "pSearch.h"
 
-#include "qscilexer.h"
 #include "qsciprinter.h"
 
 #include <QApplication>
@@ -9,6 +8,8 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QTextStream>
+#include <QInputDialog>
+#include <QPrintDialog>
 
 pEditor::pEditor( QWidget* p )
 	: QsciScintilla( p )
@@ -17,6 +18,7 @@ pEditor::pEditor( QWidget* p )
 	setUtf8( true );
 
 	// connection
+	connect( this, SIGNAL( copyAvailable( bool ) ), this, SLOT( setCopyAvailable( bool ) ) );
 	connect( this, SIGNAL( cursorPositionChanged( int, int ) ), this, SLOT( cursorPositionChanged( int, int ) ) );
 	connect( this, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
 	connect( QApplication::clipboard(), SIGNAL( dataChanged() ), this, SLOT( clipboardDataChanged() ) );
@@ -26,14 +28,30 @@ pEditor::~pEditor()
 {
 }
 
+bool pEditor::copyAvailable()
+{
+	return mCopyAvailable;
+}
+
 bool pEditor::canPaste()
 {
 	return QApplication::clipboard()->text().length();
 }
 
+QPoint pEditor::cursorPosition() const
+{
+	return mCursorPosition;
+}
+
+void pEditor::setCopyAvailable( bool b )
+{
+	mCopyAvailable = b;
+}
+
 void pEditor::cursorPositionChanged( int l, int p )
 {
-	emit cursorPositionChanged( QPoint( p, l ) );
+	mCursorPosition = QPoint( p, l );
+	emit cursorPositionChanged( mCursorPosition );
 }
 
 void pEditor::textChanged()
@@ -44,7 +62,7 @@ void pEditor::textChanged()
 
 void pEditor::clipboardDataChanged()
 {
-	emit pasteAvailable( QApplication::clipboard()->text().length() );
+	emit pasteAvailable( canPaste() );
 }
 
 bool pEditor::openFile( const QString& s )
@@ -92,4 +110,78 @@ void pEditor::closeFile()
 	setModified( false );
 }
 
+void pEditor::print( bool b )
+{
+	// get printer
+	QsciPrinter p;
 
+	// set wrapmode
+	p.setWrapMode( WrapWord );
+
+	// if quick print
+	if ( b )
+	{
+		// print and return
+		p.printRange( this );
+		return;
+	}
+
+	// printer dialog
+	QPrintDialog d( &p );
+
+	// if ok
+	if ( d.exec() )
+	{
+		// print
+		int f = -1, t = -1, i;
+		if ( d.printRange() == QPrintDialog::Selection )
+			getSelection( &f, &i, &t, &i );
+		p.printRange( this, f, t );
+	}
+}
+
+void pEditor::quickPrint()
+{
+	print( true );
+}
+
+void pEditor::selectNone()
+{
+	selectAll( false );
+}
+
+void pEditor::invokeSearchReplace()
+{
+	pSearch::instance()->setEditor( this );
+	pSearch::instance()->leSearch->setFocus();
+	pSearch::instance()->leSearch->selectAll();
+	if ( !pSearch::instance()->isVisible() )
+		pSearch::instance()->setVisible( true );
+}
+
+void pEditor::invokeGoToLine()
+{
+	bool b;
+	int l, i;
+	getCursorPosition( &l, &i );
+	int j = QInputDialog::getInteger( this, tr( "Go To Line..." ), tr( "Enter the line you want to go:" ), l +1, 1, lines(), 1, &b );
+	if ( b )
+		setCursorPosition( j -1, 0 );
+}
+
+void pEditor::convertTabs( int i )
+{
+	int x, y;
+	getCursorPosition( &y, &x );
+	if ( i == -1 )
+		i = tabWidth();
+	bool b = findFirst( "\t", false, true, false, true, true );
+	if ( b )
+	{
+		QString r = QString().fill( ' ', i );
+		replace( r );
+		while ( findNext() )
+			replace( r );
+	}
+	setCursorPosition( y, x );
+}
