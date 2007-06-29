@@ -7,13 +7,12 @@
  * COMMENTARY   : 
  ********************************************************************************************************/
 #include "UIMain.h"
+#include "pFileManager.h"
 #include "pWorkspace.h"
 #include "pMenuBar.h"
 #include "pRecentsManager.h"
-#include "UISettings.h"
 #include "pActionManager.h"
 #include "pSettings.h"
-#include "UIAbout.h"
 #include "pDockToolBar.h"
 
 /*
@@ -50,6 +49,11 @@ UIMain::UIMain( QWidget* p )
 void UIMain::closeEvent( QCloseEvent* )
 {
 	workspace()->fileCloseAll_triggered();
+}
+
+pFileManager* UIMain::fileManager()
+{
+	return pFileManager::instance( this );
 }
 
 pWorkspace* UIMain::workspace()
@@ -229,7 +233,7 @@ void UIMain::initConnections()
 {
 	// file connection
 	connect( menuBar()->action( "mFile/aOpen" ), SIGNAL( triggered() ), workspace(), SLOT( fileOpen_triggered() ) );
-	connect( pRecentsManager::instance(), SIGNAL( openFileRequested( const QString& ) ), workspace(), SLOT( openFile( const QString& ) ) );
+	connect( pRecentsManager::instance(), SIGNAL( openFileRequested( const QString& ) ), fileManager(), SLOT( openFile( const QString& ) ) );
 	connect( menuBar()->action( "mFile/mSave/aCurrent" ), SIGNAL( triggered() ), workspace(), SLOT( fileSaveCurrent_triggered() ) );
 	connect( menuBar()->action( "mFile/mSave/aAll" ), SIGNAL( triggered() ), workspace(), SLOT( fileSaveAll_triggered() ) );
 	connect( menuBar()->action( "mFile/mClose/aCurrent" ), SIGNAL( triggered() ), workspace(), SLOT( fileCloseCurrent_triggered() ) );
@@ -239,7 +243,7 @@ void UIMain::initConnections()
 	connect( menuBar()->action( "mFile/aPrint" ), SIGNAL( triggered() ), workspace(), SLOT( filePrint_triggered() ) );
 	connect( menuBar()->action( "mFile/aQuit" ), SIGNAL( triggered() ), workspace(), SLOT( fileExit_triggered() ) );
 	// edit connection
-	connect( menuBar()->action( "mEdit/aSettings" ), SIGNAL( triggered() ), this, SLOT( editSettings_triggered() ) );
+	connect( menuBar()->action( "mEdit/aSettings" ), SIGNAL( triggered() ), workspace(), SLOT( editSettings_triggered() ) );
 	connect( menuBar()->action( "mEdit/aShortcutsEditor" ), SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
 	connect( menuBar()->action( "mEdit/aUndo" ), SIGNAL( triggered() ), workspace(), SLOT( editUndo_triggered() ) );
 	connect( menuBar()->action( "mEdit/aRedo" ), SIGNAL( triggered() ), workspace(), SLOT( editRedo_triggered() ) );
@@ -249,7 +253,7 @@ void UIMain::initConnections()
 	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), workspace(), SLOT( editSearchReplace_triggered() ) );
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), workspace(), SLOT( editGoTo_triggered() ) );
 	// view connection
-	connect( agStyles, SIGNAL( triggered( QAction* ) ), this, SLOT( agStyles_triggered( QAction* ) ) );
+	connect( agStyles, SIGNAL( triggered( QAction* ) ), workspace(), SLOT( agStyles_triggered( QAction* ) ) );
 	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), workspace(), SLOT( activateNextDocument() ) );
 	connect( menuBar()->action( "mView/aPrevious" ), SIGNAL( triggered() ), workspace(), SLOT( activatePreviousDocument() ) );
 	// project connection
@@ -260,14 +264,14 @@ void UIMain::initConnections()
 	connect( menuBar()->action( "mProject/mClose/aCurrent" ), SIGNAL( triggered() ), workspace(), SLOT( projectCloseCurrent_triggered() ) );
 	connect( menuBar()->action( "mProject/mClose/aAll" ), SIGNAL( triggered() ), workspace(), SLOT( projectCloseAll_triggered() ) );
 	connect( menuBar()->action( "mProject/aSettings" ), SIGNAL( triggered() ), workspace(), SLOT( projectSettings_triggered() ) );
-	connect( pRecentsManager::instance(), SIGNAL( openProjectRequested( const QString& ) ), workspace(), SLOT( openProject( const QString& ) ) );
+	connect( pRecentsManager::instance(), SIGNAL( openProjectRequested( const QString& ) ), fileManager(), SLOT( openProject( const QString& ) ) );
 	// plugins menu
 	//connect( menuBar()->action( "mPlugins/aManage" ), SIGNAL( triggered() ), pluginsManager(), SLOT( manageRequested() ) );
 	// help menu
-	connect( menuBar()->action( "mHelp/aAbout" ), SIGNAL( triggered() ), this, SLOT( aboutApplication_triggered() ) );
-	connect( menuBar()->action( "mHelp/aAboutQt" ), SIGNAL( triggered() ), this, SLOT( aboutQt_triggered() ) );
+	connect( menuBar()->action( "mHelp/aAbout" ), SIGNAL( triggered() ), workspace(), SLOT( helpAboutApplication_triggered() ) );
+	connect( menuBar()->action( "mHelp/aAboutQt" ), SIGNAL( triggered() ), workspace(), SLOT( helpAboutQt_triggered() ) );
 #ifdef __COVERAGESCANNER__
-	connect( menuBar()->action( "mHelp/aTestReport" ), SIGNAL( triggered() ), this, SLOT( testReport_triggered() ) );
+	connect( menuBar()->action( "mHelp/aTestReport" ), SIGNAL( triggered() ), workspace(), SLOT( helpTestReport_triggered() ) );
 #endif
 }
 
@@ -282,31 +286,3 @@ void UIMain::initGui()
 	// create statusbar
 	statusBar()->show();
 }
-
-void UIMain::editSettings_triggered()
-{
-	UISettings::instance( this )->exec();
-}
-
-void UIMain::agStyles_triggered( QAction* a )
-{	
-	qApp->setStyle( a->text() );
-	settings()->setValue( "MainWindow/Style", a->text() );
-}
-
-void UIMain::aboutApplication_triggered()
-{
-	UIAbout::instance( this )->exec();
-}
-
-void UIMain::aboutQt_triggered()
-{
-	qApp->aboutQt();
-}
-
-#ifdef __COVERAGESCANNER__
-void UIMain::testReport_triggered()
-{
-	UITestReport::instance( this )->exec();
-}
-#endif

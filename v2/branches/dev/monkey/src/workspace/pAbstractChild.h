@@ -11,7 +11,7 @@
 
 #include <QWidget>
 #include <QFileInfo>
-#include <QCloseEvent>
+#include <QTextCodec>
 
 #include "MonkeyExport.h"
 
@@ -35,6 +35,7 @@ public:
 		setAttribute( Qt::WA_DeleteOnClose );
 	}
 
+public slots:
 	// return child document mode
 	virtual pAbstractChild::DocumentMode documentMode() const
 	{ return mDocument; }
@@ -61,30 +62,10 @@ public:
 		emit layoutModeChanged( mLayout );
 	}
 
-	// add a new file to the files list that this child manage
-	virtual void addFile( const QString& s, const QPoint& p = QPoint() )
+	// set window title
+	virtual void setWindowTitle( const QString& s )
 	{
-		if ( mFiles.contains( s ) )
-			return;
-		mFiles.append( s );
-		loadFile( s, p );
-	}
-
-	// return full path + basename of file s
-	virtual QString fullPathBaseName( const QString& s )
-	{
-		QFileInfo f( s );
-		if ( f.exists() )
-			return QString( "%1/%2" ).arg( f.path(), f.baseName() );
-		return QString();
-	}
-
-	// return fullPathBaseName of the first file
-	virtual QString fullPathBaseName()
-	{
-		if ( !mFiles.count() )
-			return QString();
-		return fullPathBaseName( mFiles.at( 0 ) );
+		QWidget::setWindowTitle( QFileInfo( s.isEmpty() ? currentFile() : s ).fileName() );
 	}
 
 	// return files that this child manage
@@ -127,6 +108,8 @@ public:
 	virtual void searchReplace() = 0;
 	// go to in the current child
 	virtual void goTo() = 0;
+	// go to position for file and highlight line according to bool
+	virtual void goTo( const QString&, const QPoint&, bool = false ) = 0;
 	// return the current file copy available
 	virtual bool isCopyAvailable() const = 0;
 	// return the current file paste available
@@ -146,14 +129,21 @@ public:
 	{ saveFile( currentFile() ); }
 	// ask to save all files
 	virtual void saveFiles() = 0;
-	// ask to laod file
-	virtual void loadFile( const QString&, const QPoint& = QPoint() ) = 0;
+	// ask to load file
+	virtual void openFile( const QString&, const QPoint& = QPoint(), QTextCodec* = 0 ) = 0;
 	// ask to load these files
-	virtual void loadFiles( const QStringList& l )
+	virtual void openFiles( const QStringList& l )
 	{
 		foreach ( QString s, l )
-			addFile( s, QPoint() );
+			openFile( s, QPoint() );
 	}
+	// ask to close file
+	virtual void closeFile( const QString& ) = 0;
+	// ask to close the current file
+	virtual void closeCurrentFile()
+	{ closeFile( currentFile() ); }
+	// ask to close all files
+	virtual void closeFiles() = 0;
 	// ask to print this file
 	virtual void printFile( const QString& ) = 0;
 	// ask to quick print this file
@@ -170,11 +160,12 @@ protected:
 	QStringList mFiles;
 	// child project
 	pAbstractProjectProxy* mProxy;
-	// for saving modified files
-	virtual void closeEvent( QCloseEvent* e )
-	{ emit closeEvent( this, e ); }
 
 signals:
+	// emit when a file is opened
+	void fileOpened( const QString&, pAbstractProjectProxy* );
+	// emit when a file is closed
+	void fileClosed( const QString&, pAbstractProjectProxy* );
 	// emit when the child layout mode has changed
 	void layoutModeChanged( pAbstractChild::LayoutMode );
 	// emit when the child document mode has changed
@@ -201,8 +192,6 @@ signals:
 	void requestSearchReplace();
 	// emit when request go to line
 	void requestGoTo();
-	// emit when enter child close event
-	void closeEvent( pAbstractChild*, QCloseEvent* );
 	// emit when a child require to update workspace
 	void updateWorkspaceRequested();
 

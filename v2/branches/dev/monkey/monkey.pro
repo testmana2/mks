@@ -38,7 +38,7 @@ win32{
 }
 QT	*= gui core
 
-LIBS	*= -L$${BUILD_PATH}/.lib #-lqscintilla2
+LIBS	*= -L$${BUILD_PATH}
 linux-g++:LIBS	*= -rdynamic
 win32-msvc:LIBS	*= /IMPLIB:$${BUILD_PATH}/monkey.lib
 win32-g++:LIBS	*= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
@@ -64,6 +64,7 @@ HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/workspace/pAbstractChild.h \
 	src/workspace/pChild.h \
 	src/workspace/UISaveFiles.h \
+	src/workspace/pFileManager.h \
 	src/workspace/pWorkspace.h \
 	src/maininterface/UIMain.h
 
@@ -76,6 +77,7 @@ SOURCES	+= src/maininterface/ui/UITranslator.cpp \
 	src/recentsmanager/pRecentsManager.cpp \
 	src/workspace/pChild.cpp \
 	src/workspace/UISaveFiles.cpp \
+	src/workspace/pFileManager.cpp \
 	src/workspace/pWorkspace.cpp \
 	src/maininterface/UIMain.cpp \
 	src/main.cpp

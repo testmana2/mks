@@ -67,6 +67,9 @@ public:
 	// go to in the current child
 	virtual void goTo();
 
+	// go to position for file and highlight line according to bool
+	virtual void goTo( const QString&, const QPoint&, bool = false );
+
 	// return the current file copy available
 	virtual bool isCopyAvailable() const;
 
@@ -91,8 +94,14 @@ public:
 	// ask to save all files
 	virtual void saveFiles();
 
-	// ask to laod file
-	virtual void loadFile( const QString&, const QPoint& = QPoint() );
+	// ask to load file
+	virtual void openFile( const QString&, const QPoint& = QPoint(), QTextCodec* = 0 );
+
+	// ask to close file
+	virtual void closeFile( const QString& );
+
+	// ask to close all files
+	virtual void closeFiles();
 
 	// ask to print this file
 	virtual void printFile( const QString& );

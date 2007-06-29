@@ -37,7 +37,9 @@ pChild::pChild()
 }
 
 pChild::~pChild()
-{}
+{
+	closeFiles();
+}
 
 void pChild::cursorPositionChanged()
 {
@@ -108,6 +110,9 @@ void pChild::searchReplace()
 void pChild::goTo()
 {}
 
+void pChild::goTo( const QString&, const QPoint&, bool )
+{}
+
 bool pChild::isCopyAvailable() const
 {
 	return mEdit->textCursor().selectedText().length();
@@ -138,12 +143,16 @@ bool pChild::isPrintAvailable() const
 	return false;
 }
 
-void pChild::saveFile( const QString& )
+void pChild::saveFile( const QString& s )
 {
-	QFile f( currentFile() );
+	// if not exists cancel
+	if ( !mFiles.contains( s ) )
+		return;
+
+	QFile f( s );
 	if ( !f.open( QFile::WriteOnly | QFile::Text ) )
 	{
-		QMessageBox::warning( this, tr( "Application" ), tr( "Cannot write file %1:\n%2." ).arg( currentFile() ).arg( f.errorString() ) );
+		QMessageBox::warning( this, tr( "Application" ), tr( "Cannot write file %1:\n%2." ).arg( s ).arg( f.errorString() ) );
 		return;
 	}
 
@@ -156,21 +165,33 @@ void pChild::saveFile( const QString& )
 }
 
 void pChild::saveFiles()
-{
-	saveCurrentFile();
-}
+{ saveCurrentFile(); }
 
-void pChild::loadFile( const QString&, const QPoint& )
+void pChild::openFile( const QString& s, const QPoint&, QTextCodec* c )
 {
-	QFile f( currentFile() );
+	// if already open file, cancel
+	if ( !currentFile().isNull() )
+		return;
+
+	// add filename to list
+	mFiles.append( s );
+
+	// open file
+	QFile f( s );
 	if ( !f.open( QFile::ReadOnly | QFile::Text ) )
 	{
-		QMessageBox::warning( this, tr( "Application" ), tr( "Cannot read file %1:\n%2." ).arg( currentFile() ).arg( f.errorString() ) );
+		QMessageBox::warning( this, tr( "Application" ), tr( "Cannot read file %1:\n%2." ).arg( s ).arg( f.errorString() ) );
 		return;
 	}
 
 	// change window title
-	setWindowTitle( currentFile() );
+	setWindowTitle( s );
+
+	// get textcodec
+	/*
+	if ( !c && mProxy )
+		c = mProxy
+	*/
 
 	// load file
 	QApplication::setOverrideCursor( Qt::WaitCursor );
@@ -178,7 +199,31 @@ void pChild::loadFile( const QString&, const QPoint& )
 	mEdit->setPlainText( i.readAll() );
 	mEdit->document()->setModified( false );
 	QApplication::restoreOverrideCursor();
+
+	emit fileOpened( s, mProxy );
 }
+
+void pChild::closeFile( const QString& s )
+{
+	// if not exists cancel
+	if ( !mFiles.contains( s ) )
+		return;
+
+	// reset editor
+	mEdit->clear();
+	mEdit->document()->setModified( false );
+
+	// change window title
+	setWindowTitle( tr( "[No Name]" ) );
+
+	// remove from files list
+	mFiles.removeAll( s );
+
+	emit fileClosed( s, mProxy );
+}
+
+void pChild::closeFiles()
+{ closeCurrentFile(); }
 
 void pChild::printFile( const QString& )
 {}

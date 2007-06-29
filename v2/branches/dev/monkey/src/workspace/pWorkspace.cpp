@@ -7,11 +7,15 @@
  * COMMENTARY   : 
  ********************************************************************************************************/
 #include "pWorkspace.h"
+#include "pSettings.h"
 #include "pAbstractChild.h"
 #include "pMenuBar.h"
 #include "pRecentsManager.h"
-#include "UISaveFiles.h"
 #include "pTabbedWorkspaceCorner.h"
+#include "pFileManager.h"
+#include "UISettings.h"
+#include "UISaveFiles.h"
+#include "UIAbout.h"
 
 #include "pChild.h"
 
@@ -56,27 +60,37 @@ void pWorkspace::internal_currentChanged( int i )
 	// get child
 	pAbstractChild* c = child( i );
 
+	bool ic = c;
+	bool modified = ic ? c->isModified() : false;
+	bool print = ic ? c->isPrintAvailable() : false;
+	bool undo = c ? c->isUndoAvailable() : false;
+	bool redo = c ? c->isRedoAvailable() : false;
+	bool copy = c ? c->isCopyAvailable() : false;
+	bool paste = c ? c->isPasteAvailable() : false;
+	bool search = c ? c->isSearchReplaceAvailable() : false;
+	bool go = c ? c->isGoToAvailable() : false;
+
 	// update file menu
-	pMenuBar::instance()->action( "mFile/mSave/aCurrent" )->setEnabled( c ? c->isModified() : false );
-	pMenuBar::instance()->action( "mFile/mSave/aAll" )->setEnabled( c );
-	pMenuBar::instance()->action( "mFile/mClose/aCurrent" )->setEnabled( c );
-	pMenuBar::instance()->action( "mFile/mClose/aAll" )->setEnabled( c );
+	pMenuBar::instance()->action( "mFile/mSave/aCurrent" )->setEnabled( modified );
+	pMenuBar::instance()->action( "mFile/mSave/aAll" )->setEnabled( ic );
+	pMenuBar::instance()->action( "mFile/mClose/aCurrent" )->setEnabled( ic );
+	pMenuBar::instance()->action( "mFile/mClose/aAll" )->setEnabled( ic );
 	//pMenuBar::instance()->action( "mFile/aSaveAsTemplate" )->setEnabled( false );
-	pMenuBar::instance()->action( "mFile/aQuickPrint" )->setEnabled( c ? c->isPrintAvailable() : false );
-	pMenuBar::instance()->action( "mFile/aPrint" )->setEnabled( c ? c->isPrintAvailable() : false );
+	pMenuBar::instance()->action( "mFile/aQuickPrint" )->setEnabled( print );
+	pMenuBar::instance()->action( "mFile/aPrint" )->setEnabled( print );
 
 	// update edit menu
-	pMenuBar::instance()->action( "mEdit/aUndo" )->setEnabled( c ? c->isUndoAvailable() : false );
-	pMenuBar::instance()->action( "mEdit/aRedo" )->setEnabled( c ? c->isRedoAvailable() : false );
-	pMenuBar::instance()->action( "mEdit/aCut" )->setEnabled( c ? c->isCopyAvailable() : false );
-	pMenuBar::instance()->action( "mEdit/aCopy" )->setEnabled( c ? c->isCopyAvailable() : false );
-	pMenuBar::instance()->action( "mEdit/aPaste" )->setEnabled( c ? c->isPasteAvailable() : false );
-	pMenuBar::instance()->action( "mEdit/aSearchReplace" )->setEnabled( c ? c->isSearchReplaceAvailable() : false );
-	pMenuBar::instance()->action( "mEdit/aGoTo" )->setEnabled( c ? c->isGoToAvailable() : false );
+	pMenuBar::instance()->action( "mEdit/aUndo" )->setEnabled( undo );
+	pMenuBar::instance()->action( "mEdit/aRedo" )->setEnabled( redo );
+	pMenuBar::instance()->action( "mEdit/aCut" )->setEnabled( copy );
+	pMenuBar::instance()->action( "mEdit/aCopy" )->setEnabled( copy );
+	pMenuBar::instance()->action( "mEdit/aPaste" )->setEnabled( paste );
+	pMenuBar::instance()->action( "mEdit/aSearchReplace" )->setEnabled( search );
+	pMenuBar::instance()->action( "mEdit/aGoTo" )->setEnabled( go );
 
 	// update view menu
-	pMenuBar::instance()->action( "mView/aNext" )->setEnabled( c );
-	pMenuBar::instance()->action( "mView/aPrevious" )->setEnabled( c );
+	pMenuBar::instance()->action( "mView/aNext" )->setEnabled( ic );
+	pMenuBar::instance()->action( "mView/aPrevious" )->setEnabled( ic );
 
 	// update status bar
 	//pMenuBar::instance()->setCursorPosition( c ? c->cursorPosition() : QPoint( -1, -1 ) );
@@ -87,6 +101,9 @@ void pWorkspace::internal_currentChanged( int i )
 
 	// left corner widget
 	//
+
+	// emit file changed
+	emit pFileManager::instance()->currentFileChanged( ic ? c->currentFile() : QString(), ic ? c->proxy() : 0 );
 }
 
 void pWorkspace::internal_aboutToCloseTab( int i, QCloseEvent* e )
@@ -96,63 +113,6 @@ void pWorkspace::internal_aboutToCloseTab( int i, QCloseEvent* e )
 
 	// check if need to save files
 	UISaveFiles::execute( c, e );
-}
-
-void pWorkspace::openFile( const QString& s, pAbstractProjectProxy* pp, const QPoint& p )
-{
-	// get file info
-	const QFileInfo f( s );
-
-	// get canonical file path
-	QString v = f.canonicalFilePath();
-
-	// if it not exists
-	if ( !f.exists() )
-	{
-		// remove it from recents files
-		pRecentsManager::instance()->removeRecentFile( v );
-		return;
-	}
-
-	// open file
-/*
-	if ( pluginsManager()->childPluginOpenFile( v, p ) )
-	{}
-	else
-*/
-	{
-		// create child
-		pAbstractChild* c = new pChild;
-	
-		// set child proxy
-		c->setProxy( pp );
-	
-		// add file to child
-		c->addFile( s, p );
-	
-		// update file menu
-		connect( c, SIGNAL( modifiedChanged( bool ) ), pMenuBar::instance()->action( "mFile/mSave/aCurrent" ), SLOT( setEnabled( bool ) ) );
-		// update edit menu
-		connect( c, SIGNAL( undoAvailableChanged( bool ) ), pMenuBar::instance()->action( "mEdit/aUndo" ), SLOT( setEnabled( bool ) ) );
-		connect( c, SIGNAL( redoAvailableChanged( bool ) ), pMenuBar::instance()->action( "mEdit/aRedo" ), SLOT( setEnabled( bool ) ) );
-		connect( c, SIGNAL( copyAvailableChanged( bool ) ), pMenuBar::instance()->action( "mEdit/aCut" ), SLOT( setEnabled( bool ) ) );
-		connect( c, SIGNAL( copyAvailableChanged( bool ) ), pMenuBar::instance()->action( "mEdit/aCopy" ), SLOT( setEnabled( bool ) ) );
-		connect( c, SIGNAL( pasteAvailableChanged( bool ) ), pMenuBar::instance()->action( "mEdit/aPaste" ), SLOT( setEnabled( bool ) ) );
-		connect( c, SIGNAL( searchReplaceAvailableChanged( bool ) ), pMenuBar::instance()->action( "mEdit/aSearchReplace" ), SLOT( setEnabled( bool ) ) );
-		connect( c, SIGNAL( goToAvailableChanged( bool ) ), pMenuBar::instance()->action( "mEdit/aGoTo" ), SLOT( setEnabled( bool ) ) );
-		// update status bar
-		//connect( c, SIGNAL( cursorPositionChanged( const QPoint& ) ), statusBar(), SLOT( setCursorPosition( const QPoint& ) ) );
-		//connect( c, SIGNAL( modifiedChanged( bool ) ), statusBar(), SLOT( setModified( bool ) ) );
-		//connect( c, SIGNAL( documentModeChanged( AbstractChild::DocumentMode ) ), statusBar(), SLOT( setDocumentMode( AbstractChild::DocumentMode ) ) );
-		//connect( c, SIGNAL( layoutModeChanged( AbstractChild::LayoutMode ) ), statusBar(), SLOT( setLayoutMode( AbstractChild::LayoutMode ) ) );
-		//connect( c, SIGNAL( currentFileChanged( const QString& ) ), statusBar(), SLOT( setFileName( const QString& ) ) );
-	
-		addTab( c, c->currentFileName() );
-	}
-
-	// append file to recents
-	if ( !pp )
-		pRecentsManager::instance()->addRecentFile( v );
 }
 
 // file menu
@@ -169,7 +129,14 @@ void pWorkspace::fileOpen_triggered()
 
 	// for each entry, open file
 	foreach ( QString s, l )
-		openFile( s );
+	{
+		if ( pFileManager::instance()->openFile( s ) )
+			// append file to recents
+			pRecentsManager::instance()->addRecentFile( s );
+		else
+			// remove it from recents files
+			pRecentsManager::instance()->removeRecentFile( s );
+	}
 
 	// store file open path
 	if ( !l.isEmpty() )
@@ -224,6 +191,11 @@ void pWorkspace::fileExit_triggered()
 }
 
 // edit menu
+void pWorkspace::editSettings_triggered()
+{
+	UISettings::instance( this )->exec();
+}
+
 void pWorkspace::editUndo_triggered()
 {
 	pAbstractChild* c = currentChild();
@@ -274,6 +246,11 @@ void pWorkspace::editGoTo_triggered()
 }
 
 // view menu
+void pWorkspace::agStyles_triggered( QAction* a )
+{	
+	qApp->setStyle( a->text() );
+	pSettings::instance()->setValue( "MainWindow/Style", a->text() );
+}
 
 // project menu
 void pWorkspace::projectNew_triggered()
@@ -310,3 +287,21 @@ void pWorkspace::projectSettings_triggered()
 {
 	//projectsManager()->projectSettings();
 }
+
+// help menu
+void pWorkspace::helpAboutApplication_triggered()
+{
+	UIAbout::instance( this )->exec();
+}
+
+void pWorkspace::helpAboutQt_triggered()
+{
+	qApp->aboutQt();
+}
+
+#ifdef __COVERAGESCANNER__
+void pWorkspace::helpTestReport_triggered()
+{
+	UITestReport::instance( this )->exec();
+}
+#endif
