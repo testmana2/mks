@@ -192,7 +192,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -1859,7 +1859,7 @@
         <number>6</number>
        </property>
        <item row="1" column="0" colspan="2" >
-        <widget class="QGroupBox" name="gbSyntaxHighlightingStyleElement" >
+        <widget class="QGroupBox" name="gbLexers" >
          <property name="title" >
           <string>Style Element</string>
          </property>
@@ -1871,7 +1871,7 @@
            <number>6</number>
           </property>
           <item>
-           <widget class="QListWidget" name="lwSyntaxHighlightingStyleElements" />
+           <widget class="QListWidget" name="lwLexersElements" />
           </item>
           <item>
            <layout class="QVBoxLayout" >
@@ -1890,28 +1890,28 @@
                <number>2</number>
               </property>
               <item>
-               <widget class="QPushButton" name="pbSyntaxHighlightingForegroundColour" >
+               <widget class="QPushButton" name="pbLexerForeground" >
                 <property name="text" >
                  <string>Foreground Colour</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pbSyntaxHighlightingBackgroundColour" >
+               <widget class="QPushButton" name="pbLexerBackground" >
                 <property name="text" >
                  <string>Background Colour</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pbSyntaxHighlightingFont" >
+               <widget class="QPushButton" name="pbLexerFont" >
                 <property name="text" >
                  <string>Font</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="cbSyntaxHighlightingFillToEndOfLine" >
+               <widget class="QCheckBox" name="cbLexerFillEol" >
                 <property name="text" >
                  <string>Fill to end of line</string>
                 </property>
@@ -1920,14 +1920,14 @@
              </layout>
             </item>
             <item>
-             <widget class="Line" name="line" >
+             <widget class="Line" name="lLexer" >
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldComments" >
+             <widget class="QCheckBox" name="cbLexerFoldComments" >
               <property name="statusTip" >
                <string>setFoldComments</string>
               </property>
@@ -1937,7 +1937,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldCompact" >
+             <widget class="QCheckBox" name="cbLexerFoldCompact" >
               <property name="statusTip" >
                <string>setFoldCompact</string>
               </property>
@@ -1947,7 +1947,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldQuotes" >
+             <widget class="QCheckBox" name="cbLexerFoldQuotes" >
               <property name="statusTip" >
                <string>setFoldQuotes</string>
               </property>
@@ -1957,7 +1957,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldDirectives" >
+             <widget class="QCheckBox" name="cbLexerFoldDirectives" >
               <property name="statusTip" >
                <string>setFoldDirectives</string>
               </property>
@@ -1967,7 +1967,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldAtBegin" >
+             <widget class="QCheckBox" name="cbLexerFoldAtBegin" >
               <property name="statusTip" >
                <string>setFoldAtBegin</string>
               </property>
@@ -1977,7 +1977,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldAtParenthesis" >
+             <widget class="QCheckBox" name="cbLexerFoldAtParenthesis" >
               <property name="statusTip" >
                <string>setFoldAtParenthesis</string>
               </property>
@@ -1987,7 +1987,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldAtElse" >
+             <widget class="QCheckBox" name="cbLexerFoldAtElse" >
               <property name="statusTip" >
                <string>setFoldAtElse</string>
               </property>
@@ -1997,7 +1997,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbFoldPreprocessor" >
+             <widget class="QCheckBox" name="cbLexerFoldPreprocessor" >
               <property name="statusTip" >
                <string>setFoldPreprocessor</string>
               </property>
@@ -2007,7 +2007,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbStylePreprocessor" >
+             <widget class="QCheckBox" name="cbLexerStylePreprocessor" >
               <property name="statusTip" >
                <string>setStylePreprocessor</string>
               </property>
@@ -2017,21 +2017,21 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbIndentOpeningBrace" >
+             <widget class="QCheckBox" name="cbLexerIndentOpeningBrace" >
               <property name="text" >
                <string>Indent opening brace</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbIndentClosingBrace" >
+             <widget class="QCheckBox" name="cbLexerIndentClosingBrace" >
               <property name="text" >
                <string>Indent closing brace</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbCaseSensitiveTags" >
+             <widget class="QCheckBox" name="cbLexerCaseSensitiveTags" >
               <property name="statusTip" >
                <string>setCaseSensitiveTags</string>
               </property>
@@ -2041,7 +2041,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbBackslashEscapes" >
+             <widget class="QCheckBox" name="cbLexerBackslashEscapes" >
               <property name="statusTip" >
                <string>setBackslashEscapes</string>
               </property>
@@ -2051,14 +2051,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="lIndentationWarning" >
+             <widget class="QLabel" name="lLexerIndentationWarning" >
               <property name="text" >
                <string>Indentation warning :</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="cbIndentationWarning" >
+             <widget class="QComboBox" name="cbLexerIndentationWarning" >
               <property name="statusTip" >
                <string>setIndentationWarning</string>
               </property>
@@ -2086,14 +2086,21 @@
                <number>2</number>
               </property>
               <item>
-               <widget class="QPushButton" name="pbSyntaxHighlightingAllBackgroundColours" >
+               <widget class="QPushButton" name="pbLexerAllForeground" >
+                <property name="text" >
+                 <string>All Foreground Colours</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pbLexerAllBackground" >
                 <property name="text" >
                  <string>All Background Colours</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pbSyntaxHighlightingAllFonts" >
+               <widget class="QPushButton" name="pbLexerAllFont" >
                 <property name="text" >
                  <string>All Fonts</string>
                 </property>
@@ -2101,13 +2108,36 @@
               </item>
              </layout>
             </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pbLexerReset" >
+              <property name="text" >
+               <string>Reset Current Lexer</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="QComboBox" name="cbSyntaxHighlightingLexerLanguage" >
+        <widget class="QComboBox" name="cbLexersLanguage" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>7</hsizetype>
@@ -2119,7 +2149,7 @@
         </widget>
        </item>
        <item row="0" column="0" >
-        <widget class="QLabel" name="lSyntaxHighlightingLexerLanguage" >
+        <widget class="QLabel" name="lLexerLanguage" >
          <property name="text" >
           <string>Lexer Language :</string>
          </property>

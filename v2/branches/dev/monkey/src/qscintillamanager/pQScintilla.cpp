@@ -108,6 +108,21 @@ void pQScintilla::writeSettings()
 		l->writeSettings( *pSettings::instance() );
 }
 
+void pQScintilla::resetLexer( QsciLexer* l )
+{
+	// cancel if no lexer
+	if ( !l )
+		return;
+
+	// get language
+	const QString s = l->language();
+
+	// reset lexer
+	pSettings::instance()->remove( QString( "Scintilla/%1" ).arg( s ) );
+	delete l;
+	mLexers[s] = lexer( s );
+}
+
 bool pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant& v )
 {
 	// cancel no property, no lexer or f variant is not valid
