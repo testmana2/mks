@@ -799,7 +799,7 @@ void UISettings::on_pbSyntaxHighlightingAllBackgroundColours_clicked()
 	QColor c = QColorDialog::getColor( l->defaultPaper(), window() );
 	if ( c.isValid() )
 	{
-		l->setDefaultPaper( c );
+		l->setPaper( c, -1 );
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( l->language() );
 	}
 }
@@ -811,7 +811,7 @@ void UISettings::on_pbSyntaxHighlightingAllFonts_clicked()
 	QFont f = QFontDialog::getFont( &b, l->defaultFont(), window() );
 	if ( b )
 	{
-		l->setDefaultFont( f );
+		l->setFont( f, -1 );
 		on_cbSyntaxHighlightingLexerLanguage_currentIndexChanged( l->language() );
 	}
 }

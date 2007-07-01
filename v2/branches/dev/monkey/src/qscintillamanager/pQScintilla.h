@@ -38,14 +38,16 @@ class Q_MONKEY_EXPORT pQScintilla : public QObject, public QSingleton<pQScintill
 	friend class QSingleton<pQScintilla>;
 
 public:
-	QHash<QString,QsciLexer*> lexers() const;
+	QHash<QString,QsciLexer*> lexers();
 	QStringList languages() const;
+	QsciLexer* lexer( const QString& );
 	void readSettings();
 	void writeSettings();
 	bool setProperty( const QString&, QsciLexer*, const QVariant& );
 	QVariant property( const QString&, QsciLexer* ) const;
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
+	QsciLexer* lexerForFilename( const QString& );
 
 private:
 	pQScintilla( QObject* = QApplication::instance() );
