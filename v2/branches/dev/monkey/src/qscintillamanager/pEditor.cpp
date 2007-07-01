@@ -1,4 +1,5 @@
 #include "pEditor.h"
+#include "pQScintilla.h"
 #include "pSearch.h"
 
 #include "qsciprinter.h"
@@ -74,6 +75,10 @@ bool pEditor::openFile( const QString& s )
 		QMessageBox::warning( this, tr( "Open file..." ), tr( "Cannot read file %1:\n%2." ).arg( s ).arg( f.errorString() ) );
 		return false;
 	}
+
+	// set lexer
+	delete lexer();
+	setLexer( pQScintilla::instance()->lexerForFilename( s ) );
 
 	// load file
 	QApplication::setOverrideCursor( Qt::WaitCursor );

@@ -1,33 +1,11 @@
 #include "pQScintilla.h"
 #include "pSettings.h"
 
+#include <QFileInfo>
+
 pQScintilla::pQScintilla( QObject* o )
 	: QObject( o )
-{
-	// init lexers
-	mLexers[ "Bash" ] = new QsciLexerBash( this );
-	mLexers[ "Batch" ] = new QsciLexerBatch( this );
-	mLexers[ "C#" ] = new QsciLexerCSharp( this );
-	mLexers[ "C++" ] = new QsciLexerCPP( this );
-	mLexers[ "CMake" ] = new QsciLexerCMake( this );
-	mLexers[ "CSS" ] = new QsciLexerCSS( this );
-	mLexers[ "D" ] = new QsciLexerD( this );
-	mLexers[ "Diff" ] = new QsciLexerDiff( this );
-	mLexers[ "HTML" ] = new QsciLexerHTML( this );
-	mLexers[ "IDL" ] = new QsciLexerIDL( this );
-	mLexers[ "Java" ] = new QsciLexerJava( this );
-	mLexers[ "JavaScript" ] = new QsciLexerJavaScript( this );
-	mLexers[ "Lua" ] = new QsciLexerLua( this );
-	mLexers[ "Makefile" ] = new QsciLexerMakefile( this );
-	mLexers[ "POV" ] = new QsciLexerPOV( this );
-	mLexers[ "Perl" ] = new QsciLexerPerl( this );
-	mLexers[ "Properties" ] = new QsciLexerProperties( this );
-	mLexers[ "Python" ] = new QsciLexerPython( this );
-	mLexers[ "Ruby" ] = new QsciLexerRuby( this );
-	mLexers[ "SQL" ] = new QsciLexerSQL( this );
-	mLexers[ "TeX" ] = new QsciLexerTeX( this );
-	mLexers[ "VHDL" ] = new QsciLexerVHDL( this );
-}
+{}
 
 pQScintilla::~pQScintilla()
 {
@@ -37,32 +15,103 @@ pQScintilla::~pQScintilla()
 
 QStringList pQScintilla::languages() const
 {
-	return mLexers.keys();
+	return QStringList() << "Bash" << "Batch" << "C#" << "C++" << "CMake" << "CSS"
+		<< "D" << "Diff" << "HTML" << "IDL" << "Java" << "JavaScript" << "Lua"
+		<< "Makefile" << "POV" << "Perl" << "Properties" << "Python" << "Ruby"
+		<< "SQL" << "TeX" << "VHDL";
 }
 
-QHash<QString,QsciLexer*> pQScintilla::lexers() const
+QsciLexer* pQScintilla::lexer( const QString& s )
 {
+	// get language
+	const QString ln = s.toLower();
+
+	// lexer
+	QsciLexer* l = 0;
+
+	// init lexer
+	if ( ln == "bash" )
+		l = new QsciLexerBash( this );
+	else if ( ln == "batch" )
+		l = new QsciLexerBatch( this );
+	else if ( ln == "c#" )
+		l = new QsciLexerCSharp( this );
+	else if ( ln == "c++" )
+		l = new QsciLexerCPP( this );
+	else if ( ln == "cmake" )
+		l = new QsciLexerCMake( this );
+	else if ( ln == "css" )
+		l = new QsciLexerCSS( this );
+	else if ( ln == "d" )
+		l = new QsciLexerD( this );
+	else if ( ln == "diff" )
+		l = new QsciLexerDiff( this );
+	else if ( ln == "html" )
+		l = new QsciLexerHTML( this );
+	else if ( ln == "idl" )
+		l = new QsciLexerIDL( this );
+	else if ( ln == "java" )
+		l = new QsciLexerJava( this );
+	else if ( ln == "javascript" )
+		l = new QsciLexerJavaScript( this );
+	else if ( ln == "lua" )
+		l = new QsciLexerLua( this );
+	else if ( ln == "makefile" )
+		l = new QsciLexerMakefile( this );
+	else if ( ln == "pov" )
+		l = new QsciLexerPOV( this );
+	else if ( ln == "perl" )
+		l = new QsciLexerPerl( this );
+	else if ( ln == "properties" )
+		l = new QsciLexerProperties( this );
+	else if ( ln == "python" )
+		l = new QsciLexerPython( this );
+	else if ( ln == "ruby" )
+		l = new QsciLexerRuby( this );
+	else if ( ln == "sql" )
+		l = new QsciLexerSQL( this );
+	else if ( ln == "tex" )
+		l = new QsciLexerTeX( this );
+	else if ( ln == "vhdl" )
+		l = new QsciLexerVHDL( this );
+
+	// read lexer settings
+	if ( l )
+		l->readSettings( *pSettings::instance() );
+
+	// return lexer
+	return l;
+}
+
+QHash<QString,QsciLexer*> pQScintilla::lexers()
+{
+	// init lexers if needed
+	if ( mLexers.isEmpty() )
+		foreach ( QString s, languages() )
+			mLexers[s] = lexer( s );
+
+	// return lexers
 	return mLexers;
 }
 
 void pQScintilla::readSettings()
 {
 	// read settings
-	foreach ( QsciLexer* l, mLexers )
+	foreach ( QsciLexer* l, lexers() )
 		l->readSettings( *pSettings::instance() );
 }
 
 void pQScintilla::writeSettings()
 {
 	// write settings
-	foreach ( QsciLexer* l, mLexers )
+	foreach ( QsciLexer* l, lexers() )
 		l->writeSettings( *pSettings::instance() );
 }
 
 bool pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant& v )
 {
-	// cancel f variant is not valid
-	if ( !v.isValid() )
+	// cancel no property, no lexer or f variant is not valid
+	if ( s.trimmed().isEmpty() || !l || !v.isValid() )
 		return false;
 
 	if ( v.type() == QVariant::Bool )
@@ -229,8 +278,8 @@ QHash<QString, QStringList> pQScintilla::defaultSuffixes() const
 	// Bash
 	l["Bash"] << "*.sh";
 	// Batch
-	l["Bash"] << "*.bat";
-	l["Bash"] << "*.cmd";
+	l["Batch"] << "*.bat";
+	l["Batch"] << "*.cmd";
 	// C#
 	l["C#"] << "*.cs";
 	// C++
@@ -245,9 +294,12 @@ QHash<QString, QStringList> pQScintilla::defaultSuffixes() const
 	l["C++"] << "*.hxx";
 	l["C++"] << "*.h++";
 	// CMake
+	l["CMake"] << "*.cmake";
+	l["CMake"] << "CMake.txt";
 	// CSS
 	l["CSS"] << "*.css";
 	// D
+	l["D"] << "*.d";
 	// Diff
 	l["Diff"] << "*.diff";
 	l["Diff"] << "*.patch";
@@ -282,6 +334,7 @@ QHash<QString, QStringList> pQScintilla::defaultSuffixes() const
 	l["Makefile"] << "*makefile";
 	l["Makefile"] << "Makefile*";
 	// POV
+	l["POV"] << "*.pov";
 	// Perl
 	l["Perl"] << "*.ph";
 	l["Perl"] << "*.pl";
@@ -310,6 +363,7 @@ QHash<QString, QStringList> pQScintilla::defaultSuffixes() const
 	l["TeX"] << "*.sty";
 	l["TeX"] << "*.toc";
 	// VHDL
+	l["VHDL"] << "*.vhdl";
 
 	// return list
 	return l;
@@ -333,4 +387,21 @@ QHash<QString, QStringList> pQScintilla::suffixes() const
 		l = defaultSuffixes();
 
 	return l;
+}
+
+QsciLexer* pQScintilla::lexerForFilename( const QString& s )
+{
+	// get suffixes
+	QHash<QString, QStringList> l = suffixes();
+
+	// file suffixe
+	const QString sf = QFileInfo( s ).suffix().prepend( "*." );
+
+	// basic setup need change for makefile and cmake
+	foreach ( QString k, l.keys() )
+		if ( l.value( k ).contains( sf, Qt::CaseInsensitive ) )
+			return lexer( k );
+
+	// return no lexer if not found
+	return 0;
 }
