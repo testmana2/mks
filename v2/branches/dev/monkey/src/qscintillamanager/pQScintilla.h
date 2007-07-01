@@ -43,11 +43,72 @@ public:
 	QsciLexer* lexer( const QString& );
 	void readSettings();
 	void writeSettings();
+	void resetLexer( QsciLexer* );
 	bool setProperty( const QString&, QsciLexer*, const QVariant& );
 	QVariant property( const QString&, QsciLexer* ) const;
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
 	QsciLexer* lexerForFilename( const QString& );
+	//
+	void setAutoCompletionCaseSensitivity( bool ); // true
+	bool autoCompletionCaseSensitivity() const;
+	void setAutoCompletionReplaceWord( bool ); // false
+	bool autoCompletionReplaceWord() const;
+	void setAutoCompletionShowSingle( bool ); // false
+	bool autoCompletionShowSingle() const;
+	void setAutoCompletionSource( QsciScintilla::AutoCompletionSource ); // AcsNone
+	QsciScintilla::AutoCompletionSource autoCompletionSource() const;
+	void setAutoCompletionThreshold( int ); // -1
+	int autoCompletionThreshold() const;
+	void setAutoIndent( bool ); // false
+	bool autoIndent() const;
+	void setBraceMatching( QsciScintilla::BraceMatch ); // NoBraceMatching
+	QsciScintilla::BraceMatch braceMatching() const;
+	void setBackspaceUnindents( bool ); // false
+	bool backspaceUnindents() const;
+	void setEolMode( QsciScintilla::EolMode ); // platform
+	QsciScintilla::EolMode eolMode() const;
+	void setEolVisibility( bool ); // false
+	bool eolVisibility() const;
+	void setFolding( QsciScintilla::FoldStyle ); // NoFoldStyle
+	QsciScintilla::FoldStyle folding() const;
+	void setIndentationGuides( bool ); // false
+	bool indentationGuides() const;
+	void setIndentationsUseTabs( bool ); // true
+	bool indentationsUseTabs() const;
+	void setIndentationWidth( int ); // 0
+	int indentationWidth() const;
+	void setTabIndents( bool ); // true
+	bool tabIndents() const;
+	void setTabWidth( int ); // 8
+	int tabWidth() const;
+	void setUtf8( bool ); // false
+	bool isUtf8() const;
+	void setWhitespaceVisibility( QsciScintilla::WhitespaceVisibility ); // false
+	QsciScintilla::WhitespaceVisibility whitespaceVisibility() const;
+	void setWrapMode( QsciScintilla::WrapMode ); // WrapNone
+	QsciScintilla::WrapMode wrapMode() const;
+/*
+	void setMarginLineNumbers( int, bool );
+	bool marginLineNumbers( int ) const;
+	void setMarginMarkerMask( int, int );
+	int marginMarkerMask( int ) const;
+	void setMarginSensitivity( int, bool );
+	bool marginSensitivity( int ) const;
+	void setMarginWidth( int, int );
+	int marginWidth( int ) const;
+	void setCaretForegroundColor( const QColor& );
+	void setCaretLineBackgroundColor( const QColor& );
+	void setCaretLineVisible( bool );
+	void setCaretWidth( int width );
+	void setIndentationGuidesBackgroundColor( const QColor &col )
+	void setIndentationGuidesForegroundColor( const QColor &col )
+	void setMarginsBackgroundColor( const QColor &col ) // gray
+	void setMarginsFont( const QFont &f )
+	void setMarginsForegroundColor( const QColor &col ) // black
+	void setSelectionBackgroundColor( const QColor &col )
+	void setSelectionForegroundColor( const QColor &col )
+*/
 
 private:
 	pQScintilla( QObject* = QApplication::instance() );
