@@ -3,6 +3,8 @@
 
 #include <QFileInfo>
 
+const QString mPath = "/Scintilla";
+
 pQScintilla::pQScintilla( QObject* o )
 	: QObject( o )
 {}
@@ -77,7 +79,7 @@ QsciLexer* pQScintilla::lexer( const QString& s )
 
 	// read lexer settings
 	if ( l )
-		l->readSettings( *pSettings::instance() );
+		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
 
 	// return lexer
 	return l;
@@ -98,14 +100,14 @@ void pQScintilla::readSettings()
 {
 	// read settings
 	foreach ( QsciLexer* l, lexers() )
-		l->readSettings( *pSettings::instance() );
+		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
 }
 
 void pQScintilla::writeSettings()
 {
 	// write settings
 	foreach ( QsciLexer* l, lexers() )
-		l->writeSettings( *pSettings::instance() );
+		l->writeSettings( *pSettings::instance(), qPrintable( mPath ) );
 }
 
 void pQScintilla::resetLexer( QsciLexer* l )
@@ -118,7 +120,7 @@ void pQScintilla::resetLexer( QsciLexer* l )
 	const QString s = l->language();
 
 	// reset lexer
-	pSettings::instance()->remove( QString( "Scintilla/%1" ).arg( s ) );
+	pSettings::instance()->remove( QString( "%1/%2" ).arg( mPath ).arg( s ) );
 	delete l;
 	mLexers[s] = lexer( s );
 }
@@ -393,7 +395,7 @@ QHash<QString, QStringList> pQScintilla::suffixes() const
 	pSettings* s = pSettings::instance();
 
 	// get associations from settings
-	s->beginGroup( "Settings/Editor/Associations" );
+	s->beginGroup( mPath +"/Associations" );
 	foreach ( QString k, s->childKeys() )
 		l[s->value( k ).toString()] << k;
 	s->endGroup();
@@ -420,3 +422,201 @@ QsciLexer* pQScintilla::lexerForFilename( const QString& s )
 	// return no lexer if not found
 	return 0;
 }
+
+void pQScintilla::setAutoCompletionCaseSensitivity( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/AutoCompletionCaseSensitivity", b );
+}
+
+bool pQScintilla::autoCompletionCaseSensitivity() const
+{
+	pSettings::instance()->value( mPath +"/AutoCompletionCaseSensitivity", true ).toBool();
+}
+
+void pQScintilla::setAutoCompletionReplaceWord( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/AutoCompletionReplaceWord", b );
+}
+
+bool pQScintilla::autoCompletionReplaceWord() const
+{
+	pSettings::instance()->value( mPath +"/AutoCompletionReplaceWord", false ).toBool();
+}
+
+void pQScintilla::setAutoCompletionShowSingle( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/AutoCompletionShowSingle", b );
+}
+
+bool pQScintilla::autoCompletionShowSingle() const
+{
+	pSettings::instance()->value( mPath +"/AutoCompletionShowSingle", false ).toBool();
+}
+
+void setAutoCompletionSource( QsciScintilla::AutoCompletionSource a )
+{
+	pSettings::instance()->setValue( mPath +"/AutoCompletionSource", a );
+}
+
+QsciScintilla::AutoCompletionSource pQScintilla::autoCompletionSource() const
+{
+	(QsciScintilla::AutoCompletionSource)pSettings::instance()->value( mPath +"/AutoCompletionSource", (int)QsciScintilla::AcsNone ).toInt();
+}
+
+void pQScintilla::setAutoCompletionThreshold( int i )
+{
+	pSettings::instance()->setValue( mPath +"/AutoCompletionThreshold", i );
+}
+
+int pQScintilla::autoCompletionThreshold() const
+{
+	pSettings::instance()->value( mPath +"/AutoCompletionThreshold", -1 ).toInt();
+}
+
+void pQScintilla::setAutoIndent( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/AutoIndent", b );
+}
+
+bool pQScintilla::autoIndent() const
+{
+	pSettings::instance()->value( mPath +"/AutoIndent", false ).toBool();
+}
+
+void pQScintilla::setBraceMatching( QsciScintilla::BraceMatch b )
+{
+	pSettings::instance()->setValue( mPath +"/BraceMatching", b );
+}
+
+QsciScintilla::BraceMatch pQScintilla::braceMatching() const
+{
+	(QsciScintilla::BraceMatch)pSettings::instance()->value( mPath +"/BraceMatching", (int)QsciScintilla::NoBraceMatch ).toInt();
+}
+
+void pQScintilla::setBackspaceUnindents( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/BackspaceUnindents", b );
+}
+
+bool pQScintilla::backspaceUnindents() const
+{
+	pSettings::instance()->value( mPath +"/BackspaceUnindents", false ).toBool();
+}
+
+void pQScintilla::setEolMode( QsciScintilla::EolMode e )
+{
+	pSettings::instance()->setValue( mPath +"/EolMode", e );
+}
+
+QsciScintilla::EolMode pQScintilla::eolMode() const
+{
+#if defined( Q_WS_WIN )
+	int i = QsciScintilla::EolWindows;
+#elseif defined( Q_WS_MAC )
+	int i = QsciScintilla::EolMac;
+#else
+	int i = QsciScintilla::EolUnix;
+#endif
+	(QsciScintilla::EolMode)pSettings::instance()->value( mPath +"/EolMode", i ).toInt();
+}
+
+void pQScintilla::setEolVisibility( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/EolVisibility", b );
+}
+
+bool pQScintilla::eolVisibility() const
+{
+	pSettings::instance()->value( mPath +"/EolVisibility", false ).toBool();
+}
+
+void pQScintilla::setFolding( QsciScintilla::FoldStyle f )
+{
+	pSettings::instance()->setValue( mPath +"/Folding", f );
+}
+
+QsciScintilla::FoldStyle pQScintilla::folding() const
+{
+	(QsciScintilla::FoldStyle)pSettings::instance()->value( mPath +"/Folding", (int)QsciScintilla::NoFoldStyle ).toInt();
+}
+
+void pQScintilla::setIndentationGuides( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationGuides", b );
+}
+
+bool pQScintilla::indentationGuides() const
+{
+	pSettings::instance()->value( mPath +"/IndentationGuides", false ).toBool();
+}
+
+void pQScintilla::setIndentationsUseTabs( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationsUseTabs", b );
+}
+
+bool pQScintilla::indentationsUseTabs() const
+{
+	pSettings::instance()->value( mPath +"/IndentationsUseTabs", true ).toBool();
+}
+
+void pQScintilla::setIndentationWidth( int i )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationWidth", i );
+}
+
+int pQScintilla::indentationWidth() const
+{
+	pSettings::instance()->value( mPath +"/IndentationWidth", 0 ).toInt();
+}
+
+void pQScintilla::setTabIndents( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/TabIndents", b );
+}
+
+bool pQScintilla::tabIndents() const
+{
+	pSettings::instance()->value( mPath +"/TabIndents", true ).toBool();
+}
+
+void pQScintilla::setTabWidth( int i )
+{
+	pSettings::instance()->setValue( mPath +"/TabWidth", i );
+}
+
+int pQScintilla::tabWidth() const
+{
+	pSettings::instance()->value( mPath +"/IndentationWidth", 8 ).toInt();
+}
+
+void pQScintilla::setUtf8( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/Utf8", b );
+}
+
+bool pQScintilla::isUtf8() const
+{
+	pSettings::instance()->value( mPath +"/Utf8", false ).toBool();
+}
+
+void pQScintilla::setWhitespaceVisibility( QsciScintilla::WhitespaceVisibility w )
+{
+	pSettings::instance()->setValue( mPath +"/WhitespaceVisibility", w );
+}
+
+QsciScintilla::WhitespaceVisibility pQScintilla::whitespaceVisibility() const
+{
+	(QsciScintilla::WhitespaceVisibility)pSettings::instance()->value( mPath +"/WhitespaceVisibility", (int)QsciScintilla::WsInvisible ).toInt();
+}
+
+void pQScintilla::setWrapMode( QsciScintilla::WrapMode w )
+{
+	pSettings::instance()->setValue( mPath +"/WrapMode", w );
+}
+
+QsciScintilla::WrapMode pQScintilla::wrapMode() const
+{
+	(QsciScintilla::WrapMode)pSettings::instance()->value( mPath +"/WrapMode", (int)QsciScintilla::WrapNone ).toInt();
+}
+
