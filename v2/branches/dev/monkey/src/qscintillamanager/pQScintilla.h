@@ -88,6 +88,27 @@ public:
 	QsciScintilla::WhitespaceVisibility whitespaceVisibility() const;
 	void setWrapMode( QsciScintilla::WrapMode ); // WrapNone
 	QsciScintilla::WrapMode wrapMode() const;
+
+	void setFoldMarginColors (const QColor &fore, const QColor &back)
+	void setAutoCompletionFillupsEnabled (bool enabled)
+	void setAutoCompletionFillups (const char *fillups)
+	void setAutoCompletionWordSeparators (const QStringList &separators)
+	void setCallTipsBackgroundColor (const QColor &col)
+	void setCallTipsForegroundColor (const QColor &col)
+	void setCallTipsHighlightColor (const QColor &col)
+	void setCallTipsStyle (CallTipsStyle style)
+	void setCallTipsVisible (int nr)
+	void setDocument (const QsciDocument &document)
+	void setEdgeColor (const QColor &col)
+	void setEdgeColumn (int colnr)
+	void setEdgeMode (EdgeMode mode)
+	void setMarkerBackgroundColor (const QColor &col, int mnr=-1)
+	void setMarkerForegroundColor (const QColor &col, int mnr=-1)
+	void setMatchedBraceBackgroundColor (const QColor &col)
+	void setMatchedBraceForegroundColor (const QColor &col)
+	void setUnmatchedBraceBackgroundColor (const QColor &col)
+	void setUnmatchedBraceForegroundColor (const QColor &col)
+	void setWrapVisualFlags (WrapVisualFlag eflag, WrapVisualFlag sflag=WrapFlagNone, int sindent=0)
 /*
 	void setMarginLineNumbers( int, bool );
 	bool marginLineNumbers( int ) const;
