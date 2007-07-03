@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>607</height>
+    <width>562</width>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -148,7 +148,32 @@
       </item>
       <item>
        <property name="text" >
-        <string>Colours</string>
+        <string>CallTips</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Indentation</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Brace Matching</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Edge</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Caret</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Margins</string>
        </property>
       </item>
       <item>
@@ -158,12 +183,17 @@
       </item>
       <item>
        <property name="text" >
-        <string>Associations</string>
+        <string>Source APIs</string>
        </property>
       </item>
       <item>
        <property name="text" >
-        <string>Highlighting</string>
+        <string>Lexers Associations</string>
+       </property>
+      </item>
+      <item>
+       <property name="text" >
+        <string>Lexers Highlighting</string>
        </property>
       </item>
      </item>
@@ -192,7 +222,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>10</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -472,7 +502,1414 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pEditorAutoCompletion" >
+     <widget class="QWidget" name="pAutoCompletion" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbAutoCompletionEnabled" >
+         <property name="title" >
+          <string>Auto Completion Enabled</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="3" column="0" colspan="2" >
+           <widget class="QGroupBox" name="gbAutoCompletionSource" >
+            <property name="title" >
+             <string>Source</string>
+            </property>
+            <layout class="QHBoxLayout" >
+             <property name="margin" >
+              <number>5</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="rbAcsDocument" >
+               <property name="text" >
+                <string>from Document</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbAcsAPIs" >
+               <property name="text" >
+                <string>from API file</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="rbAcsAll" >
+               <property name="text" >
+                <string>from All</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QCheckBox" name="cbAutoCompletionCaseSensitivity" >
+            <property name="text" >
+             <string>Case Sensitive</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QCheckBox" name="cbAutoCompletionReplaceWord" >
+            <property name="text" >
+             <string>Replace Word</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QCheckBox" name="cbAutoCompletionShowSingle" >
+            <property name="text" >
+             <string>Show Single</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lAutoCompletionThreshold" >
+              <property name="text" >
+               <string>Threshold :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="sAutoCompletionThreshold" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimum" >
+               <number>-1</number>
+              </property>
+              <property name="maximum" >
+               <number>10</number>
+              </property>
+              <property name="pageStep" >
+               <number>2</number>
+              </property>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition" >
+               <enum>QSlider::TicksBothSides</enum>
+              </property>
+              <property name="tickInterval" >
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="lnAutoCompletionThreshold" >
+              <property name="numDigits" >
+               <number>2</number>
+              </property>
+              <property name="segmentStyle" >
+               <enum>QLCDNumber::Flat</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pCalltips" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbCalltipsEnabled" >
+         <property name="title" >
+          <string>Calltips Enabled</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="0" column="2" >
+           <widget class="QLCDNumber" name="lnCallTipsVisible" >
+            <property name="numDigits" >
+             <number>2</number>
+            </property>
+            <property name="segmentStyle" >
+             <enum>QLCDNumber::Flat</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="lCallTipsVisible" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>0</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text" >
+             <string>Visible Calltips :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QSlider" name="sCallTipsVisible" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimum" >
+             <number>-1</number>
+            </property>
+            <property name="maximum" >
+             <number>20</number>
+            </property>
+            <property name="pageStep" >
+             <number>2</number>
+            </property>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition" >
+             <enum>QSlider::TicksBothSides</enum>
+            </property>
+            <property name="tickInterval" >
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="3" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="rbCallTipsNoContext" >
+                <property name="text" >
+                 <string>No Context</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="rbCallTipsContext" >
+                <property name="text" >
+                 <string>Context </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="rbCallTipsNoAutoCompletionContext" >
+                <property name="text" >
+                 <string>No Auto Completion Context</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="Line" name="lCalltipsVertical" >
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QGridLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item row="2" column="0" >
+               <widget class="QLabel" name="lCalltipsHighlight" >
+                <property name="text" >
+                 <string>Highlight :</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="lCalltipsForeground" >
+                <property name="text" >
+                 <string>Foreground :</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" >
+               <widget class="QToolButton" name="tbCalltipsHighlight" >
+                <property name="sizePolicy" >
+                 <sizepolicy>
+                  <hsizetype>7</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="iconSize" >
+                 <size>
+                  <width>48</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QToolButton" name="tbCalltipsBackground" >
+                <property name="sizePolicy" >
+                 <sizepolicy>
+                  <hsizetype>7</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="iconSize" >
+                 <size>
+                  <width>48</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" >
+               <widget class="QLabel" name="lCalltipsBackground" >
+                <property name="text" >
+                 <string>Background :</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QToolButton" name="tbCalltipsForeground" >
+                <property name="sizePolicy" >
+                 <sizepolicy>
+                  <hsizetype>7</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="iconSize" >
+                 <size>
+                  <width>48</width>
+                  <height>16</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pIndentation" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbIndentation" >
+         <property name="title" >
+          <string>Indentation</string>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="5" column="0" colspan="2" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lIndentationGuidesBackground" >
+              <property name="text" >
+               <string>Background :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="tbIndentationGuidesBackground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="lIndentationGuidesForeground" >
+              <property name="text" >
+               <string>Foreground :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="tbIndentationGuidesForeground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QCheckBox" name="cbIndentationUseTabs" >
+            <property name="text" >
+             <string>Indentation use Tabs</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QCheckBox" name="cbAutoIndent" >
+            <property name="text" >
+             <string>Auto Indent</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="2" >
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="1" column="2" >
+             <widget class="QLCDNumber" name="lnIndentationWidth" >
+              <property name="numDigits" >
+               <number>2</number>
+              </property>
+              <property name="segmentStyle" >
+               <enum>QLCDNumber::Flat</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="lIndentationTabWidth" >
+              <property name="text" >
+               <string>Tab Width :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QSlider" name="sIndentationWidth" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimum" >
+               <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>20</number>
+              </property>
+              <property name="pageStep" >
+               <number>2</number>
+              </property>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition" >
+               <enum>QSlider::TicksBothSides</enum>
+              </property>
+              <property name="tickInterval" >
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QSlider" name="sIndentationTabWidth" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimum" >
+               <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>20</number>
+              </property>
+              <property name="pageStep" >
+               <number>2</number>
+              </property>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition" >
+               <enum>QSlider::TicksBothSides</enum>
+              </property>
+              <property name="tickInterval" >
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLCDNumber" name="lnIndentationTabWidth" >
+              <property name="numDigits" >
+               <number>2</number>
+              </property>
+              <property name="segmentStyle" >
+               <enum>QLCDNumber::Flat</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="lIndentationWidth" >
+              <property name="text" >
+               <string>Indentation Width :</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QCheckBox" name="cbIndentationGuides" >
+            <property name="text" >
+             <string>Indentation Guides</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QCheckBox" name="cbTabIndents" >
+            <property name="text" >
+             <string>Tab Indents</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QCheckBox" name="cbBackspaceUnindents" >
+            <property name="text" >
+             <string>Backspace Unindents</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2" >
+           <widget class="QLabel" name="lIndentationGuides" >
+            <property name="text" >
+             <string>Indentation Guides Colours :</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pBraceMatching" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbBraceMatchingEnabled" >
+         <property name="title" >
+          <string>Brace Matching Enabled</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="0" colspan="2" >
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="1" column="1" >
+             <widget class="QToolButton" name="tbMatchedBraceBackground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="lUnmatchedBraceBackground" >
+              <property name="text" >
+               <string>Unmatched Brace Foreground :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="lMatchedBraceBackground" >
+              <property name="text" >
+               <string>Matched Brace Background :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="lUnmatchedBraceBackground" >
+              <property name="text" >
+               <string>Unmatched Brace Background :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QToolButton" name="tbMatchedBraceForeground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="lMatchedBraceForeground" >
+              <property name="text" >
+               <string>Matched Brace Foreground :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" >
+             <widget class="QToolButton" name="tbUnmatchedBraceBackground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="QToolButton" name="tbUnmatchedBraceBackground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QRadioButton" name="rbStrictBraceMatch" >
+            <property name="text" >
+             <string>Strict Brace Match</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QRadioButton" name="rbSloppyBraceMatch" >
+            <property name="text" >
+             <string>Sloppy Brace Match</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pEdgeMode" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbEdgeModeEnabled" >
+         <property name="title" >
+          <string>Edge Mode Enabled</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="2" column="0" colspan="2" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lEdgeBackground" >
+              <property name="text" >
+               <string>Background Color :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="tbEdgeBackground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0" colspan="2" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lEdgeColumnNumber" >
+              <property name="text" >
+               <string>Column Number :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="sEdgeColumnNumber" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximum" >
+               <number>160</number>
+              </property>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition" >
+               <enum>QSlider::TicksBothSides</enum>
+              </property>
+              <property name="tickInterval" >
+               <number>10</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="lnEdgeColumnNumber" >
+              <property name="numDigits" >
+               <number>3</number>
+              </property>
+              <property name="segmentStyle" >
+               <enum>QLCDNumber::Flat</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QRadioButton" name="rbEdgeLine" >
+            <property name="text" >
+             <string>Edge Line</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QRadioButton" name="rbEdgeBackground" >
+            <property name="text" >
+             <string>Edge Background</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pCaret" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbCaretLineVisible" >
+         <property name="title" >
+          <string>Caret Line Visible</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="1" column="1" >
+           <widget class="QToolButton" name="tbCaretForeground" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="iconSize" >
+             <size>
+              <width>48</width>
+              <height>16</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="lCaretLineBackground" >
+            <property name="text" >
+             <string>Caret Line Background :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="lCaretForeground" >
+            <property name="text" >
+             <string>Caret Foreground :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2" >
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lCaretWidth" >
+              <property name="text" >
+               <string>Column Number :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="sCaretWidth" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimum" >
+               <number>1</number>
+              </property>
+              <property name="maximum" >
+               <number>10</number>
+              </property>
+              <property name="pageStep" >
+               <number>1</number>
+              </property>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition" >
+               <enum>QSlider::TicksBothSides</enum>
+              </property>
+              <property name="tickInterval" >
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="lnCaretWidth" >
+              <property name="numDigits" >
+               <number>2</number>
+              </property>
+              <property name="segmentStyle" >
+               <enum>QLCDNumber::Flat</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QToolButton" name="tbCaretLineBackground" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="iconSize" >
+             <size>
+              <width>48</width>
+              <height>16</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pMargins" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="gbLineNumbersMarginEnabled" >
+         <property name="title" >
+          <string>Line Numbers Margin Enabled</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="lLineNumbersMarginWidth" >
+              <property name="text" >
+               <string>Margin Width :</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="sLineNumbersMarginWidth" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimum" >
+               <number>1</number>
+              </property>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition" >
+               <enum>QSlider::TicksBothSides</enum>
+              </property>
+              <property name="tickInterval" >
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLCDNumber" name="lnLineNumbersMarginWidth" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>4</hsizetype>
+                <vsizetype>1</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="numDigits" >
+               <number>2</number>
+              </property>
+              <property name="segmentStyle" >
+               <enum>QLCDNumber::Flat</enum>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbLineNumbersMarginAutoWidth" >
+            <property name="text" >
+             <string>Auto Adjust Width</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gbFoldMarginEnabled" >
+         <property name="title" >
+          <string>Fold Margin Enabled</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="2" column="1" colspan="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item rowspan="3" row="0" column="0" >
+           <layout class="QVBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="rbPlainFoldStyle" >
+              <property name="text" >
+               <string>Plain Fold Style</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbCircledTreeFoldStyle" >
+              <property name="text" >
+               <string>Circled Tree Fold Style</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbCircledFoldStyle" >
+              <property name="text" >
+               <string>Circled Fold Style</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbBoxedFoldStyle" >
+              <property name="text" >
+               <string>Boxed Fold Style</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbBoxedTreeFoldStyle" >
+              <property name="text" >
+               <string>Boxed Tree Fold Style</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QToolButton" name="tbFoldMarginBackground" >
+            <property name="iconSize" >
+             <size>
+              <width>48</width>
+              <height>16</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLabel" name="lFoldMarginBackground" >
+            <property name="text" >
+             <string>Background :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
+           <widget class="QToolButton" name="tbFoldMarginForeground" >
+            <property name="iconSize" >
+             <size>
+              <width>48</width>
+              <height>16</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QLabel" name="lFoldMarginForeground" >
+            <property name="text" >
+             <string>Foreground :</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gbGlobalMarginsEnabled" >
+         <property name="title" >
+          <string>Global Margins Enabled</string>
+         </property>
+         <property name="checkable" >
+          <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="2" column="1" >
+           <widget class="QToolButton" name="tbGlobalMarginsFont" >
+            <property name="iconSize" >
+             <size>
+              <width>48</width>
+              <height>16</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QToolButton" name="tbGlobalMarginsBackground" >
+            <property name="iconSize" >
+             <size>
+              <width>48</width>
+              <height>16</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="lGlobalMarginsForeground" >
+            <property name="text" >
+             <string>Foreground :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QToolButton" name="tbGlobalMarginsForeground" >
+            <property name="iconSize" >
+             <size>
+              <width>48</width>
+              <height>16</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="lGlobalMarginsBackground" >
+            <property name="text" >
+             <string>Background :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="lGlobalMarginsFont" >
+            <property name="text" >
+             <string>Font :</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="pGeneral" >
+      <widget class="QGroupBox" name="groupBox" >
+       <property name="geometry" >
+        <rect>
+         <x>30</x>
+         <y>30</y>
+         <width>141</width>
+         <height>121</height>
+        </rect>
+       </property>
+       <property name="title" >
+        <string>GroupBox</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="pSourceAPIs" >
       <layout class="QVBoxLayout" >
        <property name="margin" >
         <number>0</number>
@@ -550,883 +1987,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pEditorColours" >
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="11" column="0" colspan="2" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>551</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="lColoursMatchedBrace" >
-         <property name="text" >
-          <string>Matched braces :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" >
-        <widget class="QToolButton" name="tbColoursMatchedBracesBackground" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" >
-        <widget class="QLabel" name="lColoursCaretLineBackground" >
-         <property name="text" >
-          <string>Caretline background :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1" >
-        <widget class="QToolButton" name="tbColoursCaretLineBackground" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QToolButton" name="tbColoursCurrentLineMarker" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="0" >
-        <widget class="QLabel" name="lColoursUnmatchedBraces" >
-         <property name="text" >
-          <string>Unmatched braces :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QToolButton" name="tbColoursErrorLineMarker" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" >
-        <widget class="QLabel" name="lColoursCaretForeground" >
-         <property name="text" >
-          <string>Caret foreground :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0" >
-        <widget class="QLabel" name="lColoursUnmatchedBracesBackground" >
-         <property name="text" >
-          <string>Unmatched braces background :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="QToolButton" name="tbColoursMatchedBraces" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="lColoursErrorLineMarker" >
-         <property name="text" >
-          <string>Error line marker :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1" >
-        <widget class="QToolButton" name="tbColoursUnmatchedBracesBackground" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="9" column="1" >
-        <widget class="QToolButton" name="tbColoursUnmatchedBraces" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="lColoursMatchedBracesBackground" >
-         <property name="text" >
-          <string>Matched braces background :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1" >
-        <widget class="QToolButton" name="tbColoursCaretForeground" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="lColoursCurrentLineMarker" >
-         <property name="text" >
-          <string>Current line marker :</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="pEditorGeneral" >
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="4" column="0" colspan="6" >
-        <widget class="QGroupBox" name="gbOptions" >
-         <property name="title" >
-          <string>Options</string>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="1" column="1" >
-           <widget class="QCheckBox" name="cbGeneralUseTabsForIndentations" >
-            <property name="text" >
-             <string>Use tabs for indentations</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QCheckBox" name="cbGeneralConvertTabsUponOpen" >
-            <property name="text" >
-             <string>Convert tabs upon open</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1" >
-           <widget class="QCheckBox" name="cbGeneralAutomaticEndOfLineConversion" >
-            <property name="text" >
-             <string>Automatic end of line conversion</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" >
-           <widget class="QCheckBox" name="cbGeneralShowLineNumbersMargin" >
-            <property name="text" >
-             <string>Show line numbers margin</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" >
-           <widget class="QCheckBox" name="cbGeneralAutoIndentation" >
-            <property name="text" >
-             <string>Auto indentation</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" >
-           <widget class="QCheckBox" name="cbGeneralShowEndOfLine" >
-            <property name="text" >
-             <string>Show end of line</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QCheckBox" name="cbGeneralShowFoldMargin" >
-            <property name="text" >
-             <string>Show fold margin</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" >
-           <widget class="QCheckBox" name="cbStyleCaretLineVisible" >
-            <property name="text" >
-             <string>Caretline visible</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" >
-           <widget class="QCheckBox" name="cbGeneralCreateBackupFileUponOpen" >
-            <property name="text" >
-             <string>Create backup file upon open</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" >
-           <widget class="QCheckBox" name="cbGeneralShowIndentationGuides" >
-            <property name="text" >
-             <string>Show indentation guides</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" >
-           <widget class="QCheckBox" name="cbGeneralTabKeyIndents" >
-            <property name="text" >
-             <string>Tab key indents</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QCheckBox" name="cbGeneralAutomaticSyntaxCheck" >
-            <property name="text" >
-             <string>Automatic syntax check</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1" >
-           <widget class="QCheckBox" name="cbStyleColourizeSelectedText" >
-            <property name="text" >
-             <string>Colourize selected text</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QCheckBox" name="cbGeneralShowWhitespace" >
-            <property name="text" >
-             <string>Show whitespace</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="4" >
-        <widget class="QSlider" name="sGeneralAutosaveInterval" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximum" >
-          <number>30</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition" >
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval" >
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" colspan="6" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>513</width>
-           <height>200</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="5" column="4" colspan="2" >
-        <widget class="QGroupBox" name="gbStyleLineEndCharacters" >
-         <property name="title" >
-          <string>Line End Characters</string>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="rbStyleUnix" >
-            <property name="text" >
-             <string>Unix</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="rbStyleMacintosh" >
-            <property name="text" >
-             <string>Macintosh</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="rbStyleWindowsDOS" >
-            <property name="text" >
-             <string>Windows/DOS</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="4" >
-        <widget class="QGroupBox" name="gbStyleEdgeMode" >
-         <property name="title" >
-          <string>Edge Mode</string>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="lStyleBackgroundColor" >
-            <property name="text" >
-             <string>Background colour :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="lStyleColumnNumber" >
-            <property name="text" >
-             <string>Column number :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2" >
-           <widget class="QLCDNumber" name="lnStyleEdgeColumnNumber" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>4</hsizetype>
-              <vsizetype>1</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="numDigits" >
-             <number>3</number>
-            </property>
-            <property name="segmentStyle" >
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-            <property name="value" stdset="0" >
-             <double>80.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QSlider" name="sStyleEdgeModeColumnNumber" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximum" >
-             <number>160</number>
-            </property>
-            <property name="value" >
-             <number>80</number>
-            </property>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="tickPosition" >
-             <enum>QSlider::TicksBothSides</enum>
-            </property>
-            <property name="tickInterval" >
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="lStyleEdgeMode" >
-            <property name="text" >
-             <string>Mode :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" colspan="2" >
-           <widget class="QComboBox" name="cbStyleEdgeMode" />
-          </item>
-          <item row="2" column="1" colspan="2" >
-           <widget class="QToolButton" name="tbStyleEdgeModeBackgroundColour" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="iconSize" >
-             <size>
-              <width>48</width>
-              <height>16</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="5" >
-        <widget class="QLCDNumber" name="lnGeneralTabWidth" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>4</hsizetype>
-           <vsizetype>1</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="numDigits" >
-          <number>2</number>
-         </property>
-         <property name="segmentStyle" >
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-         <property name="value" stdset="0" >
-          <double>4.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5" >
-        <widget class="QLCDNumber" name="lnGeneralIndentationWidth" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>4</hsizetype>
-           <vsizetype>1</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="numDigits" >
-          <number>2</number>
-         </property>
-         <property name="segmentStyle" >
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-         <property name="value" stdset="0" >
-          <double>1.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="5" >
-        <widget class="QLCDNumber" name="lnGeneralLineNumbersWidth" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>4</hsizetype>
-           <vsizetype>1</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="numDigits" >
-          <number>2</number>
-         </property>
-         <property name="segmentStyle" >
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-         <property name="value" stdset="0" >
-          <double>4.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="5" >
-        <widget class="QLCDNumber" name="lnGeneralAutosaveInterval" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>4</hsizetype>
-           <vsizetype>1</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="numDigits" >
-          <number>2</number>
-         </property>
-         <property name="segmentStyle" >
-          <enum>QLCDNumber::Flat</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="3" >
-        <widget class="QGroupBox" name="gbGeneralEncoding" >
-         <property name="title" >
-          <string>Default encoding</string>
-         </property>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QComboBox" name="cbGeneralEncoding" />
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2" >
-        <widget class="QGroupBox" name="gbFoldingStyle" >
-         <property name="title" >
-          <string>Folding style</string>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QComboBox" name="cbStyleFoldingStyle" />
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="7" column="2" >
-        <widget class="QGroupBox" name="gbCaretWidth" >
-         <property name="title" >
-          <string>Caret width</string>
-         </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <widget class="QSpinBox" name="sbStyleCaretWidth" >
-            <property name="maximum" >
-             <number>3</number>
-            </property>
-            <property name="minimum" >
-             <number>1</number>
-            </property>
-            <property name="value" >
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item rowspan="2" row="6" column="3" colspan="3" >
-        <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="1" column="1" >
-          <widget class="QLineEdit" name="leStyleMonospacedFont" >
-           <property name="text" >
-            <string>2345</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignHCenter</set>
-           </property>
-           <property name="readOnly" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2" >
-          <widget class="QCheckBox" name="cbStyleUseMonospacedAsDefault" >
-           <property name="text" >
-            <string>Use monospaced as default</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="QLineEdit" name="leStyleLineNumbersFont" >
-           <property name="text" >
-            <string>2345</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignHCenter</set>
-           </property>
-           <property name="readOnly" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QPushButton" name="pbStyleMonospacedFont" >
-           <property name="text" >
-            <string>Monospaced Font</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0" >
-          <widget class="QPushButton" name="pbStyleLineNumbersFont" >
-           <property name="text" >
-            <string>Line Numbers Font</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="1" colspan="4" >
-        <widget class="QSlider" name="sGeneralTabWidth" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimum" >
-          <number>1</number>
-         </property>
-         <property name="maximum" >
-          <number>20</number>
-         </property>
-         <property name="value" >
-          <number>4</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition" >
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval" >
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" colspan="4" >
-        <widget class="QSlider" name="sGeneralIndentationWidth" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimum" >
-          <number>1</number>
-         </property>
-         <property name="maximum" >
-          <number>20</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition" >
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval" >
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" colspan="4" >
-        <widget class="QSlider" name="sGeneralLineNumbersWidth" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimum" >
-          <number>2</number>
-         </property>
-         <property name="maximum" >
-          <number>8</number>
-         </property>
-         <property name="value" >
-          <number>4</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition" >
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval" >
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="lGeneralAutosaveInterval" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>0</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text" >
-          <string>Autosave interval :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="lGeneralTabWidth" >
-         <property name="text" >
-          <string>Tab width :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="lGeneralIndentationWidth" >
-         <property name="text" >
-          <string>Indentation width :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="lGeneralLineNumbersWidth" >
-         <property name="text" >
-          <string>Linenumbers width :</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="pEditorAssociations" >
+     <widget class="QWidget" name="pLexersAssociations" >
       <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>
@@ -1488,7 +2049,7 @@
         </widget>
        </item>
        <item row="2" column="1" >
-        <widget class="QComboBox" name="cbHighlighterAssociationLexerLanguage" />
+        <widget class="QComboBox" name="cbLexersAssociationsLanguage" />
        </item>
        <item row="2" column="2" >
         <widget class="QPushButton" name="pbHighlighterAssociationDelete" >
@@ -1502,7 +2063,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pEditorSyntaxHighlighting" >
+     <widget class="QWidget" name="pLexersHighlighting" >
       <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>
@@ -2009,396 +2570,215 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="pAutoCompletion" >
-      <widget class="QGroupBox" name="gbAutoCompletion" >
-       <property name="geometry" >
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>308</width>
-         <height>151</height>
-        </rect>
+     <widget class="QWidget" name="pEditorGeneral" >
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
        </property>
-       <property name="title" >
-        <string>Auto Completion Enabled</string>
+       <property name="spacing" >
+        <number>6</number>
        </property>
-       <property name="checkable" >
-        <bool>true</bool>
-       </property>
-       <layout class="QGridLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <item row="3" column="0" colspan="2" >
-         <widget class="QGroupBox" name="gbAutoCompletionSource" >
-          <property name="title" >
-           <string>Source</string>
-          </property>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>5</number>
-           </property>
-           <property name="spacing" >
-            <number>6</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="rbAutoCompletionDocument" >
-             <property name="text" >
-              <string>from Document</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="rbAutoCompletionAPI" >
-             <property name="text" >
-              <string>from API file</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="rbAutoCompletionAll" >
-             <property name="text" >
-              <string>from All</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="0" >
-         <widget class="QCheckBox" name="cbAutoCompletionCaseSensitivity" >
-          <property name="text" >
-           <string>Case sensitive</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QCheckBox" name="cbAutoCompletionReplaceWord" >
-          <property name="text" >
-           <string>Replace word</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QCheckBox" name="cbAutoCompletionShowSingle" >
-          <property name="text" >
-           <string>Show single</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2" >
-         <layout class="QHBoxLayout" >
+       <item row="4" column="0" colspan="6" >
+        <widget class="QGroupBox" name="gbOptions" >
+         <property name="title" >
+          <string>Options</string>
+         </property>
+         <layout class="QGridLayout" >
           <property name="margin" >
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="spacing" >
            <number>6</number>
           </property>
-          <item>
-           <widget class="QLabel" name="lAutoCompletionThreshold" >
+          <item row="2" column="1" >
+           <widget class="QCheckBox" name="cbGeneralConvertTabsUponOpen" >
             <property name="text" >
-             <string>Threshold :</string>
+             <string>Convert tabs upon open</string>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QSlider" name="sAutoCompletionThreshold" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="5" column="1" >
+           <widget class="QCheckBox" name="cbGeneralAutomaticEndOfLineConversion" >
+            <property name="text" >
+             <string>Automatic end of line conversion</string>
             </property>
-            <property name="minimum" >
-             <number>0</number>
-            </property>
-            <property name="maximum" >
-             <number>10</number>
-            </property>
-            <property name="value" >
-             <number>0</number>
-            </property>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="tickPosition" >
-             <enum>QSlider::TicksBothSides</enum>
-            </property>
-            <property name="tickInterval" >
-             <number>1</number>
+            <property name="checked" >
+             <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QLCDNumber" name="lnAutoCompletionThreshold" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>4</hsizetype>
-              <vsizetype>1</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="3" column="0" >
+           <widget class="QCheckBox" name="cbGeneralShowEndOfLine" >
+            <property name="text" >
+             <string>Show end of line</string>
             </property>
-            <property name="numDigits" >
-             <number>2</number>
+           </widget>
+          </item>
+          <item row="5" column="0" >
+           <widget class="QCheckBox" name="cbGeneralCreateBackupFileUponOpen" >
+            <property name="text" >
+             <string>Create backup file upon open</string>
             </property>
-            <property name="segmentStyle" >
-             <enum>QLCDNumber::Flat</enum>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QCheckBox" name="cbGeneralAutomaticSyntaxCheck" >
+            <property name="text" >
+             <string>Automatic syntax check</string>
             </property>
-            <property name="value" stdset="0" >
-             <double>0.000000000000000</double>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" >
+           <widget class="QCheckBox" name="cbStyleColourizeSelectedText" >
+            <property name="text" >
+             <string>Colourize selected text</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QCheckBox" name="cbGeneralShowWhitespace" >
+            <property name="text" >
+             <string>Show whitespace</string>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="page" >
-      <widget class="QGroupBox" name="gbCalltipsEnabled" >
-       <property name="geometry" >
-        <rect>
-         <x>0</x>
-         <y>30</y>
-         <width>351</width>
-         <height>137</height>
-        </rect>
-       </property>
-       <property name="title" >
-        <string>Calltips Enabled</string>
-       </property>
-       <property name="checkable" >
-        <bool>true</bool>
-       </property>
-       <property name="checked" >
-        <bool>true</bool>
-       </property>
-       <layout class="QGridLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <item row="0" column="2" >
-         <widget class="QLCDNumber" name="lnCalltips" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>4</hsizetype>
-            <vsizetype>1</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="numDigits" >
-           <number>2</number>
-          </property>
-          <property name="segmentStyle" >
-           <enum>QLCDNumber::Flat</enum>
-          </property>
-          <property name="value" stdset="0" >
-           <double>-1.000000000000000</double>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" >
-         <widget class="QLabel" name="lCalltips" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>0</hsizetype>
-            <vsizetype>0</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text" >
-           <string>Visible calltips :</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QSlider" name="sCalltips" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>0</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimum" >
-           <number>-1</number>
-          </property>
-          <property name="maximum" >
-           <number>20</number>
-          </property>
-          <property name="singleStep" >
-           <number>1</number>
-          </property>
-          <property name="value" >
-           <number>-1</number>
-          </property>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="tickPosition" >
-           <enum>QSlider::TicksBothSides</enum>
-          </property>
-          <property name="tickInterval" >
-           <number>1</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3" >
-         <layout class="QHBoxLayout" >
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="4" >
+        <widget class="QSlider" name="sGeneralAutosaveInterval" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximum" >
+          <number>30</number>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition" >
+          <enum>QSlider::TicksBothSides</enum>
+         </property>
+         <property name="tickInterval" >
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="6" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>513</width>
+           <height>200</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="4" colspan="2" >
+        <widget class="QGroupBox" name="gbStyleLineEndCharacters" >
+         <property name="title" >
+          <string>Line End Characters</string>
+         </property>
+         <layout class="QVBoxLayout" >
           <property name="margin" >
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="spacing" >
            <number>6</number>
           </property>
           <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>6</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="rbCalltipsNoContext" >
-              <property name="text" >
-               <string>No Context</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rbCalltipsContext" >
-              <property name="text" >
-               <string>Context </string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rbCalltipsNoAutoCompletionContext" >
-              <property name="text" >
-               <string>No Auto Completion Context</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="Line" name="lCalltipsVertical" >
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
+           <widget class="QRadioButton" name="rbStyleUnix" >
+            <property name="text" >
+             <string>Unix</string>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>0</number>
+           <widget class="QRadioButton" name="rbStyleMacintosh" >
+            <property name="text" >
+             <string>Macintosh</string>
             </property>
-            <property name="spacing" >
-             <number>6</number>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbStyleWindowsDOS" >
+            <property name="text" >
+             <string>Windows/DOS</string>
             </property>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="lCalltipsHighlight" >
-              <property name="text" >
-               <string>Highlight :</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="lCalltipsForeground" >
-              <property name="text" >
-               <string>Foreground :</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" >
-             <widget class="QToolButton" name="tbCalltipsHighlight" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="iconSize" >
-               <size>
-                <width>48</width>
-                <height>16</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="QToolButton" name="tbCalltipsBackground" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="iconSize" >
-               <size>
-                <width>48</width>
-                <height>16</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="lCalltipsBackground" >
-              <property name="text" >
-               <string>Background :</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="QToolButton" name="tbCalltipsForeground" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="iconSize" >
-               <size>
-                <width>48</width>
-                <height>16</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
+        </widget>
+       </item>
+       <item row="0" column="5" >
+        <widget class="QLCDNumber" name="lnGeneralAutosaveInterval" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>4</hsizetype>
+           <vsizetype>1</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="numDigits" >
+          <number>2</number>
+         </property>
+         <property name="segmentStyle" >
+          <enum>QLCDNumber::Flat</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="3" >
+        <widget class="QGroupBox" name="gbGeneralEncoding" >
+         <property name="title" >
+          <string>Default encoding</string>
+         </property>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QComboBox" name="cbGeneralEncoding" />
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="lGeneralAutosaveInterval" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>0</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text" >
+          <string>Autosave interval :</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -2454,72 +2834,8 @@
      <y>39</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>552</x>
-     <y>49</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sGeneralTabWidth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lnGeneralTabWidth</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>511</x>
-     <y>77</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>552</x>
-     <y>78</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sGeneralIndentationWidth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lnGeneralIndentationWidth</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>511</x>
-     <y>106</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>552</x>
-     <y>107</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sGeneralLineNumbersWidth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lnGeneralLineNumbersWidth</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>511</x>
-     <y>135</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>552</x>
-     <y>136</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sStyleEdgeModeColumnNumber</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lnStyleEdgeColumnNumber</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>388</x>
-     <y>402</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>440</x>
-     <y>403</y>
+     <x>803</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>
@@ -2530,19 +2846,19 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>433</x>
-     <y>117</y>
+     <x>507</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>475</x>
-     <y>119</y>
+     <x>550</x>
+     <y>157</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>sCalltips</sender>
+   <sender>sCallTipsVisible</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>lnCalltips</receiver>
+   <receiver>lnCallTipsVisible</receiver>
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -2550,8 +2866,72 @@
      <y>88</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>495</x>
-     <y>94</y>
+     <x>584</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sIndentationTabWidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lnIndentationTabWidth</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>440</x>
+     <y>181</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>547</x>
+     <y>173</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sIndentationWidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lnIndentationWidth</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>384</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>563</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sEdgeColumnNumber</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lnEdgeColumnNumber</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>382</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>503</x>
+     <y>131</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sCaretWidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lnCaretWidth</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>455</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>551</x>
+     <y>240</y>
     </hint>
    </hints>
   </connection>

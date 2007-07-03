@@ -24,10 +24,15 @@ private:
 	QColor iconBackgroundColor( const QIcon& ) const;
 	QButtonGroup* bgDesigner;
 	QButtonGroup* bgExternalChanges;
-	QButtonGroup* bgAPISource;
+	QButtonGroup* bgAutoCompletionSource;
 	QButtonGroup* bgCallTipsStyle;
-	QButtonGroup* bgEOLMode;
-	QButtonGroup* bgPythonIndentationWarning;
+	QButtonGroup* bgBraceMatch;
+	QButtonGroup* bgEdgeMode;
+	QButtonGroup* bgFoldStyle;
+	QButtonGroup* bgEolMode;
+	QButtonGroup* bgWhitespaceVisibility;
+	QButtonGroup* bgWrapMode;
+	QButtonGroup* bgWrapVisualFlag;
 
 public slots:
 	void accept();

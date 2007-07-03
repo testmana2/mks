@@ -49,7 +49,9 @@ public:
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
 	QsciLexer* lexerForFilename( const QString& );
-	//
+	// Auto Completion
+	void setAutocompletionEnabled( bool ); // false
+	bool autocompletionEnabled() const;
 	void setAutoCompletionCaseSensitivity( bool ); // true
 	bool autoCompletionCaseSensitivity() const;
 	void setAutoCompletionReplaceWord( bool ); // false
@@ -60,20 +62,24 @@ public:
 	QsciScintilla::AutoCompletionSource autoCompletionSource() const;
 	void setAutoCompletionThreshold( int ); // -1
 	int autoCompletionThreshold() const;
-
-
+	// Calltips
+	void setCallTipsEnabled( bool ); // false
+	bool callTipsEnabled() const;
+	void setCallTipsBackgroundColor( const QColor& ); // white
+	QColor callTipsBackgroundColor() const;
+	void setCallTipsForegroundColor( const QColor& ); // mid-gray
+	QColor callTipsForegroundColor() const;
+	void setCallTipsHighlightColor( const QColor& ); // dark blue
+	QColor callTipsHighlightColor() const;
+	void setCallTipsStyle( QsciScintilla::CallTipsStyle ); // CallTipsNoContext
+	QsciScintilla::CallTipsStyle callTipsStyle() const;
+	void setCallTipsVisible( int ); // -1
+	int callTipsVisible() const;
+	// Indentation
 	void setAutoIndent( bool ); // false
 	bool autoIndent() const;
-	void setBraceMatching( QsciScintilla::BraceMatch ); // NoBraceMatching
-	QsciScintilla::BraceMatch braceMatching() const;
 	void setBackspaceUnindents( bool ); // false
 	bool backspaceUnindents() const;
-	void setEolMode( QsciScintilla::EolMode ); // platform
-	QsciScintilla::EolMode eolMode() const;
-	void setEolVisibility( bool ); // false
-	bool eolVisibility() const;
-	void setFolding( QsciScintilla::FoldStyle ); // NoFoldStyle
-	QsciScintilla::FoldStyle folding() const;
 	void setIndentationGuides( bool ); // false
 	bool indentationGuides() const;
 	void setIndentationsUseTabs( bool ); // true
@@ -84,56 +90,95 @@ public:
 	bool tabIndents() const;
 	void setTabWidth( int ); // 8
 	int tabWidth() const;
+	void setIndentationGuidesBackgroundColor( const QColor& ); // ?
+	QColor indentationGuidesBackgroundColor() const;
+	void setIndentationGuidesForegroundColor( const QColor& ); // ?
+	QColor indentationGuidesForegroundColor() const;
+	// Brace Matching
+/*
+  NoBraceMatch    Brace matching is disabled. 
+  StrictBraceMatch    Brace matching is enabled for a brace immediately before the current position. 
+  SloppyBraceMatch
+*/
+	void setBraceMatchingEnabled( bool ); // false
+	bool braceMatchingEnabled() const;
+	void setBraceMatching( QsciScintilla::BraceMatch ); // NoBraceMatching
+	QsciScintilla::BraceMatch braceMatching() const;
+	void setMatchedBraceBackgroundColor( const QColor& ); // white
+	QColor matchedBraceBackgroundColor() const;
+	void setMatchedBraceForegroundColor( const QColor& ); // red
+	QColor matchedBraceForegroundColor() const;
+	void setUnmatchedBraceBackgroundColor( const QColor& ); // white
+	QColor unmatchedBraceBackgroundColor() const;
+	void setUnmatchedBraceForegroundColor( const QColor& ); // blue
+	QColor unmatchedBraceForegroundColor() const;
+	// Edge Mode
+	void setEdgeModeEnabled( bool ); // false
+	bool edgeModeEnabled() const;
+	void setEdgeMode( QsciScintilla::EdgeMode ); // EdgeNone
+	QsciScintilla::EdgeMode edgeMode() const;
+	void setEdgeColor( const QColor& ); // red
+	QColor edgeColor() const;
+	void setEdgeColumn( int ); // 80
+	int edgeColumn() const;
+	// Caret
+	void setCaretLineVisible( bool ); // false
+	bool caretLineVisible() const;
+	void setCaretLineBackgroundColor( const QColor& ); // transparent
+	QColor caretLineBackgroundColor() const;
+	void setCaretForegroundColor( const QColor& ); // black
+	QColor caretForegroundColor() const;
+	void setCaretWidth( int ); // 1
+	int caretWidth() const;
+	// Margins
+	void setFoldMarginEnabled( bool ); // false
+	bool foldMarginEnabled() const;
+	void setFolding( QsciScintilla::FoldStyle ); // NoFoldStyle
+	QsciScintilla::FoldStyle folding() const;
+	void setFoldMarginBackgroundColor( const QColor& ); // black
+	QColor foldMarginBackgroundColor() const;
+	void setFoldMarginForegroundColor( const QColor& ); // mid gray
+	QColor foldMarginForegroundColor() const;
+	void setGlobalMarginsEnabled( bool ); // false
+	bool globalMarginsEnabled() const;
+	void setMarginsBackgroundColor( const QColor& ); // gray
+	QColor marginsBackgroundColor() const;
+	void setMarginsForegroundColor( const QColor& ); // black
+	QColor marginsForegroundColor() const;
+	void setMarginsFont( const QFont& );
+	QFont marginsFont() const;
+
+
+
 	void setUtf8( bool ); // false
 	bool isUtf8() const;
+	void setEolMode( QsciScintilla::EolMode ); // platform
+	QsciScintilla::EolMode eolMode() const;
+	void setEolVisibility( bool ); // false
+	bool eolVisibility() const;
 	void setWhitespaceVisibility( QsciScintilla::WhitespaceVisibility ); // false
 	QsciScintilla::WhitespaceVisibility whitespaceVisibility() const;
 	void setWrapMode( QsciScintilla::WrapMode ); // WrapNone
 	QsciScintilla::WrapMode wrapMode() const;
-
-	void setCallTipsBackgroundColor (const QColor &col)
-	void setCallTipsForegroundColor (const QColor &col)
-	void setCallTipsHighlightColor (const QColor &col)
-	void setCallTipsStyle (CallTipsStyle style)
-	void setCallTipsVisible (int nr)
+	//void setWrapVisualFlags (WrapVisualFlag eflag, WrapVisualFlag sflag=WrapFlagNone, int sindent=0)
 /*
-	void setFoldMarginColors (const QColor &fore, const QColor &back)
-	void setAutoCompletionFillupsEnabled (bool enabled)
-	void setAutoCompletionFillups (const char *fillups)
-	void setAutoCompletionWordSeparators (const QStringList &separators)
-	
-	void setDocument (const QsciDocument &document)
-	void setEdgeColor (const QColor &col)
-	void setEdgeColumn (int colnr)
-	void setEdgeMode (EdgeMode mode)
-	void setMarkerBackgroundColor (const QColor &col, int mnr=-1)
-	void setMarkerForegroundColor (const QColor &col, int mnr=-1)
-	void setMatchedBraceBackgroundColor (const QColor &col)
-	void setMatchedBraceForegroundColor (const QColor &col)
-	void setUnmatchedBraceBackgroundColor (const QColor &col)
-	void setUnmatchedBraceForegroundColor (const QColor &col)
-	void setWrapVisualFlags (WrapVisualFlag eflag, WrapVisualFlag sflag=WrapFlagNone, int sindent=0)
-*/
-/*
-	void setMarginLineNumbers( int, bool );
-	bool marginLineNumbers( int ) const;
-	void setMarginMarkerMask( int, int );
-	int marginMarkerMask( int ) const;
-	void setMarginSensitivity( int, bool );
-	bool marginSensitivity( int ) const;
-	void setMarginWidth( int, int );
-	int marginWidth( int ) const;
-	void setCaretForegroundColor( const QColor& );
-	void setCaretLineBackgroundColor( const QColor& );
-	void setCaretLineVisible( bool );
-	void setCaretWidth( int width );
-	void setIndentationGuidesBackgroundColor( const QColor &col )
-	void setIndentationGuidesForegroundColor( const QColor &col )
-	void setMarginsBackgroundColor( const QColor &col ) // gray
-	void setMarginsFont( const QFont &f )
-	void setMarginsForegroundColor( const QColor &col ) // black
 	void setSelectionBackgroundColor( const QColor &col )
 	void setSelectionForegroundColor( const QColor &col )
+*/
+/*
+	void setAutoCompletionFillupsEnabled (bool enabled) -
+	void setAutoCompletionFillups (const char *fillups) -
+	void setAutoCompletionWordSeparators (const QStringList &separators) -
+	void setMarginLineNumbers( int, bool );-
+	bool marginLineNumbers( int ) const;-
+	void setMarginSensitivity( int, bool );-
+	bool marginSensitivity( int ) const;-
+	void setMarginWidth( int, int );-
+	int marginWidth( int ) const;-
+	void setMarginMarkerMask( int, int );-
+	int marginMarkerMask( int ) const;-
+	void setMarkerBackgroundColor (const QColor &col, int mnr=-1)-
+	void setMarkerForegroundColor (const QColor &col, int mnr=-1)-
 */
 
 private:
