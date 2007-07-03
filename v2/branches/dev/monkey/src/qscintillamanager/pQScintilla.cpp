@@ -512,7 +512,7 @@ QsciScintilla::EolMode pQScintilla::eolMode() const
 {
 #if defined( Q_WS_WIN )
 	int i = QsciScintilla::EolWindows;
-#elseif defined( Q_WS_MAC )
+#elif defined( Q_WS_MAC )
 	int i = QsciScintilla::EolMac;
 #else
 	int i = QsciScintilla::EolUnix;

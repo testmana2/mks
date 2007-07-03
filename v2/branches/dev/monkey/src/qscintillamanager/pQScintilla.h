@@ -60,6 +60,8 @@ public:
 	QsciScintilla::AutoCompletionSource autoCompletionSource() const;
 	void setAutoCompletionThreshold( int ); // -1
 	int autoCompletionThreshold() const;
+
+
 	void setAutoIndent( bool ); // false
 	bool autoIndent() const;
 	void setBraceMatching( QsciScintilla::BraceMatch ); // NoBraceMatching
@@ -89,15 +91,17 @@ public:
 	void setWrapMode( QsciScintilla::WrapMode ); // WrapNone
 	QsciScintilla::WrapMode wrapMode() const;
 
-	void setFoldMarginColors (const QColor &fore, const QColor &back)
-	void setAutoCompletionFillupsEnabled (bool enabled)
-	void setAutoCompletionFillups (const char *fillups)
-	void setAutoCompletionWordSeparators (const QStringList &separators)
 	void setCallTipsBackgroundColor (const QColor &col)
 	void setCallTipsForegroundColor (const QColor &col)
 	void setCallTipsHighlightColor (const QColor &col)
 	void setCallTipsStyle (CallTipsStyle style)
 	void setCallTipsVisible (int nr)
+/*
+	void setFoldMarginColors (const QColor &fore, const QColor &back)
+	void setAutoCompletionFillupsEnabled (bool enabled)
+	void setAutoCompletionFillups (const char *fillups)
+	void setAutoCompletionWordSeparators (const QStringList &separators)
+	
 	void setDocument (const QsciDocument &document)
 	void setEdgeColor (const QColor &col)
 	void setEdgeColumn (int colnr)
@@ -109,6 +113,7 @@ public:
 	void setUnmatchedBraceBackgroundColor (const QColor &col)
 	void setUnmatchedBraceForegroundColor (const QColor &col)
 	void setWrapVisualFlags (WrapVisualFlag eflag, WrapVisualFlag sflag=WrapFlagNone, int sindent=0)
+*/
 /*
 	void setMarginLineNumbers( int, bool );
 	bool marginLineNumbers( int ) const;
