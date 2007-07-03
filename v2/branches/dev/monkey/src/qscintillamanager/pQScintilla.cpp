@@ -423,6 +423,16 @@ QsciLexer* pQScintilla::lexerForFilename( const QString& s )
 	return 0;
 }
 
+void pQScintilla::setAutocompletionEnabled( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/AutoCompletionEnabled", b );
+}
+
+bool pQScintilla::autocompletionEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/AutoCompletionEnabled", false ).toBool();
+}
+
 void pQScintilla::setAutoCompletionCaseSensitivity( bool b )
 {
 	pSettings::instance()->setValue( mPath +"/AutoCompletionCaseSensitivity", b );
@@ -430,7 +440,7 @@ void pQScintilla::setAutoCompletionCaseSensitivity( bool b )
 
 bool pQScintilla::autoCompletionCaseSensitivity() const
 {
-	pSettings::instance()->value( mPath +"/AutoCompletionCaseSensitivity", true ).toBool();
+	return pSettings::instance()->value( mPath +"/AutoCompletionCaseSensitivity", true ).toBool();
 }
 
 void pQScintilla::setAutoCompletionReplaceWord( bool b )
@@ -440,7 +450,7 @@ void pQScintilla::setAutoCompletionReplaceWord( bool b )
 
 bool pQScintilla::autoCompletionReplaceWord() const
 {
-	pSettings::instance()->value( mPath +"/AutoCompletionReplaceWord", false ).toBool();
+	return pSettings::instance()->value( mPath +"/AutoCompletionReplaceWord", false ).toBool();
 }
 
 void pQScintilla::setAutoCompletionShowSingle( bool b )
@@ -450,7 +460,7 @@ void pQScintilla::setAutoCompletionShowSingle( bool b )
 
 bool pQScintilla::autoCompletionShowSingle() const
 {
-	pSettings::instance()->value( mPath +"/AutoCompletionShowSingle", false ).toBool();
+	return pSettings::instance()->value( mPath +"/AutoCompletionShowSingle", false ).toBool();
 }
 
 void setAutoCompletionSource( QsciScintilla::AutoCompletionSource a )
@@ -460,7 +470,7 @@ void setAutoCompletionSource( QsciScintilla::AutoCompletionSource a )
 
 QsciScintilla::AutoCompletionSource pQScintilla::autoCompletionSource() const
 {
-	(QsciScintilla::AutoCompletionSource)pSettings::instance()->value( mPath +"/AutoCompletionSource", (int)QsciScintilla::AcsNone ).toInt();
+	return (QsciScintilla::AutoCompletionSource)pSettings::instance()->value( mPath +"/AutoCompletionSource", (int)QsciScintilla::AcsNone ).toInt();
 }
 
 void pQScintilla::setAutoCompletionThreshold( int i )
@@ -470,7 +480,67 @@ void pQScintilla::setAutoCompletionThreshold( int i )
 
 int pQScintilla::autoCompletionThreshold() const
 {
-	pSettings::instance()->value( mPath +"/AutoCompletionThreshold", -1 ).toInt();
+	return pSettings::instance()->value( mPath +"/AutoCompletionThreshold", -1 ).toInt();
+}
+
+void pQScintilla::setCallTipsEnabled( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/CallTipsEnabled", b );
+}
+
+bool pQScintilla::callTipsEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/CallTipsEnabled", false ).toBool();
+}
+
+void pQScintilla::setCallTipsBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/CallTipsBackgroundColor", c );
+}
+
+QColor pQScintilla::callTipsBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/CallTipsBackgroundColor", Qt::white ).value<QColor>();
+}
+
+void pQScintilla::setCallTipsForegroundColor( const QColor& c ) // mid-gray
+{
+	pSettings::instance()->setValue( mPath +"/CallTipsForegroundColor", c );
+}
+
+QColor pQScintilla::callTipsForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/CallTipsForegroundColor", Qt::lightGray ).value<QColor>();
+}
+
+void pQScintilla::setCallTipsHighlightColor( const QColor& c ) // dark blue
+{
+	pSettings::instance()->setValue( mPath +"/CallTipsHighlightColor", c );
+}
+
+QColor pQScintilla::callTipsHighlightColor() const
+{
+	return pSettings::instance()->value( mPath +"/CallTipsHighlightColor", Qt::darkBlue ).value<QColor>();
+}
+
+void pQScintilla::setCallTipsStyle( QsciScintilla::CallTipsStyle s )
+{
+	pSettings::instance()->setValue( mPath +"/CallTipsStyle", s );
+}
+
+QsciScintilla::CallTipsStyle pQScintilla::callTipsStyle() const
+{
+	return (QsciScintilla::CallTipsStyle)pSettings::instance()->value( mPath +"/CallTipsVisible", (int)QsciScintilla::CallTipsNoContext ).toInt();
+}
+
+void pQScintilla::setCallTipsVisible( int i ) // -1
+{
+	pSettings::instance()->setValue( mPath +"/CallTipsVisible", i );
+}
+
+int pQScintilla::callTipsVisible() const
+{
+	return pSettings::instance()->value( mPath +"/CallTipsVisible", Qt::darkBlue ).toInt();
 }
 
 void pQScintilla::setAutoIndent( bool b )
@@ -480,17 +550,7 @@ void pQScintilla::setAutoIndent( bool b )
 
 bool pQScintilla::autoIndent() const
 {
-	pSettings::instance()->value( mPath +"/AutoIndent", false ).toBool();
-}
-
-void pQScintilla::setBraceMatching( QsciScintilla::BraceMatch b )
-{
-	pSettings::instance()->setValue( mPath +"/BraceMatching", b );
-}
-
-QsciScintilla::BraceMatch pQScintilla::braceMatching() const
-{
-	(QsciScintilla::BraceMatch)pSettings::instance()->value( mPath +"/BraceMatching", (int)QsciScintilla::NoBraceMatch ).toInt();
+	return pSettings::instance()->value( mPath +"/AutoIndent", false ).toBool();
 }
 
 void pQScintilla::setBackspaceUnindents( bool b )
@@ -500,8 +560,322 @@ void pQScintilla::setBackspaceUnindents( bool b )
 
 bool pQScintilla::backspaceUnindents() const
 {
-	pSettings::instance()->value( mPath +"/BackspaceUnindents", false ).toBool();
+	return pSettings::instance()->value( mPath +"/BackspaceUnindents", false ).toBool();
 }
+
+void pQScintilla::setIndentationGuides( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationGuides", b );
+}
+
+bool pQScintilla::indentationGuides() const
+{
+	return pSettings::instance()->value( mPath +"/IndentationGuides", false ).toBool();
+}
+
+void pQScintilla::setIndentationsUseTabs( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationsUseTabs", b );
+}
+
+bool pQScintilla::indentationsUseTabs() const
+{
+	return pSettings::instance()->value( mPath +"/IndentationsUseTabs", true ).toBool();
+}
+
+void pQScintilla::setIndentationWidth( int i )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationWidth", i );
+}
+
+int pQScintilla::indentationWidth() const
+{
+	return pSettings::instance()->value( mPath +"/IndentationWidth", 0 ).toInt();
+}
+
+void pQScintilla::setTabIndents( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/TabIndents", b );
+}
+
+bool pQScintilla::tabIndents() const
+{
+	return pSettings::instance()->value( mPath +"/TabIndents", true ).toBool();
+}
+
+void pQScintilla::setTabWidth( int i )
+{
+	pSettings::instance()->setValue( mPath +"/TabWidth", i );
+}
+
+int pQScintilla::tabWidth() const
+{
+	return pSettings::instance()->value( mPath +"/IndentationWidth", 8 ).toInt();
+}
+
+void pQScintilla::setIndentationGuidesBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationGuidesBackgroundColor", c );
+}
+
+QColor pQScintilla::indentationGuidesBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/IndentationGuidesBackgroundColor", Qt::white ).value<QColor>();
+}
+
+void pQScintilla::setIndentationGuidesForegroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/IndentationGuidesForegroundColor", c );
+}
+
+QColor pQScintilla::indentationGuidesForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/IndentationGuidesForegroundColor", Qt::black ).value<QColor>();
+}
+
+void pQScintilla::setBraceMatchingEnabled( bool b ) // false
+{
+	pSettings::instance()->setValue( mPath +"/BraceMatchingEnabled", b );
+}
+
+bool pQScintilla::braceMatchingEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/BraceMatchingEnabled", false ).toBool();
+}
+
+void pQScintilla::setBraceMatching( QsciScintilla::BraceMatch b )
+{
+	pSettings::instance()->setValue( mPath +"/BraceMatching", b );
+}
+
+QsciScintilla::BraceMatch pQScintilla::braceMatching() const
+{
+	return (QsciScintilla::BraceMatch)pSettings::instance()->value( mPath +"/BraceMatching", (int)QsciScintilla::NoBraceMatch ).toInt();
+}
+
+void pQScintilla::setMatchedBraceBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/MatchedBraceBackgroundColor", c );
+}
+
+QColor pQScintilla::matchedBraceBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/MatchedBraceBackgroundColor", Qt::white ).value<QColor>();
+}
+
+void pQScintilla::setMatchedBraceForegroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/MatchedBraceForegroundColor", c );
+}
+
+QColor pQScintilla::matchedBraceForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/MatchedBraceForegroundColor", Qt::red ).value<QColor>();
+}
+
+void pQScintilla::setUnmatchedBraceBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/UnmatchedBraceBackgroundColor", c );
+}
+
+QColor pQScintilla::unmatchedBraceBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/UnmatchedBraceBackgroundColor", Qt::white ).value<QColor>();
+}
+
+void pQScintilla::setUnmatchedBraceForegroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/UnmatchedBraceForegroundColor", c );
+}
+
+QColor pQScintilla::unmatchedBraceForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/UnmatchedBraceForegroundColor", Qt::blue ).value<QColor>();
+}
+
+
+void pQScintilla::setEdgeModeEnabled( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/EdgeModeEnabled", b );
+}
+
+bool pQScintilla::edgeModeEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/EdgeModeEnabled", false ).toBool();
+}
+
+void pQScintilla::setEdgeMode( QsciScintilla::EdgeMode m )
+{
+	pSettings::instance()->setValue( mPath +"/EdgeMode", m );
+}
+
+QsciScintilla::EdgeMode pQScintilla::edgeMode() const
+{
+	return (QsciScintilla::EdgeMode)pSettings::instance()->value( mPath +"/EdgeMode", (int)QsciScintilla::EdgeNone ).toInt();
+}
+
+void pQScintilla::setEdgeColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/EdgeColor", c );
+}
+
+QColor pQScintilla::edgeColor() const
+{
+	return pSettings::instance()->value( mPath +"/EdgeColor", Qt::red ).value<QColor>();
+}
+
+void pQScintilla::setEdgeColumn( int i )
+{
+	pSettings::instance()->setValue( mPath +"/EdgeColumn", i );
+}
+
+int pQScintilla::edgeColumn() const
+{
+	return pSettings::instance()->value( mPath +"/EdgeColumn", 80 ).toInt();
+}
+
+
+void pQScintilla::setCaretLineVisible( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/CaretLineVisible", b );
+}
+
+bool pQScintilla::caretLineVisible() const
+{
+	return pSettings::instance()->value( mPath +"/CaretLineVisible", false ).toBool();
+}
+
+void pQScintilla::setCaretLineBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/CaretLineBackgroundColor", c );
+}
+
+QColor pQScintilla::caretLineBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/CaretLineBackgroundColor", QColor( 0, 0, 0, 0 ) ).value<QColor>();
+}
+
+void pQScintilla::setCaretForegroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/CaretForegroundColor", c );
+}
+
+QColor pQScintilla::caretForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/CaretForegroundColor", Qt::black ).value<QColor>();
+}
+
+void pQScintilla::setCaretWidth( int i )
+{
+	pSettings::instance()->setValue( mPath +"/CaretWidth", i );
+}
+
+int pQScintilla::caretWidth() const
+{
+	return pSettings::instance()->value( mPath +"/CaretWidth", 1 ).toInt();
+}
+
+void pQScintilla::setFoldMarginEnabled( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/FoldMarginEnabled", b );
+}
+
+bool pQScintilla::foldMarginEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/FoldMarginEnabled", false ).toBool();
+}
+
+void pQScintilla::setFolding( QsciScintilla::FoldStyle f )
+{
+	pSettings::instance()->setValue( mPath +"/Folding", f );
+}
+
+QsciScintilla::FoldStyle pQScintilla::folding() const
+{
+	return (QsciScintilla::FoldStyle)pSettings::instance()->value( mPath +"/Folding", (int)QsciScintilla::NoFoldStyle ).toInt();
+}
+
+void pQScintilla::setFoldMarginBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/FoldMarginBackgroundColor", c );
+}
+
+QColor pQScintilla::foldMarginBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/FoldMarginBackgroundColor", Qt::black ).value<QColor>();
+}
+
+void pQScintilla::setFoldMarginForegroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/FoldMarginForegroundColor", c );
+}
+
+QColor pQScintilla::foldMarginForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/FoldMarginForegroundColor", Qt::lightGray ).value<QColor>();
+}
+
+void pQScintilla::setGlobalMarginsEnabled( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/GlobalMarginsEnabled", b );
+}
+
+bool pQScintilla::globalMarginsEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/GlobalMarginsEnabled", false ).toBool();
+}
+
+void pQScintilla::setMarginsBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/MarginsBackgroundColor", c );
+}
+
+QColor pQScintilla::marginsBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/MarginsBackgroundColor", Qt::gray ).value<QColor>();
+}
+
+void pQScintilla::setMarginsForegroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/MarginsForegroundColor", c );
+}
+
+QColor pQScintilla::marginsForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/MarginsForegroundColor", Qt::black ).value<QColor>();
+}
+
+void pQScintilla::setMarginsFont( const QFont& f )
+{
+	pSettings::instance()->setValue( mPath +"/MarginsFont", f.toString() );
+}
+
+QFont pQScintilla::marginsFont() const
+{
+	QFont f;
+	f.fromString( pSettings::instance()->value( mPath +"/MarginsFont", f.toString() ).toString() );
+	return f;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void pQScintilla::setEolMode( QsciScintilla::EolMode e )
 {
@@ -517,7 +891,7 @@ QsciScintilla::EolMode pQScintilla::eolMode() const
 #else
 	int i = QsciScintilla::EolUnix;
 #endif
-	(QsciScintilla::EolMode)pSettings::instance()->value( mPath +"/EolMode", i ).toInt();
+	return (QsciScintilla::EolMode)pSettings::instance()->value( mPath +"/EolMode", i ).toInt();
 }
 
 void pQScintilla::setEolVisibility( bool b )
@@ -527,67 +901,7 @@ void pQScintilla::setEolVisibility( bool b )
 
 bool pQScintilla::eolVisibility() const
 {
-	pSettings::instance()->value( mPath +"/EolVisibility", false ).toBool();
-}
-
-void pQScintilla::setFolding( QsciScintilla::FoldStyle f )
-{
-	pSettings::instance()->setValue( mPath +"/Folding", f );
-}
-
-QsciScintilla::FoldStyle pQScintilla::folding() const
-{
-	(QsciScintilla::FoldStyle)pSettings::instance()->value( mPath +"/Folding", (int)QsciScintilla::NoFoldStyle ).toInt();
-}
-
-void pQScintilla::setIndentationGuides( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/IndentationGuides", b );
-}
-
-bool pQScintilla::indentationGuides() const
-{
-	pSettings::instance()->value( mPath +"/IndentationGuides", false ).toBool();
-}
-
-void pQScintilla::setIndentationsUseTabs( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/IndentationsUseTabs", b );
-}
-
-bool pQScintilla::indentationsUseTabs() const
-{
-	pSettings::instance()->value( mPath +"/IndentationsUseTabs", true ).toBool();
-}
-
-void pQScintilla::setIndentationWidth( int i )
-{
-	pSettings::instance()->setValue( mPath +"/IndentationWidth", i );
-}
-
-int pQScintilla::indentationWidth() const
-{
-	pSettings::instance()->value( mPath +"/IndentationWidth", 0 ).toInt();
-}
-
-void pQScintilla::setTabIndents( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/TabIndents", b );
-}
-
-bool pQScintilla::tabIndents() const
-{
-	pSettings::instance()->value( mPath +"/TabIndents", true ).toBool();
-}
-
-void pQScintilla::setTabWidth( int i )
-{
-	pSettings::instance()->setValue( mPath +"/TabWidth", i );
-}
-
-int pQScintilla::tabWidth() const
-{
-	pSettings::instance()->value( mPath +"/IndentationWidth", 8 ).toInt();
+	return pSettings::instance()->value( mPath +"/EolVisibility", false ).toBool();
 }
 
 void pQScintilla::setUtf8( bool b )
@@ -597,7 +911,7 @@ void pQScintilla::setUtf8( bool b )
 
 bool pQScintilla::isUtf8() const
 {
-	pSettings::instance()->value( mPath +"/Utf8", false ).toBool();
+	return pSettings::instance()->value( mPath +"/Utf8", false ).toBool();
 }
 
 void pQScintilla::setWhitespaceVisibility( QsciScintilla::WhitespaceVisibility w )
@@ -607,7 +921,7 @@ void pQScintilla::setWhitespaceVisibility( QsciScintilla::WhitespaceVisibility w
 
 QsciScintilla::WhitespaceVisibility pQScintilla::whitespaceVisibility() const
 {
-	(QsciScintilla::WhitespaceVisibility)pSettings::instance()->value( mPath +"/WhitespaceVisibility", (int)QsciScintilla::WsInvisible ).toInt();
+	return (QsciScintilla::WhitespaceVisibility)pSettings::instance()->value( mPath +"/WhitespaceVisibility", (int)QsciScintilla::WsInvisible ).toInt();
 }
 
 void pQScintilla::setWrapMode( QsciScintilla::WrapMode w )
@@ -617,6 +931,6 @@ void pQScintilla::setWrapMode( QsciScintilla::WrapMode w )
 
 QsciScintilla::WrapMode pQScintilla::wrapMode() const
 {
-	(QsciScintilla::WrapMode)pSettings::instance()->value( mPath +"/WrapMode", (int)QsciScintilla::WrapNone ).toInt();
+	return (QsciScintilla::WrapMode)pSettings::instance()->value( mPath +"/WrapMode", (int)QsciScintilla::WrapNone ).toInt();
 }
 
