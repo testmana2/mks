@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>731</width>
-    <height>726</height>
+    <width>556</width>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -192,7 +192,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>6</number>
+      <number>10</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -481,279 +481,6 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="gbAutoCompletion" >
-         <property name="title" >
-          <string>Auto Completion Enabled</string>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="3" column="0" colspan="2" >
-           <widget class="QGroupBox" name="gbAutoCompletionSource" >
-            <property name="title" >
-             <string>Source</string>
-            </property>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>5</number>
-             </property>
-             <property name="spacing" >
-              <number>6</number>
-             </property>
-             <item>
-              <widget class="QRadioButton" name="rbAutoCompletionDocument" >
-               <property name="text" >
-                <string>from Document</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbAutoCompletionAPI" >
-               <property name="text" >
-                <string>from API file</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbAutoCompletionAll" >
-               <property name="text" >
-                <string>from All</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="0" >
-           <widget class="QCheckBox" name="cbAutoCompletionCaseSensitive" >
-            <property name="text" >
-             <string>Case sensitive</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QCheckBox" name="cbAutoCompletionReplaceWord" >
-            <property name="text" >
-             <string>Replace word</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QCheckBox" name="cbAutoCompletionShowSingle" >
-            <property name="text" >
-             <string>Show single</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="2" >
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>6</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="lAutoCompletionThreshold" >
-              <property name="text" >
-               <string>Threshold :</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSlider" name="sAutoCompletionThreshold" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimum" >
-               <number>0</number>
-              </property>
-              <property name="maximum" >
-               <number>10</number>
-              </property>
-              <property name="value" >
-               <number>0</number>
-              </property>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="tickPosition" >
-               <enum>QSlider::TicksBothSides</enum>
-              </property>
-              <property name="tickInterval" >
-               <number>1</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLCDNumber" name="lnAutoCompletionThreshold" >
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>4</hsizetype>
-                <vsizetype>1</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="numDigits" >
-               <number>2</number>
-              </property>
-              <property name="segmentStyle" >
-               <enum>QLCDNumber::Flat</enum>
-              </property>
-              <property name="value" stdset="0" >
-               <double>0.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="gbAutoCompletionCalltips" >
-         <property name="title" >
-          <string>Calltips Enabled</string>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>true</bool>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="1" column="0" colspan="3" >
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>3</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="rbAutoCompletionNoContext" >
-              <property name="text" >
-               <string>No Context</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rbAutoCompletionNoAutoCompletionContext" >
-              <property name="text" >
-               <string>No Auto Completion Context</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="rbAutoCompletionContext" >
-              <property name="text" >
-               <string>Context </string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="lAutoCompletionCalltips" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>0</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text" >
-             <string>Visible calltips :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" >
-           <widget class="QLCDNumber" name="lnAutoCompletionCalltips" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>4</hsizetype>
-              <vsizetype>1</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="numDigits" >
-             <number>2</number>
-            </property>
-            <property name="segmentStyle" >
-             <enum>QLCDNumber::Flat</enum>
-            </property>
-            <property name="value" stdset="0" >
-             <double>-1.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QSlider" name="sAutoCompletionCalltips" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimum" >
-             <number>-1</number>
-            </property>
-            <property name="maximum" >
-             <number>20</number>
-            </property>
-            <property name="singleStep" >
-             <number>1</number>
-            </property>
-            <property name="value" >
-             <number>-1</number>
-            </property>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="tickPosition" >
-             <enum>QSlider::TicksBothSides</enum>
-            </property>
-            <property name="tickInterval" >
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <widget class="QGroupBox" name="gbAPIs" >
          <property name="title" >
           <string>APIs</string>
@@ -869,24 +596,6 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1" >
-        <widget class="QToolButton" name="tbColoursCalltipsHighlight" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
-         </property>
-        </widget>
-       </item>
        <item row="8" column="0" >
         <widget class="QLabel" name="lColoursCaretLineBackground" >
          <property name="text" >
@@ -962,35 +671,10 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" >
-        <widget class="QLabel" name="lColoursCalltipsForeground" >
-         <property name="text" >
-          <string>Calltips foreground :</string>
-         </property>
-        </widget>
-       </item>
        <item row="10" column="0" >
         <widget class="QLabel" name="lColoursUnmatchedBracesBackground" >
          <property name="text" >
           <string>Unmatched braces background :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1" >
-        <widget class="QToolButton" name="tbColoursCalltipsBackground" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
          </property>
         </widget>
        </item>
@@ -1012,35 +696,10 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0" >
-        <widget class="QLabel" name="lColoursCalltipsBackground" >
-         <property name="text" >
-          <string>Calltips background :</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="lColoursErrorLineMarker" >
          <property name="text" >
           <string>Error line marker :</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1" >
-        <widget class="QToolButton" name="tbColoursCalltipsForeground" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="iconSize" >
-          <size>
-           <width>48</width>
-           <height>16</height>
-          </size>
          </property>
         </widget>
        </item>
@@ -1077,13 +736,6 @@
            <width>48</width>
            <height>16</height>
           </size>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" >
-        <widget class="QLabel" name="lColoursCalltipsHighlight" >
-         <property name="text" >
-          <string>Calltips highlight :</string>
          </property>
         </widget>
        </item>
@@ -2357,6 +2009,397 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="pAutoCompletion" >
+      <widget class="QGroupBox" name="gbAutoCompletion" >
+       <property name="geometry" >
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>308</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="title" >
+        <string>Auto Completion Enabled</string>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="3" column="0" colspan="2" >
+         <widget class="QGroupBox" name="gbAutoCompletionSource" >
+          <property name="title" >
+           <string>Source</string>
+          </property>
+          <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="rbAutoCompletionDocument" >
+             <property name="text" >
+              <string>from Document</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="rbAutoCompletionAPI" >
+             <property name="text" >
+              <string>from API file</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="rbAutoCompletionAll" >
+             <property name="text" >
+              <string>from All</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QCheckBox" name="cbAutoCompletionCaseSensitivity" >
+          <property name="text" >
+           <string>Case sensitive</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <widget class="QCheckBox" name="cbAutoCompletionReplaceWord" >
+          <property name="text" >
+           <string>Replace word</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QCheckBox" name="cbAutoCompletionShowSingle" >
+          <property name="text" >
+           <string>Show single</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2" >
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="lAutoCompletionThreshold" >
+            <property name="text" >
+             <string>Threshold :</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="sAutoCompletionThreshold" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>7</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimum" >
+             <number>0</number>
+            </property>
+            <property name="maximum" >
+             <number>10</number>
+            </property>
+            <property name="value" >
+             <number>0</number>
+            </property>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="tickPosition" >
+             <enum>QSlider::TicksBothSides</enum>
+            </property>
+            <property name="tickInterval" >
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLCDNumber" name="lnAutoCompletionThreshold" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>4</hsizetype>
+              <vsizetype>1</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="numDigits" >
+             <number>2</number>
+            </property>
+            <property name="segmentStyle" >
+             <enum>QLCDNumber::Flat</enum>
+            </property>
+            <property name="value" stdset="0" >
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="page" >
+      <widget class="QGroupBox" name="gbCalltipsEnabled" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>30</y>
+         <width>351</width>
+         <height>137</height>
+        </rect>
+       </property>
+       <property name="title" >
+        <string>Calltips Enabled</string>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item row="0" column="2" >
+         <widget class="QLCDNumber" name="lnCalltips" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>4</hsizetype>
+            <vsizetype>1</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="numDigits" >
+           <number>2</number>
+          </property>
+          <property name="segmentStyle" >
+           <enum>QLCDNumber::Flat</enum>
+          </property>
+          <property name="value" stdset="0" >
+           <double>-1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QLabel" name="lCalltips" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>0</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>Visible calltips :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QSlider" name="sCalltips" >
+          <property name="sizePolicy" >
+           <sizepolicy>
+            <hsizetype>7</hsizetype>
+            <vsizetype>0</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimum" >
+           <number>-1</number>
+          </property>
+          <property name="maximum" >
+           <number>20</number>
+          </property>
+          <property name="singleStep" >
+           <number>1</number>
+          </property>
+          <property name="value" >
+           <number>-1</number>
+          </property>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="tickPosition" >
+           <enum>QSlider::TicksBothSides</enum>
+          </property>
+          <property name="tickInterval" >
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="3" >
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QRadioButton" name="rbCalltipsNoContext" >
+              <property name="text" >
+               <string>No Context</string>
+              </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbCalltipsContext" >
+              <property name="text" >
+               <string>Context </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbCalltipsNoAutoCompletionContext" >
+              <property name="text" >
+               <string>No Auto Completion Context</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="lCalltipsVertical" >
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="lCalltipsHighlight" >
+              <property name="text" >
+               <string>Highlight :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="lCalltipsForeground" >
+              <property name="text" >
+               <string>Foreground :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="QToolButton" name="tbCalltipsHighlight" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <widget class="QToolButton" name="tbCalltipsBackground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="lCalltipsBackground" >
+              <property name="text" >
+               <string>Background :</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QToolButton" name="tbCalltipsForeground" >
+              <property name="sizePolicy" >
+               <sizepolicy>
+                <hsizetype>7</hsizetype>
+                <vsizetype>0</vsizetype>
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="iconSize" >
+               <size>
+                <width>48</width>
+                <height>16</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -2375,8 +2418,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>285</x>
-     <y>720</y>
+     <x>286</x>
+     <y>601</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -2391,44 +2434,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>720</y>
+     <x>354</x>
+     <y>601</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sAutoCompletionThreshold</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lnAutoCompletionThreshold</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>674</x>
-     <y>159</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>717</x>
-     <y>159</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sAutoCompletionCalltips</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>lnAutoCompletionCalltips</receiver>
-   <slot>display(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>675</x>
-     <y>301</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>718</x>
-     <y>301</y>
     </hint>
    </hints>
   </connection>
@@ -2439,12 +2450,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>393</x>
-     <y>38</y>
+     <x>511</x>
+     <y>39</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>725</x>
-     <y>69</y>
+     <x>552</x>
+     <y>49</y>
     </hint>
    </hints>
   </connection>
@@ -2455,12 +2466,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>683</x>
-     <y>109</y>
+     <x>511</x>
+     <y>77</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>725</x>
-     <y>109</y>
+     <x>552</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -2471,12 +2482,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>683</x>
-     <y>149</y>
+     <x>511</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>725</x>
-     <y>149</y>
+     <x>552</x>
+     <y>107</y>
     </hint>
    </hints>
   </connection>
@@ -2487,12 +2498,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>683</x>
-     <y>189</y>
+     <x>511</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>725</x>
-     <y>189</y>
+     <x>552</x>
+     <y>136</y>
     </hint>
    </hints>
   </connection>
@@ -2503,12 +2514,44 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>508</x>
-     <y>511</y>
+     <x>388</x>
+     <y>402</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>560</x>
-     <y>511</y>
+     <x>440</x>
+     <y>403</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sAutoCompletionThreshold</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lnAutoCompletionThreshold</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>433</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>475</x>
+     <y>119</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sCalltips</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>lnCalltips</receiver>
+   <slot>display(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>318</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>495</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
