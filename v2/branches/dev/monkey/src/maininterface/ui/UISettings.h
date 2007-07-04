@@ -32,7 +32,8 @@ private:
 	QButtonGroup* bgEolMode;
 	QButtonGroup* bgWhitespaceVisibility;
 	QButtonGroup* bgWrapMode;
-	QButtonGroup* bgWrapVisualFlag;
+	QButtonGroup* bgStartWrapVisualFlag;
+	QButtonGroup* bgEndWrapVisualFlag;
 
 public slots:
 	void accept();

@@ -66,7 +66,6 @@ UISettings::UISettings( QWidget* p )
 	bgFoldStyle->addButton( rbBoxedFoldStyle, QsciScintilla::BoxedFoldStyle );
 	bgFoldStyle->addButton( rbBoxedTreeFoldStyle, QsciScintilla::BoxedTreeFoldStyle );
 
-/*
 	// eol mode
 	bgEolMode = new QButtonGroup( gbEolMode );
 	bgEolMode->addButton( rbEolUnix, QsciScintilla::EolUnix );
@@ -84,10 +83,12 @@ UISettings::UISettings( QWidget* p )
 	bgWrapMode->addButton( rbWrapCharacter, QsciScintilla::WrapCharacter );
 
 	// wrap visual flag
-	bgWrapVisualFlag = new QButtonGroup( gbWrapVisualFlag );
-	bgWrapVisualFlag->addButton( rbWrapFlagByText, QsciScintilla::WrapFlagByText );
-	bgWrapVisualFlag->addButton( rbWrapFlagByBorder, QsciScintilla::WrapFlagByBorder );
-*/
+	bgStartWrapVisualFlag = new QButtonGroup( wStartWrapVisualFlags );
+	bgStartWrapVisualFlag->addButton( rbStartWrapFlagByText, QsciScintilla::WrapFlagByText );
+	bgStartWrapVisualFlag->addButton( rbStartWrapFlagByBorder, QsciScintilla::WrapFlagByBorder );
+	bgEndWrapVisualFlag = new QButtonGroup( wEndWrapVisualFlags );
+	bgEndWrapVisualFlag->addButton( rbEndWrapFlagByText, QsciScintilla::WrapFlagByText );
+	bgEndWrapVisualFlag->addButton( rbEndWrapFlagByBorder, QsciScintilla::WrapFlagByBorder );
 
 	// fill lexers combo
 	QStringList l = pQScintilla::instance()->languages();
@@ -202,7 +203,7 @@ void UISettings::loadSettings()
 	sIndentationWidth->setValue( sc->indentationWidth() );
 	tbIndentationGuidesBackground->setIcon( colourizedPixmap( sc->indentationGuidesBackgroundColor() ) );
 	tbIndentationGuidesForeground->setIcon( colourizedPixmap( sc->indentationGuidesForegroundColor() ) );
-	// brace matching
+	// Brace Matching
 	gbBraceMatchingEnabled->setChecked( sc->braceMatchingEnabled() );
 	if ( bgBraceMatch->button( sc->braceMatching() ) )
 		bgBraceMatch->button( sc->braceMatching() )->setChecked( true );
@@ -210,6 +211,45 @@ void UISettings::loadSettings()
 	tbMatchedBraceBackground->setIcon( colourizedPixmap( sc->matchedBraceForegroundColor() ) );
 	tbUnmatchedBraceBackground->setIcon( colourizedPixmap( sc->unmatchedBraceBackgroundColor() ) );
 	tbUnmatchedBraceBackground->setIcon( colourizedPixmap( sc->unmatchedBraceForegroundColor() ) );
+	// Edge Mode
+	gbEdgeModeEnabled->setChecked( sc->edgeModeEnabled() );
+	if ( bgEdgeMode->button( sc->edgeMode() ) )
+		bgEdgeMode->button( sc->edgeMode() )->setChecked( true );
+	sEdgeColumnNumber->setValue( sc->edgeColumn() );
+	tbEdgeBackground->setIcon( colourizedPixmap( sc->edgeColor() ) );
+	// Caret
+	gbCaretLineVisible->setChecked( sc->caretLineVisible() );
+	tbCaretLineBackground->setIcon( colourizedPixmap( sc->caretLineBackgroundColor() ) );
+	tbCaretForeground->setIcon( colourizedPixmap( sc->caretForegroundColor() ) );
+	sCaretWidth->setValue( sc->caretWidth() );
+	// Margins
+	gbLineNumbersMarginEnabled->setChecked( sc->lineNumbersMarginEnabled() );
+	sLineNumbersMarginWidth->setValue( sc->lineNumbersMarginWidth() );
+	cbLineNumbersMarginAutoWidth->setChecked( sc->lineNumbersMarginAutoWidth() );
+	gbFoldMarginEnabled->setChecked( sc->foldMarginEnabled() );
+	if ( bgFoldStyle->button( sc->folding() ) )
+		bgFoldStyle->button( sc->folding() )->setChecked( true );
+	tbFoldMarginForeground->setIcon( colourizedPixmap( sc->foldMarginForegroundColor() ) );
+	tbFoldMarginBackground->setIcon( colourizedPixmap( sc->foldMarginBackgroundColor() ) );
+	gbGlobalMarginsEnabled->setChecked( sc->globalMarginsEnabled() );
+	tbGlobalMarginsForeground->setIcon( colourizedPixmap( sc->marginsForegroundColor() ) );
+	tbGlobalMarginsBackground->setIcon( colourizedPixmap( sc->marginsBackgroundColor() ) );
+	tbGlobalMarginsFont->setFont( sc->marginsFont() );
+	// Special Characters
+	bgEolMode->button( sc->eolMode() )->setChecked( true );
+	cbEolVisibility->setChecked( sc->eolVisibility() );
+	gbWhitespaceVisibilityEnabled->setChecked( sc->whitespaceVisibility() != QsciScintilla::WsInvisible );
+	if ( gbWhitespaceVisibilityEnabled->isChecked() )
+		bgWhitespaceVisibility->button( sc->whitespaceVisibility() )->setChecked( true );
+	gbWrapModeEnabled->setChecked( sc->wrapMode() != QsciScintilla::WrapNone );
+	if ( gbWrapModeEnabled->isChecked() )
+		bgWrapMode->button( sc->wrapMode() )->setChecked( true );
+	gbWrapVisualFlagsEnabled->setChecked( sc->wrapVisualFlagsEnabled() );
+	if ( bgStartWrapVisualFlag->button( sc->startWrapVisualFlag() ) )
+		bgStartWrapVisualFlag->button( sc->startWrapVisualFlag() )->setChecked( true );
+	if ( bgEndWrapVisualFlag->button( sc->endWrapVisualFlag() ) )
+		bgEndWrapVisualFlag->button( sc->endWrapVisualFlag() )->setChecked( true );
+	sWrappedLineIndentWidth->setValue( sc->wrappedLineIndentWidth() );
 
 /*
 	// Editor

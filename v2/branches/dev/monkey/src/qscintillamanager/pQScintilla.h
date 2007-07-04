@@ -49,6 +49,11 @@ public:
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
 	QsciLexer* lexerForFilename( const QString& );
+	// General
+	void setSelectionBackgroundColor( const QColor& );
+	QColor selectionBackgroundColor() const;
+	void setSelectionForegroundColor( const QColor& );
+	QColor selectionForegroundColor() const;
 	// Auto Completion
 	void setAutocompletionEnabled( bool ); // false
 	bool autocompletionEnabled() const;
@@ -95,11 +100,6 @@ public:
 	void setIndentationGuidesForegroundColor( const QColor& ); // ?
 	QColor indentationGuidesForegroundColor() const;
 	// Brace Matching
-/*
-  NoBraceMatch    Brace matching is disabled. 
-  StrictBraceMatch    Brace matching is enabled for a brace immediately before the current position. 
-  SloppyBraceMatch
-*/
 	void setBraceMatchingEnabled( bool ); // false
 	bool braceMatchingEnabled() const;
 	void setBraceMatching( QsciScintilla::BraceMatch ); // NoBraceMatching
@@ -131,13 +131,19 @@ public:
 	void setCaretWidth( int ); // 1
 	int caretWidth() const;
 	// Margins
+	void setLineNumbersMarginEnabled( bool ); // false
+	bool lineNumbersMarginEnabled() const;
+	void setLineNumbersMarginWidth( int ); // 4
+	int lineNumbersMarginWidth() const;
+	void setLineNumbersMarginAutoWidth( bool ); // false
+	bool lineNumbersMarginAutoWidth() const;
 	void setFoldMarginEnabled( bool ); // false
 	bool foldMarginEnabled() const;
 	void setFolding( QsciScintilla::FoldStyle ); // NoFoldStyle
 	QsciScintilla::FoldStyle folding() const;
-	void setFoldMarginBackgroundColor( const QColor& ); // black
+	void setFoldMarginBackgroundColor( const QColor& ); // gray
 	QColor foldMarginBackgroundColor() const;
-	void setFoldMarginForegroundColor( const QColor& ); // mid gray
+	void setFoldMarginForegroundColor( const QColor& ); // black
 	QColor foldMarginForegroundColor() const;
 	void setGlobalMarginsEnabled( bool ); // false
 	bool globalMarginsEnabled() const;
@@ -147,11 +153,7 @@ public:
 	QColor marginsForegroundColor() const;
 	void setMarginsFont( const QFont& );
 	QFont marginsFont() const;
-
-
-
-	void setUtf8( bool ); // false
-	bool isUtf8() const;
+	// Special Characters
 	void setEolMode( QsciScintilla::EolMode ); // platform
 	QsciScintilla::EolMode eolMode() const;
 	void setEolVisibility( bool ); // false
@@ -160,26 +162,14 @@ public:
 	QsciScintilla::WhitespaceVisibility whitespaceVisibility() const;
 	void setWrapMode( QsciScintilla::WrapMode ); // WrapNone
 	QsciScintilla::WrapMode wrapMode() const;
-	//void setWrapVisualFlags (WrapVisualFlag eflag, WrapVisualFlag sflag=WrapFlagNone, int sindent=0)
-/*
-	void setSelectionBackgroundColor( const QColor &col )
-	void setSelectionForegroundColor( const QColor &col )
-*/
-/*
-	void setAutoCompletionFillupsEnabled (bool enabled) -
-	void setAutoCompletionFillups (const char *fillups) -
-	void setAutoCompletionWordSeparators (const QStringList &separators) -
-	void setMarginLineNumbers( int, bool );-
-	bool marginLineNumbers( int ) const;-
-	void setMarginSensitivity( int, bool );-
-	bool marginSensitivity( int ) const;-
-	void setMarginWidth( int, int );-
-	int marginWidth( int ) const;-
-	void setMarginMarkerMask( int, int );-
-	int marginMarkerMask( int ) const;-
-	void setMarkerBackgroundColor (const QColor &col, int mnr=-1)-
-	void setMarkerForegroundColor (const QColor &col, int mnr=-1)-
-*/
+	void setWrapVisualFlagsEnabled( bool ); // false
+	bool wrapVisualFlagsEnabled() const;
+	void setStartWrapVisualFlag( QsciScintilla::WrapVisualFlag ); // WrapFlagNone
+	QsciScintilla::WrapVisualFlag startWrapVisualFlag() const;
+	void setEndWrapVisualFlag( QsciScintilla::WrapVisualFlag ); // WrapFlagNone
+	QsciScintilla::WrapVisualFlag endWrapVisualFlag() const;
+	void setWrappedLineIndentWidth( int );
+	int wrappedLineIndentWidth() const;
 
 private:
 	pQScintilla( QObject* = QApplication::instance() );
