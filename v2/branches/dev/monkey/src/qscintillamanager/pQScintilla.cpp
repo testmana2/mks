@@ -423,6 +423,26 @@ QsciLexer* pQScintilla::lexerForFilename( const QString& s )
 	return 0;
 }
 
+void pQScintilla::setSelectionBackgroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/SelectionBackgroundColor", c );
+}
+
+QColor pQScintilla::selectionBackgroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/SelectionBackgroundColor", QColor( "#444444FF" ) ).value<QColor>();
+}
+
+void pQScintilla::setSelectionForegroundColor( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/SelectionForegroundColor", c );
+}
+
+QColor pQScintilla::selectionForegroundColor() const
+{
+	return pSettings::instance()->value( mPath +"/SelectionForegroundColor", QColor( "#444444FF" ) ).value<QColor>();
+}
+
 void pQScintilla::setAutocompletionEnabled( bool b )
 {
 	pSettings::instance()->setValue( mPath +"/AutoCompletionEnabled", b );
@@ -752,7 +772,7 @@ void pQScintilla::setCaretLineBackgroundColor( const QColor& c )
 
 QColor pQScintilla::caretLineBackgroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/CaretLineBackgroundColor", QColor( 0, 0, 0, 0 ) ).value<QColor>();
+	return pSettings::instance()->value( mPath +"/CaretLineBackgroundColor", QColor( Qt::transparent ) ).value<QColor>();
 }
 
 void pQScintilla::setCaretForegroundColor( const QColor& c )
@@ -773,6 +793,36 @@ void pQScintilla::setCaretWidth( int i )
 int pQScintilla::caretWidth() const
 {
 	return pSettings::instance()->value( mPath +"/CaretWidth", 1 ).toInt();
+}
+
+void pQScintilla::setLineNumbersMarginEnabled( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/LineNumbersMarginEnabled", b );
+}
+
+bool pQScintilla::lineNumbersMarginEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/LineNumbersMarginEnabled", false ).toBool();
+}
+
+void pQScintilla::setLineNumbersMarginWidth( int i )
+{
+	pSettings::instance()->setValue( mPath +"/LineNumbersMarginWidth", i );
+}
+
+int pQScintilla::lineNumbersMarginWidth() const
+{
+	return pSettings::instance()->value( mPath +"/LineNumbersMarginWidth", 4 ).toInt();
+}
+
+void pQScintilla::setLineNumbersMarginAutoWidth( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/LineNumbersMarginAutoWidth", b );
+}
+
+bool pQScintilla::lineNumbersMarginAutoWidth() const
+{
+	return pSettings::instance()->value( mPath +"/LineNumbersMarginAutoWidth", false ).toBool();
 }
 
 void pQScintilla::setFoldMarginEnabled( bool b )
@@ -802,7 +852,7 @@ void pQScintilla::setFoldMarginBackgroundColor( const QColor& c )
 
 QColor pQScintilla::foldMarginBackgroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/FoldMarginBackgroundColor", Qt::black ).value<QColor>();
+	return pSettings::instance()->value( mPath +"/FoldMarginBackgroundColor", Qt::lightGray ).value<QColor>();
 }
 
 void pQScintilla::setFoldMarginForegroundColor( const QColor& c )
@@ -812,7 +862,7 @@ void pQScintilla::setFoldMarginForegroundColor( const QColor& c )
 
 QColor pQScintilla::foldMarginForegroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/FoldMarginForegroundColor", Qt::lightGray ).value<QColor>();
+	return pSettings::instance()->value( mPath +"/FoldMarginForegroundColor", Qt::black ).value<QColor>();
 }
 
 void pQScintilla::setGlobalMarginsEnabled( bool b )
@@ -832,7 +882,7 @@ void pQScintilla::setMarginsBackgroundColor( const QColor& c )
 
 QColor pQScintilla::marginsBackgroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/MarginsBackgroundColor", Qt::gray ).value<QColor>();
+	return pSettings::instance()->value( mPath +"/MarginsBackgroundColor", Qt::lightGray ).value<QColor>();
 }
 
 void pQScintilla::setMarginsForegroundColor( const QColor& c )
@@ -856,26 +906,6 @@ QFont pQScintilla::marginsFont() const
 	f.fromString( pSettings::instance()->value( mPath +"/MarginsFont", f.toString() ).toString() );
 	return f;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void pQScintilla::setEolMode( QsciScintilla::EolMode e )
 {
@@ -904,16 +934,6 @@ bool pQScintilla::eolVisibility() const
 	return pSettings::instance()->value( mPath +"/EolVisibility", false ).toBool();
 }
 
-void pQScintilla::setUtf8( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/Utf8", b );
-}
-
-bool pQScintilla::isUtf8() const
-{
-	return pSettings::instance()->value( mPath +"/Utf8", false ).toBool();
-}
-
 void pQScintilla::setWhitespaceVisibility( QsciScintilla::WhitespaceVisibility w )
 {
 	pSettings::instance()->setValue( mPath +"/WhitespaceVisibility", w );
@@ -934,3 +954,42 @@ QsciScintilla::WrapMode pQScintilla::wrapMode() const
 	return (QsciScintilla::WrapMode)pSettings::instance()->value( mPath +"/WrapMode", (int)QsciScintilla::WrapNone ).toInt();
 }
 
+void pQScintilla::setWrapVisualFlagsEnabled( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/WrapVisualFlagsEnabled", b );
+}
+
+bool pQScintilla::wrapVisualFlagsEnabled() const
+{
+	return pSettings::instance()->value( mPath +"/WrapVisualFlagsEnabled", false ).toBool();
+}
+
+void pQScintilla::setStartWrapVisualFlag( QsciScintilla::WrapVisualFlag f )
+{
+	pSettings::instance()->setValue( mPath +"/StartWrapVisualFlag", f );
+}
+
+QsciScintilla::WrapVisualFlag pQScintilla::startWrapVisualFlag() const
+{
+	return (QsciScintilla::WrapVisualFlag)pSettings::instance()->value( mPath +"/StartWrapVisualFlag", (int)QsciScintilla::WrapFlagNone ).toInt();
+}
+
+void pQScintilla::setEndWrapVisualFlag( QsciScintilla::WrapVisualFlag f )
+{
+	pSettings::instance()->setValue( mPath +"/EndWrapVisualFlag", f );
+}
+
+QsciScintilla::WrapVisualFlag pQScintilla::endWrapVisualFlag() const
+{
+	return (QsciScintilla::WrapVisualFlag)pSettings::instance()->value( mPath +"/EndWrapVisualFlag", (int)QsciScintilla::WrapFlagNone ).toInt();
+}
+
+void pQScintilla::setWrappedLineIndentWidth( int i )
+{
+	pSettings::instance()->setValue( mPath +"/WrappedLineIndentWidth", i );
+}
+
+int pQScintilla::wrappedLineIndentWidth() const
+{
+	return pSettings::instance()->value( mPath +"/WrappedLineIndentWidth", 0 ).toInt();
+}
