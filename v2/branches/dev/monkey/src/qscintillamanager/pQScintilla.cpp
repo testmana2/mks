@@ -580,17 +580,17 @@ void pQScintilla::setCallTipsStyle( QsciScintilla::CallTipsStyle s )
 
 QsciScintilla::CallTipsStyle pQScintilla::callTipsStyle() const
 {
-	return (QsciScintilla::CallTipsStyle)pSettings::instance()->value( mPath +"/CallTipsVisible", (int)QsciScintilla::CallTipsNoContext ).toInt();
+	return (QsciScintilla::CallTipsStyle)pSettings::instance()->value( mPath +"/CallTipsStyle", (int)QsciScintilla::CallTipsNoContext ).toInt();
 }
 
-void pQScintilla::setCallTipsVisible( int i ) // -1
+void pQScintilla::setCallTipsVisible( int i )
 {
 	pSettings::instance()->setValue( mPath +"/CallTipsVisible", i );
 }
 
 int pQScintilla::callTipsVisible() const
 {
-	return pSettings::instance()->value( mPath +"/CallTipsVisible", Qt::darkBlue ).toInt();
+	return pSettings::instance()->value( mPath +"/CallTipsVisible", -1 ).toInt();
 }
 
 void pQScintilla::setAutoIndent( bool b )
