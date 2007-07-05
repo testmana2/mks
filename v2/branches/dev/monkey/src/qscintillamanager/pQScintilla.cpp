@@ -24,7 +24,7 @@ QStringList pQScintilla::languages() const
 		<< "SQL" << "TeX" << "VHDL";
 }
 
-QsciLexer* pQScintilla::lexer( const QString& s )
+QsciLexer* pQScintilla::lexerForLanguage( const QString& s )
 {
 	// get language
 	const QString ln = s.toLower();
@@ -82,15 +82,49 @@ QsciLexer* pQScintilla::lexer( const QString& s )
 	return l;
 }
 
+QsciLexer* pQScintilla::lexerForFilename( const QString& s )
+{
+	// get suffixes
+	QHash<QString, QStringList> l = suffixes();
+
+	// file suffixe
+	const QString sf = QFileInfo( s ).suffix().prepend( "*." );
+
+	// basic setup need change for makefile and cmake
+	foreach ( QString k, l.keys() )
+		if ( l.value( k ).contains( sf, Qt::CaseInsensitive ) )
+			return lexerForLanguage( k );
+
+	// return no lexer if not found
+	return 0;
+}
+
+QsciAPIs* pQScintilla::apisForLanguage( const QString& )
+{
+	HERE CREATE NEW API
+}
+
 QHash<QString,QsciLexer*> pQScintilla::lexers()
 {
 	// init lexers if needed
 	if ( mLexers.isEmpty() )
 		foreach ( QString s, languages() )
-			mLexers[s] = lexer( s );
+			mLexers[s] = lexerForLanguage( s );
 
 	// return lexers
 	return mLexers;
+}
+
+QHash<QString,QsciAPIs*> pQScintilla::apis()
+{
+	// init apis if needed
+	if ( mAPIs.isEmpty() )
+		foreach ( QString s, languages() )
+			mAPIs[s] = new QsciAPIs( 0 );
+			HERE READ APIS FILE FOR EACH API
+
+	// return lexers
+	return mAPIs;
 }
 
 void pQScintilla::readSettings()
@@ -119,7 +153,7 @@ void pQScintilla::resetLexer( QsciLexer* l )
 	// reset lexer
 	pSettings::instance()->remove( QString( "%1/%2" ).arg( mPath ).arg( s ) );
 	delete l;
-	mLexers[s] = lexer( s );
+	mLexers[s] = lexerForLanguage( s );
 	mLexers[s]->readSettings( *pSettings::instance(), qPrintable( mPath ) );
 }
 
@@ -402,23 +436,6 @@ QHash<QString, QStringList> pQScintilla::suffixes() const
 		l = defaultSuffixes();
 
 	return l;
-}
-
-QsciLexer* pQScintilla::lexerForFilename( const QString& s )
-{
-	// get suffixes
-	QHash<QString, QStringList> l = suffixes();
-
-	// file suffixe
-	const QString sf = QFileInfo( s ).suffix().prepend( "*." );
-
-	// basic setup need change for makefile and cmake
-	foreach ( QString k, l.keys() )
-		if ( l.value( k ).contains( sf, Qt::CaseInsensitive ) )
-			return lexer( k );
-
-	// return no lexer if not found
-	return 0;
 }
 
 void pQScintilla::applyProperties( pEditor* e )
