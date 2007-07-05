@@ -50,13 +50,21 @@ public:
 	QHash<QString, QStringList> suffixes() const;
 	QsciLexer* lexerForFilename( const QString& );
 	// General
-	void setSelectionBackgroundColor( const QColor& );
+	void setAutoSyntaxCheck( bool ); // false
+	bool autoSyntaxCheck() const;
+	void setConvertTabsUponOpen( bool ); // false
+	bool convertTabsUponOpen() const;
+	void setCreateBackupUponOpen( bool ); // false
+	bool createBackupUponOpen() const;
+	void setAutoEolConversion( bool ); // false
+	bool autoEolConversion() const;
+	void setDefaultEncoding( const QString& ); // UTF-8
+	QString defaultEncoding() const;
+	void setSelectionBackgroundColor( const QColor& ); // #444444FF
 	QColor selectionBackgroundColor() const;
-	void setSelectionForegroundColor( const QColor& );
+	void setSelectionForegroundColor( const QColor& ); // #444444FF
 	QColor selectionForegroundColor() const;
 	// Auto Completion
-	void setAutocompletionEnabled( bool ); // false
-	bool autocompletionEnabled() const;
 	void setAutoCompletionCaseSensitivity( bool ); // true
 	bool autoCompletionCaseSensitivity() const;
 	void setAutoCompletionReplaceWord( bool ); // false
@@ -68,8 +76,6 @@ public:
 	void setAutoCompletionThreshold( int ); // -1
 	int autoCompletionThreshold() const;
 	// Calltips
-	void setCallTipsEnabled( bool ); // false
-	bool callTipsEnabled() const;
 	void setCallTipsBackgroundColor( const QColor& ); // white
 	QColor callTipsBackgroundColor() const;
 	void setCallTipsForegroundColor( const QColor& ); // mid-gray
@@ -100,9 +106,7 @@ public:
 	void setIndentationGuidesForegroundColor( const QColor& ); // ?
 	QColor indentationGuidesForegroundColor() const;
 	// Brace Matching
-	void setBraceMatchingEnabled( bool ); // false
-	bool braceMatchingEnabled() const;
-	void setBraceMatching( QsciScintilla::BraceMatch ); // NoBraceMatching
+	void setBraceMatching( QsciScintilla::BraceMatch ); // NoBraceMatch
 	QsciScintilla::BraceMatch braceMatching() const;
 	void setMatchedBraceBackgroundColor( const QColor& ); // white
 	QColor matchedBraceBackgroundColor() const;
@@ -113,8 +117,6 @@ public:
 	void setUnmatchedBraceForegroundColor( const QColor& ); // blue
 	QColor unmatchedBraceForegroundColor() const;
 	// Edge Mode
-	void setEdgeModeEnabled( bool ); // false
-	bool edgeModeEnabled() const;
 	void setEdgeMode( QsciScintilla::EdgeMode ); // EdgeNone
 	QsciScintilla::EdgeMode edgeMode() const;
 	void setEdgeColor( const QColor& ); // red
@@ -137,16 +139,14 @@ public:
 	int lineNumbersMarginWidth() const;
 	void setLineNumbersMarginAutoWidth( bool ); // false
 	bool lineNumbersMarginAutoWidth() const;
-	void setFoldMarginEnabled( bool ); // false
-	bool foldMarginEnabled() const;
 	void setFolding( QsciScintilla::FoldStyle ); // NoFoldStyle
 	QsciScintilla::FoldStyle folding() const;
 	void setFoldMarginBackgroundColor( const QColor& ); // gray
 	QColor foldMarginBackgroundColor() const;
 	void setFoldMarginForegroundColor( const QColor& ); // black
 	QColor foldMarginForegroundColor() const;
-	void setGlobalMarginsEnabled( bool ); // false
-	bool globalMarginsEnabled() const;
+	void setMarginsEnabled( bool ); // false
+	bool marginsEnabled() const;
 	void setMarginsBackgroundColor( const QColor& ); // gray
 	QColor marginsBackgroundColor() const;
 	void setMarginsForegroundColor( const QColor& ); // black

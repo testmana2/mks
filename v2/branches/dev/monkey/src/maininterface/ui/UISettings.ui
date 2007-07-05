@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>569</width>
-    <height>500</height>
+    <height>593</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -22,7 +22,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>10</number>
+      <number>9</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -325,41 +325,28 @@
           <item>
            <widget class="QCheckBox" name="cbAutoSyntaxCheck" >
             <property name="text" >
-             <string>Automatic syntax check</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
+             <string>Automatic Syntax Check</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="cbConvertTabsUponOpen" >
             <property name="text" >
-             <string>Convert tabs upon open</string>
+             <string>Convert Tabs Upon Open</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="cbCreateBackupUponOpen" >
             <property name="text" >
-             <string>Create backup file upon open</string>
+             <string>Create Backup File Upon Open</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="cbAutoEolConversion" >
             <property name="text" >
-             <string>Automatic end of line conversion</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cbStyleColourizeSelectedText" >
-            <property name="text" >
-             <string>Colourize selected text</string>
+             <string>Automatic End of Line Conversion</string>
             </property>
            </widget>
           </item>
@@ -379,7 +366,7 @@
            <number>6</number>
           </property>
           <item>
-           <widget class="QComboBox" name="cbGeneralEncoding" />
+           <widget class="QComboBox" name="cbDefaultEncoding" />
           </item>
          </layout>
         </widget>
@@ -1570,7 +1557,7 @@
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>Column Number :</string>
+               <string>Width :</string>
               </property>
              </widget>
             </item>
@@ -1871,7 +1858,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="gbGlobalMarginsEnabled" >
+        <widget class="QGroupBox" name="gbMarginsEnabled" >
          <property name="title" >
           <string>Global Margins Enabled</string>
          </property>
@@ -1889,7 +1876,15 @@
            <number>6</number>
           </property>
           <item row="2" column="1" >
-           <widget class="QToolButton" name="tbGlobalMarginsFont" >
+           <widget class="QToolButton" name="tbMarginsFont" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>1</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text" >
              <string>12345</string>
             </property>
@@ -1902,7 +1897,7 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QToolButton" name="tbGlobalMarginsBackground" >
+           <widget class="QToolButton" name="tbMarginsBackground" >
             <property name="iconSize" >
              <size>
               <width>48</width>
@@ -1912,14 +1907,14 @@
            </widget>
           </item>
           <item row="0" column="0" >
-           <widget class="QLabel" name="lGlobalMarginsForeground" >
+           <widget class="QLabel" name="lMarginsForeground" >
             <property name="text" >
              <string>Foreground :</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1" >
-           <widget class="QToolButton" name="tbGlobalMarginsForeground" >
+           <widget class="QToolButton" name="tbMarginsForeground" >
             <property name="iconSize" >
              <size>
               <width>48</width>
@@ -1929,14 +1924,14 @@
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QLabel" name="lGlobalMarginsBackground" >
+           <widget class="QLabel" name="lMarginsBackground" >
             <property name="text" >
              <string>Background :</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0" >
-           <widget class="QLabel" name="lGlobalMarginsFont" >
+           <widget class="QLabel" name="lMarginsFont" >
             <property name="text" >
              <string>Font :</string>
             </property>
@@ -2019,6 +2014,9 @@
          <property name="checkable" >
           <bool>true</bool>
          </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
          <layout class="QHBoxLayout" >
           <property name="margin" >
            <number>5</number>
@@ -2051,6 +2049,9 @@
          <property name="checkable" >
           <bool>true</bool>
          </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
          <layout class="QHBoxLayout" >
           <property name="margin" >
            <number>5</number>
@@ -2082,6 +2083,9 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -2167,14 +2171,14 @@
              <item>
               <widget class="QRadioButton" name="rbEndWrapFlagByText" >
                <property name="text" >
-                <string>Wrap Word</string>
+                <string>Flag By Text</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QRadioButton" name="rbEndWrapFlagByBorder" >
                <property name="text" >
-                <string>Wrap Character</string>
+                <string>Flag By Border</string>
                </property>
               </widget>
              </item>
@@ -2193,14 +2197,14 @@
              <item>
               <widget class="QRadioButton" name="rbStartWrapFlagByText" >
                <property name="text" >
-                <string>Wrap Word</string>
+                <string>Flag By Text</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QRadioButton" name="rbStartWrapFlagByBorder" >
                <property name="text" >
-                <string>Wrap Character</string>
+                <string>Flag By Border</string>
                </property>
               </widget>
              </item>
@@ -2248,7 +2252,7 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="gbAPIs" >
+        <widget class="QGroupBox" name="gbSourceAPIs" >
          <property name="title" >
           <string>APIs</string>
          </property>
@@ -2260,53 +2264,45 @@
            <number>3</number>
           </property>
           <item row="1" column="0" colspan="4" >
-           <widget class="QListWidget" name="lwAPIs" >
+           <widget class="QListWidget" name="lwSourceAPIs" >
             <property name="statusTip" >
              <string>List of API files</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1" >
-           <widget class="QPushButton" name="pbAPIsAdd" >
+           <widget class="QPushButton" name="pbSourceAPIsAdd" >
             <property name="text" >
              <string>Add</string>
             </property>
            </widget>
           </item>
           <item row="2" column="2" >
-           <widget class="QLineEdit" name="leAPIs" />
+           <widget class="QLineEdit" name="leSourceAPIs" />
           </item>
           <item row="2" column="3" >
-           <widget class="QPushButton" name="pbAPIsBrowse" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>0</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
+           <widget class="QPushButton" name="pbSourceAPIsBrowse" >
             <property name="text" >
              <string>...</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0" >
-           <widget class="QPushButton" name="pbAPIsDelete" >
+           <widget class="QPushButton" name="pbSourceAPIsDelete" >
             <property name="text" >
              <string>Delete</string>
             </property>
            </widget>
           </item>
           <item row="0" column="0" colspan="2" >
-           <widget class="QLabel" name="lAPIsLanguage" >
+           <widget class="QLabel" name="lSourceAPIsLanguage" >
             <property name="text" >
              <string>Language :</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2" colspan="2" >
-           <widget class="QComboBox" name="cbAPIsLanguages" >
+           <widget class="QComboBox" name="cbSourceAPIsLanguages" >
             <property name="toolTip" >
              <string>Select language to be configured.</string>
             </property>
@@ -2326,7 +2322,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0" colspan="3" >
-        <widget class="QTreeWidget" name="twHighlighterAssociations" >
+        <widget class="QTreeWidget" name="twLexersAssociations" >
          <property name="editTriggers" >
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -2358,38 +2354,38 @@
         </widget>
        </item>
        <item row="2" column="0" >
-        <widget class="QLabel" name="lHighlighterAssociationLexerLanguage" >
+        <widget class="QLabel" name="lLexersAssociationsLanguage" >
          <property name="text" >
-          <string>Lexer Language :</string>
+          <string>Language :</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0" >
-        <widget class="QLabel" name="lHighlighterAssociationFilenamePattern" >
+        <widget class="QLabel" name="lLexersAssociationsFilenamePattern" >
          <property name="text" >
           <string>Filename Pattern :</string>
          </property>
         </widget>
        </item>
        <item row="1" column="2" >
-        <widget class="QPushButton" name="pbHighlighterAssociationAddChange" >
+        <widget class="QPushButton" name="pbLexersAssociationsAddChange" >
          <property name="text" >
           <string>Add/Change</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1" >
-        <widget class="QComboBox" name="cbLexersAssociationsLanguage" />
+        <widget class="QComboBox" name="cbLexersAssociationsLanguages" />
        </item>
        <item row="2" column="2" >
-        <widget class="QPushButton" name="pbHighlighterAssociationDelete" >
+        <widget class="QPushButton" name="pbLexersAssociationsDelete" >
          <property name="text" >
           <string>Delete</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1" >
-        <widget class="QLineEdit" name="leHighlighterAssociationFilenamePattern" />
+        <widget class="QLineEdit" name="leLexersAssociationsFilenamePattern" />
        </item>
       </layout>
      </widget>
@@ -2402,7 +2398,7 @@
         <number>6</number>
        </property>
        <item row="1" column="0" colspan="2" >
-        <widget class="QGroupBox" name="gbLexers" >
+        <widget class="QGroupBox" name="gbLexersHighlightingElements" >
          <property name="title" >
           <string>Style Element</string>
          </property>
@@ -2414,7 +2410,7 @@
            <number>6</number>
           </property>
           <item>
-           <widget class="QListWidget" name="lwLexersElements" />
+           <widget class="QListWidget" name="lwLexersHighlightingElements" />
           </item>
           <item>
            <layout class="QVBoxLayout" >
@@ -2433,28 +2429,28 @@
                <number>2</number>
               </property>
               <item>
-               <widget class="QPushButton" name="pbLexerForeground" >
+               <widget class="QPushButton" name="pbLexersHighlightingForeground" >
                 <property name="text" >
                  <string>Foreground Colour</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pbLexerBackground" >
+               <widget class="QPushButton" name="pbLexersHighlightingBackground" >
                 <property name="text" >
                  <string>Background Colour</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pbLexerFont" >
+               <widget class="QPushButton" name="pbLexersHighlightingFont" >
                 <property name="text" >
                  <string>Font</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="cbLexerFillEol" >
+               <widget class="QCheckBox" name="cbLexersHighlightingFillEol" >
                 <property name="text" >
                  <string>Fill to end of line</string>
                 </property>
@@ -2470,7 +2466,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldComments" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldComments" >
               <property name="statusTip" >
                <string>setFoldComments</string>
               </property>
@@ -2480,7 +2476,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldCompact" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldCompact" >
               <property name="statusTip" >
                <string>setFoldCompact</string>
               </property>
@@ -2490,7 +2486,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldQuotes" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldQuotes" >
               <property name="statusTip" >
                <string>setFoldQuotes</string>
               </property>
@@ -2500,7 +2496,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldDirectives" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldDirectives" >
               <property name="statusTip" >
                <string>setFoldDirectives</string>
               </property>
@@ -2510,7 +2506,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldAtBegin" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldAtBegin" >
               <property name="statusTip" >
                <string>setFoldAtBegin</string>
               </property>
@@ -2520,7 +2516,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldAtParenthesis" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldAtParenthesis" >
               <property name="statusTip" >
                <string>setFoldAtParenthesis</string>
               </property>
@@ -2530,7 +2526,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldAtElse" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldAtElse" >
               <property name="statusTip" >
                <string>setFoldAtElse</string>
               </property>
@@ -2540,7 +2536,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerFoldPreprocessor" >
+             <widget class="QCheckBox" name="cbLexersHighlightingFoldPreprocessor" >
               <property name="statusTip" >
                <string>setFoldPreprocessor</string>
               </property>
@@ -2550,7 +2546,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerStylePreprocessor" >
+             <widget class="QCheckBox" name="cbLexersHighlightingStylePreprocessor" >
               <property name="statusTip" >
                <string>setStylePreprocessor</string>
               </property>
@@ -2560,21 +2556,21 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerIndentOpeningBrace" >
+             <widget class="QCheckBox" name="cbLexersHighlightingIndentOpeningBrace" >
               <property name="text" >
                <string>Indent opening brace</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerIndentClosingBrace" >
+             <widget class="QCheckBox" name="cbLexersHighlightingIndentClosingBrace" >
               <property name="text" >
                <string>Indent closing brace</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerCaseSensitiveTags" >
+             <widget class="QCheckBox" name="cbLexersHighlightingCaseSensitiveTags" >
               <property name="statusTip" >
                <string>setCaseSensitiveTags</string>
               </property>
@@ -2584,7 +2580,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="cbLexerBackslashEscapes" >
+             <widget class="QCheckBox" name="cbLexersHighlightingBackslashEscapes" >
               <property name="statusTip" >
                <string>setBackslashEscapes</string>
               </property>
@@ -2594,14 +2590,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="lLexerIndentationWarning" >
+             <widget class="QLabel" name="lLexersHighlightingIndentationWarning" >
               <property name="text" >
                <string>Indentation warning :</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="cbLexerIndentationWarning" >
+             <widget class="QComboBox" name="cbLexersHighlightingIndentationWarning" >
               <property name="statusTip" >
                <string>setIndentationWarning</string>
               </property>
@@ -2629,21 +2625,21 @@
                <number>2</number>
               </property>
               <item>
-               <widget class="QPushButton" name="pbLexerAllForeground" >
+               <widget class="QPushButton" name="pbLexersHighlightingAllForeground" >
                 <property name="text" >
                  <string>All Foreground Colours</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pbLexerAllBackground" >
+               <widget class="QPushButton" name="pbLexersHighlightingAllBackground" >
                 <property name="text" >
                  <string>All Background Colours</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pbLexerAllFont" >
+               <widget class="QPushButton" name="pbLexersHighlightingAllFont" >
                 <property name="text" >
                  <string>All Fonts</string>
                 </property>
@@ -2668,7 +2664,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pbLexerReset" >
+             <widget class="QPushButton" name="pbLexersHighlightingReset" >
               <property name="text" >
                <string>Reset Current Lexer</string>
               </property>
@@ -2680,7 +2676,7 @@
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="QComboBox" name="cbLexersLanguage" >
+        <widget class="QComboBox" name="cbLexersHighlightingLanguages" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>7</hsizetype>
@@ -2692,7 +2688,7 @@
         </widget>
        </item>
        <item row="0" column="0" >
-        <widget class="QLabel" name="lLexerLanguage" >
+        <widget class="QLabel" name="lLexersHighlightingLanguage" >
          <property name="text" >
           <string>Lexer Language :</string>
          </property>
@@ -2709,14 +2705,14 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="cbAbbreviations" >
+        <widget class="QCheckBox" name="cbAbbreviationsAutoWordCompletion" >
          <property name="text" >
-          <string>Enable automatic word completion</string>
+          <string>Auto Word Completion</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="lTopAbbreviation" >
+        <widget class="QLabel" name="lAbbreviationsTemplates" >
          <property name="text" >
           <string>Templates :</string>
          </property>
@@ -2731,7 +2727,7 @@
           <number>6</number>
          </property>
          <item row="1" column="1" >
-          <widget class="QPushButton" name="pbRemoveAbbreviation" >
+          <widget class="QPushButton" name="pbAbbreviationsRemove" >
            <property name="text" >
             <string>Remove</string>
            </property>
@@ -2775,7 +2771,7 @@
           </widget>
          </item>
          <item row="0" column="1" >
-          <widget class="QPushButton" name="pbAddAbbreviation" >
+          <widget class="QPushButton" name="pbAbbreviationsAdd" >
            <property name="text" >
             <string>Add...</string>
            </property>
@@ -2797,14 +2793,14 @@
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="lBottomAbbreviation" >
+        <widget class="QLabel" name="lAbbreviationsCode" >
          <property name="text" >
           <string>Code :</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="teAbbreviation" />
+        <widget class="QTextEdit" name="teAbbreviationsCode" />
        </item>
       </layout>
      </widget>
