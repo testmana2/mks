@@ -16,6 +16,8 @@
 #include "UISettings.h"
 #include "UISaveFiles.h"
 #include "UIAbout.h"
+#include "pQScintilla.h"
+#include "pEditor.h"
 
 #include "pChild.h"
 
@@ -193,7 +195,13 @@ void pWorkspace::fileExit_triggered()
 // edit menu
 void pWorkspace::editSettings_triggered()
 {
-	UISettings::instance( this )->exec();
+	if ( UISettings::instance( this )->exec() )
+	{
+		// apply scintilla properties
+		foreach ( pAbstractChild* c, children() )
+			foreach ( pEditor* p, c->findChildren<pEditor*>() )
+				pQScintilla::instance()->applyProperties( p );
+	}
 }
 
 void pWorkspace::editUndo_triggered()

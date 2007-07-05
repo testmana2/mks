@@ -17,17 +17,24 @@ public:
 	pEditor( QWidget* = 0 );
 	virtual ~pEditor();
 
+	bool lineNumbersMarginEnabled() const;
+	int lineNumbersMarginWidth() const;
+	bool lineNumbersMarginAutoWidth() const;
 	bool copyAvailable();
 	bool canPaste();
 	QPoint cursorPosition() const;
 
 protected slots:
+	void linesChanged();
 	void setCopyAvailable( bool );
 	void cursorPositionChanged( int, int );
 	void textChanged();
 	void clipboardDataChanged();
 
 public slots:
+	void setLineNumbersMarginEnabled( bool );
+	void setLineNumbersMarginWidth( int );
+	void setLineNumbersMarginAutoWidth( bool );
 	bool openFile( const QString& );
 	bool saveFile( const QString& );
 	void closeFile();

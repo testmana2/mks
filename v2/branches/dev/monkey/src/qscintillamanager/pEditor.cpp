@@ -19,6 +19,7 @@ pEditor::pEditor( QWidget* p )
 	setUtf8( true );
 
 	// connection
+	connect( this, SIGNAL( linesChanged() ), this, SLOT( linesChanged() ) );
 	connect( this, SIGNAL( copyAvailable( bool ) ), this, SLOT( setCopyAvailable( bool ) ) );
 	connect( this, SIGNAL( cursorPositionChanged( int, int ) ), this, SLOT( cursorPositionChanged( int, int ) ) );
 	connect( this, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
@@ -27,6 +28,48 @@ pEditor::pEditor( QWidget* p )
 
 pEditor::~pEditor()
 {
+}
+
+bool pEditor::lineNumbersMarginEnabled() const
+{
+	return marginLineNumbers( 0 );
+}
+
+int pEditor::lineNumbersMarginWidth() const
+{
+	return property( "LineNumbersMarginWidth" ).toInt();
+}
+
+bool pEditor::lineNumbersMarginAutoWidth() const
+{
+	return property( "LineNumbersMarginAutoWidth" ).toBool();
+}
+
+void pEditor::setLineNumbersMarginEnabled( bool b )
+{
+	setMarginLineNumbers( 0, b );
+}
+
+void pEditor::setLineNumbersMarginWidth( int i )
+{
+	int j = i;
+	if ( i != 0 )
+		j++;
+
+	setProperty( "LineNumbersMarginWidth", i );
+	setMarginWidth( 0, QString().fill( '0', j ) );
+}
+
+void pEditor::setLineNumbersMarginAutoWidth( bool b )
+{
+	setProperty( "LineNumbersMarginAutoWidth", b );
+	emit linesChanged();
+}
+
+void pEditor::linesChanged()
+{
+	if ( lineNumbersMarginAutoWidth() )
+		setLineNumbersMarginWidth( QString::number( lines() ).length() );
 }
 
 bool pEditor::copyAvailable()
@@ -68,6 +111,9 @@ void pEditor::clipboardDataChanged()
 
 bool pEditor::openFile( const QString& s )
 {
+	if ( isModified() )
+		return false;
+
 	// open file
 	QFile f( s );
 	if ( !f.open( QFile::ReadOnly ) )
@@ -79,6 +125,9 @@ bool pEditor::openFile( const QString& s )
 	// set lexer
 	delete lexer();
 	setLexer( pQScintilla::instance()->lexerForFilename( s ) );
+
+	// set properties
+	pQScintilla::instance()->applyProperties( this );
 
 	// load file
 	QApplication::setOverrideCursor( Qt::WaitCursor );
@@ -92,6 +141,9 @@ bool pEditor::openFile( const QString& s )
 
 bool pEditor::saveFile( const QString& s )
 {
+	if ( !isModified() )
+		return true;
+
 	QFile f( s );
 	if ( !f.open( QFile::WriteOnly ) )
 	{

@@ -1,5 +1,6 @@
 #include "pQScintilla.h"
 #include "pSettings.h"
+#include "pEditor.h"
 
 #include <QFileInfo>
 
@@ -77,10 +78,6 @@ QsciLexer* pQScintilla::lexer( const QString& s )
 	else if ( ln == "vhdl" )
 		l = new QsciLexerVHDL( this );
 
-	// read lexer settings
-	if ( l )
-		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
-
 	// return lexer
 	return l;
 }
@@ -123,6 +120,7 @@ void pQScintilla::resetLexer( QsciLexer* l )
 	pSettings::instance()->remove( QString( "%1/%2" ).arg( mPath ).arg( s ) );
 	delete l;
 	mLexers[s] = lexer( s );
+	mLexers[s]->readSettings( *pSettings::instance(), qPrintable( mPath ) );
 }
 
 bool pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant& v )
@@ -423,6 +421,76 @@ QsciLexer* pQScintilla::lexerForFilename( const QString& s )
 	return 0;
 }
 
+void pQScintilla::applyProperties( pEditor* e )
+{
+	if ( !e )
+		return;
+
+	// read lexer settings
+	if ( e->lexer() )
+		e->lexer()->readSettings( *pSettings::instance(), qPrintable( mPath ) );
+
+	// apply settings from UISettings
+	// General
+	e->setSelectionBackgroundColor( selectionBackgroundColor() );
+	e->setSelectionForegroundColor( selectionForegroundColor() );
+	// Auto Completion
+	e->setAutoCompletionCaseSensitivity( autoCompletionCaseSensitivity() );
+	e->setAutoCompletionReplaceWord( autoCompletionReplaceWord() );
+	e->setAutoCompletionShowSingle( autoCompletionShowSingle() );
+	e->setAutoCompletionSource( autoCompletionSource() );
+	e->setAutoCompletionThreshold( autoCompletionThreshold() );
+	// CallTips
+	e->setCallTipsBackgroundColor( callTipsBackgroundColor() );
+	e->setCallTipsForegroundColor( callTipsForegroundColor() );
+	e->setCallTipsHighlightColor( callTipsHighlightColor() );
+	e->setCallTipsStyle( callTipsStyle() );
+	e->setCallTipsVisible( callTipsVisible() );
+	// Indentation
+	e->setAutoIndent( autoIndent() );
+	e->setBackspaceUnindents( backspaceUnindents() );
+	e->setIndentationGuides( indentationGuides() );
+	e->setIndentationsUseTabs( indentationsUseTabs() );
+	e->setIndentationWidth( indentationWidth() );
+	e->setTabIndents( tabIndents() );
+	e->setTabWidth( tabWidth() );
+	e->setIndentationGuidesBackgroundColor( indentationGuidesBackgroundColor() );
+	e->setIndentationGuidesForegroundColor( indentationGuidesForegroundColor() );
+	// Brace Matching
+	e->setBraceMatching( braceMatching() );
+	e->setMatchedBraceBackgroundColor( matchedBraceBackgroundColor() );
+	e->setMatchedBraceForegroundColor( matchedBraceForegroundColor() );
+	e->setUnmatchedBraceBackgroundColor( unmatchedBraceBackgroundColor() );
+	e->setUnmatchedBraceForegroundColor( unmatchedBraceForegroundColor() );
+	// Edge Mode
+	e->setEdgeMode( edgeMode() );
+	e->setEdgeColor( edgeColor() );
+	e->setEdgeColumn( edgeColumn() );
+	// Caret
+	e->setCaretLineVisible( caretLineVisible() );
+	e->setCaretLineBackgroundColor( caretLineBackgroundColor() );
+	e->setCaretForegroundColor( caretForegroundColor() );
+	e->setCaretWidth( caretWidth() );
+	// Margins
+	if ( marginsEnabled() )
+	{
+		e->setMarginsBackgroundColor( marginsBackgroundColor() );
+		e->setMarginsForegroundColor( marginsForegroundColor() );
+		e->setMarginsFont( marginsFont() );
+	}
+	e->setLineNumbersMarginEnabled( lineNumbersMarginEnabled() );
+	e->setLineNumbersMarginWidth( lineNumbersMarginWidth() );
+	e->setLineNumbersMarginAutoWidth( lineNumbersMarginAutoWidth() );
+	e->setFolding( folding() );
+	e->setFoldMarginColors( foldMarginForegroundColor(), foldMarginBackgroundColor() );
+	// Special Characters
+	e->setEolMode( eolMode() );
+	e->setEolVisibility( eolVisibility() );
+	e->setWhitespaceVisibility( whitespaceVisibility() );
+	e->setWrapMode( wrapMode() );
+	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
+}
+
 void pQScintilla::setAutoSyntaxCheck( bool b )
 {
 	pSettings::instance()->setValue( mPath +"/AutoSyntaxCheck", b );
@@ -480,7 +548,7 @@ void pQScintilla::setSelectionBackgroundColor( const QColor& c )
 
 QColor pQScintilla::selectionBackgroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/SelectionBackgroundColor", QColor() ).value<QColor>();
+	return pSettings::instance()->value( mPath +"/SelectionBackgroundColor", QColor( "#444444" ) ).value<QColor>();
 }
 
 void pQScintilla::setSelectionForegroundColor( const QColor& c )
@@ -490,7 +558,7 @@ void pQScintilla::setSelectionForegroundColor( const QColor& c )
 
 QColor pQScintilla::selectionForegroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/SelectionForegroundColor", QColor() ).value<QColor>();
+	return pSettings::instance()->value( mPath +"/SelectionForegroundColor", QColor( Qt::transparent ) ).value<QColor>();
 }
 
 void pQScintilla::setAutoCompletionCaseSensitivity( bool b )
@@ -660,7 +728,7 @@ void pQScintilla::setTabWidth( int i )
 
 int pQScintilla::tabWidth() const
 {
-	return pSettings::instance()->value( mPath +"/IndentationWidth", 8 ).toInt();
+	return pSettings::instance()->value( mPath +"/TabWidth", 8 ).toInt();
 }
 
 void pQScintilla::setIndentationGuidesBackgroundColor( const QColor& c )
