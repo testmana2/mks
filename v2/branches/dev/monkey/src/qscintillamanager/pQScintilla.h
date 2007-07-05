@@ -5,6 +5,7 @@
 #include "QSingleton.h"
 
 #include "qsciscintilla.h"
+#include "qsciapis.h"
 #include "qscilexerbash.h"
 #include "qscilexerbatch.h"
 #include "qscilexercmake.h"
@@ -41,8 +42,11 @@ class Q_MONKEY_EXPORT pQScintilla : public QObject, public QSingleton<pQScintill
 
 public:
 	QHash<QString,QsciLexer*> lexers();
+	QHash<QString,QsciAPIs*> apis();
 	QStringList languages() const;
-	QsciLexer* lexer( const QString& );
+	QsciLexer* lexerForLanguage( const QString& );
+	QsciLexer* lexerForFilename( const QString& );
+	QsciAPIs* apisForLanguage( const QString& );
 	void readSettings();
 	void writeSettings();
 	void resetLexer( QsciLexer* );
@@ -50,7 +54,6 @@ public:
 	QVariant property( const QString&, QsciLexer* ) const;
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
-	QsciLexer* lexerForFilename( const QString& );
 	void applyProperties( pEditor* );
 	// General
 	void setAutoSyntaxCheck( bool ); // false
@@ -179,6 +182,7 @@ private:
 	~pQScintilla();
 
 	QHash<QString,QsciLexer*> mLexers;
+	QHash<QString,QsciAPIs*> mAPIs;
 
 };
 
