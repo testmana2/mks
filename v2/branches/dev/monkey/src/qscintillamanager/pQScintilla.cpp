@@ -395,7 +395,7 @@ QHash<QString, QStringList> pQScintilla::suffixes() const
 	pSettings* s = pSettings::instance();
 
 	// get associations from settings
-	s->beginGroup( mPath +"/Associations" );
+	s->beginGroup( mPath +"/LexersAssociations" );
 	foreach ( QString k, s->childKeys() )
 		l[s->value( k ).toString()] << k;
 	s->endGroup();
@@ -423,6 +423,56 @@ QsciLexer* pQScintilla::lexerForFilename( const QString& s )
 	return 0;
 }
 
+void pQScintilla::setAutoSyntaxCheck( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/AutoSyntaxCheck", b );
+}
+
+bool pQScintilla::autoSyntaxCheck() const
+{
+	return pSettings::instance()->value( mPath +"/AutoSyntaxCheck", false ).toBool();
+}
+
+void pQScintilla::setConvertTabsUponOpen( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/ConvertTabsUponOpen", b );
+}
+
+bool pQScintilla::convertTabsUponOpen() const
+{
+	return pSettings::instance()->value( mPath +"/ConvertTabsUponOpen", false ).toBool();
+}
+
+void pQScintilla::setCreateBackupUponOpen( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/CreateBackupUponOpen", b );
+}
+
+bool pQScintilla::createBackupUponOpen() const
+{
+	return pSettings::instance()->value( mPath +"/CreateBackupUponOpen", false ).toBool();
+}
+
+void pQScintilla::setAutoEolConversion( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/AutoEolConversion", b );
+}
+
+bool pQScintilla::autoEolConversion() const
+{
+	return pSettings::instance()->value( mPath +"/AutoEolConversion", false ).toBool();
+}
+
+void pQScintilla::setDefaultEncoding( const QString& s )
+{
+	pSettings::instance()->setValue( mPath +"/DefaultEncoding", s );
+}
+
+QString pQScintilla::defaultEncoding() const
+{
+	return pSettings::instance()->value( mPath +"/DefaultEncoding", "UTF-8" ).toString();
+}
+
 void pQScintilla::setSelectionBackgroundColor( const QColor& c )
 {
 	pSettings::instance()->setValue( mPath +"/SelectionBackgroundColor", c );
@@ -430,7 +480,7 @@ void pQScintilla::setSelectionBackgroundColor( const QColor& c )
 
 QColor pQScintilla::selectionBackgroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/SelectionBackgroundColor", QColor( "#444444FF" ) ).value<QColor>();
+	return pSettings::instance()->value( mPath +"/SelectionBackgroundColor", QColor() ).value<QColor>();
 }
 
 void pQScintilla::setSelectionForegroundColor( const QColor& c )
@@ -440,17 +490,7 @@ void pQScintilla::setSelectionForegroundColor( const QColor& c )
 
 QColor pQScintilla::selectionForegroundColor() const
 {
-	return pSettings::instance()->value( mPath +"/SelectionForegroundColor", QColor( "#444444FF" ) ).value<QColor>();
-}
-
-void pQScintilla::setAutocompletionEnabled( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/AutoCompletionEnabled", b );
-}
-
-bool pQScintilla::autocompletionEnabled() const
-{
-	return pSettings::instance()->value( mPath +"/AutoCompletionEnabled", false ).toBool();
+	return pSettings::instance()->value( mPath +"/SelectionForegroundColor", QColor() ).value<QColor>();
 }
 
 void pQScintilla::setAutoCompletionCaseSensitivity( bool b )
@@ -483,7 +523,7 @@ bool pQScintilla::autoCompletionShowSingle() const
 	return pSettings::instance()->value( mPath +"/AutoCompletionShowSingle", false ).toBool();
 }
 
-void setAutoCompletionSource( QsciScintilla::AutoCompletionSource a )
+void pQScintilla::setAutoCompletionSource( QsciScintilla::AutoCompletionSource a )
 {
 	pSettings::instance()->setValue( mPath +"/AutoCompletionSource", a );
 }
@@ -501,16 +541,6 @@ void pQScintilla::setAutoCompletionThreshold( int i )
 int pQScintilla::autoCompletionThreshold() const
 {
 	return pSettings::instance()->value( mPath +"/AutoCompletionThreshold", -1 ).toInt();
-}
-
-void pQScintilla::setCallTipsEnabled( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/CallTipsEnabled", b );
-}
-
-bool pQScintilla::callTipsEnabled() const
-{
-	return pSettings::instance()->value( mPath +"/CallTipsEnabled", false ).toBool();
 }
 
 void pQScintilla::setCallTipsBackgroundColor( const QColor& c )
@@ -653,16 +683,6 @@ QColor pQScintilla::indentationGuidesForegroundColor() const
 	return pSettings::instance()->value( mPath +"/IndentationGuidesForegroundColor", Qt::black ).value<QColor>();
 }
 
-void pQScintilla::setBraceMatchingEnabled( bool b ) // false
-{
-	pSettings::instance()->setValue( mPath +"/BraceMatchingEnabled", b );
-}
-
-bool pQScintilla::braceMatchingEnabled() const
-{
-	return pSettings::instance()->value( mPath +"/BraceMatchingEnabled", false ).toBool();
-}
-
 void pQScintilla::setBraceMatching( QsciScintilla::BraceMatch b )
 {
 	pSettings::instance()->setValue( mPath +"/BraceMatching", b );
@@ -711,17 +731,6 @@ void pQScintilla::setUnmatchedBraceForegroundColor( const QColor& c )
 QColor pQScintilla::unmatchedBraceForegroundColor() const
 {
 	return pSettings::instance()->value( mPath +"/UnmatchedBraceForegroundColor", Qt::blue ).value<QColor>();
-}
-
-
-void pQScintilla::setEdgeModeEnabled( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/EdgeModeEnabled", b );
-}
-
-bool pQScintilla::edgeModeEnabled() const
-{
-	return pSettings::instance()->value( mPath +"/EdgeModeEnabled", false ).toBool();
 }
 
 void pQScintilla::setEdgeMode( QsciScintilla::EdgeMode m )
@@ -825,16 +834,6 @@ bool pQScintilla::lineNumbersMarginAutoWidth() const
 	return pSettings::instance()->value( mPath +"/LineNumbersMarginAutoWidth", false ).toBool();
 }
 
-void pQScintilla::setFoldMarginEnabled( bool b )
-{
-	pSettings::instance()->setValue( mPath +"/FoldMarginEnabled", b );
-}
-
-bool pQScintilla::foldMarginEnabled() const
-{
-	return pSettings::instance()->value( mPath +"/FoldMarginEnabled", false ).toBool();
-}
-
 void pQScintilla::setFolding( QsciScintilla::FoldStyle f )
 {
 	pSettings::instance()->setValue( mPath +"/Folding", f );
@@ -865,14 +864,14 @@ QColor pQScintilla::foldMarginForegroundColor() const
 	return pSettings::instance()->value( mPath +"/FoldMarginForegroundColor", Qt::black ).value<QColor>();
 }
 
-void pQScintilla::setGlobalMarginsEnabled( bool b )
+void pQScintilla::setMarginsEnabled( bool b )
 {
-	pSettings::instance()->setValue( mPath +"/GlobalMarginsEnabled", b );
+	pSettings::instance()->setValue( mPath +"/MarginsEnabled", b );
 }
 
-bool pQScintilla::globalMarginsEnabled() const
+bool pQScintilla::marginsEnabled() const
 {
-	return pSettings::instance()->value( mPath +"/GlobalMarginsEnabled", false ).toBool();
+	return pSettings::instance()->value( mPath +"/MarginsEnabled", false ).toBool();
 }
 
 void pQScintilla::setMarginsBackgroundColor( const QColor& c )

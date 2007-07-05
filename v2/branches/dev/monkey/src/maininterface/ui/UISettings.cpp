@@ -21,6 +21,8 @@ UISettings::UISettings( QWidget* p )
 	twMenu->topLevelItem( 2 )->setExpanded( true );
 	twMenu->setCurrentItem( twMenu->topLevelItem( 0 ) );
 
+	QStringList l;
+
 	// designer
 	bgDesigner = new QButtonGroup( gbUIDesignerIntegration );
 	bgDesigner->addButton( rbUseEmbeddedUIDesigner, Embedded );
@@ -35,6 +37,13 @@ UISettings::UISettings( QWidget* p )
 	// resize column
 	twTemplatesType->setColumnWidth( 0, 100 );
 	twTemplatesType->setColumnWidth( 1, 100 );
+
+	// loads text codecs
+	l.clear();
+	foreach ( QByteArray a, QTextCodec::availableCodecs() )
+		l << a;
+	l.sort();
+	cbDefaultEncoding->addItems( l );
 
 	// auto completion source
 	bgAutoCompletionSource = new QButtonGroup( gbAutoCompletionSource );
@@ -91,14 +100,21 @@ UISettings::UISettings( QWidget* p )
 	bgEndWrapVisualFlag->addButton( rbEndWrapFlagByBorder, QsciScintilla::WrapFlagByBorder );
 
 	// fill lexers combo
-	QStringList l = pQScintilla::instance()->languages();
+	l = pQScintilla::instance()->languages();
 	l.sort();
-	cbAPIsLanguages->addItems( l );
-	cbLexersAssociationsLanguage->addItems( l );
-	cbLexersLanguage->addItems( l );
+	cbSourceAPIsLanguages->addItems( l );
+	cbLexersAssociationsLanguages->addItems( l );
+	cbLexersHighlightingLanguages->addItems( l );
 
 	// resize column
-	twHighlighterAssociations->setColumnWidth( 0, 200 );
+	twLexersAssociations->setColumnWidth( 0, 200 );
+
+	// python indentation warning
+	cbLexersHighlightingIndentationWarning->addItem( tr( "No warning" ), QsciLexerPython::NoWarning );
+	cbLexersHighlightingIndentationWarning->addItem( tr( "Inconsistent" ), QsciLexerPython::Inconsistent );
+	cbLexersHighlightingIndentationWarning->addItem( tr( "Tabs after spaces" ), QsciLexerPython::TabsAfterSpaces );
+	cbLexersHighlightingIndentationWarning->addItem( tr( "Spaces" ), QsciLexerPython::Spaces );
+	cbLexersHighlightingIndentationWarning->addItem( tr( "Tabs" ), QsciLexerPython::Tabs );
 
 	// resize column
 	twAbbreviations->setColumnWidth( 0, 100 );
@@ -107,40 +123,41 @@ UISettings::UISettings( QWidget* p )
 	// read settings
 	loadSettings();
 
+	// connections
+	// Colours Button
+	connect( tbSelectionBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbSelectionForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbCalltipsBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbCalltipsForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbCalltipsHighlight, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbIndentationGuidesBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbIndentationGuidesForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbMatchedBraceForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbMatchedBraceBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbUnmatchedBraceForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbUnmatchedBraceBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbEdgeBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbCaretLineBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbCaretForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbFoldMarginForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbFoldMarginBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbGlobalMarginsForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbGlobalMarginsBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	// margin font
+	connect( tbGlobalMarginsFont, SIGNAL( clicked() ), this, SLOT( tbFonts_clicked() ) );
+	// lexer elements highlighting
+	connect( pbLexersHighlightingForeground, SIGNAL( clicked() ), this, SLOT( lexersHighlightingColour_clicked() ) );
+	connect( pbLexersHighlightingBackground, SIGNAL( clicked() ), this, SLOT( lexersHighlightingColour_clicked() ) );
+	connect( pbLexersHighlightingFont, SIGNAL( clicked() ), this, SLOT( lexersHighlightingFont_clicked() ) );
+	connect( pbLexersHighlightingAllForeground, SIGNAL( clicked() ), this, SLOT( lexersHighlightingColour_clicked() ) );
+	connect( pbLexersHighlightingAllBackground, SIGNAL( clicked() ), this, SLOT( lexersHighlightingColour_clicked() ) );
+	connect( pbLexersHighlightingAllFont, SIGNAL( clicked() ), this, SLOT( lexersHighlightingFont_clicked() ) );
+	foreach ( QCheckBox* cb, gbLexersHighlightingElements->findChildren<QCheckBox*>() )
+		if ( cb != cbLexersHighlightingFillEol )
+			connect( cb, SIGNAL( clicked( bool ) ), this, SLOT( cbLexersHighlightingProperties_clicked( bool ) ) );
+
 	// resize to minimum size
 	resize( minimumSizeHint() );
-
-/*
-	// loads text codecs
-	QStringList l;
-	foreach ( QByteArray a, QTextCodec::availableCodecs() )
-		l << a;
-	l.sort();
-	cbGeneralEncoding->addItems( l );
-
-	// python indentation warning
-	cbLexerIndentationWarning->addItem( tr( "No warning" ), QsciLexerPython::NoWarning );
-	cbLexerIndentationWarning->addItem( tr( "Inconsistent" ), QsciLexerPython::Inconsistent );
-	cbLexerIndentationWarning->addItem( tr( "Tabs after spaces" ), QsciLexerPython::TabsAfterSpaces );
-	cbLexerIndentationWarning->addItem( tr( "Spaces" ), QsciLexerPython::Spaces );
-	cbLexerIndentationWarning->addItem( tr( "Tabs" ), QsciLexerPython::Tabs );
-
-	// connections
-	foreach ( QToolButton* tb, pEditorColours->findChildren<QToolButton*>() )
-		connect( tb, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
-	connect( tbStyleEdgeModeBackgroundColour, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
-	connect( pbLexerForeground, SIGNAL( clicked() ), this, SLOT( lexersColour_clicked() ) );
-	connect( pbLexerBackground, SIGNAL( clicked() ), this, SLOT( lexersColour_clicked() ) );
-	connect( pbLexerFont, SIGNAL( clicked() ), this, SLOT( lexersFont_clicked() ) );
-	connect( pbLexerAllForeground, SIGNAL( clicked() ), this, SLOT( lexersColour_clicked() ) );
-	connect( pbLexerAllBackground, SIGNAL( clicked() ), this, SLOT( lexersColour_clicked() ) );
-	connect( pbLexerAllFont, SIGNAL( clicked() ), this, SLOT( lexersFont_clicked() ) );
-	foreach ( QCheckBox* cb, gbLexers->findChildren<QCheckBox*>() )
-		if ( cb != cbLexerFillEol )
-			connect( cb, SIGNAL( clicked( bool ) ), this, SLOT( cbProperties_clicked( bool ) ) );
-
-	
-*/
 }
 
 void UISettings::loadSettings()
@@ -177,8 +194,16 @@ void UISettings::loadSettings()
 
 	// Editor
 	pQScintilla* sc = pQScintilla::instance();
+	//  General
+	cbAutoSyntaxCheck->setChecked( sc->autoSyntaxCheck() );
+	cbConvertTabsUponOpen->setChecked( sc->convertTabsUponOpen() );
+	cbCreateBackupUponOpen->setChecked( sc->createBackupUponOpen() );
+	cbAutoEolConversion->setChecked( sc->autoEolConversion() );
+	cbDefaultEncoding->setCurrentIndex( cbDefaultEncoding->findText( sc->defaultEncoding() ) );
+	tbSelectionBackground->setIcon( colourizedPixmap( sc->selectionBackgroundColor() ) );
+	tbSelectionForeground->setIcon( colourizedPixmap( sc->selectionForegroundColor() ) );
 	//  Auto Completion
-	gbAutoCompletionEnabled->setChecked( sc->autocompletionEnabled() );
+	gbAutoCompletionEnabled->setChecked( sc->autoCompletionSource() != QsciScintilla::AcsNone );
 	cbAutoCompletionCaseSensitivity->setChecked( sc->autoCompletionCaseSensitivity() );
 	cbAutoCompletionReplaceWord->setChecked( sc->autoCompletionReplaceWord() );
 	cbAutoCompletionShowSingle->setChecked( sc->autoCompletionShowSingle() );
@@ -186,7 +211,7 @@ void UISettings::loadSettings()
 	if ( bgAutoCompletionSource->button( sc->autoCompletionSource() ) )
 		bgAutoCompletionSource->button( sc->autoCompletionSource() )->setChecked( true );
 	//  Call Tips
-	gbCalltipsEnabled->setChecked( sc->callTipsEnabled() );
+	gbCalltipsEnabled->setChecked( sc->callTipsStyle() != QsciScintilla::CallTipsNone );
 	sCallTipsVisible->setValue( sc->callTipsVisible() );
 	if ( bgCallTipsStyle->button( sc->callTipsStyle() ) )
 		bgCallTipsStyle->button( sc->callTipsStyle() )->setChecked( true );
@@ -203,46 +228,46 @@ void UISettings::loadSettings()
 	sIndentationWidth->setValue( sc->indentationWidth() );
 	tbIndentationGuidesBackground->setIcon( colourizedPixmap( sc->indentationGuidesBackgroundColor() ) );
 	tbIndentationGuidesForeground->setIcon( colourizedPixmap( sc->indentationGuidesForegroundColor() ) );
-	// Brace Matching
-	gbBraceMatchingEnabled->setChecked( sc->braceMatchingEnabled() );
+	//  Brace Matching
+	gbBraceMatchingEnabled->setChecked( sc->braceMatching() != QsciScintilla::NoBraceMatch );
 	if ( bgBraceMatch->button( sc->braceMatching() ) )
 		bgBraceMatch->button( sc->braceMatching() )->setChecked( true );
-	tbMatchedBraceForeground->setIcon( colourizedPixmap( sc->matchedBraceBackgroundColor() ) );
-	tbMatchedBraceBackground->setIcon( colourizedPixmap( sc->matchedBraceForegroundColor() ) );
+	tbMatchedBraceForeground->setIcon( colourizedPixmap( sc->matchedBraceForegroundColor() ) );
+	tbMatchedBraceBackground->setIcon( colourizedPixmap( sc->matchedBraceBackgroundColor() ) );
 	tbUnmatchedBraceBackground->setIcon( colourizedPixmap( sc->unmatchedBraceBackgroundColor() ) );
-	tbUnmatchedBraceBackground->setIcon( colourizedPixmap( sc->unmatchedBraceForegroundColor() ) );
-	// Edge Mode
-	gbEdgeModeEnabled->setChecked( sc->edgeModeEnabled() );
+	tbUnmatchedBraceForeground->setIcon( colourizedPixmap( sc->unmatchedBraceForegroundColor() ) );
+	//  Edge Mode
+	gbEdgeModeEnabled->setChecked( sc->edgeMode() != QsciScintilla::EdgeNone );
 	if ( bgEdgeMode->button( sc->edgeMode() ) )
 		bgEdgeMode->button( sc->edgeMode() )->setChecked( true );
 	sEdgeColumnNumber->setValue( sc->edgeColumn() );
-	tbEdgeBackground->setIcon( colourizedPixmap( sc->edgeColor() ) );
-	// Caret
+	tbEdgeColor->setIcon( colourizedPixmap( sc->edgeColor() ) );
+	//  Caret
 	gbCaretLineVisible->setChecked( sc->caretLineVisible() );
 	tbCaretLineBackground->setIcon( colourizedPixmap( sc->caretLineBackgroundColor() ) );
 	tbCaretForeground->setIcon( colourizedPixmap( sc->caretForegroundColor() ) );
 	sCaretWidth->setValue( sc->caretWidth() );
-	// Margins
+	//  Margins
 	gbLineNumbersMarginEnabled->setChecked( sc->lineNumbersMarginEnabled() );
 	sLineNumbersMarginWidth->setValue( sc->lineNumbersMarginWidth() );
 	cbLineNumbersMarginAutoWidth->setChecked( sc->lineNumbersMarginAutoWidth() );
-	gbFoldMarginEnabled->setChecked( sc->foldMarginEnabled() );
+	gbFoldMarginEnabled->setChecked( sc->folding() != QsciScintilla::NoFoldStyle );
 	if ( bgFoldStyle->button( sc->folding() ) )
 		bgFoldStyle->button( sc->folding() )->setChecked( true );
 	tbFoldMarginForeground->setIcon( colourizedPixmap( sc->foldMarginForegroundColor() ) );
 	tbFoldMarginBackground->setIcon( colourizedPixmap( sc->foldMarginBackgroundColor() ) );
-	gbGlobalMarginsEnabled->setChecked( sc->globalMarginsEnabled() );
-	tbGlobalMarginsForeground->setIcon( colourizedPixmap( sc->marginsForegroundColor() ) );
-	tbGlobalMarginsBackground->setIcon( colourizedPixmap( sc->marginsBackgroundColor() ) );
-	tbGlobalMarginsFont->setFont( sc->marginsFont() );
-	// Special Characters
+	gbMarginsEnabled->setChecked( sc->marginsEnabled() );
+	tbMarginsForeground->setIcon( colourizedPixmap( sc->marginsForegroundColor() ) );
+	tbMarginsBackground->setIcon( colourizedPixmap( sc->marginsBackgroundColor() ) );
+	tbMarginsFont->setFont( sc->marginsFont() );
+	//  Special Characters
 	bgEolMode->button( sc->eolMode() )->setChecked( true );
 	cbEolVisibility->setChecked( sc->eolVisibility() );
 	gbWhitespaceVisibilityEnabled->setChecked( sc->whitespaceVisibility() != QsciScintilla::WsInvisible );
-	if ( gbWhitespaceVisibilityEnabled->isChecked() )
+	if ( bgWhitespaceVisibility->button( sc->whitespaceVisibility() ) )
 		bgWhitespaceVisibility->button( sc->whitespaceVisibility() )->setChecked( true );
 	gbWrapModeEnabled->setChecked( sc->wrapMode() != QsciScintilla::WrapNone );
-	if ( gbWrapModeEnabled->isChecked() )
+	if ( bgWrapMode->button( sc->wrapMode() ) )
 		bgWrapMode->button( sc->wrapMode() )->setChecked( true );
 	gbWrapVisualFlagsEnabled->setChecked( sc->wrapVisualFlagsEnabled() );
 	if ( bgStartWrapVisualFlag->button( sc->startWrapVisualFlag() ) )
@@ -250,104 +275,30 @@ void UISettings::loadSettings()
 	if ( bgEndWrapVisualFlag->button( sc->endWrapVisualFlag() ) )
 		bgEndWrapVisualFlag->button( sc->endWrapVisualFlag() )->setChecked( true );
 	sWrappedLineIndentWidth->setValue( sc->wrappedLineIndentWidth() );
-
-/*
-	// Editor
-	//  Auto Completion
-	sp = QString( "%1/Editor/AutoCompletion" ).arg( SettingsPath );
-	gbAutoCompletion->setChecked( s->value( sp +"/Enabled", true ).toBool() );
-	cbAutoCompletionCaseSensitive->setChecked( s->value( sp +"/CaseSensitive", true ).toBool() );
-	cbAutoCompletionShowSingle->setChecked( s->value( sp +"/ShowSingle", false ).toBool() );
-	cbAutoCompletionReplaceWord->setChecked( s->value( sp +"/ReplaceWord", false ).toBool() );
-	sAutoCompletionThreshold->setValue( s->value( sp +"/Threshold", 0 ).toInt() );
-	bgAPISource->button( s->value( sp +"/APISource", QsciScintilla::AcsAPIs ).toInt() )->setChecked( true );
-	//  Calltips
-	sp = QString( "%1/Editor/Calltips" ).arg( SettingsPath );
-	gbAutoCompletionCalltips->setChecked( s->value( sp +"/Enabled", true ).toBool() );
-	sAutoCompletionCalltips->setValue( s->value( sp +"/Visible", -1 ).toInt() );
-	bgCallTipsStyle->button( s->value( sp +"/Style", QsciScintilla::CallTipsNoContext ).toInt() )->setChecked( true );
-	//  APIs
-	for ( int i = 0; i < cbAPIsLanguages->count(); i++ )
-		cbAPIsLanguages->setItemData( i, s->value( QString( "%1/Editor/APIs/%2" ).arg( SettingsPath, cbAPIsLanguages->itemText( i ) ) ).toStringList() );
-	if ( cbAPIsLanguages->count() > 0 )
-		cbAPIsLanguages->setCurrentIndex( 0 );
-
-	//  Colours
-	sp = QString( "%1/Editor/Colours" ).arg( SettingsPath );
-	tbColoursCurrentLineMarker->setIcon( colourizedPixmap( s->value( sp +"/CurrentLineMarker", Qt::yellow ).value<QColor>() ) );
-	tbColoursErrorLineMarker->setIcon( colourizedPixmap( s->value( sp +"/ErrorLineMarker", Qt::red ).value<QColor>() ) );
-	tbColoursMatchedBraces->setIcon( colourizedPixmap( s->value( sp +"/MatchedBraces", Qt::red ).value<QColor>() ) );
-	tbColoursMatchedBracesBackground->setIcon( colourizedPixmap( s->value( sp +"/MatchedBracesBackground", Qt::white ).value<QColor>() ) );
-	tbColoursCalltipsBackground->setIcon( colourizedPixmap( s->value( sp +"/CalltipsBackground", Qt::white ).value<QColor>() ) );
-	tbColoursCalltipsForeground->setIcon( colourizedPixmap( s->value( sp +"/CalltipsForeground", Qt::lightGray ).value<QColor>() ) );
-	tbColoursCalltipsHighlight->setIcon( colourizedPixmap( s->value( sp +"/CalltipsHighlight", Qt::darkBlue ).value<QColor>() ) );
-	tbColoursCaretForeground->setIcon( colourizedPixmap( s->value( sp +"/CaretForeground", Qt::black ).value<QColor>() ) );
-	tbColoursCaretLineBackground->setIcon( colourizedPixmap( s->value( sp +"/CaretLineBackground", Qt::white ).value<QColor>() ) );
-	tbColoursUnmatchedBraces->setIcon( colourizedPixmap( s->value( sp +"/UnmatchedBraces", Qt::blue ).value<QColor>() ) );
-	tbColoursUnmatchedBracesBackground->setIcon( colourizedPixmap( s->value( sp +"/UnmatchedBracesBackground", Qt::white ).value<QColor>() ) );
-
-	//  General
-	sp = QString( "%1/Editor/General" ).arg( SettingsPath );
-	sGeneralAutosaveInterval->setValue( s->value( sp +"/AutoSaveInterval", 0 ).toInt() );
-	sGeneralTabWidth->setValue( s->value( sp +"/TabWidth", 4 ).toInt() );
-	sGeneralIndentationWidth->setValue( s->value( sp +"/IndentationWidth", 1 ).toInt() );
-	sGeneralLineNumbersWidth->setValue( s->value( sp +"/LineNumbersWidth", 4 ).toInt() );
-	//  Options
-	cbGeneralShowLineNumbersMargin->setChecked( s->value( sp +"/ShowLineNumbersMargin", true ).toBool() );
-	cbGeneralShowFoldMargin->setChecked( s->value( sp +"/ShowFoldMargin", true ).toBool() );
-	cbGeneralShowWhitespace->setChecked( s->value( sp +"/ShowWhitespace", false ).toBool() );
-	cbGeneralShowEndOfLine->setChecked( s->value( sp +"/ShowEndOfLine", false ).toBool() );
-	cbGeneralShowIndentationGuides->setChecked( s->value( sp +"/ShowIndentationGuides", true ).toBool() );
-	cbGeneralCreateBackupFileUponOpen->setChecked( s->value( sp +"/CreateBackupFileUponOpen", true ).toBool() );
-	cbStyleCaretLineVisible->setChecked( s->value( sp +"/CaretLineVisible", false ).toBool() );
-	cbGeneralAutomaticSyntaxCheck->setChecked( s->value( sp +"/AutomaticSyntaxCheck", true ).toBool() );
-	cbGeneralUseTabsForIndentations->setChecked( s->value( sp +"/UseTabsForIndentations", false ).toBool() );
-	cbGeneralConvertTabsUponOpen->setChecked( s->value( sp +"/ConvertTabsUponOpen", false ).toBool() );
-	cbGeneralTabKeyIndents->setChecked( s->value( sp +"/TabKeyIndents", true ).toBool() );
-	cbGeneralAutoIndentation->setChecked( s->value( sp +"/AutoIndentation", true ).toBool() );
-	cbGeneralAutomaticEndOfLineConversion->setChecked( s->value( sp +"/AutomaticEndOfLineConversion", true ).toBool() );
-	cbStyleColourizeSelectedText->setChecked( s->value( sp +"/ColourizeSelectedText", false ).toBool() );
-	//  Edge Mode
-	cbStyleEdgeMode->setCurrentIndex( cbStyleEdgeMode->findData( s->value( sp +"/EdgeMode", QsciScintilla::EdgeNone ).toInt() ) );
-	sStyleEdgeModeColumnNumber->setValue( s->value( sp +"/EdgeModeColumnNumber", 80 ).toInt() );
-	tbStyleEdgeModeBackgroundColour->setIcon( colourizedPixmap( s->value( sp +"/EdgeModeBackground", Qt::gray ).value<QColor>() ) );
-	//  EOL Mode
-	bgEOLMode->button( s->value( sp +"/EOLMode", QsciScintilla::EolWindows ).toInt() )->setChecked( true );
-	//  File Encoding
-	cbGeneralEncoding->setCurrentIndex( cbGeneralEncoding->findText( s->value( sp +"/DefaultEncoding", "UTF-8" ).toString() ) );
-	//  Folding style
-	cbStyleFoldingStyle->setCurrentIndex( cbStyleFoldingStyle->findData( s->value( sp +"/FoldingStyle", QsciScintilla::NoFoldStyle ).toInt() ) );
-	//  Caret width
-	sbStyleCaretWidth->setValue( s->value( sp +"/CaretWidth", 1 ).toInt() );
-	//  LineNumbers & Monospaced Font
-	QFont f;
-	if ( f.fromString( s->value( sp +"/LineNumbersFont" ).toString() ) )
-		leStyleLineNumbersFont->setFont( f );
-	if ( f.fromString( s->value( sp +"/MonospacedFont" ).toString() ) )
-		leStyleMonospacedFont->setFont( f );
-	// default monospaced font
-	cbStyleUseMonospacedAsDefault->setChecked( s->value( sp +"/UseMonospacedAsDefault", false ).toBool() );
-
-	//  Associations
+	// Source APIs
+	for ( int i = 0; i < cbSourceAPIsLanguages->count(); i++ )
+		cbSourceAPIsLanguages->setItemData( i, s->value( QString( "%1/Editor/SourceAPIs/%2" ).arg( SettingsPath, cbSourceAPIsLanguages->itemText( i ) ) ).toStringList() );
+	if ( cbSourceAPIsLanguages->count() > 0 )
+		cbSourceAPIsLanguages->setCurrentIndex( 0 );
+	//  Lexers Associations
 	QHash<QString, QStringList> l = pQScintilla::instance()->suffixes();
 	foreach ( QString k, l.keys() )
 	{
 		foreach ( QString e, l.value( k ) )
 		{
-			QTreeWidgetItem* it = new QTreeWidgetItem( twHighlighterAssociations );
+			QTreeWidgetItem* it = new QTreeWidgetItem( twLexersAssociations );
 			it->setText( 0, e );
 			it->setText( 1, k );
 		}
 	}
-
-	//  Highlighting
+	//  Lexers Highlighting
 	pQScintilla::instance()->readSettings();
-	if ( cbLexersLanguage->count() )
-		on_cbLexersLanguage_currentIndexChanged( cbLexersLanguage->itemText( 0 ) );
+	if ( cbLexersHighlightingLanguages->count() )
+		on_cbLexersHighlightingLanguages_currentIndexChanged( cbLexersHighlightingLanguages->itemText( 0 ) );
 
 	//  Abbreviations
 	sp = QString( "%1/Editor/Abbreviations" ).arg( SettingsPath );
-	cbAbbreviations->setChecked( s->value( sp +"/Enabled", false ).toBool() );
+	cbAbbreviationsAutoWordCompletion->setChecked( s->value( sp +"/Enabled", false ).toBool() );
 	size = s->beginReadArray( sp );
 	for ( int i = 0; i < size; i++ )
 	{
@@ -360,16 +311,11 @@ void UISettings::loadSettings()
 	}
 	s->endArray();
 
-/
-	// Tools Menu
-	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
-	//qWarning( qPrintable( m ) );
-*/
+	// Tools
 }
 
 void UISettings::saveSettings()
 {
-/*
 	pSettings* s = pSettings::instance();
 	QString sp;
 
@@ -405,89 +351,105 @@ void UISettings::saveSettings()
 	s->endArray();
 
 	// Editor
-	//  Auto Completion
-	sp = QString( "%1/Editor/AutoCompletion" ).arg( SettingsPath );
-	s->setValue( sp +"/Enabled", gbAutoCompletion->isChecked() );
-	s->setValue( sp +"/CaseSensitive", cbAutoCompletionCaseSensitive->isChecked() );
-	s->setValue( sp +"/ShowSingle", cbAutoCompletionShowSingle->isChecked() );
-	s->setValue( sp +"/ReplaceWord", cbAutoCompletionReplaceWord->isChecked() );
-	s->setValue( sp +"/Threshold", sAutoCompletionThreshold->value() );
-	s->setValue( sp +"/APISource", bgAPISource->checkedId() );
-	//  Calltips
-	sp = QString( "%1/Editor/Calltips" ).arg( SettingsPath );
-	s->setValue( sp +"/Enabled", gbAutoCompletionCalltips->isChecked() );
-	s->setValue( sp +"/Visible", sAutoCompletionCalltips->value() );
-	s->setValue( sp +"/Style", bgCallTipsStyle->checkedId() );
-	//  APIs
-	sp = QString( "%1/Editor/APIs/" ).arg( SettingsPath );
-	for ( int i = 0; i < cbAPIsLanguages->count(); i++ )
-		s->setValue( sp +cbAPIsLanguages->itemText( i ), cbAPIsLanguages->itemData( i ).toStringList() );
-
-	//  Colours
-	sp = QString( "%1/Editor/Colours" ).arg( SettingsPath );
-	s->setValue( sp +"/CurrentLineMarker", iconBackgroundColor( tbColoursCurrentLineMarker->icon() ) );
-	s->setValue( sp +"/ErrorLineMarker", iconBackgroundColor( tbColoursErrorLineMarker->icon() ) );
-	s->setValue( sp +"/MatchedBraces", iconBackgroundColor( tbColoursMatchedBraces->icon() ) );
-	s->setValue( sp +"/MatchedBracesBackground", iconBackgroundColor( tbColoursMatchedBracesBackground->icon() ) );
-	s->setValue( sp +"/CalltipsBackground", iconBackgroundColor( tbColoursCalltipsBackground->icon() ) );
-	s->setValue( sp +"/CalltipsForeground", iconBackgroundColor( tbColoursCalltipsForeground->icon() ) );
-	s->setValue( sp +"/CalltipsHighlight", iconBackgroundColor( tbColoursCalltipsHighlight->icon() ) );
-	s->setValue( sp +"/CaretForeground", iconBackgroundColor( tbColoursCaretForeground->icon() ) );
-	s->setValue( sp +"/CaretLineBackground", iconBackgroundColor( tbColoursCaretLineBackground->icon() ) );
-	s->setValue( sp +"/UnmatchedBraces", iconBackgroundColor( tbColoursUnmatchedBraces->icon() ) );
-	s->setValue( sp +"/UnmatchedBracesBackground", iconBackgroundColor( tbColoursUnmatchedBracesBackground->icon() ) );
-
+	pQScintilla* sc = pQScintilla::instance();
 	//  General
-	sp = QString( "%1/Editor/General" ).arg( SettingsPath );
-	s->setValue( sp +"/AutoSaveInterval", sGeneralAutosaveInterval->value() );
-	s->setValue( sp +"/TabWidth", sGeneralTabWidth->value() );
-	s->setValue( sp +"/IndentationWidth", sGeneralIndentationWidth->value() );
-	s->setValue( sp +"/LineNumbersWidth", sGeneralLineNumbersWidth->value() );
-	//  Options
-	s->setValue( sp +"/ShowLineNumbersMargin", cbGeneralShowLineNumbersMargin->isChecked() );
-	s->setValue( sp +"/ShowFoldMargin", cbGeneralShowFoldMargin->isChecked() );
-	s->setValue( sp +"/ShowWhitespace", cbGeneralShowWhitespace->isChecked() );
-	s->setValue( sp +"/ShowEndOfLine", cbGeneralShowEndOfLine->isChecked() );
-	s->setValue( sp +"/ShowIndentationGuides", cbGeneralShowIndentationGuides->isChecked() );
-	s->setValue( sp +"/CreateBackupFileUponOpen", cbGeneralCreateBackupFileUponOpen->isChecked() );
-	s->setValue( sp +"/CaretLineVisible", cbStyleCaretLineVisible->isChecked() );
-	s->setValue( sp +"/AutomaticSyntaxCheck", cbGeneralAutomaticSyntaxCheck->isChecked() );
-	s->setValue( sp +"/UseTabsForIndentations", cbGeneralUseTabsForIndentations->isChecked() );
-	s->setValue( sp +"/ConvertTabsUponOpen", cbGeneralConvertTabsUponOpen->isChecked() );
-	s->setValue( sp +"/TabKeyIndents", cbGeneralTabKeyIndents->isChecked() );
-	s->setValue( sp +"/AutoIndentation", cbGeneralAutoIndentation->isChecked() );
-	s->setValue( sp +"/AutomaticEndOfLineConversion", cbGeneralAutomaticEndOfLineConversion->isChecked() );
-	s->setValue( sp +"/ColourizeSelectedText", cbStyleColourizeSelectedText->isChecked() );
+	sc->setAutoSyntaxCheck( cbAutoSyntaxCheck->isChecked() );
+	sc->setConvertTabsUponOpen( cbConvertTabsUponOpen->isChecked() );
+	sc->setCreateBackupUponOpen( cbCreateBackupUponOpen->isChecked() ) ;
+	sc->setAutoEolConversion( cbAutoEolConversion->isChecked() );
+	sc->setDefaultEncoding( cbDefaultEncoding->currentText() );
+	sc->setSelectionBackgroundColor( iconBackgroundColor( tbSelectionBackground->icon() ) );
+	sc->setSelectionForegroundColor( iconBackgroundColor( tbSelectionForeground->icon() ) );
+	//  Auto Completion
+	sc->setAutoCompletionSource( QsciScintilla::AcsNone );
+	if ( gbAutoCompletionEnabled->isChecked() )
+		sc->setAutoCompletionSource( (QsciScintilla::AutoCompletionSource)bgAutoCompletionSource->checkedId() );
+	sc->setAutoCompletionCaseSensitivity( cbAutoCompletionCaseSensitivity->isChecked() );
+	sc->setAutoCompletionReplaceWord( cbAutoCompletionReplaceWord->isChecked() );
+	sc->setAutoCompletionShowSingle( cbAutoCompletionShowSingle->isChecked() );
+	sc->setAutoCompletionThreshold( sAutoCompletionThreshold->value() );
+	//  Call Tips
+	sc->setCallTipsStyle( QsciScintilla::CallTipsNone );
+	if ( gbCalltipsEnabled->isChecked() )
+		sc->setCallTipsStyle( (QsciScintilla::CallTipsStyle)bgCallTipsStyle->checkedId() );
+	sc->setCallTipsVisible( sCallTipsVisible->value() );
+	sc->setCallTipsBackgroundColor( iconBackgroundColor( tbCalltipsBackground->icon() ) );
+	sc->setCallTipsForegroundColor( iconBackgroundColor( tbCalltipsForeground->icon() ) );
+	sc->setCallTipsHighlightColor( iconBackgroundColor( tbCalltipsHighlight->icon() ) );
+	//  Indentation
+	sc->setAutoIndent( cbAutoIndent->isChecked()  );
+	sc->setBackspaceUnindents( cbBackspaceUnindents->isChecked() );
+	sc->setIndentationGuides( cbIndentationGuides->isChecked() );
+	sc->setIndentationsUseTabs( cbIndentationUseTabs->isChecked() );
+	sc->setTabIndents( cbTabIndents->isChecked() );
+	sc->setTabWidth( sIndentationTabWidth->value() );
+	sc->setIndentationWidth( sIndentationWidth->value() );
+	sc->setIndentationGuidesBackgroundColor( iconBackgroundColor( tbIndentationGuidesBackground->icon() ) );
+	sc->setIndentationGuidesForegroundColor( iconBackgroundColor( tbIndentationGuidesForeground->icon() ) );
+	//  Brace Matching
+	sc->setBraceMatching( QsciScintilla::NoBraceMatch );
+	if ( gbBraceMatchingEnabled->isChecked() )
+		sc->setBraceMatching( (QsciScintilla::BraceMatch)bgBraceMatch->checkedId() );
+	sc->setMatchedBraceBackgroundColor( iconBackgroundColor( tbMatchedBraceBackground->icon() ) );
+	sc->setMatchedBraceForegroundColor( iconBackgroundColor( tbMatchedBraceForeground->icon() ) );
+	sc->setUnmatchedBraceBackgroundColor( iconBackgroundColor( tbUnmatchedBraceBackground->icon() ) );
+	sc->setUnmatchedBraceForegroundColor( iconBackgroundColor( tbUnmatchedBraceForeground->icon() ) );
 	//  Edge Mode
-	s->setValue( sp +"/EdgeMode", cbStyleEdgeMode->itemData( cbStyleEdgeMode->currentIndex() ).toInt() );
-	s->setValue( sp +"/EdgeModeColumnNumber", sStyleEdgeModeColumnNumber->value() );
-	s->setValue( sp +"/EdgeModeBackground", iconBackgroundColor( tbStyleEdgeModeBackgroundColour->icon() ) );
-	//  EOL Mode
-	s->setValue( sp +"/EOLMode", bgEOLMode->checkedId() );
-	//  File Encoding
-	s->setValue( sp +"/DefaultEncoding", cbGeneralEncoding->currentText() );
-	//  Folding Style
-	s->setValue( sp +"/FoldingStyle", cbStyleFoldingStyle->itemData( cbStyleFoldingStyle->currentIndex() ).toInt() );
-	//  Caret width
-	s->setValue( sp +"/CaretWidth", sbStyleCaretWidth->value() );
-	//  LineNumbers & Monospaced Font
-	s->setValue( sp +"/LineNumbersFont", leStyleLineNumbersFont->font().toString() );
-	s->setValue( sp +"/MonospacedFont", leStyleMonospacedFont->font().toString() );
-	//  default monospaced font
-	s->setValue( sp +"/UseMonospacedAsDefault", cbStyleUseMonospacedAsDefault->isChecked() );
-
-	//  Associations
-	sp = QString( "%1/Editor/Associations/" ).arg( SettingsPath );
+	sc->setEdgeMode( QsciScintilla::EdgeNone );
+	if ( gbEdgeModeEnabled->isChecked() )
+		sc->setEdgeMode( (QsciScintilla::EdgeMode)bgEdgeMode->checkedId() );
+	sc->setEdgeColumn( sEdgeColumnNumber->value() );
+	sc->setEdgeColor( iconBackgroundColor( tbEdgeColor->icon() ) );
+	//  Caret
+	sc->setCaretLineVisible( gbCaretLineVisible->isChecked() );
+	sc->setCaretLineBackgroundColor( iconBackgroundColor( tbCaretLineBackground->icon() ) );
+	sc->setCaretForegroundColor( iconBackgroundColor( tbCaretForeground->icon() ) );
+	sc->setCaretWidth( sCaretWidth->value() );
+	//  Margins
+	sc->setLineNumbersMarginEnabled( gbLineNumbersMarginEnabled->isChecked() );
+	sc->setLineNumbersMarginWidth( sLineNumbersMarginWidth->value() );
+	sc->setLineNumbersMarginAutoWidth( cbLineNumbersMarginAutoWidth->isChecked() );
+	sc->setFolding( QsciScintilla::NoFoldStyle );
+	if ( gbFoldMarginEnabled->isChecked() )
+		sc->setFolding( (QsciScintilla::FoldStyle)bgFoldStyle->checkedId() );
+	sc->setFoldMarginForegroundColor( iconBackgroundColor( tbFoldMarginForeground->icon() ) );
+	sc->setFoldMarginBackgroundColor( iconBackgroundColor( tbFoldMarginBackground->icon() ) );
+	sc->setMarginsEnabled( gbMarginsEnabled->isChecked() );
+	sc->setMarginsForegroundColor( iconBackgroundColor( tbMarginsForeground->icon() ) );
+	sc->setMarginsBackgroundColor( iconBackgroundColor( tbMarginsBackground->icon() ) );
+	sc->setMarginsFont( tbMarginsFont->font() );
+	//  Special Characters
+	sc->setEolMode( (QsciScintilla::EolMode)bgEolMode->checkedId() );
+	sc->setEolVisibility( cbEolVisibility->isChecked() );
+	sc->setWhitespaceVisibility( QsciScintilla::WsInvisible );
+	if ( gbWhitespaceVisibilityEnabled->isChecked() )
+		sc->setWhitespaceVisibility( (QsciScintilla::WhitespaceVisibility)bgWhitespaceVisibility->checkedId() );
+	sc->setWrapMode( QsciScintilla::WrapNone );
+	if ( gbWrapModeEnabled->isChecked() )
+		sc->setWrapMode( (QsciScintilla::WrapMode)bgWrapMode->checkedId() );
+	sc->setWrapVisualFlagsEnabled( gbWrapVisualFlagsEnabled->isChecked() );
+	sc->setStartWrapVisualFlag( QsciScintilla::WrapFlagNone );
+	if ( gbWrapVisualFlagsEnabled->isChecked() )
+		sc->setStartWrapVisualFlag( (QsciScintilla::WrapVisualFlag)bgStartWrapVisualFlag->checkedId() );
+	sc->setEndWrapVisualFlag( QsciScintilla::WrapFlagNone );
+	if ( gbWrapVisualFlagsEnabled->isChecked() )
+		sc->setEndWrapVisualFlag( (QsciScintilla::WrapVisualFlag)bgEndWrapVisualFlag->checkedId() );
+	sc->setWrappedLineIndentWidth( sWrappedLineIndentWidth->value() );
+	// Source APIs
+	sp = QString( "%1/Editor/SourceAPIs/" ).arg( SettingsPath );
+	for ( int i = 0; i < cbSourceAPIsLanguages->count(); i++ )
+		s->setValue( sp +cbSourceAPIsLanguages->itemText( i ), cbSourceAPIsLanguages->itemData( i ).toStringList() );
+	//  Lexers Associations
+	sp = QString( "%1/Editor/LexersAssociations/" ).arg( SettingsPath );
 	// remove old associations
 	s->remove( sp );
 	// write new ones
-	for ( int i = 0; i < twHighlighterAssociations->topLevelItemCount(); i++ )
+	for ( int i = 0; i < twLexersAssociations->topLevelItemCount(); i++ )
 	{
-		QTreeWidgetItem* it = twHighlighterAssociations->topLevelItem( i );
+		QTreeWidgetItem* it = twLexersAssociations->topLevelItem( i );
 		s->setValue( sp +it->text( 0 ), it->text( 1 ) );
 	}
-
-	//  Highlighting
+	//  Lexers Highlighting
 	pQScintilla::instance()->writeSettings();
 
 	//  Abbreviations
@@ -495,7 +457,7 @@ void UISettings::saveSettings()
 	// remove key
 	s->remove( sp );
 	// enable abbreviations
-	s->setValue( sp +"/Enabled", cbAbbreviations->isChecked() );
+	s->setValue( sp +"/Enabled", cbAbbreviationsAutoWordCompletion->isChecked() );
 	// write new ones
 	s->beginWriteArray( sp );
 	for ( int i = 0; i < twAbbreviations->topLevelItemCount(); i++ )
@@ -510,11 +472,7 @@ void UISettings::saveSettings()
 	}
 	s->endArray();
 
-/
-	// Tools Menu
-	//QString m = QString( "%1/menus/%2applications.menu" ).arg( QString( qgetenv( "XDG_CONFIG_DIRS" ) ) ).arg( QString( qgetenv( "XDG_MENU_PREFIX" ) ) );
-	//qWarning( qPrintable( m ) );
-*/
+	// Tools
 }
 
 QPixmap UISettings::colourizedPixmap( const QColor& c ) const
@@ -549,7 +507,7 @@ void UISettings::on_twMenu_itemSelectionChanged()
 				case 2:
 					break;
 				default:
-					swPages->setCurrentIndex( i +10 );
+					swPages->setCurrentIndex( i +11 );
 					break;
 			}
 		}
@@ -596,7 +554,6 @@ void UISettings::on_pbEditTemplate_clicked()
 {
 	// get item
 	QTreeWidgetItem* it = twTemplatesType->selectedItems().value( 0 );
-
 	// open template file
 	if ( it )
 	{
@@ -611,53 +568,6 @@ void UISettings::on_pbEditTemplate_clicked()
 	}
 }
 
-void UISettings::cbAPIsLanguages_beforeChanged( int i )
-{
-	if ( i == cbAPIsLanguages->currentIndex() )
-	{
-		QStringList l;
-		for ( int j = 0; j < lwAPIs->count(); j++ )
-			l << lwAPIs->item( j )->text();
-		cbAPIsLanguages->setItemData( i, l );
-	}
-}
-
-void UISettings::on_cbAPIsLanguages_currentIndexChanged( int i )
-{
-	lwAPIs->clear();
-	lwAPIs->addItems( cbAPIsLanguages->itemData( i ).toStringList() );
-}
-
-void UISettings::on_pbAPIsDelete_clicked()
-{
-	// get selected item
-	QListWidgetItem* it = lwAPIs->selectedItems().value( 0 );
-
-	if ( it )
-	{
-		delete it;
-		cbAPIsLanguages_beforeChanged( cbAPIsLanguages->currentIndex() );
-	}
-}
-
-void UISettings::on_pbAPIsAdd_clicked()
-{
-	QString s = leAPIs->text();
-	if ( !s.isEmpty() && lwAPIs->findItems( s, Qt::MatchFixedString ).count() == 0 )
-	{
-		lwAPIs->addItem( s );
-		leAPIs->clear();
-		cbAPIsLanguages_beforeChanged( cbAPIsLanguages->currentIndex() );
-	}
-}
-
-void UISettings::on_pbAPIsBrowse_clicked()
-{
-	QString s = QFileDialog::getOpenFileName( window(), tr( "Select API file" ), QString::null, tr( "API Files (*.api);;All Files (*)" ) );
-	if ( !s.isNull() )
-		leAPIs->setText( s );
-}
-
 void UISettings::tbColours_clicked()
 {
 	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
@@ -666,70 +576,118 @@ void UISettings::tbColours_clicked()
 		tb->setIcon( colourizedPixmap( c ) );
 }
 
-void UISettings::on_twHighlighterAssociations_itemSelectionChanged()
+void UISettings::tbFonts_clicked()
 {
-/*
-	QTreeWidgetItem* it = twHighlighterAssociations->selectedItems().value( 0 );
-	if ( it )
-	{
-		leHighlighterAssociationFilenamePattern->setText( it->text( 0 ) );
-		cbHighlighterAssociationLexerLanguage->setCurrentIndex( cbHighlighterAssociationLexerLanguage->findText( it->text( 1 ) ) );
-	}
-*/
+	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
+	bool b;
+	QFont f = QFontDialog::getFont( &b, tb->font(), window() );
+	if ( b )
+		tb->setFont( f );
 }
 
-void UISettings::on_pbHighlighterAssociationAddChange_clicked()
+void UISettings::cbSourceAPIsLanguages_beforeChanged( int i )
 {
-/*
-	QString f = leHighlighterAssociationFilenamePattern->text();
-	QString l = cbHighlighterAssociationLexerLanguage->currentText();
-	if ( f.isEmpty() || l.isEmpty() )
-		return;
-	QTreeWidgetItem* it = twHighlighterAssociations->selectedItems().value( 0 );
-	if ( !it || it->text( 0 ) != f )
+	if ( i == cbSourceAPIsLanguages->currentIndex() )
 	{
-		// check if item with same parameters already exists
-		QList<QTreeWidgetItem*> l = twHighlighterAssociations->findItems( f, Qt::MatchFixedString );
-		if ( l.count() )
-			it = l.at( 0 );
-		else
-			it = new QTreeWidgetItem( twHighlighterAssociations );
+		QStringList l;
+		for ( int j = 0; j < lwSourceAPIs->count(); j++ )
+			l << lwSourceAPIs->item( j )->text();
+		cbSourceAPIsLanguages->setItemData( i, l );
 	}
-	it->setText( 0, f );
-	it->setText( 1, l );
-	twHighlighterAssociations->setCurrentItem( 0 );
-	twHighlighterAssociations->selectionModel()->clear();
-	leHighlighterAssociationFilenamePattern->clear();
-	cbHighlighterAssociationLexerLanguage->setCurrentIndex( -1 );
-*/
 }
 
-void UISettings::on_pbHighlighterAssociationDelete_clicked()
+void UISettings::on_cbSourceAPIsLanguages_currentIndexChanged( int i )
 {
-/*
-	QTreeWidgetItem* it = twHighlighterAssociations->selectedItems().value( 0 );
+	lwSourceAPIs->clear();
+	lwSourceAPIs->addItems( cbSourceAPIsLanguages->itemData( i ).toStringList() );
+}
+
+void UISettings::on_pbSourceAPIsDelete_clicked()
+{
+	// get selected item
+	QListWidgetItem* it = lwSourceAPIs->selectedItems().value( 0 );
 	if ( it )
 	{
 		delete it;
-		twHighlighterAssociations->setCurrentItem( 0 );
-		twHighlighterAssociations->selectionModel()->clear();
-		leHighlighterAssociationFilenamePattern->clear();
-		cbHighlighterAssociationLexerLanguage->setCurrentIndex( -1 );
+		cbSourceAPIsLanguages_beforeChanged( cbSourceAPIsLanguages->currentIndex() );
 	}
-*/
 }
 
-void UISettings::on_cbLexersLanguage_currentIndexChanged( const QString& s )
+void UISettings::on_pbSourceAPIsAdd_clicked()
 {
-/*
+	QString s = leSourceAPIs->text();
+	if ( !s.isEmpty() && lwSourceAPIs->findItems( s, Qt::MatchFixedString ).count() == 0 )
+	{
+		lwSourceAPIs->addItem( s );
+		leSourceAPIs->clear();
+		cbSourceAPIsLanguages_beforeChanged( cbSourceAPIsLanguages->currentIndex() );
+	}
+}
+
+void UISettings::on_pbSourceAPIsBrowse_clicked()
+{
+	QString s = QFileDialog::getOpenFileName( window(), tr( "Select API file" ), QString::null, tr( "API Files (*.api);;All Files (*)" ) );
+	if ( !s.isNull() )
+		leSourceAPIs->setText( s );
+}
+
+void UISettings::on_twLexersAssociations_itemSelectionChanged()
+{
+	QTreeWidgetItem* it = twLexersAssociations->selectedItems().value( 0 );
+	if ( it )
+	{
+		leLexersAssociationsFilenamePattern->setText( it->text( 0 ) );
+		cbLexersAssociationsLanguages->setCurrentIndex( cbLexersAssociationsLanguages->findText( it->text( 1 ) ) );
+	}
+}
+
+void UISettings::on_pbLexersAssociationsAddChange_clicked()
+{
+	QString f = leLexersAssociationsFilenamePattern->text();
+	QString l = cbLexersAssociationsLanguages->currentText();
+	if ( f.isEmpty() || l.isEmpty() )
+		return;
+	QTreeWidgetItem* it = twLexersAssociations->selectedItems().value( 0 );
+	if ( !it || it->text( 0 ) != f )
+	{
+		// check if item with same parameters already exists
+		QList<QTreeWidgetItem*> l = twLexersAssociations->findItems( f, Qt::MatchFixedString );
+		if ( l.count() )
+			it = l.at( 0 );
+		else
+			it = new QTreeWidgetItem( twLexersAssociations );
+	}
+	it->setText( 0, f );
+	it->setText( 1, l );
+	twLexersAssociations->setCurrentItem( 0 );
+	twLexersAssociations->selectionModel()->clear();
+	leLexersAssociationsFilenamePattern->clear();
+	cbLexersAssociationsLanguages->setCurrentIndex( -1 );
+}
+
+void UISettings::on_pbLexersAssociationsDelete_clicked()
+{
+	QTreeWidgetItem* it = twLexersAssociations->selectedItems().value( 0 );
+	if ( it )
+	{
+		delete it;
+		twLexersAssociations->setCurrentItem( 0 );
+		twLexersAssociations->selectionModel()->clear();
+		leLexersAssociationsFilenamePattern->clear();
+		cbLexersAssociationsLanguages->setCurrentIndex( -1 );
+	}
+}
+
+void UISettings::on_cbLexersHighlightingLanguages_currentIndexChanged( const QString& s )
+{
 	QsciLexer* l = pQScintilla::instance()->lexers().value( s );
-	lwLexersElements->clear();
+	lwLexersHighlightingElements->clear();
 	for ( int i = 0; i < 128; i++ )
 	{
 		QString n = l->description( i );
 		if ( !n.isEmpty() )
 		{
-			QListWidgetItem* it = new QListWidgetItem( lwLexersElements );
+			QListWidgetItem* it = new QListWidgetItem( lwLexersHighlightingElements );
 			it->setText( n );
 			it->setForeground( l->color( i ) );
 			it->setBackground( l->paper( i ) );
@@ -742,97 +700,93 @@ void UISettings::on_cbLexersLanguage_currentIndexChanged( const QString& s )
 
 	// fold comments
 	v = pQScintilla::instance()->property( "foldComments", l );
-	cbLexerFoldComments->setVisible( v.isValid() );
+	cbLexersHighlightingFoldComments->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldComments->setChecked( v.toBool() );
+		cbLexersHighlightingFoldComments->setChecked( v.toBool() );
 
 	// fold compact
 	v = pQScintilla::instance()->property( "foldCompact", l );
-	cbLexerFoldCompact->setVisible( v.isValid() );
+	cbLexersHighlightingFoldCompact->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldCompact->setChecked( v.toBool() );
+		cbLexersHighlightingFoldCompact->setChecked( v.toBool() );
 
 	// fold quotes
 	v = pQScintilla::instance()->property( "foldQuotes", l );
-	cbLexerFoldQuotes->setVisible( v.isValid() );
+	cbLexersHighlightingFoldQuotes->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldQuotes->setChecked( v.toBool() );
+		cbLexersHighlightingFoldQuotes->setChecked( v.toBool() );
 
 	// fold directives
 	v = pQScintilla::instance()->property( "foldDirectives", l );
-	cbLexerFoldDirectives->setVisible( v.isValid() );
+	cbLexersHighlightingFoldDirectives->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldDirectives->setChecked( v.toBool() );
+		cbLexersHighlightingFoldDirectives->setChecked( v.toBool() );
 
 	// fold at begin
 	v = pQScintilla::instance()->property( "foldAtBegin", l );
-	cbLexerFoldAtBegin->setVisible( v.isValid() );
+	cbLexersHighlightingFoldAtBegin->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldAtBegin->setChecked( v.toBool() );
+		cbLexersHighlightingFoldAtBegin->setChecked( v.toBool() );
 
 	// fold at parenthesis
 	v = pQScintilla::instance()->property( "foldAtParenthesis", l );
-	cbLexerFoldAtParenthesis->setVisible( v.isValid() );
+	cbLexersHighlightingFoldAtParenthesis->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldAtParenthesis->setChecked( v.toBool() );
+		cbLexersHighlightingFoldAtParenthesis->setChecked( v.toBool() );
 
 	// fold at else
 	v = pQScintilla::instance()->property( "foldAtElse", l );
-	cbLexerFoldAtElse->setVisible( v.isValid() );
+	cbLexersHighlightingFoldAtElse->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldAtElse->setChecked( v.toBool() );
+		cbLexersHighlightingFoldAtElse->setChecked( v.toBool() );
 
 	// fold preprocessor
 	v = pQScintilla::instance()->property( "foldPreprocessor", l );
-	cbLexerFoldPreprocessor->setVisible( v.isValid() );
+	cbLexersHighlightingFoldPreprocessor->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerFoldPreprocessor->setChecked( v.toBool() );
+		cbLexersHighlightingFoldPreprocessor->setChecked( v.toBool() );
 
 	// style preprocessor
 	v = pQScintilla::instance()->property( "stylePreprocessor", l );
-	cbLexerStylePreprocessor->setVisible( v.isValid() );
+	cbLexersHighlightingStylePreprocessor->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerStylePreprocessor->setChecked( v.toBool() );
+		cbLexersHighlightingStylePreprocessor->setChecked( v.toBool() );
 
 	// indent opening brace
-	cbLexerIndentOpeningBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiOpening );
+	cbLexersHighlightingIndentOpeningBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiOpening );
 
 	// indent closing brace
-	cbLexerIndentClosingBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiClosing );
+	cbLexersHighlightingIndentClosingBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiClosing );
 
 	// case sensitive tags
 	v = pQScintilla::instance()->property( "caseSensitiveTags", l );
-	cbLexerCaseSensitiveTags->setVisible( v.isValid() );
+	cbLexersHighlightingCaseSensitiveTags->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerCaseSensitiveTags->setChecked( v.toBool() );
+		cbLexersHighlightingCaseSensitiveTags->setChecked( v.toBool() );
 
 	// backslash escapes
 	v = pQScintilla::instance()->property( "backslashEscapes", l );
-	cbLexerBackslashEscapes->setVisible( v.isValid() );
+	cbLexersHighlightingBackslashEscapes->setVisible( v.isValid() );
 	if ( v.isValid() )
-		cbLexerBackslashEscapes->setChecked( v.toBool() );
+		cbLexersHighlightingBackslashEscapes->setChecked( v.toBool() );
 
 	// indentation warning
 	v = pQScintilla::instance()->property( "indentationWarning", l );
-	lLexerIndentationWarning->setVisible( v.isValid() );
-	cbLexerIndentationWarning->setVisible( lLexerIndentationWarning->isVisible() );
+	lLexersHighlightingIndentationWarning->setVisible( v.isValid() );
+	cbLexersHighlightingIndentationWarning->setVisible( lLexersHighlightingIndentationWarning->isVisible() );
 	if ( v.isValid() )
-		cbLexerIndentationWarning->setCurrentIndex( cbLexerIndentationWarning->findData( v.toInt() ) );
-*/
+		cbLexersHighlightingIndentationWarning->setCurrentIndex( cbLexersHighlightingIndentationWarning->findData( v.toInt() ) );
 }
 
-void UISettings::on_lwLexersElements_itemSelectionChanged()
+void UISettings::on_lwLexersHighlightingElements_itemSelectionChanged()
 {
-/*
-	QListWidgetItem* it = lwLexersElements->selectedItems().value( 0 );
+	QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 	if ( it )
-		cbLexerFillEol->setChecked( pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
-*/
+		cbLexersHighlightingFillEol->setChecked( pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
 }
 
-void UISettings::lexersColour_clicked()
+void UISettings::lexersHighlightingColour_clicked()
 {
-/*
 	// get sender
 	QObject* o = sender();
 
@@ -840,70 +794,68 @@ void UISettings::lexersColour_clicked()
 	QColor c;
 
 	// element colour
-	if ( o == pbLexerForeground || o == pbLexerBackground )
+	if ( o == pbLexersHighlightingForeground || o == pbLexersHighlightingBackground )
 	{
 		// get item
-		QListWidgetItem* it = lwLexersElements->selectedItems().value( 0 );
+		QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 
 		// cancel if no item
 		if ( !it )
 			return;
 
 		// get color
-		c = QColorDialog::getColor( o == pbLexerForeground ? it->foreground().color() : it->background().color(), window() );
+		c = QColorDialog::getColor( o == pbLexersHighlightingForeground ? it->foreground().color() : it->background().color(), window() );
 
 		// apply color
 		if ( c.isValid() )
 		{
-			if ( o == pbLexerForeground )
+			if ( o == pbLexersHighlightingForeground )
 			{
 				it->setForeground( c );
-				pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() )->setColor( c, it->data( Qt::UserRole ).toInt() );
+				pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setColor( c, it->data( Qt::UserRole ).toInt() );
 			}
-			else if ( o == pbLexerBackground )
+			else if ( o == pbLexersHighlightingBackground )
 			{
 				it->setBackground( c );
-				pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() )->setPaper( c, it->data( Qt::UserRole ).toInt() );
+				pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setPaper( c, it->data( Qt::UserRole ).toInt() );
 			}
 		}
 	}
 	// gobal color
-	else if ( o == pbLexerAllForeground || o == pbLexerAllBackground )
+	else if ( o == pbLexersHighlightingAllForeground || o == pbLexersHighlightingAllBackground )
 	{
 		// get lexer
-		QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() );
+		QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
 
 		// get color
-		c = QColorDialog::getColor( o == pbLexerAllForeground ? l->color( -1 ) : l->paper( -1 ), window() );
+		c = QColorDialog::getColor( o == pbLexersHighlightingAllForeground ? l->color( -1 ) : l->paper( -1 ), window() );
 
 		// apply
 		if ( c.isValid() )
 		{
-			if ( o == pbLexerAllForeground )
+			if ( o == pbLexersHighlightingAllForeground )
 				l->setColor( c, -1 );
-			else if ( o == pbLexerAllBackground )
+			else if ( o == pbLexersHighlightingAllBackground )
 				l->setPaper( c, -1 );
 
 			// refresh
-			on_cbLexersLanguage_currentIndexChanged( l->language() );
+			on_cbLexersHighlightingLanguages_currentIndexChanged( l->language() );
 		}
 	}
-*/
 }
 
-void UISettings::lexersFont_clicked()
+void UISettings::lexersHighlightingFont_clicked()
 {
-/*
 	// get sender
 	QObject* o = sender();
 
 	bool b;
 	QFont f;
 
-	if ( o == pbLexerFont )
+	if ( o == pbLexersHighlightingFont )
 	{
 		// get item
-		QListWidgetItem* it = lwLexersElements->selectedItems().value( 0 );
+		QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 
 		// cancel if no item
 		if ( !it )
@@ -916,13 +868,13 @@ void UISettings::lexersFont_clicked()
 		if ( b )
 		{
 			it->setFont( f );
-			pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt() );
+			pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt() );
 		}
 	}
-	else if ( o == pbLexerAllFont )
+	else if ( o == pbLexersHighlightingAllFont )
 	{
 		// get lexer
-		QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() );
+		QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
 
 		// get font
 		f = QFontDialog::getFont( &b, l->font( -1 ), window() );
@@ -931,133 +883,96 @@ void UISettings::lexersFont_clicked()
 		if ( b )
 		{
 			l->setFont( f, -1 );
-			on_cbLexersLanguage_currentIndexChanged( l->language() );
+			on_cbLexersHighlightingLanguages_currentIndexChanged( l->language() );
 		}
 	}
-*/
 }
 
-void UISettings::on_cbLexerFillEol_clicked( bool b )
+void UISettings::on_cbLexersHighlightingFillEol_clicked( bool b )
 {
-/*
-	QListWidgetItem* it = lwLexersElements->selectedItems().value( 0 );
+	QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 	if ( it )
-		pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
-*/
+		pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
 }
 
-void UISettings::cbProperties_clicked( bool b )
+void UISettings::cbLexersHighlightingProperties_clicked( bool b )
 {
-/*
 	// get check box
 	QCheckBox* cb = qobject_cast<QCheckBox*>( sender() );
 	if ( !cb )
 		return;
 
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() );
+	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
 
 	// set lexer properties
-	if ( cb == cbLexerIndentOpeningBrace || cb == cbLexerIndentClosingBrace )
+	if ( cb == cbLexersHighlightingIndentOpeningBrace || cb == cbLexersHighlightingIndentClosingBrace )
 	{
-		if ( cbLexerIndentOpeningBrace->isChecked() && cbLexerIndentClosingBrace->isChecked() )
+		if ( cbLexersHighlightingIndentOpeningBrace->isChecked() && cbLexersHighlightingIndentClosingBrace->isChecked() )
 			l->setAutoIndentStyle( QsciScintilla::AiOpening | QsciScintilla::AiClosing );
-		else if ( cbLexerIndentOpeningBrace->isChecked() )
+		else if ( cbLexersHighlightingIndentOpeningBrace->isChecked() )
 			l->setAutoIndentStyle( QsciScintilla::AiOpening );
-		else if ( cbLexerIndentClosingBrace->isChecked() )
+		else if ( cbLexersHighlightingIndentClosingBrace->isChecked() )
 			l->setAutoIndentStyle( QsciScintilla::AiClosing );
 		else
 			l->setAutoIndentStyle( QsciScintilla::AiMaintain );
 	}
 	else
 		pQScintilla::instance()->setProperty( cb->statusTip(), l, b );
-*/
 }
 
-void UISettings::on_cbLexerIndentationWarning_currentIndexChanged( int i )
+void UISettings::on_cbLexersHighlightingIndentationWarning_currentIndexChanged( int i )
 {
-/*
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() );
+	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
 
 	// set lexer properties
-	pQScintilla::instance()->setProperty( cbLexerIndentationWarning->statusTip(), l, cbLexerIndentationWarning->itemData( i ) );
-*/
+	pQScintilla::instance()->setProperty( cbLexersHighlightingIndentationWarning->statusTip(), l, cbLexersHighlightingIndentationWarning->itemData( i ) );
 }
 
-void UISettings::on_pbLexerReset_clicked()
+void UISettings::on_pbLexersHighlightingReset_clicked()
 {
-/*
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersLanguage->currentText() );
+	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
 
 	// reset and refresh
 	if ( l )
 	{
 		pQScintilla::instance()->resetLexer( l );
-		on_cbLexersLanguage_currentIndexChanged( l->language() );
+		on_cbLexersHighlightingLanguages_currentIndexChanged( l->language() );
 	}
-*/
-}
-
-void UISettings::on_pbStyleLineNumbersFont_clicked()
-{
-/*
-	bool b;
-	QFont f = QFontDialog::getFont( &b, leStyleLineNumbersFont->font(), window() );
-	if ( b )
-		leStyleLineNumbersFont->setFont( f );
-*/
-}
-
-void UISettings::on_pbStyleMonospacedFont_clicked()
-{
-/*
-	bool b;
-	QFont f = QFontDialog::getFont( &b, leStyleMonospacedFont->font(), window() );
-	if ( b )
-		leStyleMonospacedFont->setFont( f );
-*/
 }
 
 void UISettings::on_twAbbreviations_itemSelectionChanged()
 {
-/*
 	// get item
 	QTreeWidgetItem* it = twAbbreviations->selectedItems().value( 0 );
 
 	if ( it )
-		teAbbreviation->setPlainText( it->data( 0, Qt::UserRole ).toString() );
+		teAbbreviationsCode->setPlainText( it->data( 0, Qt::UserRole ).toString() );
 
 	// enable/disable according to selection
-	teAbbreviation->setEnabled( it );
-*/
+	teAbbreviationsCode->setEnabled( it );
 }
 
-void UISettings::on_pbAddAbbreviation_clicked()
+void UISettings::on_pbAbbreviationsAdd_clicked()
 {
-/*
 	UIAddAbbreviation::edit( twAbbreviations );
-*/
 }
 
-void UISettings::on_pbRemoveAbbreviation_clicked()
+void UISettings::on_pbAbbreviationsRemove_clicked()
 {
-/*
 	delete twAbbreviations->selectedItems().value( 0 );
-	teAbbreviation->clear();
-*/
+	teAbbreviationsCode->clear();
 }
 
-void UISettings::on_teAbbreviation_textChanged()
+void UISettings::on_teAbbreviationsCode_textChanged()
 {
-/*
 	// get item
 	QTreeWidgetItem* it = twAbbreviations->selectedItems().value( 0 );
 
 	if ( it )
-		it->setData( 0, Qt::UserRole, teAbbreviation->toPlainText() );
-*/
+		it->setData( 0, Qt::UserRole, teAbbreviationsCode->toPlainText() );
 }
 
 void UISettings::accept()
