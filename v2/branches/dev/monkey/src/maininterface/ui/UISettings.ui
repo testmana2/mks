@@ -22,7 +22,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>7</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -3119,8 +3119,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>291</x>
-     <y>422</y>
+     <x>296</x>
+     <y>587</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -3135,8 +3135,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>359</x>
-     <y>422</y>
+     <x>364</x>
+     <y>587</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
@@ -3151,12 +3151,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>512</x>
+     <y>128</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>555</x>
+     <y>129</y>
     </hint>
    </hints>
   </connection>
@@ -3167,12 +3167,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>512</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>555</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -3183,12 +3183,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>512</x>
+     <y>156</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>555</x>
+     <y>157</y>
     </hint>
    </hints>
   </connection>
@@ -3199,12 +3199,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>512</x>
+     <y>181</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>555</x>
+     <y>182</y>
     </hint>
    </hints>
   </connection>
@@ -3215,12 +3215,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>503</x>
+     <y>101</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>555</x>
+     <y>102</y>
     </hint>
    </hints>
   </connection>
@@ -3231,12 +3231,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>512</x>
+     <y>134</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>555</x>
+     <y>135</y>
     </hint>
    </hints>
   </connection>
@@ -3251,8 +3251,8 @@
      <y>61</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>290</x>
-     <y>61</y>
+     <x>555</x>
+     <y>73</y>
     </hint>
    </hints>
   </connection>
@@ -3263,12 +3263,12 @@
    <slot>display(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>386</x>
-     <y>374</y>
+     <x>512</x>
+     <y>361</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>463</x>
-     <y>372</y>
+     <x>555</x>
+     <y>362</y>
     </hint>
    </hints>
   </connection>

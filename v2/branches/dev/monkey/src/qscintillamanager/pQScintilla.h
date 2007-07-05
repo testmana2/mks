@@ -32,6 +32,8 @@
 #include <QApplication>
 #include <QHash>
 
+class pEditor;
+
 class Q_MONKEY_EXPORT pQScintilla : public QObject, public QSingleton<pQScintilla>
 {
 	Q_OBJECT
@@ -49,6 +51,7 @@ public:
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
 	QsciLexer* lexerForFilename( const QString& );
+	void applyProperties( pEditor* );
 	// General
 	void setAutoSyntaxCheck( bool ); // false
 	bool autoSyntaxCheck() const;
@@ -75,7 +78,7 @@ public:
 	QsciScintilla::AutoCompletionSource autoCompletionSource() const;
 	void setAutoCompletionThreshold( int ); // -1
 	int autoCompletionThreshold() const;
-	// Calltips
+	// CallTips
 	void setCallTipsBackgroundColor( const QColor& ); // white
 	QColor callTipsBackgroundColor() const;
 	void setCallTipsForegroundColor( const QColor& ); // mid-gray
