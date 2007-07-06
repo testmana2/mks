@@ -7,10 +7,12 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMessageBox>
-#include <QFile>
+#include <QFileInfo>
 #include <QTextStream>
 #include <QInputDialog>
 #include <QPrintDialog>
+#include <QDir>
+#include <QDateTime>
 
 pEditor::pEditor( QWidget* p )
 	: QsciScintilla( p )
@@ -123,18 +125,35 @@ bool pEditor::openFile( const QString& s )
 	}
 
 	// set lexer
-	delete lexer();
 	setLexer( pQScintilla::instance()->lexerForFilename( s ) );
 
+	// set apis
+	//setAPIs( pQScintilla::instance()->apisForLanguage( s ) );
+
 	// set properties
-	pQScintilla::instance()->applyProperties( this );
+	pQScintilla::instance()->setProperties( this );
 
 	// load file
 	QApplication::setOverrideCursor( Qt::WaitCursor );
-	QTextStream i( &f );
+	QTextStream i( &f ); // defaultEncoding()
 	setText( i.readAll() );
 	setModified( false );
 	QApplication::restoreOverrideCursor();
+
+	// remember filename
+	setProperty( "fileName", s );
+
+	// convert tabs if needed
+	if ( pQScintilla::instance()->convertTabsUponOpen() )
+		convertTabs();
+		
+	// make backup if needed
+	if ( pQScintilla::instance()->createBackupUponOpen() )
+		makeBackup();
+
+	// convert eol
+	if ( pQScintilla::instance()->autoEolConversion() )
+		convertEols( eolMode() );
 
 	return true;
 }
@@ -153,10 +172,13 @@ bool pEditor::saveFile( const QString& s )
 
 	// writing file
 	QApplication::setOverrideCursor( Qt::WaitCursor );
-	QTextStream o( &f );
+	QTextStream o( &f ); // defaultEncoding()
 	o << text();
 	setModified( false );
 	QApplication::restoreOverrideCursor();
+
+	// remember filename
+	setProperty( "fileName", s );
 
 	return true;
 }
@@ -165,6 +187,9 @@ void pEditor::closeFile()
 {
 	clear();
 	setModified( false );
+
+	// clear filename
+	setProperty( "fileName", QVariant() );
 }
 
 void pEditor::print( bool b )
@@ -241,4 +266,26 @@ void pEditor::convertTabs( int i )
 			replace( r );
 	}
 	setCursorPosition( y, x );
+}
+
+void pEditor::makeBackup()
+{
+	// get filename
+	const QString dn = ".bak";
+	QFileInfo f( property( "fileName" ).toString() );
+	const QString s = f.path().append( "/" ).append( dn ).append( "/" ).append( f.fileName() ).append( "." ).append( QDateTime::currentDateTime().toString( "yyyyMMdd_hhmmss" ) );
+
+	// cancel if filename doesn't exists
+	if ( !f.exists() )
+		return;
+
+	// filename dir
+	QDir d( f.path() );
+
+	// create bak folder
+	if ( !d.exists( ".bak" ) )
+		if ( !d.mkdir( ".bak" ) )
+			return;
+
+	QFile::copy( f.absoluteFilePath(), s );
 }

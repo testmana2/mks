@@ -1,6 +1,8 @@
 #include "pQScintilla.h"
 #include "pSettings.h"
 #include "pEditor.h"
+#include "pAbstractChild.h"
+#include "pWorkspace.h"
 
 #include <QFileInfo>
 
@@ -11,17 +13,17 @@ pQScintilla::pQScintilla( QObject* o )
 {}
 
 pQScintilla::~pQScintilla()
-{
-	qDeleteAll( mLexers );
-	mLexers.clear();
-}
+{}
 
-QStringList pQScintilla::languages() const
+QHash<QString,QsciLexer*> pQScintilla::lexersSettings()
 {
-	return QStringList() << "Bash" << "Batch" << "C#" << "C++" << "CMake" << "CSS"
-		<< "D" << "Diff" << "HTML" << "IDL" << "Java" << "JavaScript" << "Lua"
-		<< "Makefile" << "POV" << "Perl" << "Properties" << "Python" << "Ruby"
-		<< "SQL" << "TeX" << "VHDL";
+	// init lexers if needed
+	if ( mLexersSettings.isEmpty() )
+		foreach ( QString s, languages() )
+			mLexersSettings[s] = lexerForLanguage( s );
+
+	// return lexers
+	return mLexersSettings;
 }
 
 QsciLexer* pQScintilla::lexerForLanguage( const QString& s )
@@ -78,67 +80,12 @@ QsciLexer* pQScintilla::lexerForLanguage( const QString& s )
 	else if ( ln == "vhdl" )
 		l = new QsciLexerVHDL( this );
 
+	// read settings
+	if ( l )
+		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
+
 	// return lexer
 	return l;
-}
-
-QsciLexer* pQScintilla::lexerForFilename( const QString& s )
-{
-	// get suffixes
-	QHash<QString, QStringList> l = suffixes();
-
-	// file suffixe
-	const QString sf = QFileInfo( s ).suffix().prepend( "*." );
-
-	// basic setup need change for makefile and cmake
-	foreach ( QString k, l.keys() )
-		if ( l.value( k ).contains( sf, Qt::CaseInsensitive ) )
-			return lexerForLanguage( k );
-
-	// return no lexer if not found
-	return 0;
-}
-
-QsciAPIs* pQScintilla::apisForLanguage( const QString& )
-{
-	HERE CREATE NEW API
-}
-
-QHash<QString,QsciLexer*> pQScintilla::lexers()
-{
-	// init lexers if needed
-	if ( mLexers.isEmpty() )
-		foreach ( QString s, languages() )
-			mLexers[s] = lexerForLanguage( s );
-
-	// return lexers
-	return mLexers;
-}
-
-QHash<QString,QsciAPIs*> pQScintilla::apis()
-{
-	// init apis if needed
-	if ( mAPIs.isEmpty() )
-		foreach ( QString s, languages() )
-			mAPIs[s] = new QsciAPIs( 0 );
-			HERE READ APIS FILE FOR EACH API
-
-	// return lexers
-	return mAPIs;
-}
-
-void pQScintilla::readSettings()
-{
-	// read settings
-	foreach ( QsciLexer* l, lexers() )
-		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
-}
-
-void pQScintilla::writeSettings()
-{
-	// write settings
-	foreach ( QsciLexer* l, lexers() )
-		l->writeSettings( *pSettings::instance(), qPrintable( mPath ) );
 }
 
 void pQScintilla::resetLexer( QsciLexer* l )
@@ -153,11 +100,17 @@ void pQScintilla::resetLexer( QsciLexer* l )
 	// reset lexer
 	pSettings::instance()->remove( QString( "%1/%2" ).arg( mPath ).arg( s ) );
 	delete l;
-	mLexers[s] = lexerForLanguage( s );
-	mLexers[s]->readSettings( *pSettings::instance(), qPrintable( mPath ) );
+	mLexersSettings[s] = lexerForLanguage( s );
 }
 
-bool pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant& v )
+void pQScintilla::writeLexersSettings()
+{
+	// write settings
+	foreach ( QsciLexer* l, lexersSettings() )
+		l->writeSettings( *pSettings::instance(), qPrintable( mPath ) );
+}
+
+bool pQScintilla::setLexerProperty( const QString& s, QsciLexer* l, const QVariant& v )
 {
 	// cancel no property, no lexer or f variant is not valid
 	if ( s.trimmed().isEmpty() || !l || !v.isValid() )
@@ -165,14 +118,14 @@ bool pQScintilla::setProperty( const QString& s, QsciLexer* l, const QVariant& v
 
 	if ( v.type() == QVariant::Bool )
 		return QMetaObject::invokeMethod( l, qPrintable( s ), Q_ARG( bool, v.toBool() ) );
-	else if ( v.userType() == QVariant::Int )
+	else if ( v.type() == QVariant::Int )
 		return QMetaObject::invokeMethod( l, qPrintable( s ), Q_ARG( QsciLexerPython::IndentationWarning, (QsciLexerPython::IndentationWarning)v.toInt() ) );
 
 	// return default value
 	return false;
 }
 
-QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
+QVariant pQScintilla::lexerProperty( const QString& s, QsciLexer* l ) const
 {
 	// if no member or lexer return null variant
 	if ( s.trimmed().isEmpty() || !l )
@@ -319,6 +272,80 @@ QVariant pQScintilla::property( const QString& s, QsciLexer* l ) const
 	return QVariant();
 }
 
+void pQScintilla::setProperties( pEditor* e )
+{
+	if ( !e )
+		return;
+
+	// apply settings from UISettings
+	// General
+	e->setSelectionBackgroundColor( selectionBackgroundColor() );
+	e->setSelectionForegroundColor( selectionForegroundColor() );
+	// Auto Completion
+	e->setAutoCompletionCaseSensitivity( autoCompletionCaseSensitivity() );
+	e->setAutoCompletionReplaceWord( autoCompletionReplaceWord() );
+	e->setAutoCompletionShowSingle( autoCompletionShowSingle() );
+	e->setAutoCompletionSource( autoCompletionSource() );
+	e->setAutoCompletionThreshold( autoCompletionThreshold() );
+	// CallTips
+	e->setCallTipsBackgroundColor( callTipsBackgroundColor() );
+	e->setCallTipsForegroundColor( callTipsForegroundColor() );
+	e->setCallTipsHighlightColor( callTipsHighlightColor() );
+	e->setCallTipsStyle( callTipsStyle() );
+	e->setCallTipsVisible( callTipsVisible() );
+	// Indentation
+	e->setAutoIndent( autoIndent() );
+	e->setBackspaceUnindents( backspaceUnindents() );
+	e->setIndentationGuides( indentationGuides() );
+	e->setIndentationsUseTabs( indentationsUseTabs() );
+	e->setIndentationWidth( indentationWidth() );
+	e->setTabIndents( tabIndents() );
+	e->setTabWidth( tabWidth() );
+	e->setIndentationGuidesBackgroundColor( indentationGuidesBackgroundColor() );
+	e->setIndentationGuidesForegroundColor( indentationGuidesForegroundColor() );
+	// Brace Matching
+	e->setBraceMatching( braceMatching() );
+	e->setMatchedBraceBackgroundColor( matchedBraceBackgroundColor() );
+	e->setMatchedBraceForegroundColor( matchedBraceForegroundColor() );
+	e->setUnmatchedBraceBackgroundColor( unmatchedBraceBackgroundColor() );
+	e->setUnmatchedBraceForegroundColor( unmatchedBraceForegroundColor() );
+	// Edge Mode
+	e->setEdgeMode( edgeMode() );
+	e->setEdgeColor( edgeColor() );
+	e->setEdgeColumn( edgeColumn() );
+	// Caret
+	e->setCaretLineVisible( caretLineVisible() );
+	e->setCaretLineBackgroundColor( caretLineBackgroundColor() );
+	e->setCaretForegroundColor( caretForegroundColor() );
+	e->setCaretWidth( caretWidth() );
+	// Margins
+	if ( marginsEnabled() )
+	{
+		e->setMarginsBackgroundColor( marginsBackgroundColor() );
+		e->setMarginsForegroundColor( marginsForegroundColor() );
+		e->setMarginsFont( marginsFont() );
+	}
+	e->setLineNumbersMarginEnabled( lineNumbersMarginEnabled() );
+	e->setLineNumbersMarginWidth( lineNumbersMarginWidth() );
+	e->setLineNumbersMarginAutoWidth( lineNumbersMarginAutoWidth() );
+	e->setFolding( folding() );
+	e->setFoldMarginColors( foldMarginForegroundColor(), foldMarginBackgroundColor() );
+	// Special Characters
+	e->setEolMode( eolMode() );
+	e->setEolVisibility( eolVisibility() );
+	e->setWhitespaceVisibility( whitespaceVisibility() );
+	e->setWrapMode( wrapMode() );
+	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
+}
+
+QStringList pQScintilla::languages() const
+{
+	return QStringList() << "Bash" << "Batch" << "C#" << "C++" << "CMake" << "CSS"
+		<< "D" << "Diff" << "HTML" << "IDL" << "Java" << "JavaScript" << "Lua"
+		<< "Makefile" << "POV" << "Perl" << "Properties" << "Python" << "Ruby"
+		<< "SQL" << "TeX" << "VHDL";
+}
+
 QHash<QString, QStringList> pQScintilla::defaultSuffixes() const
 {
 	// suffixes list
@@ -438,74 +465,60 @@ QHash<QString, QStringList> pQScintilla::suffixes() const
 	return l;
 }
 
-void pQScintilla::applyProperties( pEditor* e )
+QString pQScintilla::filters() const
 {
-	if ( !e )
-		return;
+	QString f;
 
-	// read lexer settings
-	if ( e->lexer() )
-		e->lexer()->readSettings( *pSettings::instance(), qPrintable( mPath ) );
+	// get suffixes
+	QHash<QString, QStringList> sl = suffixes();
+	
+	foreach ( QString k, sl.keys() )
+		f += QString( "%1 Files ( %2 );;" ).arg( k ).arg( sl.value( k ).join( " " ) );
 
-	// apply settings from UISettings
-	// General
-	e->setSelectionBackgroundColor( selectionBackgroundColor() );
-	e->setSelectionForegroundColor( selectionForegroundColor() );
-	// Auto Completion
-	e->setAutoCompletionCaseSensitivity( autoCompletionCaseSensitivity() );
-	e->setAutoCompletionReplaceWord( autoCompletionReplaceWord() );
-	e->setAutoCompletionShowSingle( autoCompletionShowSingle() );
-	e->setAutoCompletionSource( autoCompletionSource() );
-	e->setAutoCompletionThreshold( autoCompletionThreshold() );
-	// CallTips
-	e->setCallTipsBackgroundColor( callTipsBackgroundColor() );
-	e->setCallTipsForegroundColor( callTipsForegroundColor() );
-	e->setCallTipsHighlightColor( callTipsHighlightColor() );
-	e->setCallTipsStyle( callTipsStyle() );
-	e->setCallTipsVisible( callTipsVisible() );
-	// Indentation
-	e->setAutoIndent( autoIndent() );
-	e->setBackspaceUnindents( backspaceUnindents() );
-	e->setIndentationGuides( indentationGuides() );
-	e->setIndentationsUseTabs( indentationsUseTabs() );
-	e->setIndentationWidth( indentationWidth() );
-	e->setTabIndents( tabIndents() );
-	e->setTabWidth( tabWidth() );
-	e->setIndentationGuidesBackgroundColor( indentationGuidesBackgroundColor() );
-	e->setIndentationGuidesForegroundColor( indentationGuidesForegroundColor() );
-	// Brace Matching
-	e->setBraceMatching( braceMatching() );
-	e->setMatchedBraceBackgroundColor( matchedBraceBackgroundColor() );
-	e->setMatchedBraceForegroundColor( matchedBraceForegroundColor() );
-	e->setUnmatchedBraceBackgroundColor( unmatchedBraceBackgroundColor() );
-	e->setUnmatchedBraceForegroundColor( unmatchedBraceForegroundColor() );
-	// Edge Mode
-	e->setEdgeMode( edgeMode() );
-	e->setEdgeColor( edgeColor() );
-	e->setEdgeColumn( edgeColumn() );
-	// Caret
-	e->setCaretLineVisible( caretLineVisible() );
-	e->setCaretLineBackgroundColor( caretLineBackgroundColor() );
-	e->setCaretForegroundColor( caretForegroundColor() );
-	e->setCaretWidth( caretWidth() );
-	// Margins
-	if ( marginsEnabled() )
+	// remove trailing ;;
+	if ( f.endsWith( ";;" ) )
+		f.chop( 2 );
+
+	// return filters list
+	return f;
+}
+
+QsciLexer* pQScintilla::lexerForFilename( const QString& s )
+{
+	// get suffixes
+	QHash<QString, QStringList> l = suffixes();
+
+	// file suffixe
+	const QString sf = QFileInfo( s ).suffix().prepend( "*." );
+
+	// basic setup need change for makefile and cmake
+	foreach ( QString k, l.keys() )
 	{
-		e->setMarginsBackgroundColor( marginsBackgroundColor() );
-		e->setMarginsForegroundColor( marginsForegroundColor() );
-		e->setMarginsFont( marginsFont() );
+		if ( l.value( k ).contains( sf, Qt::CaseInsensitive ) )
+		{
+			// return existing global lexer
+			if ( mGlobalsLexers.keys().contains( k ) )
+				return mGlobalsLexers[k];
+			// create global lexer, store and return it
+			mGlobalsLexers[k] = lexerForLanguage( k );
+			return mGlobalsLexers[k];
+		}
 	}
-	e->setLineNumbersMarginEnabled( lineNumbersMarginEnabled() );
-	e->setLineNumbersMarginWidth( lineNumbersMarginWidth() );
-	e->setLineNumbersMarginAutoWidth( lineNumbersMarginAutoWidth() );
-	e->setFolding( folding() );
-	e->setFoldMarginColors( foldMarginForegroundColor(), foldMarginBackgroundColor() );
-	// Special Characters
-	e->setEolMode( eolMode() );
-	e->setEolVisibility( eolVisibility() );
-	e->setWhitespaceVisibility( whitespaceVisibility() );
-	e->setWrapMode( wrapMode() );
-	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
+
+	// return no lexer if not found
+	return 0;
+}
+
+void pQScintilla::applyProperties()
+{
+	// apply scintilla properties
+	foreach ( pAbstractChild* c, pWorkspace::instance()->children() )
+		foreach ( pEditor* p, c->findChildren<pEditor*>() )
+			setProperties( p );
+
+	// apply lexers properties
+	foreach ( QsciLexer* l, mGlobalsLexers )
+		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
 }
 
 void pQScintilla::setAutoSyntaxCheck( bool b )
