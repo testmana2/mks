@@ -155,6 +155,8 @@ UISettings::UISettings( QWidget* p )
 	foreach ( QCheckBox* cb, gbLexersHighlightingElements->findChildren<QCheckBox*>() )
 		if ( cb != cbLexersHighlightingFillEol )
 			connect( cb, SIGNAL( clicked( bool ) ), this, SLOT( cbLexersHighlightingProperties_clicked( bool ) ) );
+	// apply button
+	connect( dbbButtons->button( QDialogButtonBox::Apply ), SIGNAL( clicked() ), this, SLOT( apply() ) );
 
 	// resize to minimum size
 	resize( minimumSizeHint() );
@@ -292,7 +294,7 @@ void UISettings::loadSettings()
 		}
 	}
 	//  Lexers Highlighting
-	pQScintilla::instance()->readSettings();
+	pQScintilla::instance()->lexersSettings();
 	if ( cbLexersHighlightingLanguages->count() )
 		on_cbLexersHighlightingLanguages_currentIndexChanged( cbLexersHighlightingLanguages->itemText( 0 ) );
 
@@ -450,7 +452,7 @@ void UISettings::saveSettings()
 		s->setValue( sp +it->text( 0 ), it->text( 1 ) );
 	}
 	//  Lexers Highlighting
-	pQScintilla::instance()->writeSettings();
+	pQScintilla::instance()->writeLexersSettings();
 
 	//  Abbreviations
 	sp = QString( "%1/Editor/Abbreviations" ).arg( SettingsPath );
@@ -680,7 +682,7 @@ void UISettings::on_pbLexersAssociationsDelete_clicked()
 
 void UISettings::on_cbLexersHighlightingLanguages_currentIndexChanged( const QString& s )
 {
-	QsciLexer* l = pQScintilla::instance()->lexers().value( s );
+	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( s );
 	lwLexersHighlightingElements->clear();
 	for ( int i = 0; i < 128; i++ )
 	{
@@ -699,55 +701,55 @@ void UISettings::on_cbLexersHighlightingLanguages_currentIndexChanged( const QSt
 	QVariant v;
 
 	// fold comments
-	v = pQScintilla::instance()->property( "foldComments", l );
+	v = pQScintilla::instance()->lexerProperty( "foldComments", l );
 	cbLexersHighlightingFoldComments->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldComments->setChecked( v.toBool() );
 
 	// fold compact
-	v = pQScintilla::instance()->property( "foldCompact", l );
+	v = pQScintilla::instance()->lexerProperty( "foldCompact", l );
 	cbLexersHighlightingFoldCompact->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldCompact->setChecked( v.toBool() );
 
 	// fold quotes
-	v = pQScintilla::instance()->property( "foldQuotes", l );
+	v = pQScintilla::instance()->lexerProperty( "foldQuotes", l );
 	cbLexersHighlightingFoldQuotes->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldQuotes->setChecked( v.toBool() );
 
 	// fold directives
-	v = pQScintilla::instance()->property( "foldDirectives", l );
+	v = pQScintilla::instance()->lexerProperty( "foldDirectives", l );
 	cbLexersHighlightingFoldDirectives->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldDirectives->setChecked( v.toBool() );
 
 	// fold at begin
-	v = pQScintilla::instance()->property( "foldAtBegin", l );
+	v = pQScintilla::instance()->lexerProperty( "foldAtBegin", l );
 	cbLexersHighlightingFoldAtBegin->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldAtBegin->setChecked( v.toBool() );
 
 	// fold at parenthesis
-	v = pQScintilla::instance()->property( "foldAtParenthesis", l );
+	v = pQScintilla::instance()->lexerProperty( "foldAtParenthesis", l );
 	cbLexersHighlightingFoldAtParenthesis->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldAtParenthesis->setChecked( v.toBool() );
 
 	// fold at else
-	v = pQScintilla::instance()->property( "foldAtElse", l );
+	v = pQScintilla::instance()->lexerProperty( "foldAtElse", l );
 	cbLexersHighlightingFoldAtElse->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldAtElse->setChecked( v.toBool() );
 
 	// fold preprocessor
-	v = pQScintilla::instance()->property( "foldPreprocessor", l );
+	v = pQScintilla::instance()->lexerProperty( "foldPreprocessor", l );
 	cbLexersHighlightingFoldPreprocessor->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldPreprocessor->setChecked( v.toBool() );
 
 	// style preprocessor
-	v = pQScintilla::instance()->property( "stylePreprocessor", l );
+	v = pQScintilla::instance()->lexerProperty( "stylePreprocessor", l );
 	cbLexersHighlightingStylePreprocessor->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingStylePreprocessor->setChecked( v.toBool() );
@@ -759,19 +761,19 @@ void UISettings::on_cbLexersHighlightingLanguages_currentIndexChanged( const QSt
 	cbLexersHighlightingIndentClosingBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiClosing );
 
 	// case sensitive tags
-	v = pQScintilla::instance()->property( "caseSensitiveTags", l );
+	v = pQScintilla::instance()->lexerProperty( "caseSensitiveTags", l );
 	cbLexersHighlightingCaseSensitiveTags->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingCaseSensitiveTags->setChecked( v.toBool() );
 
 	// backslash escapes
-	v = pQScintilla::instance()->property( "backslashEscapes", l );
+	v = pQScintilla::instance()->lexerProperty( "backslashEscapes", l );
 	cbLexersHighlightingBackslashEscapes->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingBackslashEscapes->setChecked( v.toBool() );
 
 	// indentation warning
-	v = pQScintilla::instance()->property( "indentationWarning", l );
+	v = pQScintilla::instance()->lexerProperty( "indentationWarning", l );
 	lLexersHighlightingIndentationWarning->setVisible( v.isValid() );
 	cbLexersHighlightingIndentationWarning->setVisible( lLexersHighlightingIndentationWarning->isVisible() );
 	if ( v.isValid() )
@@ -782,7 +784,7 @@ void UISettings::on_lwLexersHighlightingElements_itemSelectionChanged()
 {
 	QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 	if ( it )
-		cbLexersHighlightingFillEol->setChecked( pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
+		cbLexersHighlightingFillEol->setChecked( pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
 }
 
 void UISettings::lexersHighlightingColour_clicked()
@@ -812,12 +814,12 @@ void UISettings::lexersHighlightingColour_clicked()
 			if ( o == pbLexersHighlightingForeground )
 			{
 				it->setForeground( c );
-				pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setColor( c, it->data( Qt::UserRole ).toInt() );
+				pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setColor( c, it->data( Qt::UserRole ).toInt() );
 			}
 			else if ( o == pbLexersHighlightingBackground )
 			{
 				it->setBackground( c );
-				pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setPaper( c, it->data( Qt::UserRole ).toInt() );
+				pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setPaper( c, it->data( Qt::UserRole ).toInt() );
 			}
 		}
 	}
@@ -825,7 +827,7 @@ void UISettings::lexersHighlightingColour_clicked()
 	else if ( o == pbLexersHighlightingAllForeground || o == pbLexersHighlightingAllBackground )
 	{
 		// get lexer
-		QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
+		QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
 
 		// get color
 		c = QColorDialog::getColor( o == pbLexersHighlightingAllForeground ? l->color( -1 ) : l->paper( -1 ), window() );
@@ -868,13 +870,13 @@ void UISettings::lexersHighlightingFont_clicked()
 		if ( b )
 		{
 			it->setFont( f );
-			pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt() );
+			pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt() );
 		}
 	}
 	else if ( o == pbLexersHighlightingAllFont )
 	{
 		// get lexer
-		QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
+		QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
 
 		// get font
 		f = QFontDialog::getFont( &b, l->font( -1 ), window() );
@@ -892,7 +894,7 @@ void UISettings::on_cbLexersHighlightingFillEol_clicked( bool b )
 {
 	QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 	if ( it )
-		pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
+		pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
 }
 
 void UISettings::cbLexersHighlightingProperties_clicked( bool b )
@@ -903,7 +905,7 @@ void UISettings::cbLexersHighlightingProperties_clicked( bool b )
 		return;
 
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
+	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
 
 	// set lexer properties
 	if ( cb == cbLexersHighlightingIndentOpeningBrace || cb == cbLexersHighlightingIndentClosingBrace )
@@ -918,22 +920,22 @@ void UISettings::cbLexersHighlightingProperties_clicked( bool b )
 			l->setAutoIndentStyle( QsciScintilla::AiMaintain );
 	}
 	else
-		pQScintilla::instance()->setProperty( cb->statusTip(), l, b );
+		pQScintilla::instance()->setLexerProperty( cb->statusTip(), l, b );
 }
 
 void UISettings::on_cbLexersHighlightingIndentationWarning_currentIndexChanged( int i )
 {
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
+	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
 
 	// set lexer properties
-	pQScintilla::instance()->setProperty( cbLexersHighlightingIndentationWarning->statusTip(), l, cbLexersHighlightingIndentationWarning->itemData( i ) );
+	pQScintilla::instance()->setLexerProperty( cbLexersHighlightingIndentationWarning->statusTip(), l, cbLexersHighlightingIndentationWarning->itemData( i ) );
 }
 
 void UISettings::on_pbLexersHighlightingReset_clicked()
 {
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexers().value( cbLexersHighlightingLanguages->currentText() );
+	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
 
 	// reset and refresh
 	if ( l )
@@ -977,6 +979,12 @@ void UISettings::on_teAbbreviationsCode_textChanged()
 
 void UISettings::accept()
 {
-	saveSettings();
+	apply();
 	QDialog::accept();
+}
+
+void UISettings::apply()
+{
+	saveSettings();
+	pQScintilla::instance()->applyProperties();
 }

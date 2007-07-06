@@ -39,22 +39,25 @@ class Q_MONKEY_EXPORT pQScintilla : public QObject, public QSingleton<pQScintill
 {
 	Q_OBJECT
 	friend class QSingleton<pQScintilla>;
+	friend class UISettings;
+	friend class pEditor;
+
+protected:
+	QHash<QString,QsciLexer*> lexersSettings();
+	QsciLexer* lexerForLanguage( const QString& );
+	void resetLexer( QsciLexer* );
+	void writeLexersSettings();
+	bool setLexerProperty( const QString&, QsciLexer*, const QVariant& );
+	QVariant lexerProperty( const QString&, QsciLexer* ) const;
+	void setProperties( pEditor* );
 
 public:
-	QHash<QString,QsciLexer*> lexers();
-	QHash<QString,QsciAPIs*> apis();
 	QStringList languages() const;
-	QsciLexer* lexerForLanguage( const QString& );
-	QsciLexer* lexerForFilename( const QString& );
-	QsciAPIs* apisForLanguage( const QString& );
-	void readSettings();
-	void writeSettings();
-	void resetLexer( QsciLexer* );
-	bool setProperty( const QString&, QsciLexer*, const QVariant& );
-	QVariant property( const QString&, QsciLexer* ) const;
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
-	void applyProperties( pEditor* );
+	QString filters() const;
+	QsciLexer* lexerForFilename( const QString& );
+	void applyProperties();
 	// General
 	void setAutoSyntaxCheck( bool ); // false
 	bool autoSyntaxCheck() const;
@@ -181,8 +184,9 @@ private:
 	pQScintilla( QObject* = QApplication::instance() );
 	~pQScintilla();
 
-	QHash<QString,QsciLexer*> mLexers;
-	QHash<QString,QsciAPIs*> mAPIs;
+	QHash<QString,QsciLexer*> mLexersSettings;
+	QHash<QString,QsciLexer*> mGlobalsLexers;
+	QHash<QString,QsciAPIs*> mGlobalAPIs;
 
 };
 

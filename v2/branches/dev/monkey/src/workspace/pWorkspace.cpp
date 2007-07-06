@@ -17,7 +17,6 @@
 #include "UISaveFiles.h"
 #include "UIAbout.h"
 #include "pQScintilla.h"
-#include "pEditor.h"
 
 #include "pChild.h"
 
@@ -124,10 +123,10 @@ void pWorkspace::fileOpen_triggered()
 	const QString mPath = pRecentsManager::instance()->recentFileOpenPath();
 
 	// get available filters
-	//QString mFilters = pluginsManager()->childsFilters().join( ";;" );
+	QString mFilters = pQScintilla::instance()->filters();
 
 	// open open file dialog
-	QStringList l = QFileDialog::getOpenFileNames( this, tr( "Choose the file(s) to open" ), mPath ); //, mFilters );
+	QStringList l = QFileDialog::getOpenFileNames( this, tr( "Choose the file(s) to open" ), mPath, mFilters );
 
 	// for each entry, open file
 	foreach ( QString s, l )
@@ -195,13 +194,7 @@ void pWorkspace::fileExit_triggered()
 // edit menu
 void pWorkspace::editSettings_triggered()
 {
-	if ( UISettings::instance( this )->exec() )
-	{
-		// apply scintilla properties
-		foreach ( pAbstractChild* c, children() )
-			foreach ( pEditor* p, c->findChildren<pEditor*>() )
-				pQScintilla::instance()->applyProperties( p );
-	}
+	UISettings::instance( this )->exec();
 }
 
 void pWorkspace::editUndo_triggered()

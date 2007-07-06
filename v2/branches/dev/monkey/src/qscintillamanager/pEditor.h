@@ -43,7 +43,8 @@ public slots:
 	void selectNone();
 	void invokeSearchReplace();
 	void invokeGoToLine();
-	void convertTabs( int i );
+	void convertTabs( int = -1 );
+	void makeBackup();
 
 signals:
 	void cursorPositionChanged( const QPoint& );

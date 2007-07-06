@@ -33,8 +33,8 @@ RESOURCES	*= src/resources/resources.qrc
 
 CONFIG	*= qt warn_on release app_bundle thread x11 windows console
 win32{
-	CONFIG -= debug
-	CONFIG *= release
+#	CONFIG -= debug
+#	CONFIG *= release
 }
 QT	*= gui core
 

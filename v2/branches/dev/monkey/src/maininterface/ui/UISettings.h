@@ -37,6 +37,7 @@ private:
 
 public slots:
 	void accept();
+	void apply();
 
 private slots:
 	void on_twMenu_itemSelectionChanged();

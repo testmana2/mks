@@ -188,12 +188,44 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>699</x>
-     <y>31</y>
+     <x>630</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
      <x>60</x>
      <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leSearch</sender>
+   <signal>returnPressed()</signal>
+   <receiver>tbNext</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>96</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>45</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leReplace</sender>
+   <signal>returnPressed()</signal>
+   <receiver>tbReplace</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>95</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>16</x>
+     <y>70</y>
     </hint>
    </hints>
   </connection>
