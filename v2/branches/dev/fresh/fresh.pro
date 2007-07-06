@@ -2,6 +2,8 @@
 
 include( fresh.pri )
 
+CONFIG +=debug
+
 HEADER	+= MonkeyExport.h
 
 # objects

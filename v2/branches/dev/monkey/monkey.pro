@@ -31,7 +31,7 @@ DEFINES	*= MONKEY_CORE_BUILD "PROGRAM_NAME=\"\\\"$${PROGRAM_NAME}\\\"\"" "PROGRA
 win32:RC_FILE	*= monkey.rc
 RESOURCES	*= src/resources/resources.qrc
 
-CONFIG	*= qt warn_on release app_bundle thread x11 windows console
+CONFIG	*= qt warn_on debug app_bundle thread x11 windows console
 win32{
 #	CONFIG -= debug
 #	CONFIG *= release
