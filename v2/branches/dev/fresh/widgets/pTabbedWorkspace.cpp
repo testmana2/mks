@@ -16,6 +16,7 @@
 #include <QIcon>
 #include <QCloseEvent>
 #include <QFile>
+#include <QTime>
 
 pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	: QWidget( p ), mTabsHaveShortcut( true )
@@ -26,7 +27,6 @@ pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	QBoxLayout::TopToBottom
 	QBoxLayout::BottomToTop
 	*/
-
 	// tab widget
 	mTabLayout = new QBoxLayout( QBoxLayout::LeftToRight );
 	mTabLayout->setSpacing( 3 );
@@ -602,18 +602,27 @@ void pTabbedWorkspace::closeAllTabs( bool b )
 
 void pTabbedWorkspace::activateNextDocument()
 {
+    QTime time1;
+    time1.start ();
+    time1 = QTime::currentTime ();
 	if ( currentIndex() +1 == count() )
 		setCurrentIndex( 0 );
 	else
 		setCurrentIndex( currentIndex() +1 );
+    qDebug("Tab switch time: %d ms", time1.elapsed());
+    
 }
 
 void pTabbedWorkspace::activatePreviousDocument()
 {
+    QTime time1;
+    time1.start ();
+    time1 = QTime::currentTime ();
 	if ( currentIndex() -1 == -1 )
 		setCurrentIndex( count() -1 );
 	else
 		setCurrentIndex( currentIndex() -1 );
+    qDebug("Tab switch time: %d ms", time1.elapsed());
 }
 
 bool pTabbedWorkspace::tabsHaveShortcut() const
