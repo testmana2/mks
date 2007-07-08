@@ -338,6 +338,32 @@ void pQScintilla::setProperties( pEditor* e )
 	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
 }
 
+const QList<pAbbreviation*> pQScintilla::abbreviations()
+{
+	// get settings
+	pSettings* s = pSettings::instance();
+
+	// get abbreviation if needed
+	if ( mAbbreviations.isEmpty() )
+	{
+		int size = s->beginReadArray( mPath +"/Abbreviations" );
+		for ( int i = 0; i < size; i++ )
+		{
+			s->setArrayIndex( i );
+			pAbbreviation* a = new pAbbreviation();
+			a->Template = s->value( "Template" ).toString();
+			a->Description = s->value( "Description" ).toString();
+			a->Language = s->value( "Language" ).toString();
+			a->Code = s->value( "Code" ).toString();
+			mAbbreviations << a;
+		}
+		s->endArray();
+	}
+
+	// return abbreviations
+	return mAbbreviations;
+}
+
 QStringList pQScintilla::languages() const
 {
 	return QStringList() << "Bash" << "Batch" << "C#" << "C++" << "CMake" << "CSS"
@@ -519,6 +545,96 @@ void pQScintilla::applyProperties()
 	// apply lexers properties
 	foreach ( QsciLexer* l, mGlobalsLexers )
 		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
+
+	// clear mAbbreviations so a call to abbreviations() will refill it
+	qDeleteAll( mAbbreviations );
+	mAbbreviations.clear();
+}
+
+void pQScintilla::expandAbbreviation( pEditor* e )
+{
+	if ( !e || !e->lexer() )
+		return;
+
+	// get current cursor position
+	const QPoint p = e->cursorPosition();
+
+	// get word template
+	QString t = e->text( p.y() ).left( p.x() );
+
+	// calculate the index
+	int i = t.lastIndexOf( " " );
+	if ( i == -1 )
+		i = t.lastIndexOf( "\t" );
+
+	// get true word template
+	t = t.mid( i ).trimmed();
+
+	// get language
+	const QString lng = e->lexer()->language();
+
+	// look for abbreviation and lexer to replace
+	foreach ( pAbbreviation* a, abbreviations() )
+	{
+		// if template is found for language
+		if ( a->Language == lng && a->Template == t )
+		{
+			// select word template from document
+			e->setSelection( p.y(), i +1, p.y(), i +1 +t.length() );
+
+			// remove word template from document
+			e->removeSelectedText();
+
+			// for calculate final cursor position if it found a |
+			QPoint op;
+			int k;
+
+			// get code lines
+			QStringList l = a->Code.split( "\n" );
+			int j = 0;
+			// iterating code lines
+			foreach ( QString s, l )
+			{
+				// looking for cursor position
+				k = s.indexOf( "|" );
+
+				// calculate cursor position
+				if ( k != -1 )
+				{
+					op.ry() = p.y() +j;
+					op.rx() = k +i +1;
+					s.replace( "|", "" );
+				}
+
+				// if no last line
+				if ( j < l.count() -1 )
+				{
+					// insert code line and an end of line
+					e->insert( s +"\n" );
+
+					// set cursor on next line
+					e->setCursorPosition( p.y() +j +1, 0 );
+				}
+				// insert codel ine
+				else
+					e->insert( s );
+
+				// process indentation for code line if line is not first one
+				if ( j > 0 )
+					e->setIndentation( p.y() +j, e->indentation( p.y() ) );
+
+				// increment j for calculate correct line
+				j++;
+			}
+
+			// set new cursor position is needed
+			if ( !op.isNull() )
+				e->setCursorPosition( op.y(), op.x() );
+
+			// finish
+			return;
+		}
+	}
 }
 
 void pQScintilla::setAutoSyntaxCheck( bool b )

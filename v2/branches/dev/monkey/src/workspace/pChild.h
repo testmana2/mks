@@ -37,6 +37,9 @@ public:
 	// the current visible / focused file name ( without path )
 	virtual QString currentFileName() const;
 
+	// the current visible editor
+	virtual pEditor* currentEditor() const;
+
 	// return the current file modified flag
 	virtual bool isModified() const;
 

@@ -53,6 +53,7 @@ public slots:
 	void editPaste_triggered();
 	void editSearchReplace_triggered();
 	void editGoTo_triggered();
+	void editExpandAbbreviation_triggered();
 
 	// view menu
 	void agStyles_triggered( QAction* );

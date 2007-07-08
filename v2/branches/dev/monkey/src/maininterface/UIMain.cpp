@@ -100,7 +100,12 @@ void UIMain::initMenuBar()
 		mb->action( "aPaste", tr( "&Paste" ), QIcon( ":/edit/icons/edit/paste.png" ), tr( "Ctrl+V" ), tr( "Paste" ) )->setEnabled( false );
 		mb->action( "aSeparator3" );
 		mb->action( "aSearchReplace", tr( "&Search - Replace..." ), QIcon( ":/edit/icons/edit/search.png" ), tr( "Ctrl+F" ), tr( "Search - Replace..." ) )->setEnabled( false );
-		mb->action( "aGoTo", tr( "&Go To..." ), QIcon( ":edit/icons/edit/goto.png" ), tr( "Ctrl+G" ), tr( "Go To..." ) )->setEnabled( false );
+		mb->action( "aSearchPrevious", tr( "Search Previous" ), QIcon( ":/edit/icons/edit/search.png" ), tr( "Shift+F3" ), tr( "Search Previous" ) )->setEnabled( false );
+		mb->action( "aSearchNext", tr( "Search Next" ), QIcon( ":/edit/icons/edit/search.png" ), tr( "F3" ), tr( "Search Next" ) )->setEnabled( false );
+		mb->action( "aSeparator4" );
+		mb->action( "aGoTo", tr( "&Go To..." ), QIcon( ":/edit/icons/edit/goto.png" ), tr( "Ctrl+G" ), tr( "Go To..." ) )->setEnabled( false );
+		mb->action( "aSeparator5" );
+		mb->action( "aExpandAbbreviation", tr( "Expand Abbreviation" ), QIcon( "" ), tr( "Ctrl+L" ), tr( "Expand Abbreviation" ) )->setEnabled( false );
 	mb->endGroup();
 	mb->menu( "mView", tr( "&View" ) );
 	mb->beginGroup( "mView" );
@@ -253,6 +258,7 @@ void UIMain::initConnections()
 	connect( menuBar()->action( "mEdit/aPaste" ), SIGNAL( triggered() ), workspace(), SLOT( editPaste_triggered() ) );
 	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), workspace(), SLOT( editSearchReplace_triggered() ) );
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), workspace(), SLOT( editGoTo_triggered() ) );
+	connect( menuBar()->action( "mEdit/aExpandAbbreviation" ), SIGNAL( triggered() ), workspace(), SLOT( editExpandAbbreviation_triggered() ) );
 	// view connection
 	connect( agStyles, SIGNAL( triggered( QAction* ) ), workspace(), SLOT( agStyles_triggered( QAction* ) ) );
 	connect( menuBar()->action( "mView/aNext" ), SIGNAL( triggered() ), workspace(), SLOT( activateNextDocument() ) );

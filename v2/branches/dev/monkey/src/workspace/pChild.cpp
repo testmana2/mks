@@ -67,6 +67,11 @@ QString pChild::currentFileName() const
 	return QFileInfo( currentFile() ).fileName();
 }
 
+pEditor* pChild::currentEditor() const
+{
+	return mEditor;
+}
+
 bool pChild::isModified() const
 {
 	return mEditor->isModified();
