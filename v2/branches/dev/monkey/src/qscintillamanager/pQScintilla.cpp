@@ -346,7 +346,7 @@ const QList<pAbbreviation*> pQScintilla::abbreviations()
 	// get abbreviation if needed
 	if ( mAbbreviations.isEmpty() )
 	{
-		int size = s->beginReadArray( mPath +"/Abbreviations" );
+		int size = s->beginReadArray( "Abbreviations" );
 		for ( int i = 0; i < size; i++ )
 		{
 			s->setArrayIndex( i );
