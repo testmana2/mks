@@ -24,15 +24,15 @@ UISettings::UISettings( QWidget* p )
 	QStringList l;
 
 	// designer
-	bgDesigner = new QButtonGroup( gbUIDesignerIntegration );
-	bgDesigner->addButton( rbUseEmbeddedUIDesigner, Embedded );
-	bgDesigner->addButton( rbRunQtDesigner, External );
+	bgUIDesigner = new QButtonGroup( gbUIDesignerIntegration );
+	bgUIDesigner->addButton( rbUseEmbeddedUIDesigner, pQScintilla::uidmEmbedded );
+	bgUIDesigner->addButton( rbRunQtDesigner, pQScintilla::uidmExternal );
 
 	// externalchanges
 	bgExternalChanges = new QButtonGroup( gbOnExternalChanges );
-	bgExternalChanges->addButton( rbDoNothing, Nothing );
-	bgExternalChanges->addButton( rbAlertUser, Alert );
-	bgExternalChanges->addButton( rbReloadAutomatically, Reload );
+	bgExternalChanges->addButton( rbDoNothing, pQScintilla::ecmNothing );
+	bgExternalChanges->addButton( rbAlertUser, pQScintilla::ecmAlert );
+	bgExternalChanges->addButton( rbReloadAutomatically, pQScintilla::ecmReload );
 
 	// resize column
 	twTemplatesType->setColumnWidth( 0, 100 );
@@ -164,18 +164,17 @@ UISettings::UISettings( QWidget* p )
 
 void UISettings::loadSettings()
 {
+	pQScintilla* sc = pQScintilla::instance();
 	pSettings* s = pSettings::instance();
 	QString sp;
 
-	// general
-	sp = QString( "%1/Editor/General" ).arg( SettingsPath );
-	cbLoadLastProject->setChecked( s->value( sp +"/LoadLastProject", true ).toBool() );	
-	leDefaultProjectsDirectory->setText( s->value( sp +"/DefaultProjectsDirectory", "%HOME%/Projects" ).toString() );
-	bgDesigner->button( s->value( sp +"/Designer", Embedded ).toInt() )->setChecked( true );
-
-	// user interface
-	sp = QString( "%1/Editor/UserInterface" ).arg( SettingsPath );
-	bgExternalChanges->button( s->value( sp +"/ExternalChanges", Alert ).toInt() )->setChecked( true );
+	// General
+	cbRestoreProjectsOnStartup->setChecked( sc->restoreProjectsOnStartup() );
+	leDefaultProjectsDirectory->setText( sc->defaultProjectsDirectory() );
+	bgUIDesigner->button( sc->uiDesignerMode() )->setChecked( true );
+	bgExternalChanges->button( sc->externalchanges() )->setChecked( true );
+	cbSaveSession->setChecked( sc->saveSessionOnClose() );
+	cbRestoreSession->setChecked( sc->restoreSessionOnStartup() );
 
 	// File Templates
 	sp = QString( "%1/Editor/Templates" ).arg( SettingsPath );
@@ -195,7 +194,6 @@ void UISettings::loadSettings()
 	s->endArray();
 
 	// Editor
-	pQScintilla* sc = pQScintilla::instance();
 	//  General
 	cbAutoSyntaxCheck->setChecked( sc->autoSyntaxCheck() );
 	cbConvertTabsUponOpen->setChecked( sc->convertTabsUponOpen() );
@@ -317,18 +315,17 @@ void UISettings::loadSettings()
 
 void UISettings::saveSettings()
 {
+	pQScintilla* sc = pQScintilla::instance();
 	pSettings* s = pSettings::instance();
 	QString sp;
 
-	// general
-	sp = QString( "%1/Editor/General" ).arg( SettingsPath );
-	s->setValue( sp +"/LoadLastProject", cbLoadLastProject->isChecked() );
-	s->setValue( sp +"/DefaultProjectsDirectory", leDefaultProjectsDirectory->text() );
-	s->setValue( sp +"/Designer", bgDesigner->checkedId() );
-
-	// user interface
-	sp = QString( "%1/Editor/UserInterface" ).arg( SettingsPath );
-	s->setValue( sp +"/ExternalChanges", bgExternalChanges->checkedId() );
+	// General
+	sc->setRestoreProjectsOnStartup( cbRestoreProjectsOnStartup->isChecked() );
+	sc->setDefaultProjectsDirectory( leDefaultProjectsDirectory->text() );
+	sc->setUIDesignerMode( (pQScintilla::UIDesignerMode)bgUIDesigner->checkedId() );
+	sc->setExternalChanges( (pQScintilla::ExternalChangesMode)bgExternalChanges->checkedId() );
+	sc->setSaveSessionOnClose( cbSaveSession->isChecked() );
+	sc->setRestoreSessionOnStartup( cbRestoreSession->isChecked() );
 
 	// File Templates
 	sp = QString( "%1/Editor/Templates" ).arg( SettingsPath );
@@ -352,7 +349,6 @@ void UISettings::saveSettings()
 	s->endArray();
 
 	// Editor
-	pQScintilla* sc = pQScintilla::instance();
 	//  General
 	sc->setAutoSyntaxCheck( cbAutoSyntaxCheck->isChecked() );
 	sc->setConvertTabsUponOpen( cbConvertTabsUponOpen->isChecked() );
@@ -469,7 +465,7 @@ void UISettings::saveSettings()
 		s->setValue( "Template", it->text( 0 ).trimmed() );
 		s->setValue( "Description", it->text( 1 ).trimmed() );
 		s->setValue( "Language", it->text( 2 ) );
-		s->setValue( "Code", it->data( 0, Qt::UserRole ).toString().trimmed() );
+		s->setValue( "Code", it->data( 0, Qt::UserRole ).toString() );
 	}
 	s->endArray();
 

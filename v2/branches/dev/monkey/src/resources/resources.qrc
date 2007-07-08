@@ -32,10 +32,12 @@
         <file>icons/file/print.png</file>
         <file>icons/file/quickprint.png</file>
         <file>icons/file/quit.png</file>
-        <file>icons/file/recentsfiles.png</file>
+        <file>icons/file/recents.png</file>
+        <file>icons/file/restore.png</file>
         <file>icons/file/save.png</file>
         <file>icons/file/saveall.png</file>
         <file>icons/file/saveas.png</file>
+        <file>icons/file/session.png</file>
     </qresource>
     <qresource prefix="/help" >
         <file>icons/help/assistant.png</file>

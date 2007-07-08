@@ -22,12 +22,9 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>14</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
       <layout class="QVBoxLayout" >
        <property name="margin" >
         <number>0</number>
@@ -37,6 +34,9 @@
        </property>
        <item>
         <widget class="QGroupBox" name="gbProjectSettings" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="title" >
           <string>Project Settings</string>
          </property>
@@ -48,9 +48,9 @@
            <number>6</number>
           </property>
           <item row="0" column="0" colspan="2" >
-           <widget class="QCheckBox" name="cbLoadLastProject" >
+           <widget class="QCheckBox" name="cbRestoreProjectsOnStartup" >
             <property name="text" >
-             <string>Load last project on startup</string>
+             <string>Restore Projects On Startup</string>
             </property>
             <property name="checked" >
              <bool>true</bool>
@@ -83,6 +83,9 @@
        </item>
        <item>
         <widget class="QGroupBox" name="gbUIDesignerIntegration" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="title" >
           <string>UI Designer Integration</string>
          </property>
@@ -115,6 +118,9 @@
        </item>
        <item>
         <widget class="QGroupBox" name="gbOnExternalChanges" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="title" >
           <string>On External Changes</string>
          </property>
@@ -146,6 +152,35 @@
            <widget class="QRadioButton" name="rbReloadAutomatically" >
             <property name="text" >
              <string>Automatically reload the file if safe, alert the user if not</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="gbSession" >
+         <property name="title" >
+          <string>Session</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="cbSaveSession" >
+            <property name="text" >
+             <string>Save Session On Close</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbRestoreSession" >
+            <property name="text" >
+             <string>Restore Session On Startup</string>
             </property>
            </widget>
           </item>

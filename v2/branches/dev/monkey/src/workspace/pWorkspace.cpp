@@ -145,6 +145,25 @@ void pWorkspace::fileOpen_triggered()
 		pRecentsManager::instance()->setRecentFileOpenPath( QFileInfo( l.at( 0 ) ).canonicalPath() );
 }
 
+void pWorkspace::fileSessionSave_triggered()
+{
+	QStringList l;
+	foreach ( pAbstractChild* c, children() )
+	{
+		if ( !c->proxy() )
+			l << c->files();
+	}
+
+	pSettings::instance()->setValue( "Session", l );
+}
+
+void pWorkspace::fileSessionRestore_triggered()
+{
+	foreach ( QString s, pSettings::instance()->value( "Session", QStringList() ).toStringList() )
+		if ( !pFileManager::instance()->openFile( s ) ) // remove it from recents files
+			pRecentsManager::instance()->removeRecentFile( s );
+}
+
 void pWorkspace::fileSaveCurrent_triggered()
 {
 	pAbstractChild* c = currentChild();

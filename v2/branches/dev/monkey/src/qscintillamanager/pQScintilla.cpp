@@ -621,7 +621,7 @@ void pQScintilla::expandAbbreviation( pEditor* e )
 
 				// process indentation for code line if line is not first one
 				if ( j > 0 )
-					e->setIndentation( p.y() +j, e->indentation( p.y() ) );
+					e->setIndentation( p.y() +j, e->indentation( p.y() ) +e->indentation( p.y() +j ) );
 
 				// increment j for calculate correct line
 				j++;
@@ -635,6 +635,66 @@ void pQScintilla::expandAbbreviation( pEditor* e )
 			return;
 		}
 	}
+}
+
+void pQScintilla::setRestoreProjectsOnStartup( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/RestoreProjectsOnStartup", b );
+}
+
+bool pQScintilla::restoreProjectsOnStartup() const
+{
+	return pSettings::instance()->value( mPath +"/RestoreProjectsOnStartup", true ).toBool();
+}
+
+void pQScintilla::setDefaultProjectsDirectory( const QString& s )
+{
+	pSettings::instance()->setValue( mPath +"/DefaultProjectsDirectory", s );
+}
+
+QString pQScintilla::defaultProjectsDirectory() const
+{
+	return pSettings::instance()->value( mPath +"/DefaultProjectsDirectory", "%HOME%/.Monkey Studio/Projects" ).toString();
+}
+
+void pQScintilla::setUIDesignerMode( pQScintilla::UIDesignerMode d )
+{
+	pSettings::instance()->setValue( mPath +"/UIDesignerMode", d );
+}
+
+pQScintilla::UIDesignerMode pQScintilla::uiDesignerMode() const
+{
+	return (pQScintilla::UIDesignerMode)pSettings::instance()->value( mPath +"/UIDesignerMode", pQScintilla::uidmExternal ).toInt();
+}
+
+void pQScintilla::setExternalChanges( pQScintilla::ExternalChangesMode e )
+{
+	pSettings::instance()->setValue( mPath +"/ExternalChanges", e );
+}
+
+pQScintilla::ExternalChangesMode pQScintilla::externalchanges() const
+{
+	return (pQScintilla::ExternalChangesMode)pSettings::instance()->value( mPath +"/ExternalChanges", pQScintilla::ecmAlert ).toInt();
+}
+
+void pQScintilla::setSaveSessionOnClose( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/SaveSessionOnClose", b );
+}
+
+bool pQScintilla::saveSessionOnClose() const
+{
+	return pSettings::instance()->value( mPath +"/SaveSessionOnClose", true ).toBool();
+}
+
+void pQScintilla::setRestoreSessionOnStartup( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/RestoreSessionOnStartup", b );
+}
+
+bool pQScintilla::restoreSessionOnStartup() const
+{
+	return pSettings::instance()->value( mPath +"/RestoreSessionOnStartup", true ).toBool();
 }
 
 void pQScintilla::setAutoSyntaxCheck( bool b )
