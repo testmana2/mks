@@ -65,6 +65,9 @@ protected:
 	const QList<pAbbreviation*> abbreviations();
 
 public:
+	enum UIDesignerMode { uidmEmbedded = 0, uidmExternal };
+	enum ExternalChangesMode { ecmNothing = 0, ecmAlert, ecmReload };
+
 	QStringList languages() const;
 	QHash<QString, QStringList> defaultSuffixes() const;
 	QHash<QString, QStringList> suffixes() const;
@@ -72,6 +75,20 @@ public:
 	QsciLexer* lexerForFilename( const QString& );
 	void applyProperties();
 	void expandAbbreviation( pEditor* );
+	// General
+	void setRestoreProjectsOnStartup( bool ); // true
+	bool restoreProjectsOnStartup() const;
+	void setDefaultProjectsDirectory( const QString& ); // %HOME%/.Monkey Studio/Projects
+	QString defaultProjectsDirectory() const;
+	void setUIDesignerMode( pQScintilla::UIDesignerMode ); // dmExternal
+	pQScintilla::UIDesignerMode uiDesignerMode() const;
+	void setExternalChanges( pQScintilla::ExternalChangesMode ); // ecmAlert
+	pQScintilla::ExternalChangesMode externalchanges() const;
+	void setSaveSessionOnClose( bool ); // true
+	bool saveSessionOnClose() const;
+	void setRestoreSessionOnStartup( bool ); // true
+	bool restoreSessionOnStartup() const;
+	/******	EDITOR ******/
 	// General
 	void setAutoSyntaxCheck( bool ); // false
 	bool autoSyntaxCheck() const;

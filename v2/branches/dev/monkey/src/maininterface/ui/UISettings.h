@@ -12,17 +12,13 @@ class Q_MONKEY_EXPORT UISettings : public QDialog, public Ui::UISettings, public
 	Q_OBJECT
 	friend class QSingleton<UISettings>;
 
-public:
-	enum Designer { Embedded = 0, External };
-	enum ExternalChanges { Nothing = 0, Alert, Reload };
-
 private:
 	UISettings( QWidget* = 0 );
 	void loadSettings();
 	void saveSettings();
 	QPixmap colourizedPixmap( const QColor& ) const;
 	QColor iconBackgroundColor( const QIcon& ) const;
-	QButtonGroup* bgDesigner;
+	QButtonGroup* bgUIDesigner;
 	QButtonGroup* bgExternalChanges;
 	QButtonGroup* bgAutoCompletionSource;
 	QButtonGroup* bgCallTipsStyle;

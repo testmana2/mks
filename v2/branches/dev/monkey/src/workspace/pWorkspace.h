@@ -35,6 +35,8 @@ private slots:
 public slots:
 	// file menu
 	void fileOpen_triggered();
+	void fileSessionSave_triggered();
+	void fileSessionRestore_triggered();
 	void fileSaveCurrent_triggered();
 	void fileSaveAll_triggered();
 	void fileCloseCurrent_triggered();
