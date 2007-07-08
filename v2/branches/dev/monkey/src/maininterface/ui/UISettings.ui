@@ -22,9 +22,12 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>11</number>
+      <number>14</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
       <layout class="QVBoxLayout" >
        <property name="margin" >
         <number>0</number>
@@ -168,6 +171,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="pFileTemplates" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
       <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>
@@ -324,6 +330,9 @@
           </property>
           <item>
            <widget class="QCheckBox" name="cbAutoSyntaxCheck" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>Automatic Syntax Check</string>
             </property>
@@ -354,7 +363,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="gbGeneralEncoding" >
+        <widget class="QGroupBox" name="gbDEncoding" >
          <property name="title" >
           <string>Default encoding</string>
          </property>
@@ -472,9 +481,6 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -643,9 +649,6 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
          </property>
          <layout class="QVBoxLayout" >
           <property name="margin" >
@@ -1171,9 +1174,6 @@
          <property name="checkable" >
           <bool>true</bool>
          </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
          <layout class="QGridLayout" >
           <property name="margin" >
            <number>5</number>
@@ -1339,9 +1339,6 @@
          <property name="checkable" >
           <bool>true</bool>
          </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
          <layout class="QGridLayout" >
           <property name="margin" >
            <number>5</number>
@@ -1495,9 +1492,6 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -1660,9 +1654,6 @@
          <property name="checkable" >
           <bool>true</bool>
          </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
          <layout class="QVBoxLayout" >
           <property name="margin" >
            <number>5</number>
@@ -1751,9 +1742,6 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -1864,9 +1852,6 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -2014,9 +1999,6 @@
          <property name="checkable" >
           <bool>true</bool>
          </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
          <layout class="QHBoxLayout" >
           <property name="margin" >
            <number>5</number>
@@ -2049,9 +2031,6 @@
          <property name="checkable" >
           <bool>true</bool>
          </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
          <layout class="QHBoxLayout" >
           <property name="margin" >
            <number>5</number>
@@ -2083,9 +2062,6 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
@@ -2706,6 +2682,9 @@
        </property>
        <item>
         <widget class="QCheckBox" name="cbAbbreviationsAutoWordCompletion" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
          <property name="text" >
           <string>Auto Word Completion</string>
          </property>
@@ -2805,6 +2784,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="pToolsMenu" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
       <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>

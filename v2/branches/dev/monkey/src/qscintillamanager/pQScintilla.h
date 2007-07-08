@@ -35,6 +35,18 @@
 
 class pEditor;
 
+struct Q_MONKEY_EXPORT pAbbreviation
+{
+	pAbbreviation() {}
+	pAbbreviation( const QString& t, const QString& d, const QString& l, const QString& c )
+		: Template( t ), Description( d ), Language( l ), Code( c ) {}
+
+	QString Template;
+	QString Description;
+	QString Language;
+	QString Code;
+};
+
 class Q_MONKEY_EXPORT pQScintilla : public QObject, public QSingleton<pQScintilla>
 {
 	Q_OBJECT
@@ -50,6 +62,7 @@ protected:
 	bool setLexerProperty( const QString&, QsciLexer*, const QVariant& );
 	QVariant lexerProperty( const QString&, QsciLexer* ) const;
 	void setProperties( pEditor* );
+	const QList<pAbbreviation*> abbreviations();
 
 public:
 	QStringList languages() const;
@@ -58,6 +71,7 @@ public:
 	QString filters() const;
 	QsciLexer* lexerForFilename( const QString& );
 	void applyProperties();
+	void expandAbbreviation( pEditor* );
 	// General
 	void setAutoSyntaxCheck( bool ); // false
 	bool autoSyntaxCheck() const;
@@ -187,6 +201,7 @@ private:
 	QHash<QString,QsciLexer*> mLexersSettings;
 	QHash<QString,QsciLexer*> mGlobalsLexers;
 	QHash<QString,QsciAPIs*> mGlobalAPIs;
+	QList<pAbbreviation*> mAbbreviations;
 
 };
 

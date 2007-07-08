@@ -299,19 +299,18 @@ void UISettings::loadSettings()
 		on_cbLexersHighlightingLanguages_currentIndexChanged( cbLexersHighlightingLanguages->itemText( 0 ) );
 
 	//  Abbreviations
-	sp = QString( "%1/Editor/Abbreviations" ).arg( SettingsPath );
-	cbAbbreviationsAutoWordCompletion->setChecked( s->value( sp +"/Enabled", false ).toBool() );
-	size = s->beginReadArray( sp );
-	for ( int i = 0; i < size; i++ )
+	sp = "Scintilla/Abbreviations";
+	// enable abbreviations
+	cbAbbreviationsAutoWordCompletion->setChecked( s->value( sp +"/Enabled" ).toBool() );
+
+	foreach ( pAbbreviation* a, pQScintilla::instance()->abbreviations() )
 	{
-		s->setArrayIndex( i );
 		QTreeWidgetItem* it = new QTreeWidgetItem( twAbbreviations );
-		it->setText( 0, s->value( "Template" ).toString() );
-		it->setText( 1, s->value( "Description" ).toString() );
-		it->setText( 2, s->value( "Language" ).toString() );
-		it->setData( 0, Qt::UserRole, s->value( "Code" ).toString() );
+		it->setText( 0, a->Template );
+		it->setText( 1, a->Description );
+		it->setText( 2, a->Language );
+		it->setData( 0, Qt::UserRole, a->Code );
 	}
-	s->endArray();
 
 	// Tools
 }
@@ -455,7 +454,7 @@ void UISettings::saveSettings()
 	pQScintilla::instance()->writeLexersSettings();
 
 	//  Abbreviations
-	sp = QString( "%1/Editor/Abbreviations" ).arg( SettingsPath );
+	sp = "Scintilla/Abbreviations";
 	// remove key
 	s->remove( sp );
 	// enable abbreviations
@@ -467,10 +466,10 @@ void UISettings::saveSettings()
 		s->setArrayIndex( i );
 		QTreeWidgetItem* it = twAbbreviations->topLevelItem( i );
 
-		s->setValue( "Template", it->text( 0 ) );
-		s->setValue( "Description", it->text( 1 ) );
+		s->setValue( "Template", it->text( 0 ).trimmed() );
+		s->setValue( "Description", it->text( 1 ).trimmed() );
 		s->setValue( "Language", it->text( 2 ) );
-		s->setValue( "Code", it->data( 0, Qt::UserRole ).toString() );
+		s->setValue( "Code", it->data( 0, Qt::UserRole ).toString().trimmed() );
 	}
 	s->endArray();
 

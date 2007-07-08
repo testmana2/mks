@@ -602,27 +602,18 @@ void pTabbedWorkspace::closeAllTabs( bool b )
 
 void pTabbedWorkspace::activateNextDocument()
 {
-    QTime time1;
-    time1.start ();
-    time1 = QTime::currentTime ();
 	if ( currentIndex() +1 == count() )
 		setCurrentIndex( 0 );
 	else
 		setCurrentIndex( currentIndex() +1 );
-    qDebug("Tab switch time: %d ms", time1.elapsed());
-    
 }
 
 void pTabbedWorkspace::activatePreviousDocument()
 {
-    QTime time1;
-    time1.start ();
-    time1 = QTime::currentTime ();
 	if ( currentIndex() -1 == -1 )
 		setCurrentIndex( count() -1 );
 	else
 		setCurrentIndex( currentIndex() -1 );
-    qDebug("Tab switch time: %d ms", time1.elapsed());
 }
 
 bool pTabbedWorkspace::tabsHaveShortcut() const

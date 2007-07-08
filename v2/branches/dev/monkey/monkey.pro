@@ -32,10 +32,6 @@ win32:RC_FILE	*= monkey.rc
 RESOURCES	*= src/resources/resources.qrc
 
 CONFIG	*= qt warn_on debug app_bundle thread x11 windows console
-win32{
-#	CONFIG -= debug
-#	CONFIG *= release
-}
 QT	*= gui core
 
 LIBS	*= -L$${BUILD_PATH}

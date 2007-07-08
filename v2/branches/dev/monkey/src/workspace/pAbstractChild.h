@@ -16,6 +16,7 @@
 #include "MonkeyExport.h"
 
 class pAbstractProjectProxy;
+class pEditor;
 
 class Q_MONKEY_EXPORT pAbstractChild : public QWidget
 {
@@ -88,6 +89,8 @@ public slots:
 	virtual QString currentFile() const = 0;
 	// the current visible / focused file name ( without path )
 	virtual QString currentFileName() const = 0;
+	// the current visible editor
+	virtual pEditor* currentEditor() const = 0;
 	// return the current file modified flag
 	virtual bool isModified() const = 0;
 	// return the current file undo flag

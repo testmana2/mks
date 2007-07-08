@@ -88,6 +88,7 @@ void pWorkspace::internal_currentChanged( int i )
 	pMenuBar::instance()->action( "mEdit/aPaste" )->setEnabled( paste );
 	pMenuBar::instance()->action( "mEdit/aSearchReplace" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aGoTo" )->setEnabled( go );
+	pMenuBar::instance()->action( "mEdit/aExpandAbbreviation" )->setEnabled( ic );
 
 	// update view menu
 	pMenuBar::instance()->action( "mView/aNext" )->setEnabled( ic );
@@ -244,6 +245,13 @@ void pWorkspace::editGoTo_triggered()
 	pAbstractChild* c = currentChild();
 	if ( c )
 		c->goTo();
+}
+
+void pWorkspace::editExpandAbbreviation_triggered()
+{
+	pAbstractChild* c = currentChild();
+	if ( c )
+		pQScintilla::instance()->expandAbbreviation( c->currentEditor() );
 }
 
 // view menu
