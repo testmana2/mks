@@ -299,7 +299,7 @@ void UISettings::loadSettings()
 		on_cbLexersHighlightingLanguages_currentIndexChanged( cbLexersHighlightingLanguages->itemText( 0 ) );
 
 	//  Abbreviations
-	sp = "Scintilla/Abbreviations";
+	sp = "Abbreviations";
 	// enable abbreviations
 	cbAbbreviationsAutoWordCompletion->setChecked( s->value( sp +"/Enabled" ).toBool() );
 
@@ -454,7 +454,7 @@ void UISettings::saveSettings()
 	pQScintilla::instance()->writeLexersSettings();
 
 	//  Abbreviations
-	sp = "Scintilla/Abbreviations";
+	sp = "Abbreviations";
 	// remove key
 	s->remove( sp );
 	// enable abbreviations
