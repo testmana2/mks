@@ -35,8 +35,11 @@ pAction::pAction( const QString& n, const QIcon& i, const QString& s, const QKey
 	// set object name
 	setObjectName( n );
 
+	// fixed group
+	QString cg = fixedString( g );
+
 	// add to group
-	pActionManager::addAction( g, this );
+	pActionManager::addAction( cg, this );
 
 	// set icon
 	setIcon( i );
@@ -46,5 +49,20 @@ pAction::pAction( const QString& n, const QIcon& i, const QString& s, const QKey
 
 	// set action shortcut
 	setProperty( _DEFAULT_SHORTCUT_PROPERTY_, sc.toString() );
-	setShortcut( pActionManager::getShortcut( g, this, sc ) );
+	setShortcut( pActionManager::getShortcut( cg, this, sc ) );
+}
+
+QString pAction::fixedString( const QString& s )
+{
+	QString p = s;
+	
+	// remove trailing /
+	if ( p.endsWith( "/" ) )
+		p.chop( 1 );
+
+	// remove &
+	p.replace( "&", "" );
+
+	// return correct string
+	return p;
 }
