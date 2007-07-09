@@ -118,7 +118,7 @@ UISettings::UISettings( QWidget* p )
 
 	// resize column
 	twAbbreviations->setColumnWidth( 0, 100 );
-	twAbbreviations->setColumnWidth( 1, 300 );
+	twAbbreviations->setColumnWidth( 1, 180 );
 
 	// read settings
 	loadSettings();
@@ -302,10 +302,6 @@ void UISettings::loadSettings()
 		on_cbLexersHighlightingLanguages_currentIndexChanged( cbLexersHighlightingLanguages->itemText( 0 ) );
 
 	//  Abbreviations
-	sp = "Abbreviations";
-	// enable abbreviations
-	cbAbbreviationsAutoWordCompletion->setChecked( s->value( sp +"/Enabled" ).toBool() );
-
 	foreach ( pAbbreviation* a, pQScintilla::instance()->abbreviations() )
 	{
 		QTreeWidgetItem* it = new QTreeWidgetItem( twAbbreviations );
@@ -362,7 +358,7 @@ void UISettings::saveSettings()
 	sc->setDefaultEncoding( cbDefaultEncoding->currentText() );
 	sc->setSelectionBackgroundColor( iconBackgroundColor( tbSelectionBackground->icon() ) );
 	sc->setSelectionForegroundColor( iconBackgroundColor( tbSelectionForeground->icon() ) );
-	sc->defaultDocumentColours( gbDefaultDocumentColours->isChecked() );
+	sc->setDefaultDocumentColours( gbDefaultDocumentColours->isChecked() );
 	sc->setDefaultDocumentPen( iconBackgroundColor( tbDefaultDocumentPen->icon() ) );
 	sc->setDefaultDocumentPaper( iconBackgroundColor( tbDefaultDocumentPaper->icon() ) );
 	//  Auto Completion
@@ -461,8 +457,6 @@ void UISettings::saveSettings()
 	sp = "Abbreviations";
 	// remove key
 	s->remove( sp );
-	// enable abbreviations
-	s->setValue( sp +"/Enabled", cbAbbreviationsAutoWordCompletion->isChecked() );
 	// write new ones
 	s->beginWriteArray( sp );
 	for ( int i = 0; i < twAbbreviations->topLevelItemCount(); i++ )

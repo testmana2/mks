@@ -124,11 +124,31 @@ bool pEditor::openFile( const QString& s )
 		return false;
 	}
 
+	// remember filename
+	setProperty( "fileName", s );
+
+	// clear lexer so we can set default colours
+	setLexer( 0 );
+
+	// apply default colours if needed
+	if ( pQScintilla::instance()->defaultDocumentColours() )
+	{
+		setColor( pQScintilla::instance()->defaultDocumentPen() );
+		setPaper( pQScintilla::instance()->defaultDocumentPaper() );
+	}
+
 	// set lexer
 	setLexer( pQScintilla::instance()->lexerForFilename( s ) );
 
+	// apply default colours if needed
+	if ( lexer() && pQScintilla::instance()->defaultDocumentColours() )
+	{
+		lexer()->setDefaultColor( pQScintilla::instance()->defaultDocumentPen() );
+		lexer()->setDefaultPaper( pQScintilla::instance()->defaultDocumentPaper() );
+	}
+
 	// set apis
-	//setAPIs( pQScintilla::instance()->apisForLanguage( s ) );
+	//setAPIs( pQScintilla::instance()->apisForLexer( s ) );
 
 	// set properties
 	pQScintilla::instance()->setProperties( this );
@@ -139,9 +159,6 @@ bool pEditor::openFile( const QString& s )
 	setText( i.readAll() );
 	setModified( false );
 	QApplication::restoreOverrideCursor();
-
-	// remember filename
-	setProperty( "fileName", s );
 
 	// convert tabs if needed
 	if ( pQScintilla::instance()->convertTabsUponOpen() )

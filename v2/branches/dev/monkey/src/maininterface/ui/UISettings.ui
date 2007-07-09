@@ -22,7 +22,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>2</number>
+      <number>14</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -2784,16 +2784,6 @@
         <number>6</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="cbAbbreviationsAutoWordCompletion" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="text" >
-          <string>Auto Word Completion</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="lAbbreviationsTemplates" >
          <property name="text" >
           <string>Templates :</string>
@@ -2882,7 +2872,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QTextEdit" name="teAbbreviationsCode" />
+        <widget class="QTextEdit" name="teAbbreviationsCode" >
+         <property name="lineWrapMode" >
+          <enum>QTextEdit::NoWrap</enum>
+         </property>
+         <property name="tabStopWidth" >
+          <number>40</number>
+         </property>
+         <property name="acceptRichText" >
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
