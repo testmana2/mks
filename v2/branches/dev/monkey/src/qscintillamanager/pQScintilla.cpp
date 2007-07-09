@@ -336,12 +336,6 @@ void pQScintilla::setProperties( pEditor* e )
 	e->setWhitespaceVisibility( whitespaceVisibility() );
 	e->setWrapMode( wrapMode() );
 	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
-
-	if ( defaultDocumentColours() )
-	{
-		e->setColor( defaultDocumentPen() );
-		e->setPaper( defaultDocumentPaper() );
-	}
 }
 
 const QList<pAbbreviation*> pQScintilla::abbreviations()
