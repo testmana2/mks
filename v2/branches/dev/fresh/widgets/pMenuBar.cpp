@@ -126,13 +126,22 @@ QAction* pMenuBar::action( const QString& s, const QString& l, const QIcon& i, c
 		mPath = mString.mid( 0, mString.lastIndexOf( '/' ) );
 
 	QMenu* m = menu( mPath );
+	QMenu* n = m;
 	QAction* a = searchAction( m, mText );
 
 	// create action if needed
 	if ( !a )
 	{
 		// get group
-		QString g = m->title().isEmpty() ? mMenuGroup : QString( "%1/%2" ).arg( mMenuGroup, m->title() );
+		QString g;
+		while ( n && !n->title().isEmpty() )
+		{
+			g.prepend( n->title() +"/" );
+			n = qobject_cast<QMenu*>( n->parentWidget() );
+		}
+
+		// add main menu group
+		g.prepend( mMenuGroup +"/" );
 
 		// create action
 		a = new pAction( mText, i, l, QKeySequence( c ), g );

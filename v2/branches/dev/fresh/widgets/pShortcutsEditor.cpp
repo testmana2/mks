@@ -99,7 +99,7 @@ pShortcutsEditor::pShortcutsEditor( QWidget* w )
 		{
 			// action item
 			QTreeWidgetItem* it = new QTreeWidgetItem( gi );
-			it->setText( 0, a->text() );
+			it->setText( 0, pAction::fixedString( a->text() ) );
 			it->setText( 1, a->shortcut().toString() );
 			it->setIcon( 0, a->icon() );
 			// stock pointer action in data

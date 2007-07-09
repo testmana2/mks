@@ -23,6 +23,8 @@ public:
 	pAction( const QString&, const QString&, const QKeySequence&, const QString& = pActionManager::globalGroup() );
 	pAction( const QString&, const QIcon&, const QString&, const QKeySequence&, const QString& = pActionManager::globalGroup() );
 
+	static QString fixedString( const QString& );
+
 	static const char* _DEFAULT_SHORTCUT_PROPERTY_;
 	static const char* _GROUP_PROPERTY_;
 	static const char* _SETTINGS_SCOPE_;
