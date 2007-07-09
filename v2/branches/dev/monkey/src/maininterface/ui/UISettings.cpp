@@ -127,6 +127,8 @@ UISettings::UISettings( QWidget* p )
 	// Colours Button
 	connect( tbSelectionBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbSelectionForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbDefaultDocumentPen, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	connect( tbDefaultDocumentPaper, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbCalltipsBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbCalltipsForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbCalltipsHighlight, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
@@ -202,6 +204,9 @@ void UISettings::loadSettings()
 	cbDefaultEncoding->setCurrentIndex( cbDefaultEncoding->findText( sc->defaultEncoding() ) );
 	tbSelectionBackground->setIcon( colourizedPixmap( sc->selectionBackgroundColor() ) );
 	tbSelectionForeground->setIcon( colourizedPixmap( sc->selectionForegroundColor() ) );
+	gbDefaultDocumentColours->setChecked( sc->defaultDocumentColours() );
+	tbDefaultDocumentPen->setIcon( colourizedPixmap( sc->defaultDocumentPen() ) );
+	tbDefaultDocumentPaper->setIcon( colourizedPixmap( sc->defaultDocumentPaper() ) );
 	//  Auto Completion
 	gbAutoCompletionEnabled->setChecked( sc->autoCompletionSource() != QsciScintilla::AcsNone );
 	cbAutoCompletionCaseSensitivity->setChecked( sc->autoCompletionCaseSensitivity() );
@@ -357,6 +362,9 @@ void UISettings::saveSettings()
 	sc->setDefaultEncoding( cbDefaultEncoding->currentText() );
 	sc->setSelectionBackgroundColor( iconBackgroundColor( tbSelectionBackground->icon() ) );
 	sc->setSelectionForegroundColor( iconBackgroundColor( tbSelectionForeground->icon() ) );
+	sc->defaultDocumentColours( gbDefaultDocumentColours->isChecked() );
+	sc->setDefaultDocumentPen( iconBackgroundColor( tbDefaultDocumentPen->icon() ) );
+	sc->setDefaultDocumentPaper( iconBackgroundColor( tbDefaultDocumentPaper->icon() ) );
 	//  Auto Completion
 	sc->setAutoCompletionSource( QsciScintilla::AcsNone );
 	if ( gbAutoCompletionEnabled->isChecked() )

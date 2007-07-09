@@ -336,6 +336,12 @@ void pQScintilla::setProperties( pEditor* e )
 	e->setWhitespaceVisibility( whitespaceVisibility() );
 	e->setWrapMode( wrapMode() );
 	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
+
+	if ( defaultDocumentColours() )
+	{
+		e->setColor( defaultDocumentPen() );
+		e->setPaper( defaultDocumentPaper() );
+	}
 }
 
 const QList<pAbbreviation*> pQScintilla::abbreviations()
@@ -765,6 +771,36 @@ void pQScintilla::setSelectionForegroundColor( const QColor& c )
 QColor pQScintilla::selectionForegroundColor() const
 {
 	return pSettings::instance()->value( mPath +"/SelectionForegroundColor", QColor( Qt::transparent ) ).value<QColor>();
+}
+
+void pQScintilla::setDefaultDocumentColours( bool b )
+{
+	pSettings::instance()->setValue( mPath +"/DefaultDocumentColours", b );
+}
+
+bool pQScintilla::defaultDocumentColours() const
+{
+	return pSettings::instance()->value( mPath +"/DefaultDocumentColours", false ).toBool();
+}
+
+void pQScintilla::setDefaultDocumentPen( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/DefaultDocumentPen", c );
+}
+
+QColor pQScintilla::defaultDocumentPen() const
+{
+	return pSettings::instance()->value( mPath +"/DefaultDocumentPen", QColor( Qt::black ) ).value<QColor>();
+}
+
+void pQScintilla::setDefaultDocumentPaper( const QColor& c )
+{
+	pSettings::instance()->setValue( mPath +"/DefaultDocumentPaper", c );
+}
+
+QColor pQScintilla::defaultDocumentPaper() const
+{
+	return pSettings::instance()->value( mPath +"/DefaultDocumentPaper", QColor( Qt::white ) ).value<QColor>();
 }
 
 void pQScintilla::setAutoCompletionCaseSensitivity( bool b )
