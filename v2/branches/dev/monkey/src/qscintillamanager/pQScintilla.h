@@ -104,6 +104,12 @@ public:
 	QColor selectionBackgroundColor() const;
 	void setSelectionForegroundColor( const QColor& ); // #444444FF
 	QColor selectionForegroundColor() const;
+	void setDefaultDocumentColours( bool ); // false
+	bool defaultDocumentColours() const;
+	void setDefaultDocumentPen( const QColor& ); // black
+	QColor defaultDocumentPen() const;
+	void setDefaultDocumentPaper( const QColor& ); // white
+	QColor defaultDocumentPaper() const;
 	// Auto Completion
 	void setAutoCompletionCaseSensitivity( bool ); // true
 	bool autoCompletionCaseSensitivity() const;
