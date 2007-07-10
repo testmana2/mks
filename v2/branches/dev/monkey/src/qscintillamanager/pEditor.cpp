@@ -251,7 +251,6 @@ void pEditor::selectNone()
 
 void pEditor::invokeSearchReplace()
 {
-	pSearch::instance()->setEditor( this );
 	pSearch::instance()->leSearch->setFocus();
 	pSearch::instance()->leSearch->selectAll();
 	if ( !pSearch::instance()->isVisible() )

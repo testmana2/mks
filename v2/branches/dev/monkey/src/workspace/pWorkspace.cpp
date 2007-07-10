@@ -87,6 +87,8 @@ void pWorkspace::internal_currentChanged( int i )
 	pMenuBar::instance()->action( "mEdit/aCopy" )->setEnabled( copy );
 	pMenuBar::instance()->action( "mEdit/aPaste" )->setEnabled( paste );
 	pMenuBar::instance()->action( "mEdit/aSearchReplace" )->setEnabled( search );
+	pMenuBar::instance()->action( "mEdit/aSearchPrevious" )->setEnabled( search );
+	pMenuBar::instance()->action( "mEdit/aSearchNext" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aGoTo" )->setEnabled( go );
 	pMenuBar::instance()->action( "mEdit/aExpandAbbreviation" )->setEnabled( ic );
 
@@ -257,6 +259,20 @@ void pWorkspace::editSearchReplace_triggered()
 	pAbstractChild* c = currentChild();
 	if ( c )
 		c->searchReplace();
+}
+
+void pWorkspace::editSearchPrevious_triggered()
+{
+	pAbstractChild* c = currentChild();
+	if ( c )
+		c->searchPrevious();
+}
+
+void pWorkspace::editSearchNext_triggered()
+{
+	pAbstractChild* c = currentChild();
+	if ( c )
+		c->searchNext();
 }
 
 void pWorkspace::editGoTo_triggered()

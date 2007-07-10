@@ -62,6 +62,7 @@ protected:
 	bool setLexerProperty( const QString&, QsciLexer*, const QVariant& );
 	QVariant lexerProperty( const QString&, QsciLexer* ) const;
 	void setProperties( pEditor* );
+	const QList<pAbbreviation*> defaultAbbreviations();
 	const QList<pAbbreviation*> abbreviations();
 
 public:

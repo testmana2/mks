@@ -338,6 +338,87 @@ void pQScintilla::setProperties( pEditor* e )
 	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
 }
 
+const QList<pAbbreviation*> pQScintilla::defaultAbbreviations()
+{
+	QList<pAbbreviation*> l;
+	pAbbreviation* a;
+
+	// C++
+	// classd
+	a = new pAbbreviation();
+	a->Template = "classd";
+	a->Description = "class declaration";
+	a->Language = "C++";
+	a->Code = "class |\n{\npublic:\n};";
+	l << a;
+	// forb
+	a = new pAbbreviation();
+	a->Template = "forb";
+	a->Description = "for statement";
+	a->Language = "C++";
+	a->Code = "for( |; ; )\n{\n}";
+	l << a;
+	// ifb
+	a = new pAbbreviation();
+	a->Template = "ifb";
+	a->Description = "if statement";
+	a->Language = "C++";
+	a->Code = "if( | )\n{\n}";
+	l << a;
+	// ife
+	a = new pAbbreviation();
+	a->Template = "ife";
+	a->Description = "if else statement";
+	a->Language = "C++";
+	a->Code = "if( | )\n{\n}\nelse\n{\n}";
+	l << a;
+	// pr
+	a = new pAbbreviation();
+	a->Template = "pr";
+	a->Description = "private";
+	a->Language = "C++";
+	a->Code = "private|";
+	l << a;
+	// pro
+	a = new pAbbreviation();
+	a->Template = "pro";
+	a->Description = "protected";
+	a->Language = "C++";
+	a->Code = "protected|";
+	l << a;
+	// pu
+	a = new pAbbreviation();
+	a->Template = "pu";
+	a->Description = "public";
+	a->Language = "C++";
+	a->Code = "public|";
+	l << a;
+	// structd
+	a = new pAbbreviation();
+	a->Template = "structd";
+	a->Description = "struct declaration";
+	a->Language = "C++";
+	a->Code = "struct |\n{\n};";
+	l << a;
+	// switchb
+	a = new pAbbreviation();
+	a->Template = "switchb";
+	a->Description = "switch statement";
+	a->Language = "C++";
+	a->Code = "switch( | )\n{\n}";
+	l << a;
+	// whileb
+	a = new pAbbreviation();
+	a->Template = "whileb";
+	a->Description = "while statement";
+	a->Language = "C++";
+	a->Code = "while( | )\n{\n}";
+	l << a;
+
+	// return abbreviations
+	return l;
+}
+
 const QList<pAbbreviation*> pQScintilla::abbreviations()
 {
 	// get settings
@@ -346,6 +427,7 @@ const QList<pAbbreviation*> pQScintilla::abbreviations()
 	// get abbreviation if needed
 	if ( mAbbreviations.isEmpty() )
 	{
+		// read abbreviations from settings
 		int size = s->beginReadArray( "Abbreviations" );
 		for ( int i = 0; i < size; i++ )
 		{
@@ -358,6 +440,10 @@ const QList<pAbbreviation*> pQScintilla::abbreviations()
 			mAbbreviations << a;
 		}
 		s->endArray();
+
+		// get default abbreviations if needed
+		if ( mAbbreviations.isEmpty() )
+			mAbbreviations << defaultAbbreviations();
 	}
 
 	// return abbreviations
