@@ -55,13 +55,14 @@ class Q_MONKEY_EXPORT pQScintilla : public QObject, public QSingleton<pQScintill
 	friend class pEditor;
 
 protected:
+	QsciAPIs* apisForLexer( QsciLexer* );
 	QHash<QString,QsciLexer*> lexersSettings();
 	QsciLexer* lexerForLanguage( const QString& );
 	void resetLexer( QsciLexer* );
 	void writeLexersSettings();
 	bool setLexerProperty( const QString&, QsciLexer*, const QVariant& );
 	QVariant lexerProperty( const QString&, QsciLexer* ) const;
-	void setProperties( pEditor* );
+	void setEditorProperties( pEditor* );
 	const QList<pAbbreviation*> defaultAbbreviations();
 	const QList<pAbbreviation*> abbreviations();
 
@@ -224,7 +225,7 @@ private:
 
 	QHash<QString,QsciLexer*> mLexersSettings;
 	QHash<QString,QsciLexer*> mGlobalsLexers;
-	QHash<QString,QsciAPIs*> mGlobalAPIs;
+	QHash<QString,QsciAPIs*> mGlobalsAPIs;
 	QList<pAbbreviation*> mAbbreviations;
 
 };
