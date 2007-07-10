@@ -478,6 +478,32 @@ const QList<pAbbreviation*> pQScintilla::abbreviations()
 	return mAbbreviations;
 }
 
+const QList<pTemplate*> pQScintilla::templates()
+{
+	// get settings
+	pSettings* s = pSettings::instance();
+
+	// templates list;
+	QList<pTemplate*> l;
+
+	int size = s->beginReadArray( "Templates" );
+	for ( int i = 0; i < size; i++ )
+	{
+		s->setArrayIndex( i );
+		pTemplate* t = new pTemplate();
+		t->Language = s->value( "Language" ).toString();
+		t->Name = s->value( "Name" ).toString();
+		t->Description = s->value( "Description" ).toString();
+		t->Icon = s->value( "Icon" ).toString();
+		t->FileName = s->value( "Filename" ).toString();
+		l << t;
+	}
+	s->endArray();
+
+	// return list
+	return l;
+}
+
 QStringList pQScintilla::languages() const
 {
 	return QStringList() << "Bash" << "Batch" << "C#" << "C++" << "CMake" << "CSS"
@@ -854,6 +880,16 @@ void pQScintilla::setRestoreSessionOnStartup( bool b )
 bool pQScintilla::restoreSessionOnStartup() const
 {
 	return pSettings::instance()->value( mPath +"/RestoreSessionOnStartup", true ).toBool();
+}
+
+void pQScintilla::setTemplatesPath( const QString& s )
+{
+	pSettings::instance()->setValue( "Templates/DefaultDirectory", s );
+}
+
+QString pQScintilla::templatesPath() const
+{
+	return pSettings::instance()->value( "Templates/DefaultDirectory", "%HOME%/.Monkey Studio/Templates" ).toString();
 }
 
 void pQScintilla::setAutoSyntaxCheck( bool b )

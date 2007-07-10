@@ -47,14 +47,28 @@ struct Q_MONKEY_EXPORT pAbbreviation
 	QString Code;
 };
 
+struct Q_MONKEY_EXPORT pTemplate
+{
+	pTemplate() {}
+	pTemplate( const QString& l, const QString& n, const QString& d, const QString& i, const QString& f )
+		: Language( l ), Name( n ), Description( d ), Icon( i ), FileName( f ) {}
+
+	QString Language;
+	QString Name;
+	QString Description;
+	QString Icon;
+	QString FileName;
+};
+
 class Q_MONKEY_EXPORT pQScintilla : public QObject, public QSingleton<pQScintilla>
 {
 	Q_OBJECT
 	friend class QSingleton<pQScintilla>;
-	friend class UISettings;
-	friend class pEditor;
 
-protected:
+public:
+	enum UIDesignerMode { uidmEmbedded = 0, uidmExternal };
+	enum ExternalChangesMode { ecmNothing = 0, ecmAlert, ecmReload };
+
 	QsciAPIs* apisForLexer( QsciLexer* );
 	QHash<QString,QsciLexer*> lexersSettings();
 	QsciLexer* lexerForLanguage( const QString& );
@@ -65,10 +79,7 @@ protected:
 	void setEditorProperties( pEditor* );
 	const QList<pAbbreviation*> defaultAbbreviations();
 	const QList<pAbbreviation*> abbreviations();
-
-public:
-	enum UIDesignerMode { uidmEmbedded = 0, uidmExternal };
-	enum ExternalChangesMode { ecmNothing = 0, ecmAlert, ecmReload };
+	const QList<pTemplate*> templates();
 
 	QStringList languages() const;
 	QHash<QString, QStringList> defaultSuffixes() const;
@@ -77,7 +88,7 @@ public:
 	QsciLexer* lexerForFilename( const QString& );
 	void applyProperties();
 	void expandAbbreviation( pEditor* );
-	// General
+	/***** GENERAL *****/
 	void setRestoreProjectsOnStartup( bool ); // true
 	bool restoreProjectsOnStartup() const;
 	void setDefaultProjectsDirectory( const QString& ); // %HOME%/.Monkey Studio/Projects
@@ -90,6 +101,9 @@ public:
 	bool saveSessionOnClose() const;
 	void setRestoreSessionOnStartup( bool ); // true
 	bool restoreSessionOnStartup() const;
+	/* TEMPLATES */
+	void setTemplatesPath( const QString& );
+	QString templatesPath() const;
 	/******	EDITOR ******/
 	// General
 	void setAutoSyntaxCheck( bool ); // false

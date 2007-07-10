@@ -7,7 +7,7 @@
 
 class Q_MONKEY_EXPORT pEditor : public QsciScintilla
 {
-    Q_OBJECT
+	Q_OBJECT
 
 protected:
 	bool mCopyAvailable;

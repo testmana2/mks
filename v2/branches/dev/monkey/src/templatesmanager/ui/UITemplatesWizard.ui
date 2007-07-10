@@ -1,0 +1,273 @@
+<ui version="4.0" >
+ <class>UITemplatesWizard</class>
+ <widget class="QDialog" name="UITemplatesWizard" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>363</width>
+    <height>356</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Templates Wizard</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="lInformations" >
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+     <property name="frameShape" >
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="swPages" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="wTemplates" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="lLanguage" >
+           <property name="text" >
+            <string>Language :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbLanguages" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QListWidget" name="lwTemplates" >
+         <property name="editTriggers" >
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionMode" >
+          <enum>QAbstractItemView::MultiSelection</enum>
+         </property>
+         <property name="iconSize" >
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="movement" >
+          <enum>QListView::Static</enum>
+         </property>
+         <property name="viewMode" >
+          <enum>QListView::IconMode</enum>
+         </property>
+         <property name="uniformItemSizes" >
+          <bool>true</bool>
+         </property>
+         <item>
+          <property name="text" >
+           <string>New Item</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/kcmsystem.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>New Item</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/kpf.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>New Item</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/kwin.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>New Item</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/package_development.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>New Item</string>
+          </property>
+          <property name="icon" >
+           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/package_applications.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="wView" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QSplitter" name="sView" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="gbInformations" >
+     <property name="title" >
+      <string>Informations</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>5</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="2" column="1" colspan="2" >
+       <widget class="QComboBox" name="cbProjects" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="lProject" >
+        <property name="text" >
+         <string>Project :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="lDestination" >
+        <property name="text" >
+         <string>Destination :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2" >
+       <widget class="QLineEdit" name="leBaseName" />
+      </item>
+      <item row="1" column="2" >
+       <widget class="QToolButton" name="tbDestination" >
+        <property name="text" >
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="leDestination" />
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="lBaseName" >
+        <property name="text" >
+         <string>Base Name :</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbCancel" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbPrevious" >
+       <property name="text" >
+        <string>Previous</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbNext" >
+       <property name="text" >
+        <string>Next</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../resources/resources.qrc" />
+ </resources>
+ <connections>
+  <connection>
+   <sender>pbCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>UITemplatesWizard</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>153</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>160</x>
+     <y>379</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

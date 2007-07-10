@@ -22,7 +22,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -206,9 +206,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="pFileTemplates" >
-      <property name="enabled" >
-       <bool>false</bool>
-      </property>
       <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>

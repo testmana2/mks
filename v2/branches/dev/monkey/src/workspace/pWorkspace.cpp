@@ -17,6 +17,7 @@
 #include "UISaveFiles.h"
 #include "UIAbout.h"
 #include "pQScintilla.h"
+#include "UITemplatesWizard.h"
 
 #include "pChild.h"
 
@@ -120,6 +121,11 @@ void pWorkspace::internal_aboutToCloseTab( int i, QCloseEvent* e )
 }
 
 // file menu
+void pWorkspace::fileNew_triggered()
+{
+	UITemplatesWizard::instance( this )->exec();
+}
+
 void pWorkspace::fileOpen_triggered()
 {
 	// get last file open path

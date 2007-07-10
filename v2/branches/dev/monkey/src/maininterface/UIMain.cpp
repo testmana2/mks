@@ -78,7 +78,8 @@ void UIMain::initMenuBar()
 	pMenuBar* mb = menuBar();
 	mb->menu( "mFile", tr( "&File" ) );
 	mb->beginGroup( "mFile" );
-		mb->action( "aOpen", tr( "&Open" ), QIcon( ":/file/icons/file/open.png" ), tr( "Ctrl+O" ), tr( "Open a file" ) );
+		mb->action( "aNew", tr( "&New..." ), QIcon( ":/file/icons/file/new.png" ), tr( "Ctrl+N" ), tr( "Create a new file" ) );
+		mb->action( "aOpen", tr( "&Open..." ), QIcon( ":/file/icons/file/open.png" ), tr( "Ctrl+O" ), tr( "Open a file" ) );
 		mb->menu( "mRecents", tr( "&Recents" ), QIcon( ":/file/icons/file/recents.png" ) );
 		mb->action( "mRecents/aClear", tr( "&Clear" ), QIcon( ":/file/icons/file/clear.png" ), QString::null, tr( "Clear the recents files list" ) );
 		mb->action( "mRecents/aSeparator1" );
@@ -97,7 +98,7 @@ void UIMain::initMenuBar()
 		//mb->action( "aSaveAsTemplate", tr( "Save As &Template" ), QIcon( ":/Icons/Icons/filesaveastemplate.png" ), tr( "Ctrl+T" ), tr( "Save the current file as template" ) )->setEnabled( false );
 		mb->action( "aSeparator4" );
 		mb->action( "aQuickPrint", tr( "Quic&k Print" ), QIcon( ":/file/icons/file/quickprint.png" ), QString::null, tr( "Quick print the current file" ) )->setEnabled( false );
-		mb->action( "aPrint", tr( "&Print" ), QIcon( ":/file/icons/file/print.png" ), tr( "Ctrl+P" ), tr( "Print the current file" ) )->setEnabled( false );
+		mb->action( "aPrint", tr( "&Print..." ), QIcon( ":/file/icons/file/print.png" ), tr( "Ctrl+P" ), tr( "Print the current file" ) )->setEnabled( false );
 		mb->action( "aSeparator5" );
 		mb->action( "aQuit", tr( "&Quit" ), QIcon( ":/file/icons/file/quit.png" ), tr( "Ctrl+Q" ), tr( "Quit the application" ) );
 	mb->endGroup();
@@ -218,6 +219,7 @@ void UIMain::initToolBar()
 	dockToolBar( Qt::TopToolBarArea )->addAction();
 
 	// file action
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mFile/aNew" ) );
 	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mFile/aOpen" ) );
 	dockToolBar( Qt::TopToolBarArea )->addActions( menuBar()->menu( "mFile/mSave" )->actions() );
 	dockToolBar( Qt::TopToolBarArea )->addActions( menuBar()->menu( "mFile/mClose" )->actions() );
@@ -253,6 +255,7 @@ void UIMain::initToolBar()
 void UIMain::initConnections()
 {
 	// file connection
+	connect( menuBar()->action( "mFile/aNew" ), SIGNAL( triggered() ), workspace(), SLOT( fileNew_triggered() ) );
 	connect( menuBar()->action( "mFile/aOpen" ), SIGNAL( triggered() ), workspace(), SLOT( fileOpen_triggered() ) );
 	connect( pRecentsManager::instance(), SIGNAL( openFileRequested( const QString& ) ), fileManager(), SLOT( openFile( const QString& ) ) );
 	connect( menuBar()->action( "mFile/mSession/aSave" ), SIGNAL( triggered() ), workspace(), SLOT( fileSessionSave_triggered() ) );

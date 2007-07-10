@@ -3,6 +3,7 @@
 #include "pQScintilla.h"
 #include "UIEditTemplate.h"
 #include "UIAddAbbreviation.h"
+#include "pFileManager.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
@@ -179,21 +180,20 @@ void UISettings::loadSettings()
 	cbRestoreSession->setChecked( sc->restoreSessionOnStartup() );
 
 	// File Templates
-	sp = "Templates";
-	leTemplatesPath->setText( s->value( sp +"/DefaultDirectory", "%HOME%/.Monkey Studio/Templates" ).toString() );
-	int size = s->beginReadArray( sp );
-	for ( int i = 0; i < size; i++ )
+	leTemplatesPath->setText( pQScintilla::instance()->templatesPath() );
+	QList<pTemplate*> tl = pQScintilla::instance()->templates();
+	foreach ( pTemplate* t, tl )
 	{
-		s->setArrayIndex( i );
 		QTreeWidgetItem* it = new QTreeWidgetItem( twTemplatesType );
-		it->setText( 0, s->value( "Language" ).toString() );
-		it->setText( 1, s->value( "Name" ).toString() );
-		it->setText( 2, s->value( "Description" ).toString() );
-		it->setData( 0, Qt::UserRole, s->value( "Icon" ).toString() );
-		it->setData( 0, Qt::UserRole +1, s->value( "Filename" ).toString() );
-		it->setIcon( 0, QIcon( s->value( "Icon" ).toString() ) );
+		it->setText( 0, t->Language );
+		it->setText( 1, t->Name );
+		it->setText( 2, t->Description );
+		it->setData( 0, Qt::UserRole, t->Icon );
+		it->setData( 0, Qt::UserRole +1, t->FileName );
+		it->setIcon( 0, QIcon( t->Icon ) );
 	}
-	s->endArray();
+	// clear pointer
+	qDeleteAll( tl );
 
 	// Editor
 	//  General
@@ -333,7 +333,7 @@ void UISettings::saveSettings()
 	// remove key
 	s->remove( sp );
 	// default templates path
-	s->setValue( sp +"/DefaultDirectory", leTemplatesPath->text() );
+	pQScintilla::instance()->setTemplatesPath( leTemplatesPath->text() );
 	// write new ones
 	s->beginWriteArray( sp );
 	for ( int i = 0; i < twTemplatesType->topLevelItemCount(); i++ )
@@ -561,9 +561,7 @@ void UISettings::on_pbEditTemplate_clicked()
 		const QString f = it->data( 0, Qt::UserRole +1 ).toString().replace( "%TEMPLATE_PATH%", t );
 
 		// open template file
-		//pFileManager::instance()->openFile( f );
-
-		qWarning( "edit tempalte require: %s", qPrintable( f ) );
+		pFileManager::instance()->openFile( f );
 	}
 }
 
