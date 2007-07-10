@@ -29,6 +29,7 @@
         <file>icons/file/clear.png</file>
         <file>icons/file/close.png</file>
         <file>icons/file/closeall.png</file>
+        <file>icons/file/new.png</file>
         <file>icons/file/open.png</file>
         <file>icons/file/print.png</file>
         <file>icons/file/quickprint.png</file>
@@ -47,6 +48,14 @@
     </qresource>
     <qresource prefix="/licenses" >
         <file>texts/license.gpl</file>
+    </qresource>
+    <qresource prefix="/temp" >
+        <file>icons/temp/kcmsystem.png</file>
+        <file>icons/temp/kpf.png</file>
+        <file>icons/temp/kwin.png</file>
+        <file>icons/temp/package_applications.png</file>
+        <file>icons/temp/package_development.png</file>
+        <file>icons/temp/package_system.png</file>
     </qresource>
     <qresource prefix="/view" >
         <file>icons/view/next.png</file>
