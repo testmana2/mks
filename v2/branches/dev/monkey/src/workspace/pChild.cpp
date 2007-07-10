@@ -8,6 +8,7 @@
  ********************************************************************************************************/
 #include "pChild.h"
 #include "pEditor.h"
+#include "pSearch.h"
 
 #include <QVBoxLayout>
 #include <QFileInfo>
@@ -114,7 +115,20 @@ void pChild::paste()
 
 void pChild::searchReplace()
 {
+	pSearch::instance()->setEditor( this );
 	mEditor->invokeSearchReplace();
+}
+
+void pChild::searchPrevious()
+{
+	pSearch::instance()->setEditor( mEditor );
+	pSearch::instance()->on_tbPrevious_clicked();
+}
+
+void pChild::searchNext()
+{
+	pSearch::instance()->setEditor( mEditor );
+	pSearch::instance()->on_tbNext_clicked();
 }
 
 void pChild::goTo()

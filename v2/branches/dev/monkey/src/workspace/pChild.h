@@ -67,6 +67,12 @@ public:
 	// search/replace in the current child
 	virtual void searchReplace();
 
+	// search previous
+	virtual void searchPrevious();
+
+	// search next
+	virtual void searchNext();
+
 	// go to in the current child
 	virtual void goTo();
 

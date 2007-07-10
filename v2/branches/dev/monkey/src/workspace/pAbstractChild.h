@@ -109,6 +109,10 @@ public slots:
 	virtual void paste() = 0;
 	// search/replace in the current child
 	virtual void searchReplace() = 0;
+	// search previous
+	virtual void searchPrevious() = 0;
+	// search next
+	virtual void searchNext() = 0;
 	// go to in the current child
 	virtual void goTo() = 0;
 	// go to position for file and highlight line according to bool

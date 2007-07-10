@@ -10,6 +10,7 @@
         <file>icons/application/splashscreen.png</file>
     </qresource>
     <qresource prefix="/edit" >
+        <file>icons/edit/abbreviation.png</file>
         <file>icons/edit/close.png</file>
         <file>icons/edit/copy.png</file>
         <file>icons/edit/cut.png</file>

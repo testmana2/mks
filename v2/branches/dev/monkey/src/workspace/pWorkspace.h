@@ -54,6 +54,8 @@ public slots:
 	void editCopy_triggered();
 	void editPaste_triggered();
 	void editSearchReplace_triggered();
+	void editSearchPrevious_triggered();
+	void editSearchNext_triggered();
 	void editGoTo_triggered();
 	void editExpandAbbreviation_triggered();
 

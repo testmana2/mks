@@ -119,7 +119,7 @@ void UIMain::initMenuBar()
 		mb->action( "aSeparator4" );
 		mb->action( "aGoTo", tr( "&Go To..." ), QIcon( ":/edit/icons/edit/goto.png" ), tr( "Ctrl+G" ), tr( "Go To..." ) )->setEnabled( false );
 		mb->action( "aSeparator5" );
-		mb->action( "aExpandAbbreviation", tr( "Expand Abbreviation" ), QIcon( "" ), tr( "Ctrl+L" ), tr( "Expand Abbreviation" ) )->setEnabled( false );
+		mb->action( "aExpandAbbreviation", tr( "Expand Abbreviation" ), QIcon( ":/edit/icons/edit/abbreviation.png" ), tr( "Ctrl+L" ), tr( "Expand Abbreviation" ) )->setEnabled( false );
 	mb->endGroup();
 	mb->menu( "mView", tr( "&View" ) );
 	mb->beginGroup( "mView" );
@@ -274,6 +274,8 @@ void UIMain::initConnections()
 	connect( menuBar()->action( "mEdit/aCopy" ), SIGNAL( triggered() ), workspace(), SLOT( editCopy_triggered() ) );
 	connect( menuBar()->action( "mEdit/aPaste" ), SIGNAL( triggered() ), workspace(), SLOT( editPaste_triggered() ) );
 	connect( menuBar()->action( "mEdit/aSearchReplace" ), SIGNAL( triggered() ), workspace(), SLOT( editSearchReplace_triggered() ) );
+	connect( menuBar()->action( "mEdit/aSearchPrevious" ), SIGNAL( triggered() ), workspace(), SLOT( editSearchPrevious_triggered() ) );
+	connect( menuBar()->action( "mEdit/aSearchNext" ), SIGNAL( triggered() ), workspace(), SLOT( editSearchNext_triggered() ) );
 	connect( menuBar()->action( "mEdit/aGoTo" ), SIGNAL( triggered() ), workspace(), SLOT( editGoTo_triggered() ) );
 	connect( menuBar()->action( "mEdit/aExpandAbbreviation" ), SIGNAL( triggered() ), workspace(), SLOT( editExpandAbbreviation_triggered() ) );
 	// view connection
