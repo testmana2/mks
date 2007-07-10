@@ -115,7 +115,7 @@ void pChild::paste()
 
 void pChild::searchReplace()
 {
-	pSearch::instance()->setEditor( this );
+	pSearch::instance()->setEditor( mEditor );
 	mEditor->invokeSearchReplace();
 }
 
