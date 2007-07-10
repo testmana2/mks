@@ -15,6 +15,29 @@ pQScintilla::pQScintilla( QObject* o )
 pQScintilla::~pQScintilla()
 {}
 
+QsciAPIs* pQScintilla::apisForLexer( QsciLexer* l )
+{
+	// cancel if no lexer
+	if ( !l )
+		return 0;
+
+	if ( !mGlobalsAPIs.contains( l->language() ) )
+	{
+		// create apis
+		QsciAPIs* a = new QsciAPIs( l );
+
+		// load prepared files
+		foreach ( QString s, pSettings::instance()->value( QString( "SourceAPIs/" ).append( +l->language() ) ).toStringList() )
+			a->loadPrepared( s );
+
+		// store global apis
+		mGlobalsAPIs[l->language()] = a;
+	}
+
+	// return apis
+	return mGlobalsAPIs.value( l->language() );
+}
+
 QHash<QString,QsciLexer*> pQScintilla::lexersSettings()
 {
 	// init lexers if needed
@@ -80,9 +103,14 @@ QsciLexer* pQScintilla::lexerForLanguage( const QString& s )
 	else if ( ln == "vhdl" )
 		l = new QsciLexerVHDL( this );
 
-	// read settings
 	if ( l )
+	{
+		// read settings
 		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
+
+		// set apis
+		l->setAPIs( apisForLexer( l ) );
+	}
 
 	// return lexer
 	return l;
@@ -272,7 +300,7 @@ QVariant pQScintilla::lexerProperty( const QString& s, QsciLexer* l ) const
 	return QVariant();
 }
 
-void pQScintilla::setProperties( pEditor* e )
+void pQScintilla::setEditorProperties( pEditor* e )
 {
 	if ( !e )
 		return;
@@ -566,7 +594,7 @@ QHash<QString, QStringList> pQScintilla::suffixes() const
 	pSettings* s = pSettings::instance();
 
 	// get associations from settings
-	s->beginGroup( mPath +"/LexersAssociations" );
+	s->beginGroup( "LexersAssociations" );
 	foreach ( QString k, s->childKeys() )
 		l[s->value( k ).toString()] << k;
 	s->endGroup();
@@ -623,18 +651,63 @@ QsciLexer* pQScintilla::lexerForFilename( const QString& s )
 
 void pQScintilla::applyProperties()
 {
-	// apply scintilla properties
-	foreach ( pAbstractChild* c, pWorkspace::instance()->children() )
-		foreach ( pEditor* p, c->findChildren<pEditor*>() )
-			setProperties( p );
-
-	// apply lexers properties
-	foreach ( QsciLexer* l, mGlobalsLexers )
-		l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
-
 	// clear mAbbreviations so a call to abbreviations() will refill it
 	qDeleteAll( mAbbreviations );
 	mAbbreviations.clear();
+
+	// temp fresh lexer, so i don't relaod same lexer/apis properties many times
+	QList<QsciLexer*> ll;
+	
+	// apply scintilla properties
+	foreach ( pAbstractChild* c, pWorkspace::instance()->children() )
+	{
+		foreach ( pEditor* e, c->findChildren<pEditor*>() )
+		{
+			// get editor lexer
+			QsciLexer* l = e->lexer();
+
+			// remove it so we can apply default colours
+			e->setLexer( 0 );
+
+			// apply default colours if needed
+			if ( defaultDocumentColours() )
+			{
+				e->setColor( defaultDocumentPen() );
+				e->setPaper( defaultDocumentPaper() );
+			}
+
+			// restore original lexer
+			e->setLexer( l );
+
+			// scintilla properties
+			setEditorProperties( e );
+
+			// apply default colours if needed
+			if ( l && !ll.contains( l ) )
+			{
+				// remenber that this lexer already refresh
+				ll << l;
+
+					// apply default colours
+				if ( defaultDocumentColours() )
+				{
+					l->setDefaultColor( defaultDocumentPen() );
+					l->setDefaultPaper( defaultDocumentPaper() );
+				}
+
+				// apply lexers properties
+				l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
+
+				// relaod apis if needed
+				if ( l->apis() )
+				{
+					// load prepared files
+					foreach ( QString s, pSettings::instance()->value( QString( "SourceAPIs/" ).append( +l->language() ) ).toStringList() )
+						l->apis()->loadPrepared( s );
+				}
+			}
+		}
+	}
 }
 
 void pQScintilla::expandAbbreviation( pEditor* e )

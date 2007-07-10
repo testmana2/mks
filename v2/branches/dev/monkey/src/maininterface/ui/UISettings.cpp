@@ -179,7 +179,7 @@ void UISettings::loadSettings()
 	cbRestoreSession->setChecked( sc->restoreSessionOnStartup() );
 
 	// File Templates
-	sp = QString( "%1/Editor/Templates" ).arg( SettingsPath );
+	sp = "Templates";
 	leTemplatesPath->setText( s->value( sp +"/DefaultDirectory", "%HOME%/.Monkey Studio/Templates" ).toString() );
 	int size = s->beginReadArray( sp );
 	for ( int i = 0; i < size; i++ )
@@ -282,7 +282,7 @@ void UISettings::loadSettings()
 	sWrappedLineIndentWidth->setValue( sc->wrappedLineIndentWidth() );
 	// Source APIs
 	for ( int i = 0; i < cbSourceAPIsLanguages->count(); i++ )
-		cbSourceAPIsLanguages->setItemData( i, s->value( QString( "%1/Editor/SourceAPIs/%2" ).arg( SettingsPath, cbSourceAPIsLanguages->itemText( i ) ) ).toStringList() );
+		cbSourceAPIsLanguages->setItemData( i, s->value( "SourceAPIs/" +cbSourceAPIsLanguages->itemText( i ) ).toStringList() );
 	if ( cbSourceAPIsLanguages->count() > 0 )
 		cbSourceAPIsLanguages->setCurrentIndex( 0 );
 	//  Lexers Associations
@@ -329,7 +329,7 @@ void UISettings::saveSettings()
 	sc->setRestoreSessionOnStartup( cbRestoreSession->isChecked() );
 
 	// File Templates
-	sp = QString( "%1/Editor/Templates" ).arg( SettingsPath );
+	sp = "Templates";
 	// remove key
 	s->remove( sp );
 	// default templates path
@@ -437,11 +437,11 @@ void UISettings::saveSettings()
 		sc->setEndWrapVisualFlag( (QsciScintilla::WrapVisualFlag)bgEndWrapVisualFlag->checkedId() );
 	sc->setWrappedLineIndentWidth( sWrappedLineIndentWidth->value() );
 	// Source APIs
-	sp = QString( "%1/Editor/SourceAPIs/" ).arg( SettingsPath );
+	sp = "SourceAPIs/";
 	for ( int i = 0; i < cbSourceAPIsLanguages->count(); i++ )
 		s->setValue( sp +cbSourceAPIsLanguages->itemText( i ), cbSourceAPIsLanguages->itemData( i ).toStringList() );
 	//  Lexers Associations
-	sp = QString( "%1/Editor/LexersAssociations/" ).arg( SettingsPath );
+	sp = "LexersAssociations/";
 	// remove old associations
 	s->remove( sp );
 	// write new ones
