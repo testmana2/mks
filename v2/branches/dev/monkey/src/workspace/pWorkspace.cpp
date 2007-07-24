@@ -24,6 +24,7 @@
 #include <QToolButton>
 #include <QFileDialog>
 #include <QCloseEvent>
+#include <QTime>
 
 pWorkspace::pWorkspace( QWidget* p )
 	: pTabbedWorkspace( p )
@@ -62,6 +63,10 @@ void pWorkspace::internal_currentChanged( int i )
 	// get child
 	pAbstractChild* c = child( i );
 
+QTime t;
+ 
+
+ 
 	bool ic = c;
 	bool modified = ic ? c->isModified() : false;
 	bool print = ic ? c->isPrintAvailable() : false;
@@ -72,6 +77,7 @@ void pWorkspace::internal_currentChanged( int i )
 	bool search = c ? c->isSearchReplaceAvailable() : false;
 	bool go = c ? c->isGoToAvailable() : false;
 
+t.start();
 	// update file menu
 	pMenuBar::instance()->action( "mFile/mSave/aCurrent" )->setEnabled( modified );
 	pMenuBar::instance()->action( "mFile/mSave/aAll" )->setEnabled( ic );
@@ -108,6 +114,7 @@ void pWorkspace::internal_currentChanged( int i )
 	//
 
 	// emit file changed
+qDebug("Time elapsed: %d ms", t.elapsed());
 	emit pFileManager::instance()->currentFileChanged( ic ? c->currentFile() : QString(), ic ? c->proxy() : 0 );
 }
 
