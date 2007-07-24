@@ -28,18 +28,18 @@ PROGRAM_NAME	= "Monkey Studio"
 
 DEFINES	*= MONKEY_CORE_BUILD "PROGRAM_NAME=\"\\\"$${PROGRAM_NAME}\\\"\"" "PROGRAM_VERSION=\"\\\"$${VERSION}\\\"\"" "PROGRAM_DOMAIN=\"\\\"$${DOMAIN}\\\"\"" "PROGRAM_COPYRIGHTS=\"\\\"$${COPYRIGHTS}\\\"\""
 
-win32:RC_FILE	*= monkey.rc
-RESOURCES	*= src/resources/resources.qrc
+win32:RC_FILE	+= monkey.rc
+RESOURCES	+= src/resources/resources.qrc
 
-CONFIG	*= qt warn_on debug app_bundle thread x11 windows console
-QT	*= gui core
+CONFIG	+= qt warn_on debug app_bundle thread x11 windows console
+QT	+= gui core
 
-LIBS	*= -L$${BUILD_PATH}
-linux-g++:LIBS	*= -rdynamic
-win32-msvc:LIBS	*= /IMPLIB:$${BUILD_PATH}/monkey.lib
-win32-g++:LIBS	*= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
+LIBS	+= -L$${BUILD_PATH}
+linux-g++:LIBS	+= -rdynamic
+win32-msvc:LIBS	+= /IMPLIB:$${BUILD_PATH}/monkey.lib
+win32-g++:LIBS	+= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
 
-INCLUDEPATH	*= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager src/qscintillamanager/ui src/templatesmanager src/templatesmanager/ui
+INCLUDEPATH	+= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager src/qscintillamanager/ui src/templatesmanager src/templatesmanager/ui
 
 # include fresh framework
 include( ../fresh/fresh.pro )
