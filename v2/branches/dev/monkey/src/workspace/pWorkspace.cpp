@@ -24,7 +24,6 @@
 #include <QToolButton>
 #include <QFileDialog>
 #include <QCloseEvent>
-#include <QTime>
 
 pWorkspace::pWorkspace( QWidget* p )
 	: pTabbedWorkspace( p )
@@ -62,22 +61,15 @@ void pWorkspace::internal_currentChanged( int i )
 {
 	// get child
 	pAbstractChild* c = child( i );
-
-QTime t;
- 
-
- 
 	bool ic = c;
 	bool modified = ic ? c->isModified() : false;
 	bool print = ic ? c->isPrintAvailable() : false;
 	bool undo = c ? c->isUndoAvailable() : false;
 	bool redo = c ? c->isRedoAvailable() : false;
 	bool copy = c ? c->isCopyAvailable() : false;
-	bool paste = c ? c->isPasteAvailable() : false;
 	bool search = c ? c->isSearchReplaceAvailable() : false;
 	bool go = c ? c->isGoToAvailable() : false;
 
-t.start();
 	// update file menu
 	pMenuBar::instance()->action( "mFile/mSave/aCurrent" )->setEnabled( modified );
 	pMenuBar::instance()->action( "mFile/mSave/aAll" )->setEnabled( ic );
@@ -92,7 +84,6 @@ t.start();
 	pMenuBar::instance()->action( "mEdit/aRedo" )->setEnabled( redo );
 	pMenuBar::instance()->action( "mEdit/aCut" )->setEnabled( copy );
 	pMenuBar::instance()->action( "mEdit/aCopy" )->setEnabled( copy );
-	pMenuBar::instance()->action( "mEdit/aPaste" )->setEnabled( paste );
 	pMenuBar::instance()->action( "mEdit/aSearchReplace" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aSearchPrevious" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aSearchNext" )->setEnabled( search );
@@ -114,7 +105,6 @@ t.start();
 	//
 
 	// emit file changed
-qDebug("Time elapsed: %d ms", t.elapsed());
 	emit pFileManager::instance()->currentFileChanged( ic ? c->currentFile() : QString(), ic ? c->proxy() : 0 );
 }
 
