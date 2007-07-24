@@ -58,6 +58,7 @@ public slots:
 	void setTabShape( QTabBar::Shape );
 	void setTabMode( pTabbedWorkspace::TabMode );
 	void setDocumentMode( pTabbedWorkspace::DocumentMode );
+	//this function will just switch tab. See also setCurrentIndex_internal
 	void setCurrentIndex( int );
 	void setCurrentDocument( QWidget* );
 	void setCornerWidget( pTabbedWorkspaceCorner*, Qt::Corner = Qt::TopRightCorner );
@@ -68,6 +69,13 @@ public slots:
 	void activateNextDocument();
 	void activatePreviousDocument();
 	void setTabsHaveShortcut( bool );
+
+private slots:
+	/*
+	Handler of currentChanged( int ) signal of QTabWidget.	Function executed when tab was switched (by user or by code). 
+	Will switch active document and 	emit sitnal currentChanged(i)
+	*/
+	void setCurrentIndex_internal(int i);
 
 protected:
 	void updateCorners();
