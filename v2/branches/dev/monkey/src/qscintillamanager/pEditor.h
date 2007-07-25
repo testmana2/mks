@@ -11,6 +11,8 @@ class Q_MONKEY_EXPORT pEditor : public QsciScintilla
 
 protected:
 	bool mCopyAvailable;
+	static bool mPasteAvailableInit;
+	static bool mPasteAvailable;
 	QPoint mCursorPosition;
 
 public:

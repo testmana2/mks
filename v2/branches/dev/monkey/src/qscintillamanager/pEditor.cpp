@@ -14,6 +14,9 @@
 #include <QDir>
 #include <QDateTime>
 
+bool pEditor::mPasteAvailableInit = false;
+bool pEditor::mPasteAvailable = false;
+
 pEditor::pEditor( QWidget* p )
 	: QsciScintilla( p )
 {
@@ -26,6 +29,13 @@ pEditor::pEditor( QWidget* p )
 	connect( this, SIGNAL( cursorPositionChanged( int, int ) ), this, SLOT( cursorPositionChanged( int, int ) ) );
 	connect( this, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
 	connect( QApplication::clipboard(), SIGNAL( dataChanged() ), this, SLOT( clipboardDataChanged() ) );
+
+	// init pasteAvailable
+	if ( !mPasteAvailableInit )
+	{
+		mPasteAvailableInit = true;
+		mPasteAvailable = QApplication::clipboard()->text().isEmpty();
+	}
 }
 
 pEditor::~pEditor()
@@ -78,10 +88,10 @@ bool pEditor::copyAvailable()
 {
 	return mCopyAvailable;
 }
-
+#include <QTime>
 bool pEditor::canPaste()
 {
-	return !QApplication::clipboard()->text().isEmpty();
+	return mPasteAvailable;
 }
 
 QPoint pEditor::cursorPosition() const
@@ -108,6 +118,7 @@ void pEditor::textChanged()
 
 void pEditor::clipboardDataChanged()
 {
+	mPasteAvailable = QApplication::clipboard()->text().isEmpty();
 	emit pasteAvailable( canPaste() );
 }
 
