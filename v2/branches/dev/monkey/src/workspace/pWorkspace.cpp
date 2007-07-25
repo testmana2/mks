@@ -67,12 +67,9 @@ void pWorkspace::internal_currentChanged( int i )
 	bool undo = c ? c->isUndoAvailable() : false;
 	bool redo = c ? c->isRedoAvailable() : false;
 	bool copy = c ? c->isCopyAvailable() : false;
-	//bool paste = false;
+	bool paste = c ? c->isPasteAvailable() : false;
 	bool search = c ? c->isSearchReplaceAvailable() : false;
 	bool go = c ? c->isGoToAvailable() : false;
-
-	// check if need to update paste action
-	bool paste = c ? c->isPasteAvailable() : false;
 
 	// update file menu
 	pMenuBar::instance()->action( "mFile/mSave/aCurrent" )->setEnabled( modified );
