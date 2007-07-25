@@ -81,6 +81,8 @@ public slots:
 	virtual pAbstractProjectProxy* proxy() const
 	{ return mProxy; }
 
+	// return child type
+	virtual int type() const = 0;
 	// return cursor position if available
 	virtual QPoint cursorPosition() const = 0;
 	// show/focus the file in child

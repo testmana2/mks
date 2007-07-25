@@ -25,6 +25,9 @@ public:
 	pChild();
 	virtual ~pChild();
 
+	// return child type
+	virtual int type() const;
+
 	// return cursor position if available
 	virtual QPoint cursorPosition() const;
 

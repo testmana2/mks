@@ -50,6 +50,11 @@ void pChild::cursorPositionChanged()
 	emit pAbstractChild::cursorPositionChanged( cursorPosition() );
 }
 
+int pChild::type() const
+{
+	return 0;
+}
+
 QPoint pChild::cursorPosition() const
 {
 	return mEditor->cursorPosition();

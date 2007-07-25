@@ -81,7 +81,7 @@ bool pEditor::copyAvailable()
 
 bool pEditor::canPaste()
 {
-	return QApplication::clipboard()->text().length();
+	return !QApplication::clipboard()->text().isEmpty();
 }
 
 QPoint pEditor::cursorPosition() const
