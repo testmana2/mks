@@ -9,7 +9,6 @@
 #ifndef UIMAIN_H
 #define UIMAIN_H
 
-#include <QAction>
 #include "MonkeyExport.h"
 #include "QSingleton.h"
 #include "pMainWindow.h"
@@ -17,33 +16,6 @@
 class QActionGroup;
 class pFileManager;
 class pWorkspace;
-
-//public accessible list of actions.
-struct kernelActions_s
-{
-	//file menu
-	QAction *aFileNew,	*aFileOpen, *aFileRecentsClear, *aFileSessionSave, *aFileSessionRestore, *aFileSaveCurrent, *aFileSaveAll, *aFileCloseCurrent, *aFileCloseAll, *aFileQuickPrint, *aFilePrint, *aFileQuit;
-	//edit menu
-	QAction *aEditSettings, *aEditShortcutsEditor, *aEditUndo, *aEditRedo, *aEditCopy, *aEditCut, *aEditPaste, *aEditSearchReplace, *aEditSearchNext, *aEditSearchPrevious, *aEditGoTo, *aEditExpandAbbreviation;
-	//view menu
-	QAction *aViewNext, *aViewPrevious;
-	//project menu
-	QAction *aProjectNew, *aProjectOpen, *aProjectSaveCurrent, *aProjectSaveAll, *aProjectCloseCurrent, *aProjectCloseAll, *aProjectSettings, *aProjectRecentsClear;
-	//tools menu
-	QAction *aToolsEdit;
-	//plugins menu
-	QAction *aPluginsManage;
-	//help menu
-	QAction *aHelpManual, *aHelpAbout, *aHelpAboutQt, *aHelpTestReport;
-} ;
-
-
-class Q_MONKEY_EXPORT kernelActionsContainer : public QObject, public QSingleton<kernelActionsContainer>
-{
-public:
-	struct kernelActions_s kernelActions;
-};
-
 
 class Q_MONKEY_EXPORT UIMain : public pMainWindow, public QSingleton<UIMain>
 {
@@ -65,6 +37,7 @@ private:
 	void initGui();
 
 	QActionGroup* agStyles;
+
 };
 
 #endif // UIMAIN_H
