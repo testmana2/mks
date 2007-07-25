@@ -28,23 +28,23 @@ PROGRAM_NAME	= "Monkey Studio"
 
 DEFINES	*= MONKEY_CORE_BUILD "PROGRAM_NAME=\"\\\"$${PROGRAM_NAME}\\\"\"" "PROGRAM_VERSION=\"\\\"$${VERSION}\\\"\"" "PROGRAM_DOMAIN=\"\\\"$${DOMAIN}\\\"\"" "PROGRAM_COPYRIGHTS=\"\\\"$${COPYRIGHTS}\\\"\""
 
-win32:RC_FILE	+= monkey.rc
-RESOURCES	+= src/resources/resources.qrc
+win32:RC_FILE	*= monkey.rc
+RESOURCES	*= src/resources/resources.qrc
 
-CONFIG	+= qt warn_on debug app_bundle thread x11 windows console
-QT	+= gui core
+CONFIG	*= qt warn_on debug app_bundle thread x11 windows console
+QT	*= gui core
 
-LIBS	+= -L$${BUILD_PATH}
-linux-g++:LIBS	+= -rdynamic
-win32-msvc:LIBS	+= /IMPLIB:$${BUILD_PATH}/monkey.lib
-win32-g++:LIBS	+= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
+LIBS	*= -L$${BUILD_PATH}
+linux-g++:LIBS	*= -rdynamic
+win32-msvc:LIBS	*= /IMPLIB:$${BUILD_PATH}/monkey.lib
+win32-g++:LIBS	*= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
 
-INCLUDEPATH	+= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager src/qscintillamanager/ui src/templatesmanager src/templatesmanager/ui
+INCLUDEPATH	*= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager src/qscintillamanager/ui src/templatesmanager src/templatesmanager/ui
 
 # include fresh framework
 include( ../fresh/fresh.pro )
 
-FORMS	+= src/maininterface/ui/UITranslator.ui \
+FORMS	*= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UIAbout.ui \
 	src/maininterface/ui/UIEditTemplate.ui \
 	src/maininterface/ui/UIAddAbbreviation.ui \
@@ -52,7 +52,7 @@ FORMS	+= src/maininterface/ui/UITranslator.ui \
 	src/qscintillamanager/ui/pSearch.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui
 
-HEADERS	+= src/maininterface/ui/UITranslator.h \
+HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/maininterface/ui/UIAbout.h \
 	src/qscintillamanager/pQScintilla.h \
 	src/maininterface/ui/UIEditTemplate.h \
@@ -70,7 +70,7 @@ HEADERS	+= src/maininterface/ui/UITranslator.h \
 	src/templatesmanager/pTemplatePreviewer.h \
 	src/templatesmanager/ui/UITemplatesWizard.h
 
-SOURCES	+= src/maininterface/ui/UITranslator.cpp \
+SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
 	src/qscintillamanager/pQScintilla.cpp \
 	src/maininterface/ui/UIEditTemplate.cpp \
