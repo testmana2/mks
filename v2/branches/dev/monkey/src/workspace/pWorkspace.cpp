@@ -67,6 +67,7 @@ void pWorkspace::internal_currentChanged( int i )
 	bool undo = c ? c->isUndoAvailable() : false;
 	bool redo = c ? c->isRedoAvailable() : false;
 	bool copy = c ? c->isCopyAvailable() : false;
+	bool paste = c ? c->isPasteAvailable() : false;
 	bool search = c ? c->isSearchReplaceAvailable() : false;
 	bool go = c ? c->isGoToAvailable() : false;
 
@@ -84,6 +85,7 @@ void pWorkspace::internal_currentChanged( int i )
 	pMenuBar::instance()->action( "mEdit/aRedo" )->setEnabled( redo );
 	pMenuBar::instance()->action( "mEdit/aCut" )->setEnabled( copy );
 	pMenuBar::instance()->action( "mEdit/aCopy" )->setEnabled( copy );
+	pMenuBar::instance()->action( "mEdit/aPaste" )->setEnabled( paste );
 	pMenuBar::instance()->action( "mEdit/aSearchReplace" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aSearchPrevious" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aSearchNext" )->setEnabled( search );

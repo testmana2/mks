@@ -16,7 +16,7 @@
 #include <QIcon>
 #include <QCloseEvent>
 #include <QFile>
-#include <QDebug>
+#include <QTime>
 
 pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	: QWidget( p ), mTabsHaveShortcut( true )
@@ -48,8 +48,9 @@ pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	mLayout->addLayout( mStackedLayout );
 
 	// connections
-	connect( mTabBar, SIGNAL( currentChanged( int ) ), this, SLOT( setCurrentIndex_internal( int ) ) );
+	connect( mTabBar, SIGNAL( currentChanged( int ) ), this, SLOT( setCurrentIndex( int ) ) );
 	connect( mWorkspaceWidget, SIGNAL( windowActivated( QWidget* ) ), this, SLOT( workspaceWidget_windowActivated( QWidget* ) ) );
+
 	// init view
 	setAttribute( Qt::WA_DeleteOnClose );
 	mTabBar->setDrawBase( false );
@@ -276,63 +277,53 @@ int pTabbedWorkspace::currentIndex() const
 
 void pTabbedWorkspace::setCurrentIndex( int i )
 {
-	mTabBar->setCurrentIndex( i );
-}
+	if ( mTabBar->currentIndex() != i )
+	{
+		mTabBar->setCurrentIndex( i );
+		emit currentChanged( i );
+	}
+	else
+	{
+		// get document
+		QWidget* td = document( i );
 
-void pTabbedWorkspace::setCurrentIndex_internal( int i )
-{
-	// get document
-	QWidget* td = document( i );
-	// set correct document visible
-	setCurrentDocument ( td);
-	emit currentChanged( i );
+		// set correct document visible
+		switch ( mTabMode )
+		{
+		case tmSDI:
+			if ( mStackedWidget->currentIndex() != i )
+			{
+				mStackedWidget->setCurrentIndex( i );
+				emit currentChanged( i );
+			}
+			break;
+		case tmMDI:
+			if ( mWorkspaceWidget->activeWindow() != td )
+			{
+				mWorkspaceWidget->setActiveWindow( td );
+				emit currentChanged( i );
+			}
+			break;
+		case tmTopLevel:
+			if ( td )
+			{
+				td->raise();
+				td->activateWindow();
+				emit currentChanged( i );
+			}
+			break;
+		}
+	}
 }
 
 QWidget* pTabbedWorkspace::currentDocument() const
 {
-	switch ( mTabMode )
-	{
-		case tmSDI:
-			return mStackedWidget->currentWidget();
-		case tmMDI:
-			return  mWorkspaceWidget->activeWindow();
-		case tmTopLevel:
-			return QApplication::activeWindow();
-		default:
-			Q_ASSERT_X(0, __func__, "not right tab mode");
-	}
-	return NULL;
+	return document( currentIndex() );
 }
 
 void pTabbedWorkspace::setCurrentDocument( QWidget* d )
 {
-	int docIndex = indexOf (d);
-	if ( currentDocument() != d)
-	{
-		switch ( mTabMode )
-		{
-			case tmSDI:
-				if ( mStackedWidget->currentIndex() != docIndex )
-				{
-					mStackedWidget->setCurrentIndex( docIndex );
-				}
-				break;
-			case tmMDI:
-				if ( mWorkspaceWidget->activeWindow() != d )
-				{
-					mWorkspaceWidget->setActiveWindow( d );
-				}
-			break;
-			case tmTopLevel:
-				if ( d )
-				{
-					d->raise();
-					d->activateWindow();
-				}
-			break;
-		}
-	}
-	setCurrentIndex( docIndex );
+	setCurrentIndex( indexOf( d ) );
 }
 
 int pTabbedWorkspace::indexOf( QWidget* d ) const
@@ -519,7 +510,6 @@ void pTabbedWorkspace::addDocument( QWidget* td, int i )
 
 int pTabbedWorkspace::addTab( QWidget* td, const QString& l )
 {
-	
 	return insertTab( count(), td, l );
 }
 
@@ -612,20 +602,18 @@ void pTabbedWorkspace::closeAllTabs( bool b )
 
 void pTabbedWorkspace::activateNextDocument()
 {
-	int currIndex = currentIndex();
-	if ( currIndex +1 == count() )
+	if ( currentIndex() +1 == count() )
 		setCurrentIndex( 0 );
 	else
-		setCurrentIndex( currIndex +1 );
+		setCurrentIndex( currentIndex() +1 );
 }
 
 void pTabbedWorkspace::activatePreviousDocument()
 {
-	int currIndex = currentIndex();
-	if ( currIndex -1 == -1 )
+	if ( currentIndex() -1 == -1 )
 		setCurrentIndex( count() -1 );
 	else
-		setCurrentIndex( currIndex -1 );
+		setCurrentIndex( currentIndex() -1 );
 }
 
 bool pTabbedWorkspace::tabsHaveShortcut() const
