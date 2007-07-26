@@ -6,9 +6,9 @@
 #include "Ctags.h"
 #include "Entity.h"
 
-EntityContainer::EntityContainer ( QWidget* parent, QString tname, bool tcomplex_only): QTreeWidget (parent)
+EntityContainer::EntityContainer ( QWidget* parent, QString tname, int tdisplayMask): QTreeWidget (parent)
 {
-	complex_only = tcomplex_only;
+    displayMask = tdisplayMask; // -1 == 0xff...ff
 	setHeaderLabel ( tname );
 	connect (this, SIGNAL (doubleClicked ( const QModelIndex)),this, SLOT (make_goto()));
 	Entity::initIcons ();
@@ -61,20 +61,14 @@ void EntityContainer::addTagsFromRecord ( FileRecord*  fileRecord )
 	Entity* newEnt;
 	Entity* parEnt;
 	TagEntry* entry;
+    EntityType entType;
 	while ( item != NULL )
 	{
 		entry = &item->entry;	
 		item = item->next ;
-		if ( complex_only)
-		{
-			if (	( entry->kind =='d') or
-				( entry->kind == 'e') or
-				( entry->kind == 'p') or
-				( entry->kind == 't') or
-				//( entry->kind == 'f') or
-				( entry->kind == 'v') )
-			continue; //ignore this entity types
-		}
+        entType = Entity::getEntityType (entry->kind);
+        if ( not entType & displayMask )
+            continue; // if mask not set for it's entity - ignore it
 		parEnt = getScopeEntity ( entry->scope[0], entry->scope[1]);
 		addChild ( parEnt, entry,fileRecord->file,fileRecord->time );
 	}
