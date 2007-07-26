@@ -10,25 +10,25 @@
 #include "Ctags.h"
 
 enum EntityType { 
-	NAMESPACE, //0
-	CLASS, //1
-	CONSTRUCTOR, //2
-	DESTRUCTOR, //3
-	ENUM, //4
-	ENUMERATOR, //5
-	EXTERN, //6
-	FUNCTION, //7
-	MACRO, //8
-	MEMBER, //9
-	PROTOTYPE, //10
-	STRUCT, //11
-	TYPEDEF, //12
-	UNION, //13
-	VARIABLE, //14
+	NAMESPACE = 0x0001,
+	CLASS = 0x0002,
+	CONSTRUCTOR = 0x0004,
+	DESTRUCTOR = 0x0008,
+	ENUM = 0x0010,
+	ENUMERATOR = 0x0020,
+	EXTERN = 0x0040,
+	FUNCTION = 0x0080,
+	MACRO = 0x0100,
+	MEMBER = 0x0200,
+	PROTOTYPE = 0x0400,
+	STRUCT = 0x0800,
+	TYPEDEF = 0x1000,
+	UNION = 0x2000,
+	VARIABLE = 0x4000,
 
 	ROOT_ENTITY,  //15  //top level entiry, possible file, or project
 
-	UNKNOWN //16
+	UNKNOWN = 0x8000 //16
 };
 
 class Entity : public QTreeWidgetItem
