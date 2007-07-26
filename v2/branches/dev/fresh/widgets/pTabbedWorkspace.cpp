@@ -17,10 +17,6 @@
 #include <QCloseEvent>
 #include <QFile>
 
-#include <QTime>
-
-static QTime t;
-
 pTabbedWorkspace::pTabbedWorkspace( QWidget* p, pTabbedWorkspace::TabMode m )
 	: QWidget( p ), mTabsHaveShortcut( true )
 {
@@ -279,7 +275,6 @@ int pTabbedWorkspace::currentIndex() const
 
 void pTabbedWorkspace::setCurrentIndex( int i )
 {
-	t.restart();
 	if ( i != currentIndex() )
 		mTabBar->setCurrentIndex( i );
 	else if ( currentDocument() != document( i ) )
@@ -314,7 +309,6 @@ void pTabbedWorkspace::internal_currentChanged( int i )
 	}
 	// emit document change
 	emit currentChanged( i );
-	qWarning( "time: %d", t.elapsed() );
 }
 
 QWidget* pTabbedWorkspace::currentDocument() const

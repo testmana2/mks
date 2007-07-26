@@ -10,6 +10,8 @@
 #include "pEditor.h"
 #include "pSearch.h"
 
+#include "qscilexer.h"
+
 #include <QVBoxLayout>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -50,9 +52,14 @@ void pChild::cursorPositionChanged()
 	emit pAbstractChild::cursorPositionChanged( cursorPosition() );
 }
 
-int pChild::type() const
+QString pChild::language() const
 {
-	return 0;
+	// return the editor language
+	if ( mEditor->lexer() )
+		return mEditor->lexer()->language();
+
+	// return nothing
+	return QString();
 }
 
 QPoint pChild::cursorPosition() const
@@ -209,7 +216,7 @@ void pChild::openFile( const QString& s, const QPoint&, QTextCodec* c )
 	// change window title
 	setWindowTitle( s );
 
-	emit fileOpened( s, mProxy );
+	emit fileOpened( s );
 }
 
 void pChild::closeFile( const QString& s )
@@ -224,9 +231,9 @@ void pChild::closeFile( const QString& s )
 	mFiles.removeAll( s );
 
 	// change window title
-	setWindowTitle( tr( "[No Name]" ) );
+	setWindowTitle( QString() );
 
-	emit fileClosed( s, mProxy );
+	emit fileClosed( s );
 }
 
 void pChild::closeFiles()

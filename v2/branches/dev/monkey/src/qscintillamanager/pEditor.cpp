@@ -34,7 +34,7 @@ pEditor::pEditor( QWidget* p )
 	if ( !mPasteAvailableInit )
 	{
 		mPasteAvailableInit = true;
-		mPasteAvailable = QApplication::clipboard()->text().isEmpty();
+		mPasteAvailable = !QApplication::clipboard()->text().isEmpty();
 	}
 }
 
@@ -88,7 +88,7 @@ bool pEditor::copyAvailable()
 {
 	return mCopyAvailable;
 }
-#include <QTime>
+
 bool pEditor::canPaste()
 {
 	return mPasteAvailable;
@@ -118,7 +118,7 @@ void pEditor::textChanged()
 
 void pEditor::clipboardDataChanged()
 {
-	mPasteAvailable = QApplication::clipboard()->text().isEmpty();
+	mPasteAvailable = !QApplication::clipboard()->text().isEmpty();
 	emit pasteAvailable( canPaste() );
 }
 
@@ -171,10 +171,15 @@ bool pEditor::saveFile( const QString& s )
 	if ( !isModified() )
 		return true;
 
-	QFile f( s );
+	// get filename
+	QString fn = s;
+	if ( s.isEmpty() )
+		fn = property( "fileName" ).toString();
+
+	QFile f( fn );
 	if ( !f.open( QFile::WriteOnly ) )
 	{
-		QMessageBox::warning( this, tr( "Save file..." ), tr( "Cannot write file %1:\n%2." ).arg( s ).arg( f.errorString() ) );
+		QMessageBox::warning( this, tr( "Save file..." ), tr( "Cannot write file %1:\n%2." ).arg( fn ).arg( f.errorString() ) );
 		return false;
 	}
 
@@ -186,7 +191,7 @@ bool pEditor::saveFile( const QString& s )
 	QApplication::restoreOverrideCursor();
 
 	// remember filename
-	setProperty( "fileName", s );
+	setProperty( "fileName", fn );
 
 	return true;
 }

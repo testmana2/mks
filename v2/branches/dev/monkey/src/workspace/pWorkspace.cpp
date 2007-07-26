@@ -107,7 +107,7 @@ void pWorkspace::internal_currentChanged( int i )
 	//
 
 	// emit file changed
-	emit pFileManager::instance()->currentFileChanged( ic ? c->currentFile() : QString(), ic ? c->proxy() : 0 );
+	emit pFileManager::instance()->currentFileChanged( ic ? c->currentFile() : QString() );
 }
 
 void pWorkspace::internal_aboutToCloseTab( int i, QCloseEvent* e )
@@ -156,10 +156,7 @@ void pWorkspace::fileSessionSave_triggered()
 {
 	QStringList l;
 	foreach ( pAbstractChild* c, children() )
-	{
-		if ( !c->proxy() )
-			l << c->files();
-	}
+		l << c->files();
 
 	pSettings::instance()->setValue( "Session", l );
 }

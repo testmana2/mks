@@ -8,12 +8,11 @@
 
 #include <QFileInfo>
 
-
 pFileManager::pFileManager( QObject* o )
 	: QObject( o )
 {}
 
-pAbstractChild* pFileManager::openFile( const QString& s, const QPoint& p, pAbstractProjectProxy* pp )
+pAbstractChild* pFileManager::openFile( const QString& s, const QPoint& p )
 {
 	// if it not exists
 	if ( !QFile::exists( s ) )
@@ -28,13 +27,10 @@ pAbstractChild* pFileManager::openFile( const QString& s, const QPoint& p, pAbst
 	{
 		// create child
 		pAbstractChild* c = new pChild;
-	
-		// set child proxy
-		c->setProxy( pp );
 
 		// opened/closed file
-		connect( c, SIGNAL( fileOpened( const QString&, pAbstractProjectProxy* ) ), this, SIGNAL( fileOpened( const QString&, pAbstractProjectProxy* ) ) );
-		connect( c, SIGNAL( fileClosed( const QString&, pAbstractProjectProxy* ) ), this, SIGNAL( fileClosed( const QString&, pAbstractProjectProxy* ) ) );
+		connect( c, SIGNAL( fileOpened( const QString& ) ), this, SIGNAL( fileOpened( const QString& ) ) );
+		connect( c, SIGNAL( fileClosed( const QString& ) ), this, SIGNAL( fileClosed( const QString& ) ) );
 		// update file menu
 		connect( c, SIGNAL( modifiedChanged( bool ) ), pMenuBar::instance()->action( "mFile/mSave/aCurrent" ), SLOT( setEnabled( bool ) ) );
 		// update edit menu
@@ -77,7 +73,7 @@ void pFileManager::closeFile( const QString& s )
 	}
 }
 
-void pFileManager::goToLine( const QString& s, const QPoint& p, bool b, pAbstractProjectProxy* pp )
+void pFileManager::goToLine( const QString& s, const QPoint& p, bool b )
 {
 	// search child for this file
 	foreach ( pAbstractChild* c, pWorkspace::instance()->children() )
@@ -90,13 +86,13 @@ void pFileManager::goToLine( const QString& s, const QPoint& p, bool b, pAbstrac
 	}
 
 	// open file
-	pAbstractChild* c = openFile( s, p, pp );
+	pAbstractChild* c = openFile( s, p );
 
 	// goto line
 	if ( c )
 		c->goTo( s, p, b );
 }
-
+/*
 void pFileManager::setBreakPoint( const QString& s, int i, bool b, pAbstractProjectProxy* p )
 {
 	emit breakPointChanged( s, i, b, 0 );
@@ -112,3 +108,4 @@ void pFileManager::closeProject( const QString& s )
 	emit projectClosed( s, 0 );
 	emit aboutToCloseProject( s, 0 );
 }
+*/

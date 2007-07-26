@@ -38,7 +38,7 @@ public slots:
 	void setLineNumbersMarginWidth( int );
 	void setLineNumbersMarginAutoWidth( bool );
 	bool openFile( const QString& );
-	bool saveFile( const QString& );
+	bool saveFile( const QString& = QString() );
 	void closeFile();
 	void print( bool = false );
 	void quickPrint();

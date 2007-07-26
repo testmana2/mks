@@ -15,7 +15,6 @@
 
 #include "MonkeyExport.h"
 
-class pAbstractProjectProxy;
 class pEditor;
 
 class Q_MONKEY_EXPORT pAbstractChild : public QWidget
@@ -30,17 +29,54 @@ public:
 	// constructor
 	pAbstractChild()
 	{
-		mProxy = 0;
+		setAttribute( Qt::WA_DeleteOnClose );
 		mDocument = mNone;
 		mLayout = lNone;
-		setAttribute( Qt::WA_DeleteOnClose );
 	}
 
-public slots:
 	// return child document mode
 	virtual pAbstractChild::DocumentMode documentMode() const
 	{ return mDocument; }
 
+	// return the child layout mode
+	virtual pAbstractChild::LayoutMode layoutMode() const
+	{ return mLayout; }
+
+	// return child language
+	virtual QString language() const
+	{ return QString(); }
+	
+	// return cursor position if available
+	virtual QPoint cursorPosition() const = 0;
+	// return files that this child manage
+	virtual QStringList files() const
+	{ return mFiles; }
+	// the current visible / focused file
+	virtual QString currentFile() const = 0;
+	// the current visible / focused file name ( without path )
+	virtual QString currentFileName() const = 0;
+	// the current visible editor
+	virtual pEditor* currentEditor() const = 0;
+	// return the current file modified flag
+	virtual bool isModified() const = 0;
+	// return the current file undo flag
+	virtual bool isUndoAvailable() const = 0;
+	// return the current file redo flag
+	virtual bool isRedoAvailable() const = 0;
+	// return the current file copy available
+	virtual bool isCopyAvailable() const = 0;
+	// return the current file paste available
+	virtual bool isPasteAvailable() const = 0;
+	// return is search/replace is available
+	virtual bool isSearchReplaceAvailable() const = 0;
+	// return is goto is available
+	virtual bool isGoToAvailable() const = 0;
+	// return the modified state of file
+	virtual bool isModified( const QString& ) const = 0;
+	// return if print is available
+	virtual bool isPrintAvailable() const = 0;
+
+public slots:
 	// set the child document mode
 	virtual void setDocumentMode( pAbstractChild::DocumentMode m )
 	{
@@ -49,10 +85,6 @@ public slots:
 		mDocument = m;
 		emit documentModeChanged( mDocument );
 	}
-
-	// return the child layout mode
-	virtual pAbstractChild::LayoutMode layoutMode() const
-	{ return mLayout; }
 
 	// set the child layout mode
 	virtual void setLayoutMode( pAbstractChild::LayoutMode m )
@@ -65,42 +97,12 @@ public slots:
 
 	// set window title
 	virtual void setWindowTitle( const QString& s )
-	{
-		QWidget::setWindowTitle( QFileInfo( s.isEmpty() ? currentFile() : s ).fileName() );
-	}
-
-	// return files that this child manage
-	virtual QStringList files() const
-	{ return mFiles; }
-
-	// set the project for this child
-	virtual void setProxy( pAbstractProjectProxy* p )
-	{ mProxy = p; }
-
-	// return the project of this child
-	virtual pAbstractProjectProxy* proxy() const
-	{ return mProxy; }
-
-	// return child type
-	virtual int type() const = 0;
-	// return cursor position if available
-	virtual QPoint cursorPosition() const = 0;
+	{ QWidget::setWindowTitle( QFileInfo( s.isEmpty() ? currentFile() : s ).fileName() ); }
+	
 	// show/focus the file in child
 	virtual void showFile( const QString& ) = 0;
-	// the current visible / focused file
-	virtual QString currentFile() const = 0;
-	// the current visible / focused file name ( without path )
-	virtual QString currentFileName() const = 0;
-	// the current visible editor
-	virtual pEditor* currentEditor() const = 0;
-	// return the current file modified flag
-	virtual bool isModified() const = 0;
-	// return the current file undo flag
-	virtual bool isUndoAvailable() const = 0;
 	// undo
 	virtual void undo() = 0;
-	// return the current file redo flag
-	virtual bool isRedoAvailable() const = 0;
 	// redo
 	virtual void redo() = 0;
 	// cut
@@ -119,18 +121,6 @@ public slots:
 	virtual void goTo() = 0;
 	// go to position for file and highlight line according to bool
 	virtual void goTo( const QString&, const QPoint&, bool = false ) = 0;
-	// return the current file copy available
-	virtual bool isCopyAvailable() const = 0;
-	// return the current file paste available
-	virtual bool isPasteAvailable() const = 0;
-	// return is search/replace is available
-	virtual bool isSearchReplaceAvailable() const = 0;
-	// return is goto is available
-	virtual bool isGoToAvailable() const = 0;
-	// return the modified state of file
-	virtual bool isModified( const QString& ) const = 0;
-	// return if print is available
-	virtual bool isPrintAvailable() const = 0;
 	// ask to save file
 	virtual void saveFile( const QString& ) = 0;
 	// ask to save the current file
@@ -167,14 +157,12 @@ public slots:
 protected:
 	// files list this child manage
 	QStringList mFiles;
-	// child project
-	pAbstractProjectProxy* mProxy;
 
 signals:
 	// emit when a file is opened
-	void fileOpened( const QString&, pAbstractProjectProxy* ); // ok
+	void fileOpened( const QString& ); // ok
 	// emit when a file is closed
-	void fileClosed( const QString&, pAbstractProjectProxy* ); // ok
+	void fileClosed( const QString& ); // ok
 	// emit when the child layout mode has changed
 	void layoutModeChanged( pAbstractChild::LayoutMode );
 	// emit when the child document mode has changed

@@ -115,8 +115,8 @@ void UIMain::initMenuBar()
 		mb->action( "aPaste", tr( "&Paste" ), QIcon( ":/edit/icons/edit/paste.png" ), tr( "Ctrl+V" ), tr( "Paste" ) )->setEnabled( false );
 		mb->action( "aSeparator3" );
 		mb->action( "aSearchReplace", tr( "&Search - Replace..." ), QIcon( ":/edit/icons/edit/search.png" ), tr( "Ctrl+F" ), tr( "Search - Replace..." ) )->setEnabled( false );
-		mb->action( "aSearchPrevious", tr( "Search Previous" ), QIcon( ":/edit/icons/edit/search.png" ), tr( "Shift+F3" ), tr( "Search Previous" ) )->setEnabled( false );
-		mb->action( "aSearchNext", tr( "Search Next" ), QIcon( ":/edit/icons/edit/search.png" ), tr( "F3" ), tr( "Search Next" ) )->setEnabled( false );
+		mb->action( "aSearchPrevious", tr( "Search Previous" ), QIcon( ":/edit/icons/edit/previous.png" ), tr( "Shift+F3" ), tr( "Search Previous" ) )->setEnabled( false );
+		mb->action( "aSearchNext", tr( "Search Next" ), QIcon( ":/edit/icons/edit/next.png" ), tr( "F3" ), tr( "Search Next" ) )->setEnabled( false );
 		mb->action( "aSeparator4" );
 		mb->action( "aGoTo", tr( "&Go To..." ), QIcon( ":/edit/icons/edit/goto.png" ), tr( "Ctrl+G" ), tr( "Go To..." ) )->setEnabled( false );
 		mb->action( "aSeparator5" );
