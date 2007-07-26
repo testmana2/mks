@@ -25,8 +25,8 @@ public:
 	pChild();
 	virtual ~pChild();
 
-	// return child type
-	virtual int type() const;
+	// return child language
+	virtual QString language() const;
 
 	// return cursor position if available
 	virtual QPoint cursorPosition() const;

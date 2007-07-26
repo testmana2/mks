@@ -8,8 +8,6 @@
 #include <QApplication>
 
 class pAbstractChild;
-class pAbstractProjectModel;
-class pAbstractProjectProxy;
 
 class Q_MONKEY_EXPORT pFileManager : public QObject, public QSingleton<pFileManager>
 {
@@ -22,25 +20,28 @@ public:
 
 public slots:
 	// open a file and set cursor to position for proxy
-	pAbstractChild* openFile( const QString&, const QPoint& = QPoint(), pAbstractProjectProxy* = 0 );
+	pAbstractChild* openFile( const QString&, const QPoint& = QPoint() );
 	// close file
 	void closeFile( const QString& );
 	// goto to position inside file, highlight line according to bool, opening it if needed
-	void goToLine( const QString&, const QPoint&, bool, pAbstractProjectProxy* = 0 );
+	void goToLine( const QString&, const QPoint&, bool );
+/*
 	// set breakpoint to file for line, opening it if needed
-	void setBreakPoint( const QString&, int, bool, pAbstractProjectProxy* = 0 );
+	void setBreakPoint( const QString&, int, bool );
 	// open a project
 	void openProject( const QString& );
 	// close a project
 	void closeProject( const QString& );
+*/
 
 signals:
 	// a file has been opened
-	void fileOpened( const QString&, pAbstractProjectProxy* ); // ok
+	void fileOpened( const QString& );
 	// a file has been closed
-	void fileClosed( const QString&, pAbstractProjectProxy* ); // ok
+	void fileClosed( const QString& );
 	// current file changed
-	void currentFileChanged( const QString&, pAbstractProjectProxy* ); // ok
+	void currentFileChanged( const QString& );
+/*
 	// a file is selected in the project manager view
 	void fileSelected( const QString&, pAbstractProjectProxy* );
 	// breakpoint changed
@@ -51,6 +52,7 @@ signals:
 	void projectClosed( const QString&, pAbstractProjectProxy* );
 	// about to close a project
 	void aboutToCloseProject( const QString&, pAbstractProjectProxy* );
+*/
 
 };
 

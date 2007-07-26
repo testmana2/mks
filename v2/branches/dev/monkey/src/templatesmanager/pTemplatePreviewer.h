@@ -18,19 +18,18 @@ public:
 	pTemplatePreviewer( QWidget* = 0 );
 	virtual ~pTemplatePreviewer();
 
-	void setText( const QString& );
-	QString text() const;
+	void setFileName( const QString& );
+	QString fileName() const;
 
-	void setLanguage( const QString& );
-	QString language() const;
-
-	void setName( const QString& );
-	QString name() const;
+	void setDestination( const QString& );
+	QString destination() const;
 
 	void setOpen( bool );
 	bool open() const;
 
 	bool open( const QString& );
+
+	pEditor* editor() const;
 
 };
 

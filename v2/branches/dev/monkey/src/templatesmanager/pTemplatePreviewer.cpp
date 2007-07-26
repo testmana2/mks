@@ -20,34 +20,24 @@ pTemplatePreviewer::~pTemplatePreviewer()
 {
 }
 
-void pTemplatePreviewer::setText( const QString& s )
+void pTemplatePreviewer::setFileName( const QString& s )
 {
 	mLabel->setText( s );
 }
 
-QString pTemplatePreviewer::text() const
+QString pTemplatePreviewer::fileName() const
 {
-	mLabel->text();
+	return mLabel->text();
 }
 
-void pTemplatePreviewer::setLanguage( const QString& s )
+void pTemplatePreviewer::setDestination( const QString& s )
 {
-	setProperty( "pLanguage", s );
+	setProperty( "pdestination", s );
 }
 
-QString pTemplatePreviewer::language() const
+QString pTemplatePreviewer::destination() const
 {
-	return property( "pLanguage" ).toString();
-}
-
-void pTemplatePreviewer::setName( const QString& s )
-{
-	setProperty( "pName", s );
-}
-
-QString pTemplatePreviewer::name() const
-{
-	return property( "pName" ).toString();
+	return property( "pdestination" ).toString();
 }
 
 void pTemplatePreviewer::setOpen( bool b )
@@ -64,4 +54,9 @@ bool pTemplatePreviewer::open( const QString& s )
 {
 	setOpen( mEditor->openFile( s ) );
 	return open();
+}
+
+pEditor* pTemplatePreviewer::editor() const
+{
+	return mEditor;
 }
