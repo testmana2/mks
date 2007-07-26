@@ -36,12 +36,18 @@ void ClassBrouser::initialize( Workspace* w )
 	currProjectTreew = new EntityContainer (projectWidget,"No project selected",false);
 	projectTrees.insert ( NULL, currProjectTreew);
 	projectBox->addWidget ( currProjectTreew);
+    projectLock = new QPushButton (tr("Lock view"), projectWidget);
+    projectLock->setCheckable ( true );
+    projectBox->addWidget (projectLock);
 	fileWidget = new QWidget (dockwgt);
 	fileBox = new QVBoxLayout ( fileWidget);
 	fileWidget->setLayout ( fileBox );
 	currFileTreew = new EntityContainer (projectWidget,"No file selected",false);
 	fileTrees.insert ( NULL, currFileTreew);
 	fileBox->addWidget ( currFileTreew);
+    fileLock = new QPushButton (tr("Lock view"), fileWidget);
+    fileLock->setCheckable ( true );
+    fileBox->addWidget (fileLock);
 	tabw->addTab ( projectWidget, "Project Tree");
 	tabw->addTab ( fileWidget, "File Tree");
 	dockwgt->setWidget ( tabw);
@@ -98,7 +104,9 @@ void ClassBrouser::proxyAdded( AbstractProjectProxy* proxy)
 
 void ClassBrouser::showProject(AbstractProjectModel* aim)
 {
-	qDebug ("trying to change project view");
+	if (projectLock->isChecked())
+        return;  //view is locked, do not need to change
+    qDebug ("trying to change project view");
 	pTabToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
 	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
 		return;  //do not need do something, if tab not active
@@ -121,7 +129,7 @@ void ClassBrouser::showProject(AbstractProjectModel* aim)
 	projectWidget->setUpdatesEnabled(false);
 	projectBox->removeWidget (oldWidget );
 	oldWidget->hide();
-	projectBox->addWidget ( currProjectTreew);
+	projectBox->insertWidget (0, currProjectTreew);
 	currProjectTreew->show();
 //	if ( currProjectTreew->topLevelItemCount () == 0 )
 //		dockwgt->hide();
@@ -133,6 +141,8 @@ void ClassBrouser::showProject(AbstractProjectModel* aim)
 
 void ClassBrouser::showFile ( QString absPath)
 {
+ 	if (fileLock->isChecked())
+        return;  //view is locked, do not need to change
     QStringList files (absPath); //  'files' contains list of all paths
     QFileInfo finfo (absPath);
     QString nameWithoutDot = finfo.path()+"/"+finfo.completeBaseName ();

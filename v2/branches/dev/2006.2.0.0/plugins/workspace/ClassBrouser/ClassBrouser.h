@@ -3,6 +3,7 @@
 //
 #include <QDockWidget>
 #include <QVBoxLayout>
+#include <QPushButton>
 #include <QHash>
 #include <QString>
 #include <QTabWidget>
@@ -31,6 +32,8 @@ private:
 	QVBoxLayout* fileBox;
 	EntityContainer* currProjectTreew;
 	EntityContainer* currFileTreew;
+    QPushButton* projectLock;
+    QPushButton* fileLock;
 public:
 	virtual void initialize( Workspace* );
 //	virtual QWidget* settingsWidget();
