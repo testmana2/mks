@@ -13,10 +13,13 @@ INCLUDEPATH += ../../../monkey/src/3rdparty/exuberantCtags
 
 SOURCES	= ClassBrouser.cpp  \
 		Entity.cpp  \
-		EntityContainer.cpp
+		EntityContainer.cpp \
+		ClassBrouserSettings.cpp
+		
 
 HEADERS	= ClassBrouser.h	\
 		Entity.h  \
-		EntityContainer.h
+		EntityContainer.h \
+		ClassBrouserSettings.h
 
 

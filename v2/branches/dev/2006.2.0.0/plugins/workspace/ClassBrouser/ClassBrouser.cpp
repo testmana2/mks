@@ -11,6 +11,7 @@
 #include "Ctags.h"
 #include "ProjectsManager.h"
 #include "AbstractProjectProxy.h"
+#include "ClassBrouserSettings.h"
 
 
 //
@@ -69,9 +70,27 @@ bool ClassBrouser::uninstall()
 	delete (dockwgt);
 	if ( !isInstalled() )
 		return true;
-	mPluginInfos.Installed = false;
+	mPluginInfos.Installed = false;QWidget* settingsWidget ();
 	return true;
 };
+
+QWidget* ClassBrouser::settingsWidget ()
+{
+	qDebug ("mask is %i", projectMask);
+	return new ClassBrouserSettings (this,projectMask,fileMask);
+}
+
+void ClassBrouser::setProjectMask (int mask)
+{
+	projectMask = mask;
+	qDebug ("setted mask in the CB");
+	qDebug ("mask is %i", projectMask);
+}
+
+void ClassBrouser::setFileMask (int mask)
+{
+	projectMask = mask;
+}
 
 /*void ClassBrouser::freeProjectView(AbstractProjectModel* p)
 {
