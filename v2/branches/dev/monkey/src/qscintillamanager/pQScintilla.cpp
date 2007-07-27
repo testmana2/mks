@@ -309,6 +309,18 @@ void pQScintilla::setEditorProperties( pEditor* e )
 	// General
 	e->setSelectionBackgroundColor( selectionBackgroundColor() );
 	e->setSelectionForegroundColor( selectionForegroundColor() );
+	if ( defaultDocumentColours() )
+	{
+		// set scintilla default colors
+		e->setColor( defaultDocumentPen() );
+		e->setPaper( defaultDocumentPaper() );
+		// set lexer default colors
+		if ( e->lexer() )
+		{
+			e->lexer()->setDefaultColor( defaultDocumentPen() );
+			e->lexer()->setDefaultPaper( defaultDocumentPaper() );
+		}
+	}
 	// Auto Completion
 	e->setAutoCompletionCaseSensitivity( autoCompletionCaseSensitivity() );
 	e->setAutoCompletionReplaceWord( autoCompletionReplaceWord() );
@@ -681,55 +693,24 @@ void pQScintilla::applyProperties()
 	qDeleteAll( mAbbreviations );
 	mAbbreviations.clear();
 
-	// temp fresh lexer, so i don't relaod same lexer/apis properties many times
-	QList<QsciLexer*> ll;
-	
 	// apply scintilla properties
 	foreach ( pAbstractChild* c, pWorkspace::instance()->children() )
 	{
 		foreach ( pEditor* e, c->findChildren<pEditor*>() )
 		{
-			// get editor lexer
-			QsciLexer* l = e->lexer();
-
-			// remove it so we can apply default colours
-			e->setLexer( 0 );
-
-			// apply default colours if needed
-			if ( defaultDocumentColours() )
-			{
-				e->setColor( defaultDocumentPen() );
-				e->setPaper( defaultDocumentPaper() );
-			}
-
-			// restore original lexer
-			e->setLexer( l );
-
 			// scintilla properties
 			setEditorProperties( e );
-
-			// apply default colours if needed
-			if ( l && !ll.contains( l ) )
+			// apply lexers properties
+			if ( e->lexer() )
 			{
-				// remenber that this lexer already refresh
-				ll << l;
-
-					// apply default colours
-				if ( defaultDocumentColours() )
-				{
-					l->setDefaultColor( defaultDocumentPen() );
-					l->setDefaultPaper( defaultDocumentPaper() );
-				}
-
-				// apply lexers properties
-				l->readSettings( *pSettings::instance(), qPrintable( mPath ) );
-
+				// read settings
+				e->lexer()->readSettings( *pSettings::instance(), qPrintable( mPath ) );
 				// relaod apis if needed
-				if ( l->apis() )
+				if ( e->lexer()->apis() )
 				{
 					// load prepared files
-					foreach ( QString s, pSettings::instance()->value( QString( "SourceAPIs/" ).append( +l->language() ) ).toStringList() )
-						l->apis()->loadPrepared( s );
+					foreach ( QString s, pSettings::instance()->value( QString( "SourceAPIs/" ).append( +e->lexer()->language() ) ).toStringList() )
+						e->lexer()->apis()->loadPrepared( s );
 				}
 			}
 		}
