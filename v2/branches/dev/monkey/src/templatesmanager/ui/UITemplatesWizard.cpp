@@ -170,8 +170,13 @@ void UITemplatesWizard::generatePreview()
 		c.replace( "%CLASSNAME%", leClassName->text(), Qt::CaseInsensitive );
 		// %UPPERCLASSNAME%
 		c.replace( "%UPPERCLASSNAME%", leClassName->text().toUpper(), Qt::CaseInsensitive );
-		// %HERITS%
-		c.replace( "%HERITS%", cbHerits->currentText(), Qt::CaseInsensitive );
+		// %FILENAMEHERITS%
+		if ( QFileInfo( cbHerits->currentText() ).suffix().isEmpty() )
+			c.replace( "%FILENAMEHERITS%", cbHerits->currentText().prepend( "<" ).append( ">" ), Qt::CaseInsensitive );
+		else
+			c.replace( "%FILENAMEHERITS%", cbHerits->currentText().prepend( "\"" ).append( "\"" ), Qt::CaseInsensitive );
+		// %CLASSNAMEHERITS%
+		c.replace( "%CLASSNAMEHERITS%", QFileInfo( cbHerits->currentText() ).baseName(), Qt::CaseInsensitive );
 		// set text
 		p->editor()->setText( c.isEmpty() ? "\n" : c );
 		// add widget to splitter
