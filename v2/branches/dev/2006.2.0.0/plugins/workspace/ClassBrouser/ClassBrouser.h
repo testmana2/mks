@@ -35,11 +35,9 @@ private:
     QPushButton* projectLock;
     QPushButton* fileLock;
 
-	int projectMask;
-	int fileMask;
 public:
+	ClassBrouser ();
 	virtual void initialize( Workspace* );
-//	virtual QWidget* settingsWidget();
 	virtual bool install();
 	virtual bool uninstall();
 	virtual QWidget* settingsWidget ();

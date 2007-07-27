@@ -11,8 +11,13 @@
 #include "Ctags.h"
 #include "ProjectsManager.h"
 #include "AbstractProjectProxy.h"
-//#include "ClassBrouserSettings.h"
+#include "ClassBrouserSettings.h"
+#include "Settings.h"
 
+ClassBrouser::ClassBrouser ()
+{
+	qDebug ("ClassBrouser object created");
+}
 
 //
 void ClassBrouser::initialize( Workspace* w )
@@ -34,7 +39,7 @@ void ClassBrouser::initialize( Workspace* w )
 	projectWidget = new QWidget (dockwgt);
 	projectBox = new QVBoxLayout ( projectWidget);
 	projectWidget->setLayout ( projectBox );
-	currProjectTreew = new EntityContainer (projectWidget,"No project selected",false);
+	currProjectTreew = new EntityContainer (projectWidget,"No project selected",Settings::current()->value ("Plugins/ClassBrouser/projectDisplayMask",-1).toInt());
 	projectTrees.insert ( NULL, currProjectTreew);
 	projectBox->addWidget ( currProjectTreew);
     projectLock = new QPushButton (tr("Lock view"), projectWidget);
@@ -43,7 +48,7 @@ void ClassBrouser::initialize( Workspace* w )
 	fileWidget = new QWidget (dockwgt);
 	fileBox = new QVBoxLayout ( fileWidget);
 	fileWidget->setLayout ( fileBox );
-	currFileTreew = new EntityContainer (projectWidget,"No file selected",false);
+	currFileTreew = new EntityContainer (projectWidget,"No file selected",Settings::current()->value ("Plugins/ClassBrouser/fileDisplayMask",-1).toInt());
 	fileTrees.insert ( NULL, currFileTreew);
 	fileBox->addWidget ( currFileTreew);
     fileLock = new QPushButton (tr("Lock view"), fileWidget);
@@ -76,21 +81,19 @@ bool ClassBrouser::uninstall()
 
 QWidget* ClassBrouser::settingsWidget ()
 {
-	qDebug ("mask is %i on instance %i", projectMask, int(this));
-    return new QWidget();
-	//return new ClassBrouserSettings (this,projectMask,fileMask);
+	return new ClassBrouserSettings (this,currProjectTreew->getDisplayMask (),currFileTreew->getDisplayMask ());
 }
 
 void ClassBrouser::setProjectMask (int mask)
 {
-	projectMask = mask;
-	qDebug ("setted mask in the CB");
-	qDebug ("mask is %i", projectMask);
+	currProjectTreew->setDisplayMask (mask);
+	Settings::current()->setValue ("Plugins/ClassBrouser/projectDisplayMask",QVariant(mask));
 }
 
 void ClassBrouser::setFileMask (int mask)
 {
-	projectMask = mask;
+	currFileTreew->setDisplayMask (mask);
+	Settings::current()->setValue ("Plugins/ClassBrouser/fileDisplayMask",QVariant(mask));	
 }
 
 /*void ClassBrouser::freeProjectView(AbstractProjectModel* p)

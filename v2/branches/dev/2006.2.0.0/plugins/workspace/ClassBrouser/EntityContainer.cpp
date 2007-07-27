@@ -67,9 +67,10 @@ void EntityContainer::addTagsFromRecord ( FileRecord*  fileRecord )
 		entry = &item->entry;	
 		item = item->next ;
         entType = Entity::getEntityType (entry->kind);
-        if ( not entType & displayMask )
+        if ( not (entType & displayMask) )
             continue; // if mask not set for it's entity - ignore it
 		parEnt = getScopeEntity ( entry->scope[0], entry->scope[1]);
+		qDebug ("Adding child");
 		addChild ( parEnt, entry,fileRecord->file,fileRecord->time );
 	}
 };
@@ -195,3 +196,11 @@ void EntityContainer::make_goto ()
 	QMessageBox(QMessageBox::NoIcon,QString ("Hello, world"),"Make goto to the "+ activeEntity->file+QString(":%1").arg(activeEntity->line), QMessageBox::Ok).exec();
 }
 
+void EntityContainer::setDisplayMask (int mask)
+{
+	displayMask = mask;
+}
+int EntityContainer::getDisplayMask ()
+{
+	return displayMask;
+}
