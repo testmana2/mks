@@ -11,7 +11,7 @@
 #include "Ctags.h"
 #include "ProjectsManager.h"
 #include "AbstractProjectProxy.h"
-#include "ClassBrouserSettings.h"
+//#include "ClassBrouserSettings.h"
 
 
 //
@@ -76,8 +76,9 @@ bool ClassBrouser::uninstall()
 
 QWidget* ClassBrouser::settingsWidget ()
 {
-	qDebug ("mask is %i", projectMask);
-	return new ClassBrouserSettings (this,projectMask,fileMask);
+	qDebug ("mask is %i on instance %i", projectMask, int(this));
+    return new QWidget();
+	//return new ClassBrouserSettings (this,projectMask,fileMask);
 }
 
 void ClassBrouser::setProjectMask (int mask)
