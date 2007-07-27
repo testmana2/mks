@@ -11,6 +11,8 @@ public:
 	~EntityContainer ();
 	void updateFileInfo ( QString fileName );	
 	void deleteFileInfo ( QString file, QDateTime olderThan );
+	void setDisplayMask (int);
+	int getDisplayMask ();
 private:
 	void addTagsFromRecord ( FileRecord*  fileRecord );
 
