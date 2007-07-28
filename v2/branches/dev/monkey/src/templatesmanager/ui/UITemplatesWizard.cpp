@@ -111,9 +111,9 @@ bool UITemplatesWizard::checkTemplates()
 		return false;
 	}
 
-	if ( leClassName->text().isEmpty() )
+	if ( leBaseName->text().isEmpty() )
 	{
-		QMessageBox::information( this, tr( "Class Name..." ), tr( "Choose a class name for your file(s)." ) );
+		QMessageBox::information( this, tr( "Base Name..." ), tr( "Choose a base name for your file(s)." ) );
 		return false;
 	}
 
@@ -139,13 +139,13 @@ void UITemplatesWizard::generatePreview()
 		pTemplatePreviewer* p = new pTemplatePreviewer;
 		if ( it->data( Qt::UserRole +1 ).toString().isEmpty() )
 		{
-			p->setFileName( leClassName->text() );
+			p->setFileName( leBaseName->text() );
 			if ( it->text() == tr( "Blank" ) )
 				p->setOpen( true );
 		}
 		else
 		{
-			p->setFileName( leClassName->text().append( QString( ".%1" ).arg( QFileInfo( s ).suffix() ) ) );
+			p->setFileName( leBaseName->text().append( QString( ".%1" ).arg( QFileInfo( s ).suffix() ) ) );
 			p->open( s );
 		}
 		p->setDestination( leDestination->text() );
@@ -167,16 +167,9 @@ void UITemplatesWizard::generatePreview()
 		// %COMMENT%
 		c.replace( "%COMMENT%", tr( "Your comment here" ), Qt::CaseInsensitive );
 		// %CLASSNAME%
-		c.replace( "%CLASSNAME%", leClassName->text(), Qt::CaseInsensitive );
+		c.replace( "%CLASSNAME%", leBaseName->text(), Qt::CaseInsensitive );
 		// %UPPERCLASSNAME%
-		c.replace( "%UPPERCLASSNAME%", leClassName->text().toUpper(), Qt::CaseInsensitive );
-		// %FILENAMEHERITS%
-		if ( QFileInfo( cbHerits->currentText() ).suffix().isEmpty() )
-			c.replace( "%FILENAMEHERITS%", cbHerits->currentText().prepend( "<" ).append( ">" ), Qt::CaseInsensitive );
-		else
-			c.replace( "%FILENAMEHERITS%", cbHerits->currentText().prepend( "\"" ).append( "\"" ), Qt::CaseInsensitive );
-		// %CLASSNAMEHERITS%
-		c.replace( "%CLASSNAMEHERITS%", QFileInfo( cbHerits->currentText() ).baseName(), Qt::CaseInsensitive );
+		c.replace( "%UPPERCLASSNAME%", leBaseName->text().toUpper(), Qt::CaseInsensitive );
 		// set text
 		p->editor()->setText( c.isEmpty() ? "\n" : c );
 		// add widget to splitter
