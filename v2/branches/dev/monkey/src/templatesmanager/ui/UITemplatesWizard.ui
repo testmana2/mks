@@ -6,18 +6,27 @@
     <x>0</x>
     <y>0</y>
     <width>363</width>
-    <height>428</height>
+    <height>382</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Templates Wizard</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
    <property name="spacing" >
     <number>3</number>
+   </property>
+   <property name="leftMargin" >
+    <number>5</number>
+   </property>
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
    </property>
    <item>
     <widget class="QLabel" name="lInformations" >
@@ -39,19 +48,37 @@
      </property>
      <widget class="QWidget" name="wTemplates" >
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>3</number>
        </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>3</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QLabel" name="lLanguage" >
@@ -88,46 +115,6 @@
          <property name="uniformItemSizes" >
           <bool>true</bool>
          </property>
-         <item>
-          <property name="text" >
-           <string>New Item</string>
-          </property>
-          <property name="icon" >
-           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/kcmsystem.png</iconset>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>New Item</string>
-          </property>
-          <property name="icon" >
-           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/kpf.png</iconset>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>New Item</string>
-          </property>
-          <property name="icon" >
-           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/kwin.png</iconset>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>New Item</string>
-          </property>
-          <property name="icon" >
-           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/package_development.png</iconset>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>New Item</string>
-          </property>
-          <property name="icon" >
-           <iconset resource="../../resources/resources.qrc" >:/temp/icons/temp/package_applications.png</iconset>
-          </property>
-         </item>
         </widget>
        </item>
        <item>
@@ -136,61 +123,62 @@
           <string>Informations</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>5</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>5</number>
+          </property>
+          <property name="rightMargin" >
+           <number>5</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>5</number>
+          </property>
+          <property name="horizontalSpacing" >
            <number>3</number>
           </property>
-          <item row="5" column="1" colspan="2" >
-           <widget class="QComboBox" name="cbProjects" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" >
-           <widget class="QLabel" name="lProject" >
+          <property name="verticalSpacing" >
+           <number>3</number>
+          </property>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="lBaseName" >
             <property name="text" >
-             <string>Project :</string>
+             <string>Base Name :</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
+          <item row="0" column="1" colspan="2" >
+           <widget class="QLineEdit" name="leBaseName" />
+          </item>
+          <item row="1" column="0" >
            <widget class="QLabel" name="lDestination" >
             <property name="text" >
              <string>Destination :</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="2" >
-           <widget class="QLineEdit" name="leClassName" />
+          <item row="1" column="1" >
+           <widget class="QLineEdit" name="leDestination" />
           </item>
-          <item row="2" column="2" >
+          <item row="1" column="2" >
            <widget class="QToolButton" name="tbDestination" >
             <property name="text" >
              <string>...</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="QLineEdit" name="leDestination" />
-          </item>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="lClassName" >
-            <property name="text" >
-             <string>Class Name :</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" >
+          <item row="2" column="0" >
            <widget class="QLabel" name="lAuthor" >
             <property name="text" >
              <string>Author :</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" >
+          <item row="2" column="1" colspan="2" >
+           <widget class="QLineEdit" name="leAuthor" />
+          </item>
+          <item row="3" column="0" >
            <widget class="QLabel" name="lLicense" >
             <property name="text" >
              <string>License :</string>
@@ -198,9 +186,6 @@
            </widget>
           </item>
           <item row="3" column="1" colspan="2" >
-           <widget class="QLineEdit" name="leAuthor" />
-          </item>
-          <item row="4" column="1" colspan="2" >
            <widget class="QComboBox" name="cbLicenses" >
             <property name="editable" >
              <bool>true</bool>
@@ -227,21 +212,21 @@
             </item>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="lHerits" >
+          <item row="4" column="0" >
+           <widget class="QLabel" name="lProject" >
             <property name="text" >
-             <string>Herits :</string>
+             <string>Project :</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="2" >
-           <widget class="QComboBox" name="cbHerits" >
-            <property name="editable" >
-             <bool>true</bool>
+          <item row="4" column="1" colspan="2" >
+           <widget class="QComboBox" name="cbProjects" >
+            <property name="enabled" >
+             <bool>false</bool>
             </property>
            </widget>
           </item>
-          <item row="6" column="1" colspan="2" >
+          <item row="5" column="1" colspan="2" >
            <widget class="QCheckBox" name="cbAddToProject" >
             <property name="enabled" >
              <bool>false</bool>
@@ -258,16 +243,28 @@
      </widget>
      <widget class="QWidget" name="wView" >
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>3</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
         <widget class="QSplitter" name="sView" >
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="handleWidth" >
+          <number>3</number>
          </property>
         </widget>
        </item>
@@ -277,11 +274,20 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>3</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <spacer>

@@ -3,16 +3,16 @@
 #include "pQScintilla.h"
 
 #include <QVariant>
-#include <QLabel>
+#include <QLineEdit>
 #include <QVBoxLayout>
 
 pTemplatePreviewer::pTemplatePreviewer( QWidget* w )
 	: QWidget( w )
 {
 	QVBoxLayout* mLayout = new QVBoxLayout( this );
-	mLabel = new QLabel;
+	mLineEdit = new QLineEdit;
 	mEditor = new pEditor;
-	mLayout->addWidget( mLabel );
+	mLayout->addWidget( mLineEdit );
 	mLayout->addWidget( mEditor );
 }
 
@@ -22,12 +22,12 @@ pTemplatePreviewer::~pTemplatePreviewer()
 
 void pTemplatePreviewer::setFileName( const QString& s )
 {
-	mLabel->setText( s );
+	mLineEdit->setText( s );
 }
 
 QString pTemplatePreviewer::fileName() const
 {
-	return mLabel->text();
+	return mLineEdit->text();
 }
 
 void pTemplatePreviewer::setDestination( const QString& s )

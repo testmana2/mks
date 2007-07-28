@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-class QLabel;
+class QLineEdit;
 class pEditor;
 
 class pTemplatePreviewer : public QWidget
@@ -11,7 +11,7 @@ class pTemplatePreviewer : public QWidget
 	Q_OBJECT
 
 protected:
-	QLabel* mLabel;
+	QLineEdit* mLineEdit;
 	pEditor* mEditor;
 
 public:
