@@ -10,6 +10,8 @@ pTemplatePreviewer::pTemplatePreviewer( QWidget* w )
 	: QWidget( w )
 {
 	QVBoxLayout* mLayout = new QVBoxLayout( this );
+	mLayout->setMargin( 0 );
+	mLayout->setSpacing( 3 );
 	mLineEdit = new QLineEdit;
 	mEditor = new pEditor;
 	mLayout->addWidget( mLineEdit );

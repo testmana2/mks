@@ -39,24 +39,22 @@ linux-g++:LIBS	*= -rdynamic
 win32-msvc:LIBS	*= /IMPLIB:$${BUILD_PATH}/monkey.lib
 win32-g++:LIBS	*= -Wl,--out-implib,$${BUILD_PATH}/libmonkey.a
 
-INCLUDEPATH	*= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager src/qscintillamanager/ui src/templatesmanager src/templatesmanager/ui
+INCLUDEPATH	*= . src src/maininterface src/maininterface/ui src/workspace src/recentsmanager src/qscintillamanager src/qscintillamanager/ui src/templatesmanager src/templatesmanager/ui src/abbreviationsmanager src/abbreviationsmanager/ui
 
 # include fresh framework
 include( ../fresh/fresh.pro )
 
 FORMS	*= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UIAbout.ui \
-	src/maininterface/ui/UIEditTemplate.ui \
-	src/maininterface/ui/UIAddAbbreviation.ui \
 	src/maininterface/ui/UISettings.ui \
 	src/qscintillamanager/ui/pSearch.ui \
+	src/abbreviationsmanager/ui/UIAddAbbreviation.ui \
+	src/templatesmanager/ui/UIEditTemplate.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui
 
 HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/maininterface/ui/UIAbout.h \
 	src/qscintillamanager/pQScintilla.h \
-	src/maininterface/ui/UIEditTemplate.h \
-	src/maininterface/ui/UIAddAbbreviation.h \
 	src/maininterface/ui/UISettings.h \
 	src/recentsmanager/pRecentsManager.h \
 	src/workspace/pAbstractChild.h \
@@ -67,14 +65,16 @@ HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/workspace/pFileManager.h \
 	src/workspace/pWorkspace.h \
 	src/maininterface/UIMain.h \
+	src/abbreviationsmanager/ui/UIAddAbbreviation.h \
+	src/templatesmanager/pTemplatesManager.h \
 	src/templatesmanager/pTemplatePreviewer.h \
-	src/templatesmanager/ui/UITemplatesWizard.h
+	src/templatesmanager/ui/UIEditTemplate.h \
+	src/templatesmanager/ui/UITemplatesWizard.h \
+	src/pTools.h
 
 SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
 	src/qscintillamanager/pQScintilla.cpp \
-	src/maininterface/ui/UIEditTemplate.cpp \
-	src/maininterface/ui/UIAddAbbreviation.cpp \
 	src/maininterface/ui/UISettings.cpp \
 	src/recentsmanager/pRecentsManager.cpp \
 	src/qscintillamanager/ui/pSearch.cpp \
@@ -84,6 +84,10 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/workspace/pFileManager.cpp \
 	src/workspace/pWorkspace.cpp \
 	src/maininterface/UIMain.cpp \
+	src/abbreviationsmanager/ui/UIAddAbbreviation.cpp \
+	src/templatesmanager/pTemplatesManager.cpp \
 	src/templatesmanager/pTemplatePreviewer.cpp \
+	src/templatesmanager/ui/UIEditTemplate.cpp \
 	src/templatesmanager/ui/UITemplatesWizard.cpp \
+	src/pTools.cpp \
 	src/main.cpp

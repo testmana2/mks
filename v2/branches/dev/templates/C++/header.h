@@ -1,21 +1,12 @@
-/*****************************************************
-* AUTHOR   : %AUTHOR%
-* PROJECT  : %PROJECTNAME%
-* FILENAME : %FILENAME%
-* DATE     : %DATE%
-* TIME     : %TIME%
-* LICENSE  : %LICENSE%
-* COMMENT  : %COMMENT%
-*****************************************************/
-#ifndef %UPPERCLASSNAME%_H
-#define %UPPERCLASSNAME%_H
+#ifndef $name.upper$_H
+#define $name.upper$_H
 
-class %CLASSNAME%
+class $name$
 {
 public:
-	%CLASSNAME%();
-	~%CLASSNAME%();
+	$name$();
+	~$name$();
 
 };
 
-#endif // %UPPERCLASSNAME%_H
+#endif // $name.upper$_H

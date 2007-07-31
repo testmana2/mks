@@ -3,12 +3,12 @@
 #include "pTemplatePreviewer.h"
 #include "pEditor.h"
 #include "pFileManager.h"
+#include "pTemplatesManager.h"
+#include "pTools.h"
 
-#include <QMessageBox>
 #include <QFileInfo>
 #include <QDir>
 #include <QDateTime>
-#include <QFileDialog>
 
 UITemplatesWizard::UITemplatesWizard( QWidget* w )
 	: QDialog( w )
@@ -31,30 +31,25 @@ void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
 {
 	// clear lwTemplates
 	lwTemplates->clear();
-	// get language template
-	QList<pTemplate*> tl = pQScintilla::instance()->templates();
-	QListWidgetItem* it;
 
 	// create blank file
-	it = new QListWidgetItem( lwTemplates );
+	QListWidgetItem* it = new QListWidgetItem( lwTemplates );
 	it->setIcon( QIcon( ":/file/icons/file/new.png" ) );
 	it->setToolTip( tr( "Blank File" ) );
 	it->setText( tr( "Blank" ) );
 	it->setData( Qt::UserRole +1, QString() );
 
-	foreach ( pTemplate* t, tl )
+	foreach ( pTemplate t, pTemplatesManager::templates() )
 	{
-		if ( t->Language == s )
+		if ( t.Language == s )
 		{
 			it = new QListWidgetItem( lwTemplates );
-			it->setIcon( QIcon( t->Icon ) );
-			it->setToolTip( t->Description );
-			it->setText( t->Name );
-			it->setData( Qt::UserRole +1, t->FileName );
+			it->setIcon( QIcon( t.Icon ) );
+			it->setToolTip( t.Description );
+			it->setText( t.Name );
+			it->setData( Qt::UserRole +1, t.FileNames );
 		}
 	}
-	// clear pointer
-	qDeleteAll( tl );
 }
 
 void UITemplatesWizard::on_swPages_currentChanged( int i )
@@ -79,7 +74,7 @@ void UITemplatesWizard::on_swPages_currentChanged( int i )
 
 void UITemplatesWizard::on_tbDestination_clicked()
 {
-	QString s = QFileDialog::getExistingDirectory( window(), tr( "Select the file(s) destination" ), leDestination->text() );
+	QString s = pTools::getExistingDirectory( tr( "Select the file(s) destination" ), leDestination->text(), window() );
 	if ( !s.isNull() )
 		leDestination->setText( s );
 }
@@ -107,19 +102,19 @@ bool UITemplatesWizard::checkTemplates()
 {
 	if ( !lwTemplates->selectedItems().count() )
 	{
-		QMessageBox::information( this, tr( "Templates..." ), tr( "Choose at least one template to continue." ) );
+		pTools::information( tr( "Templates..." ), tr( "Choose a template to continue." ), this );
 		return false;
 	}
 
 	if ( leBaseName->text().isEmpty() )
 	{
-		QMessageBox::information( this, tr( "Base Name..." ), tr( "Choose a base name for your file(s)." ) );
+		pTools::information( tr( "Base Name..." ), tr( "Choose a base name for your file(s)." ), this );
 		return false;
 	}
 
 	if ( leDestination->text().isEmpty() )
 	{
-		QMessageBox::information( this, tr( "Destination..." ), tr( "Choose a destination for your file(s)." ) );
+		pTools::information( tr( "Destination..." ), tr( "Choose a destination for your file(s)." ), this );
 		return false;
 	}
 
@@ -134,46 +129,37 @@ void UITemplatesWizard::generatePreview()
 	// create new preview
 	foreach ( QListWidgetItem* it, lwTemplates->selectedItems() )
 	{
-		QString s = pQScintilla::instance()->templatesPath().replace( "%HOME%", QDir::homePath() );
-		s = QString( it->data( Qt::UserRole +1 ).toString() ).replace( "%TEMPLATE_PATH%", s );
-		pTemplatePreviewer* p = new pTemplatePreviewer;
-		if ( it->data( Qt::UserRole +1 ).toString().isEmpty() )
+		// get template files
+		foreach ( QString s, it->data( Qt::UserRole +1 ).toStringList() )
 		{
-			p->setFileName( leBaseName->text() );
-			if ( it->text() == tr( "Blank" ) )
-				p->setOpen( true );
+			pTemplatePreviewer* p = new pTemplatePreviewer;
+			if ( s.isEmpty() )
+			{
+				p->setFileName( leBaseName->text() );
+				if ( it->text() == tr( "Blank" ) )
+					p->setOpen( true );
+			}
+			else
+			{
+				p->setFileName( leBaseName->text().append( QString( ".%1" ).arg( QFileInfo( s ).suffix() ) ) );
+				p->open( s );
+				p->editor()->insertAt( pTemplatesManager::templatesHeader(), 0, 0 );
+			}
+			p->setDestination( leDestination->text() );
+			// process content parsing
+			pTemplateContent tc;
+			tc.Name = leBaseName->text();
+			tc.Author = leAuthor->text();
+			tc.License = cbLicenses->currentText();
+			tc.Project = cbProjects->currentText();
+			tc.FileName = p->fileName();
+			tc.Comment = tr( "Your comment here" );
+			tc.Content = p->editor()->text();
+			// set content
+			p->editor()->setText( tc.Content.isEmpty() ? "\n" : pTemplatesManager::processContent( tc ) );
+			// add widget to splitter
+			sView->addWidget( p );
 		}
-		else
-		{
-			p->setFileName( leBaseName->text().append( QString( ".%1" ).arg( QFileInfo( s ).suffix() ) ) );
-			p->open( s );
-		}
-		p->setDestination( leDestination->text() );
-
-		// replace keywords
-		QString c = p->editor()->text();
-		// %PROJECTNAME%
-		c.replace( "%PROJECTNAME%", cbProjects->currentText(), Qt::CaseInsensitive );
-		// %AUTHOR%
-		c.replace( "%AUTHOR%", leAuthor->text(), Qt::CaseInsensitive );
-		// %FILENAME%
-		c.replace( "%FILENAME%", p->fileName(), Qt::CaseInsensitive );
-		// %DATE%
-		c.replace( "%DATE%", QDateTime::currentDateTime().toString( "yyyy/MM/dd" ), Qt::CaseInsensitive );
-		// %TIME%
-		c.replace( "%TIME%", QDateTime::currentDateTime().toString( "hh:mm" ), Qt::CaseInsensitive );
-		// %LICENSE%
-		c.replace( "%LICENSE%", cbLicenses->currentText(), Qt::CaseInsensitive );
-		// %COMMENT%
-		c.replace( "%COMMENT%", tr( "Your comment here" ), Qt::CaseInsensitive );
-		// %CLASSNAME%
-		c.replace( "%CLASSNAME%", leBaseName->text(), Qt::CaseInsensitive );
-		// %UPPERCLASSNAME%
-		c.replace( "%UPPERCLASSNAME%", leBaseName->text().toUpper(), Qt::CaseInsensitive );
-		// set text
-		p->editor()->setText( c.isEmpty() ? "\n" : c );
-		// add widget to splitter
-		sView->addWidget( p );
 	}
 }
 
@@ -187,19 +173,23 @@ void UITemplatesWizard::accept()
 		{
 			// set filename
 			QString s = QDir::cleanPath( p->destination().append( "/" ).append( p->fileName() ) );
+			// check if file already existing
+			if ( QFile::exists( s ) && !pTools::question( tr( "Overwrite File..." ), tr( "The file '%1' already exists, do you want to continue ?" ).arg( p->fileName() ) ) )
+				continue;
 			// if can save
 			if ( p->editor()->saveFile( s ) )
 			{
-				// open file in ide
-				pFileManager::instance()->openFile( QFileInfo( s ).canonicalFilePath() );
+				// open file in ide if needed
+				if ( cbOpen->isChecked() )
+					pFileManager::instance()->openFile( QFileInfo( s ).canonicalFilePath() );
 				// add to project if needed
 				if ( cbAddToProject->isChecked() )
 				{
 					//
 				}
+				// close dialog
+				QDialog::accept();
 			}
 		}
 	}
-	
-	QDialog::accept();
 }

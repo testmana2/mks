@@ -88,17 +88,21 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cbLanguages" />
+          <widget class="QComboBox" name="cbLanguages" >
+           <property name="toolTip" >
+            <string>Choose the language in witch you want to pick templates</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item>
         <widget class="QListWidget" name="lwTemplates" >
+         <property name="toolTip" >
+          <string>Choose a template</string>
+         </property>
          <property name="editTriggers" >
           <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="selectionMode" >
-          <enum>QAbstractItemView::MultiSelection</enum>
          </property>
          <property name="iconSize" >
           <size>
@@ -149,7 +153,11 @@
            </widget>
           </item>
           <item row="0" column="1" colspan="2" >
-           <widget class="QLineEdit" name="leBaseName" />
+           <widget class="QLineEdit" name="leBaseName" >
+            <property name="toolTip" >
+             <string>Base File/Class Name</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0" >
            <widget class="QLabel" name="lDestination" >
@@ -159,10 +167,17 @@
            </widget>
           </item>
           <item row="1" column="1" >
-           <widget class="QLineEdit" name="leDestination" />
+           <widget class="QLineEdit" name="leDestination" >
+            <property name="toolTip" >
+             <string>File Destination</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="2" >
            <widget class="QToolButton" name="tbDestination" >
+            <property name="toolTip" >
+             <string>Click to select a folder for your file(s)</string>
+            </property>
             <property name="text" >
              <string>...</string>
             </property>
@@ -176,7 +191,11 @@
            </widget>
           </item>
           <item row="2" column="1" colspan="2" >
-           <widget class="QLineEdit" name="leAuthor" />
+           <widget class="QLineEdit" name="leAuthor" >
+            <property name="toolTip" >
+             <string>Author(s), like : Nox P@sNox &lt;pasnox@gmail.com></string>
+            </property>
+           </widget>
           </item>
           <item row="3" column="0" >
            <widget class="QLabel" name="lLicense" >
@@ -187,6 +206,9 @@
           </item>
           <item row="3" column="1" colspan="2" >
            <widget class="QComboBox" name="cbLicenses" >
+            <property name="toolTip" >
+             <string>Choose a license for your file(s)</string>
+            </property>
             <property name="editable" >
              <bool>true</bool>
             </property>
@@ -224,17 +246,40 @@
             <property name="enabled" >
              <bool>false</bool>
             </property>
+            <property name="toolTip" >
+             <string>Choose the project in witch you want to add file(s)</string>
+            </property>
            </widget>
           </item>
           <item row="5" column="1" colspan="2" >
-           <widget class="QCheckBox" name="cbAddToProject" >
-            <property name="enabled" >
-             <bool>false</bool>
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>3</number>
             </property>
-            <property name="text" >
-             <string>Add to project</string>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="cbAddToProject" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="toolTip" >
+               <string>If checked, file(s) will be add to the current selected project</string>
+              </property>
+              <property name="text" >
+               <string>Add to project</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbOpen" >
+              <property name="toolTip" >
+               <string>If checked the file(s) will be opened at the wizard end</string>
+              </property>
+              <property name="text" >
+               <string>Open</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>

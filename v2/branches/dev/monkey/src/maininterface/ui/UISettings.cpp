@@ -4,6 +4,8 @@
 #include "UIEditTemplate.h"
 #include "UIAddAbbreviation.h"
 #include "pFileManager.h"
+#include "pTemplatesManager.h"
+#include "pTools.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
@@ -180,20 +182,18 @@ void UISettings::loadSettings()
 	cbRestoreSession->setChecked( sc->restoreSessionOnStartup() );
 
 	// File Templates
-	leTemplatesPath->setText( pQScintilla::instance()->templatesPath() );
-	QList<pTemplate*> tl = pQScintilla::instance()->templates();
-	foreach ( pTemplate* t, tl )
+	leTemplatesPath->setText( pTemplatesManager::templatesPath() );
+	foreach ( pTemplate t, pTemplatesManager::templates() )
 	{
 		QTreeWidgetItem* it = new QTreeWidgetItem( twTemplatesType );
-		it->setText( 0, t->Language );
-		it->setText( 1, t->Name );
-		it->setText( 2, t->Description );
-		it->setData( 0, Qt::UserRole, t->Icon );
-		it->setData( 0, Qt::UserRole +1, t->FileName );
-		it->setIcon( 0, QIcon( t->Icon ) );
+		it->setText( 0, t.Language );
+		it->setText( 1, t.Name );
+		it->setText( 2, t.Description );
+		it->setData( 0, Qt::UserRole, t.Icon );
+		it->setData( 0, Qt::UserRole +1, t.FileNames );
+		it->setIcon( 0, QIcon( t.Icon ) );
 	}
-	// clear pointer
-	qDeleteAll( tl );
+	teHeader->setPlainText( pTemplatesManager::templatesHeader() );
 
 	// Editor
 	//  General
@@ -302,13 +302,13 @@ void UISettings::loadSettings()
 		on_cbLexersHighlightingLanguages_currentIndexChanged( cbLexersHighlightingLanguages->itemText( 0 ) );
 
 	//  Abbreviations
-	foreach ( pAbbreviation* a, pQScintilla::instance()->abbreviations() )
+	foreach ( pAbbreviation a, pQScintilla::instance()->abbreviations() )
 	{
 		QTreeWidgetItem* it = new QTreeWidgetItem( twAbbreviations );
-		it->setText( 0, a->Template );
-		it->setText( 1, a->Description );
-		it->setText( 2, a->Language );
-		it->setData( 0, Qt::UserRole, a->Code );
+		it->setText( 0, a.Template );
+		it->setText( 1, a.Description );
+		it->setText( 2, a.Language );
+		it->setData( 0, Qt::UserRole, a.Code );
 	}
 
 	// Tools
@@ -333,21 +333,29 @@ void UISettings::saveSettings()
 	// remove key
 	s->remove( sp );
 	// default templates path
-	pQScintilla::instance()->setTemplatesPath( leTemplatesPath->text() );
+	pTemplatesManager::setTemplatesPath( leTemplatesPath->text() );
+	// tokenize items, need do separate as qsettings is not thread safe
+	for ( int i = 0; i < twTemplatesType->topLevelItemCount(); i++ )
+	{
+		QTreeWidgetItem* it = twTemplatesType->topLevelItem( i );
+		it->setData( 0, Qt::UserRole, pTemplatesManager::tokenize( it->data( 0, Qt::UserRole ).toString() ) );
+		it->setData( 0, Qt::UserRole +1, pTemplatesManager::tokenize( it->data( 0, Qt::UserRole +1 ).toStringList() ) );
+	}
 	// write new ones
 	s->beginWriteArray( sp );
 	for ( int i = 0; i < twTemplatesType->topLevelItemCount(); i++ )
 	{
 		s->setArrayIndex( i );
 		QTreeWidgetItem* it = twTemplatesType->topLevelItem( i );
-
 		s->setValue( "Language", it->text( 0 ) );
 		s->setValue( "Name", it->text( 1 ) );
 		s->setValue( "Description", it->text( 2 ) );
 		s->setValue( "Icon", it->data( 0, Qt::UserRole ).toString() );
-		s->setValue( "Filename", it->data( 0, Qt::UserRole +1 ).toString() );
+		s->setValue( "FileNames", it->data( 0, Qt::UserRole +1 ).toStringList() );
 	}
 	s->endArray();
+	// templates header
+	pTemplatesManager::setTemplatesHeader( teHeader->toPlainText() );
 
 	// Editor
 	//  General
@@ -524,24 +532,24 @@ void UISettings::on_tbDefaultProjectsDirectory_clicked()
 
 void UISettings::on_tbTemplatesPath_clicked()
 {
-	const QString d = leTemplatesPath->text().replace( "%HOME%", QDir::homePath() );
-	QString s = QFileDialog::getExistingDirectory( window(), tr( "Select default templates directory" ), d );
+	const QString d = pTools::unTokenizeHome( leTemplatesPath->text() );
+	QString s = pTools::getExistingDirectory( tr( "Select default templates directory" ), d, window() );
 	if ( !s.isNull() )
 	{
 		if ( s.endsWith( "/" ) )
 			s.chop( 1 );
-		leTemplatesPath->setText( s.replace( QDir::homePath(), "%HOME%" ) );
+		leTemplatesPath->setText( pTools::tokenizeHome( s ) );
 	}
 }
 
 void UISettings::on_pbAddTemplateType_clicked()
 {
-	UIEditTemplate::edit( twTemplatesType, 0, leTemplatesPath->text() );
+	UIEditTemplate::edit( twTemplatesType, 0 );
 }
 
 void UISettings::on_pbEditTemplateType_clicked()
 {
-	UIEditTemplate::edit( twTemplatesType, twTemplatesType->selectedItems().value( 0 ), leTemplatesPath->text() );
+	UIEditTemplate::edit( twTemplatesType, twTemplatesType->selectedItems().value( 0 ) );
 }
 
 void UISettings::on_pbRemoveTemplateType_clicked()
@@ -555,14 +563,8 @@ void UISettings::on_pbEditTemplate_clicked()
 	QTreeWidgetItem* it = twTemplatesType->selectedItems().value( 0 );
 	// open template file
 	if ( it )
-	{
-		// get correct full path
-		const QString t = leTemplatesPath->text().replace( "%HOME%", QDir::homePath() );
-		const QString f = it->data( 0, Qt::UserRole +1 ).toString().replace( "%TEMPLATE_PATH%", t );
-
-		// open template file
-		pFileManager::instance()->openFile( f );
-	}
+		foreach ( QString s, it->data( 0, Qt::UserRole +1 ).toStringList() )
+			pFileManager::instance()->openFile( s );
 }
 
 void UISettings::tbColours_clicked()
