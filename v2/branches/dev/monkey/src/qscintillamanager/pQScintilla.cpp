@@ -3,6 +3,7 @@
 #include "pEditor.h"
 #include "pAbstractChild.h"
 #include "pWorkspace.h"
+#include "pTemplatesManager.h"
 
 #include <QFileInfo>
 
@@ -378,88 +379,23 @@ void pQScintilla::setEditorProperties( pEditor* e )
 	e->setWrapVisualFlags( endWrapVisualFlag(), startWrapVisualFlag(), wrappedLineIndentWidth() );
 }
 
-const QList<pAbbreviation*> pQScintilla::defaultAbbreviations()
+const QList<pAbbreviation> pQScintilla::defaultAbbreviations()
 {
-	QList<pAbbreviation*> l;
-	pAbbreviation* a;
-
+	return QList<pAbbreviation>()
 	// C++
-	// classd
-	a = new pAbbreviation();
-	a->Template = "classd";
-	a->Description = "class declaration";
-	a->Language = "C++";
-	a->Code = "class |\n{\npublic:\n};";
-	l << a;
-	// forb
-	a = new pAbbreviation();
-	a->Template = "forb";
-	a->Description = "for statement";
-	a->Language = "C++";
-	a->Code = "for( |; ; )\n{\n}";
-	l << a;
-	// ifb
-	a = new pAbbreviation();
-	a->Template = "ifb";
-	a->Description = "if statement";
-	a->Language = "C++";
-	a->Code = "if( | )\n{\n}";
-	l << a;
-	// ife
-	a = new pAbbreviation();
-	a->Template = "ife";
-	a->Description = "if else statement";
-	a->Language = "C++";
-	a->Code = "if( | )\n{\n}\nelse\n{\n}";
-	l << a;
-	// pr
-	a = new pAbbreviation();
-	a->Template = "pr";
-	a->Description = "private";
-	a->Language = "C++";
-	a->Code = "private|";
-	l << a;
-	// pro
-	a = new pAbbreviation();
-	a->Template = "pro";
-	a->Description = "protected";
-	a->Language = "C++";
-	a->Code = "protected|";
-	l << a;
-	// pu
-	a = new pAbbreviation();
-	a->Template = "pu";
-	a->Description = "public";
-	a->Language = "C++";
-	a->Code = "public|";
-	l << a;
-	// structd
-	a = new pAbbreviation();
-	a->Template = "structd";
-	a->Description = "struct declaration";
-	a->Language = "C++";
-	a->Code = "struct |\n{\n};";
-	l << a;
-	// switchb
-	a = new pAbbreviation();
-	a->Template = "switchb";
-	a->Description = "switch statement";
-	a->Language = "C++";
-	a->Code = "switch( | )\n{\n}";
-	l << a;
-	// whileb
-	a = new pAbbreviation();
-	a->Template = "whileb";
-	a->Description = "while statement";
-	a->Language = "C++";
-	a->Code = "while( | )\n{\n}";
-	l << a;
-
-	// return abbreviations
-	return l;
+	<< pAbbreviation( "classd", "class declaration", "C++", "class |\n{\npublic:\n};" )
+	<< pAbbreviation( "forb", "for statement", "C++", "for( |; ; )\n{\n}" )
+	<< pAbbreviation( "ifb", "if statement", "C++", "if( | )\n{\n}" )
+	<< pAbbreviation( "ife", "if else statement", "C++", "if( | )\n{\n}\nelse\n{\n}" )
+	<< pAbbreviation( "pr", "private", "C++", "private|" )
+	<< pAbbreviation( "pro", "protected", "C++", "protected|" )
+	<< pAbbreviation( "pu", "public", "C++", "public|" )
+	<< pAbbreviation( "structd", "struct declaration", "C++", "struct |\n{\n};" )
+	<< pAbbreviation( "switchb", "switch statement", "C++", "switch( | )\n{\n}" )
+	<< pAbbreviation( "whileb", "while statement", "C++", "while( | )\n{\n}" );
 }
 
-const QList<pAbbreviation*> pQScintilla::abbreviations()
+const QList<pAbbreviation> pQScintilla::abbreviations()
 {
 	// get settings
 	pSettings* s = pSettings::instance();
@@ -472,12 +408,7 @@ const QList<pAbbreviation*> pQScintilla::abbreviations()
 		for ( int i = 0; i < size; i++ )
 		{
 			s->setArrayIndex( i );
-			pAbbreviation* a = new pAbbreviation();
-			a->Template = s->value( "Template" ).toString();
-			a->Description = s->value( "Description" ).toString();
-			a->Language = s->value( "Language" ).toString();
-			a->Code = s->value( "Code" ).toString();
-			mAbbreviations << a;
+			mAbbreviations << pAbbreviation( s->value( "Template" ).toString(), s->value( "Description" ).toString(), s->value( "Language" ).toString(), s->value( "Code" ).toString() );
 		}
 		s->endArray();
 
@@ -488,32 +419,6 @@ const QList<pAbbreviation*> pQScintilla::abbreviations()
 
 	// return abbreviations
 	return mAbbreviations;
-}
-
-const QList<pTemplate*> pQScintilla::templates()
-{
-	// get settings
-	pSettings* s = pSettings::instance();
-
-	// templates list;
-	QList<pTemplate*> l;
-
-	int size = s->beginReadArray( "Templates" );
-	for ( int i = 0; i < size; i++ )
-	{
-		s->setArrayIndex( i );
-		pTemplate* t = new pTemplate();
-		t->Language = s->value( "Language" ).toString();
-		t->Name = s->value( "Name" ).toString();
-		t->Description = s->value( "Description" ).toString();
-		t->Icon = s->value( "Icon" ).toString();
-		t->FileName = s->value( "Filename" ).toString();
-		l << t;
-	}
-	s->endArray();
-
-	// return list
-	return l;
 }
 
 QStringList pQScintilla::languages() const
@@ -689,10 +594,6 @@ QsciLexer* pQScintilla::lexerForFilename( const QString& s )
 
 void pQScintilla::applyProperties()
 {
-	// clear mAbbreviations so a call to abbreviations() will refill it
-	qDeleteAll( mAbbreviations );
-	mAbbreviations.clear();
-
 	// apply scintilla properties
 	foreach ( pAbstractChild* c, pWorkspace::instance()->children() )
 	{
@@ -740,10 +641,10 @@ void pQScintilla::expandAbbreviation( pEditor* e )
 	const QString lng = e->lexer()->language();
 
 	// look for abbreviation and lexer to replace
-	foreach ( pAbbreviation* a, abbreviations() )
+	foreach ( pAbbreviation a, abbreviations() )
 	{
 		// if template is found for language
-		if ( a->Language == lng && a->Template == t )
+		if ( a.Language == lng && a.Template == t )
 		{
 			// select word template from document
 			e->setSelection( p.y(), i +1, p.y(), i +1 +t.length() );
@@ -756,7 +657,7 @@ void pQScintilla::expandAbbreviation( pEditor* e )
 			int k;
 
 			// get code lines
-			QStringList l = a->Code.split( "\n" );
+			QStringList l = a.Code.split( "\n" );
 			int j = 0;
 			// iterating code lines
 			foreach ( QString s, l )
@@ -861,16 +762,6 @@ void pQScintilla::setRestoreSessionOnStartup( bool b )
 bool pQScintilla::restoreSessionOnStartup() const
 {
 	return pSettings::instance()->value( mPath +"/RestoreSessionOnStartup", true ).toBool();
-}
-
-void pQScintilla::setTemplatesPath( const QString& s )
-{
-	pSettings::instance()->setValue( "Templates/DefaultDirectory", s );
-}
-
-QString pQScintilla::templatesPath() const
-{
-	return pSettings::instance()->value( "Templates/DefaultDirectory", "%HOME%/.Monkey Studio/Templates" ).toString();
 }
 
 void pQScintilla::setAutoSyntaxCheck( bool b )

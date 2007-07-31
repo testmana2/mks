@@ -1,25 +1,16 @@
-/*****************************************************
-* AUTHOR   : %AUTHOR%
-* PROJECT  : %PROJECTNAME%
-* FILENAME : %FILENAME%
-* DATE     : %DATE%
-* TIME     : %TIME%
-* LICENSE  : %LICENSE%
-* COMMENT  : %COMMENT%
-*****************************************************/
-#ifndef %UPPERCLASSNAME%_H
-#define %UPPERCLASSNAME%_H
+#ifndef $name.upper$_H
+#define $name.upper$_H
 
 #include <QWidget>
 
-class %CLASSNAME% : public QWidget
+class $name$ : public QWidget
 {
 	Q_OBJECT
 
 public:
-	%CLASSNAME%( QWidget* = 0 );
-	~%CLASSNAME%();
+	$name$( QWidget* = 0 );
+	~$name$();
 
 };
 
-#endif // %UPPERCLASSNAME%_H
+#endif // $name.upper$_H

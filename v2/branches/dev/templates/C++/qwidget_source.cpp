@@ -1,19 +1,10 @@
-/*****************************************************
-* AUTHOR   : %AUTHOR%
-* PROJECT  : %PROJECTNAME%
-* FILENAME : %FILENAME%
-* DATE     : %DATE%
-* TIME     : %TIME%
-* LICENSE  : %LICENSE%
-* COMMENT  : %COMMENT%
-*****************************************************/
-#include "%CLASSNAME%.h"
+#include "$name$.h"
 
-%CLASSNAME%::%CLASSNAME%( QWidget* w )
+$name$::$name$( QWidget* w )
 	: QWidget( w )
 {
 }
 
-%CLASSNAME%::~%CLASSNAME%()
+$name$::~$name$()
 {
 }

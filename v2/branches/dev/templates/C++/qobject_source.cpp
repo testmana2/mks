@@ -1,19 +1,10 @@
-/*****************************************************
-* AUTHOR   : %AUTHOR%
-* PROJECT  : %PROJECTNAME%
-* FILENAME : %FILENAME%
-* DATE     : %DATE%
-* TIME     : %TIME%
-* LICENSE  : %LICENSE%
-* COMMENT  : %COMMENT%
-*****************************************************/
-#include "%CLASSNAME%.h"
+#include "$name$.h"
 
-%CLASSNAME%::%CLASSNAME%( QObject* o )
+$name$::$name$( QObject* o )
 	: QObject( o )
 {
 }
 
-%CLASSNAME%::~%CLASSNAME%()
+$name$::~$name$()
 {
 }
