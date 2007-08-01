@@ -19,15 +19,15 @@ const QList<pTemplate> pTemplatesManager::defaultTemplates()
 {
 	return QList<pTemplate>()
 	// C++
-	<< pTemplate( "C++", "Header", "Simple Header", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/header.h" ) ) )
-	<< pTemplate( "C++", "Source", "Simple Source", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/source.cpp" ) ) )
-	<< pTemplate( "C++", "Main", "Simple Main", unTokenize( "$TEMPLATE_PATH$/C++/console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/main.cpp" ) ) )
-	<< pTemplate( "C++", "QObject Header", "Simple QObject Header", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_header.h" ) ) )
-	<< pTemplate( "C++", "QObject Source", "Simple QObject Source", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_source.cpp" ) ) )
-	<< pTemplate( "C++", "QWidget Header", "Simple QWidget Header", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_header.h" ) ) )
-	<< pTemplate( "C++", "QWidget Source", "Simple QWidget Source", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_source.cpp" ) ) )
-	<< pTemplate( "C++", "Qt Console Main", "Simple Qt Console Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_console_main.cpp" ) ) )
-	<< pTemplate( "C++", "Qt GUI Main", "Simple Qt GUI Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_gui.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_gui_main.cpp" ) ) );
+	<< pTemplate( "C++", "", "Header", "Simple Header", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/header.h" ) ) )
+	<< pTemplate( "C++", "", "Source", "Simple Source", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/source.cpp" ) ) )
+	<< pTemplate( "C++", "", "Main", "Simple Main", unTokenize( "$TEMPLATE_PATH$/C++/console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/main.cpp" ) ) )
+	<< pTemplate( "C++", "", "QObject Header", "Simple QObject Header", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_header.h" ) ) )
+	<< pTemplate( "C++", "", "QObject Source", "Simple QObject Source", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_source.cpp" ) ) )
+	<< pTemplate( "C++", "", "QWidget Header", "Simple QWidget Header", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_header.h" ) ) )
+	<< pTemplate( "C++", "", "QWidget Source", "Simple QWidget Source", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_source.cpp" ) ) )
+	<< pTemplate( "C++", "", "Qt Console Main", "Simple Qt Console Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_console_main.cpp" ) ) )
+	<< pTemplate( "C++", "", "Qt GUI Main", "Simple Qt GUI Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_gui.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_gui_main.cpp" ) ) );
 }
 
 const QList<pTemplate> pTemplatesManager::templates()
@@ -165,14 +165,17 @@ const QString pTemplatesManager::processContent( pTemplateContent tc )
 			QString v = l.at( 0 );
 
 			// monkeystudio_version
-			if ( v == "monkeystudio_version" )
+			if ( v == "editor_version" )
 				l[0] = PROGRAM_VERSION;
 			// monkeystudio_version_string
-			else if ( v == "monkeystudio_version_string" )
+			else if ( v == "editor_version_string" )
 				l[0] = QString( "%1 v%2" ).arg( PROGRAM_NAME ).arg( PROGRAM_VERSION );
 			// filename
 			else if ( v == "filename" )
 				l[0] = tc.FileName;
+			// basename
+			else if ( v == "basename" )
+				l[0] = QFileInfo( tc.FileName ).baseName();
 			// name
 			else if ( v == "name" )
 				l[0] = tc.Name;

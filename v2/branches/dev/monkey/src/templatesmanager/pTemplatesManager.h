@@ -21,10 +21,11 @@ class pTemplatePreviewer;
 struct Q_MONKEY_EXPORT pTemplate
 {
 	pTemplate() {}
-	pTemplate( const QString& l, const QString& n, const QString& d, const QString& i, const QStringList& f )
-		: Language( l ), Name( n ), Description( d ), Icon( i ), FileNames( f ) {}
+	pTemplate( const QString& l, const QString& t, const QString& n, const QString& d, const QString& i, const QStringList& f )
+		: Language( l ), Type( t ), Name( n ), Description( d ), Icon( i ), FileNames( f ) {}
 
 	QString Language;
+	QString Type;
 	QString Name;
 	QString Description;
 	QString Icon;

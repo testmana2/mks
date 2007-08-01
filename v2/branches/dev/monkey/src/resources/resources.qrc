@@ -49,6 +49,9 @@
     <qresource prefix="/licenses" >
         <file>texts/license.gpl</file>
     </qresource>
+    <qresource prefix="/project" >
+        <file>icons/project/new.png</file>
+    </qresource>
     <qresource prefix="/temp" >
         <file>icons/temp/kcmsystem.png</file>
         <file>icons/temp/kpf.png</file>
