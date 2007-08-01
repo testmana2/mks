@@ -721,7 +721,7 @@ void pQScintilla::setDefaultProjectsDirectory( const QString& s )
 
 QString pQScintilla::defaultProjectsDirectory() const
 {
-	return pSettings::instance()->value( mPath +"/DefaultProjectsDirectory", "%HOME%/.Monkey Studio/Projects" ).toString();
+	return pSettings::instance()->value( mPath +"/DefaultProjectsDirectory", "$HOME$/.Monkey Studio/Projects" ).toString();
 }
 
 void pQScintilla::setUIDesignerMode( pQScintilla::UIDesignerMode d )

@@ -52,6 +52,10 @@ const QString pTools::getImageFileName( const QString& c, const QString& f, QWid
 	d.setFileMode( QFileDialog::ExistingFile );
 	// choose last used filter if available
 	d.selectFilter( pSettings::instance()->value( "Recents/ImageFilter" ).toString() );
+	// set filename
+	QFileInfo fi( f );
+	d.setDirectory( fi.path() );
+	d.selectFile( fi.fileName() );
 
 	// execute dialog
 	d.exec();

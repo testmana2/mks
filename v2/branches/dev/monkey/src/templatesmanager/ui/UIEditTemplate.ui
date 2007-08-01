@@ -9,26 +9,11 @@
     <height>224</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>File Type</string>
-  </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>5</number>
    </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>3</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>3</number>
    </property>
    <item row="0" column="0" >
@@ -86,10 +71,10 @@
    </item>
    <item row="3" column="0" colspan="5" >
     <layout class="QGridLayout" >
-     <property name="horizontalSpacing" >
-      <number>3</number>
+     <property name="margin" >
+      <number>0</number>
      </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>3</number>
      </property>
      <item rowspan="4" row="0" column="0" >
