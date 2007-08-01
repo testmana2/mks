@@ -6,37 +6,88 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>224</height>
+    <height>251</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
+   <property name="horizontalSpacing" >
     <number>3</number>
    </property>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="lLanguage" >
-     <property name="text" >
-      <string>Language :</string>
-     </property>
-    </widget>
+   <property name="verticalSpacing" >
+    <number>3</number>
+   </property>
+   <item row="0" column="0" colspan="3" >
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="lLanguage" >
+       <property name="text" >
+        <string>Language :</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cbLanguages" />
+     </item>
+     <item>
+      <widget class="QLabel" name="lType" >
+       <property name="text" >
+        <string>Type :</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cbType" >
+       <item>
+        <property name="text" >
+         <string>Files</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="../../resources/resources.qrc" >:/file/icons/file/new.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Projects</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="../../resources/resources.qrc" >:/project/icons/project/new.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Extras</string>
+        </property>
+        <property name="icon" >
+         <iconset resource="../../resources/resources.qrc" >:/file/icons/file/recents.png</iconset>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="0" column="1" >
-    <widget class="QComboBox" name="cbLanguages" />
-   </item>
-   <item row="0" column="2" >
+   <item row="1" column="0" >
     <widget class="QLabel" name="lName" >
      <property name="text" >
       <string>Name :</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="3" >
+   <item row="1" column="1" >
     <widget class="QLineEdit" name="leName" />
    </item>
-   <item rowspan="2" row="0" column="4" >
+   <item rowspan="2" row="1" column="2" >
     <widget class="QToolButton" name="tbIcon" >
      <property name="minimumSize" >
       <size>
@@ -52,29 +103,41 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
+   <item row="2" column="0" >
     <widget class="QLabel" name="lDescription" >
      <property name="text" >
       <string>Description :</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="3" >
+   <item row="2" column="1" >
     <widget class="QLineEdit" name="leDescription" />
    </item>
-   <item row="2" column="0" colspan="5" >
+   <item row="3" column="0" colspan="3" >
     <widget class="QLabel" name="lFiles" >
      <property name="text" >
       <string>Template File(s) :</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="5" >
+   <item row="4" column="0" colspan="3" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>3</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>3</number>
      </property>
      <item rowspan="4" row="0" column="0" >
@@ -120,7 +183,7 @@
      </item>
     </layout>
    </item>
-   <item row="4" column="0" colspan="5" >
+   <item row="5" column="0" colspan="3" >
     <widget class="QDialogButtonBox" name="dbbButtons" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -132,7 +195,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/resources.qrc" />
+ </resources>
  <connections>
   <connection>
    <sender>dbbButtons</sender>
