@@ -48,32 +48,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="cbType" >
-       <item>
-        <property name="text" >
-         <string>Files</string>
-        </property>
-        <property name="icon" >
-         <iconset resource="../../resources/resources.qrc" >:/file/icons/file/new.png</iconset>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Projects</string>
-        </property>
-        <property name="icon" >
-         <iconset resource="../../resources/resources.qrc" >:/project/icons/project/new.png</iconset>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>Extras</string>
-        </property>
-        <property name="icon" >
-         <iconset resource="../../resources/resources.qrc" >:/file/icons/file/recents.png</iconset>
-        </property>
-       </item>
-      </widget>
+      <widget class="QComboBox" name="cbType" />
      </item>
     </layout>
    </item>
