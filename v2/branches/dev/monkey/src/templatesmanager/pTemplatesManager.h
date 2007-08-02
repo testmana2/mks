@@ -20,12 +20,13 @@ class pTemplatePreviewer;
 
 struct Q_MONKEY_EXPORT pTemplate
 {
+	enum TemplateType { ttUnknow = 0, ttFiles, ttProjects, ttExtras };
 	pTemplate() {}
-	pTemplate( const QString& l, const QString& t, const QString& n, const QString& d, const QString& i, const QStringList& f )
+	pTemplate( const QString& l, TemplateType t, const QString& n, const QString& d, const QString& i, const QStringList& f )
 		: Language( l ), Type( t ), Name( n ), Description( d ), Icon( i ), FileNames( f ) {}
 
 	QString Language;
-	QString Type;
+	TemplateType Type;
 	QString Name;
 	QString Description;
 	QString Icon;

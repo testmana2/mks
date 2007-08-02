@@ -19,15 +19,15 @@ const QList<pTemplate> pTemplatesManager::defaultTemplates()
 {
 	return QList<pTemplate>()
 	// C++
-	<< pTemplate( "C++", "", "Header", "Simple Header", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/header.h" ) ) )
-	<< pTemplate( "C++", "", "Source", "Simple Source", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/source.cpp" ) ) )
-	<< pTemplate( "C++", "", "Main", "Simple Main", unTokenize( "$TEMPLATE_PATH$/C++/console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/main.cpp" ) ) )
-	<< pTemplate( "C++", "", "QObject Header", "Simple QObject Header", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_header.h" ) ) )
-	<< pTemplate( "C++", "", "QObject Source", "Simple QObject Source", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_source.cpp" ) ) )
-	<< pTemplate( "C++", "", "QWidget Header", "Simple QWidget Header", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_header.h" ) ) )
-	<< pTemplate( "C++", "", "QWidget Source", "Simple QWidget Source", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_source.cpp" ) ) )
-	<< pTemplate( "C++", "", "Qt Console Main", "Simple Qt Console Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_console_main.cpp" ) ) )
-	<< pTemplate( "C++", "", "Qt GUI Main", "Simple Qt GUI Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_gui.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_gui_main.cpp" ) ) );
+	<< pTemplate( "C++", pTemplate::ttFiles, "Header", "Simple Header", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/header.h" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "Source", "Simple Source", unTokenize( "$TEMPLATE_PATH$/C++/misc.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/source.cpp" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "Main", "Simple Main", unTokenize( "$TEMPLATE_PATH$/C++/console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/main.cpp" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "QObject Header", "Simple QObject Header", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_header.h" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "QObject Source", "Simple QObject Source", unTokenize( "$TEMPLATE_PATH$/C++/qobject.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qobject_source.cpp" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "QWidget Header", "Simple QWidget Header", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_header.h" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "QWidget Source", "Simple QWidget Source", unTokenize( "$TEMPLATE_PATH$/C++/qwidget.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qwidget_source.cpp" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "Qt Console Main", "Simple Qt Console Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_console.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_console_main.cpp" ) ) )
+	<< pTemplate( "C++", pTemplate::ttFiles, "Qt GUI Main", "Simple Qt GUI Main", unTokenize( "$TEMPLATE_PATH$/C++/qt_gui.png" ), QStringList( unTokenize( "$TEMPLATE_PATH$/C++/qt_gui_main.cpp" ) ) );
 }
 
 const QList<pTemplate> pTemplatesManager::templates()
@@ -41,7 +41,7 @@ const QList<pTemplate> pTemplatesManager::templates()
 	for ( int i = 0; i < size; i++ )
 	{
 		s->setArrayIndex( i );
-		mTemplates << pTemplate( s->value( "Language" ).toString(), s->value( "Name" ).toString(), s->value( "Description" ).toString(), s->value( "Icon" ).toString(), s->value( "FileNames" ).toStringList() );
+		mTemplates << pTemplate( s->value( "Language" ).toString(), (pTemplate::TemplateType)s->value( "Type" ).toInt(), s->value( "Name" ).toString(), s->value( "Description" ).toString(), s->value( "Icon" ).toString(), s->value( "FileNames" ).toStringList() );
 	}
 	s->endArray();
 
@@ -83,7 +83,7 @@ const QString pTemplatesManager::templatesHeader()
 	if ( s.isEmpty() )
 		s = "/****************************************************************************\n"
 			"**\n"
-			"** 		Created using $monkeystudio_version_string$\n"
+			"** 		Created using $editor_version_string$\n"
 			"** Author    : $author$\n"
 			"** Project   : $name$\n"
 			"** FileName  : $filename$\n"

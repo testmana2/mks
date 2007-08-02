@@ -191,6 +191,22 @@ void UISettings::loadSettings()
 		it->setText( 2, t.Description );
 		it->setData( 0, Qt::UserRole, t.Icon );
 		it->setData( 0, Qt::UserRole +1, t.FileNames );
+		it->setData( 0, Qt::UserRole +2, t.Type );
+		switch( t.Type )
+		{
+			case pTemplate::ttFiles:
+				it->setText( 3, tr( "Files" ) );
+				break;
+			case pTemplate::ttProjects:
+				it->setText( 3, tr( "Projects" ) );
+				break;
+			case pTemplate::ttExtras:
+				it->setText( 3, tr( "Extras" ) );
+				break;
+			default:
+				it->setText( 3, tr( "Unknow" ) );
+				break;
+		}
 		it->setIcon( 0, QIcon( t.Icon ) );
 	}
 	teHeader->setPlainText( pTemplatesManager::templatesHeader() );
@@ -352,6 +368,7 @@ void UISettings::saveSettings()
 		s->setValue( "Description", it->text( 2 ) );
 		s->setValue( "Icon", it->data( 0, Qt::UserRole ).toString() );
 		s->setValue( "FileNames", it->data( 0, Qt::UserRole +1 ).toStringList() );
+		s->setValue( "Type", it->data( 0, Qt::UserRole +2 ).toInt() );
 	}
 	s->endArray();
 	// templates header
