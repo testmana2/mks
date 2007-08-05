@@ -48,7 +48,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="cbType" />
+      <widget class="QComboBox" name="cbTypes" />
      </item>
     </layout>
    </item>

@@ -22,11 +22,14 @@ UIEditTemplate::UIEditTemplate( QWidget* w, QTreeWidget* t, QTreeWidgetItem* i )
 	setWindowTitle( tr( "Creating new template" ) );
 	// fill combo with language
 	cbLanguages->addItems( pQScintilla::instance()->languages() );
+	// fill type comboobox
+	pTemplate::fillComboBox( cbTypes );
 	// fill infos
 	if ( i )
 	{
 		setWindowTitle( tr( "Editing template - %1" ).arg( i->text( 1 ) ) );
 		cbLanguages->setCurrentIndex( cbLanguages->findText( i->text( 0 ), Qt::MatchFixedString ) );
+		cbTypes->setCurrentIndex( cbTypes->findData( i->data( 0, Qt::UserRole +2 ).toInt(), Qt::UserRole, Qt::MatchFixedString ) );
 		leName->setText( i->text( 1 ) );
 		leDescription->setText( i->text( 2 ) );
 		tbIcon->setIcon( i->icon( 0 ) );
@@ -113,11 +116,13 @@ void UIEditTemplate::accept()
 		mItem->setIcon( 0, tbIcon->icon() );
 		mItem->setText( 1, leName->text() );
 		mItem->setText( 2, leDescription->text() );
+		mItem->setText( 3, cbTypes->currentText() );
 		mItem->setData( 0, Qt::UserRole, tbIcon->toolTip() );
 		QStringList l;
 		for ( int i = 0; i < lwFiles->count(); i++ )
 			l << lwFiles->item( i )->toolTip();
 		mItem->setData( 0, Qt::UserRole +1, l );
+		mItem->setData( 0, Qt::UserRole +2, cbTypes->itemData( cbTypes->currentIndex() ).toInt() );
 		// set current item new one
 		mTree->setCurrentItem( mItem );
 		// accept

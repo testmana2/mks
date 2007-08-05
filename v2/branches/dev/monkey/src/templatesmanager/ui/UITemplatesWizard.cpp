@@ -15,10 +15,10 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 {
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
-
 	// fill available languages
 	cbLanguages->addItems( pQScintilla::instance()->languages() );
-
+	// fill type comboobox
+	pTemplate::fillComboBox( cbTypes );
 	// show correct page
 	on_swPages_currentChanged( 0 );
 }
@@ -34,14 +34,14 @@ void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
 
 	// create blank file
 	QListWidgetItem* it = new QListWidgetItem( lwTemplates );
-	it->setIcon( QIcon( ":/file/icons/file/new.png" ) );
+	it->setIcon( QIcon( ":/templates/icons/templates/empty.png" ) );
 	it->setToolTip( tr( "Blank File" ) );
 	it->setText( tr( "Blank" ) );
 	it->setData( Qt::UserRole +1, QString() );
 
 	foreach ( pTemplate t, pTemplatesManager::templates() )
 	{
-		if ( t.Language == s )
+		if ( t.Language == s && pTemplate::stringForType( t.Type ) == cbTypes->currentText() )
 		{
 			it = new QListWidgetItem( lwTemplates );
 			it->setIcon( QIcon( t.Icon ) );
@@ -50,6 +50,11 @@ void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
 			it->setData( Qt::UserRole +1, t.FileNames );
 		}
 	}
+}
+
+void UITemplatesWizard::on_cbTypes_currentIndexChanged( const QString& )
+{
+	on_cbLanguages_currentIndexChanged( cbLanguages->currentText() );
 }
 
 void UITemplatesWizard::on_swPages_currentChanged( int i )
@@ -126,6 +131,7 @@ void UITemplatesWizard::generatePreview()
 	// delete all existing preview
 	qDeleteAll( sView->findChildren<pTemplatePreviewer*>() );
 
+	int i = 0;
 	// create new preview
 	foreach ( QListWidgetItem* it, lwTemplates->selectedItems() )
 	{
@@ -143,7 +149,8 @@ void UITemplatesWizard::generatePreview()
 			{
 				p->setFileName( leBaseName->text().append( QString( ".%1" ).arg( QFileInfo( s ).suffix() ) ) );
 				p->open( s );
-				p->editor()->insertAt( pTemplatesManager::templatesHeader(), 0, 0 );
+				if ( cbTypes->itemData( cbTypes->currentIndex() ).toInt() != pTemplate::ttProjects || ( i != 0 && cbTypes->itemData( cbTypes->currentIndex() ).toInt() == pTemplate::ttProjects ) )
+					p->editor()->insertAt( pTemplatesManager::templatesHeader(), 0, 0 );
 			}
 			p->setDestination( leDestination->text() );
 			// process content parsing
@@ -160,11 +167,14 @@ void UITemplatesWizard::generatePreview()
 			// add widget to splitter
 			sView->addWidget( p );
 		}
+		// increase i
+		i++;
 	}
 }
 
 void UITemplatesWizard::accept()
 {
+	int i = 0;
 	// create files
 	foreach ( pTemplatePreviewer* p, sView->findChildren<pTemplatePreviewer*>() )
 	{
@@ -181,7 +191,14 @@ void UITemplatesWizard::accept()
 			{
 				// open file in ide if needed
 				if ( cbOpen->isChecked() )
-					pFileManager::instance()->openFile( QFileInfo( s ).canonicalFilePath() );
+				{
+					/*
+					if ( i == 0 && cbTypes->itemData( cbTypes->currentIndex() ).toInt() == pTemplate::ttProjects )
+						pFileManager::instance()->openProject( QFileInfo( s ).canonicalFilePath() );
+					else
+					*/
+						pFileManager::instance()->openFile( QFileInfo( s ).canonicalFilePath() );
+				}
 				// add to project if needed
 				if ( cbAddToProject->isChecked() )
 				{
@@ -191,5 +208,7 @@ void UITemplatesWizard::accept()
 				QDialog::accept();
 			}
 		}
+		// increase i
+		i++;
 	}
 }

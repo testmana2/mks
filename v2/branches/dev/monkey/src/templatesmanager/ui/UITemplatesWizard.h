@@ -18,6 +18,7 @@ private:
 
 private slots:
 	void on_cbLanguages_currentIndexChanged( const QString& );
+	void on_cbTypes_currentIndexChanged( const QString& );
 	void on_swPages_currentChanged( int );
 	void on_tbDestination_clicked();
 	void on_pbPrevious_clicked();

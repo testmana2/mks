@@ -34,7 +34,7 @@
    <item row="1" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pGeneral" >
       <layout class="QVBoxLayout" >
@@ -821,7 +821,7 @@
           <item row="2" column="0" colspan="2" >
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -837,12 +837,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lAutoCompletionThreshold" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Threshold :</string>
               </property>
@@ -851,7 +845,7 @@
             <item>
              <widget class="QSlider" name="sAutoCompletionThreshold" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -953,7 +947,7 @@
           <item>
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -969,12 +963,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lCallTipsVisible" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Visible Calltips :</string>
               </property>
@@ -983,7 +971,7 @@
             <item>
              <widget class="QSlider" name="sCallTipsVisible" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -1242,7 +1230,7 @@
           <item row="4" column="0" colspan="2" >
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -1258,12 +1246,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lIndentationWidth" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Indentation Width :</string>
               </property>
@@ -1272,7 +1254,7 @@
             <item>
              <widget class="QSlider" name="sIndentationWidth" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -1315,7 +1297,7 @@
           <item row="3" column="0" colspan="2" >
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -1331,12 +1313,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lIndentationTabWidth" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Tab Width :</string>
               </property>
@@ -1345,7 +1321,7 @@
             <item>
              <widget class="QSlider" name="sIndentationTabWidth" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -1789,7 +1765,7 @@
           <item row="1" column="0" colspan="2" >
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -1805,12 +1781,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lEdgeColumnNumber" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Column Number :</string>
               </property>
@@ -1819,7 +1789,7 @@
             <item>
              <widget class="QSlider" name="sEdgeColumnNumber" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -1962,7 +1932,7 @@
           <item row="2" column="0" colspan="2" >
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -1978,12 +1948,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lCaretWidth" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Width :</string>
               </property>
@@ -1992,7 +1956,7 @@
             <item>
              <widget class="QSlider" name="sCaretWidth" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -2110,7 +2074,7 @@
           <item>
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -2126,12 +2090,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lLineNumbersMarginWidth" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Width :</string>
               </property>
@@ -2140,7 +2098,7 @@
             <item>
              <widget class="QSlider" name="sLineNumbersMarginWidth" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -2604,7 +2562,7 @@
           <item row="2" column="0" colspan="3" >
            <layout class="QHBoxLayout" >
             <property name="spacing" >
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="leftMargin" >
              <number>0</number>
@@ -2620,12 +2578,6 @@
             </property>
             <item>
              <widget class="QLabel" name="lWrappedLineIndentWidth" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
               <property name="text" >
                <string>Indent Width :</string>
               </property>
@@ -2634,7 +2586,7 @@
             <item>
              <widget class="QSlider" name="sWrappedLineIndentWidth" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>

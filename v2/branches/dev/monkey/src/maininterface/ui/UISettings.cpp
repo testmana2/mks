@@ -192,21 +192,7 @@ void UISettings::loadSettings()
 		it->setData( 0, Qt::UserRole, t.Icon );
 		it->setData( 0, Qt::UserRole +1, t.FileNames );
 		it->setData( 0, Qt::UserRole +2, t.Type );
-		switch( t.Type )
-		{
-			case pTemplate::ttFiles:
-				it->setText( 3, tr( "Files" ) );
-				break;
-			case pTemplate::ttProjects:
-				it->setText( 3, tr( "Projects" ) );
-				break;
-			case pTemplate::ttExtras:
-				it->setText( 3, tr( "Extras" ) );
-				break;
-			default:
-				it->setText( 3, tr( "Unknow" ) );
-				break;
-		}
+		it->setText( 3, pTemplate::stringForType( t.Type ) );
 		it->setIcon( 0, QIcon( t.Icon ) );
 	}
 	teHeader->setPlainText( pTemplatesManager::templatesHeader() );
