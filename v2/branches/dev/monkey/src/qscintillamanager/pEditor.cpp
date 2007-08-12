@@ -1,6 +1,6 @@
 #include "pEditor.h"
-#include "pQScintilla.h"
 #include "pSearch.h"
+#include "pMonkeyStudio.h"
 
 #include "qsciprinter.h"
 
@@ -13,6 +13,7 @@
 #include <QPrintDialog>
 #include <QDir>
 #include <QDateTime>
+#include <QTextCodec>
 
 bool pEditor::mPasteAvailableInit = false;
 bool pEditor::mPasteAvailable = false;
@@ -139,28 +140,30 @@ bool pEditor::openFile( const QString& s )
 	setProperty( "fileName", s );
 
 	// set lexer and apis
-	setLexer( pQScintilla::instance()->lexerForFilename( s ) );
+	setLexer( pMonkeyStudio::lexerForFilename( s ) );
 
 	// set properties
-	pQScintilla::instance()->setEditorProperties( this );
+	pMonkeyStudio::setEditorProperties( this );
 
 	// load file
 	QApplication::setOverrideCursor( Qt::WaitCursor );
-	QTextStream i( &f ); // defaultEncoding()
+	QTextStream i( &f );
+	if ( i.codec()->name() != qPrintable( pMonkeyStudio::defaultEncoding() ) )
+		i.setCodec( qPrintable( pMonkeyStudio::defaultEncoding() ) );
 	setText( i.readAll() );
 	setModified( false );
 	QApplication::restoreOverrideCursor();
 
 	// convert tabs if needed
-	if ( pQScintilla::instance()->convertTabsUponOpen() )
+	if ( pMonkeyStudio::convertTabsUponOpen() )
 		convertTabs();
 		
 	// make backup if needed
-	if ( pQScintilla::instance()->createBackupUponOpen() )
+	if ( pMonkeyStudio::createBackupUponOpen() )
 		makeBackup();
 
 	// convert eol
-	if ( pQScintilla::instance()->autoEolConversion() )
+	if ( pMonkeyStudio::autoEolConversion() )
 		convertEols( eolMode() );
 
 	return true;
@@ -196,7 +199,9 @@ bool pEditor::saveFile( const QString& s )
 
 	// writing file
 	QApplication::setOverrideCursor( Qt::WaitCursor );
-	QTextStream o( &f ); // defaultEncoding()
+	QTextStream o( &f );
+	if ( o.codec()->name() != qPrintable( pMonkeyStudio::defaultEncoding() ) )
+		o.setCodec( qPrintable( pMonkeyStudio::defaultEncoding() ) );
 	o << text();
 	setModified( false );
 	QApplication::restoreOverrideCursor();

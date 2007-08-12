@@ -1,4 +1,4 @@
-#include "$basename.h"
+#include "$basename$.h"
 
 $basename$::$basename$( QObject* o )
 	: QObject( o )

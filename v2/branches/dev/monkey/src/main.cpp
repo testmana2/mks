@@ -5,6 +5,7 @@
 #include <QLocale>
 
 #include "UITranslator.h"
+#include "UISettings.h"
 #include "UIMain.h"
 #include "pSettings.h"
 
@@ -68,6 +69,11 @@ int main( int argc, char** argv )
 		t.load( QString( "%1/monkey2_%3" ).arg( pSettings::instance()->value( "Paths/Translations" ).toString(), mLanguage ) );
 		a.installTranslator( &t );
 	}
+
+	// show settings dialog the first time user start program
+	if ( pSettings::instance()->value( "FirstTimeRunning", true ).toBool() )
+		if ( UISettings::instance()->exec() )
+			pSettings::instance()->setValue( "FirstTimeRunning", false );
 
 	// init main window
 	showMessage( &splash, QObject::tr( "Initializing Main Window..." ) );
