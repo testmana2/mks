@@ -1,6 +1,5 @@
 #include "UIEditTemplate.h"
-#include "pQScintilla.h"
-#include "pTools.h"
+#include "pMonkeyStudio.h"
 #include "pTemplatesManager.h"
 
 #include <QTreeWidget>
@@ -21,7 +20,7 @@ UIEditTemplate::UIEditTemplate( QWidget* w, QTreeWidget* t, QTreeWidgetItem* i )
 	setupUi( this );
 	setWindowTitle( tr( "Creating new template" ) );
 	// fill combo with language
-	cbLanguages->addItems( pQScintilla::instance()->languages() );
+	cbLanguages->addItems( pMonkeyStudio::availableLanguages() );
 	// fill type comboobox
 	pTemplate::fillComboBox( cbTypes );
 	// fill infos
@@ -57,7 +56,7 @@ bool UIEditTemplate::canAddFile( const QString& s )
 void UIEditTemplate::on_tbIcon_clicked()
 {
 	// choose image
-	QString s = pTools::getImageFileName( tr( "Select an icon for this template type" ), tbIcon->toolTip(), this );
+	QString s = pMonkeyStudio::getImageFileName( tr( "Select an icon for this template type" ), tbIcon->toolTip(), this );
 	// remember it
 	if ( !s.isNull() )
 	{
@@ -69,7 +68,7 @@ void UIEditTemplate::on_tbIcon_clicked()
 void UIEditTemplate::on_pbAdd_clicked()
 {
 	// get a file
-	QString s = pTools::getOpenFileName( tr( "Select a template file" ), pTemplatesManager::templatesPath(), window() );
+	QString s = pMonkeyStudio::getOpenFileName( tr( "Select a template file" ), pTemplatesManager::templatesPath(), QString(), window() );
 	// remember it
 	if ( !s.isNull() && canAddFile( s ) )
 	{
@@ -87,7 +86,7 @@ void UIEditTemplate::on_pbEdit_clicked()
 	if ( !it )
 		return;
 	// get a file
-	QString s = pTools::getOpenFileName( tr( "Select a template file" ), it->toolTip(), window() );
+	QString s = pMonkeyStudio::getOpenFileName( tr( "Select a template file" ), it->toolTip(), QString(), window() );
 	// remember it
 	if ( !s.isNull() && canAddFile( s ) )
 	{
@@ -129,5 +128,5 @@ void UIEditTemplate::accept()
 		QDialog::accept();
 	}
 	else
-		pTools::warning( tr( "Warning..." ), tr( "This template name is already used." ), window() );
+		pMonkeyStudio::warning( tr( "Warning..." ), tr( "This template name is already used." ), window() );
 }

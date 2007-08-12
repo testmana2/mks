@@ -13,13 +13,25 @@
    <string>Translation...</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/linguist.png</iconset>
+   <iconset resource="../../resources/resources.qrc" >:/translation/icons/translation/translation.png</iconset>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>3</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>3</number>
    </property>
    <item row="0" column="0" colspan="3" >
@@ -52,7 +64,7 @@
       <string>Reload the translations list</string>
      </property>
      <property name="icon" >
-      <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/buildclean.png</iconset>
+      <iconset resource="../../resources/resources.qrc" >:/translation/icons/translation/update.png</iconset>
      </property>
     </widget>
    </item>
@@ -62,7 +74,7 @@
       <string>Locate the translations</string>
      </property>
      <property name="icon" >
-      <iconset resource="../../resources/resources.qrc" >:/Icons/Icons/folder_blue.png</iconset>
+      <iconset resource="../../resources/resources.qrc" >:/translation/icons/translation/folder.png</iconset>
      </property>
     </widget>
    </item>

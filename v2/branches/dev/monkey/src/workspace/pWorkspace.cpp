@@ -16,13 +16,13 @@
 #include "UISettings.h"
 #include "UISaveFiles.h"
 #include "UIAbout.h"
-#include "pQScintilla.h"
 #include "UITemplatesWizard.h"
+#include "pAbbreviationsManager.h"
+#include "pMonkeyStudio.h"
 
 #include "pChild.h"
 
 #include <QToolButton>
-#include <QFileDialog>
 #include <QCloseEvent>
 
 pWorkspace::pWorkspace( QWidget* p )
@@ -131,10 +131,19 @@ void pWorkspace::fileOpen_triggered()
 	const QString mPath = pRecentsManager::instance()->recentFileOpenPath();
 
 	// get available filters
-	QString mFilters = pQScintilla::instance()->filters();
+	QString mFilters = pMonkeyStudio::availableLanguagesFilters();
+
+	// prepend a all in one filter
+	if ( !mFilters.isEmpty() )
+	{
+		QString s;
+		foreach ( QStringList l, pMonkeyStudio::availableSuffixes().values() )
+			s.append( l.join( " " ).append( " " ) );
+		mFilters.prepend( QString( "All Supported Files (%1);;" ).arg( s.trimmed() ) );
+	}
 
 	// open open file dialog
-	QStringList l = QFileDialog::getOpenFileNames( this, tr( "Choose the file(s) to open" ), mPath, mFilters );
+	QStringList l = pMonkeyStudio::getOpenFileNames( tr( "Choose the file(s) to open" ), mPath, mFilters, window() );
 
 	// for each entry, open file
 	foreach ( QString s, l )
@@ -288,7 +297,7 @@ void pWorkspace::editExpandAbbreviation_triggered()
 {
 	pAbstractChild* c = currentChild();
 	if ( c )
-		pQScintilla::instance()->expandAbbreviation( c->currentEditor() );
+		pAbbreviationsManager::expandAbbreviation( c->currentEditor() );
 }
 
 // view menu

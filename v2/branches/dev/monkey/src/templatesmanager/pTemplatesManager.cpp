@@ -8,7 +8,7 @@
 * COMMENT  : Your comment here
 *****************************************************/
 #include "pTemplatesManager.h"
-#include "pTools.h"
+#include "pMonkeyStudio.h"
 #include "pSettings.h"
 
 #include <QDir>
@@ -25,6 +25,7 @@ const QList<pTemplate> pTemplatesManager::defaultTemplates()
 	<< pTemplate( "C++", pTemplate::ttFiles, "Qt Console Main", "Simple Qt Console Main", ":/templates/icons/templates/qt_console.png", unTokenize( QStringList( "$TEMPLATE_PATH$/C++/Files/qt_console_main.cpp" ) ) )
 	<< pTemplate( "C++", pTemplate::ttFiles, "Qt GUI Main", "Simple Qt GUI Main", ":/templates/icons/templates/qt_gui.png", unTokenize( QStringList( "$TEMPLATE_PATH$/C++/Files/qt_gui_main.cpp" ) ) )
 	// C++ Extras
+	<< pTemplate( "C++", pTemplate::ttExtras, "Namespace", "Simple Namespace", ":/templates/icons/templates/namespace.png", unTokenize( QStringList() << "$TEMPLATE_PATH$/C++/Extras/namespace.h" << "$TEMPLATE_PATH$/C++/Extras/namespace.cpp" ) )
 	<< pTemplate( "C++", pTemplate::ttExtras, "QObject", "Simple QObject Class", ":/templates/icons/templates/qobject.png", unTokenize( QStringList() << "$TEMPLATE_PATH$/C++/Files/qobject_header.h" << "$TEMPLATE_PATH$/C++/Files/qobject_source.cpp" ) )
 	<< pTemplate( "C++", pTemplate::ttExtras, "QWidget", "Simple QWidget Class", ":/templates/icons/templates/qwidget.png", unTokenize( QStringList() << "$TEMPLATE_PATH$/C++/Files/qwidget_header.h" << "$TEMPLATE_PATH$/C++/Files/qwidget_source.cpp" ) ) 
 	<< pTemplate( "C++", pTemplate::ttExtras, "QDialog", "Simple QDialog Class", ":/templates/icons/templates/qdialog.png", unTokenize( QStringList() << "$TEMPLATE_PATH$/C++/Files/qdialog_header.h" << "$TEMPLATE_PATH$/C++/Files/qdialog_source.cpp" ) ) 
@@ -36,13 +37,13 @@ const QList<pTemplate> pTemplatesManager::defaultTemplates()
 	<< pTemplate( "C++", pTemplate::ttProjects, "Qt Static Lib", "Simple Qt Static Lib", ":/templates/icons/templates/qt_static_lib.png", unTokenize( QStringList( "$TEMPLATE_PATH$/C++/Projects/qt_gui.pro" ) ) );
 }
 
-const QList<pTemplate> pTemplatesManager::templates()
+const QList<pTemplate> pTemplatesManager::availableTemplates()
 {
 	// get settings
 	pSettings* s = pSettings::instance();
-	
+	// values list
 	QList<pTemplate> mTemplates;
-
+	// read settings
 	int size = s->beginReadArray( "Templates" );
 	for ( int i = 0; i < size; i++ )
 	{
@@ -50,7 +51,6 @@ const QList<pTemplate> pTemplatesManager::templates()
 		mTemplates << pTemplate( s->value( "Language" ).toString(), (pTemplate::TemplateType)s->value( "Type" ).toInt(), s->value( "Name" ).toString(), s->value( "Description" ).toString(), s->value( "Icon" ).toString(), s->value( "FileNames" ).toStringList() );
 	}
 	s->endArray();
-
 	// untokenize, need doing it separatly because qsettings is not thread safe
 	for ( int i = 0; i < mTemplates.count(); i++ )
 	{
@@ -58,23 +58,21 @@ const QList<pTemplate> pTemplatesManager::templates()
 		t.Icon = unTokenize( t.Icon );
 		t.FileNames = unTokenize( t.FileNames );
 	}
-
 	// get default abbreviations if needed
 	if ( mTemplates.isEmpty() )
 		mTemplates << defaultTemplates();
-
 	// return list
 	return mTemplates;
 }
 
 void pTemplatesManager::setTemplatesPath( const QString& s )
 {
-	pSettings::instance()->setValue( "Templates/DefaultDirectory", pTools::tokenizeHome( s ) );
+	pSettings::instance()->setValue( "Templates/DefaultDirectory", pMonkeyStudio::tokenizeHome( s ) );
 }
 
 const QString pTemplatesManager::templatesPath()
 {
-	return pTools::unTokenizeHome( pSettings::instance()->value( "Templates/DefaultDirectory", "$HOME$/.Monkey Studio/Templates" ).toString() );
+	return pMonkeyStudio::unTokenizeHome( pSettings::instance()->value( "Templates/DefaultDirectory", "$HOME$/.Monkey Studio/Templates" ).toString() );
 }
 
 void pTemplatesManager::setTemplatesHeader( const QString& s )
@@ -133,7 +131,6 @@ QString processFunction( const QString& v, const QString& f )
 {
 	// get lower function name
 	QString s = f.toLower();
-
 	// interpret
 	if ( s == "upper" )
 		return v.toUpper();
@@ -143,7 +140,6 @@ QString processFunction( const QString& v, const QString& f )
 		return v.trimmed();
 	else if ( s == "simplified" )
 		return v.simplified();
-
 	// default value
 	return v;
 }
@@ -154,22 +150,18 @@ const QString pTemplatesManager::processContent( pTemplateContent tc )
 	int p = 0;
 	QString s;
 	QRegExp r( "(\\$[^$\\s]+\\$)" );
-
 	// search and interpret values
 	while ( ( p = r.indexIn( tc.Content, p ) ) != -1 )
 	{
 		// got keyword
 		s = r.capturedTexts().value( 1 ).toLower();
-
 		// process value if needed
 		if ( !values.contains( s ) )
 		{
 			// slip to check function needed
 			QStringList l = QString( s ).replace( "$", "" ).split( "." );
-
 			// set value
 			QString v = l.at( 0 );
-
 			// monkeystudio_version
 			if ( v == "editor_version" )
 				l[0] = PROGRAM_VERSION;
@@ -202,24 +194,19 @@ const QString pTemplatesManager::processContent( pTemplateContent tc )
 				l[0] = tc.Project;
 			else
 				l[0] = "";
-
 			// process function
 			if ( l.count() > 1 )
 				for ( int i = 0; i < l.count(); i++ )
 					l[0] = processFunction( l.at( 0 ), l.at( i ) );
-
 			// save value
 			values[s] = l.at( 0 );
 		}
-
 		// next occurence
 		p += r.matchedLength();
 	}
-	
 	// replace occurences
 	foreach ( QString k, values.keys() )
 		tc.Content.replace( k, values[k], Qt::CaseInsensitive );
-
 	// return value
 	return tc.Content;
 }

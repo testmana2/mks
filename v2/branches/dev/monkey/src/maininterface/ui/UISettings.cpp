@@ -1,11 +1,34 @@
 #include "UISettings.h"
 #include "pSettings.h"
-#include "pQScintilla.h"
 #include "UIEditTemplate.h"
 #include "UIAddAbbreviation.h"
 #include "pFileManager.h"
 #include "pTemplatesManager.h"
-#include "pTools.h"
+#include "pAbbreviationsManager.h"
+#include "pMonkeyStudio.h"
+
+#include "qscilexerbash.h"
+#include "qscilexerbatch.h"
+#include "qscilexercmake.h"
+#include "qscilexercpp.h"
+#include "qscilexercsharp.h"
+#include "qscilexercss.h"
+#include "qscilexerd.h"
+#include "qscilexerdiff.h"
+#include "qscilexerhtml.h"
+#include "qscilexeridl.h"
+#include "qscilexerjava.h"
+#include "qscilexerjavascript.h"
+#include "qscilexerlua.h"
+#include "qscilexermakefile.h"
+#include "qscilexerperl.h"
+#include "qscilexerpov.h"
+#include "qscilexerproperties.h"
+#include "qscilexerpython.h"
+#include "qscilexerruby.h"
+#include "qscilexersql.h"
+#include "qscilexertex.h"
+#include "qscilexervhdl.h"
 
 #include <QButtonGroup>
 #include <QFileDialog>
@@ -26,27 +49,26 @@ UISettings::UISettings( QWidget* p )
 
 	QStringList l;
 
+	foreach ( QString s, pMonkeyStudio::availableLanguages() )
+			mLexers[s] = pMonkeyStudio::lexerForLanguage( s );
+
 	// designer
 	bgUIDesigner = new QButtonGroup( gbUIDesignerIntegration );
-	bgUIDesigner->addButton( rbUseEmbeddedUIDesigner, pQScintilla::uidmEmbedded );
-	bgUIDesigner->addButton( rbRunQtDesigner, pQScintilla::uidmExternal );
+	bgUIDesigner->addButton( rbUseEmbeddedUIDesigner, pMonkeyStudio::uidmEmbedded );
+	bgUIDesigner->addButton( rbRunQtDesigner, pMonkeyStudio::uidmExternal );
 
 	// externalchanges
 	bgExternalChanges = new QButtonGroup( gbOnExternalChanges );
-	bgExternalChanges->addButton( rbDoNothing, pQScintilla::ecmNothing );
-	bgExternalChanges->addButton( rbAlertUser, pQScintilla::ecmAlert );
-	bgExternalChanges->addButton( rbReloadAutomatically, pQScintilla::ecmReload );
+	bgExternalChanges->addButton( rbDoNothing, pMonkeyStudio::ecmNothing );
+	bgExternalChanges->addButton( rbAlertUser, pMonkeyStudio::ecmAlert );
+	bgExternalChanges->addButton( rbReloadAutomatically, pMonkeyStudio::ecmReload );
 
 	// resize column
 	twTemplatesType->setColumnWidth( 0, 100 );
 	twTemplatesType->setColumnWidth( 1, 100 );
 
 	// loads text codecs
-	l.clear();
-	foreach ( QByteArray a, QTextCodec::availableCodecs() )
-		l << a;
-	l.sort();
-	cbDefaultEncoding->addItems( l );
+	cbDefaultEncoding->addItems( pMonkeyStudio::availableTextCodecs() );
 
 	// auto completion source
 	bgAutoCompletionSource = new QButtonGroup( gbAutoCompletionSource );
@@ -103,11 +125,9 @@ UISettings::UISettings( QWidget* p )
 	bgEndWrapVisualFlag->addButton( rbEndWrapFlagByBorder, QsciScintilla::WrapFlagByBorder );
 
 	// fill lexers combo
-	l = pQScintilla::instance()->languages();
-	l.sort();
-	cbSourceAPIsLanguages->addItems( l );
-	cbLexersAssociationsLanguages->addItems( l );
-	cbLexersHighlightingLanguages->addItems( l );
+	cbSourceAPIsLanguages->addItems( pMonkeyStudio::availableLanguages() );
+	cbLexersAssociationsLanguages->addItems( pMonkeyStudio::availableLanguages() );
+	cbLexersHighlightingLanguages->addItems( pMonkeyStudio::availableLanguages() );
 
 	// resize column
 	twLexersAssociations->setColumnWidth( 0, 200 );
@@ -169,21 +189,20 @@ UISettings::UISettings( QWidget* p )
 
 void UISettings::loadSettings()
 {
-	pQScintilla* sc = pQScintilla::instance();
 	pSettings* s = pSettings::instance();
 	QString sp;
 
 	// General
-	cbRestoreProjectsOnStartup->setChecked( sc->restoreProjectsOnStartup() );
-	leDefaultProjectsDirectory->setText( sc->defaultProjectsDirectory() );
-	bgUIDesigner->button( sc->uiDesignerMode() )->setChecked( true );
-	bgExternalChanges->button( sc->externalchanges() )->setChecked( true );
-	cbSaveSession->setChecked( sc->saveSessionOnClose() );
-	cbRestoreSession->setChecked( sc->restoreSessionOnStartup() );
+	cbRestoreProjectsOnStartup->setChecked( pMonkeyStudio::restoreProjectsOnStartup() );
+	leDefaultProjectsDirectory->setText( pMonkeyStudio::defaultProjectsDirectory() );
+	bgUIDesigner->button( pMonkeyStudio::uiDesignerMode() )->setChecked( true );
+	bgExternalChanges->button( pMonkeyStudio::externalchanges() )->setChecked( true );
+	cbSaveSession->setChecked( pMonkeyStudio::saveSessionOnClose() );
+	cbRestoreSession->setChecked( pMonkeyStudio::restoreSessionOnStartup() );
 
 	// File Templates
 	leTemplatesPath->setText( pTemplatesManager::templatesPath() );
-	foreach ( pTemplate t, pTemplatesManager::templates() )
+	foreach ( pTemplate t, pTemplatesManager::availableTemplates() )
 	{
 		QTreeWidgetItem* it = new QTreeWidgetItem( twTemplatesType );
 		it->setText( 0, t.Language );
@@ -199,96 +218,96 @@ void UISettings::loadSettings()
 
 	// Editor
 	//  General
-	cbAutoSyntaxCheck->setChecked( sc->autoSyntaxCheck() );
-	cbConvertTabsUponOpen->setChecked( sc->convertTabsUponOpen() );
-	cbCreateBackupUponOpen->setChecked( sc->createBackupUponOpen() );
-	cbAutoEolConversion->setChecked( sc->autoEolConversion() );
-	cbDefaultEncoding->setCurrentIndex( cbDefaultEncoding->findText( sc->defaultEncoding() ) );
-	tbSelectionBackground->setIcon( colourizedPixmap( sc->selectionBackgroundColor() ) );
-	tbSelectionForeground->setIcon( colourizedPixmap( sc->selectionForegroundColor() ) );
-	gbDefaultDocumentColours->setChecked( sc->defaultDocumentColours() );
-	tbDefaultDocumentPen->setIcon( colourizedPixmap( sc->defaultDocumentPen() ) );
-	tbDefaultDocumentPaper->setIcon( colourizedPixmap( sc->defaultDocumentPaper() ) );
+	cbAutoSyntaxCheck->setChecked( pMonkeyStudio::autoSyntaxCheck() );
+	cbConvertTabsUponOpen->setChecked( pMonkeyStudio::convertTabsUponOpen() );
+	cbCreateBackupUponOpen->setChecked( pMonkeyStudio::createBackupUponOpen() );
+	cbAutoEolConversion->setChecked( pMonkeyStudio::autoEolConversion() );
+	cbDefaultEncoding->setCurrentIndex( cbDefaultEncoding->findText( pMonkeyStudio::defaultEncoding() ) );
+	tbSelectionBackground->setIcon( colourizedPixmap( pMonkeyStudio::selectionBackgroundColor() ) );
+	tbSelectionForeground->setIcon( colourizedPixmap( pMonkeyStudio::selectionForegroundColor() ) );
+	gbDefaultDocumentColours->setChecked( pMonkeyStudio::defaultDocumentColours() );
+	tbDefaultDocumentPen->setIcon( colourizedPixmap( pMonkeyStudio::defaultDocumentPen() ) );
+	tbDefaultDocumentPaper->setIcon( colourizedPixmap( pMonkeyStudio::defaultDocumentPaper() ) );
 	//  Auto Completion
-	gbAutoCompletionEnabled->setChecked( sc->autoCompletionSource() != QsciScintilla::AcsNone );
-	cbAutoCompletionCaseSensitivity->setChecked( sc->autoCompletionCaseSensitivity() );
-	cbAutoCompletionReplaceWord->setChecked( sc->autoCompletionReplaceWord() );
-	cbAutoCompletionShowSingle->setChecked( sc->autoCompletionShowSingle() );
-	sAutoCompletionThreshold->setValue( sc->autoCompletionThreshold() );
-	if ( bgAutoCompletionSource->button( sc->autoCompletionSource() ) )
-		bgAutoCompletionSource->button( sc->autoCompletionSource() )->setChecked( true );
+	gbAutoCompletionEnabled->setChecked( pMonkeyStudio::autoCompletionSource() != QsciScintilla::AcsNone );
+	cbAutoCompletionCaseSensitivity->setChecked( pMonkeyStudio::autoCompletionCaseSensitivity() );
+	cbAutoCompletionReplaceWord->setChecked( pMonkeyStudio::autoCompletionReplaceWord() );
+	cbAutoCompletionShowSingle->setChecked( pMonkeyStudio::autoCompletionShowSingle() );
+	sAutoCompletionThreshold->setValue( pMonkeyStudio::autoCompletionThreshold() );
+	if ( bgAutoCompletionSource->button( pMonkeyStudio::autoCompletionSource() ) )
+		bgAutoCompletionSource->button( pMonkeyStudio::autoCompletionSource() )->setChecked( true );
 	//  Call Tips
-	gbCalltipsEnabled->setChecked( sc->callTipsStyle() != QsciScintilla::CallTipsNone );
-	sCallTipsVisible->setValue( sc->callTipsVisible() );
-	if ( bgCallTipsStyle->button( sc->callTipsStyle() ) )
-		bgCallTipsStyle->button( sc->callTipsStyle() )->setChecked( true );
-	tbCalltipsBackground->setIcon( colourizedPixmap( sc->callTipsBackgroundColor() ) );
-	tbCalltipsForeground->setIcon( colourizedPixmap( sc->callTipsForegroundColor() ) );
-	tbCalltipsHighlight->setIcon( colourizedPixmap( sc->callTipsHighlightColor() ) );
+	gbCalltipsEnabled->setChecked( pMonkeyStudio::callTipsStyle() != QsciScintilla::CallTipsNone );
+	sCallTipsVisible->setValue( pMonkeyStudio::callTipsVisible() );
+	if ( bgCallTipsStyle->button( pMonkeyStudio::callTipsStyle() ) )
+		bgCallTipsStyle->button( pMonkeyStudio::callTipsStyle() )->setChecked( true );
+	tbCalltipsBackground->setIcon( colourizedPixmap( pMonkeyStudio::callTipsBackgroundColor() ) );
+	tbCalltipsForeground->setIcon( colourizedPixmap( pMonkeyStudio::callTipsForegroundColor() ) );
+	tbCalltipsHighlight->setIcon( colourizedPixmap( pMonkeyStudio::callTipsHighlightColor() ) );
 	//  Indentation
-	cbAutoIndent->setChecked( sc->autoIndent() );
-	cbBackspaceUnindents->setChecked( sc->backspaceUnindents() );
-	cbIndentationGuides->setChecked( sc->indentationGuides() );
-	cbIndentationUseTabs->setChecked( sc->indentationsUseTabs() );
-	cbTabIndents->setChecked( sc->tabIndents() );
-	sIndentationTabWidth->setValue( sc->tabWidth() );
-	sIndentationWidth->setValue( sc->indentationWidth() );
-	tbIndentationGuidesBackground->setIcon( colourizedPixmap( sc->indentationGuidesBackgroundColor() ) );
-	tbIndentationGuidesForeground->setIcon( colourizedPixmap( sc->indentationGuidesForegroundColor() ) );
+	cbAutoIndent->setChecked( pMonkeyStudio::autoIndent() );
+	cbBackspaceUnindents->setChecked( pMonkeyStudio::backspaceUnindents() );
+	cbIndentationGuides->setChecked( pMonkeyStudio::indentationGuides() );
+	cbIndentationUseTabs->setChecked( pMonkeyStudio::indentationsUseTabs() );
+	cbTabIndents->setChecked( pMonkeyStudio::tabIndents() );
+	sIndentationTabWidth->setValue( pMonkeyStudio::tabWidth() );
+	sIndentationWidth->setValue( pMonkeyStudio::indentationWidth() );
+	tbIndentationGuidesBackground->setIcon( colourizedPixmap( pMonkeyStudio::indentationGuidesBackgroundColor() ) );
+	tbIndentationGuidesForeground->setIcon( colourizedPixmap( pMonkeyStudio::indentationGuidesForegroundColor() ) );
 	//  Brace Matching
-	gbBraceMatchingEnabled->setChecked( sc->braceMatching() != QsciScintilla::NoBraceMatch );
-	if ( bgBraceMatch->button( sc->braceMatching() ) )
-		bgBraceMatch->button( sc->braceMatching() )->setChecked( true );
-	tbMatchedBraceForeground->setIcon( colourizedPixmap( sc->matchedBraceForegroundColor() ) );
-	tbMatchedBraceBackground->setIcon( colourizedPixmap( sc->matchedBraceBackgroundColor() ) );
-	tbUnmatchedBraceBackground->setIcon( colourizedPixmap( sc->unmatchedBraceBackgroundColor() ) );
-	tbUnmatchedBraceForeground->setIcon( colourizedPixmap( sc->unmatchedBraceForegroundColor() ) );
+	gbBraceMatchingEnabled->setChecked( pMonkeyStudio::braceMatching() != QsciScintilla::NoBraceMatch );
+	if ( bgBraceMatch->button( pMonkeyStudio::braceMatching() ) )
+		bgBraceMatch->button( pMonkeyStudio::braceMatching() )->setChecked( true );
+	tbMatchedBraceForeground->setIcon( colourizedPixmap( pMonkeyStudio::matchedBraceForegroundColor() ) );
+	tbMatchedBraceBackground->setIcon( colourizedPixmap( pMonkeyStudio::matchedBraceBackgroundColor() ) );
+	tbUnmatchedBraceBackground->setIcon( colourizedPixmap( pMonkeyStudio::unmatchedBraceBackgroundColor() ) );
+	tbUnmatchedBraceForeground->setIcon( colourizedPixmap( pMonkeyStudio::unmatchedBraceForegroundColor() ) );
 	//  Edge Mode
-	gbEdgeModeEnabled->setChecked( sc->edgeMode() != QsciScintilla::EdgeNone );
-	if ( bgEdgeMode->button( sc->edgeMode() ) )
-		bgEdgeMode->button( sc->edgeMode() )->setChecked( true );
-	sEdgeColumnNumber->setValue( sc->edgeColumn() );
-	tbEdgeColor->setIcon( colourizedPixmap( sc->edgeColor() ) );
+	gbEdgeModeEnabled->setChecked( pMonkeyStudio::edgeMode() != QsciScintilla::EdgeNone );
+	if ( bgEdgeMode->button( pMonkeyStudio::edgeMode() ) )
+		bgEdgeMode->button( pMonkeyStudio::edgeMode() )->setChecked( true );
+	sEdgeColumnNumber->setValue( pMonkeyStudio::edgeColumn() );
+	tbEdgeColor->setIcon( colourizedPixmap( pMonkeyStudio::edgeColor() ) );
 	//  Caret
-	gbCaretLineVisible->setChecked( sc->caretLineVisible() );
-	tbCaretLineBackground->setIcon( colourizedPixmap( sc->caretLineBackgroundColor() ) );
-	tbCaretForeground->setIcon( colourizedPixmap( sc->caretForegroundColor() ) );
-	sCaretWidth->setValue( sc->caretWidth() );
+	gbCaretLineVisible->setChecked( pMonkeyStudio::caretLineVisible() );
+	tbCaretLineBackground->setIcon( colourizedPixmap( pMonkeyStudio::caretLineBackgroundColor() ) );
+	tbCaretForeground->setIcon( colourizedPixmap( pMonkeyStudio::caretForegroundColor() ) );
+	sCaretWidth->setValue( pMonkeyStudio::caretWidth() );
 	//  Margins
-	gbLineNumbersMarginEnabled->setChecked( sc->lineNumbersMarginEnabled() );
-	sLineNumbersMarginWidth->setValue( sc->lineNumbersMarginWidth() );
-	cbLineNumbersMarginAutoWidth->setChecked( sc->lineNumbersMarginAutoWidth() );
-	gbFoldMarginEnabled->setChecked( sc->folding() != QsciScintilla::NoFoldStyle );
-	if ( bgFoldStyle->button( sc->folding() ) )
-		bgFoldStyle->button( sc->folding() )->setChecked( true );
-	tbFoldMarginForeground->setIcon( colourizedPixmap( sc->foldMarginForegroundColor() ) );
-	tbFoldMarginBackground->setIcon( colourizedPixmap( sc->foldMarginBackgroundColor() ) );
-	gbMarginsEnabled->setChecked( sc->marginsEnabled() );
-	tbMarginsForeground->setIcon( colourizedPixmap( sc->marginsForegroundColor() ) );
-	tbMarginsBackground->setIcon( colourizedPixmap( sc->marginsBackgroundColor() ) );
-	tbMarginsFont->setFont( sc->marginsFont() );
+	gbLineNumbersMarginEnabled->setChecked( pMonkeyStudio::lineNumbersMarginEnabled() );
+	sLineNumbersMarginWidth->setValue( pMonkeyStudio::lineNumbersMarginWidth() );
+	cbLineNumbersMarginAutoWidth->setChecked( pMonkeyStudio::lineNumbersMarginAutoWidth() );
+	gbFoldMarginEnabled->setChecked( pMonkeyStudio::folding() != QsciScintilla::NoFoldStyle );
+	if ( bgFoldStyle->button( pMonkeyStudio::folding() ) )
+		bgFoldStyle->button( pMonkeyStudio::folding() )->setChecked( true );
+	tbFoldMarginForeground->setIcon( colourizedPixmap( pMonkeyStudio::foldMarginForegroundColor() ) );
+	tbFoldMarginBackground->setIcon( colourizedPixmap( pMonkeyStudio::foldMarginBackgroundColor() ) );
+	gbMarginsEnabled->setChecked( pMonkeyStudio::marginsEnabled() );
+	tbMarginsForeground->setIcon( colourizedPixmap( pMonkeyStudio::marginsForegroundColor() ) );
+	tbMarginsBackground->setIcon( colourizedPixmap( pMonkeyStudio::marginsBackgroundColor() ) );
+	tbMarginsFont->setFont( pMonkeyStudio::marginsFont() );
 	//  Special Characters
-	bgEolMode->button( sc->eolMode() )->setChecked( true );
-	cbEolVisibility->setChecked( sc->eolVisibility() );
-	gbWhitespaceVisibilityEnabled->setChecked( sc->whitespaceVisibility() != QsciScintilla::WsInvisible );
-	if ( bgWhitespaceVisibility->button( sc->whitespaceVisibility() ) )
-		bgWhitespaceVisibility->button( sc->whitespaceVisibility() )->setChecked( true );
-	gbWrapModeEnabled->setChecked( sc->wrapMode() != QsciScintilla::WrapNone );
-	if ( bgWrapMode->button( sc->wrapMode() ) )
-		bgWrapMode->button( sc->wrapMode() )->setChecked( true );
-	gbWrapVisualFlagsEnabled->setChecked( sc->wrapVisualFlagsEnabled() );
-	if ( bgStartWrapVisualFlag->button( sc->startWrapVisualFlag() ) )
-		bgStartWrapVisualFlag->button( sc->startWrapVisualFlag() )->setChecked( true );
-	if ( bgEndWrapVisualFlag->button( sc->endWrapVisualFlag() ) )
-		bgEndWrapVisualFlag->button( sc->endWrapVisualFlag() )->setChecked( true );
-	sWrappedLineIndentWidth->setValue( sc->wrappedLineIndentWidth() );
+	bgEolMode->button( pMonkeyStudio::eolMode() )->setChecked( true );
+	cbEolVisibility->setChecked( pMonkeyStudio::eolVisibility() );
+	gbWhitespaceVisibilityEnabled->setChecked( pMonkeyStudio::whitespaceVisibility() != QsciScintilla::WsInvisible );
+	if ( bgWhitespaceVisibility->button( pMonkeyStudio::whitespaceVisibility() ) )
+		bgWhitespaceVisibility->button( pMonkeyStudio::whitespaceVisibility() )->setChecked( true );
+	gbWrapModeEnabled->setChecked( pMonkeyStudio::wrapMode() != QsciScintilla::WrapNone );
+	if ( bgWrapMode->button( pMonkeyStudio::wrapMode() ) )
+		bgWrapMode->button( pMonkeyStudio::wrapMode() )->setChecked( true );
+	gbWrapVisualFlagsEnabled->setChecked( pMonkeyStudio::wrapVisualFlagsEnabled() );
+	if ( bgStartWrapVisualFlag->button( pMonkeyStudio::startWrapVisualFlag() ) )
+		bgStartWrapVisualFlag->button( pMonkeyStudio::startWrapVisualFlag() )->setChecked( true );
+	if ( bgEndWrapVisualFlag->button( pMonkeyStudio::endWrapVisualFlag() ) )
+		bgEndWrapVisualFlag->button( pMonkeyStudio::endWrapVisualFlag() )->setChecked( true );
+	sWrappedLineIndentWidth->setValue( pMonkeyStudio::wrappedLineIndentWidth() );
 	// Source APIs
 	for ( int i = 0; i < cbSourceAPIsLanguages->count(); i++ )
 		cbSourceAPIsLanguages->setItemData( i, s->value( "SourceAPIs/" +cbSourceAPIsLanguages->itemText( i ) ).toStringList() );
 	if ( cbSourceAPIsLanguages->count() > 0 )
 		cbSourceAPIsLanguages->setCurrentIndex( 0 );
 	//  Lexers Associations
-	QHash<QString, QStringList> l = pQScintilla::instance()->suffixes();
+	QHash<QString, QStringList> l = pMonkeyStudio::availableSuffixes();
 	foreach ( QString k, l.keys() )
 	{
 		foreach ( QString e, l.value( k ) )
@@ -299,12 +318,14 @@ void UISettings::loadSettings()
 		}
 	}
 	//  Lexers Highlighting
-	pQScintilla::instance()->lexersSettings();
+	foreach ( QsciLexer* l, mLexers )
+		l->readSettings( *pSettings::instance(), qPrintable( pMonkeyStudio::scintillaSettingsPath() ) );
+	
 	if ( cbLexersHighlightingLanguages->count() )
 		on_cbLexersHighlightingLanguages_currentIndexChanged( cbLexersHighlightingLanguages->itemText( 0 ) );
 
 	//  Abbreviations
-	foreach ( pAbbreviation a, pQScintilla::instance()->abbreviations() )
+	foreach ( pAbbreviation a, pAbbreviationsManager::availableAbbreviations() )
 	{
 		QTreeWidgetItem* it = new QTreeWidgetItem( twAbbreviations );
 		it->setText( 0, a.Template );
@@ -318,17 +339,16 @@ void UISettings::loadSettings()
 
 void UISettings::saveSettings()
 {
-	pQScintilla* sc = pQScintilla::instance();
 	pSettings* s = pSettings::instance();
 	QString sp;
 
 	// General
-	sc->setRestoreProjectsOnStartup( cbRestoreProjectsOnStartup->isChecked() );
-	sc->setDefaultProjectsDirectory( leDefaultProjectsDirectory->text() );
-	sc->setUIDesignerMode( (pQScintilla::UIDesignerMode)bgUIDesigner->checkedId() );
-	sc->setExternalChanges( (pQScintilla::ExternalChangesMode)bgExternalChanges->checkedId() );
-	sc->setSaveSessionOnClose( cbSaveSession->isChecked() );
-	sc->setRestoreSessionOnStartup( cbRestoreSession->isChecked() );
+	pMonkeyStudio::setRestoreProjectsOnStartup( cbRestoreProjectsOnStartup->isChecked() );
+	pMonkeyStudio::setDefaultProjectsDirectory( leDefaultProjectsDirectory->text() );
+	pMonkeyStudio::setUIDesignerMode( (pMonkeyStudio::UIDesignerMode)bgUIDesigner->checkedId() );
+	pMonkeyStudio::setExternalChanges( (pMonkeyStudio::ExternalChangesMode)bgExternalChanges->checkedId() );
+	pMonkeyStudio::setSaveSessionOnClose( cbSaveSession->isChecked() );
+	pMonkeyStudio::setRestoreSessionOnStartup( cbRestoreSession->isChecked() );
 
 	// File Templates
 	sp = "Templates";
@@ -362,91 +382,91 @@ void UISettings::saveSettings()
 
 	// Editor
 	//  General
-	sc->setAutoSyntaxCheck( cbAutoSyntaxCheck->isChecked() );
-	sc->setConvertTabsUponOpen( cbConvertTabsUponOpen->isChecked() );
-	sc->setCreateBackupUponOpen( cbCreateBackupUponOpen->isChecked() ) ;
-	sc->setAutoEolConversion( cbAutoEolConversion->isChecked() );
-	sc->setDefaultEncoding( cbDefaultEncoding->currentText() );
-	sc->setSelectionBackgroundColor( iconBackgroundColor( tbSelectionBackground->icon() ) );
-	sc->setSelectionForegroundColor( iconBackgroundColor( tbSelectionForeground->icon() ) );
-	sc->setDefaultDocumentColours( gbDefaultDocumentColours->isChecked() );
-	sc->setDefaultDocumentPen( iconBackgroundColor( tbDefaultDocumentPen->icon() ) );
-	sc->setDefaultDocumentPaper( iconBackgroundColor( tbDefaultDocumentPaper->icon() ) );
+	pMonkeyStudio::setAutoSyntaxCheck( cbAutoSyntaxCheck->isChecked() );
+	pMonkeyStudio::setConvertTabsUponOpen( cbConvertTabsUponOpen->isChecked() );
+	pMonkeyStudio::setCreateBackupUponOpen( cbCreateBackupUponOpen->isChecked() ) ;
+	pMonkeyStudio::setAutoEolConversion( cbAutoEolConversion->isChecked() );
+	pMonkeyStudio::setDefaultEncoding( cbDefaultEncoding->currentText() );
+	pMonkeyStudio::setSelectionBackgroundColor( iconBackgroundColor( tbSelectionBackground->icon() ) );
+	pMonkeyStudio::setSelectionForegroundColor( iconBackgroundColor( tbSelectionForeground->icon() ) );
+	pMonkeyStudio::setDefaultDocumentColours( gbDefaultDocumentColours->isChecked() );
+	pMonkeyStudio::setDefaultDocumentPen( iconBackgroundColor( tbDefaultDocumentPen->icon() ) );
+	pMonkeyStudio::setDefaultDocumentPaper( iconBackgroundColor( tbDefaultDocumentPaper->icon() ) );
 	//  Auto Completion
-	sc->setAutoCompletionSource( QsciScintilla::AcsNone );
+	pMonkeyStudio::setAutoCompletionSource( QsciScintilla::AcsNone );
 	if ( gbAutoCompletionEnabled->isChecked() )
-		sc->setAutoCompletionSource( (QsciScintilla::AutoCompletionSource)bgAutoCompletionSource->checkedId() );
-	sc->setAutoCompletionCaseSensitivity( cbAutoCompletionCaseSensitivity->isChecked() );
-	sc->setAutoCompletionReplaceWord( cbAutoCompletionReplaceWord->isChecked() );
-	sc->setAutoCompletionShowSingle( cbAutoCompletionShowSingle->isChecked() );
-	sc->setAutoCompletionThreshold( sAutoCompletionThreshold->value() );
+		pMonkeyStudio::setAutoCompletionSource( (QsciScintilla::AutoCompletionSource)bgAutoCompletionSource->checkedId() );
+	pMonkeyStudio::setAutoCompletionCaseSensitivity( cbAutoCompletionCaseSensitivity->isChecked() );
+	pMonkeyStudio::setAutoCompletionReplaceWord( cbAutoCompletionReplaceWord->isChecked() );
+	pMonkeyStudio::setAutoCompletionShowSingle( cbAutoCompletionShowSingle->isChecked() );
+	pMonkeyStudio::setAutoCompletionThreshold( sAutoCompletionThreshold->value() );
 	//  Call Tips
-	sc->setCallTipsStyle( QsciScintilla::CallTipsNone );
+	pMonkeyStudio::setCallTipsStyle( QsciScintilla::CallTipsNone );
 	if ( gbCalltipsEnabled->isChecked() )
-		sc->setCallTipsStyle( (QsciScintilla::CallTipsStyle)bgCallTipsStyle->checkedId() );
-	sc->setCallTipsVisible( sCallTipsVisible->value() );
-	sc->setCallTipsBackgroundColor( iconBackgroundColor( tbCalltipsBackground->icon() ) );
-	sc->setCallTipsForegroundColor( iconBackgroundColor( tbCalltipsForeground->icon() ) );
-	sc->setCallTipsHighlightColor( iconBackgroundColor( tbCalltipsHighlight->icon() ) );
+		pMonkeyStudio::setCallTipsStyle( (QsciScintilla::CallTipsStyle)bgCallTipsStyle->checkedId() );
+	pMonkeyStudio::setCallTipsVisible( sCallTipsVisible->value() );
+	pMonkeyStudio::setCallTipsBackgroundColor( iconBackgroundColor( tbCalltipsBackground->icon() ) );
+	pMonkeyStudio::setCallTipsForegroundColor( iconBackgroundColor( tbCalltipsForeground->icon() ) );
+	pMonkeyStudio::setCallTipsHighlightColor( iconBackgroundColor( tbCalltipsHighlight->icon() ) );
 	//  Indentation
-	sc->setAutoIndent( cbAutoIndent->isChecked()  );
-	sc->setBackspaceUnindents( cbBackspaceUnindents->isChecked() );
-	sc->setIndentationGuides( cbIndentationGuides->isChecked() );
-	sc->setIndentationsUseTabs( cbIndentationUseTabs->isChecked() );
-	sc->setTabIndents( cbTabIndents->isChecked() );
-	sc->setTabWidth( sIndentationTabWidth->value() );
-	sc->setIndentationWidth( sIndentationWidth->value() );
-	sc->setIndentationGuidesBackgroundColor( iconBackgroundColor( tbIndentationGuidesBackground->icon() ) );
-	sc->setIndentationGuidesForegroundColor( iconBackgroundColor( tbIndentationGuidesForeground->icon() ) );
+	pMonkeyStudio::setAutoIndent( cbAutoIndent->isChecked()  );
+	pMonkeyStudio::setBackspaceUnindents( cbBackspaceUnindents->isChecked() );
+	pMonkeyStudio::setIndentationGuides( cbIndentationGuides->isChecked() );
+	pMonkeyStudio::setIndentationsUseTabs( cbIndentationUseTabs->isChecked() );
+	pMonkeyStudio::setTabIndents( cbTabIndents->isChecked() );
+	pMonkeyStudio::setTabWidth( sIndentationTabWidth->value() );
+	pMonkeyStudio::setIndentationWidth( sIndentationWidth->value() );
+	pMonkeyStudio::setIndentationGuidesBackgroundColor( iconBackgroundColor( tbIndentationGuidesBackground->icon() ) );
+	pMonkeyStudio::setIndentationGuidesForegroundColor( iconBackgroundColor( tbIndentationGuidesForeground->icon() ) );
 	//  Brace Matching
-	sc->setBraceMatching( QsciScintilla::NoBraceMatch );
+	pMonkeyStudio::setBraceMatching( QsciScintilla::NoBraceMatch );
 	if ( gbBraceMatchingEnabled->isChecked() )
-		sc->setBraceMatching( (QsciScintilla::BraceMatch)bgBraceMatch->checkedId() );
-	sc->setMatchedBraceBackgroundColor( iconBackgroundColor( tbMatchedBraceBackground->icon() ) );
-	sc->setMatchedBraceForegroundColor( iconBackgroundColor( tbMatchedBraceForeground->icon() ) );
-	sc->setUnmatchedBraceBackgroundColor( iconBackgroundColor( tbUnmatchedBraceBackground->icon() ) );
-	sc->setUnmatchedBraceForegroundColor( iconBackgroundColor( tbUnmatchedBraceForeground->icon() ) );
+		pMonkeyStudio::setBraceMatching( (QsciScintilla::BraceMatch)bgBraceMatch->checkedId() );
+	pMonkeyStudio::setMatchedBraceBackgroundColor( iconBackgroundColor( tbMatchedBraceBackground->icon() ) );
+	pMonkeyStudio::setMatchedBraceForegroundColor( iconBackgroundColor( tbMatchedBraceForeground->icon() ) );
+	pMonkeyStudio::setUnmatchedBraceBackgroundColor( iconBackgroundColor( tbUnmatchedBraceBackground->icon() ) );
+	pMonkeyStudio::setUnmatchedBraceForegroundColor( iconBackgroundColor( tbUnmatchedBraceForeground->icon() ) );
 	//  Edge Mode
-	sc->setEdgeMode( QsciScintilla::EdgeNone );
+	pMonkeyStudio::setEdgeMode( QsciScintilla::EdgeNone );
 	if ( gbEdgeModeEnabled->isChecked() )
-		sc->setEdgeMode( (QsciScintilla::EdgeMode)bgEdgeMode->checkedId() );
-	sc->setEdgeColumn( sEdgeColumnNumber->value() );
-	sc->setEdgeColor( iconBackgroundColor( tbEdgeColor->icon() ) );
+		pMonkeyStudio::setEdgeMode( (QsciScintilla::EdgeMode)bgEdgeMode->checkedId() );
+	pMonkeyStudio::setEdgeColumn( sEdgeColumnNumber->value() );
+	pMonkeyStudio::setEdgeColor( iconBackgroundColor( tbEdgeColor->icon() ) );
 	//  Caret
-	sc->setCaretLineVisible( gbCaretLineVisible->isChecked() );
-	sc->setCaretLineBackgroundColor( iconBackgroundColor( tbCaretLineBackground->icon() ) );
-	sc->setCaretForegroundColor( iconBackgroundColor( tbCaretForeground->icon() ) );
-	sc->setCaretWidth( sCaretWidth->value() );
+	pMonkeyStudio::setCaretLineVisible( gbCaretLineVisible->isChecked() );
+	pMonkeyStudio::setCaretLineBackgroundColor( iconBackgroundColor( tbCaretLineBackground->icon() ) );
+	pMonkeyStudio::setCaretForegroundColor( iconBackgroundColor( tbCaretForeground->icon() ) );
+	pMonkeyStudio::setCaretWidth( sCaretWidth->value() );
 	//  Margins
-	sc->setLineNumbersMarginEnabled( gbLineNumbersMarginEnabled->isChecked() );
-	sc->setLineNumbersMarginWidth( sLineNumbersMarginWidth->value() );
-	sc->setLineNumbersMarginAutoWidth( cbLineNumbersMarginAutoWidth->isChecked() );
-	sc->setFolding( QsciScintilla::NoFoldStyle );
+	pMonkeyStudio::setLineNumbersMarginEnabled( gbLineNumbersMarginEnabled->isChecked() );
+	pMonkeyStudio::setLineNumbersMarginWidth( sLineNumbersMarginWidth->value() );
+	pMonkeyStudio::setLineNumbersMarginAutoWidth( cbLineNumbersMarginAutoWidth->isChecked() );
+	pMonkeyStudio::setFolding( QsciScintilla::NoFoldStyle );
 	if ( gbFoldMarginEnabled->isChecked() )
-		sc->setFolding( (QsciScintilla::FoldStyle)bgFoldStyle->checkedId() );
-	sc->setFoldMarginForegroundColor( iconBackgroundColor( tbFoldMarginForeground->icon() ) );
-	sc->setFoldMarginBackgroundColor( iconBackgroundColor( tbFoldMarginBackground->icon() ) );
-	sc->setMarginsEnabled( gbMarginsEnabled->isChecked() );
-	sc->setMarginsForegroundColor( iconBackgroundColor( tbMarginsForeground->icon() ) );
-	sc->setMarginsBackgroundColor( iconBackgroundColor( tbMarginsBackground->icon() ) );
-	sc->setMarginsFont( tbMarginsFont->font() );
+		pMonkeyStudio::setFolding( (QsciScintilla::FoldStyle)bgFoldStyle->checkedId() );
+	pMonkeyStudio::setFoldMarginForegroundColor( iconBackgroundColor( tbFoldMarginForeground->icon() ) );
+	pMonkeyStudio::setFoldMarginBackgroundColor( iconBackgroundColor( tbFoldMarginBackground->icon() ) );
+	pMonkeyStudio::setMarginsEnabled( gbMarginsEnabled->isChecked() );
+	pMonkeyStudio::setMarginsForegroundColor( iconBackgroundColor( tbMarginsForeground->icon() ) );
+	pMonkeyStudio::setMarginsBackgroundColor( iconBackgroundColor( tbMarginsBackground->icon() ) );
+	pMonkeyStudio::setMarginsFont( tbMarginsFont->font() );
 	//  Special Characters
-	sc->setEolMode( (QsciScintilla::EolMode)bgEolMode->checkedId() );
-	sc->setEolVisibility( cbEolVisibility->isChecked() );
-	sc->setWhitespaceVisibility( QsciScintilla::WsInvisible );
+	pMonkeyStudio::setEolMode( (QsciScintilla::EolMode)bgEolMode->checkedId() );
+	pMonkeyStudio::setEolVisibility( cbEolVisibility->isChecked() );
+	pMonkeyStudio::setWhitespaceVisibility( QsciScintilla::WsInvisible );
 	if ( gbWhitespaceVisibilityEnabled->isChecked() )
-		sc->setWhitespaceVisibility( (QsciScintilla::WhitespaceVisibility)bgWhitespaceVisibility->checkedId() );
-	sc->setWrapMode( QsciScintilla::WrapNone );
+		pMonkeyStudio::setWhitespaceVisibility( (QsciScintilla::WhitespaceVisibility)bgWhitespaceVisibility->checkedId() );
+	pMonkeyStudio::setWrapMode( QsciScintilla::WrapNone );
 	if ( gbWrapModeEnabled->isChecked() )
-		sc->setWrapMode( (QsciScintilla::WrapMode)bgWrapMode->checkedId() );
-	sc->setWrapVisualFlagsEnabled( gbWrapVisualFlagsEnabled->isChecked() );
-	sc->setStartWrapVisualFlag( QsciScintilla::WrapFlagNone );
+		pMonkeyStudio::setWrapMode( (QsciScintilla::WrapMode)bgWrapMode->checkedId() );
+	pMonkeyStudio::setWrapVisualFlagsEnabled( gbWrapVisualFlagsEnabled->isChecked() );
+	pMonkeyStudio::setStartWrapVisualFlag( QsciScintilla::WrapFlagNone );
 	if ( gbWrapVisualFlagsEnabled->isChecked() )
-		sc->setStartWrapVisualFlag( (QsciScintilla::WrapVisualFlag)bgStartWrapVisualFlag->checkedId() );
-	sc->setEndWrapVisualFlag( QsciScintilla::WrapFlagNone );
+		pMonkeyStudio::setStartWrapVisualFlag( (QsciScintilla::WrapVisualFlag)bgStartWrapVisualFlag->checkedId() );
+	pMonkeyStudio::setEndWrapVisualFlag( QsciScintilla::WrapFlagNone );
 	if ( gbWrapVisualFlagsEnabled->isChecked() )
-		sc->setEndWrapVisualFlag( (QsciScintilla::WrapVisualFlag)bgEndWrapVisualFlag->checkedId() );
-	sc->setWrappedLineIndentWidth( sWrappedLineIndentWidth->value() );
+		pMonkeyStudio::setEndWrapVisualFlag( (QsciScintilla::WrapVisualFlag)bgEndWrapVisualFlag->checkedId() );
+	pMonkeyStudio::setWrappedLineIndentWidth( sWrappedLineIndentWidth->value() );
 	// Source APIs
 	sp = "SourceAPIs/";
 	for ( int i = 0; i < cbSourceAPIsLanguages->count(); i++ )
@@ -462,7 +482,8 @@ void UISettings::saveSettings()
 		s->setValue( sp +it->text( 0 ), it->text( 1 ) );
 	}
 	//  Lexers Highlighting
-	pQScintilla::instance()->writeLexersSettings();
+	foreach ( QsciLexer* l, mLexers )
+		l->writeSettings( *pSettings::instance(), qPrintable( pMonkeyStudio::scintillaSettingsPath() ) );
 
 	//  Abbreviations
 	sp = "Abbreviations";
@@ -535,13 +556,21 @@ void UISettings::on_tbDefaultProjectsDirectory_clicked()
 
 void UISettings::on_tbTemplatesPath_clicked()
 {
-	const QString d = pTools::unTokenizeHome( leTemplatesPath->text() );
-	QString s = pTools::getExistingDirectory( tr( "Select default templates directory" ), d, window() );
+	const QString d = pMonkeyStudio::unTokenizeHome( leTemplatesPath->text() );
+	QString s = pMonkeyStudio::getExistingDirectory( tr( "Select default templates directory" ), d, window() );
 	if ( !s.isNull() )
 	{
 		if ( s.endsWith( "/" ) )
 			s.chop( 1 );
-		leTemplatesPath->setText( pTools::tokenizeHome( s ) );
+		leTemplatesPath->setText( pMonkeyStudio::tokenizeHome( s ) );
+		// update existing items
+		for ( int i = 0; i < twTemplatesType->topLevelItemCount(); i++ )
+		{
+			QTreeWidgetItem* it = twTemplatesType->topLevelItem( i );
+			// icon file
+			it->setData( 0, Qt::UserRole, it->data( 0, Qt::UserRole ).toString().replace( d, s ) );
+			it->setData( 0, Qt::UserRole +1, it->data( 0, Qt::UserRole +1 ).toStringList().replaceInStrings( d, s ) );
+		}
 	}
 }
 
@@ -682,7 +711,7 @@ void UISettings::on_pbLexersAssociationsDelete_clicked()
 
 void UISettings::on_cbLexersHighlightingLanguages_currentIndexChanged( const QString& s )
 {
-	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( s );
+	QsciLexer* l = mLexers.value( s );
 	lwLexersHighlightingElements->clear();
 	for ( int i = 0; i < 128; i++ )
 	{
@@ -697,83 +726,69 @@ void UISettings::on_cbLexersHighlightingLanguages_currentIndexChanged( const QSt
 			it->setData( Qt::UserRole, i );
 		}
 	}
-
+	// value
 	QVariant v;
-
 	// fold comments
-	v = pQScintilla::instance()->lexerProperty( "foldComments", l );
+	v = pMonkeyStudio::lexerProperty( "foldComments", l );
 	cbLexersHighlightingFoldComments->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldComments->setChecked( v.toBool() );
-
 	// fold compact
-	v = pQScintilla::instance()->lexerProperty( "foldCompact", l );
+	v = pMonkeyStudio::lexerProperty( "foldCompact", l );
 	cbLexersHighlightingFoldCompact->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldCompact->setChecked( v.toBool() );
-
 	// fold quotes
-	v = pQScintilla::instance()->lexerProperty( "foldQuotes", l );
+	v = pMonkeyStudio::lexerProperty( "foldQuotes", l );
 	cbLexersHighlightingFoldQuotes->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldQuotes->setChecked( v.toBool() );
-
 	// fold directives
-	v = pQScintilla::instance()->lexerProperty( "foldDirectives", l );
+	v = pMonkeyStudio::lexerProperty( "foldDirectives", l );
 	cbLexersHighlightingFoldDirectives->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldDirectives->setChecked( v.toBool() );
-
 	// fold at begin
-	v = pQScintilla::instance()->lexerProperty( "foldAtBegin", l );
+	v = pMonkeyStudio::lexerProperty( "foldAtBegin", l );
 	cbLexersHighlightingFoldAtBegin->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldAtBegin->setChecked( v.toBool() );
-
 	// fold at parenthesis
-	v = pQScintilla::instance()->lexerProperty( "foldAtParenthesis", l );
+	v = pMonkeyStudio::lexerProperty( "foldAtParenthesis", l );
 	cbLexersHighlightingFoldAtParenthesis->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldAtParenthesis->setChecked( v.toBool() );
-
 	// fold at else
-	v = pQScintilla::instance()->lexerProperty( "foldAtElse", l );
+	v = pMonkeyStudio::lexerProperty( "foldAtElse", l );
 	cbLexersHighlightingFoldAtElse->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldAtElse->setChecked( v.toBool() );
-
 	// fold preprocessor
-	v = pQScintilla::instance()->lexerProperty( "foldPreprocessor", l );
+	v = pMonkeyStudio::lexerProperty( "foldPreprocessor", l );
 	cbLexersHighlightingFoldPreprocessor->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingFoldPreprocessor->setChecked( v.toBool() );
-
 	// style preprocessor
-	v = pQScintilla::instance()->lexerProperty( "stylePreprocessor", l );
+	v = pMonkeyStudio::lexerProperty( "stylePreprocessor", l );
 	cbLexersHighlightingStylePreprocessor->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingStylePreprocessor->setChecked( v.toBool() );
-
 	// indent opening brace
 	cbLexersHighlightingIndentOpeningBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiOpening );
-
 	// indent closing brace
 	cbLexersHighlightingIndentClosingBrace->setChecked( l->autoIndentStyle() & QsciScintilla::AiClosing );
-
 	// case sensitive tags
-	v = pQScintilla::instance()->lexerProperty( "caseSensitiveTags", l );
+	v = pMonkeyStudio::lexerProperty( "caseSensitiveTags", l );
 	cbLexersHighlightingCaseSensitiveTags->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingCaseSensitiveTags->setChecked( v.toBool() );
-
 	// backslash escapes
-	v = pQScintilla::instance()->lexerProperty( "backslashEscapes", l );
+	v = pMonkeyStudio::lexerProperty( "backslashEscapes", l );
 	cbLexersHighlightingBackslashEscapes->setVisible( v.isValid() );
 	if ( v.isValid() )
 		cbLexersHighlightingBackslashEscapes->setChecked( v.toBool() );
-
 	// indentation warning
-	v = pQScintilla::instance()->lexerProperty( "indentationWarning", l );
+	v = pMonkeyStudio::lexerProperty( "indentationWarning", l );
 	lLexersHighlightingIndentationWarning->setVisible( v.isValid() );
 	cbLexersHighlightingIndentationWarning->setVisible( lLexersHighlightingIndentationWarning->isVisible() );
 	if ( v.isValid() )
@@ -784,42 +799,37 @@ void UISettings::on_lwLexersHighlightingElements_itemSelectionChanged()
 {
 	QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 	if ( it )
-		cbLexersHighlightingFillEol->setChecked( pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
+		cbLexersHighlightingFillEol->setChecked( mLexers.value( cbLexersHighlightingLanguages->currentText() )->eolFill( it->data( Qt::UserRole ).toInt() ) );
 }
 
 void UISettings::lexersHighlightingColour_clicked()
 {
 	// get sender
 	QObject* o = sender();
-
 	// color
 	QColor c;
-
 	// element colour
 	if ( o == pbLexersHighlightingForeground || o == pbLexersHighlightingBackground )
 	{
 		// get item
 		QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
-
 		// cancel if no item
 		if ( !it )
 			return;
-
 		// get color
 		c = QColorDialog::getColor( o == pbLexersHighlightingForeground ? it->foreground().color() : it->background().color(), window() );
-
 		// apply color
 		if ( c.isValid() )
 		{
 			if ( o == pbLexersHighlightingForeground )
 			{
 				it->setForeground( c );
-				pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setColor( c, it->data( Qt::UserRole ).toInt() );
+				mLexers.value( cbLexersHighlightingLanguages->currentText() )->setColor( c, it->data( Qt::UserRole ).toInt() );
 			}
 			else if ( o == pbLexersHighlightingBackground )
 			{
 				it->setBackground( c );
-				pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setPaper( c, it->data( Qt::UserRole ).toInt() );
+				mLexers.value( cbLexersHighlightingLanguages->currentText() )->setPaper( c, it->data( Qt::UserRole ).toInt() );
 			}
 		}
 	}
@@ -827,11 +837,9 @@ void UISettings::lexersHighlightingColour_clicked()
 	else if ( o == pbLexersHighlightingAllForeground || o == pbLexersHighlightingAllBackground )
 	{
 		// get lexer
-		QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
-
+		QsciLexer* l = mLexers.value( cbLexersHighlightingLanguages->currentText() );
 		// get color
 		c = QColorDialog::getColor( o == pbLexersHighlightingAllForeground ? l->color( -1 ) : l->paper( -1 ), window() );
-
 		// apply
 		if ( c.isValid() )
 		{
@@ -839,7 +847,6 @@ void UISettings::lexersHighlightingColour_clicked()
 				l->setColor( c, -1 );
 			else if ( o == pbLexersHighlightingAllBackground )
 				l->setPaper( c, -1 );
-
 			// refresh
 			on_cbLexersHighlightingLanguages_currentIndexChanged( l->language() );
 		}
@@ -850,37 +857,33 @@ void UISettings::lexersHighlightingFont_clicked()
 {
 	// get sender
 	QObject* o = sender();
-
+	// values
 	bool b;
 	QFont f;
-
+	// element font
 	if ( o == pbLexersHighlightingFont )
 	{
 		// get item
 		QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
-
 		// cancel if no item
 		if ( !it )
 			return;
-
 		// get font
 		f = QFontDialog::getFont( &b, it->font(), window() );
-
 		// apply
 		if ( b )
 		{
 			it->setFont( f );
-			pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt() );
+			mLexers.value( cbLexersHighlightingLanguages->currentText() )->setFont( f, it->data( Qt::UserRole ).toInt() );
 		}
 	}
+	// global font
 	else if ( o == pbLexersHighlightingAllFont )
 	{
 		// get lexer
-		QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
-
+		QsciLexer* l = mLexers.value( cbLexersHighlightingLanguages->currentText() );
 		// get font
 		f = QFontDialog::getFont( &b, l->font( -1 ), window() );
-
 		// apply
 		if ( b )
 		{
@@ -894,7 +897,7 @@ void UISettings::on_cbLexersHighlightingFillEol_clicked( bool b )
 {
 	QListWidgetItem* it = lwLexersHighlightingElements->selectedItems().value( 0 );
 	if ( it )
-		pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
+		mLexers.value( cbLexersHighlightingLanguages->currentText() )->setEolFill( b, it->data( Qt::UserRole ).toInt() );
 }
 
 void UISettings::cbLexersHighlightingProperties_clicked( bool b )
@@ -903,10 +906,8 @@ void UISettings::cbLexersHighlightingProperties_clicked( bool b )
 	QCheckBox* cb = qobject_cast<QCheckBox*>( sender() );
 	if ( !cb )
 		return;
-
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
-
+	QsciLexer* l = mLexers.value( cbLexersHighlightingLanguages->currentText() );
 	// set lexer properties
 	if ( cb == cbLexersHighlightingIndentOpeningBrace || cb == cbLexersHighlightingIndentClosingBrace )
 	{
@@ -920,27 +921,25 @@ void UISettings::cbLexersHighlightingProperties_clicked( bool b )
 			l->setAutoIndentStyle( QsciScintilla::AiMaintain );
 	}
 	else
-		pQScintilla::instance()->setLexerProperty( cb->statusTip(), l, b );
+		pMonkeyStudio::setLexerProperty( cb->statusTip(), l, b );
 }
 
 void UISettings::on_cbLexersHighlightingIndentationWarning_currentIndexChanged( int i )
 {
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
-
+	QsciLexer* l = mLexers.value( cbLexersHighlightingLanguages->currentText() );
 	// set lexer properties
-	pQScintilla::instance()->setLexerProperty( cbLexersHighlightingIndentationWarning->statusTip(), l, cbLexersHighlightingIndentationWarning->itemData( i ) );
+	pMonkeyStudio::setLexerProperty( cbLexersHighlightingIndentationWarning->statusTip(), l, cbLexersHighlightingIndentationWarning->itemData( i ) );
 }
 
 void UISettings::on_pbLexersHighlightingReset_clicked()
 {
 	// get lexer
-	QsciLexer* l = pQScintilla::instance()->lexersSettings().value( cbLexersHighlightingLanguages->currentText() );
-
+	QsciLexer* l = mLexers.value( cbLexersHighlightingLanguages->currentText() );
 	// reset and refresh
 	if ( l )
 	{
-		pQScintilla::instance()->resetLexer( l );
+		pMonkeyStudio::resetLexer( l );
 		on_cbLexersHighlightingLanguages_currentIndexChanged( l->language() );
 	}
 }
@@ -949,10 +948,8 @@ void UISettings::on_twAbbreviations_itemSelectionChanged()
 {
 	// get item
 	QTreeWidgetItem* it = twAbbreviations->selectedItems().value( 0 );
-
 	if ( it )
 		teAbbreviationsCode->setPlainText( it->data( 0, Qt::UserRole ).toString() );
-
 	// enable/disable according to selection
 	teAbbreviationsCode->setEnabled( it );
 }
@@ -972,7 +969,6 @@ void UISettings::on_teAbbreviationsCode_textChanged()
 {
 	// get item
 	QTreeWidgetItem* it = twAbbreviations->selectedItems().value( 0 );
-
 	if ( it )
 		it->setData( 0, Qt::UserRole, teAbbreviationsCode->toPlainText() );
 }
@@ -986,5 +982,5 @@ void UISettings::accept()
 void UISettings::apply()
 {
 	saveSettings();
-	pQScintilla::instance()->applyProperties();
+	pMonkeyStudio::applyProperties();
 }

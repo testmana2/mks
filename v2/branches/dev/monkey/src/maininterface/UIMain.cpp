@@ -12,21 +12,11 @@
 #include "pMenuBar.h"
 #include "pRecentsManager.h"
 #include "pActionManager.h"
+#include "pToolsManager.h"
 #include "pSettings.h"
 #include "pDockToolBar.h"
 #include "pSearch.h"
-#include "pQScintilla.h"
-
-/*
-#include "Settings.h"
-#include "TabToolBar.h"
-#include "MenuBar.h"
-#include "Workspace.h"
-#include "StatusBar.h"
-#include "UITestReport.h"
-#include <QCloseEvent>
-
-*/
+#include "pMonkeyStudio.h"
 
 #include <QActionGroup>
 #include <QStyleFactory>
@@ -48,14 +38,14 @@ UIMain::UIMain( QWidget* p )
 	initConnections();
 
 	// restore session if needed
-	if ( pQScintilla::instance()->restoreSessionOnStartup() )
+	if ( pMonkeyStudio::restoreSessionOnStartup() )
 		workspace()->fileSessionRestore_triggered();
 }
 
 void UIMain::closeEvent( QCloseEvent* )
 {
 	// save session if needed
-	if ( pQScintilla::instance()->saveSessionOnClose() )
+	if ( pMonkeyStudio::saveSessionOnClose() )
 		workspace()->fileSessionSave_triggered();
 
 	// close all documents
@@ -174,7 +164,7 @@ void UIMain::initMenuBar()
 */
 	mb->menu( "mTools", tr( "&Tools" ) );
 	mb->beginGroup( "mTools" );
-		mb->action( "aEdit", tr( "&Edit..." ), QIcon( ":/Icons/Icons/toolsedit.png" ), QString::null, tr( "Edit tools..." ) );
+		mb->action( "aEdit", tr( "&Edit..." ), QIcon( ":/tools/icons/tools/edit.png" ), QString::null, tr( "Edit tools..." ) );
 		mb->action( "aSeparator1" );
 	mb->endGroup();
 	mb->menu( "mPlugins", tr( "Plu&gins" ) );
@@ -208,6 +198,9 @@ void UIMain::initMenuBar()
 
 	// init recents manager
 	pRecentsManager::instance( this );
+
+	// init tools manager
+	pToolsManager::instance( this );
 }
 
 void UIMain::initToolBar()

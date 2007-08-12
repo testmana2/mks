@@ -1,10 +1,9 @@
 #include "UITemplatesWizard.h"
-#include "pQScintilla.h"
 #include "pTemplatePreviewer.h"
 #include "pEditor.h"
 #include "pFileManager.h"
 #include "pTemplatesManager.h"
-#include "pTools.h"
+#include "pMonkeyStudio.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -16,7 +15,7 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	// fill available languages
-	cbLanguages->addItems( pQScintilla::instance()->languages() );
+	cbLanguages->addItems( pMonkeyStudio::availableLanguages() );
 	// fill type comboobox
 	pTemplate::fillComboBox( cbTypes );
 	// show correct page
@@ -31,15 +30,14 @@ void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
 {
 	// clear lwTemplates
 	lwTemplates->clear();
-
 	// create blank file
 	QListWidgetItem* it = new QListWidgetItem( lwTemplates );
 	it->setIcon( QIcon( ":/templates/icons/templates/empty.png" ) );
 	it->setToolTip( tr( "Blank File" ) );
 	it->setText( tr( "Blank" ) );
 	it->setData( Qt::UserRole +1, QString() );
-
-	foreach ( pTemplate t, pTemplatesManager::templates() )
+	// create tempaltes
+	foreach ( pTemplate t, pTemplatesManager::availableTemplates() )
 	{
 		if ( t.Language == s && pTemplate::stringForType( t.Type ) == cbTypes->currentText() )
 		{
@@ -69,7 +67,6 @@ void UITemplatesWizard::on_swPages_currentChanged( int i )
 			generatePreview();
 			break;
 	}
-
 	// set correct text/state to buttons
 	pbPrevious->setEnabled( i != 0 );
 	pbNext->setText( tr( "Next" ) );
@@ -79,7 +76,7 @@ void UITemplatesWizard::on_swPages_currentChanged( int i )
 
 void UITemplatesWizard::on_tbDestination_clicked()
 {
-	QString s = pTools::getExistingDirectory( tr( "Select the file(s) destination" ), leDestination->text(), window() );
+	QString s = pMonkeyStudio::getExistingDirectory( tr( "Select the file(s) destination" ), leDestination->text(), window() );
 	if ( !s.isNull() )
 		leDestination->setText( s );
 }
@@ -93,12 +90,12 @@ void UITemplatesWizard::on_pbNext_clicked()
 {
 	if ( !checkTemplates() )
 		return;
-
+	//
 	int i = swPages->currentIndex();
-
+	//
 	if ( i < swPages->count() -1 )
 		swPages->setCurrentIndex( i +1 );
-
+	//
 	if ( i == swPages->count() -1 )
 		accept();
 }
@@ -107,22 +104,22 @@ bool UITemplatesWizard::checkTemplates()
 {
 	if ( !lwTemplates->selectedItems().count() )
 	{
-		pTools::information( tr( "Templates..." ), tr( "Choose a template to continue." ), this );
+		pMonkeyStudio::information( tr( "Templates..." ), tr( "Choose a template to continue." ), this );
 		return false;
 	}
-
+	//
 	if ( leBaseName->text().isEmpty() )
 	{
-		pTools::information( tr( "Base Name..." ), tr( "Choose a base name for your file(s)." ), this );
+		pMonkeyStudio::information( tr( "Base Name..." ), tr( "Choose a base name for your file(s)." ), this );
 		return false;
 	}
-
+	//
 	if ( leDestination->text().isEmpty() )
 	{
-		pTools::information( tr( "Destination..." ), tr( "Choose a destination for your file(s)." ), this );
+		pMonkeyStudio::information( tr( "Destination..." ), tr( "Choose a destination for your file(s)." ), this );
 		return false;
 	}
-
+	//
 	return true;
 }
 
@@ -130,7 +127,7 @@ void UITemplatesWizard::generatePreview()
 {
 	// delete all existing preview
 	qDeleteAll( sView->findChildren<pTemplatePreviewer*>() );
-
+	//
 	int i = 0;
 	// create new preview
 	foreach ( QListWidgetItem* it, lwTemplates->selectedItems() )
@@ -184,7 +181,7 @@ void UITemplatesWizard::accept()
 			// set filename
 			QString s = QDir::cleanPath( p->destination().append( "/" ).append( p->fileName() ) );
 			// check if file already existing
-			if ( QFile::exists( s ) && !pTools::question( tr( "Overwrite File..." ), tr( "The file '%1' already exists, do you want to continue ?" ).arg( p->fileName() ) ) )
+			if ( QFile::exists( s ) && !pMonkeyStudio::question( tr( "Overwrite File..." ), tr( "The file '%1' already exists, do you want to continue ?" ).arg( p->fileName() ) ) )
 				continue;
 			// if can save
 			if ( p->editor()->saveFile( s ) )

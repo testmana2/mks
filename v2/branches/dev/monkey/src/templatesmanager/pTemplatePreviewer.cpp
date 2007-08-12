@@ -1,6 +1,5 @@
 #include "pTemplatePreviewer.h"
 #include "pEditor.h"
-#include "pQScintilla.h"
 
 #include <QVariant>
 #include <QLineEdit>

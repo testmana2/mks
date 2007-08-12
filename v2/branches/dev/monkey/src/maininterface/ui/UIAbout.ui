@@ -13,10 +13,22 @@
    <string>About : %1</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>3</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>3</number>
    </property>
    <item row="2" column="0" >
@@ -35,15 +47,13 @@
    <item row="2" column="1" >
     <widget class="QPushButton" name="pbOK" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>0</hsizetype>
-       <vsizetype>0</vsizetype>
+      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="cursor" >
-      <cursor>13</cursor>
+      <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="text" >
       <string>OK</string>
@@ -81,11 +91,23 @@
       <property name="font" >
        <font>
         <family>Monospace</family>
-        <pointsize>9</pointsize>
+        <pointsize>8</pointsize>
        </font>
       </property>
+      <property name="verticalScrollBarPolicy" >
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
       <property name="horizontalScrollBarPolicy" >
-       <enum>Qt::ScrollBarAlwaysOff</enum>
+       <enum>Qt::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="lineWrapMode" >
+       <enum>QTextEdit::NoWrap</enum>
+      </property>
+      <property name="tabStopWidth" >
+       <number>20</number>
+      </property>
+      <property name="acceptRichText" >
+       <bool>false</bool>
       </property>
       <attribute name="title" >
        <string>License</string>
@@ -117,7 +139,7 @@
        <weight>75</weight>
        <bold>true</bold>
        <strikeout>false</strikeout>
-       <antialiasing>true</antialiasing>
+       <stylestrategy>PreferDefault</stylestrategy>
        <kerning>true</kerning>
       </font>
      </property>

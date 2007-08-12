@@ -75,7 +75,7 @@ struct Q_MONKEY_EXPORT pTemplateContent
 namespace pTemplatesManager
 {
 	const QList<pTemplate> defaultTemplates();
-	const QList<pTemplate> templates();
+	const QList<pTemplate> availableTemplates();
 
 	void setTemplatesPath( const QString& );
 	const QString templatesPath();

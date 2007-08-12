@@ -30,6 +30,7 @@ private:
 	QButtonGroup* bgWrapMode;
 	QButtonGroup* bgStartWrapVisualFlag;
 	QButtonGroup* bgEndWrapVisualFlag;
+	QHash<QString,QsciLexer*> mLexers;
 
 public slots:
 	void accept();
