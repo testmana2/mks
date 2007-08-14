@@ -10,26 +10,20 @@
    </rect>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>5</number>
    </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>3</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>3</number>
    </property>
    <item row="0" column="0" colspan="3" >
     <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>3</number>
+     </property>
      <item>
       <widget class="QLabel" name="lLanguage" >
        <property name="text" >
@@ -97,22 +91,10 @@
    </item>
    <item row="4" column="0" colspan="3" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>3</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>3</number>
      </property>
      <item rowspan="4" row="0" column="0" >

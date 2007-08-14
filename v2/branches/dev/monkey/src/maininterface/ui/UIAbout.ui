@@ -13,22 +13,10 @@
    <string>About : %1</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>5</number>
    </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>3</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>3</number>
    </property>
    <item row="2" column="0" >
@@ -47,13 +35,12 @@
    <item row="2" column="1" >
     <widget class="QPushButton" name="pbOK" >
      <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+      <sizepolicy>
+       <hsizetype>0</hsizetype>
+       <vsizetype>0</vsizetype>
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="cursor" >
-      <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="text" >
       <string>OK</string>
@@ -139,7 +126,6 @@
        <weight>75</weight>
        <bold>true</bold>
        <strikeout>false</strikeout>
-       <stylestrategy>PreferDefault</stylestrategy>
        <kerning>true</kerning>
       </font>
      </property>
