@@ -16,22 +16,10 @@
    <iconset resource="../../resources/resources.qrc" >:/translation/icons/translation/translation.png</iconset>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>5</number>
    </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>3</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>3</number>
    </property>
    <item row="0" column="0" colspan="3" >
@@ -46,6 +34,9 @@
    </item>
    <item row="3" column="0" colspan="3" >
     <widget class="QDialogButtonBox" name="bbButtons" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
      <property name="standardButtons" >
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
      </property>
@@ -93,6 +84,7 @@
    </item>
   </layout>
  </widget>
+ <includes/>
  <resources>
   <include location="../../resources/resources.qrc" />
  </resources>
