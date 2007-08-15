@@ -94,7 +94,7 @@ void UIMain::initMenuBar()
 	mb->endGroup();
 	mb->menu( "mEdit", tr( "&Edit" ) );
 	mb->beginGroup( "mEdit" );
-		mb->action( "aSettings", tr( "Settings..." ), QIcon( ":/edit/icons/edit/settings.png" ) );
+		mb->action( "aSettings", tr( "Settings..." ), QIcon( ":/edit/icons/edit/settings.png" ), "", tr( "Edit the application settings" ) );
 		mb->action( "aShortcutsEditor", tr( "Shortcuts Editor..." ), QIcon( ":/edit/icons/edit/shortcuts.png" ), tr( "Ctrl+E" ), tr( "Edit the application shortcuts" ) );
 		mb->action( "aSeparator1" );
 		mb->action( "aUndo", tr( "&Undo" ), QIcon( ":/edit/icons/edit/undo.png" ), tr( "Ctrl+Z" ), tr( "Undo" ) )->setEnabled( false );
@@ -165,6 +165,7 @@ void UIMain::initMenuBar()
 	mb->menu( "mTools", tr( "&Tools" ) );
 	mb->beginGroup( "mTools" );
 		mb->action( "aEdit", tr( "&Edit..." ), QIcon( ":/tools/icons/tools/edit.png" ), QString::null, tr( "Edit tools..." ) );
+		mb->action( "aEditDesktop", tr( "&Desktop Tools..." ), QIcon( ":/tools/icons/tools/desktop.png" ), QString::null, tr( "Edit desktop tools..." ) );
 		mb->action( "aSeparator1" );
 	mb->endGroup();
 	mb->menu( "mPlugins", tr( "Plu&gins" ) );
@@ -209,6 +210,13 @@ void UIMain::initToolBar()
 	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->menu( "mFile/mRecents" )->menuAction() );
 	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->menu( "mFile/mSession" )->menuAction() );
 	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->menu( "mProject/mRecents" )->menuAction() );
+	dockToolBar( Qt::TopToolBarArea )->addAction();
+
+	// settings, tools
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aSettings" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aShortcutsEditor" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mTools/aEdit" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mTools/aEditDesktop" ) );
 	dockToolBar( Qt::TopToolBarArea )->addAction();
 
 	// file action

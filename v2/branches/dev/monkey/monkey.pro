@@ -55,6 +55,7 @@ FORMS	*= src/maininterface/ui/UITranslator.ui \
 	src/abbreviationsmanager/ui/UIAddAbbreviation.ui \
 	src/templatesmanager/ui/UIEditTemplate.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui \
+	src/toolsmanager/ui/UIDesktopMenu.ui \
 	src/toolsmanager/ui/UIToolsEdit.ui
 
 HEADERS	*= src/maininterface/ui/UITranslator.h \
@@ -76,6 +77,8 @@ HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/templatesmanager/ui/UIEditTemplate.h \
 	src/templatesmanager/ui/UITemplatesWizard.h \
 	src/pMonkeyStudio.h \
+	src/toolsmanager/ui/UIDesktopMenu.h \
+	src/toolsmanager/pDesktopMenuEntry.h \
 	src/toolsmanager/ui/UIToolsEdit.h \
 	src/toolsmanager/pToolsManager.h
 
@@ -97,6 +100,8 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/templatesmanager/ui/UIEditTemplate.cpp \
 	src/templatesmanager/ui/UITemplatesWizard.cpp \
 	src/pMonkeyStudio.cpp \
+	src/toolsmanager/ui/UIDesktopMenu.cpp \
+	src/toolsmanager/pDesktopMenuEntry.cpp \
 	src/toolsmanager/ui/UIToolsEdit.cpp \
 	src/toolsmanager/pToolsManager.cpp \
 	src/main.cpp

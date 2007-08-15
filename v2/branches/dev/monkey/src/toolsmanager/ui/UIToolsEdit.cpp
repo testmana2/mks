@@ -238,6 +238,8 @@ void UIToolsEdit::accept()
 	QList<pTool> l = pToolsManager::tools( pToolsManager::ttDesktopEntry );
 	// get settings
 	QSettings* s = pSettings::instance();
+	// remove all tools entries
+	s->remove( "Tools" );
 	// begin array
 	s->beginWriteArray( "Tools" );
 	int i = 0;
@@ -245,22 +247,22 @@ void UIToolsEdit::accept()
 	for ( i = 0; i < lwTools->count(); i++ )
 	{
 		s->setArrayIndex( i );
-		qWarning( "before: %d", i );
 		s->setValue( "Caption", lwTools->item( i )->data( idCaption ).toString() );
 		s->setValue( "FileIcon", lwTools->item( i )->data( idFileIcon ).toString() );
 		s->setValue( "FilePath", lwTools->item( i )->data( idFilePath ).toString() );
 		s->setValue( "WorkingPath", lwTools->item( i )->data( idWorkingPath ).toString() );
 		s->setValue( "DesktopEntry", false );
 	}
-	qWarning( "after: %d", i );
 	// write desktop entry
 	foreach ( pTool t, l )
 	{
+		s->setArrayIndex( i );
 		s->setValue( "Caption", t.Caption );
 		s->setValue( "FileIcon", t.FileIcon );
 		s->setValue( "FilePath", t.FilePath );
 		s->setValue( "WorkingPath", t.WorkingPath );
 		s->setValue( "DesktopEntry", true );
+		i++;
 	}
 	// end array
 	s->endArray();
