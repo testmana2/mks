@@ -28,8 +28,8 @@ const QList<pDatas> mTeamates = QList<pDatas>()
 	<< pDatas( "Manuel Schmidt", "oversize", QObject::tr( "Germany" ), "manuel@schmidtman.de", QObject::tr( "Web Developer & Web Designer" ) )
 	<< pDatas( "Yannick", "xiantia", QObject::tr( "France" ), "xiantia@gmail.com", QObject::tr( "GDB Driver Integration" ) )
 	<< pDatas( "Julien Decologne", "Judd", QObject::tr( "France" ), "judd@hotmail.com", QObject::tr( "Splashscreen & Icons Designer" ) )
-	<< pDatas( "Mashin Evgeniy", "Zhenya", QObject::tr( "Russia" ), "mashin.zhenya@gmail.com", QObject::tr( "Many shared code between our IDEs" ) )
-	<< pDatas( "Kopats Andrei", "hlamer", QObject::tr( "Belo-Russia" ), "hlamer@tut.by", QObject::tr( "Principal Developer, Class Browser" ) )
+	<< pDatas( "Mashin Evgeniy", "evgenM", QObject::tr( "Russia" ), "mashin.zhenya@gmail.com", QObject::tr( "Many shared code between our IDEs" ) )
+	<< pDatas( "Kopats Andrei", "hlamer", QObject::tr( "Belorussia" ), "hlamer@tut.by", QObject::tr( "Principal Developer, Class Browser" ) )
 	<< pDatas( "Roper Alexander", "Minirop", QObject::tr( "France" ), "minirop@peyj.com", QObject::tr( "Qt Pro Parser, Some Features/Help" ) );
 
 const QList<pDatas> mDonors = QList<pDatas>()
