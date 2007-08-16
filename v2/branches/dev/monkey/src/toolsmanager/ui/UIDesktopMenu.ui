@@ -13,42 +13,18 @@
    <string>Desktop Applications</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>5</number>
    </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <property name="horizontalSpacing" >
-    <number>3</number>
-   </property>
-   <property name="verticalSpacing" >
+   <property name="spacing" >
     <number>3</number>
    </property>
    <item row="0" column="0" colspan="4" >
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>3</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>3</number>
      </property>
      <item row="0" column="0" >
@@ -128,9 +104,6 @@
    </item>
    <item row="1" column="3" >
     <widget class="QPushButton" name="pbUp" >
-     <property name="cursor" >
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
      <property name="text" >
       <string>&amp;Up</string>
      </property>
@@ -141,9 +114,6 @@
    </item>
    <item row="2" column="3" >
     <widget class="QPushButton" name="pbDown" >
-     <property name="cursor" >
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
      <property name="text" >
       <string>&amp;Down</string>
      </property>
@@ -213,13 +183,27 @@
    </item>
    <item row="7" column="0" colspan="4" >
     <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>3</number>
+     </property>
      <item>
       <widget class="QProgressBar" name="pbLoading" >
        <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-         <horstretch>1</horstretch>
+        <sizepolicy>
+         <hsizetype>7</hsizetype>
+         <vsizetype>5</vsizetype>
+         <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="format" >
         <string>Loading Applications... %p%</string>
@@ -229,10 +213,15 @@
      <item>
       <widget class="QDialogButtonBox" name="dbbButtons" >
        <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+        <sizepolicy>
+         <hsizetype>0</hsizetype>
+         <vsizetype>0</vsizetype>
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
        </property>
        <property name="standardButtons" >
         <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
