@@ -194,8 +194,8 @@
        <property name="sizePolicy" >
         <sizepolicy>
          <hsizetype>7</hsizetype>
-         <vsizetype>5</vsizetype>
-         <horstretch>0</horstretch>
+         <vsizetype>0</vsizetype>
+         <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -212,14 +212,6 @@
      </item>
      <item>
       <widget class="QDialogButtonBox" name="dbbButtons" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>0</hsizetype>
-         <vsizetype>0</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
