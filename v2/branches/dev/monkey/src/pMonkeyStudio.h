@@ -12,6 +12,7 @@
 
 #include <QApplication>
 #include <QMessageBox>
+#include <QDir>
 
 #include "qsciscintilla.h"
 
@@ -31,6 +32,8 @@ namespace pMonkeyStudio
 	const QStringList availableTextCodecs();
 	const QStringList availableImageFormats();
 	const QStringList availableLanguages();
+
+	const QFileInfoList getFiles( QDir d, const QString& = QString::null, bool = true );
 
 	const QStringList getImageFileNames( const QString&, const QString&, QWidget* = QApplication::activeWindow() );
 	const QString getImageFileName( const QString&, const QString&, QWidget* = QApplication::activeWindow() );

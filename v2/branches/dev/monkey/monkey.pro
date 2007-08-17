@@ -79,6 +79,7 @@ HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/pMonkeyStudio.h \
 	src/toolsmanager/ui/UIDesktopMenu.h \
 	src/toolsmanager/pDesktopMenuEntry.h \
+	src/toolsmanager/pWindowsDesktopMenuEntry.h \
 	src/toolsmanager/ui/UIToolsEdit.h \
 	src/toolsmanager/pToolsManager.h
 
@@ -102,6 +103,7 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/pMonkeyStudio.cpp \
 	src/toolsmanager/ui/UIDesktopMenu.cpp \
 	src/toolsmanager/pDesktopMenuEntry.cpp \
+	src/toolsmanager/pWindowsDesktopMenuEntry.cpp \
 	src/toolsmanager/ui/UIToolsEdit.cpp \
 	src/toolsmanager/pToolsManager.cpp \
 	src/main.cpp

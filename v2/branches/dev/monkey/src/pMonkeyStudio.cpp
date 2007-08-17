@@ -17,7 +17,7 @@
 #include <QTextCodec>
 #include <QImageReader>
 #include <QFileDialog>
-#include <QDir>
+#include <QFileInfo>
 #include <QHash>
 
 #include "qsciapis.h"
@@ -90,6 +90,23 @@ const QStringList pMonkeyStudio::availableLanguages()
 		<< "D" << "Diff" << "HTML" << "IDL" << "Java" << "JavaScript" << "Lua"
 		<< "Makefile" << "POV" << "Perl" << "Properties" << "Python" << "Ruby"
 		<< "SQL" << "TeX" << "VHDL";
+	return l;
+}
+
+const QFileInfoList pMonkeyStudio::getFiles( QDir d, const QString& s, bool b )
+{
+	QFileInfoList l;
+	foreach ( QFileInfo f, d.entryInfoList( QDir::AllEntries | QDir::NoDotAndDotDot ) )
+	{
+		if ( f.isFile() && ( s.isNull() || ( !s.isNull() && f.suffix() == s ) ) )
+			l << f;
+		else if ( f.isDir() && b )
+		{
+			d.cd( f.filePath() );
+			l << getFiles( d, s );
+			d.cdUp();
+		}
+	}
 	return l;
 }
 
