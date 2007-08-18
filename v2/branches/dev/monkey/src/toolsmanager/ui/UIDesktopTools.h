@@ -2,8 +2,8 @@
 **
 ** 		Created using Monkey Studio v1.7.0
 ** Author    : Nox P@sNox
-** Project   : UIDesktopMenu
-** FileName  : UIDesktopMenu.h
+** Project   : UIDesktopTools
+** FileName  : UIDesktopTools.h
 ** Date      : lun. août 13 19:14:07 2007
 ** License   : GPL
 ** Comment   : Your comment here
@@ -12,29 +12,33 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#ifndef UIDESKTOPMENU_H
-#define UIDESKTOPMENU_H
+#ifndef UIDesktopTools_H
+#define UIDesktopTools_H
 
 #include "MonkeyExport.h"
 #include "QSingleton.h"
-#include "ui_UIDesktopMenu.h"
-#include "pDesktopMenuEntry.h"
+#include "ui_UIDesktopTools.h"
+#include "pDesktopApplications.h"
 
-class Q_MONKEY_EXPORT UIDesktopMenu : public QDialog, public Ui::UIDesktopMenu, public QSingleton<UIDesktopMenu>
+class QTreeWidgetItem;
+class pDesktopFolder;
+
+class Q_MONKEY_EXPORT UIDesktopTools : public QDialog, public Ui::UIDesktopTools, public QSingleton<UIDesktopTools>
 {
 	Q_OBJECT
-	friend class QSingleton<UIDesktopMenu>;
+	friend class QSingleton<UIDesktopTools>;
 
 private:
-	UIDesktopMenu( QWidget* = QApplication::activeWindow() );
-	~UIDesktopMenu();
+	UIDesktopTools( QWidget* = QApplication::activeWindow() );
+	~UIDesktopTools();
 
 protected:
-	pDesktopMenuEntry mDesktopEntries;
+	pDesktopApplications mStartMenu;
 
 	void showEvent( QShowEvent* );
 
 protected slots:
+	void populateTree( QTreeWidgetItem* i, pDesktopFolder* f );
 	void populateList();
 	void on_leNameFilter_returnPressed();
 	void on_leCategoriesFilters_returnPressed();
@@ -46,4 +50,4 @@ protected slots:
 
 };
 
-#endif // UIDESKTOPMENU_H
+#endif // UIDesktopTools_H

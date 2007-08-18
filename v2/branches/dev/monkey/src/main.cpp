@@ -3,13 +3,12 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QLocale>
+#include <QErrorMessage>
 
 #include "UITranslator.h"
 #include "UISettings.h"
 #include "UIMain.h"
 #include "pSettings.h"
-
-#include "pWindowsDesktopMenuEntry.h"
 
 void showMessage( QSplashScreen* s, const QString& m )
 {
@@ -80,9 +79,6 @@ int main( int argc, char** argv )
 	// init main window
 	showMessage( &splash, QObject::tr( "Initializing Main Window..." ) );
 	UIMain::instance()->setWindowTitle( QObject::tr( "%1 v%2 - %3, The Monkey Studio Team" ).arg( PROGRAM_NAME, PROGRAM_VERSION, PROGRAM_COPYRIGHTS ) );
-		
-	pWindowsDesktopMenuEntry dd;
-	dd.exec();
 
 /*
 	// menu tools
