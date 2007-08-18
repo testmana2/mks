@@ -29,7 +29,7 @@ PROGRAM_NAME	= "Monkey Studio"
 win32:RC_FILE	*= monkey.rc
 RESOURCES	*= src/resources/resources.qrc
 
-CONFIG	*= qt warn_on app_bundle thread x11 windows
+CONFIG	*= qt warn_on app_bundle thread x11 windows console debug
 !contains( CONFIG, release ) {
 	CONFIG	*= debug console
 	VERSION = "${VERSION}svn"
@@ -55,7 +55,7 @@ FORMS	*= src/maininterface/ui/UITranslator.ui \
 	src/abbreviationsmanager/ui/UIAddAbbreviation.ui \
 	src/templatesmanager/ui/UIEditTemplate.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui \
-	src/toolsmanager/ui/UIDesktopMenu.ui \
+	src/toolsmanager/ui/UIDesktopTools.ui \
 	src/toolsmanager/ui/UIToolsEdit.ui
 
 HEADERS	*= src/maininterface/ui/UITranslator.h \
@@ -77,9 +77,8 @@ HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/templatesmanager/ui/UIEditTemplate.h \
 	src/templatesmanager/ui/UITemplatesWizard.h \
 	src/pMonkeyStudio.h \
-	src/toolsmanager/ui/UIDesktopMenu.h \
-	src/toolsmanager/pDesktopMenuEntry.h \
-	src/toolsmanager/pWindowsDesktopMenuEntry.h \
+	src/toolsmanager/pDesktopApplications.h \
+	src/toolsmanager/ui/UIDesktopTools.h \
 	src/toolsmanager/ui/UIToolsEdit.h \
 	src/toolsmanager/pToolsManager.h
 
@@ -101,9 +100,12 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/templatesmanager/ui/UIEditTemplate.cpp \
 	src/templatesmanager/ui/UITemplatesWizard.cpp \
 	src/pMonkeyStudio.cpp \
-	src/toolsmanager/ui/UIDesktopMenu.cpp \
-	src/toolsmanager/pDesktopMenuEntry.cpp \
-	src/toolsmanager/pWindowsDesktopMenuEntry.cpp \
+	src/toolsmanager/pDesktopApplications.cpp \
+	src/toolsmanager/ui/UIDesktopTools.cpp \
 	src/toolsmanager/ui/UIToolsEdit.cpp \
 	src/toolsmanager/pToolsManager.cpp \
 	src/main.cpp
+
+unix:SOURCES	*= src/toolsmanager/pDesktopApplications_unix.cpp
+mac:SOURCES	*= src/toolsmanager/pDesktopApplications_mac.cpp
+win32:SOURCES	*= src/toolsmanager/pDesktopApplications_win32.cpp

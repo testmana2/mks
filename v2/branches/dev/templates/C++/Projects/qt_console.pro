@@ -17,4 +17,4 @@ TEMPLATE = app
 
 CONFIG -= gui
 
-SOURCE	+= $basename$.cpp
+SOURCES	+= $basename$.cpp

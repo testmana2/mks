@@ -96,7 +96,7 @@ const QStringList pMonkeyStudio::availableLanguages()
 const QFileInfoList pMonkeyStudio::getFiles( QDir d, const QString& s, bool b )
 {
 	QFileInfoList l;
-	foreach ( QFileInfo f, d.entryInfoList( QDir::AllEntries | QDir::NoDotAndDotDot ) )
+	foreach ( QFileInfo f, d.entryInfoList( QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst | QDir::Name ) )
 	{
 		if ( f.isFile() && ( s.isNull() || ( !s.isNull() && f.suffix() == s ) ) )
 			l << f;

@@ -2,8 +2,8 @@
 **
 ** 		Created using Monkey Studio v1.7.0
 ** Author    : Nox P@sNox
-** Project   : UIDesktopMenu
-** FileName  : UIDesktopMenu.cpp
+** Project   : UIDesktopTools
+** FileName  : UIDesktopTools.cpp
 ** Date      : lun. août 13 19:14:07 2007
 ** License   : GPL
 ** Comment   : Your comment here
@@ -12,72 +12,98 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#include "UIDesktopMenu.h"
+#include "UIDesktopTools.h"
 #include "pToolsManager.h"
 #include "pSettings.h"
 #include "pMonkeyStudio.h"
 
 #include <QTimer>
 
-UIDesktopMenu::UIDesktopMenu( QWidget* w )
+UIDesktopTools::UIDesktopTools( QWidget* w )
 	: QDialog( w )
 {
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
+	twLeft->headerItem()->setHidden( true );
 	pbLoading->setVisible( false );
 	setProperty( "Populated", false );
 }
 
-UIDesktopMenu::~UIDesktopMenu()
-{
-}
+UIDesktopTools::~UIDesktopTools()
+{}
 
-void UIDesktopMenu::showEvent( QShowEvent* e )
+void UIDesktopTools::showEvent( QShowEvent* e )
 {
 	QDialog::showEvent( e );
 	dbbButtons->button( QDialogButtonBox::Ok )->setDefault( false );
 	QTimer::singleShot( 0, this, SLOT( populateList() ) );
 }
 
-void UIDesktopMenu::populateList()
+void UIDesktopTools::populateTree( QTreeWidgetItem* i, pDesktopFolder* f )
+{
+	if ( !f )
+		return;
+	// Folders
+	foreach ( QString s, f->Folders.keys() )
+	{
+		pDesktopFolder* df = f->Folders.value( s );
+		QTreeWidgetItem* it = 0;
+		if ( i )
+			it = new QTreeWidgetItem( i );
+		else
+			it = new QTreeWidgetItem( twLeft );
+		it->setText( 0, s );
+		it->setIcon( 0, QPixmap( df->Icon ) );
+		it->setData( 0, pDesktopApplications::dtType, pDesktopApplications::dtFolder );
+		populateTree( it, df );
+	}
+	// Applications
+	foreach ( QString s, f->Applications.keys() )
+	{
+		QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
+		pDesktopApplication* a = f->Applications.value( s );
+		QTreeWidgetItem* it = 0;
+		if ( i )
+			it = new QTreeWidgetItem( i );
+		else
+			it = new QTreeWidgetItem( twLeft );
+		it->setText( 0, a->Name );
+		it->setIcon( 0, QPixmap( a->Icon ) );
+		it->setToolTip( 0, QString( "<b>%1</b><br />%2" ).arg( a->GenericName.isEmpty() ? a->Name : a->GenericName ).arg( a->Comment.isEmpty() ? QObject::tr( "No available comment" ) : a->Comment ) );
+		it->setStatusTip( 0, s );
+		it->setData( 0, pDesktopApplications::dtType, pDesktopApplications::dtApplication );
+		it->setData( 0, pDesktopApplications::dtIcon, a->Icon );
+		it->setData( 0, pDesktopApplications::dtCategories, a->Categories );
+		pbLoading->setValue( pbLoading->value() +1 );
+	}
+}
+
+void UIDesktopTools::populateList()
 {
 	if ( !property( "Populated" ).toBool() )
 	{
+		// populate applications
+		mStartMenu.populateApplications();
 		// show progressbar
 		pbLoading->setVisible( true );
-		pbLoading->setRange( 0, mDesktopEntries.applications().count() );
+		pbLoading->setRange( 0, mStartMenu.count() );
 		// clear tree
-		lwLeft->clear();
-		// load application
-		foreach ( pDesktopFile df, mDesktopEntries.applications() )
-		{
-			QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
-			QListWidgetItem* it = new QListWidgetItem( lwLeft );
-			QString s;
-			// caption
-			it->setText( df.Name );
-			// icon
-			it->setIcon( QPixmap( mDesktopEntries.FindIcon( df.Icon, lwLeft->iconSize().width(), "Crystal SVG" ) ) );
-			it->setData( Qt::UserRole +1, df.Icon );
-			// tooltip
-			it->setToolTip( QString( "<b>%1</b><br />%2" ).arg( df.GenericName.isEmpty() ? df.Name : df.GenericName, df.Comment.isEmpty() ? tr( "No Comment" ) : df.Comment ) );
-			// filepath
-			it->setStatusTip( df.FilePath );
-			// categories
-			it->setData( Qt::UserRole +2, df.Categories );
-			// update progressbar
-			pbLoading->setValue( pbLoading->value() +1 );
-		}
+		twLeft->clear();
+		// disable update
+		twLeft->setUpdatesEnabled( false );
+		// populate tree
+		populateTree( 0, mStartMenu.startMenu() );
+		// enable update
+		twLeft->setUpdatesEnabled( true );
 		// hide progressbar
 		pbLoading->setVisible( false );
 		// restore to right added applications
 		QStringList l;
 		foreach ( pTool t, pToolsManager::tools( pToolsManager::ttDesktopEntry ) )
 			l << t.FilePath;
-		for ( int i = 0; i < lwLeft->count(); i++ )
+		foreach ( QTreeWidgetItem* it, twLeft->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 		{
-			QListWidgetItem* it = lwLeft->item( i );
-			if ( l.contains( it->statusTip() ) )
+			if ( l.contains( it->statusTip( 0 ) ) )
 				it->setSelected( true );
 		}
 		// simulate click to add items to right
@@ -87,24 +113,21 @@ void UIDesktopMenu::populateList()
 	}
 }
 
-void UIDesktopMenu::on_leNameFilter_returnPressed()
+void UIDesktopTools::on_leNameFilter_returnPressed()
 {
-	QList<QListWidgetItem*> l = lwLeft->findItems( leNameFilter->text(), Qt::MatchContains | Qt::MatchWrap );
-	for ( int i = 0; i < lwLeft->count(); i++ )
-	{
-		// get item
-		QListWidgetItem* it = lwLeft->item( i );
-		//
-		it->setHidden( !l.contains( it ) );
-	}
+	QList<QTreeWidgetItem*> l = twLeft->findItems( leNameFilter->text(), Qt::MatchContains | Qt::MatchRecursive );
+	foreach ( QTreeWidgetItem* it, twLeft->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
+		if ( it->data( 0, pDesktopApplications::dtType ).toInt() == pDesktopApplications::dtApplication )
+			it->setHidden( !l.contains( it ) );
 }
 
-void UIDesktopMenu::on_leCategoriesFilters_returnPressed()
+void UIDesktopTools::on_leCategoriesFilters_returnPressed()
 {
-	for ( int i = 0; i < lwLeft->count(); i++ )
+	/*
+	for ( int i = 0; i < twLeft->count(); i++ )
 	{
 		// get item
-		QListWidgetItem* it = lwLeft->item( i );
+		QListWidgetItem* it = twLeft->item( i );
 		// get item data
 		QStringList l = it->data( Qt::UserRole +2 ).toStringList();
 		// check if need to be visible according to filter
@@ -122,23 +145,37 @@ void UIDesktopMenu::on_leCategoriesFilters_returnPressed()
 		// set item visibility
 		it->setHidden( !b );
 	}
+	*/
 }
 
-void UIDesktopMenu::on_tbRight_clicked()
+void UIDesktopTools::on_tbRight_clicked()
 {
-	foreach ( QListWidgetItem* it, lwLeft->selectedItems() )
-		if ( !it->isHidden() )
-			lwRight->addItem( lwLeft->takeItem( lwLeft->row( it ) ) );
+	foreach ( QTreeWidgetItem* it, twLeft->selectedItems() )
+	{
+		if ( !it->isHidden() && it->data( 0, pDesktopApplications::dtType ).toInt() == pDesktopApplications::dtApplication )
+		{
+			QListWidgetItem* i = new QListWidgetItem( lwRight );
+			i->setText( it->text( 0 ) );
+			i->setIcon( it->icon( 0 ) );
+			i->setToolTip( it->toolTip( 0 ) );
+			i->setStatusTip( it->statusTip( 0 ) );
+			i->setData( pDesktopApplications::dtIcon, it->data( 0, pDesktopApplications::dtIcon ).toString() );
+			i->setData( pDesktopApplications::dtPointer, reinterpret_cast<quintptr>( it ) );
+			it->setHidden( true );
+		}
+	}
 }
 
-void UIDesktopMenu::on_tbLeft_clicked()
+void UIDesktopTools::on_tbLeft_clicked()
 {
 	foreach ( QListWidgetItem* it, lwRight->selectedItems() )
-		if ( !it->isHidden() )
-			lwLeft->addItem( lwRight->takeItem( lwRight->row( it ) ) );
+	{
+		reinterpret_cast<QTreeWidgetItem*>( it->data( pDesktopApplications::dtPointer ).value<quintptr>() )->setHidden( false );
+		delete it;
+	}
 }
 
-void UIDesktopMenu::on_pbUp_clicked()
+void UIDesktopTools::on_pbUp_clicked()
 {
 	if ( lwRight->selectedItems().count() > 1 )
 	{
@@ -155,7 +192,7 @@ void UIDesktopMenu::on_pbUp_clicked()
 	lwRight->setCurrentRow( id -1 );
 }
 
-void UIDesktopMenu::on_pbDown_clicked()
+void UIDesktopTools::on_pbDown_clicked()
 {
 	if ( lwRight->selectedItems().count() > 1 )
 	{
@@ -172,7 +209,7 @@ void UIDesktopMenu::on_pbDown_clicked()
 	lwRight->setCurrentRow( id +1 );
 }
 
-void UIDesktopMenu::accept()
+void UIDesktopTools::accept()
 {
 	// get desktop entry
 	QList<pTool> l = pToolsManager::tools( pToolsManager::ttUserEntry );
@@ -188,7 +225,7 @@ void UIDesktopMenu::accept()
 	{
 		s->setArrayIndex( i );
 		s->setValue( "Caption", lwRight->item( i )->text() );
-		s->setValue( "FileIcon", mDesktopEntries.FindIcon( lwRight->item( i )->data( Qt::UserRole +1 ).toString(), 22, "Crystal SVG" ) );
+		s->setValue( "FileIcon", lwRight->item( i )->data( pDesktopApplications::dtIcon ).toString() );
 		s->setValue( "FilePath", lwRight->item( i )->statusTip() );
 		s->setValue( "WorkingPath", "" );
 		s->setValue( "DesktopEntry", true );

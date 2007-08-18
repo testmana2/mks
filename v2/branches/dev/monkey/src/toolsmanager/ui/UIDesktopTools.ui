@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>UIDesktopMenu</class>
- <widget class="QDialog" name="UIDesktopMenu" >
+ <class>UIDesktopTools</class>
+ <widget class="QDialog" name="UIDesktopTools" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -13,18 +13,42 @@
    <string>Desktop Applications</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>3</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>3</number>
    </property>
    <item row="0" column="0" colspan="4" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>3</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>3</number>
      </property>
      <item row="0" column="0" >
@@ -64,7 +88,7 @@
     </layout>
    </item>
    <item rowspan="6" row="1" column="0" >
-    <widget class="QListWidget" name="lwLeft" >
+    <widget class="QTreeWidget" name="twLeft" >
      <property name="editTriggers" >
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
@@ -74,6 +98,14 @@
      <property name="selectionMode" >
       <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
+     <property name="allColumnsShowFocus" >
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text" >
+       <string>1</string>
+      </property>
+     </column>
     </widget>
    </item>
    <item rowspan="2" row="1" column="1" >
@@ -183,18 +215,25 @@
    </item>
    <item row="7" column="0" colspan="4" >
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>3</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QProgressBar" name="pbLoading" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>0</vsizetype>
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -231,7 +270,7 @@
   <connection>
    <sender>dbbButtons</sender>
    <signal>accepted()</signal>
-   <receiver>UIDesktopMenu</receiver>
+   <receiver>UIDesktopTools</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -247,7 +286,7 @@
   <connection>
    <sender>dbbButtons</sender>
    <signal>rejected()</signal>
-   <receiver>UIDesktopMenu</receiver>
+   <receiver>UIDesktopTools</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >

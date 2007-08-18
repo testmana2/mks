@@ -2,7 +2,7 @@
 #include "pSettings.h"
 #include "pMenuBar.h"
 #include "UIToolsEdit.h"
-#include "UIDesktopMenu.h"
+#include "UIDesktopTools.h"
 
 #include <QProcess>
 #include <QDesktopServices>
@@ -57,7 +57,7 @@ void pToolsManager::toolsMenu_triggered( QAction* a )
 {
 	if ( a == pMenuBar::instance()->action( "mTools/aEdit" ) || a == pMenuBar::instance()->action( "mTools/aEditDesktop" ) )
 	{
-		if ( ( a == pMenuBar::instance()->action( "mTools/aEdit" ) ? UIToolsEdit::instance()->exec() : UIDesktopMenu::instance()->exec() ) )
+		if ( ( a == pMenuBar::instance()->action( "mTools/aEdit" ) ? UIToolsEdit::instance()->exec() : UIDesktopTools::instance()->exec() ) )
 		{
 			// got menubar
 			pMenuBar* mb = pMenuBar::instance();

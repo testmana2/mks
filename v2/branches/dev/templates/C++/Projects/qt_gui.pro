@@ -15,4 +15,4 @@
 
 TEMPLATE = app
 
-SOURCE	+= $basename$.cpp
+SOURCES	+= $basename$.cpp
