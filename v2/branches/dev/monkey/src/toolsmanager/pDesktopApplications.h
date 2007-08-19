@@ -46,7 +46,7 @@ class pDesktopApplications : public QObject
 	friend class UIDesktopTools;
 
 public:
-	enum DataType { dtType = Qt::UserRole, dtApplication, dtFolder, dtIcon, dtCategories, dtPointer };
+	enum DataType { dtType = Qt::UserRole, dtApplication, dtFolder, dtIcon, dtCategories, dtPointer, dtInUse };
 
 	pDesktopApplications( QObject* = 0 );
 	~pDesktopApplications();

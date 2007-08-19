@@ -74,6 +74,7 @@ void UIDesktopTools::populateTree( QTreeWidgetItem* i, pDesktopFolder* f )
 		it->setData( 0, pDesktopApplications::dtType, pDesktopApplications::dtApplication );
 		it->setData( 0, pDesktopApplications::dtIcon, a->Icon );
 		it->setData( 0, pDesktopApplications::dtCategories, a->Categories );
+		it->setData( 0, pDesktopApplications::dtInUse, false );
 		pbLoading->setValue( pbLoading->value() +1 );
 	}
 }
@@ -117,24 +118,23 @@ void UIDesktopTools::on_leNameFilter_returnPressed()
 {
 	QList<QTreeWidgetItem*> l = twLeft->findItems( leNameFilter->text(), Qt::MatchContains | Qt::MatchRecursive );
 	foreach ( QTreeWidgetItem* it, twLeft->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
-		if ( it->data( 0, pDesktopApplications::dtType ).toInt() == pDesktopApplications::dtApplication )
+		if ( !it->data( 0, pDesktopApplications::dtInUse ).toBool() && it->data( 0, pDesktopApplications::dtType ).toInt() == pDesktopApplications::dtApplication )
 			it->setHidden( !l.contains( it ) );
 }
 
 void UIDesktopTools::on_leCategoriesFilters_returnPressed()
 {
-	/*
-	for ( int i = 0; i < twLeft->count(); i++ )
+	foreach ( QTreeWidgetItem* it, twLeft->findItems( "*", Qt::MatchWildcard | Qt::MatchRecursive ) )
 	{
-		// get item
-		QListWidgetItem* it = twLeft->item( i );
+		if ( it->data( 0, pDesktopApplications::dtInUse ).toBool() || it->data( 0, pDesktopApplications::dtType ).toInt() == pDesktopApplications::dtFolder )
+			continue;
 		// get item data
-		QStringList l = it->data( Qt::UserRole +2 ).toStringList();
+		QStringList l = it->data( 0, pDesktopApplications::dtCategories ).toStringList();
 		// check if need to be visible according to filter
 		bool b = leCategoriesFilters->text().isEmpty();
 		if ( !b )
 		{
-			foreach ( QString s, leCategoriesFilters->text().split( ";" ) )
+			foreach ( QString s, leCategoriesFilters->text().split( ";", QString::SkipEmptyParts ) )
 			{
 				if ( l.contains( s, Qt::CaseInsensitive ) )
 					b = true;
@@ -145,7 +145,6 @@ void UIDesktopTools::on_leCategoriesFilters_returnPressed()
 		// set item visibility
 		it->setHidden( !b );
 	}
-	*/
 }
 
 void UIDesktopTools::on_tbRight_clicked()
@@ -161,6 +160,7 @@ void UIDesktopTools::on_tbRight_clicked()
 			i->setStatusTip( it->statusTip( 0 ) );
 			i->setData( pDesktopApplications::dtIcon, it->data( 0, pDesktopApplications::dtIcon ).toString() );
 			i->setData( pDesktopApplications::dtPointer, reinterpret_cast<quintptr>( it ) );
+			it->setData( 0, pDesktopApplications::dtInUse, true );
 			it->setHidden( true );
 		}
 	}
@@ -170,7 +170,12 @@ void UIDesktopTools::on_tbLeft_clicked()
 {
 	foreach ( QListWidgetItem* it, lwRight->selectedItems() )
 	{
-		reinterpret_cast<QTreeWidgetItem*>( it->data( pDesktopApplications::dtPointer ).value<quintptr>() )->setHidden( false );
+		QTreeWidgetItem* i = reinterpret_cast<QTreeWidgetItem*>( it->data( pDesktopApplications::dtPointer ).value<quintptr>() );
+		if ( i )
+		{
+			i->setHidden( false );
+			i->setData( 0, pDesktopApplications::dtInUse, false );
+		}
 		delete it;
 	}
 }
