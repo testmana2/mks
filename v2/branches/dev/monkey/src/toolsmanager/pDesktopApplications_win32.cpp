@@ -28,6 +28,8 @@ QStringList pDesktopApplications::startMenuPaths() const
 	// get start menu files
 	if ( SHGetSpecialFolderPathW( NULL, s, CSIDL_STARTMENU, false ) )
 		l << QString::fromWCharArray( s ).replace( "\\", "/" );
+	// return values
+	return l;
 }
 
 void pDesktopApplications::populateApplications()
@@ -55,7 +57,7 @@ void pDesktopApplications::populateApplications()
 			if ( !df->Applications.contains( f.absoluteFilePath() ) )
 			{
 				pDesktopApplication* a = new pDesktopApplication();
-				a->Name = f.baseName();
+				a->Name = f.completeBaseName();
 				a->Icon = QString();
 				a->GenericName = QString();
 				a->Comment = QString();
