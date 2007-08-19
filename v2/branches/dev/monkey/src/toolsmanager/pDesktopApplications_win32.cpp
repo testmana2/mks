@@ -32,6 +32,9 @@ QStringList pDesktopApplications::startMenuPaths() const
 	return l;
 }
 
+bool pDesktopApplications::categoriesAvailable() const
+{ return false; }
+
 void pDesktopApplications::populateApplications()
 {
 	foreach ( const QString fp, startMenuPaths() )
@@ -43,14 +46,19 @@ void pDesktopApplications::populateApplications()
 			// get relative path
 			QString p = f.absolutePath().remove( fp ).remove( 0, 1 );
 			// get last folder object
+			QString s;
 			foreach ( QString n, p.split( "/", QString::SkipEmptyParts ) )
 			{
+				s += n +"/";
 				if ( df->Folders.contains( n ) )
 					df = df->Folders[n];
 				else
 				{
 					df->Folders[n] = new pDesktopFolder();
 					df = df->Folders[n];
+					df->Path = fp +"/" +s;
+					if ( df->Path.endsWith( "/" ) )
+						df->Path.chop( 1 );
 				}
 			}
 			// add application

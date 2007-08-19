@@ -18,6 +18,7 @@
 #include "pMonkeyStudio.h"
 
 #include <QTimer>
+#include <QFileIconProvider>
 
 UIDesktopTools::UIDesktopTools( QWidget* w )
 	: QDialog( w )
@@ -27,6 +28,11 @@ UIDesktopTools::UIDesktopTools( QWidget* w )
 	twLeft->headerItem()->setHidden( true );
 	pbLoading->setVisible( false );
 	setProperty( "Populated", false );
+	if ( !mStartMenu.categoriesAvailable() )
+	{
+		lCategoriesFilters->hide();
+		leCategoriesFilters->hide();
+	}
 }
 
 UIDesktopTools::~UIDesktopTools()
@@ -54,6 +60,8 @@ void UIDesktopTools::populateTree( QTreeWidgetItem* i, pDesktopFolder* f )
 			it = new QTreeWidgetItem( twLeft );
 		it->setText( 0, s );
 		it->setIcon( 0, QPixmap( df->Icon ) );
+		if ( it->icon( 0 ).isNull() )
+			it->setIcon( 0, mIconProvider.icon( df->Path ) );
 		it->setData( 0, pDesktopApplications::dtType, pDesktopApplications::dtFolder );
 		populateTree( it, df );
 	}
@@ -69,6 +77,8 @@ void UIDesktopTools::populateTree( QTreeWidgetItem* i, pDesktopFolder* f )
 			it = new QTreeWidgetItem( twLeft );
 		it->setText( 0, a->Name );
 		it->setIcon( 0, QPixmap( a->Icon ) );
+		if ( it->icon( 0 ).isNull() )
+			it->setIcon( 0, mIconProvider.icon( s ) );
 		it->setToolTip( 0, QString( "<b>%1</b><br />%2" ).arg( a->GenericName.isEmpty() ? a->Name : a->GenericName ).arg( a->Comment.isEmpty() ? QObject::tr( "No available comment" ) : a->Comment ) );
 		it->setStatusTip( 0, s );
 		it->setData( 0, pDesktopApplications::dtType, pDesktopApplications::dtApplication );
