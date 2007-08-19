@@ -267,6 +267,9 @@ QStringList pDesktopApplications::startMenuPaths() const
 	return QStringList( "/usr/share/applications" );
 }
 
+bool pDesktopApplications::categoriesAvailable() const
+{ return true; }
+
 void pDesktopApplications::populateApplications()
 {
 	// hash icons themes
@@ -281,14 +284,19 @@ void pDesktopApplications::populateApplications()
 			// get relative path
 			QString p = f.absolutePath().remove( fp ).remove( 0, 1 );
 			// get last folder object
+			QString fd;
 			foreach ( QString n, p.split( "/", QString::SkipEmptyParts ) )
 			{
+				fd += n +"/";
 				if ( df->Folders.contains( n ) )
 					df = df->Folders[n];
 				else
 				{
 					df->Folders[n] = new pDesktopFolder();
 					df = df->Folders[n];
+					df->Path = fp +"/" +fd;
+					if ( df->Path.endsWith( "/" ) )
+						df->Path.chop( 1 );
 				}
 			}
 			// update application for breaking freeze

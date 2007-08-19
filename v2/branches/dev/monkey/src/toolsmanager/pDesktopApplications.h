@@ -35,6 +35,7 @@ struct pDesktopFolder
 	~pDesktopFolder()
 	{ qDeleteAll( Applications ); qDeleteAll( Folders ); }
 	
+	QString Path;
 	QString Icon;
 	QHash<QString, pDesktopApplication*> Applications;
 	QHash<QString, pDesktopFolder*> Folders;
@@ -53,6 +54,7 @@ public:
 
 	const int count();
 	QStringList startMenuPaths() const;
+	bool categoriesAvailable() const;
 	pDesktopFolder* startMenu() { return &mStartMenu; }
 
 protected:

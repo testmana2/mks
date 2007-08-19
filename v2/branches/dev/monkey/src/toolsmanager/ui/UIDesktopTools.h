@@ -20,6 +20,8 @@
 #include "ui_UIDesktopTools.h"
 #include "pDesktopApplications.h"
 
+#include <QFileIconProvider>
+
 class QTreeWidgetItem;
 class pDesktopFolder;
 
@@ -33,6 +35,7 @@ private:
 	~UIDesktopTools();
 
 protected:
+	QFileIconProvider mIconProvider;
 	pDesktopApplications mStartMenu;
 
 	void showEvent( QShowEvent* );

@@ -17,5 +17,8 @@
 QStringList pDesktopApplications::startMenuPaths() const
 { return QStringList(); }
 
+bool pDesktopApplications::categoriesAvailable() const
+{ return false; }
+
 void pDesktopApplications::populateApplications()
 {}
