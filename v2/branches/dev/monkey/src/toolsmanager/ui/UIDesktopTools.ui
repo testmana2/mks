@@ -13,18 +13,42 @@
    <string>Desktop Applications</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="margin" >
+   <property name="leftMargin" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>5</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>3</number>
+   </property>
+   <property name="verticalSpacing" >
     <number>3</number>
    </property>
    <item row="0" column="0" colspan="4" >
     <layout class="QGridLayout" >
-     <property name="margin" >
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>3</number>
+     </property>
+     <property name="verticalSpacing" >
       <number>3</number>
      </property>
      <item row="0" column="0" >
@@ -191,18 +215,25 @@
    </item>
    <item row="7" column="0" colspan="4" >
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>3</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QProgressBar" name="pbLoading" >
        <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>0</hsizetype>
-         <vsizetype>0</vsizetype>
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -220,6 +251,12 @@
      </item>
      <item>
       <widget class="QDialogButtonBox" name="dbbButtons" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
@@ -243,8 +280,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>318</x>
-     <y>457</y>
+     <x>633</x>
+     <y>473</y>
     </hint>
     <hint type="destinationlabel" >
      <x>316</x>
@@ -256,11 +293,11 @@
    <sender>dbbButtons</sender>
    <signal>rejected()</signal>
    <receiver>UIDesktopTools</receiver>
-   <slot>reject()</slot>
+   <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>410</x>
-     <y>457</y>
+     <x>633</x>
+     <y>473</y>
     </hint>
     <hint type="destinationlabel" >
      <x>404</x>

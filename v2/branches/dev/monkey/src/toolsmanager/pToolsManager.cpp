@@ -3,6 +3,7 @@
 #include "pMenuBar.h"
 #include "UIToolsEdit.h"
 #include "UIDesktopTools.h"
+#include "pMonkeyStudio.h"
 
 #include <QProcess>
 #include <QDesktopServices>
@@ -10,13 +11,26 @@
 #include <QFile>
 #include <QTimer>
 
+QFileIconProvider* pToolsManager::mIconProvider = 0L;
+
 pToolsManager::pToolsManager( QObject* p )
 	: QObject( p )
 {
 	// initialise action
 	initializeTools();
 	// action connection
-	connect( pMenuBar::instance()->menu( "mTools" ), SIGNAL( triggered( QAction* ) ), this, SLOT( toolsMenu_triggered( QAction* ) ) );
+	connect( pMenuBar::instance()->action( "mTools/aEditUser" ), SIGNAL( triggered() ), this, SLOT( editTools_triggered() ) );
+	connect( pMenuBar::instance()->action( "mTools/aEditDesktop" ), SIGNAL( triggered() ), this, SLOT( editTools_triggered() ) );
+	connect( pMenuBar::instance()->menu( "mTools/mUserTools" ), SIGNAL( triggered( QAction* ) ), this, SLOT( toolsMenu_triggered( QAction* ) ) );
+	connect( pMenuBar::instance()->menu( "mTools/mDesktopTools" ), SIGNAL( triggered( QAction* ) ), this, SLOT( toolsMenu_triggered( QAction* ) ) );
+}
+
+pToolsManager::~pToolsManager()
+{ delete mIconProvider; }
+
+const QFileIconProvider* pToolsManager::iconProvider()
+{
+	return mIconProvider ? mIconProvider : ( mIconProvider = new QFileIconProvider() );
 }
 
 const QList<pTool> pToolsManager::tools( ToolType t )
@@ -41,56 +55,50 @@ const QList<pTool> pToolsManager::tools( ToolType t )
 void pToolsManager::initializeTools()
 {
 	// got menu
-	QMenu* m = pMenuBar::instance()->menu( "mTools" );
+	QMenu* mu = pMenuBar::instance()->menu( "mTools/mUserTools" );
+	QMenu* md = pMenuBar::instance()->menu( "mTools/mDesktopTools" );
+	// clear action
+	mu->clear();
+	md->clear();
 	// initialize tools
 	foreach ( pTool t, tools() )
 	{
-		QAction* ac = new QAction( QIcon( t.FileIcon ), t.Caption, m );
+		QAction* ac = new QAction( QIcon( t.FileIcon ), t.Caption, t.DesktopEntry ? md : mu );
+		if ( ac->icon().isNull() )
+			ac->setIcon( iconProvider()->icon( t.FilePath ) );
 		ac->setStatusTip( t.FilePath );
 		ac->setData( t.WorkingPath );
 		ac->setProperty( "DesktopEntry", t.DesktopEntry );
-		m->addAction( ac );
+		// add to menu
+		if ( t.DesktopEntry )
+			md->addAction( ac );
+		else
+			mu->addAction( ac );
 	}
+}
+
+void pToolsManager::editTools_triggered()
+{
+	QAction* a = qobject_cast<QAction*>( sender() );
+	if ( ( a == pMenuBar::instance()->action( "mTools/aEditUser" ) ? UIToolsEdit::instance()->exec() : UIDesktopTools::instance()->exec() ) )
+		initializeTools();
 }
 
 void pToolsManager::toolsMenu_triggered( QAction* a )
 {
-	if ( a == pMenuBar::instance()->action( "mTools/aEdit" ) || a == pMenuBar::instance()->action( "mTools/aEditDesktop" ) )
-	{
-		if ( ( a == pMenuBar::instance()->action( "mTools/aEdit" ) ? UIToolsEdit::instance()->exec() : UIDesktopTools::instance()->exec() ) )
-		{
-			// got menubar
-			pMenuBar* mb = pMenuBar::instance();
-			// got all menu action
-			QList<QAction*> l = mb->menu( "mTools" )->actions();
-			// got action to not delete
-			QAction* ae = mb->action( "mTools/aEdit" );
-			QAction* aed = mb->action( "mTools/aEditDesktop" );
-			QAction* as = mb->action( "mTools/aSeparator1" );
-			// delete unneeded action
-			foreach ( QAction* ac, l )
-				if ( ac != ae && ac != aed && ac != as )
-					delete ac;
-			// initialize
-			initializeTools();
-		}
-	}
+	bool b = false;
+	if ( a->data().toString().isEmpty() && QFile::exists( a->statusTip() ) )
+		b = QDesktopServices::openUrl( QUrl::fromLocalFile( a->statusTip() ) );
+	else if ( a->data().toString().isEmpty() )
+		b = QProcess::startDetached( a->statusTip() );
 	else
 	{
-		bool b = false;
-		if ( a->data().toString().isEmpty() && QFile::exists( a->statusTip() ) )
-			b = QDesktopServices::openUrl( QUrl::fromLocalFile( a->statusTip() ) );
-		else if ( a->data().toString().isEmpty() )
-			b = QProcess::startDetached( a->statusTip() );
-		else
-		{
-			QProcess* p = new QProcess( this );
-			connect( p, SIGNAL( finished( int ) ), p, SLOT( deleteLater() ) );
-			p->setWorkingDirectory( a->data().toString() );
-			p->start( a->statusTip() );
-			b = p->waitForStarted();
-		}
-		if ( !b )
-			qWarning( qPrintable( tr( "can't start: %1" ).arg( a->statusTip() ) ) );
+		QProcess* p = new QProcess( this );
+		connect( p, SIGNAL( finished( int ) ), p, SLOT( deleteLater() ) );
+		p->setWorkingDirectory( a->data().toString() );
+		p->start( a->statusTip() );
+		b = p->waitForStarted();
 	}
+	if ( !b )
+		pMonkeyStudio::warning( tr( "Tools Error..." ), tr( "Error trying to start tools:\n%1" ).arg( a->statusTip() ) );
 }

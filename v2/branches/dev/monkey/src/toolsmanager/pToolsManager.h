@@ -5,6 +5,7 @@
 #include "QSingleton.h"
 
 #include <QApplication>
+#include <QFileIconProvider>
 
 class pSettings;
 class pMenuBar;
@@ -30,13 +31,19 @@ class Q_MONKEY_EXPORT pToolsManager : public QObject, public QSingleton<pToolsMa
 public:
 	enum ToolType { ttAll = -1, ttUserEntry, ttDesktopEntry };
 
+	static const QFileIconProvider* iconProvider();
 	static const QList<pTool> tools( ToolType = pToolsManager::ttAll );
 	static void initializeTools();
-	
+
+protected:
+	static QFileIconProvider* mIconProvider;
+
 private:
 	pToolsManager( QObject* = QApplication::instance() );
+	~pToolsManager();
 
 public slots:
+	void editTools_triggered();
 	void toolsMenu_triggered( QAction* );
 
 };

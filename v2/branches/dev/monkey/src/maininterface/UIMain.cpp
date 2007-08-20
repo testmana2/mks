@@ -164,9 +164,11 @@ void UIMain::initMenuBar()
 */
 	mb->menu( "mTools", tr( "&Tools" ) );
 	mb->beginGroup( "mTools" );
-		mb->action( "aEdit", tr( "&Edit..." ), QIcon( ":/tools/icons/tools/edit.png" ), QString::null, tr( "Edit tools..." ) );
-		mb->action( "aEditDesktop", tr( "&Desktop Tools..." ), QIcon( ":/tools/icons/tools/desktop.png" ), QString::null, tr( "Edit desktop tools..." ) );
+		mb->action( "aEditUser", tr( "&Edit User Tools..." ), QIcon( ":/tools/icons/tools/edit.png" ), QString::null, tr( "Edit tools..." ) );
+		mb->action( "aEditDesktop", tr( "Edit &Desktop Tools..." ), QIcon( ":/tools/icons/tools/desktop.png" ), QString::null, tr( "Edit desktop tools..." ) );
 		mb->action( "aSeparator1" );
+		mb->menu( "mUserTools", tr( "&User Tools" ), QIcon( ":/tools/icons/tools/user.png" ) );
+		mb->menu( "mDesktopTools", tr( "Desktop &Tools" ), QIcon( ":/tools/icons/tools/desktop.png" ) );
 	mb->endGroup();
 	mb->menu( "mPlugins", tr( "Plu&gins" ) );
 	mb->beginGroup( "mPlugins" );
@@ -215,7 +217,7 @@ void UIMain::initToolBar()
 	// settings, tools
 	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aSettings" ) );
 	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mEdit/aShortcutsEditor" ) );
-	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mTools/aEdit" ) );
+	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mTools/aEditUser" ) );
 	dockToolBar( Qt::TopToolBarArea )->addAction( menuBar()->action( "mTools/aEditDesktop" ) );
 	dockToolBar( Qt::TopToolBarArea )->addAction();
 
