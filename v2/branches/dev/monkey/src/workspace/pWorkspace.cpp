@@ -21,6 +21,8 @@
 #include "pMonkeyStudio.h"
 
 #include "pChild.h"
+#include "pEditor.h"
+#include "pSearch.h"
 
 #include <QToolButton>
 #include <QCloseEvent>
@@ -106,6 +108,9 @@ void pWorkspace::internal_currentChanged( int i )
 	// left corner widget
 	//
 
+	// search dock
+	pSearch::instance()->setEditor( ic ? c->currentEditor() : 0 );
+	
 	// emit file changed
 	emit pFileManager::instance()->currentFileChanged( ic ? c->currentFile() : QString() );
 }
