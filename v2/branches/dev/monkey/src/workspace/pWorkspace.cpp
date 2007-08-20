@@ -302,8 +302,9 @@ void pWorkspace::editExpandAbbreviation_triggered()
 
 // view menu
 void pWorkspace::agStyles_triggered( QAction* a )
-{	
+{
 	qApp->setStyle( a->text() );
+	qApp->setPalette( qApp->style()->standardPalette() );
 	pSettings::instance()->setValue( "MainWindow/Style", a->text() );
 }
 

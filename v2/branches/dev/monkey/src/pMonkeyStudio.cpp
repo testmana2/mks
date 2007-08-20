@@ -836,7 +836,7 @@ void pMonkeyStudio::setAutoEolConversion( bool b )
 
 const bool pMonkeyStudio::autoEolConversion()
 {
-	return pSettings::instance()->value( settingsPath() +"/AutoEolConversion", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/AutoEolConversion", true ).toBool();
 }
 
 void pMonkeyStudio::setDefaultEncoding( const QString& s )
@@ -856,7 +856,7 @@ void pMonkeyStudio::setSelectionBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::selectionBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/SelectionBackgroundColor", QColor( "#444444" ) ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/SelectionBackgroundColor", QColor( "#bdff9b" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setSelectionForegroundColor( const QColor& c )
@@ -866,7 +866,7 @@ void pMonkeyStudio::setSelectionForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::selectionForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/SelectionForegroundColor", QColor( Qt::transparent ) ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/SelectionForegroundColor", QColor( "#000000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setDefaultDocumentColours( bool b )
@@ -916,7 +916,7 @@ void pMonkeyStudio::setAutoCompletionReplaceWord( bool b )
 
 const bool pMonkeyStudio::autoCompletionReplaceWord()
 {
-	return pSettings::instance()->value( settingsPath() +"/AutoCompletionReplaceWord", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/AutoCompletionReplaceWord", true ).toBool();
 }
 
 void pMonkeyStudio::setAutoCompletionShowSingle( bool b )
@@ -936,7 +936,7 @@ void pMonkeyStudio::setAutoCompletionSource( QsciScintilla::AutoCompletionSource
 
 const QsciScintilla::AutoCompletionSource pMonkeyStudio::autoCompletionSource()
 {
-	return (QsciScintilla::AutoCompletionSource)pSettings::instance()->value( settingsPath() +"/AutoCompletionSource", (int)QsciScintilla::AcsNone ).toInt();
+	return (QsciScintilla::AutoCompletionSource)pSettings::instance()->value( settingsPath() +"/AutoCompletionSource", (int)QsciScintilla::AcsAll ).toInt();
 }
 
 void pMonkeyStudio::setAutoCompletionThreshold( int i )
@@ -946,7 +946,7 @@ void pMonkeyStudio::setAutoCompletionThreshold( int i )
 
 const int pMonkeyStudio::autoCompletionThreshold()
 {
-	return pSettings::instance()->value( settingsPath() +"/AutoCompletionThreshold", -1 ).toInt();
+	return pSettings::instance()->value( settingsPath() +"/AutoCompletionThreshold", 3 ).toInt();
 }
 
 void pMonkeyStudio::setCallTipsBackgroundColor( const QColor& c )
@@ -956,7 +956,7 @@ void pMonkeyStudio::setCallTipsBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::callTipsBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/CallTipsBackgroundColor", Qt::white ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/CallTipsBackgroundColor", QColor( "#ffff9b" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setCallTipsForegroundColor( const QColor& c )
@@ -966,7 +966,7 @@ void pMonkeyStudio::setCallTipsForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::callTipsForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/CallTipsForegroundColor", Qt::lightGray ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/CallTipsForegroundColor", QColor( "#000000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setCallTipsHighlightColor( const QColor& c )
@@ -976,7 +976,7 @@ void pMonkeyStudio::setCallTipsHighlightColor( const QColor& c )
 
 const QColor pMonkeyStudio::callTipsHighlightColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/CallTipsHighlightColor", Qt::darkBlue ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/CallTipsHighlightColor", QColor( "#ff0000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setCallTipsStyle( QsciScintilla::CallTipsStyle s )
@@ -986,7 +986,7 @@ void pMonkeyStudio::setCallTipsStyle( QsciScintilla::CallTipsStyle s )
 
 const QsciScintilla::CallTipsStyle pMonkeyStudio::callTipsStyle()
 {
-	return (QsciScintilla::CallTipsStyle)pSettings::instance()->value( settingsPath() +"/CallTipsStyle", (int)QsciScintilla::CallTipsNoContext ).toInt();
+	return (QsciScintilla::CallTipsStyle)pSettings::instance()->value( settingsPath() +"/CallTipsStyle", (int)QsciScintilla::CallTipsContext ).toInt();
 }
 
 void pMonkeyStudio::setCallTipsVisible( int i )
@@ -1006,7 +1006,7 @@ void pMonkeyStudio::setAutoIndent( bool b )
 
 const bool pMonkeyStudio::autoIndent()
 {
-	return pSettings::instance()->value( settingsPath() +"/AutoIndent", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/AutoIndent", true ).toBool();
 }
 
 void pMonkeyStudio::setBackspaceUnindents( bool b )
@@ -1016,7 +1016,7 @@ void pMonkeyStudio::setBackspaceUnindents( bool b )
 
 const bool pMonkeyStudio::backspaceUnindents()
 {
-	return pSettings::instance()->value( settingsPath() +"/BackspaceUnindents", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/BackspaceUnindents", true ).toBool();
 }
 
 void pMonkeyStudio::setIndentationGuides( bool b )
@@ -1026,7 +1026,7 @@ void pMonkeyStudio::setIndentationGuides( bool b )
 
 const bool pMonkeyStudio::indentationGuides()
 {
-	return pSettings::instance()->value( settingsPath() +"/IndentationGuides", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/IndentationGuides", true ).toBool();
 }
 
 void pMonkeyStudio::setIndentationsUseTabs( bool b )
@@ -1046,7 +1046,7 @@ void pMonkeyStudio::setIndentationWidth( int i )
 
 const int pMonkeyStudio::indentationWidth()
 {
-	return pSettings::instance()->value( settingsPath() +"/IndentationWidth", 0 ).toInt();
+	return pSettings::instance()->value( settingsPath() +"/IndentationWidth", 4 ).toInt();
 }
 
 void pMonkeyStudio::setTabIndents( bool b )
@@ -1066,7 +1066,7 @@ void pMonkeyStudio::setTabWidth( int i )
 
 const int pMonkeyStudio::tabWidth()
 {
-	return pSettings::instance()->value( settingsPath() +"/TabWidth", 8 ).toInt();
+	return pSettings::instance()->value( settingsPath() +"/TabWidth", 4 ).toInt();
 }
 
 void pMonkeyStudio::setIndentationGuidesBackgroundColor( const QColor& c )
@@ -1076,7 +1076,7 @@ void pMonkeyStudio::setIndentationGuidesBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::indentationGuidesBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/IndentationGuidesBackgroundColor", Qt::white ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/IndentationGuidesBackgroundColor", QColor( "#0000ff" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setIndentationGuidesForegroundColor( const QColor& c )
@@ -1086,7 +1086,7 @@ void pMonkeyStudio::setIndentationGuidesForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::indentationGuidesForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/IndentationGuidesForegroundColor", Qt::black ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/IndentationGuidesForegroundColor", QColor( "#0000ff" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setBraceMatching( QsciScintilla::BraceMatch b )
@@ -1096,7 +1096,7 @@ void pMonkeyStudio::setBraceMatching( QsciScintilla::BraceMatch b )
 
 const QsciScintilla::BraceMatch pMonkeyStudio::braceMatching()
 {
-	return (QsciScintilla::BraceMatch)pSettings::instance()->value( settingsPath() +"/BraceMatching", (int)QsciScintilla::NoBraceMatch ).toInt();
+	return (QsciScintilla::BraceMatch)pSettings::instance()->value( settingsPath() +"/BraceMatching", (int)QsciScintilla::SloppyBraceMatch ).toInt();
 }
 
 void pMonkeyStudio::setMatchedBraceBackgroundColor( const QColor& c )
@@ -1106,7 +1106,7 @@ void pMonkeyStudio::setMatchedBraceBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::matchedBraceBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/MatchedBraceBackgroundColor", Qt::white ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/MatchedBraceBackgroundColor", QColor( "#ffff7f" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setMatchedBraceForegroundColor( const QColor& c )
@@ -1116,7 +1116,7 @@ void pMonkeyStudio::setMatchedBraceForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::matchedBraceForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/MatchedBraceForegroundColor", Qt::red ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/MatchedBraceForegroundColor", QColor( "#ff0000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setUnmatchedBraceBackgroundColor( const QColor& c )
@@ -1126,7 +1126,7 @@ void pMonkeyStudio::setUnmatchedBraceBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::unmatchedBraceBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/UnmatchedBraceBackgroundColor", Qt::white ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/UnmatchedBraceBackgroundColor", QColor( "#55aa00" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setUnmatchedBraceForegroundColor( const QColor& c )
@@ -1136,7 +1136,7 @@ void pMonkeyStudio::setUnmatchedBraceForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::unmatchedBraceForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/UnmatchedBraceForegroundColor", Qt::blue ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/UnmatchedBraceForegroundColor", QColor( "#ff0000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setEdgeMode( QsciScintilla::EdgeMode m )
@@ -1156,7 +1156,7 @@ void pMonkeyStudio::setEdgeColor( const QColor& c )
 
 const QColor pMonkeyStudio::edgeColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/EdgeColor", Qt::red ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/EdgeColor", QColor( "#ff0000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setEdgeColumn( int i )
@@ -1176,7 +1176,7 @@ void pMonkeyStudio::setCaretLineVisible( bool b )
 
 const bool pMonkeyStudio::caretLineVisible()
 {
-	return pSettings::instance()->value( settingsPath() +"/CaretLineVisible", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/CaretLineVisible", true ).toBool();
 }
 
 void pMonkeyStudio::setCaretLineBackgroundColor( const QColor& c )
@@ -1186,7 +1186,7 @@ void pMonkeyStudio::setCaretLineBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::caretLineBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/CaretLineBackgroundColor", QColor( Qt::transparent ) ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/CaretLineBackgroundColor", QColor( "#aaaaff" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setCaretForegroundColor( const QColor& c )
@@ -1196,7 +1196,7 @@ void pMonkeyStudio::setCaretForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::caretForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/CaretForegroundColor", Qt::black ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/CaretForegroundColor", QColor( "#000000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setCaretWidth( int i )
@@ -1216,7 +1216,7 @@ void pMonkeyStudio::setLineNumbersMarginEnabled( bool b )
 
 const bool pMonkeyStudio::lineNumbersMarginEnabled()
 {
-	return pSettings::instance()->value( settingsPath() +"/LineNumbersMarginEnabled", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/LineNumbersMarginEnabled", true ).toBool();
 }
 
 void pMonkeyStudio::setLineNumbersMarginWidth( int i )
@@ -1236,7 +1236,7 @@ void pMonkeyStudio::setLineNumbersMarginAutoWidth( bool b )
 
 const bool pMonkeyStudio::lineNumbersMarginAutoWidth()
 {
-	return pSettings::instance()->value( settingsPath() +"/LineNumbersMarginAutoWidth", false ).toBool();
+	return pSettings::instance()->value( settingsPath() +"/LineNumbersMarginAutoWidth", true ).toBool();
 }
 
 void pMonkeyStudio::setFolding( QsciScintilla::FoldStyle f )
@@ -1246,7 +1246,7 @@ void pMonkeyStudio::setFolding( QsciScintilla::FoldStyle f )
 
 const QsciScintilla::FoldStyle pMonkeyStudio::folding()
 {
-	return (QsciScintilla::FoldStyle)pSettings::instance()->value( settingsPath() +"/Folding", (int)QsciScintilla::NoFoldStyle ).toInt();
+	return (QsciScintilla::FoldStyle)pSettings::instance()->value( settingsPath() +"/Folding", (int)QsciScintilla::BoxedTreeFoldStyle ).toInt();
 }
 
 void pMonkeyStudio::setFoldMarginBackgroundColor( const QColor& c )
@@ -1256,7 +1256,7 @@ void pMonkeyStudio::setFoldMarginBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::foldMarginBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/FoldMarginBackgroundColor", Qt::lightGray ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/FoldMarginBackgroundColor", QColor( "#c0c0c0" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setFoldMarginForegroundColor( const QColor& c )
@@ -1266,7 +1266,7 @@ void pMonkeyStudio::setFoldMarginForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::foldMarginForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/FoldMarginForegroundColor", Qt::black ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/FoldMarginForegroundColor", QColor( "#000000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setMarginsEnabled( bool b )
@@ -1286,7 +1286,7 @@ void pMonkeyStudio::setMarginsBackgroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::marginsBackgroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/MarginsBackgroundColor", Qt::lightGray ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/MarginsBackgroundColor", QColor( "#c0c0c0" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setMarginsForegroundColor( const QColor& c )
@@ -1296,7 +1296,7 @@ void pMonkeyStudio::setMarginsForegroundColor( const QColor& c )
 
 const QColor pMonkeyStudio::marginsForegroundColor()
 {
-	return pSettings::instance()->value( settingsPath() +"/MarginsForegroundColor", Qt::black ).value<QColor>();
+	return pSettings::instance()->value( settingsPath() +"/MarginsForegroundColor", QColor( "#000000" ) ).value<QColor>();
 }
 
 void pMonkeyStudio::setMarginsFont( const QFont& f )
