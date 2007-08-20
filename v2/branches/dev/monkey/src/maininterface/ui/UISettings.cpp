@@ -168,6 +168,7 @@ UISettings::UISettings( QWidget* p )
 	connect( tbFoldMarginBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbMarginsForeground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
 	connect( tbMarginsBackground, SIGNAL( clicked() ), this, SLOT( tbColours_clicked() ) );
+	// event filter
 	// margin font
 	connect( tbMarginsFont, SIGNAL( clicked() ), this, SLOT( tbFonts_clicked() ) );
 	// lexer elements highlighting
@@ -224,10 +225,14 @@ void UISettings::loadSettings()
 	cbAutoEolConversion->setChecked( pMonkeyStudio::autoEolConversion() );
 	cbDefaultEncoding->setCurrentIndex( cbDefaultEncoding->findText( pMonkeyStudio::defaultEncoding() ) );
 	tbSelectionBackground->setIcon( colourizedPixmap( pMonkeyStudio::selectionBackgroundColor() ) );
+	tbSelectionBackground->setToolTip( pMonkeyStudio::selectionBackgroundColor().name() );
 	tbSelectionForeground->setIcon( colourizedPixmap( pMonkeyStudio::selectionForegroundColor() ) );
+	tbSelectionForeground->setToolTip( pMonkeyStudio::selectionForegroundColor().name() );
 	gbDefaultDocumentColours->setChecked( pMonkeyStudio::defaultDocumentColours() );
 	tbDefaultDocumentPen->setIcon( colourizedPixmap( pMonkeyStudio::defaultDocumentPen() ) );
+	tbDefaultDocumentPen->setToolTip( pMonkeyStudio::defaultDocumentPen().name() );
 	tbDefaultDocumentPaper->setIcon( colourizedPixmap( pMonkeyStudio::defaultDocumentPaper() ) );
+	tbDefaultDocumentPaper->setToolTip( pMonkeyStudio::defaultDocumentPaper().name() );
 	//  Auto Completion
 	gbAutoCompletionEnabled->setChecked( pMonkeyStudio::autoCompletionSource() != QsciScintilla::AcsNone );
 	cbAutoCompletionCaseSensitivity->setChecked( pMonkeyStudio::autoCompletionCaseSensitivity() );
@@ -242,8 +247,11 @@ void UISettings::loadSettings()
 	if ( bgCallTipsStyle->button( pMonkeyStudio::callTipsStyle() ) )
 		bgCallTipsStyle->button( pMonkeyStudio::callTipsStyle() )->setChecked( true );
 	tbCalltipsBackground->setIcon( colourizedPixmap( pMonkeyStudio::callTipsBackgroundColor() ) );
+	tbCalltipsBackground->setToolTip( pMonkeyStudio::callTipsBackgroundColor().name() );
 	tbCalltipsForeground->setIcon( colourizedPixmap( pMonkeyStudio::callTipsForegroundColor() ) );
+	tbCalltipsForeground->setToolTip( pMonkeyStudio::callTipsForegroundColor().name() );
 	tbCalltipsHighlight->setIcon( colourizedPixmap( pMonkeyStudio::callTipsHighlightColor() ) );
+	tbCalltipsHighlight->setToolTip( pMonkeyStudio::callTipsHighlightColor().name() );
 	//  Indentation
 	cbAutoIndent->setChecked( pMonkeyStudio::autoIndent() );
 	cbBackspaceUnindents->setChecked( pMonkeyStudio::backspaceUnindents() );
@@ -253,25 +261,34 @@ void UISettings::loadSettings()
 	sIndentationTabWidth->setValue( pMonkeyStudio::tabWidth() );
 	sIndentationWidth->setValue( pMonkeyStudio::indentationWidth() );
 	tbIndentationGuidesBackground->setIcon( colourizedPixmap( pMonkeyStudio::indentationGuidesBackgroundColor() ) );
+	tbIndentationGuidesBackground->setToolTip( pMonkeyStudio::indentationGuidesBackgroundColor().name() );
 	tbIndentationGuidesForeground->setIcon( colourizedPixmap( pMonkeyStudio::indentationGuidesForegroundColor() ) );
+	tbIndentationGuidesForeground->setToolTip( pMonkeyStudio::indentationGuidesForegroundColor().name() );
 	//  Brace Matching
 	gbBraceMatchingEnabled->setChecked( pMonkeyStudio::braceMatching() != QsciScintilla::NoBraceMatch );
 	if ( bgBraceMatch->button( pMonkeyStudio::braceMatching() ) )
 		bgBraceMatch->button( pMonkeyStudio::braceMatching() )->setChecked( true );
 	tbMatchedBraceForeground->setIcon( colourizedPixmap( pMonkeyStudio::matchedBraceForegroundColor() ) );
+	tbMatchedBraceForeground->setToolTip( pMonkeyStudio::matchedBraceForegroundColor().name() );
 	tbMatchedBraceBackground->setIcon( colourizedPixmap( pMonkeyStudio::matchedBraceBackgroundColor() ) );
+	tbMatchedBraceBackground->setToolTip( pMonkeyStudio::matchedBraceBackgroundColor().name() );
 	tbUnmatchedBraceBackground->setIcon( colourizedPixmap( pMonkeyStudio::unmatchedBraceBackgroundColor() ) );
+	tbUnmatchedBraceBackground->setToolTip( pMonkeyStudio::unmatchedBraceBackgroundColor().name() );
 	tbUnmatchedBraceForeground->setIcon( colourizedPixmap( pMonkeyStudio::unmatchedBraceForegroundColor() ) );
+	tbUnmatchedBraceForeground->setToolTip( pMonkeyStudio::unmatchedBraceForegroundColor().name() );
 	//  Edge Mode
 	gbEdgeModeEnabled->setChecked( pMonkeyStudio::edgeMode() != QsciScintilla::EdgeNone );
 	if ( bgEdgeMode->button( pMonkeyStudio::edgeMode() ) )
 		bgEdgeMode->button( pMonkeyStudio::edgeMode() )->setChecked( true );
 	sEdgeColumnNumber->setValue( pMonkeyStudio::edgeColumn() );
 	tbEdgeColor->setIcon( colourizedPixmap( pMonkeyStudio::edgeColor() ) );
+	tbEdgeColor->setToolTip( pMonkeyStudio::edgeColor().name() );
 	//  Caret
 	gbCaretLineVisible->setChecked( pMonkeyStudio::caretLineVisible() );
 	tbCaretLineBackground->setIcon( colourizedPixmap( pMonkeyStudio::caretLineBackgroundColor() ) );
+	tbCaretLineBackground->setToolTip( pMonkeyStudio::caretLineBackgroundColor().name() );
 	tbCaretForeground->setIcon( colourizedPixmap( pMonkeyStudio::caretForegroundColor() ) );
+	tbCaretForeground->setToolTip( pMonkeyStudio::caretForegroundColor().name() );
 	sCaretWidth->setValue( pMonkeyStudio::caretWidth() );
 	//  Margins
 	gbLineNumbersMarginEnabled->setChecked( pMonkeyStudio::lineNumbersMarginEnabled() );
@@ -281,10 +298,14 @@ void UISettings::loadSettings()
 	if ( bgFoldStyle->button( pMonkeyStudio::folding() ) )
 		bgFoldStyle->button( pMonkeyStudio::folding() )->setChecked( true );
 	tbFoldMarginForeground->setIcon( colourizedPixmap( pMonkeyStudio::foldMarginForegroundColor() ) );
+	tbFoldMarginForeground->setToolTip( pMonkeyStudio::foldMarginForegroundColor().name() );
 	tbFoldMarginBackground->setIcon( colourizedPixmap( pMonkeyStudio::foldMarginBackgroundColor() ) );
+	tbFoldMarginBackground->setToolTip( pMonkeyStudio::foldMarginBackgroundColor().name() );
 	gbMarginsEnabled->setChecked( pMonkeyStudio::marginsEnabled() );
 	tbMarginsForeground->setIcon( colourizedPixmap( pMonkeyStudio::marginsForegroundColor() ) );
+	tbMarginsForeground->setToolTip( pMonkeyStudio::marginsForegroundColor().name() );
 	tbMarginsBackground->setIcon( colourizedPixmap( pMonkeyStudio::marginsBackgroundColor() ) );
+	tbMarginsBackground->setToolTip( pMonkeyStudio::marginsBackgroundColor().name() );
 	tbMarginsFont->setFont( pMonkeyStudio::marginsFont() );
 	//  Special Characters
 	bgEolMode->button( pMonkeyStudio::eolMode() )->setChecked( true );
@@ -533,9 +554,8 @@ void UISettings::on_twMenu_itemSelectionChanged()
 			{
 				case 0:
 				case 1:
-					swPages->setCurrentIndex( i );
-					break;
 				case 2:
+					swPages->setCurrentIndex( i );
 					break;
 				default:
 					swPages->setCurrentIndex( i +11 );
@@ -604,7 +624,10 @@ void UISettings::tbColours_clicked()
 	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
 	QColor c = QColorDialog::getColor( iconBackgroundColor( tb->icon() ), window() );
 	if ( c.isValid() )
+	{
 		tb->setIcon( colourizedPixmap( c ) );
+		tb->setToolTip( c.name() );
+	}
 }
 
 void UISettings::tbFonts_clicked()

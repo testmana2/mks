@@ -30,9 +30,9 @@ win32:RC_FILE	*= monkey.rc
 RESOURCES	*= src/resources/resources.qrc
 
 CONFIG	*= qt warn_on app_bundle thread x11 windows
-contains( CONFIG, debug ) {
+!contains( CONFIG, release ) {
 	CONFIG	*= console
-	VERSION = "${VERSION}svn"
+	VERSION = ${VERSION}svn
 }
 QT	*= gui core
 

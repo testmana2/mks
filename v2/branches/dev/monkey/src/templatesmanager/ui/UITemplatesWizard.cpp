@@ -4,6 +4,7 @@
 #include "pFileManager.h"
 #include "pTemplatesManager.h"
 #include "pMonkeyStudio.h"
+#include "pSettings.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -20,6 +21,14 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 	pTemplate::fillComboBox( cbTypes );
 	// show correct page
 	on_swPages_currentChanged( 0 );
+	// restore infos
+	pSettings* s = pSettings::instance();
+	cbLanguages->setCurrentIndex( cbLanguages->findText( s->value( "Recents/FileWizard/Language" ).toString() ) );
+	cbTypes->setCurrentIndex( cbTypes->findData( s->value( "Recents/FileWizard/Type" ).toInt() ) );
+	leDestination->setText( s->value( "Recents/FileWizard/Destination" ).toString() );
+	leAuthor->setText( s->value( "Recents/FileWizard/Author" ).toString() );
+	cbLicenses->setEditText( s->value( "Recents/FileWizard/License" ).toString() );
+	cbOpen->setChecked( s->value( "Recents/FileWizard/Open", true ).toBool() );
 }
 
 UITemplatesWizard::~UITemplatesWizard()
@@ -201,11 +210,19 @@ void UITemplatesWizard::accept()
 				{
 					//
 				}
-				// close dialog
-				QDialog::accept();
 			}
 		}
 		// increase i
 		i++;
 	}
+	// close dialog
+	QDialog::accept();
+	// remember some infos
+	pSettings* s = pSettings::instance();
+	s->setValue( "Recents/FileWizard/Language", cbLanguages->currentText() );
+	s->setValue( "Recents/FileWizard/Type", cbTypes->itemData( cbTypes->currentIndex() ) );
+	s->setValue( "Recents/FileWizard/Destination", leDestination->text() );
+	s->setValue( "Recents/FileWizard/Author", leAuthor->text() );
+	s->setValue( "Recents/FileWizard/License", cbLicenses->currentText() );
+	s->setValue( "Recents/FileWizard/Open", cbOpen->isChecked() );
 }

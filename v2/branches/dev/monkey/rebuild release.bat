@@ -1,5 +1,5 @@
 qmake
 mingw32-make -f Makefile.Release distclean
-qmake
+qmake "CONFIG*=release"
 mingw32-make -f Makefile.Release
 pause
