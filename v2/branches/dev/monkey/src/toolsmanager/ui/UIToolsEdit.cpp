@@ -32,11 +32,12 @@ UIToolsEdit::UIToolsEdit( QWidget* p )
 		it->setData( idWorkingPath, t.WorkingPath );
 		it->setIcon( QIcon( t.FileIcon ) );
 	}
+	setProperty( "Modified" , false );
 }
 //
 void UIToolsEdit::closeEvent( QCloseEvent* e )
 {
-	if ( !pMonkeyStudio::question( tr( "Tools Editor..." ), tr( "You're about to discard all changes. Are you sure ?" ), this ) )
+	if ( property( "Modified" ).toBool() && !pMonkeyStudio::question( tr( "Tools Editor..." ), tr( "You're about to discard all changes. Are you sure ?" ), this ) )
 		e->ignore();
 }
 //
@@ -90,6 +91,8 @@ bool UIToolsEdit::eventFilter( QObject* o, QEvent* e )
 	lwTools->clearSelection();
 	lwTools->setCurrentItem( it );
 	it->setSelected( true );
+	// modified state
+	setProperty( "Modified" , true );
 	// we finish
 	return true;
 }
@@ -115,6 +118,8 @@ void UIToolsEdit::on_pbNew_clicked()
 	lwTools->setCurrentItem( it );
 	it->setSelected( true );
 	on_lwTools_itemSelectionChanged();
+	// modified state
+	setProperty( "Modified" , true );
 }
 
 void UIToolsEdit::on_pbDelete_clicked()
@@ -127,6 +132,8 @@ void UIToolsEdit::on_pbDelete_clicked()
 		lwTools->currentItem()->setSelected( true );
 		on_lwTools_itemSelectionChanged();
 	}
+	// modified state
+	setProperty( "Modified" , true );
 }
 
 void UIToolsEdit::on_pbUp_clicked()
@@ -138,6 +145,8 @@ void UIToolsEdit::on_pbUp_clicked()
 	it = lwTools->takeItem( id );
 	lwTools->insertItem( id -1, it );
 	lwTools->setCurrentRow( id -1 );
+	// modified state
+	setProperty( "Modified" , true );
 }
 
 void UIToolsEdit::on_pbDown_clicked()
@@ -149,6 +158,8 @@ void UIToolsEdit::on_pbDown_clicked()
 	it = lwTools->takeItem( id );
 	lwTools->insertItem( id +1, it );
 	lwTools->setCurrentRow( id +1 );
+	// modified state
+	setProperty( "Modified" , true );
 }
 
 void UIToolsEdit::on_tbHelp_clicked()
@@ -166,7 +177,11 @@ void UIToolsEdit::on_leCaption_editingFinished()
 {
 	QListWidgetItem* it = lwTools->selectedItems().value( 0 );
 	if ( it )
+	{
 		it->setData( idCaption, leCaption->text() );
+		// modified state
+		setProperty( "Modified" , true );
+	}
 }
 
 void UIToolsEdit::on_tbFileIcon_clicked()
@@ -180,13 +195,19 @@ void UIToolsEdit::on_tbFileIcon_clicked()
 	it->setData( idFileIcon, s );
 	tbFileIcon->setIcon( QIcon( s ) );
 	it->setIcon( tbFileIcon->icon() );
+	// modified state
+	setProperty( "Modified" , true );
 }
 
 void UIToolsEdit::on_leFilePath_editingFinished()
 {
 	QListWidgetItem* it = lwTools->selectedItems().value( 0 );
 	if ( it )
+	{
 		it->setData( idFilePath, leFilePath->text() );
+		// modified state
+		setProperty( "Modified" , true );
+	}
 }
 
 void UIToolsEdit::on_tbFilePath_clicked()
@@ -199,6 +220,8 @@ void UIToolsEdit::on_tbFilePath_clicked()
 		return;
 	leFilePath->setText( s );
 	leFilePath->setFocus();
+	// modified state
+	setProperty( "Modified" , true );
 }
 
 void UIToolsEdit::on_tbUpdateWorkingPath_clicked()
@@ -210,6 +233,8 @@ void UIToolsEdit::on_tbUpdateWorkingPath_clicked()
 	{
 		leWorkingPath->setText( f.absolutePath() );
 		leWorkingPath->setFocus();
+		// modified state
+		setProperty( "Modified" , true );
 	}
 }
 
@@ -217,7 +242,11 @@ void UIToolsEdit::on_leWorkingPath_editingFinished()
 {
 	QListWidgetItem* it = lwTools->selectedItems().value( 0 );
 	if ( it )
+	{
 		it->setData( idWorkingPath, leWorkingPath->text() );
+		// modified state
+		setProperty( "Modified" , true );
+	}
 }
 
 void UIToolsEdit::on_tbWorkingPath_clicked()
@@ -230,42 +259,47 @@ void UIToolsEdit::on_tbWorkingPath_clicked()
 		return;
 	leWorkingPath->setText( s );
 	leWorkingPath->setFocus();
+	// modified state
+	setProperty( "Modified" , true );
 }
 
 void UIToolsEdit::accept()
 {
-	// get desktop entry
-	QList<pTool> l = pToolsManager::tools( pToolsManager::ttDesktopEntry );
-	// get settings
-	QSettings* s = pSettings::instance();
-	// remove all tools entries
-	s->remove( "Tools" );
-	// begin array
-	s->beginWriteArray( "Tools" );
-	int i = 0;
-	// write user entry
-	for ( i = 0; i < lwTools->count(); i++ )
+	if ( property( "Modified" ).toBool() )
 	{
-		s->setArrayIndex( i );
-		s->setValue( "Caption", lwTools->item( i )->data( idCaption ).toString() );
-		s->setValue( "FileIcon", lwTools->item( i )->data( idFileIcon ).toString() );
-		s->setValue( "FilePath", lwTools->item( i )->data( idFilePath ).toString() );
-		s->setValue( "WorkingPath", lwTools->item( i )->data( idWorkingPath ).toString() );
-		s->setValue( "DesktopEntry", false );
+		// get desktop entry
+		QList<pTool> l = pToolsManager::tools( pToolsManager::ttDesktopEntry );
+		// get settings
+		QSettings* s = pSettings::instance();
+		// remove all tools entries
+		s->remove( "Tools" );
+		// begin array
+		s->beginWriteArray( "Tools" );
+		int i = 0;
+		// write user entry
+		for ( i = 0; i < lwTools->count(); i++ )
+		{
+			s->setArrayIndex( i );
+			s->setValue( "Caption", lwTools->item( i )->data( idCaption ).toString() );
+			s->setValue( "FileIcon", lwTools->item( i )->data( idFileIcon ).toString() );
+			s->setValue( "FilePath", lwTools->item( i )->data( idFilePath ).toString() );
+			s->setValue( "WorkingPath", lwTools->item( i )->data( idWorkingPath ).toString() );
+			s->setValue( "DesktopEntry", false );
+		}
+		// write desktop entry
+		foreach ( pTool t, l )
+		{
+			s->setArrayIndex( i );
+			s->setValue( "Caption", t.Caption );
+			s->setValue( "FileIcon", t.FileIcon );
+			s->setValue( "FilePath", t.FilePath );
+			s->setValue( "WorkingPath", t.WorkingPath );
+			s->setValue( "DesktopEntry", true );
+			i++;
+		}
+		// end array
+		s->endArray();
 	}
-	// write desktop entry
-	foreach ( pTool t, l )
-	{
-		s->setArrayIndex( i );
-		s->setValue( "Caption", t.Caption );
-		s->setValue( "FileIcon", t.FileIcon );
-		s->setValue( "FilePath", t.FilePath );
-		s->setValue( "WorkingPath", t.WorkingPath );
-		s->setValue( "DesktopEntry", true );
-		i++;
-	}
-	// end array
-	s->endArray();
 	// close dialog
 	QDialog::accept();
 }

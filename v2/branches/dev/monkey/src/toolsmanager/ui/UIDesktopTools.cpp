@@ -18,7 +18,7 @@
 #include "pMonkeyStudio.h"
 
 #include <QTimer>
-#include <QFileIconProvider>
+#include <QCloseEvent>
 
 UIDesktopTools::UIDesktopTools( QWidget* w )
 	: QDialog( w )
@@ -28,11 +28,15 @@ UIDesktopTools::UIDesktopTools( QWidget* w )
 	twLeft->headerItem()->setHidden( true );
 	pbLoading->setVisible( false );
 	setProperty( "Populated", false );
+	setProperty( "Modified", false );
 	if ( !mStartMenu.categoriesAvailable() )
 	{
 		lCategoriesFilters->hide();
 		leCategoriesFilters->hide();
 	}
+	// connection
+	connect( twLeft, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( on_tbRight_clicked() ) );
+	connect( lwRight, SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), this, SLOT( on_tbLeft_clicked() ) );
 }
 
 UIDesktopTools::~UIDesktopTools()
@@ -43,6 +47,12 @@ void UIDesktopTools::showEvent( QShowEvent* e )
 	QDialog::showEvent( e );
 	dbbButtons->button( QDialogButtonBox::Ok )->setDefault( false );
 	QTimer::singleShot( 0, this, SLOT( populateList() ) );
+}
+
+void UIDesktopTools::closeEvent( QCloseEvent* e )
+{
+	if ( property( "Modified" ).toBool() && !pMonkeyStudio::question( tr( "Tools Editor..." ), tr( "You're about to discard all changes. Are you sure ?" ), this ) )
+		e->ignore();
 }
 
 void UIDesktopTools::populateTree( QTreeWidgetItem* i, pDesktopFolder* f )
@@ -61,7 +71,7 @@ void UIDesktopTools::populateTree( QTreeWidgetItem* i, pDesktopFolder* f )
 		it->setText( 0, s );
 		it->setIcon( 0, QPixmap( df->Icon ) );
 		if ( it->icon( 0 ).isNull() )
-			it->setIcon( 0, mIconProvider.icon( df->Path ) );
+			it->setIcon( 0, pToolsManager::iconProvider()->icon( df->Path ) );
 		it->setData( 0, pDesktopApplications::dtType, pDesktopApplications::dtFolder );
 		populateTree( it, df );
 	}
@@ -78,7 +88,7 @@ void UIDesktopTools::populateTree( QTreeWidgetItem* i, pDesktopFolder* f )
 		it->setText( 0, a->Name );
 		it->setIcon( 0, QPixmap( a->Icon ) );
 		if ( it->icon( 0 ).isNull() )
-			it->setIcon( 0, mIconProvider.icon( s ) );
+			it->setIcon( 0, pToolsManager::iconProvider()->icon( s ) );
 		it->setToolTip( 0, QString( "<b>%1</b><br />%2" ).arg( a->GenericName.isEmpty() ? a->Name : a->GenericName ).arg( a->Comment.isEmpty() ? QObject::tr( "No available comment" ) : a->Comment ) );
 		it->setStatusTip( 0, s );
 		it->setData( 0, pDesktopApplications::dtType, pDesktopApplications::dtApplication );
@@ -93,10 +103,13 @@ void UIDesktopTools::populateList()
 {
 	if ( !property( "Populated" ).toBool() )
 	{
-		// populate applications
-		mStartMenu.populateApplications();
 		// show progressbar
 		pbLoading->setVisible( true );
+		// set temp progressbar for loading application
+		pbLoading->setRange( 0, 0 );
+		// populate applications
+		mStartMenu.populateApplications();
+		// set progressbar range
 		pbLoading->setRange( 0, mStartMenu.count() );
 		// clear tree
 		twLeft->clear();
@@ -121,6 +134,9 @@ void UIDesktopTools::populateList()
 		tbRight->click();
 		// update property
 		setProperty( "Populated", true );
+		setProperty( "Modified", false );
+		// resize windows fucking this Windows XP style bug for progressbar width
+		resize( 640, 480 );
 	}
 }
 
@@ -172,6 +188,8 @@ void UIDesktopTools::on_tbRight_clicked()
 			i->setData( pDesktopApplications::dtPointer, reinterpret_cast<quintptr>( it ) );
 			it->setData( 0, pDesktopApplications::dtInUse, true );
 			it->setHidden( true );
+			// modified state
+			setProperty( "Modified", true );
 		}
 	}
 }
@@ -185,6 +203,8 @@ void UIDesktopTools::on_tbLeft_clicked()
 		{
 			i->setHidden( false );
 			i->setData( 0, pDesktopApplications::dtInUse, false );
+			// modified state
+			setProperty( "Modified", true );
 		}
 		delete it;
 	}
@@ -205,6 +225,8 @@ void UIDesktopTools::on_pbUp_clicked()
 	it = lwRight->takeItem( id );
 	lwRight->insertItem( id -1, it );
 	lwRight->setCurrentRow( id -1 );
+	// modified state
+	setProperty( "Modified", true );
 }
 
 void UIDesktopTools::on_pbDown_clicked()
@@ -222,42 +244,47 @@ void UIDesktopTools::on_pbDown_clicked()
 	it = lwRight->takeItem( id );
 	lwRight->insertItem( id +1, it );
 	lwRight->setCurrentRow( id +1 );
+	// modified state
+	setProperty( "Modified", true );
 }
 
 void UIDesktopTools::accept()
 {
-	// get desktop entry
-	QList<pTool> l = pToolsManager::tools( pToolsManager::ttUserEntry );
-	// get settings
-	QSettings* s = pSettings::instance();
-	// remove all tools entries
-	s->remove( "Tools" );
-	// begin array
-	s->beginWriteArray( "Tools" );
-	int i = 0;
-	// write desktop entry
-	for ( i = 0; i < lwRight->count(); i++ )
+	if ( property( "Modified" ).toBool() )
 	{
-		s->setArrayIndex( i );
-		s->setValue( "Caption", lwRight->item( i )->text() );
-		s->setValue( "FileIcon", lwRight->item( i )->data( pDesktopApplications::dtIcon ).toString() );
-		s->setValue( "FilePath", lwRight->item( i )->statusTip() );
-		s->setValue( "WorkingPath", "" );
-		s->setValue( "DesktopEntry", true );
+		// get desktop entry
+		QList<pTool> l = pToolsManager::tools( pToolsManager::ttUserEntry );
+		// get settings
+		QSettings* s = pSettings::instance();
+		// remove all tools entries
+		s->remove( "Tools" );
+		// begin array
+		s->beginWriteArray( "Tools" );
+		int i = 0;
+		// write desktop entry
+		for ( i = 0; i < lwRight->count(); i++ )
+		{
+			s->setArrayIndex( i );
+			s->setValue( "Caption", lwRight->item( i )->text() );
+			s->setValue( "FileIcon", lwRight->item( i )->data( pDesktopApplications::dtIcon ).toString() );
+			s->setValue( "FilePath", lwRight->item( i )->statusTip() );
+			s->setValue( "WorkingPath", "" );
+			s->setValue( "DesktopEntry", true );
+		}
+		// write user entry
+		foreach ( pTool t, l )
+		{
+			s->setArrayIndex( i );
+			s->setValue( "Caption", t.Caption );
+			s->setValue( "FileIcon", t.FileIcon );
+			s->setValue( "FilePath", t.FilePath );
+			s->setValue( "WorkingPath", t.WorkingPath );
+			s->setValue( "DesktopEntry", false );
+			i++;
+		}
+		// end array
+		s->endArray();
 	}
-	// write user entry
-	foreach ( pTool t, l )
-	{
-		s->setArrayIndex( i );
-		s->setValue( "Caption", t.Caption );
-		s->setValue( "FileIcon", t.FileIcon );
-		s->setValue( "FilePath", t.FilePath );
-		s->setValue( "WorkingPath", t.WorkingPath );
-		s->setValue( "DesktopEntry", false );
-		i++;
-	}
-	// end array
-	s->endArray();
 	// close dialog
 	QDialog::accept();
 }

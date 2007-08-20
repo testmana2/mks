@@ -87,6 +87,7 @@
         <file>icons/tools/remove.png</file>
         <file>icons/tools/up.png</file>
         <file>icons/tools/update.png</file>
+        <file>icons/tools/user.png</file>
     </qresource>
     <qresource prefix="/translation" >
         <file>icons/translation/folder.png</file>
