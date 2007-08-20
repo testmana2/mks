@@ -29,9 +29,9 @@ PROGRAM_NAME	= "Monkey Studio"
 win32:RC_FILE	*= monkey.rc
 RESOURCES	*= src/resources/resources.qrc
 
-CONFIG	*= qt warn_on app_bundle thread x11 windows release console
-!contains( CONFIG, release ) {
-	CONFIG	*= debug console
+CONFIG	*= qt warn_on app_bundle thread x11 windows
+contains( CONFIG, debug ) {
+	CONFIG	*= console
 	VERSION = "${VERSION}svn"
 }
 QT	*= gui core
