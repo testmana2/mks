@@ -210,12 +210,12 @@ void UITemplatesWizard::accept()
 					//
 				}
 			}
+			else
+				pMonkeyStudio::warning( "Create File...", tr( "Can't create file:\n%1" ).arg( s ) );
 		}
 		// increase i
 		i++;
 	}
-	// close dialog
-	QDialog::accept();
 	// remember some infos
 	pSettings* s = pSettings::instance();
 	s->setValue( "Recents/FileWizard/Language", cbLanguages->currentText() );
@@ -224,4 +224,6 @@ void UITemplatesWizard::accept()
 	s->setValue( "Recents/FileWizard/Author", leAuthor->text() );
 	s->setValue( "Recents/FileWizard/License", cbLicenses->currentText() );
 	s->setValue( "Recents/FileWizard/Open", cbOpen->isChecked() );
+	// close dialog
+	QDialog::accept();
 }

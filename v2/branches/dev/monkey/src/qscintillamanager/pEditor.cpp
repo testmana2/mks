@@ -184,13 +184,15 @@ bool pEditor::saveFile( const QString& s )
 	// filename
 	QFile f( fn );
 	// filename dir
-	QDir d( fp );
+	QDir d;
 	// create bak folder
-	if ( !d.exists() )
-		if ( !d.mkdir( fp ) )
+	if ( !d.exists( fp ) )
+		if ( !d.mkpath( fp ) )
 			return false;
 
-		// try open file to write in
+	// set correct path
+	d.setPath( fp );
+	// try open file to write in
 	if ( !f.open( QFile::WriteOnly ) )
 	{
 		QMessageBox::warning( this, tr( "Save file..." ), tr( "Cannot write file %1:\n%2." ).arg( fn ).arg( f.errorString() ) );
