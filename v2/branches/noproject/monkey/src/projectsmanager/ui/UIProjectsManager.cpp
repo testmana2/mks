@@ -24,6 +24,8 @@
 
 #include <QHeaderView>
 
+#include <QDebug>
+
 UIProjectsManager::UIProjectsManager( QWidget* w )
 	: QDockWidget( w ), mProjects( new ProjectsModel( this ) ), mProxy( new ProjectsProxy( mProjects ) )
 {
@@ -97,6 +99,7 @@ void UIProjectsManager::initializeProject( ProjectItem* it )
 	// sort proxy
 	mProxy->sort( 0, Qt::AscendingOrder );
 	// set current project
+    qDebug()<< QString("puted project with pointer = %1").arg(int(it));
 	tvProjects->setCurrentIndex( mProxy->mapFromSource( it->index() ) );
 }
 
@@ -110,8 +113,10 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 	if ( c.isValid() )
 	{
 		// get item
-		QModelIndex mi = mProxy->mapToSource( c );
-		ProjectItem* it = mProjects->itemFromIndex( mi );
+		ProjectItem* it = mProjects->itemFromIndex( mProxy->mapToSource( c ) );
+        ProjectItem* _it = (ProjectItem*)mProjects->item(0);
+        qDebug()<< QString("item (0) = %1").arg(int(_it));
+        qDebug()<< QString("poped project with pointer = %1").arg(int(it));
 		ProjectPlugin* pp = it->parentPlugin;
 		bool en = pp->isEnabled();
 		if ( it && it->isEnabled() )
