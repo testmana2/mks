@@ -1,0 +1,28 @@
+#ifndef CLITOOLPLUGIN_H
+#define CLITOOLPLUGIN_H
+
+#include "MonkeyExport.h"
+#include "BasePlugin.h"
+
+#include <QString>
+
+class ConsoleParser;
+
+class Q_MONKEY_EXPORT CLIToolPlugin : public BasePlugin
+{
+	Q_OBJECT
+	
+public:
+	//Tool name
+	QString name();
+	//Command to execute
+	QString getCommand ();
+	//will show to user dialog, where he can configure command line switches, 
+	//and, when user will accept, switches string will be returned
+	QString getSwitches (QString oldSwitches = QString::null());
+	ConsoleParser getParser ();
+};
+
+Q_DECLARE_INTERFACE( CLIToolPlugin, "org.monkeystudio.MonkeyStudio.CLIToolPlugin/1.0" )
+
+#endif // CLITOOLPLUGIN_H
