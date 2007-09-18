@@ -9,10 +9,6 @@ NoProjectProjectItem::NoProjectProjectItem (ProjectPlugin* parent)
 	setType( ProjectsModel::ProjectType );
 	setValue( "Project" );
 	setFilePath ("toto.noproject");
-	NoProjectProjectItem* it = new NoProjectProjectItem( parent );
-	it->setType( ProjectsModel::EmptyType );
-	it->setValue( "empty item" );
-	appendRow( it );
 }
 
 void NoProjectProjectItem::editSettings()
