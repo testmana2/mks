@@ -12,7 +12,7 @@ NoProjectProjectItem::NoProjectProjectItem (ProjectPlugin* parent)
 	NoProjectProjectItem* it = new NoProjectProjectItem( parent );
 	it->setType( ProjectsModel::EmptyType );
 	it->setValue( "empty item" );
-	append( it );
+	appendRow( it );
 }
 
 void NoProjectProjectItem::editSettings()
