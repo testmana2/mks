@@ -1,0 +1,20 @@
+#include "ProjectPlugin.h"
+
+void ProjectPlugin::reBuild()
+{
+	clean();
+	build();
+}
+
+void ProjectPlugin::buildExecute()
+{
+	build();
+	execute();
+}
+
+void ProjectPlugin::distCleanBuildExecute()
+{
+	distClean();
+	build();
+	execute();
+}
