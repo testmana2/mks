@@ -15,6 +15,7 @@
 #include "ProjectItem.h"
 #include "pMonkeyStudio.h"
 #include "ProjectPlugin.h"
+#include "PluginsManager.h"
 #include "UIMain.h"
 
 #include <QFileInfo>
@@ -675,7 +676,7 @@ void ProjectItem::removeActionsFromMenu()
 
 ProjectPlugin* ProjectItem::getParentPlugin()
 {
-	return parentPlugin;
+	return PluginsManager::instance()->plugin<ProjectPlugin*>( "NoProject" );
 }
 
 void ProjectItem::setName(QString newname)

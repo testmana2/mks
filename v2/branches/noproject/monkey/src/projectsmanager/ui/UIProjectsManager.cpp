@@ -98,13 +98,14 @@ void UIProjectsManager::initializeProject( ProjectItem* it )
 	it->redoLayout();
 	// sort proxy
 	mProxy->sort( 0, Qt::AscendingOrder );
+	qWarning( "item initialized: %d", it );
 	// set current project
-    qDebug()<< QString("puted project with pointer = %1").arg(int(it));
 	tvProjects->setCurrentIndex( mProxy->mapFromSource( it->index() ) );
 }
 
 void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const QModelIndex& p )
 {
+	qWarning( "item currentchanged: %s", qPrintable( c.data().toString() ) );
 	// get menubar
 	pMenuBar* mb = pMenuBar::instance();
 	// get pluginsmanager
@@ -113,14 +114,16 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 	if ( c.isValid() )
 	{
 		// get item
+		qWarning( "1" );
 		ProjectItem* it = mProjects->itemFromIndex( mProxy->mapToSource( c ) );
-        ProjectItem* _it = (ProjectItem*)mProjects->item(0);
-        qDebug()<< QString("item (0) = %1").arg(int(_it));
-        qDebug()<< QString("poped project with pointer = %1").arg(int(it));
-		ProjectPlugin* pp = it->parentPlugin;
-		bool en = pp->isEnabled();
-		if ( it && it->isEnabled() )
+      qWarning( "item from index: %d", it );
+		ProjectPlugin* pp = PluginsManager::instance()->plugin<ProjectPlugin*>( "NoProject" );
+		qWarning( "plugin: %d", pp );
+		bool en = pp ? pp->isEnabled() : false;
+		if ( pp )
 		{
+			qWarning( "ok" );
+			/*
 			// desactive compiler, debugger and interpreter
 			pm->setCurrentCompiler( it->compiler( currentProject() ) );
 			pm->setCurrentDebugger( it->debugger( currentProject() ) );
@@ -129,6 +132,7 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 			mb->menu( "mBuild" )->setEnabled( !pm->currentCompiler().isEmpty() );
 			mb->menu( "mDebugger" )->setEnabled( !pm->currentDebugger().isEmpty() );
 			mb->menu( "mInterpreter" )->setEnabled( !pm->currentInterpreter().isEmpty() );
+			*/
 			// desactive project action
 			mb->action( "mProject/mSave/aCurrent" )->setEnabled( true );
 			mb->action( "mProject/mSave/aAll" )->setEnabled( true );
@@ -140,6 +144,7 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 	}
 	else
 	{
+		qWarning( "failed" );
 		// desactive compiler, debugger and interpreter
 		pm->setCurrentCompiler( QString::null );
 		pm->setCurrentDebugger( QString::null );
@@ -155,6 +160,7 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 		mb->action( "mProject/mClose/aAll" )->setEnabled( false );
 		mb->action( "mProject/aSettings" )->setEnabled( false );
 	}
+	qWarning( "end" );
 }
 
 void UIProjectsManager::on_tvProjects_doubleClicked( const QModelIndex& i )
@@ -189,7 +195,11 @@ void UIProjectsManager::projectNew_triggered()
 {
 	//FIXME - temporary code!!!!! remove all
 	ProjectItem* it = PluginsManager::instance()->projectPluginForFileName(".noproject")->generateProjectItem();
+	qWarning( "item generated: %d", it );
 	initializeProject( it );
+	qWarning( "item initialisez: %d", it );
+	it->editSettings();
+	qWarning( "item settings: %d", it );
 }
 
 void UIProjectsManager::projectOpen_triggered()
