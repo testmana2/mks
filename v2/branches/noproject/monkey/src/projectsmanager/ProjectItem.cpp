@@ -16,6 +16,8 @@
 #include "pMonkeyStudio.h"
 #include "ProjectPlugin.h"
 #include "PluginsManager.h"
+#include "pCommand.h"
+#include "pConsoleManager.h"
 #include "UIMain.h"
 
 #include <QFileInfo>
@@ -610,7 +612,7 @@ bool ProjectItem::isEnabled ()
 
 void ProjectItem::build()
 {
-	//exec buildCommand
+	pConsoleManager::instance()->sendRawCommand (buildCommand);
 }
 
 void ProjectItem::clean()
