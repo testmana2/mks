@@ -151,6 +151,7 @@ void UIMain::initMenuBar()
 	//mb->menu( "mBuild", tr( "&Build" ) )->setEnabled( false );
 	mb->menu( "mDebugger", tr( "&Debugger" ) )->setEnabled( false );
 	mb->menu( "mInterpreter", tr( "&Interpreter" ) )->setEnabled( false );
+	mb->menu( "mBuild", tr( "&Build" ) );
 	mb->beginGroup( "mBuild" );
 		mb->menu( "mBuild", tr( "&Build" ), QIcon( ":/Icons/Icons/buildbuild.png" ) );
 		buildActions.build = mb->action( "mBuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildbuild.png" ), QString::null, tr( "Build current" ) );

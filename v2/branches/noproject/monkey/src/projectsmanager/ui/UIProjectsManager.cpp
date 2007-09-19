@@ -83,6 +83,8 @@ UIProjectsManager::~UIProjectsManager()
 ProjectItem* UIProjectsManager::currentProject() const
 {
 	// get current item
+ 	//ProjectItem* it = (ProjectItem*)mProjects->item (0);
+	
 	ProjectItem* it = mProjects->itemFromIndex( mProxy->mapToSource( tvProjects->currentIndex() ) );
 	// return project item
 	return it ? it->project() : 0;

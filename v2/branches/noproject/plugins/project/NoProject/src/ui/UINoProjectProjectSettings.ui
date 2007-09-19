@@ -169,6 +169,9 @@
        <property name="text" >
         <string>OK</string>
        </property>
+       <property name="default" >
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -176,8 +179,11 @@
        <property name="text" >
         <string>Cansel</string>
        </property>
+       <property name="autoDefault" >
+        <bool>false</bool>
+       </property>
        <property name="default" >
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>

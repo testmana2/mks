@@ -9,10 +9,10 @@ ProjectsModel::~ProjectsModel()
 {}
 
 ProjectItem* ProjectsModel::itemFromIndex( const QModelIndex& i ) const
-{ return reinterpret_cast<ProjectItem*>( QStandardItemModel::itemFromIndex( i ) ); }
+{ return dynamic_cast<ProjectItem*>( QStandardItemModel::itemFromIndex( i ) ); }
 
 ProjectItem* ProjectsModel::takeItem( int i, int j )
-{ return reinterpret_cast<ProjectItem*>( QStandardItemModel::takeItem( i, j ) ); }
+{ return dynamic_cast<ProjectItem*>( QStandardItemModel::takeItem( i, j ) ); }
 
 /*
 int ProjectsModel::id() const
