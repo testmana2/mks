@@ -9,15 +9,12 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
 	setWindowTitle( "Project Settings");
-	projectName->setText (project->getName());
-	projectPath->setText (project->getFilePath());
-	commands ["Build"] = project->buildCommand;
-	commands ["Clean"] = project->cleanCommand;
-	commands ["Distclean"] = project->distCleanCommand;
-	commands ["Execute"] = project->executeCommand;
+	projectName->setText (project->getValue());
+	projectPath->setText (project->canonicalPath());
+	targets = project->targets;
 	connect (acceptBtn, SIGNAL (clicked()), this, SLOT (accept()));
 	connect (pathDialogBtn, SIGNAL (clicked()), this, SLOT (pathDialogRequested()));
-	connect (actionsList, SIGNAL (currentTextChanged(QString)), this, SLOT(selectedActionChanged(QString)));
+	connect (actionsList, SIGNAL (currentRowChanged(int)), this, SLOT(selectedRowChanged(int)));
 	connect (actionName, SIGNAL (textEdited(QString)), this, SLOT(actionNameEdited(QString)));
 	connect (addActionBtn, SIGNAL (clicked()), this, SLOT (addAction()));
 	connect (removeActionBtn, SIGNAL (clicked()), this, SLOT (removeAction()));
@@ -27,12 +24,9 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 
 void UINoProjectProjectSettings::accept()
 {
-	project->setName(projectName->text());
-	project->setFilePath( projectPath->text());
-	project->buildCommand = commands ["Build"];
-	project->cleanCommand = commands ["Clean"];
-	project->distCleanCommand = commands ["Distclean"];
-	project->executeCommand = commands ["Execute"];
+	project->setValue(projectName->text());
+	project->setFilePath( projectPath->text()+".noproject");
+	project->targets = targets;
 	QDialog::accept();
 }
 
@@ -43,10 +37,10 @@ void UINoProjectProjectSettings::pathDialogRequested ()
 	projectPath->setText (path);
 }
 
-void UINoProjectProjectSettings::selectedActionChanged(QString action)
+void UINoProjectProjectSettings::selectedRowChanged(int actionnum)
 {
-	actionName->setText(action);
-	commandsEdit->setText (commands[action]);
+	actionName->setText(targets[actionnum].text);
+	commandsEdit->setText (targets[actionnum].command);
 	commandsEdit->setEnabled (true);
 	if ( actionsList->currentRow() >3 )
 	{	
@@ -80,5 +74,5 @@ void UINoProjectProjectSettings::removeAction()
 
 void UINoProjectProjectSettings::actionCommandEdited ()
 {
-	commands[actionsList->currentItem()->text()] = commandsEdit->toPlainText();
+	targets[actionsList->currentIndex().row()].command = commandsEdit->toPlainText();
 }

@@ -13,18 +13,6 @@
    <string>Plugins Settings</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>5</number>
-   </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
    <property name="horizontalSpacing" >
     <number>3</number>
    </property>
@@ -43,18 +31,6 @@
       <string>Informations</string>
      </property>
      <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>5</number>
-      </property>
-      <property name="topMargin" >
-       <number>5</number>
-      </property>
-      <property name="rightMargin" >
-       <number>5</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>5</number>
-      </property>
       <property name="horizontalSpacing" >
        <number>3</number>
       </property>
@@ -203,21 +179,6 @@
    </item>
    <item rowspan="2" row="0" column="0" >
     <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>3</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
      <item>
       <widget class="QLabel" name="lType1" >
        <property name="text" >

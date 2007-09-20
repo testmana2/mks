@@ -16,18 +16,12 @@ enum BuildActionType
     aDistClean,
     aExecute,
     aBuidExecute,
-    aCustom1,
-    aCustom2,
-    aCustom3,
-    aCustom4,
-    aCustom5,
-    aCustom6,
     aLast
 }
 struct BuildAction
 {
-    QString text();
-    QString command ();
+    QString text;
+    QString command;
 }
 
     Project ();
@@ -37,9 +31,10 @@ struct BuildAction
     virtual ProjectPlugin* getParentPlugin ();
 
 private:
+	QList<BuildAction> targets;
+	
     void processAction (BuildActionType);
     void getCommand (BuildActionType);
-    void BuildAction actions[aLast] // [item count in the enum
 
 public slots:
     virtual void editSettings() {};

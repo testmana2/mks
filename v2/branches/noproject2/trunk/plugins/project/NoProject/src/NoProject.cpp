@@ -20,7 +20,13 @@ ProjectItem* NoProject::generateProjectItem()
 	if ( !isEnabled() )
 		return NULL;
 	// crete root project item and return it
-	return new NoProjectProjectItem (this);
+	return dynamic_cast<ProjectItem*> (new NoProjectProjectItem );
 }
+
+bool NoProject::setEnabled (bool en)
+{
+	mPluginInfos.Enabled = en;
+	return true;
+};
 
 Q_EXPORT_PLUGIN2( ProjectNoProject, NoProject )

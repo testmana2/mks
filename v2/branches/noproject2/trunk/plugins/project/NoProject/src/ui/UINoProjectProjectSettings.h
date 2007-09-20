@@ -4,6 +4,7 @@
 #include <QHash>
 
 #include "ui_UINoProjectProjectSettings.h"
+#include "ProjectItem.h"
 
 class NoProjectProjectItem;
 
@@ -13,11 +14,11 @@ class UINoProjectProjectSettings : public QDialog, Ui_UINoProjectProjectSettings
 public:
 	UINoProjectProjectSettings (NoProjectProjectItem* project);
 
-	QHash <QString,QString> commands;
+	QList<ProjectItem::BuildAction> targets;
 private slots:
 	void accept ();
 	void pathDialogRequested ();
-	void selectedActionChanged(QString);
+	void selectedRowChanged(int);
 	void actionNameEdited(QString name);
 	void addAction ();
 	void removeAction ();

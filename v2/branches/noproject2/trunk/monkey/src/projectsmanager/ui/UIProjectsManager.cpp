@@ -111,12 +111,12 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 		// looking plugin that can manage this project
 		ProjectPlugin* pp = pm->plugin<ProjectPlugin*>( it->pluginName() );
 		//
-		if ( pp && pp->isEnabled() )
+		if ( it && it->isEnabled() )
 		{
 			// desactive compiler, debugger and interpreter
-			pm->setCurrentCompiler( pp->compiler( currentProject() ) );
-			pm->setCurrentDebugger( pp->debugger( currentProject() ) );
-			pm->setCurrentInterpreter( pp->interpreter( currentProject() ) );
+			pm->setCurrentCompiler( it->compiler());
+			pm->setCurrentDebugger( it->debugger() );
+			pm->setCurrentInterpreter( it->interpreter() );
 			// desactive menu entries
 			mb->menu( "mBuild" )->setEnabled( !pm->currentCompiler().isEmpty() );
 			mb->menu( "mDebugger" )->setEnabled( !pm->currentDebugger().isEmpty() );
@@ -161,13 +161,17 @@ bool UIProjectsManager::openProject( const QString& s )
 {
 	if ( ProjectPlugin* pp = PluginsManager::instance()->projectPluginForFileName( s ) )
 	{
-		if ( ProjectItem* it = pp->openProject( s ) )
+		ProjectItem* it = pp->generateProjectItem();
+		if ( it->openProject( s ) )
 		{
 			initializeProject( it );
 			return true;
 		}
 		else
+		{
 			pMonkeyStudio::warning( tr( "Open Project" ), tr( "An error occur while opening this project:\n[%1]" ).arg( s ) );
+			delete it;
+		}
 	}
 	else
 		pMonkeyStudio::warning( tr( "Open Project..." ), tr( "There is no plugin that can manage this kind of project.\n[%1]" ).arg( s ) );
@@ -176,7 +180,9 @@ bool UIProjectsManager::openProject( const QString& s )
 
 void UIProjectsManager::projectNew_triggered()
 {
-	qWarning( "new" );
+	//FIXME - temporary code!!!!! remove all
+	ProjectItem* it = PluginsManager::instance()->projectPluginForFileName(".noproject")->generateProjectItem();
+	initializeProject( it );
 }
 
 void UIProjectsManager::projectOpen_triggered()
@@ -239,8 +245,6 @@ void UIProjectsManager::projectSettings_triggered()
 {
 	if ( ProjectItem* it = currentProject() )
 	{
-		PluginsManager::instance()->plugin<ProjectPlugin*>( it->pluginName() )->editSettings( it->project() );
-		mProxy->refresh( it );
+		it->editSettings();
 	}
 }
-
