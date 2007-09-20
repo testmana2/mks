@@ -3,6 +3,7 @@
 
 #include "MonkeyExport.h"
 #include "BasePlugin.h"
+#include "pCommand.h"
 
 #include <QString>
 
@@ -33,11 +34,11 @@ public:
 	QString name();
 	
 	//Command to execute tool
-	ConsoseCommand* getCommand ();
+	pCommand* getCommand ();
 	
 	//will show to user dialog, where he can configure command line switches, 
 	//and, when user will accept, switches string will be returned
-	QString getSwitches (QString oldSwitches = QString::null());
+	QString getSwitches (QString oldSwitches = QString::null);
 	
 };
 

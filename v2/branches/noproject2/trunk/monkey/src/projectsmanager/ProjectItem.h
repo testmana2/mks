@@ -22,22 +22,43 @@
 #include <QStandardItem>
 
 class QTextCodec;
+class ProjectPlugin;
 
 class ProjectItem;
 typedef QList<ProjectItem*> ProjectItemList;
 
-class Q_MONKEY_EXPORT ProjectItem : /*public QObject,*/ public QStandardItem
+/*
+For compile project I was need to implement all  =0 functions with some body.
+I marked this functions with    //FIXME
+Possible it's error, need to think, how to fix
+hlamer
+*/
+class Q_MONKEY_EXPORT ProjectItem : public QObject, public QStandardItem
 {
-	//Q_OBJECT
+	Q_OBJECT
 	friend class UIProjectsManager;
 	
 public:
+enum BuildActionType
+{
+    aBuild = 0,
+    aClean ,
+    aDistClean,
+    aExecute,
+    aLast
+};
+struct BuildAction
+{
+    QString text;
+    QString command;
+};
+
 	ProjectItem( ProjectsModel::NodeType = ProjectsModel::ProjectType, ProjectItem* = 0 );
 	
 	// item type
 	virtual int type() const;
-	// plugin name
-	virtual QString pluginName() const = 0;
+// 	// plugin name
+// 	virtual QString pluginName() const = 0;   //use parentPlugin()->infos.Name;
 	// set data
 	virtual void setData( const QVariant&, int = Qt::UserRole +1 );
 	// type of the item
@@ -71,20 +92,26 @@ public:
 	virtual void setReadOnly( bool );
 	virtual bool getReadOnly() const;
 	// item indent
-	virtual QString getIndent() const = 0;
+	virtual QString getIndent() const 
+		{return QString::null;};
 	// item eol
-	virtual QString getEol() const = 0;
+	virtual QString getEol() const
+		{return QString::null;};
 	// tell if item is the first child of its parent
-	virtual bool isFirst() const = 0;
+	virtual bool isFirst() const
+		{return true;};  // FIXME
 	// tell if item is the last child of its parent
-	virtual bool isLast() const = 0;
+	virtual bool isLast() const
+		{return true;};  // FIXME
 	// scope of item
-	virtual QString scope() const = 0;
+	virtual QString scope() const 
+		{return QString::null;};  // FIXME
 	// check scope
-	virtual QString checkScope( const QString& ) const = 0;
+	virtual QString checkScope( const QString& ) const
+		{return QString::null;};  // FIXME
 	// check equals scope
-	virtual bool isEqualScope( const QString&, const QString& ) const = 0;
-	
+	virtual bool isEqualScope( const QString& s1, const QString& s2 ) const 
+		{return (s1 == s2);};  // FIXME
 	// item model
 	virtual ProjectsModel* model() const;
 	// item parent
@@ -96,17 +123,25 @@ public:
 	// get children, recursively according to bool and same project according to bool
 	virtual ProjectItemList children( bool = false, bool = false ) const;
 	// append item
-	virtual void appendRow( ProjectItem* ) = 0;
+	virtual void appendRow( ProjectItem* )
+		{;};  // FIXME
 	// insert item
-	virtual void insertRow( int, ProjectItem* ) = 0;
+	virtual void insertRow( int, ProjectItem* )
+		{;};  // FIXME
 	// moving item
-	virtual bool swapRow( int, int ) = 0;
-	virtual bool moveRowUp( int ) = 0;
-	virtual bool moveRowDown( int ) = 0;
-	virtual bool moveUp() = 0;
-	virtual bool moveDown() = 0;
+	virtual bool swapRow( int, int )
+		{return false;};  // FIXME	
+	virtual bool moveRowUp( int ) 
+		{return false;};  // FIXME	
+	virtual bool moveRowDown( int )
+		{return false;};  // FIXME	
+	virtual bool moveUp()
+		{return false;};  // FIXME	
+	virtual bool moveDown()
+		{return false;};  // FIXME	
 	// remove itself
-	virtual void remove() = 0;
+	virtual void remove()
+		{;};  // FIXME	
 	// redo internal layout, to filter / sort items
 	virtual void refresh();
 	
@@ -141,45 +176,74 @@ public:
 	// name of project
 	virtual QString name() const;
 	// close the project
-	virtual void close() = 0;
+	virtual void close() {}; // FIXME
 	// save project, asking user according to bool
-	virtual void save( bool = true ) = 0;
+	virtual void save( bool = true ) {}; //FIXME
 	// save project including all children projects
-	virtual void saveAll( bool = true ) = 0;
+	virtual void saveAll( bool = true ) {}; //FIXME
 	// show the content of items 
-	virtual void debug() = 0;
+	virtual void debug() {}; //FIXME
 	
+	// the compiler this project use
+	virtual QString compiler() const
+	{ return "GNUMake"; }
+	// the debugger this project use
+	virtual QString debugger() const
+	{ return "GNUDebugger"; }
+	// the interpreter this project use
+	virtual QString interpreter()
+	{ return QString::null; }
 	
 	// get index list
 	virtual ProjectItemList match( int, const QVariant& ) const;
 	// get all items matching
 	virtual ProjectItemList getItemList( ProjectsModel::NodeType, const QString&, const QString&, const QString& ) const;
 	// get item scope, creating it if needed
-	virtual ProjectItem* getItemScope( const QString&, bool ) const = 0;
+	virtual ProjectItem* getItemScope( const QString&, bool ) const
+			{return NULL;};  // FIXME	
 	// get all variable content as modelindex list for project index
 	virtual ProjectItemList getItemListValues( const QString&, const QString&, const QString& ) const;
 	// get a variable index
 	virtual ProjectItem* getItemVariable( const QString&, const QString&, const QString& ) const;
 	
 	// get variable content as stringlist for project index
-	virtual QStringList getListValues( const QString&, const QString& = "=", const QString& = QString::null ) const = 0;
+	virtual QStringList getListValues( const QString&, const QString& = "=", const QString& = QString::null ) const 
+		{return QStringList();};  // FIXME
 	// get variable content as string for project index
-	virtual QString getStringValues( const QString&, const QString& = "=", const QString& = QString::null ) const = 0;
+	virtual QString getStringValues( const QString&, const QString& = "=", const QString& = QString::null ) const
+			{return QString::null;};  // FIXME	
 	// set variable content as stringlist for project index
-	virtual void setListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
+	virtual void setListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null )
+			{;};  // FIXME	
 	// get variable content as string for project index
-	virtual void setStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
+	virtual void setStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null )
+			{return ;};  // FIXME	
 	// add variable content as stringlist for project index
-	virtual void addListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
+	virtual void addListValues( const QStringList&, const QString&, const QString& = "=", const QString& = QString::null )
+			{;};  // FIXME	
 	// add variable content as string for project index
-	virtual void addStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null ) = 0;
+	virtual void addStringValues( const QString&, const QString&, const QString& = "=", const QString& = QString::null )
+			{;};  // FIXME	
+	//returns true, if plugin of this project type is enabled
+	virtual bool isEnabled();
+	//returns pointer to the plugin, that are managing this project type
+	virtual ProjectPlugin* getParentPlugin ()
+			{return NULL;};  // FIXME	
+	
+	virtual bool openProject( const QString&, ProjectItem* = 0 ) {return false;}; //FIXME
+	
+public slots:
+	virtual void editSettings()
+			{;};  // FIXME	
 	
 protected:
 	QString mBuffer;
-	virtual void redoLayout( ProjectItem* = 0 ) = 0;
-	virtual void writeProject() = 0;
-	virtual void writeItem( ProjectItem* ) = 0;
+	QList<BuildAction> targets;
+	virtual void redoLayout( ProjectItem* = 0 ) {}; //FIXME
+	virtual void writeProject() {}; //FIXME
+	virtual void writeItem( ProjectItem* ) {}; //FIXME
 
+	void processAction (BuildActionType);
 };
 
 #endif // PROJECTITEM_H

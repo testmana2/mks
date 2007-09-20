@@ -11,13 +11,10 @@ class NoProjectProjectItem : public ProjectItem
 	friend class UINoProjectProjectSettings;
 	
 public:
-	NoProjectProjectItem (ProjectPlugin* parent);
+	NoProjectProjectItem ();
 
-	QString buildCommand;
-	QString cleanCommand;
-	QString distCleanCommand;
-	QString executeCommand;
- 
+	void close ();
+	
 public slots:
 	void editSettings();
 

@@ -87,7 +87,7 @@ public:
 	}
 #endif
 	
-	virtual bool setEnabled( bool ) = 0;
+	virtual bool setEnabled( bool ) = 0; 
 	
 protected:
 	PluginInfos mPluginInfos;

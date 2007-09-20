@@ -13,6 +13,7 @@
 **
 ****************************************************************************/
 #include "ProjectItem.h"
+#include "ProjectPlugin.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -29,6 +30,12 @@ ProjectItem::ProjectItem( ProjectsModel::NodeType t, ProjectItem* i )
 	// append to parent if needed
 	if ( i )
 		i->appendRow( this );
+		
+	//FIXME targets need only for ProjectsModel::ProjectType
+	targets.append ( (BuildAction){"Build", ""});
+	targets.append ( (BuildAction){"Clean", ""});
+	targets.append ( (BuildAction){"Distclean", ""});
+	targets.append ( (BuildAction){"Execute", ""});
 }
 
 int ProjectItem::type() const
@@ -288,3 +295,8 @@ ProjectItemList ProjectItem::getItemListValues( const QString& v, const QString&
 
 ProjectItem* ProjectItem::getItemVariable( const QString& v, const QString& o, const QString& s ) const
 { return getItemList( ProjectsModel::VariableType, v, o, s ).value ( 0 ); }
+
+bool ProjectItem::isEnabled ()
+{
+	return getParentPlugin ()->isEnabled();
+}
