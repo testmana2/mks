@@ -300,3 +300,18 @@ bool ProjectItem::isEnabled ()
 {
 	return getParentPlugin ()->isEnabled();
 }
+
+void ProjectItem::removeSelfFromMenu (QMenu* menu)
+{
+    
+}
+
+void ProjectItem::addSelfToMenu ()
+{
+    
+}
+
+void ProjectItem::processTarget (BuildTargetType target)
+{
+    qWarning ()<<"Executing command "<<targets[target].command;
+}

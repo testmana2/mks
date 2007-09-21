@@ -104,21 +104,24 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 	// get pluginsmanager
 	PluginsManager* pm = PluginsManager::instance();
 	// if valid
-	if ( c.isValid() )
+	if ( c.isValid() && p.isValid() )
 	{
 		// get item
-		ProjectItem* it = mProjects->itemFromIndex( mProxy->mapToSource( c ) );
-		// looking plugin that can manage this project
-		ProjectPlugin* pp = pm->plugin<ProjectPlugin*>( it->pluginName() );
+		ProjectItem* curr_pro = mProjects->itemFromIndex( mProxy->mapToSource( c ) )->project();
+        ProjectItem* prev_pro = mProjects->itemFromIndex( mProxy->mapToSource( p ) )->project();
+        if (curr_pro == prev_pro)
+            return;
 		//
-		if ( it && it->isEnabled() )
+        prev_pro->removeSelfFromMenu(mb->menu( "mBuild" ));
+		if ( curr_pro && curr_pro->isEnabled() )
 		{
+            curr_pro->addSelfToMenu(mb->menu( "mBuild" ));
 			// desactive compiler, debugger and interpreter
-			pm->setCurrentCompiler( it->compiler());
-			pm->setCurrentDebugger( it->debugger() );
-			pm->setCurrentInterpreter( it->interpreter() );
+			pm->setCurrentCompiler( curr_pro->compiler());
+			pm->setCurrentDebugger( curr_pro->debugger() );
+			pm->setCurrentInterpreter( curr_pro->interpreter() );
 			// desactive menu entries
-			mb->menu( "mBuild" )->setEnabled( !pm->currentCompiler().isEmpty() );
+			//mb->menu( "mBuild" )->setEnabled( !pm->currentCompiler().isEmpty() );
 			mb->menu( "mDebugger" )->setEnabled( !pm->currentDebugger().isEmpty() );
 			mb->menu( "mInterpreter" )->setEnabled( !pm->currentInterpreter().isEmpty() );
 			// desactive project action
