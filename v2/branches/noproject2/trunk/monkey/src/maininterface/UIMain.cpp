@@ -148,34 +148,33 @@ void UIMain::initMenuBar()
 		mb->action( "mRecents/aClear", tr( "&Clear" ), QIcon( ":/project/icons/project/clear.png" ), QString::null, tr( "Clear the recents projects list" ) );
 		mb->action( "mRecents/aSeparator1" );
 	mb->endGroup();
-	mb->menu( "mBuild", tr( "&Build" ) )->setEnabled( false );
+	//mb->menu( "mBuild", tr( "&Build" ) )->setEnabled( false );
 	mb->menu( "mDebugger", tr( "&Debugger" ) )->setEnabled( false );
 	mb->menu( "mInterpreter", tr( "&Interpreter" ) )->setEnabled( false );
-/* Need to be plugin that instore its actions
+	mb->menu( "mBuild", tr( "&Build" ) );
 	mb->beginGroup( "mBuild" );
 		mb->menu( "mBuild", tr( "&Build" ), QIcon( ":/Icons/Icons/buildbuild.png" ) );
-		mb->action( "mBuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildbuild.png" ), QString::null, tr( "Build current" ) );
+		buildActions.build = mb->action( "mBuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildbuild.png" ), QString::null, tr( "Build current" ) );
 		mb->action( "mBuild/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/buildbuild.png" ), QString::null, tr( "Build all" ) );
 		mb->menu( "mRebuild", tr( "&Rebuild" ), QIcon( ":/Icons/Icons/buildrebuild.png" ) );
-		mb->action( "mRebuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildrebuild.png" ), QString::null, tr( "Rebuild current" ) );
+		buildActions.reBuild = mb->action( "mRebuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildrebuild.png" ), QString::null, tr( "Rebuild current" ) );
 		mb->action( "mRebuild/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/buildrebuild.png" ), QString::null, tr( "Rebuild all" ) );
 		mb->action( "aSeparator1" );
 		mb->action( "aStop", tr( "&Stop" ), QIcon( ":/Icons/Icons/buildstop.png" ), QString::null, tr( "Stop current" ) );
 		mb->action( "aSeparator2" );
 		mb->menu( "mClean", tr( "&Clean" ), QIcon( ":/Icons/Icons/buildclean.png" ) );
-		mb->action( "mClean/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildclean.png" ), QString::null, tr( "Clean current" ) );
+		buildActions.clean = mb->action( "mClean/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildclean.png" ), QString::null, tr( "Clean current" ) );
 		mb->action( "mClean/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/buildclean.png" ), QString::null, tr( "Clean all" ) );
 		mb->menu( "mDistClean", tr( "&Dist Clean" ), QIcon( ":/Icons/Icons/builddistclean.png" ) );
-		mb->action( "mDistClean/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/builddistclean.png" ), QString::null, tr( "Dist clean current" ) );
+		buildActions.distClean = mb->action( "mDistClean/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/builddistclean.png" ), QString::null, tr( "Dist clean current" ) );
 		mb->action( "mDistClean/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/builddistclean.png" ), QString::null, tr( "Dist clean all" ) );
 		mb->action( "aSeparator3" );
-		mb->action( "aExecute", tr( "&Execute" ), QIcon( ":/Icons/Icons/buildexecute.png" ), QString::null, tr( "Execute current" ) );
+		buildActions.execute = mb->action( "aExecute", tr( "&Execute" ), QIcon( ":/Icons/Icons/buildexecute.png" ), QString::null, tr( "Execute current" ) );
 		mb->action( "aExecuteWithParameters", tr( "Execute with &parameters..." ), QIcon( ":/Icons/Icons/buildexecute.png" ), QString::null, tr( "Execute current with parameters..." ) );
 		mb->action( "aSeparator4" );
-		mb->action( "aBuildExecute", tr( "Build, Execu&te" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Build and execute current" ) );
-		mb->action( "aDistCleanBuildExecute", tr( "Dist Clean, Build, E&xecute" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Dist clean, build and execute current" ) );
+		buildActions.buildExecute = mb->action( "aBuildExecute", tr( "Build, Execu&te" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Build and execute current" ) );
 	mb->endGroup();
-*/
+
 	mb->menu( "mTools", tr( "&Tools" ) );
 	mb->beginGroup( "mTools" );
 		mb->action( "aEditUser", tr( "&Edit User Tools..." ), QIcon( ":/tools/icons/tools/edit.png" ), QString::null, tr( "Edit tools..." ) );

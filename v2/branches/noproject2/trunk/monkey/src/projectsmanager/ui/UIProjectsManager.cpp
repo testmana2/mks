@@ -23,6 +23,7 @@
 #include "pFileManager.h"
 
 #include <QHeaderView>
+#include <QDebug>
 
 UIProjectsManager::UIProjectsManager( QWidget* w )
 	: QDockWidget( w ), mProjects( new ProjectsModel( this ) ), mProxy( new ProjectsProxy( mProjects ) )
@@ -87,10 +88,12 @@ ProjectItem* UIProjectsManager::currentProject() const
 
 void UIProjectsManager::initializeProject( ProjectItem* it )
 {
+	qWarning ()<<"init";
 	// clear selected item
 	tvProjects->selectionModel()->clear();
 	// append project item
 	mProjects->appendRow( it );
+	
 	// refresh project
 	mProxy->refresh( it );
 	// set current project
