@@ -39,7 +39,7 @@ class Q_MONKEY_EXPORT ProjectItem : public QObject, public QStandardItem
 	friend class UIProjectsManager;
 	
 public:
-enum BuildActionType
+enum BuildTargetType
 {
     aBuild = 0,
     aClean ,
@@ -231,6 +231,11 @@ struct BuildAction
 			{return NULL;};  // FIXME	
 	
 	virtual bool openProject( const QString&, ProjectItem* = 0 ) {return false;}; //FIXME
+
+    virtual void removeSelfFromMenu (QMenu* menu);
+    virtual void addSelfFromMenu (QMenu* menu);
+
+    virtual void processTarget (BuildTargetType target);
 	
 public slots:
 	virtual void editSettings()
