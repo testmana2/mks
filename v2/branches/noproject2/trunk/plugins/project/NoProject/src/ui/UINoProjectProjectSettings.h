@@ -4,9 +4,8 @@
 #include <QHash>
 
 #include "ui_UINoProjectProjectSettings.h"
-#include "ProjectItem.h"
 
-class NoProjectProjectItem;
+#include "NoProjectProjectItem.h"
 
 class UINoProjectProjectSettings : public QDialog, Ui_UINoProjectProjectSettings
 {
@@ -14,7 +13,7 @@ class UINoProjectProjectSettings : public QDialog, Ui_UINoProjectProjectSettings
 public:
 	UINoProjectProjectSettings (NoProjectProjectItem* project);
 
-	QList<ProjectItem::BuildAction> targets;
+	QList<NoProjectProjectItem::target> targets;
 private slots:
 	void accept ();
 	void pathDialogRequested ();

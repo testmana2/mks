@@ -1,7 +1,7 @@
 #include <QFileDialog>
 
 #include "UINoProjectProjectSettings.h"
-#include "NoProjectProjectItem.h"
+
 
 UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* pproject): QDialog()
 {
@@ -63,7 +63,7 @@ void UINoProjectProjectSettings::addAction()
 {
 	actionsList->addItem ("");
 	actionsList->setCurrentRow (actionsList->count()-1);
-	addActionBtn->clearFocus();
+	targets.append ( (NoProjectProjectItem::target){"","",NULL});
 	actionName->setFocus(Qt::OtherFocusReason);
 }
 

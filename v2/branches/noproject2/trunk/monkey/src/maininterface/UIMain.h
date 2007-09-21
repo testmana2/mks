@@ -30,6 +30,16 @@ public:
 	pWorkspace* workspace();
 	UIProjectsManager* projectsManager();
 
+	//Pointers for some actions stored fore more quick access to it
+	struct {
+		QAction* build;
+		QAction* clean;
+		QAction* reBuild;
+		QAction* distClean;
+		QAction* execute;
+		QAction* buildExecute;
+	} buildActions;
+
 protected:
 	void closeEvent( QCloseEvent* );
 

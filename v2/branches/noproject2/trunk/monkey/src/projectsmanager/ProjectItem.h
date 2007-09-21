@@ -25,6 +25,7 @@ class QTextCodec;
 class ProjectPlugin;
 
 class ProjectItem;
+class QMenu;
 typedef QList<ProjectItem*> ProjectItemList;
 
 /*
@@ -46,11 +47,6 @@ enum BuildTargetType
     aDistClean,
     aExecute,
     aLast
-};
-struct BuildAction
-{
-    QString text;
-    QString command;
 };
 
 	ProjectItem( ProjectsModel::NodeType = ProjectsModel::ProjectType, ProjectItem* = 0 );
@@ -232,23 +228,20 @@ struct BuildAction
 	
 	virtual bool openProject( const QString&, ProjectItem* = 0 ) {return false;}; //FIXME
 
-    virtual void removeSelfFromMenu (QMenu* menu);
-    virtual void addSelfFromMenu (QMenu* menu);
+    virtual void removeSelfFromMenu (QMenu* menu){};
+    virtual void addSelfToMenu (QMenu* menu){};
 
-    virtual void processTarget (BuildTargetType target);
-	
 public slots:
 	virtual void editSettings()
 			{;};  // FIXME	
+	virtual void buildMenuTriggered () {};
 	
 protected:
 	QString mBuffer;
-	QList<BuildAction> targets;
 	virtual void redoLayout( ProjectItem* = 0 ) {}; //FIXME
 	virtual void writeProject() {}; //FIXME
 	virtual void writeItem( ProjectItem* ) {}; //FIXME
 
-	void processAction (BuildActionType);
 };
 
 #endif // PROJECTITEM_H

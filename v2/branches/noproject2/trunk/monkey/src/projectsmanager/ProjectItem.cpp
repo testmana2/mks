@@ -31,11 +31,6 @@ ProjectItem::ProjectItem( ProjectsModel::NodeType t, ProjectItem* i )
 	if ( i )
 		i->appendRow( this );
 		
-	//FIXME targets need only for ProjectsModel::ProjectType
-	targets.append ( (BuildAction){"Build", ""});
-	targets.append ( (BuildAction){"Clean", ""});
-	targets.append ( (BuildAction){"Distclean", ""});
-	targets.append ( (BuildAction){"Execute", ""});
 }
 
 int ProjectItem::type() const
@@ -301,17 +296,3 @@ bool ProjectItem::isEnabled ()
 	return getParentPlugin ()->isEnabled();
 }
 
-void ProjectItem::removeSelfFromMenu (QMenu* menu)
-{
-    
-}
-
-void ProjectItem::addSelfToMenu ()
-{
-    
-}
-
-void ProjectItem::processTarget (BuildTargetType target)
-{
-    qWarning ()<<"Executing command "<<targets[target].command;
-}
