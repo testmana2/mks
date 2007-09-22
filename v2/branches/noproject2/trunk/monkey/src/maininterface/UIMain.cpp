@@ -154,7 +154,7 @@ void UIMain::initMenuBar()
 	mb->menu( "mBuild", tr( "&Build" ) );
 	mb->beginGroup( "mBuild" );
 		mb->menu( "mBuild", tr( "&Build" ), QIcon( ":/Icons/Icons/buildbuild.png" ) );
-		buildActions.build = mb->action( "mBuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildbuild.png" ), QString::null, tr( "Build current" ) );
+		mb->action( "mBuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildbuild.png" ), QString::null, tr( "Build current" ) );
 		mb->action( "mBuild/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/buildbuild.png" ), QString::null, tr( "Build all" ) );
 		mb->menu( "mRebuild", tr( "&Rebuild" ), QIcon( ":/Icons/Icons/buildrebuild.png" ) );
 		buildActions.reBuild = mb->action( "mRebuild/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/buildrebuild.png" ), QString::null, tr( "Rebuild current" ) );
@@ -169,7 +169,7 @@ void UIMain::initMenuBar()
 		buildActions.distClean = mb->action( "mDistClean/aCurrent", tr( "&Current" ), QIcon( ":/Icons/Icons/builddistclean.png" ), QString::null, tr( "Dist clean current" ) );
 		mb->action( "mDistClean/aAll", tr( "&All" ), QIcon( ":/Icons/Icons/builddistclean.png" ), QString::null, tr( "Dist clean all" ) );
 		mb->action( "aSeparator3" );
-		buildActions.execute = mb->action( "aExecute", tr( "&Execute" ), QIcon( ":/Icons/Icons/buildexecute.png" ), QString::null, tr( "Execute current" ) );
+		mb->action( "aExecute", tr( "&Execute" ), QIcon( ":/Icons/Icons/buildexecute.png" ), QString::null, tr( "Execute current" ) );
 		mb->action( "aExecuteWithParameters", tr( "Execute with &parameters..." ), QIcon( ":/Icons/Icons/buildexecute.png" ), QString::null, tr( "Execute current with parameters..." ) );
 		mb->action( "aSeparator4" );
 		buildActions.buildExecute = mb->action( "aBuildExecute", tr( "Build, Execu&te" ), QIcon( ":/Icons/Icons/buildmisc.png" ), QString::null, tr( "Build and execute current" ) );

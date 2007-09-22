@@ -129,10 +129,10 @@ bool ProjectItem::getReadOnly() const
 { return data( ProjectsModel::ReadOnlyRole ).toBool(); }
 
 ProjectsModel* ProjectItem::model() const
-{ return reinterpret_cast<ProjectsModel*>( QStandardItem::model() ); }
+{ return dynamic_cast<ProjectsModel*>( QStandardItem::model() ); }
 
 ProjectItem* ProjectItem::parent() const
-{ return reinterpret_cast<ProjectItem*>( QStandardItem::parent() ); }
+{ return dynamic_cast<ProjectItem*>( QStandardItem::parent() ); }
 
 int ProjectItem::parentCount() const
 {
@@ -148,7 +148,7 @@ int ProjectItem::parentCount() const
 }
 
 ProjectItem* ProjectItem::child( int i, int j ) const
-{ return reinterpret_cast<ProjectItem*>( QStandardItem::child( i, j ) ); }
+{ return dynamic_cast<ProjectItem*>( QStandardItem::child( i, j ) ); }
 
 ProjectItemList ProjectItem::children( bool r, bool s ) const
 {

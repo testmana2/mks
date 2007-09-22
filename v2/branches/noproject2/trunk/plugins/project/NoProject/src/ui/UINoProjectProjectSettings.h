@@ -13,7 +13,7 @@ class UINoProjectProjectSettings : public QDialog, Ui_UINoProjectProjectSettings
 public:
 	UINoProjectProjectSettings (NoProjectProjectItem* project);
 
-	QList<NoProjectProjectItem::target> targets;
+	QList<NoProjectProjectItem::Target> targets;
 private slots:
 	void accept ();
 	void pathDialogRequested ();
