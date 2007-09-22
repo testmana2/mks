@@ -89,19 +89,20 @@ ProjectItem* UIProjectsManager::currentProject() const
 void UIProjectsManager::initializeProject( ProjectItem* it )
 {
 	qWarning ()<<"init";
-	// clear selected item
+/*	// clear selected item
 	tvProjects->selectionModel()->clear();
-	// append project item
-	mProjects->appendRow( it );
-	
+	// append project item*/
+	mProjects->appendRow( new QStandardItem );
+/*	
 	// refresh project
 	mProxy->refresh( it );
 	// set current project
-	tvProjects->setCurrentIndex( mProxy->mapFromSource( it->index() ) );
+	tvProjects->setCurrentIndex( mProxy->mapFromSource( it->index() ) );*/
 }
 
 void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const QModelIndex& p )
 {
+	qWarning ()<<"on current";
 	// get menubar
 	pMenuBar* mb = pMenuBar::instance();
 	// get pluginsmanager
@@ -110,6 +111,7 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 	if ( c.isValid() && p.isValid() )
 	{
 		// get item
+		// looking plugin that can manage this project
 		ProjectItem* curr_pro = mProjects->itemFromIndex( mProxy->mapToSource( c ) )->project();
         ProjectItem* prev_pro = mProjects->itemFromIndex( mProxy->mapToSource( p ) )->project();
         if (curr_pro == prev_pro)
@@ -187,8 +189,8 @@ bool UIProjectsManager::openProject( const QString& s )
 void UIProjectsManager::projectNew_triggered()
 {
 	//FIXME - temporary code!!!!! remove all
-	ProjectItem* it = PluginsManager::instance()->projectPluginForFileName(".noproject")->generateProjectItem();
-	initializeProject( it );
+/*	ProjectItem* it = PluginsManager::instance()->projectPluginForFileName(".noproject")->generateProjectItem();*/
+	initializeProject( NULL );
 }
 
 void UIProjectsManager::projectOpen_triggered()
