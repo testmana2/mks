@@ -26,6 +26,8 @@ class ProjectPlugin;
 
 class ProjectItem;
 class QMenu;
+class QAction;
+
 typedef QList<ProjectItem*> ProjectItemList;
 
 /*

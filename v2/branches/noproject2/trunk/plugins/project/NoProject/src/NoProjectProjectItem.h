@@ -9,7 +9,7 @@ class QAction;
 
 class NoProjectProjectItem : public ProjectItem
 {
-struct target
+struct Target
 {
 	QString text;
 	QString command;
@@ -26,13 +26,13 @@ public:
 public slots:
 	void editSettings();
 	void buildMenuTriggered ();
-    void removeSelfFromMenu (QMenu* menu);
-    void addSelfToMenu (QMenu* menu);
-
+    void removeSelfFromMenu (QMenu* menu = NULL);
+    void addSelfToMenu (QMenu* menu = NULL);
+	ProjectPlugin* getParentPlugin ();
 private:
-	QList<target> targets;
+	QList<Target> targets;
 	void makeTarget (int targetIndex);
-
+	void updateBuildMenu (QMenu* menu = NULL);
 
 };
 

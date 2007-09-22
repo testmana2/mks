@@ -25,8 +25,10 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 void UINoProjectProjectSettings::accept()
 {
 	project->setValue(projectName->text());
+	project->setText(projectName->text());
 	project->setFilePath( projectPath->text()+".noproject");
 	project->targets = targets;
+	project->updateBuildMenu ();
 	QDialog::accept();
 }
 
@@ -63,7 +65,7 @@ void UINoProjectProjectSettings::addAction()
 {
 	actionsList->addItem ("");
 	actionsList->setCurrentRow (actionsList->count()-1);
-	targets.append ( (NoProjectProjectItem::target){"","",NULL});
+	targets.append ( (NoProjectProjectItem::Target){"","",NULL});
 	actionName->setFocus(Qt::OtherFocusReason);
 }
 

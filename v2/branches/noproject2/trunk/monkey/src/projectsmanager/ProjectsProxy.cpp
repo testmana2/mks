@@ -32,7 +32,6 @@ bool ProjectsProxy::filterAcceptsRow( int r, const QModelIndex& i ) const
 		for ( int j = 0; j < it->rowCount(); j++ )
 			if ( filterAcceptsRow( j, it->index() ) )
 				return true;
-
 	return b;
 }
 

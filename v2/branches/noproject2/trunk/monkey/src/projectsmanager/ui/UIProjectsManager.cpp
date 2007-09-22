@@ -62,7 +62,7 @@ UIProjectsManager::UIProjectsManager( QWidget* w )
 	// filter are negate
 	mProxy->setNegateFilter( false );
 	// apply filtering
-	mProxy->setFiltering( true );
+	//mProxy->setFiltering( true );    FIXME  i swithed of filtering, because with it can not open project.   Possible need to switch on.   Hlamer
 	// set view proxy
 	tvProjects->setModel( mProxy );
 	
@@ -88,41 +88,39 @@ ProjectItem* UIProjectsManager::currentProject() const
 
 void UIProjectsManager::initializeProject( ProjectItem* it )
 {
-	qWarning ()<<"init";
-/*	// clear selected item
+	// clear selected item
 	tvProjects->selectionModel()->clear();
-	// append project item*/
-	mProjects->appendRow( new QStandardItem );
-/*	
+	// append project item
+	mProjects->appendRow( it );
+	
 	// refresh project
 	mProxy->refresh( it );
 	// set current project
-	tvProjects->setCurrentIndex( mProxy->mapFromSource( it->index() ) );*/
+	tvProjects->setCurrentIndex( mProxy->mapFromSource( it->index() ) );
 }
 
 void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const QModelIndex& p )
 {
-	qWarning ()<<"on current";
 	// get menubar
 	pMenuBar* mb = pMenuBar::instance();
 	// get pluginsmanager
 	PluginsManager* pm = PluginsManager::instance();
 	// if valid
-	if ( c.isValid() && p.isValid() )
+	if ( c.isValid() )
 	{
 		// get item
 		// looking plugin that can manage this project
 		ProjectItem* curr_pro = mProjects->itemFromIndex( mProxy->mapToSource( c ) )->project();
-        ProjectItem* prev_pro = mProjects->itemFromIndex( mProxy->mapToSource( p ) )->project();
+        ProjectItem* prev_pro = p.isValid() ? mProjects->itemFromIndex( mProxy->mapToSource( p ) )->project() : NULL;
         if (curr_pro == prev_pro)
             return;
 		//
-        prev_pro->removeSelfFromMenu(mb->menu( "mBuild" ));
+        if (prev_pro)
+        	prev_pro->removeSelfFromMenu(mb->menu( "mBuild" ));
 		if ( curr_pro && curr_pro->isEnabled() )
 		{
             curr_pro->addSelfToMenu(mb->menu( "mBuild" ));
 			// desactive compiler, debugger and interpreter
-			pm->setCurrentCompiler( curr_pro->compiler());
 			pm->setCurrentDebugger( curr_pro->debugger() );
 			pm->setCurrentInterpreter( curr_pro->interpreter() );
 			// desactive menu entries
@@ -189,8 +187,8 @@ bool UIProjectsManager::openProject( const QString& s )
 void UIProjectsManager::projectNew_triggered()
 {
 	//FIXME - temporary code!!!!! remove all
-/*	ProjectItem* it = PluginsManager::instance()->projectPluginForFileName(".noproject")->generateProjectItem();*/
-	initializeProject( NULL );
+	ProjectItem* it = PluginsManager::instance()->projectPluginForFileName(".noproject")->generateProjectItem();
+	initializeProject( it );
 }
 
 void UIProjectsManager::projectOpen_triggered()
