@@ -27,11 +27,9 @@ public:
 	pCommandParser( QObject* = 0 ) {}
 	virtual ~pCommandParser() {}
 
-	virtual QByteArray contents() const = 0;
-
 public slots:
-	virtual void addContents( const QByteArray& ) = 0;
-	virtual void processParsing() = 0;
+	//will try to parse presended output, and return true, if it's succesfully parsed.
+	virtual bool parse(const QByteArray* output) = 0;
 
 };
 

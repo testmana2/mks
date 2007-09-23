@@ -77,8 +77,12 @@ void pConsoleManager::readyRead()
 	// get current command
 	pCommand* c = currentCommand();
 	// append data to parser if available
-	if ( c && c->parser() )
-		c->parser()->addContents( a );
+	if ( c && currentParsers.size() )
+		foreach (pCommandParser* p, currentParsers)
+		{
+			if ( p->parse (&a))
+				break;
+		}
 	// emit signal
 	emit commandReadyRead( c, a );
 }
@@ -105,7 +109,7 @@ void pConsoleManager::sendRawCommand( const QString& s )
 	// assign text
 	c->setText( tr( "User Raw Command" ) );
 	// assign raw command
-	c->setCommand( s );
+	c->setDefaultCommand( s );
 	// set skip on error to false
 	c->setSkipOnError( false );
 	// add command to console

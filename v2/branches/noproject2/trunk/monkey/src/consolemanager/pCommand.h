@@ -28,30 +28,33 @@ class Q_MONKEY_EXPORT pCommand : public QObject
 
 public:
 	pCommand( QObject* o = 0 )	: QObject( o ) {}
-	~pCommand() { if ( mParser ) mParser->deleteLater(); }
+	~pCommand() {}
 
 	QString text() const { return mText; }
-	QString command() const { return mCommand; }
+	QString command() const;
 	QStringList arguments() const { return mArguments; }
 	QString workingDirectory() const { return mWorkingDirectory; }
-	pCommandParser* parser() const { return mParser; }
+	QStringList parsers() const { return mParsers; }
+	bool tryAllParsers() const {return mTryAllParsers; }
 	bool skipOnError() const { return mSkipOnError; }
 
 	void setText( const QString& s ) { mText = s; }
-	void setCommand( const QString& s ) { mCommand = s; }
+	void setDefaultCommand( const QString& s ) { mDefaultCommand = s; }
 	void setArguments( const QStringList& l ) { mArguments = l; }
 	void setWorkingDirectory( const QString& s ) { mWorkingDirectory = s; }
-	void setParser( pCommandParser* p ) { mParser = p; }
+	void setParsers( QStringList parsers ) { mParsers = parsers; }
+	void setTryAllParsers (bool b) { mTryAllParsers = true; }
 	void setSkipOnError( bool b ) { mSkipOnError = b; }
 
 protected:
 	QString mText;
-	QString mCommand;
-	QStringList mArguments;
+	QString mTool; //Text name of a tool
+	QString mDefaultCommand; //command of a tool, that will be used, if mTool will not be finded
+	QStringList mArguments;//for command without mTool may also be stored in the mDefauldCommand
 	QString mWorkingDirectory;
 	bool mSkipOnError;
-	QPointer<pCommandParser> mParser;
-
+	QStringList mParsers;
+	bool mTryAllParsers; //if output not parsed by mParsers, will try to parse by all other parsers
 };
 
 typedef QList<pCommand*> pCommandList;
