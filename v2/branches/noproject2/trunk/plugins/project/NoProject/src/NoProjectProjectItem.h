@@ -31,7 +31,6 @@ public slots:
 	ProjectPlugin* getParentPlugin ();
 private:
 	QList<Target> targets;
-	void makeTarget (int targetIndex);
 
 };
 

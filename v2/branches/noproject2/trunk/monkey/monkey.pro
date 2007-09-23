@@ -116,6 +116,7 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/toolsmanager/ui/UIToolsEdit.cpp \
 	src/toolsmanager/pToolsManager.cpp \
 	src/consolemanager/pConsoleManager.cpp \
+	src/consolemanager/pCommand.cpp \
 	src/pluginsmanager/PluginsManager.cpp \
 	src/pluginsmanager/ui/UIPluginsSettings.cpp \
 	src/projectsmanager/ui/UIProjectsManager.cpp \

@@ -33,6 +33,8 @@ public:
 protected:
 	int mTimerId;
 	pCommandList mCommands;
+	QHash<QString,pCommandParser*> parsers;//list of all availible parsers
+	QList<pCommandParser*> currentParsers;//list of parsers, that used for current command. First elements will be applyed at first.
 	void timerEvent( QTimerEvent* );
 
 private:
