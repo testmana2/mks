@@ -32,7 +32,6 @@ public slots:
 private:
 	QList<Target> targets;
 	void makeTarget (int targetIndex);
-	void updateBuildMenu (QMenu* menu = NULL);
 
 };
 

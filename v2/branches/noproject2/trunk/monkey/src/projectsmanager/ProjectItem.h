@@ -45,14 +45,17 @@ public:
 enum BuildTargetType
 {
     aBuild = 0,
-    aClean ,
+    aReBuild,
+    aClean,
     aDistClean,
     aExecute,
+    aBuildExecute,
     aLast
 };
 
 	ProjectItem( ProjectsModel::NodeType = ProjectsModel::ProjectType, ProjectItem* = 0 );
 	
+	virtual ~ProjectItem () {};
 	// item type
 	virtual int type() const;
 // 	// plugin name

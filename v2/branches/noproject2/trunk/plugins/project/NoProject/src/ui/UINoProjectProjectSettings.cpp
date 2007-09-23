@@ -1,7 +1,7 @@
 #include <QFileDialog>
 
 #include "UINoProjectProjectSettings.h"
-
+#include "pMenuBar.h"
 
 UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* pproject): QDialog()
 {
@@ -12,6 +12,8 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 	projectName->setText (project->getValue());
 	projectPath->setText (project->canonicalPath());
 	targets = project->targets;
+	foreach (NoProjectProjectItem::Target t, targets)
+		actionsList->addItem (t.text);
 	connect (acceptBtn, SIGNAL (clicked()), this, SLOT (accept()));
 	connect (pathDialogBtn, SIGNAL (clicked()), this, SLOT (pathDialogRequested()));
 	connect (actionsList, SIGNAL (currentRowChanged(int)), this, SLOT(selectedRowChanged(int)));
@@ -27,8 +29,11 @@ void UINoProjectProjectSettings::accept()
 	project->setValue(projectName->text());
 	project->setText(projectName->text());
 	project->setFilePath( projectPath->text()+".noproject");
+	targets[ProjectItem::aReBuild].command = targets[ProjectItem::aClean].command+"\n"+targets[ProjectItem::aBuild].command;
+	targets[ProjectItem::aBuildExecute].command = targets[ProjectItem::aBuild].command+"\n"+targets[ProjectItem::aExecute].command;
 	project->targets = targets;
-	project->updateBuildMenu ();
+	project->removeSelfFromMenu ();
+	project->addSelfToMenu ();
 	QDialog::accept();
 }
 
@@ -39,12 +44,12 @@ void UINoProjectProjectSettings::pathDialogRequested ()
 	projectPath->setText (path);
 }
 
-void UINoProjectProjectSettings::selectedRowChanged(int actionnum)
+void UINoProjectProjectSettings::selectedRowChanged(int actionNum)
 {
-	actionName->setText(targets[actionnum].text);
-	commandsEdit->setText (targets[actionnum].command);
+	actionName->setText(targets[actionNum].text);
+	commandsEdit->setText (targets[actionNum].command);
 	commandsEdit->setEnabled (true);
-	if ( actionsList->currentRow() >3 )
+	if ( actionsList->currentRow() >=ProjectItem::aLast )
 	{	
 		actionName->setEnabled (true);
 		removeActionBtn->setEnabled (true);
@@ -59,13 +64,14 @@ void UINoProjectProjectSettings::selectedRowChanged(int actionnum)
 void UINoProjectProjectSettings::actionNameEdited(QString name)
 {
 	actionsList->currentItem()->setText(name);
+	targets[actionsList->currentRow()].text = name;
 }
 
 void UINoProjectProjectSettings::addAction()
 {
+	targets.append ( (NoProjectProjectItem::Target){"","",NULL});
 	actionsList->addItem ("");
 	actionsList->setCurrentRow (actionsList->count()-1);
-	targets.append ( (NoProjectProjectItem::Target){"","",NULL});
 	actionName->setFocus(Qt::OtherFocusReason);
 }
 

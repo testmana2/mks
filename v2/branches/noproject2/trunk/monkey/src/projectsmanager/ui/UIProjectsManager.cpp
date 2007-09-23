@@ -92,7 +92,7 @@ void UIProjectsManager::initializeProject( ProjectItem* it )
 	tvProjects->selectionModel()->clear();
 	// append project item
 	mProjects->appendRow( it );
-	
+	qDebug ()<<mProjects;
 	// refresh project
 	mProxy->refresh( it );
 	// set current project
@@ -111,20 +111,20 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 		// get item
 		// looking plugin that can manage this project
 		ProjectItem* curr_pro = mProjects->itemFromIndex( mProxy->mapToSource( c ) )->project();
-        ProjectItem* prev_pro = p.isValid() ? mProjects->itemFromIndex( mProxy->mapToSource( p ) )->project() : NULL;
-        if (curr_pro == prev_pro)
+		ProjectItem* prev_pro = p.isValid() ? mProjects->itemFromIndex( mProxy->mapToSource( p ) )->project() : NULL;
+		if (curr_pro == prev_pro)
             return;
 		//
         if (prev_pro)
         	prev_pro->removeSelfFromMenu(mb->menu( "mBuild" ));
 		if ( curr_pro && curr_pro->isEnabled() )
 		{
-            curr_pro->addSelfToMenu(mb->menu( "mBuild" ));
+			curr_pro->addSelfToMenu(mb->menu( "mBuild" ));
+			mb->menu( "mBuild" )->setEnabled(true);
 			// desactive compiler, debugger and interpreter
 			pm->setCurrentDebugger( curr_pro->debugger() );
 			pm->setCurrentInterpreter( curr_pro->interpreter() );
 			// desactive menu entries
-			//mb->menu( "mBuild" )->setEnabled( !pm->currentCompiler().isEmpty() );
 			mb->menu( "mDebugger" )->setEnabled( !pm->currentDebugger().isEmpty() );
 			mb->menu( "mInterpreter" )->setEnabled( !pm->currentInterpreter().isEmpty() );
 			// desactive project action
@@ -236,9 +236,9 @@ void UIProjectsManager::projectSaveAll_triggered()
 
 void UIProjectsManager::projectCloseCurrent_triggered()
 {
-	ProjectItem* p = currentProject();
-	if ( p )
-		p->close();
+	ProjectItem* it = currentProject();
+	if ( it )
+		it->close();
 }
 
 void UIProjectsManager::projectCloseAll_triggered()
