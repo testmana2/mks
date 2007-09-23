@@ -25,6 +25,15 @@ QMake::~QMake()
 		setEnabled( false );
 }
 
+ProjectItem* NoProject::generateProjectItem()
+{
+	// don t open project if plugin is not enabled
+	if ( !isEnabled() )
+		return NULL;
+	// crete root project item and return it
+	return dynamic_cast<ProjectItem*> (new NoProjectProjectItem );
+}
+
 bool QMake::setEnabled( bool b )
 {
 	if ( b && !isEnabled() )

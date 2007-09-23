@@ -16,18 +16,6 @@
    <property name="spacing" >
     <number>3</number>
    </property>
-   <property name="leftMargin" >
-    <number>5</number>
-   </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
    <item>
     <widget class="QTabWidget" name="twQMake" >
      <property name="currentIndex" >
@@ -38,18 +26,6 @@
        <string>&amp;General</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>5</number>
-       </property>
-       <property name="topMargin" >
-        <number>5</number>
-       </property>
-       <property name="rightMargin" >
-        <number>5</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>5</number>
-       </property>
        <property name="horizontalSpacing" >
         <number>3</number>
        </property>
@@ -88,18 +64,6 @@
           <string>Generate Qt &amp;Api files</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <property name="horizontalSpacing" >
            <number>3</number>
           </property>
@@ -188,36 +152,12 @@
        <property name="spacing" >
         <number>3</number>
        </property>
-       <property name="leftMargin" >
-        <number>5</number>
-       </property>
-       <property name="topMargin" >
-        <number>5</number>
-       </property>
-       <property name="rightMargin" >
-        <number>5</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>5</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="gbFilter" >
          <property name="title" >
           <string>&amp;Accepted View Filter</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <property name="horizontalSpacing" >
            <number>3</number>
           </property>
@@ -316,18 +256,6 @@
           <string>S&amp;copes</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <property name="horizontalSpacing" >
            <number>3</number>
           </property>
@@ -416,18 +344,6 @@
           <string>&amp;Path/Files</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <property name="horizontalSpacing" >
            <number>3</number>
           </property>
@@ -520,36 +436,12 @@
        <property name="spacing" >
         <number>3</number>
        </property>
-       <property name="leftMargin" >
-        <number>5</number>
-       </property>
-       <property name="topMargin" >
-        <number>5</number>
-       </property>
-       <property name="rightMargin" >
-        <number>5</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>5</number>
-       </property>
        <item>
         <widget class="QGroupBox" name="gbOperators" >
          <property name="title" >
           <string>&amp;Operators</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <property name="horizontalSpacing" >
            <number>3</number>
           </property>
@@ -638,18 +530,6 @@
           <string>&amp;Librairies Extensions</string>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
           <property name="horizontalSpacing" >
            <number>3</number>
           </property>
@@ -739,18 +619,6 @@
        <string>&amp;Qt Modules</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>5</number>
-       </property>
-       <property name="topMargin" >
-        <number>5</number>
-       </property>
-       <property name="rightMargin" >
-        <number>5</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>5</number>
-       </property>
        <property name="horizontalSpacing" >
         <number>3</number>
        </property>
@@ -759,18 +627,6 @@
        </property>
        <item rowspan="8" row="0" column="0" >
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
          <property name="horizontalSpacing" >
           <number>3</number>
          </property>
@@ -918,18 +774,6 @@
        <string>&amp;Configuration</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>5</number>
-       </property>
-       <property name="topMargin" >
-        <number>5</number>
-       </property>
-       <property name="rightMargin" >
-        <number>5</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>5</number>
-       </property>
        <property name="horizontalSpacing" >
         <number>3</number>
        </property>
@@ -938,18 +782,6 @@
        </property>
        <item rowspan="8" row="0" column="0" >
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
          <property name="horizontalSpacing" >
           <number>3</number>
          </property>

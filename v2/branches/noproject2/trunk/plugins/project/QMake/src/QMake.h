@@ -15,6 +15,8 @@ public:
 	virtual QWidget* settingsWidget();
 	virtual ProjectItem* openProject( const QString&, ProjectItem* = 0 );
 	virtual void editSettings( ProjectItem* );
+	
+	ProjectItem* generateProjectItem ();
 
 };
 
