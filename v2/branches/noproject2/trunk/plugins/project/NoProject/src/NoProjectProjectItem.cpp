@@ -29,17 +29,7 @@ NoProjectProjectItem::NoProjectProjectItem ()
 NoProjectProjectItem::~NoProjectProjectItem ()
 {
 	removeSelfFromMenu ();
-// 	qDebug ()<<"oops";
-// 	model()->removeRow( row(), index().parent() ); // just a little segfault
-
-	ProjectItem* it = parent();
-	if ( !( it && ( it->getType() == ProjectsModel::ScopeType || it->getType() == ProjectsModel::NestedScopeType ) && it->rowCount() == 2 ) )
-		it = this;
-	qWarning( qPrintable( QString( "Removing item: %1, %2, %3, %4 - %5, parent: %6" ).arg( it->getValue() ).arg( it->getType() ).arg( it->scope() ).arg( it->row() ).arg( it->column() ).arg( it->parent() ? it->parent()->getValue() : "no parent" ) ) );
-	if ( it->parent() )
-		it->parent()->removeRow( it->row() );
-	else if ( model() )
-		model()->removeRow( it->row(), it->index().parent() );
+	qWarning ("destructor");
 }
 
 void NoProjectProjectItem::editSettings()
@@ -49,7 +39,9 @@ void NoProjectProjectItem::editSettings()
 
 void NoProjectProjectItem::close()
 {
-	delete (this);
+	qWarning ("close");
+	model()->removeRow( row(), index().parent() );
+	//delete (this);
 }
 
 void NoProjectProjectItem::buildMenuTriggered ()
@@ -57,7 +49,10 @@ void NoProjectProjectItem::buildMenuTriggered ()
 	foreach ( Target t, targets)
 		if ( t.action == sender())
 		{
-				pConsoleManager::instance()->sendRawCommand(t.command);
+				pCommand* cmd = new pCommand;
+				cmd->setDefaultCommand (t.command);
+				cmd->setWorkingDirectory (canonicalPath());
+				pConsoleManager::instance()->addCommand(cmd);
 				return;
 		}
 };

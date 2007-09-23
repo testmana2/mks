@@ -28,9 +28,7 @@ void UINoProjectProjectSettings::accept()
 {
 	project->setValue(projectName->text());
 	project->setText(projectName->text());
-	project->setFilePath( projectPath->text()+".noproject");
-	targets[ProjectItem::aReBuild].command = targets[ProjectItem::aClean].command+"\n"+targets[ProjectItem::aBuild].command;
-	targets[ProjectItem::aBuildExecute].command = targets[ProjectItem::aBuild].command+"\n"+targets[ProjectItem::aExecute].command;
+	project->setFilePath( projectPath->text()+"/1.noproject");
 	project->targets = targets;
 	project->removeSelfFromMenu ();
 	project->addSelfToMenu ();
