@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>319</width>
-    <height>365</height>
+    <width>329</width>
+    <height>396</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -66,28 +66,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="actionsList" >
-         <item>
-          <property name="text" >
-           <string>Build</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>Clean</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>Distclean</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>Execute</string>
-          </property>
-         </item>
-        </widget>
+        <widget class="QListWidget" name="actionsList" />
        </item>
       </layout>
      </item>
@@ -103,7 +82,7 @@
        <item>
         <widget class="QLineEdit" name="actionName" >
          <property name="enabled" >
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
