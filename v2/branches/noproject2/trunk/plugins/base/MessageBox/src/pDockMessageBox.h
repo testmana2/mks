@@ -56,7 +56,9 @@ private:
 public slots:
 	void appendOutput( const QString& );
 	void appendLog( const QString& );
-	void appendInBox( const QString&, const QColor& = Qt::red );
+	//TODO find good names for next 2 methods    hlamer
+	void appendInLog( const QString&, const QColor& = Qt::red );
+	void appendMessageInBox (const pConsoleManager::Message&);
 	void showBuild();
 	void showOutput();
 	void showLog();

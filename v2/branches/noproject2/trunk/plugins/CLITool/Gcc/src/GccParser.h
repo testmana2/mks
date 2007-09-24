@@ -6,13 +6,12 @@
 class GccParser : public pCommandParser
 {
 public:
-    GccParser();
-    virtual ~GccParser();
+	GccParser();
+	~GccParser();
 
-    bool parse(QByteArray*);
+    bool parse(const QByteArray*);
 
-    QString name();
-
+    QString name() const;
 };
 
 #endif

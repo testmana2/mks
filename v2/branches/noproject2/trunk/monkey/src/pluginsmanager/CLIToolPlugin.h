@@ -28,21 +28,20 @@ Possible this steps will be realised by one member of PluginsManager
 
 */
 {
-	Q_OBJECT
 	
 public:
 	//Tool name
-	virtual QString name();
+	virtual QString name()=0;
 	
 	//Command for executing tool
-	virtual QString getCommand ();
+	virtual QString getCommand ()=0;
 	
 	//will show to user dialog, where he can configure command line switches, 
 	//and, when user will accept, switches string will be returned
-	virtual QString getSwitches (QString oldSwitches = QString::null);
+	virtual QString getSwitches (QString oldSwitches = QString::null)=0;
 
     //returns pointer to the console output parser for output of console utility
-    virtual pCommandParser* getParser();
+    virtual pCommandParser* generateParser()=0;
 	
 };
 

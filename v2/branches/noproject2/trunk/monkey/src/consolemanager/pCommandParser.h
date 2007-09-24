@@ -16,13 +16,17 @@
 #define PCOMMANDPARSER_H
 
 #include "MonkeyExport.h"
+#include "pConsoleManager.h"
 
 #include <QObject>
 
+
 class Q_MONKEY_EXPORT pCommandParser : public QObject
 {
+Q_OBJECT
+
 public:
-	pCommandParser( QObject* = 0 ) {}
+	pCommandParser() {}
 	virtual ~pCommandParser() {}
 
 public:
@@ -30,7 +34,8 @@ public:
 	virtual bool parse(const QByteArray* output) = 0;
     
     virtual QString name() const = 0;
-
+signals:
+	void newMessageAvailible (pConsoleManager::Message);
 };
 
 #endif // PCOMMANDPARSER_H

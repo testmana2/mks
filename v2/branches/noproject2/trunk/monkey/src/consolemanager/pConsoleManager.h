@@ -28,6 +28,18 @@ class Q_MONKEY_EXPORT pConsoleManager : public QProcess, public QSingleton<pCons
 	friend class QSingleton<pConsoleManager>;
 	
 public:
+
+	// FIXME DO NOT SURE IT'S THE BEST PLACE FOR Message and MessageType definition. hlamer
+	enum MessageType { Unknown = -1, Error, Warning, Good, Bad, Compiling, State };
+	struct Message
+	{
+		QString mFileName;
+		QPoint mPosition;
+		MessageType mType;
+		QString mText;
+		QString mFullText;
+	};
+
 	pCommand* currentCommand() const { return mCommands.value( 0 ); }
 
 protected:
@@ -36,10 +48,18 @@ protected:
 	QHash<QString,pCommandParser*> parsers;//list of all availible parsers
 	QList<pCommandParser*> currentParsers;//list of parsers, that used for current command. First elements will be applyed at first.
 	void timerEvent( QTimerEvent* );
+	//Generate a list of parsers, that will be used for command, that executing now
+	void setCurrentParsers (QStringList, bool);
 
 private:
 	pConsoleManager( QObject* = QApplication::instance() );
 	~pConsoleManager();
+
+public:
+	//add parser to the list of active parsers. Will be used by CLIToolPlugin
+	void addParser (pCommandParser*);
+	//remove parser from the list of active parsers. Will be used by CLIToolPlugin
+	void removeParser (QString);
 
 public slots:
 	void sendRawCommand( const QString& );
@@ -65,7 +85,7 @@ signals:
 	void commandStarted( pCommand* );
 	void commandStateChanged( pCommand*, QProcess::ProcessState );
 	void commandSkipped( pCommand* );
-
+	void newMessageAvailible (const Message&);
 };
 
 #endif // PCONSOLEMANAGER_H

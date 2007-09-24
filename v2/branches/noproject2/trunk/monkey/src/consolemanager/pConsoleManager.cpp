@@ -13,7 +13,7 @@
 **
 ****************************************************************************/
 #include "pConsoleManager.h"
-
+#include "pCommandParser.h"
 #include <QTimer>
 
 pConsoleManager::pConsoleManager( QObject* o )
@@ -51,6 +51,23 @@ void pConsoleManager::timerEvent( QTimerEvent* e )
 	}
 }
 
+void pConsoleManager::setCurrentParsers (QStringList sl, bool tryAllParsers)
+{
+	currentParsers.clear();
+	pCommandParser* p;
+	foreach (QString s, sl)
+	{
+		p = parsers[s];
+		if (p)
+			if (not currentParsers.contains(p))
+				currentParsers.append(p);
+	}
+	if (tryAllParsers)
+		foreach ( p, parsers)
+			if (not currentParsers.contains(p))
+				currentParsers.append(p);
+}
+
 void pConsoleManager::error( QProcess::ProcessError e )
 {
 	// emit signal error
@@ -68,6 +85,7 @@ void pConsoleManager::finished( int i, QProcess::ExitStatus e )
 	emit commandFinished( currentCommand(), i, e );
 	// remove command from list
 	removeCommand( currentCommand() );
+	currentParsers.clear();
 }
 
 void pConsoleManager::readyRead()
@@ -100,6 +118,18 @@ void pConsoleManager::stateChanged( QProcess::ProcessState e )
 	// remove command if crashed and state 0
 	if ( QProcess::error() == QProcess::FailedToStart && e == QProcess::NotRunning )
 		removeCommand( currentCommand() );
+}
+
+void pConsoleManager::addParser (pCommandParser* p)
+{
+	parsers[p->name()] = p;
+	connect (p, SIGNAL (newMessageAvailible(pConsoleManager::Message)), this, SIGNAL (newMessageAvailible1(const pConsoleManager::Message&)));
+}
+	
+void pConsoleManager::removeParser (QString s)
+{
+	disconnect (parsers[s], SIGNAL (newMessageAvailible (const pConsoleManager::Message)), this,SIGNAL (newMessageAvailible (const pConsoleManager::Message)));
+	parsers.remove (s);
 }
 
 void pConsoleManager::sendRawCommand( const QString& s )
@@ -182,6 +212,7 @@ void pConsoleManager::executeProcess()
 		}
 		// execute command
 		setWorkingDirectory( c->workingDirectory() );
+		setCurrentParsers (c->parsers(),c->tryAllParsers());
 		start( QString( "%1 %2" ).arg( c->command() ).arg( c->arguments().join( " " ) ) );
 		// exit
 		return;
