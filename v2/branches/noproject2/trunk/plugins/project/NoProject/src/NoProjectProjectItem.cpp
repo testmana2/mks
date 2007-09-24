@@ -52,6 +52,7 @@ void NoProjectProjectItem::buildMenuTriggered ()
 				pCommand* cmd = new pCommand;
 				cmd->setDefaultCommand (t.command);
 				cmd->setWorkingDirectory (canonicalPath());
+                cmd->setSkipOnError (false);
 				pConsoleManager::instance()->addCommand(cmd);
 				return;
 		}
