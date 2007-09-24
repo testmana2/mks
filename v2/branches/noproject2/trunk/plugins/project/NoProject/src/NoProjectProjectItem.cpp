@@ -29,7 +29,6 @@ NoProjectProjectItem::NoProjectProjectItem ()
 NoProjectProjectItem::~NoProjectProjectItem ()
 {
 	removeSelfFromMenu ();
-	qWarning ("destructor");
 }
 
 void NoProjectProjectItem::editSettings()
@@ -39,9 +38,7 @@ void NoProjectProjectItem::editSettings()
 
 void NoProjectProjectItem::close()
 {
-	qWarning ("close");
 	model()->removeRow( row(), index().parent() );
-	//delete (this);
 }
 
 void NoProjectProjectItem::buildMenuTriggered ()
@@ -53,6 +50,7 @@ void NoProjectProjectItem::buildMenuTriggered ()
 				cmd->setDefaultCommand (t.command);
 				cmd->setWorkingDirectory (canonicalPath());
                 cmd->setSkipOnError (false);
+				cmd->setTryAllParsers (true);
 				pConsoleManager::instance()->addCommand(cmd);
 				return;
 		}

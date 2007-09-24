@@ -187,7 +187,8 @@ bool UIProjectsManager::openProject( const QString& s )
 void UIProjectsManager::projectNew_triggered()
 {
 	//FIXME - temporary code!!!!! remove all
-	ProjectItem* it = PluginsManager::instance()->projectPluginForFileName(".noproject")->generateProjectItem();
+	ProjectPlugin* p = PluginsManager::instance()->projectPluginForFileName(".noproject");
+	ProjectItem* it = p->generateProjectItem();
 	initializeProject( it );
 }
 

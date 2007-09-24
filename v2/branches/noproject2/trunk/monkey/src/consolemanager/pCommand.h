@@ -16,11 +16,12 @@
 #define PCOMMAND_H
 
 #include "MonkeyExport.h"
-#include "pCommandParser.h"
 
 #include <QObject>
 #include <QStringList>
 #include <QPointer>
+
+class pCommandParser;
 
 class Q_MONKEY_EXPORT pCommand : public QObject
 {

@@ -144,11 +144,70 @@ void pDockMessageBox::appendLog( const QString& s )
 	teLog->verticalScrollBar()->setValue( b ? teLog->verticalScrollBar()->maximum() : p );
 }
 
-void pDockMessageBox::appendInBox( const QString& s, const QColor& c )
+void pDockMessageBox::appendInLog( const QString& s, const QColor& c )
 {
 	appendLog( colourText( "********************************************************************************", c ) );
 	appendLog( s );
 	appendLog( colourText( "********************************************************************************", c ) );
+}
+
+void pDockMessageBox::appendMessageInBox( const pConsoleManager::Message& m)
+{
+	// get last type
+	pConsoleManager::MessageType t = pConsoleManager::Unknown;
+	QListWidgetItem* lastIt = lwBuildSteps->item( lwBuildSteps->count() -1 );
+	if ( lastIt )
+		t = (pConsoleManager::MessageType)lastIt->data( Qt::UserRole +1 ).toInt();
+	lastIt = NULL;
+	// create new/update item
+	QListWidgetItem* it;
+	if ( t == pConsoleManager::Compiling )
+	{
+		if ( m.mType == pConsoleManager::Warning )
+		{
+			lastIt = lwBuildSteps->takeItem( lwBuildSteps->count() -1 );
+			it = new QListWidgetItem( lwBuildSteps );
+		}
+		else
+			it = lwBuildSteps->item( lwBuildSteps->count() -1 );
+	}
+	else
+		it = new QListWidgetItem( lwBuildSteps );
+	if ( lastIt )
+		lwBuildSteps->addItem( lastIt );
+	// set item infos
+	it->setText( m.mText );
+	it->setToolTip( m.mFullText );
+	it->setData( Qt::UserRole +1, m.mType ); // type
+	it->setData( Qt::UserRole +2, m.mFileName ); // filename
+	it->setData( Qt::UserRole +3, m.mPosition ); // position
+	switch ( m.mType )
+	{
+	case pConsoleManager::Error:
+		it->setIcon( QIcon( ":/icons/builderror.png" ) );
+		it->setBackground( QColor( 255, 0, 0, 20 ) );
+		break;
+	case pConsoleManager::Warning:
+		it->setIcon( QIcon( ":/icons/buildwarning.png" ) );
+		it->setBackground( QColor( 0, 255, 0, 20 ) );
+		break;
+	case pConsoleManager::Compiling:
+		it->setIcon( QIcon( ":/icons/clock.png" ) );
+		it->setBackground( QColor( 0, 0, 255, 20 ) );
+		break;
+	case pConsoleManager::Good:
+		it->setIcon( QIcon( ":/icons/buildwarning.png" ) );
+		it->setBackground( QColor( 0, 255, 0, 90 ) );
+		break;
+	case pConsoleManager::Bad:
+		it->setIcon( QIcon( ":/icons/builderror.png" ) );
+		it->setBackground( QColor( 255, 0, 0, 90 ) );
+		break;
+	default:
+		it->setIcon( QIcon( ":/icons/unknow.png" ) );
+		it->setBackground( QColor( 125, 125, 125, 20 ) );
+		break;
+	}
 }
 
 void pDockMessageBox::showBuild()
@@ -225,7 +284,7 @@ void pDockMessageBox::commandError( pCommand* c, QProcess::ProcessError e )
 			break;
 	}
 	// appendOutput to console log
-	appendInBox( colourText( s, Qt::blue ), Qt::red );
+	appendInLog( colourText( s, Qt::blue ), Qt::red );
 }
 
 void pDockMessageBox::commandFinished( pCommand* c, int i, QProcess::ExitStatus e )
@@ -246,7 +305,7 @@ void pDockMessageBox::commandFinished( pCommand* c, int i, QProcess::ExitStatus 
 			s.append( colourText( tr( "An unknown error occurred." ), Qt::darkGreen ) );
 	}
 	// appendOutput to console log
-	appendInBox( colourText( s, Qt::blue ), Qt::red );
+	appendInLog( colourText( s, Qt::blue ), Qt::red );
 	// disable stop button
 	tbStopCommand->setEnabled( false );
 }
@@ -270,7 +329,7 @@ void pDockMessageBox::commandStarted( pCommand* c )
 	s.append( tr( "* Arguments        : %1<br />" ).arg( colourText( c->arguments().join( " " )  )) );
 	s.append( tr( "* Working Directory: %1" ).arg( colourText( c->workingDirectory() ) ) );
 	// appendOutput to console log
-	appendInBox( colourText( s, Qt::blue ), Qt::red );
+	appendInLog( colourText( s, Qt::blue ), Qt::red );
 }
 
 void pDockMessageBox::commandStateChanged( pCommand* c, QProcess::ProcessState s )
@@ -307,5 +366,5 @@ void pDockMessageBox::commandSkipped( pCommand* c )
 	s.append( tr( "* Working Directory: %1" ).arg( colourText( c->workingDirectory() ) ) );
 	s.append( colourText( tr( "The command has been skipped due to previous error." ), Qt::darkGreen ) );
 	// appendOutput to console log
-	appendInBox( colourText( s, Qt::blue ), Qt::red );
+	appendInLog( colourText( s, Qt::blue ), Qt::red );
 }
