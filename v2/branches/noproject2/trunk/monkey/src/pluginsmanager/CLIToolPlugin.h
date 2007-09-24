@@ -4,6 +4,7 @@
 #include "MonkeyExport.h"
 #include "BasePlugin.h"
 #include "pCommand.h"
+#include "pCommandParser.h"
 
 #include <QString>
 
@@ -31,14 +32,17 @@ Possible this steps will be realised by one member of PluginsManager
 	
 public:
 	//Tool name
-	QString name();
+	virtual QString name();
 	
-	//Command to execute tool
-	pCommand* getCommand ();
+	//Command for executing tool
+	virtual QString getCommand ();
 	
 	//will show to user dialog, where he can configure command line switches, 
 	//and, when user will accept, switches string will be returned
-	QString getSwitches (QString oldSwitches = QString::null);
+	virtual QString getSwitches (QString oldSwitches = QString::null);
+
+    //returns pointer to the console output parser for output of console utility
+    virtual pCommandParser* getParser();
 	
 };
 
