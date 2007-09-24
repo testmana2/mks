@@ -21,15 +21,15 @@
 
 class Q_MONKEY_EXPORT pCommandParser : public QObject
 {
-	Q_OBJECT
-
 public:
 	pCommandParser( QObject* = 0 ) {}
 	virtual ~pCommandParser() {}
 
-public slots:
+public:
 	//will try to parse presended output, and return true, if it's succesfully parsed.
 	virtual bool parse(const QByteArray* output) = 0;
+    
+    virtual QString name() const = 0;
 
 };
 
