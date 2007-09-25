@@ -31,11 +31,11 @@ public:
 
 public:
 	//will try to parse presended output, and return true, if it's succesfully parsed.
-	virtual bool parse(const QByteArray* output) = 0;
+	virtual bool parse(const QByteArray* output) {return false;};
     
-    virtual QString name() const = 0;
+    virtual QString name() const {return QString::null;};
 signals:
-	void newMessageAvailible (pConsoleManager::Message);
+	void newMessageAvailible (const pConsoleManager::Message);
 };
 
 #endif // PCOMMANDPARSER_H

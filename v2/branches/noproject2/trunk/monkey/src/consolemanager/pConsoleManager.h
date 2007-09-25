@@ -85,7 +85,7 @@ signals:
 	void commandStarted( pCommand* );
 	void commandStateChanged( pCommand*, QProcess::ProcessState );
 	void commandSkipped( pCommand* );
-	void newMessageAvailible (const Message&);
+	void newMessageAvailible (const pConsoleManager::Message);
 };
 
 #endif // PCONSOLEMANAGER_H
