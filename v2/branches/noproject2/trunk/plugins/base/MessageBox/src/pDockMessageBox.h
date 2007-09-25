@@ -58,7 +58,7 @@ public slots:
 	void appendLog( const QString& );
 	//TODO find good names for next 2 methods    hlamer
 	void appendInLog( const QString&, const QColor& = Qt::red );
-	void appendMessageInBox (const pConsoleManager::Message&);
+	void appendMessageInBox (const pConsoleManager::Message);
 	void showBuild();
 	void showOutput();
 	void showLog();

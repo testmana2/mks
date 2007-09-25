@@ -123,7 +123,7 @@ void pConsoleManager::stateChanged( QProcess::ProcessState e )
 void pConsoleManager::addParser (pCommandParser* p)
 {
 	parsers[p->name()] = p;
-	connect (p, SIGNAL (newMessageAvailible(pConsoleManager::Message)), this, SIGNAL (newMessageAvailible1(const pConsoleManager::Message&)));
+	connect (p, SIGNAL (newMessageAvailible(pConsoleManager::Message)), this, SIGNAL (newMessageAvailible(pConsoleManager::Message)));
 }
 	
 void pConsoleManager::removeParser (QString s)

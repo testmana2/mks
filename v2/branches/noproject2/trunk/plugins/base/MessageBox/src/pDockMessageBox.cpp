@@ -90,6 +90,7 @@ pDockMessageBox::pDockMessageBox( QWidget* w )
 	connect( pConsoleManager::instance(), SIGNAL( commandStarted( pCommand* ) ), this, SLOT( commandStarted( pCommand* ) ) );
 	connect( pConsoleManager::instance(), SIGNAL( commandStateChanged( pCommand*, QProcess::ProcessState ) ), this, SLOT( commandStateChanged( pCommand*, QProcess::ProcessState ) ) );
 	connect( pConsoleManager::instance(), SIGNAL( commandSkipped( pCommand* ) ), this, SLOT( commandSkipped( pCommand* ) ) );
+	connect (pConsoleManager::instance(), SIGNAL( newMessageAvailible (const pConsoleManager::Message)), this, SLOT (appendMessageInBox (const pConsoleManager::Message)));
 }
 
 pDockMessageBox::~pDockMessageBox()
@@ -151,7 +152,7 @@ void pDockMessageBox::appendInLog( const QString& s, const QColor& c )
 	appendLog( colourText( "********************************************************************************", c ) );
 }
 
-void pDockMessageBox::appendMessageInBox( const pConsoleManager::Message& m)
+void pDockMessageBox::appendMessageInBox( const pConsoleManager::Message m)
 {
 	// get last type
 	pConsoleManager::MessageType t = pConsoleManager::Unknown;
@@ -184,11 +185,11 @@ void pDockMessageBox::appendMessageInBox( const pConsoleManager::Message& m)
 	switch ( m.mType )
 	{
 	case pConsoleManager::Error:
-		it->setIcon( QIcon( ":/icons/builderror.png" ) );
+		it->setIcon( QIcon( ":/icons/error.png" ) );
 		it->setBackground( QColor( 255, 0, 0, 20 ) );
 		break;
 	case pConsoleManager::Warning:
-		it->setIcon( QIcon( ":/icons/buildwarning.png" ) );
+		it->setIcon( QIcon( ":/icons/warning.png" ) );
 		it->setBackground( QColor( 0, 255, 0, 20 ) );
 		break;
 	case pConsoleManager::Compiling:
@@ -196,15 +197,14 @@ void pDockMessageBox::appendMessageInBox( const pConsoleManager::Message& m)
 		it->setBackground( QColor( 0, 0, 255, 20 ) );
 		break;
 	case pConsoleManager::Good:
-		it->setIcon( QIcon( ":/icons/buildwarning.png" ) );
+		it->setIcon( QIcon( ":/icons/warning.png" ) );
 		it->setBackground( QColor( 0, 255, 0, 90 ) );
 		break;
 	case pConsoleManager::Bad:
-		it->setIcon( QIcon( ":/icons/builderror.png" ) );
+		it->setIcon( QIcon( ":/icons/error.png" ) );
 		it->setBackground( QColor( 255, 0, 0, 90 ) );
 		break;
 	default:
-		it->setIcon( QIcon( ":/icons/unknow.png" ) );
 		it->setBackground( QColor( 125, 125, 125, 20 ) );
 		break;
 	}
@@ -308,6 +308,13 @@ void pDockMessageBox::commandFinished( pCommand* c, int i, QProcess::ExitStatus 
 	appendInLog( colourText( s, Qt::blue ), Qt::red );
 	// disable stop button
 	tbStopCommand->setEnabled( false );
+	// get last type
+	pConsoleManager::MessageType t;
+	QListWidgetItem* lastIt = lwBuildSteps->item( lwBuildSteps->count() -1 );
+	if ( lastIt )
+		t = (pConsoleManager::MessageType)lastIt->data( Qt::UserRole +1 ).toInt();
+	if ( t == pConsoleManager::State)
+		delete lastIt;
 }
 
 void pDockMessageBox::commandReadyRead( pCommand*, const QByteArray& a )
