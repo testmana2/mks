@@ -29,9 +29,12 @@ public slots:
     void removeSelfFromMenu (QMenu* menu = NULL);
     void addSelfToMenu (QMenu* menu = NULL);
 	ProjectPlugin* getParentPlugin ();
+	void save( bool = true );
+	bool openProject( const QString&);
+	void setValue (QString);
 private:
 	QList<Target> targets;
-
+	QString projectPath;
 };
 
 #endif // NOPROJECTPROJECTITEM_H

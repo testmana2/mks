@@ -67,6 +67,7 @@ pDockMessageBox::pDockMessageBox( QWidget* w )
 	tbOutput->setLineWrapMode( QTextEdit::NoWrap );
 	tbOutput->setTabStopWidth( 40 );
 	tbOutput->setOpenExternalLinks( true );
+	tbOutput->setLineWrapMode ( QTextEdit::WidgetWidth );
 	// create textedit
 	teLog = new QTextEdit;
 	teLog->setReadOnly( true );
