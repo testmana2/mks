@@ -231,7 +231,7 @@ enum BuildTargetType
 	virtual ProjectPlugin* getParentPlugin ()
 			{return NULL;};  // FIXME	
 	
-	virtual bool openProject( const QString&, ProjectItem* = 0 ) {return false;}; //FIXME
+	virtual bool openProject( const QString&) {return false;}; //FIXME
 
     virtual void removeSelfFromMenu (QMenu* menu){};
     virtual void addSelfToMenu (QMenu* menu){};

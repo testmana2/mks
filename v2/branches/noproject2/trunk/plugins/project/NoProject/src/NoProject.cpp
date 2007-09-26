@@ -11,7 +11,7 @@ NoProject::NoProject()
 	mPluginInfos.Name = "NoProject";
 	mPluginInfos.Version = "0.0.1";
 	mPluginInfos.Enabled = false;
-	mSuffixes["No project"] = QStringList(".noproject");
+	mSuffixes["No project"] = QStringList("*.noproject");
 }
 
 ProjectItem* NoProject::generateProjectItem()

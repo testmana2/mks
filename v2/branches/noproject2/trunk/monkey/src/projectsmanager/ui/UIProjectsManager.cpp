@@ -128,7 +128,7 @@ void UIProjectsManager::tvProjects_currentChanged( const QModelIndex& c, const Q
 			mb->menu( "mDebugger" )->setEnabled( !pm->currentDebugger().isEmpty() );
 			mb->menu( "mInterpreter" )->setEnabled( !pm->currentInterpreter().isEmpty() );
 			// desactive project action
-			mb->action( "mProject/mSave/aCurrent" )->setEnabled( true );
+			mb->action( "mProject/mSave/aCurrent" )->setEnabled( curr_pro->getModified() );
 			mb->action( "mProject/mSave/aAll" )->setEnabled( true );
 			mb->action( "mProject/mClose/aCurrent" )->setEnabled( true );
 			mb->action( "mProject/mClose/aAll" )->setEnabled( true );
@@ -228,6 +228,7 @@ void UIProjectsManager::projectSaveCurrent_triggered()
 	ProjectItem* p = currentProject();
 	if ( p )
 		p->save( false );
+	pMenuBar::instance()->action( "mProject/mSave/aCurrent" )->setEnabled( p->getModified() );
 }
 
 void UIProjectsManager::projectSaveAll_triggered()

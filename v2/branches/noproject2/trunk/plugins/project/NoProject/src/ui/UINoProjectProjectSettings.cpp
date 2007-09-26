@@ -10,7 +10,7 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 	setAttribute( Qt::WA_DeleteOnClose );
 	setWindowTitle( "Project Settings");
 	projectName->setText (project->getValue());
-	projectPath->setText (project->canonicalPath());
+	projectPath->setText (project->projectPath);
 	targets = project->targets;
 	foreach (NoProjectProjectItem::Target t, targets)
 		actionsList->addItem (t.text);
@@ -27,11 +27,11 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 void UINoProjectProjectSettings::accept()
 {
 	project->setValue(projectName->text());
-	project->setText(projectName->text());
-	project->setFilePath( projectPath->text()+"/1.noproject");
+	project->projectPath = projectPath->text();
 	project->targets = targets;
 	project->removeSelfFromMenu ();
 	project->addSelfToMenu ();
+	project->setModified (true);
 	QDialog::accept();
 }
 
