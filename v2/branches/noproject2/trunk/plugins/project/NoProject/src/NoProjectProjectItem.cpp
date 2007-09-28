@@ -52,15 +52,10 @@ void NoProjectProjectItem::removeSelfFromMenu (QMenu* menu)
 {
 	foreach ( Target t, targets)
 		if (t.action)
-			disconnect ( t.action, SIGNAL (triggered()), this, SLOT (buildMenuTriggered()));
-	for ( int i = ProjectItem::aLast; i < targets.size(); i++)
-	{
-		if (targets[i].action)
-		{
-			delete targets[i].action;  // !!! I can not see way to delete action from menu, so, deleting it and cleating again
-			targets[i].action = NULL;
-		}
-	}
+        {
+			delete t.action;  // !!! I can not see way to delete action from menu, so, deleting it and cleating again
+            t.action = NULL;
+        }
 }
 
 void NoProjectProjectItem::addSelfToMenu (QMenu* menu)
@@ -68,15 +63,12 @@ void NoProjectProjectItem::addSelfToMenu (QMenu* menu)
 	if ( !menu)
 		menu = pMenuBar::instance()->menu( "mBuild" );
 	menu->setEnabled (true);	
-	for ( int i = ProjectItem::aLast; i < targets.size(); i++)
+	for (int i = 0; i < targets.size(); i++)
 	{
-		targets[i].action = pMenuBar::instance()->action(QString("mBuild/aCustom%1").arg(i),targets[i].text);  // !!! I can not see way to delete action from menu, so, deleting it and creating again
-	}
-	foreach ( Target t, targets)
-	{
-		connect ( t.action, SIGNAL (triggered()), this, SLOT (buildMenuTriggered()));
-		t.action->setEnabled ( !t.command.isEmpty() );
-		t.action->setText (t.text);
+        targets[i].action = pMenuBar::instance()->action(QString("mBuild/aAction%1").arg(i),targets[i].text);  // !!! I can not see    way to delete action from menu, so, deleting it and creating again. hlamer
+		connect ( targets[i].action, SIGNAL (triggered()), this, SLOT (buildMenuTriggered()));
+		targets[i].action->setEnabled ( !targets[i].command.isEmpty() );
+		targets[i].action->setText (targets[i].text);
 	}
 }
 
@@ -93,6 +85,7 @@ void NoProjectProjectItem::setValue (QString s)
 
 bool NoProjectProjectItem::openProject( const QString& s)
 {
+    qWarning () <<"Opening project "<<s;
 	setFilePath (s);
 	QSettings settings (s, QSettings::IniFormat);
 	if ( settings.status() == QSettings::AccessError)
@@ -128,25 +121,11 @@ bool NoProjectProjectItem::openProject( const QString& s)
 	{ //creating new
 		setValue( "Project" );
 		projectPath = canonicalPath ();
-		targets.append ( (Target){"Build","",NULL});
-		targets.append ( (Target){"Rebuild","",NULL});
-		targets.append ( (Target){"Clean","",NULL});
-		targets.append ( (Target){"Distclean","",NULL});
-		targets.append ( (Target){"Execute","",NULL});
-		targets.append ( (Target){"Build & execute","",NULL});
 	}
-	
-	pMenuBar* mb = pMenuBar::instance();
-	targets[0].action = mb->action("mBuild/mBuild/aCurrent");
-	targets[1].action = mb->action("mBuild/mRebuild/aCurrent");
-	targets[2].action = mb->action("mBuild/mClean/aCurrent");
-	targets[3].action = mb->action("mBuild/mDistClean/aCurrent");
-	targets[4].action = mb->action("mBuild/aExecute");
-	targets[5].action = mb->action("mBuild/aBuildExecute");
 	
 	if ( targetsCount == 0) //new project created
 		editSettings ();
-
+    qWarning ("successfully opened");
 	return true;
 }
 
