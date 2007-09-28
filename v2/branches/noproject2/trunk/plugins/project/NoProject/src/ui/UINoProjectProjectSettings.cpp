@@ -1,3 +1,18 @@
+/****************************************************************************
+**
+**      Created using kate
+** Author    : Kopats Andrei aka hlamer <hlamer@tut.by>
+** Project   : NoProject project plugin
+** FileName  : NoProjectProjectSettings.cpp
+** Date      : 2007-09-28
+** License   : GPL
+** Comment   : NoProject project settings
+**
+** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+**
+****************************************************************************/
+
 #include <QFileDialog>
 
 #include "UINoProjectProjectSettings.h"
@@ -8,7 +23,7 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 	project = pproject;
 	setupUi( this );
 	setAttribute( Qt::WA_DeleteOnClose );
-	setWindowTitle( "Project Settings");
+	setWindowTitle( tr("Project Settings"));
 	projectName->setText (project->getValue());
 	projectPath->setText (project->projectPath);
 	targets = project->targets;
@@ -46,17 +61,6 @@ void UINoProjectProjectSettings::selectedRowChanged(int actionNum)
 {
 	actionName->setText(targets[actionNum].text);
 	commandsEdit->setText (targets[actionNum].command);
-	commandsEdit->setEnabled (true);
-	if ( actionsList->currentRow() >=ProjectItem::aLast )
-	{	
-		actionName->setEnabled (true);
-		removeActionBtn->setEnabled (true);
-	}
-	else
-	{
-		actionName->setEnabled (false);
-		removeActionBtn->setEnabled (false);
-	}
 }
 
 void UINoProjectProjectSettings::actionNameEdited(QString name)
