@@ -11,7 +11,6 @@
 class Q_MONKEY_EXPORT ProjectPlugin : public BasePlugin
 {
 	Q_OBJECT
-	friend class ProjectItem;
 public:
 	// the suffixes this project can manage
 	virtual QHash<QString, QStringList> suffixes() const

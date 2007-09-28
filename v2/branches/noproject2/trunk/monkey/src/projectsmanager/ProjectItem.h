@@ -24,18 +24,18 @@
 class QTextCodec;
 class ProjectPlugin;
 
-class ProjectItem;
 class QMenu;
 class QAction;
 
 typedef QList<ProjectItem*> ProjectItemList;
 
-/*
+/*   //FIXME
 For compile project I was need to implement all  =0 functions with some body.
-I marked this functions with    //FIXME
-Possible it's error, need to think, how to fix
+I marked this functions with    //FIXME and added some implementation, returning nothing.
+It's not rightly, possible, this methods just must be mooved from this parent class
 hlamer
-*/
+*/  //FIXME
+
 class Q_MONKEY_EXPORT ProjectItem : public QObject, public QStandardItem
 {
 	Q_OBJECT
@@ -48,8 +48,8 @@ public:
 	virtual ~ProjectItem () {};
 	// item type
 	virtual int type() const;
-// 	// plugin name
-// 	virtual QString pluginName() const = 0;   //use parentPlugin()->infos.Name;
+// 	// plugin name  I removed, because parentPlugin()->infos().Name may be used. hlamer
+// 	virtual QString pluginName() const = 0;   //use ;
 	// set data
 	virtual void setData( const QVariant&, int = Qt::UserRole +1 );
 	// type of the item
@@ -90,10 +90,10 @@ public:
 		{return QString::null;};
 	// tell if item is the first child of its parent
 	virtual bool isFirst() const
-		{return true;};  // FIXME
+		{return false;};  // FIXME
 	// tell if item is the last child of its parent
 	virtual bool isLast() const
-		{return true;};  // FIXME
+		{return false;};  // FIXME
 	// scope of item
 	virtual QString scope() const 
 		{return QString::null;};  // FIXME
@@ -167,9 +167,9 @@ public:
 	// name of project
 	virtual QString name() const;
 	// close the project
-	virtual void close() {}; // FIXME
+	virtual void close() =0;
 	// save project, asking user according to bool
-	virtual void save( bool = true ) {}; //FIXME
+	virtual void save( bool = true ) =0;
 	// save project including all children projects
 	virtual void saveAll( bool = true ) {}; //FIXME
 	// show the content of items 
@@ -227,13 +227,13 @@ public:
     virtual void addSelfToMenu (QMenu* menu){};
 
 public slots:
-	virtual void editSettings()
-			{;};  // FIXME	
-	virtual void buildMenuTriggered () {};
+	virtual void editSettings() = 0;
+	virtual void buildMenuTriggered () =0;
 	
 protected:
 	QString mBuffer;
 	virtual void redoLayout( ProjectItem* = 0 ) {}; //FIXME
+	//what difference with save() ?    hlamer
 	virtual void writeProject() {}; //FIXME
 	virtual void writeItem( ProjectItem* ) {}; //FIXME
 
