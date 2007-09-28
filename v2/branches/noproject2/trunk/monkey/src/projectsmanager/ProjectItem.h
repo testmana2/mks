@@ -42,16 +42,6 @@ class Q_MONKEY_EXPORT ProjectItem : public QObject, public QStandardItem
 	friend class UIProjectsManager;
 	
 public:
-enum BuildTargetType
-{
-    aBuild = 0,
-    aReBuild,
-    aClean,
-    aDistClean,
-    aExecute,
-    aBuildExecute,
-    aLast
-};
 
 	ProjectItem( ProjectsModel::NodeType = ProjectsModel::ProjectType, ProjectItem* = 0 );
 	

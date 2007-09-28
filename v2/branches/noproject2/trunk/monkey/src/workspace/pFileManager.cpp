@@ -7,6 +7,7 @@
 #include "pChild.h"
 
 #include <QFileInfo>
+#include <QDebug>
 
 pFileManager::pFileManager( QObject* o )
 	: QObject( o )
@@ -14,6 +15,7 @@ pFileManager::pFileManager( QObject* o )
 
 pAbstractChild* pFileManager::openFile( const QString& s, const QPoint& p )
 {
+	qWarning ()<<"opening"<<s;
 	// if it not exists
 	if ( !QFile::exists( s ) )
 		return 0;
