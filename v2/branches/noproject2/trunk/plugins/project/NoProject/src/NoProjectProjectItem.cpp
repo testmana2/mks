@@ -92,7 +92,7 @@ void NoProjectProjectItem::addSelfToMenu (QMenu* menu)
 	for (int i = 0; i < targets.size(); i++)
 	{
 		if (targets[i].action)
-			targets[i].action->setVisible (true)
+			targets[i].action->setVisible (true);
 		else
         {	targets[i].action = pMenuBar::instance()->action(QString("mBuild/aAction%1").arg(i),targets[i].text);  // !!! I can not see    way to delete action from menu, so, deleting it and creating again. hlamer
 			connect ( targets[i].action, SIGNAL (triggered()), this, SLOT (buildMenuTriggered()));
