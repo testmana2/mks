@@ -1,7 +1,7 @@
 #ifndef GCCPARSER_H
 #define GCCPARSER_H
 
-#include <QRegExp>
+
 
 #include "pCommandParser.h"
 
@@ -15,9 +15,9 @@ public:
 	GccParser();
 	~GccParser();
 
-    bool parse(const QByteArray*);
+	QString name() const;
+	bool parse(const QByteArray*);
 
-    QString name() const;
 };
 
 #endif

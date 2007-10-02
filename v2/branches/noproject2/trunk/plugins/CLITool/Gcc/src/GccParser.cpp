@@ -1,5 +1,6 @@
+#include <QRegExp>
+
 #include "GccParser.h"
-#include <QDebug>
 
 GccParser::GccParser()
 {
@@ -7,13 +8,11 @@ GccParser::GccParser()
 	rxBuild.setPattern ("^g\\+\\+.+([^\\s]+\\.cpp)");
 	rxUndefRef.setPattern ("^.*(In\\sfunction\\s.*:.*:).+(\\sundefined\\sreference\\sto.+)$");
 	rxNoRule.setPattern ("^make: \\*\\*\\* (No rule to make target `.+', needed by `.+')\\.  Stop\\.$" );  // FIXME not a Gcc error
-
 }
 
 GccParser::~GccParser()
 {
 }
-
 
 bool GccParser::parse(const QByteArray* arr)
 {

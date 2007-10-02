@@ -2,11 +2,11 @@
 **
 **      Created using kate
 ** Author    : Kopats Andrei aka hlamer <hlamer@tut.by>
-** Project   : NoProject project type 
-** FileName  : NoProjectProjectItem.h
+** Project   : MonkeyProject project type 
+** FileName  : MonkeyProjectItem.cpp
 ** Date      : 2007-09-28
 ** License   : GPL
-** Comment   : NoProject project class
+** Comment   : MonkeyProject project class
 **
 ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -15,37 +15,37 @@
 #include <QMenu>
 #include <QMessageBox>
 
-#include "NoProjectProjectItem.h"
+#include "MonkeyProjectItem.h"
 #include "ProjectPlugin.h"
-#include "UINoProjectProjectSettings.h"
+#include "UIMonkeyProjectSettings.h"
 #include "pCommand.h"
 #include "pConsoleManager.h"
 #include "PluginsManager.h"
 #include "pMenuBar.h"
 
 
-NoProjectProjectItem::NoProjectProjectItem () : ProjectItem()
+MonkeyProjectItem::MonkeyProjectItem () : ProjectItem()
 {
 	setType( ProjectsModel::ProjectType );
 	setModified (false);
 }
 
-NoProjectProjectItem::~NoProjectProjectItem ()
+MonkeyProjectItem::~MonkeyProjectItem ()
 {
 	removeSelfFromMenu ();
 }
 
-void NoProjectProjectItem::editSettings()
+void MonkeyProjectItem::editSettings()
 {
-	new UINoProjectProjectSettings (this);
+	new UIMonkeyProjectSettings (this);
 }
 
-void NoProjectProjectItem::close()
+void MonkeyProjectItem::close()
 {
 	model()->removeRow( row(), index().parent() );
 }
 
-void NoProjectProjectItem::save (bool)
+void MonkeyProjectItem::save (bool)
 {
 	QSettings settings (getFilePath(), QSettings::IniFormat);
 	settings.setValue ("projectName", getValue());
@@ -59,7 +59,7 @@ void NoProjectProjectItem::save (bool)
 	setModified (false);
 }
 
-void NoProjectProjectItem::buildMenuTriggered ()
+void MonkeyProjectItem::buildMenuTriggered ()
 {
 	foreach ( Target t, targets)
 		if ( t.action == sender())
@@ -74,7 +74,7 @@ void NoProjectProjectItem::buildMenuTriggered ()
 		}
 };
 
-void NoProjectProjectItem::removeSelfFromMenu (QMenu* menu)
+void MonkeyProjectItem::removeSelfFromMenu (QMenu* menu)
 {
 	foreach ( Target t, targets)
 		if (t.action)
@@ -84,7 +84,7 @@ void NoProjectProjectItem::removeSelfFromMenu (QMenu* menu)
         }
 }
 
-void NoProjectProjectItem::addSelfToMenu (QMenu* menu)
+void MonkeyProjectItem::addSelfToMenu (QMenu* menu)
 {
 	if ( !menu)
 		menu = pMenuBar::instance()->menu( "mBuild" );
@@ -102,18 +102,18 @@ void NoProjectProjectItem::addSelfToMenu (QMenu* menu)
 	}
 }
 
-ProjectPlugin* NoProjectProjectItem::getParentPlugin ()
+ProjectPlugin* MonkeyProjectItem::getParentPlugin ()
 {
-	return PluginsManager::instance()->plugin<ProjectPlugin*>( "NoProject" );
+	return PluginsManager::instance()->plugin<ProjectPlugin*>( "MonkeyProject" );
 }
 
-void NoProjectProjectItem::setValue (QString s)
+void MonkeyProjectItem::setValue (QString s)
 {
 	ProjectItem::setValue (s);
 	setText (s);
 }
 
-bool NoProjectProjectItem::openProject( const QString& s)
+bool MonkeyProjectItem::openProject( const QString& s)
 {
 	setFilePath (s);
 	QSettings settings (s, QSettings::IniFormat);

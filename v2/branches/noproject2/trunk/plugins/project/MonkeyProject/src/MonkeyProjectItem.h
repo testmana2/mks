@@ -2,11 +2,11 @@
 **
 **      Created using kate
 ** Author    : Kopats Andrei aka hlamer <hlamer@tut.by>
-** Project   : NoProject project type 
-** FileName  : NoProjectProjectItem.cpp
+** Project   : MonkeyProject project type 
+** FileName  : MonkeyProjectItem.h
 ** Date      : 2007-09-28
 ** License   : GPL
-** Comment   : NoProject project  class
+** Comment   : MonkeyProject project  class
 **
 ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -18,10 +18,10 @@
 #include "ProjectItem.h"
 
 //class ProjectPlugin;
-class UINoProjectProjectSettings;
+class UIMonkeyProjectSettings;
 class QAction;
 
-class NoProjectProjectItem : public ProjectItem
+class MonkeyProjectItem : public ProjectItem
 {
 struct Target
 {
@@ -29,11 +29,11 @@ struct Target
 	QString command;
 	QAction* action;  //may be NULL or valid pointer
 };
-	friend class UINoProjectProjectSettings;
+	friend class UIMonkeyProjectSettings;
 	
 public:
-	NoProjectProjectItem ();
-	~NoProjectProjectItem ();
+	MonkeyProjectItem ();
+	~MonkeyProjectItem ();
 	
 	void setValue (QString);	
 	void close ();
