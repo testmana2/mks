@@ -2,11 +2,11 @@
 **
 **      Created using kate
 ** Author    : Kopats Andrei aka hlamer <hlamer@tut.by>
-** Project   : NoProject project plugin
-** FileName  : NoProjectProjectSettings.cpp
+** Project   : MonkeyProject project plugin
+** FileName  : MonkeyProjectSettings.cpp
 ** Date      : 2007-09-28
 ** License   : GPL
-** Comment   : NoProject project settings
+** Comment   : MonkeyProject project settings
 **
 ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -15,10 +15,10 @@
 
 #include <QFileDialog>
 
-#include "UINoProjectProjectSettings.h"
+#include "UIMonkeyProjectSettings.h"
 #include "pMenuBar.h"
 
-UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* pproject): QDialog()
+UIMonkeyProjectSettings::UIMonkeyProjectSettings(MonkeyProjectItem* pproject): QDialog()
 {
 	project = pproject;
 	setupUi( this );
@@ -27,7 +27,7 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 	projectName->setText (project->getValue());
 	projectPath->setText (project->projectPath);
 	targets = project->targets;
-	foreach (NoProjectProjectItem::Target t, targets)
+	foreach (MonkeyProjectItem::Target t, targets)
 		actionsList->addItem (t.text);
 	connect (acceptBtn, SIGNAL (clicked()), this, SLOT (accept()));
 	connect (pathDialogBtn, SIGNAL (clicked()), this, SLOT (pathDialogRequested()));
@@ -39,7 +39,7 @@ UINoProjectProjectSettings::UINoProjectProjectSettings(NoProjectProjectItem* ppr
 	exec();
 }
 
-void UINoProjectProjectSettings::accept()
+void UIMonkeyProjectSettings::accept()
 {
 	project->setValue(projectName->text());
 	project->projectPath = projectPath->text();
@@ -50,39 +50,39 @@ void UINoProjectProjectSettings::accept()
 	QDialog::accept();
 }
 
-void UINoProjectProjectSettings::pathDialogRequested ()
+void UIMonkeyProjectSettings::pathDialogRequested ()
 {
 	QString path = QFileDialog::getExistingDirectory(this,
      tr("Select project path"), projectPath->text());
 	projectPath->setText (path);
 }
 
-void UINoProjectProjectSettings::selectedRowChanged(int actionNum)
+void UIMonkeyProjectSettings::selectedRowChanged(int actionNum)
 {
 	actionName->setText(targets[actionNum].text);
 	commandsEdit->setText (targets[actionNum].command);
 }
 
-void UINoProjectProjectSettings::actionNameEdited(QString name)
+void UIMonkeyProjectSettings::actionNameEdited(QString name)
 {
 	actionsList->currentItem()->setText(name);
 	targets[actionsList->currentRow()].text = name;
 }
 
-void UINoProjectProjectSettings::addAction()
+void UIMonkeyProjectSettings::addAction()
 {
-	targets.append ( (NoProjectProjectItem::Target){"","",NULL});
+	targets.append ( (MonkeyProjectItem::Target){"","",NULL});
 	actionsList->addItem ("");
 	actionsList->setCurrentRow (actionsList->count()-1);
 	actionName->setFocus(Qt::OtherFocusReason);
 }
 
-void UINoProjectProjectSettings::removeAction()
+void UIMonkeyProjectSettings::removeAction()
 {
 	delete actionsList->takeItem (actionsList->currentRow());
 }
 
-void UINoProjectProjectSettings::actionCommandEdited ()
+void UIMonkeyProjectSettings::actionCommandEdited ()
 {
 	targets[actionsList->currentIndex().row()].command = commandsEdit->toPlainText();
 }

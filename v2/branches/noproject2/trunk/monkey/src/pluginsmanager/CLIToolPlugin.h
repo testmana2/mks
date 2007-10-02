@@ -19,12 +19,7 @@ Normal way to execute some console command (make tool, compiler, utility, etc.):
 				 command = GNUMake::getCommand ()
 3) Add to the command line actions that you need to process
 				 command.command() = command.command() +" clean all"
-4) Execute command, using Console plugin
-	
-Possible this steps will be realised by one member of PluginsManager
-	PluginsManager::execCommand (QString toolName, QString arguments, QString defaultToolCommand, QStringList additionalParsers = QStringList)
-	
-	example:    PluginsManager::execCommand ("GNU Make", "clean all", "make", "Gcc")
+4) Execute command, using Console manager
 
 */
 {

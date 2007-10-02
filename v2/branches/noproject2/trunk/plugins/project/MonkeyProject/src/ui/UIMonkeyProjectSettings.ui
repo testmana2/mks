@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>UINoProjectProjectSettings</class>
- <widget class="QDialog" name="UINoProjectProjectSettings" >
+ <class>UIMonkeyProjectSettings</class>
+ <widget class="QDialog" name="UIMonkeyProjectSettings" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -175,7 +175,7 @@
   <connection>
    <sender>pushButton_4</sender>
    <signal>clicked()</signal>
-   <receiver>UINoProjectProjectSettings</receiver>
+   <receiver>UIMonkeyProjectSettings</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >

@@ -2,11 +2,11 @@
 **
 **      Created using kate
 ** Author    : Kopats Andrei aka hlamer <hlamer@tut.by>
-** Project   : NoProject project plugin
-** FileName  : NoProjectProjectSettings.h
+** Project   : MonkeyProject project plugin
+** FileName  : MonkeyProjectSettings.h
 ** Date      : 2007-09-28
 ** License   : GPL
-** Comment   : NoProject project settings
+** Comment   : MonkeyProject project settings
 **
 ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -17,17 +17,17 @@
 
 #include <QHash>
 
-#include "ui_UINoProjectProjectSettings.h"
+#include "ui_UIMonkeyProjectSettings.h"
 
-#include "NoProjectProjectItem.h"
+#include "MonkeyProjectItem.h"
 
-class UINoProjectProjectSettings : public QDialog, Ui_UINoProjectProjectSettings
+class UIMonkeyProjectSettings : public QDialog, Ui_UIMonkeyProjectSettings
 {
 	Q_OBJECT
 public:
-	UINoProjectProjectSettings (NoProjectProjectItem* project);
+	UIMonkeyProjectSettings (MonkeyProjectItem* project);
 
-	QList<NoProjectProjectItem::Target> targets;
+	QList<MonkeyProjectItem::Target> targets;
 private slots:
 	void accept ();
 	void pathDialogRequested ();
@@ -37,7 +37,7 @@ private slots:
 	void removeAction ();
 	void actionCommandEdited ();
 private:
-	NoProjectProjectItem* project;
+	MonkeyProjectItem* project;
 };
 
 #endif // UINOPROJECTPROJECTSETTINGS_H
