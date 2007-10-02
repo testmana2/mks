@@ -1,4 +1,5 @@
 #include <QRegExp>
+#include <QDebug>
 
 #include "GccParser.h"
 
@@ -8,6 +9,10 @@ GccParser::GccParser()
 	rxBuild.setPattern ("^g\\+\\+.+([^\\s]+\\.cpp)");
 	rxUndefRef.setPattern ("^.*(In\\sfunction\\s.*:.*:).+(\\sundefined\\sreference\\sto.+)$");
 	rxNoRule.setPattern ("^make: \\*\\*\\* (No rule to make target `.+', needed by `.+')\\.  Stop\\.$" );  // FIXME not a Gcc error
+    connect (&proc, SIGNAL (readyReadStandardOutput ()), this, SLOT (read()));
+    proc.start ("/data/a/monkeyrepos/v2/branches/noproject2/trunk/bin/parser.py");
+    qWarning () << "statred";
+    qWarning() << QProcess::execute("echo hello world");
 }
 
 GccParser::~GccParser()
@@ -82,4 +87,10 @@ return false;
 QString GccParser::name() const
 {
 	return QString ("Gcc");
+}
+
+void GccParser::read()
+{
+    qWarning () <<"output from python\n";
+    qWarning () << proc.readAll();
 }
