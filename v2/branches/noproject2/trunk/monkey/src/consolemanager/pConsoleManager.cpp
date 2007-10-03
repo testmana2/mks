@@ -92,7 +92,9 @@ void pConsoleManager::finished( int i, QProcess::ExitStatus e )
 void pConsoleManager::readyRead()
 {
 	// get datas
-	const QByteArray a = readAllStandardOutput();
+	QByteArray a;
+	while ( canReadLine ()) // read N lines, for parsing
+		a.append (readLine());
 	// get current command
 	pCommand* c = currentCommand();
 	// append data to parser if available
