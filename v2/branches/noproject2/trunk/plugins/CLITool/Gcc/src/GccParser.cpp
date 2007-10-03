@@ -23,7 +23,7 @@ GccParser::GccParser()
 			"0", //column
 			"%2", //row
 			pConsoleManager::Warning, //type
-			"Compiling %1...", //text
+			"%1:%2: %4", //text
 			"%0" //full text
 		},
 		{
@@ -33,7 +33,7 @@ GccParser::GccParser()
 			"0", //column
 			"0", //row
 			pConsoleManager::Compiling, //type
-			"%1:%2: %4", //text
+			"Compiling %1...", //text
 			"%0" //full text
 		},
 		{
