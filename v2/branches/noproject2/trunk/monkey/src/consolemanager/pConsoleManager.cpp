@@ -15,6 +15,7 @@
 #include "pConsoleManager.h"
 #include "pCommandParser.h"
 #include <QTimer>
+#include <QDebug>
 
 pConsoleManager::pConsoleManager( QObject* o )
 	: QProcess( o )
@@ -29,6 +30,8 @@ pConsoleManager::pConsoleManager( QObject* o )
 	connect( this, SIGNAL( stateChanged( QProcess::ProcessState ) ), this, SLOT( stateChanged( QProcess::ProcessState ) ) );
 	// start timerEvent
 	mTimerId = startTimer( 100 );
+    connect (&parserProcess, SIGNAL (readyReadStandardOutput ()), this, SLOT (readyReadParser()));
+	parserProcess.start ("/data/a/monkeyrepos/v2/branches/noproject2/trunk/bin/parser.py");
 }
 
 pConsoleManager::~pConsoleManager()
@@ -95,13 +98,18 @@ void pConsoleManager::readyRead()
 	// get current command
 	pCommand* c = currentCommand();
 	// append data to parser if available
+
+/* OLD STYLE PARSING
 	if ( c && currentParsers.size() )
 		foreach (pCommandParser* p, currentParsers)
 		{
 			if ( p->parse (&a))
 				break;
 		}
+*/ 
+	parserProcess.write (a);
 	// emit signal
+	qWarning ()<<"writed to parser"<<a;
 	emit commandReadyRead( c, a );
 }
 
@@ -217,4 +225,9 @@ void pConsoleManager::executeProcess()
 		// exit
 		return;
 	}
+}
+
+void pConsoleManager::readyReadParser()
+{
+	qWarning () << parserProcess.readAll();
 }
