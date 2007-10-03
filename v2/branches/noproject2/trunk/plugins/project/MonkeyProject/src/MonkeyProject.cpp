@@ -33,7 +33,7 @@ ProjectItem* MonkeyProject::generateProjectItem()
 {
 	// don t open project if plugin is not enabled
 	if ( !isEnabled() )
-		return NULL;
+		return NULL
 	// crete root project item and return it
 	return dynamic_cast<ProjectItem*> (new MonkeyProjectItem );
 }
