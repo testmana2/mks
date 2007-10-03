@@ -60,7 +60,9 @@ void UIMonkeyProjectSettings::pathDialogRequested ()
 void UIMonkeyProjectSettings::selectedRowChanged(int actionNum)
 {
 	actionName->setText(targets[actionNum].text);
+	actionName->setEnabled (true);
 	commandsEdit->setText (targets[actionNum].command);
+	commandsEdit->setEnabled (true);
 }
 
 void UIMonkeyProjectSettings::actionNameEdited(QString name)

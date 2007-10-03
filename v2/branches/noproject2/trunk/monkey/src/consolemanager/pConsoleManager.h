@@ -47,6 +47,7 @@ protected:
 	pCommandList mCommands;
 	QHash<QString,pCommandParser*> parsers;//list of all availible parsers
 	QList<pCommandParser*> currentParsers;//list of parsers, that used for current command. First elements will be applyed at first.
+	QProcess parserProcess ;
 	void timerEvent( QTimerEvent* );
 	//Generate a list of parsers, that will be used for command, that executing now
 	void setCurrentParsers (QStringList, bool);
@@ -77,6 +78,7 @@ private slots:
 	void readyRead();
 	void started();
 	void stateChanged( QProcess::ProcessState );
+	void readyReadParser ();
 
 signals:
 	void commandError( pCommand*, QProcess::ProcessError );
