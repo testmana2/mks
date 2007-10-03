@@ -67,8 +67,11 @@ void UIMonkeyProjectSettings::selectedRowChanged(int actionNum)
 
 void UIMonkeyProjectSettings::actionNameEdited(QString name)
 {
-	actionsList->currentItem()->setText(name);
-	targets[actionsList->currentRow()].text = name;
+	if (actionsList->currentItem())
+	{
+		actionsList->currentItem()->setText(name);
+		targets[actionsList->currentRow()].text = name;
+	}
 }
 
 void UIMonkeyProjectSettings::addAction()

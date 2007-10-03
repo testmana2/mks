@@ -66,7 +66,7 @@ void MonkeyProjectItem::buildMenuTriggered ()
 		{
 				pCommand* cmd = new pCommand;
 				cmd->setDefaultCommand (t.command);
-				cmd->setWorkingDirectory (canonicalPath());
+				cmd->setWorkingDirectory (projectPath);
                 cmd->setSkipOnError (false);
 				cmd->setTryAllParsers (true);
 				pConsoleManager::instance()->addCommand(cmd);
