@@ -5,6 +5,63 @@
 
 GccParser::GccParser()
 {
+	Pattern ps[] = 
+	{
+		{
+			"^(.+):(\\d+):(\\d+:)?\\serror:\\s(.+)$", //reg exp
+			"Error in the file/line", //desctiption
+			"%1", //file name
+			"0", //column
+			"%2", //row
+			pConsoleManager::Error, //type
+			"%1:%2: %4", //text
+			"%0", //full text
+		},
+		{
+			"^(.+):(\\d+):(\\d+:)?\\serror:\\s(.+)$", //reg exp
+			"Warning in the file/line", //desctiption
+			"%1", //file name
+			"0", //column
+			"%2", //row
+			pConsoleManager::Warning, //type
+			"Compiling %1...", //text
+			"%0" //full text
+		},
+		{
+			"^g\\+\\+.+([^\\s]+\\.cpp)", //reg exp
+			"Building file", //desctiption
+			"", //file name
+			"0", //column
+			"0", //row
+			pConsoleManager::Compiling, //type
+			"%1:%2: %4", //text
+			"%0" //full text
+		},
+		{
+			"^.*(In\\sfunction\\s.*:.*:).+(\\sundefined\\sreference\\sto.+)$", //reg exp
+			"Undedined reference", //desctiption
+			"", //file name
+			"0", //column
+			"0", //row
+			pConsoleManager::Error, //type
+			"%1%2", //text
+			"%0" //full text
+		},
+		{
+			"^make: \\*\\*\\* (No rule to make target `.+', needed by `.+')\\.  Stop\\.$", //reg exp
+			"No rule for make target", //desctiption
+			"", //file name
+			"0", //column
+			"0", //row
+			pConsoleManager::Error, //type
+			"%1", //text
+			"%0" //full text
+		},
+		{"", "", "", "", "", pConsoleManager::Unknown,"",""} //this item must be last
+	};
+	for ( int i = 0; ps[i].regExp != ""; i++)
+		patterns.append (ps[i]);
+		
 	rxErrWarn.setPattern ("^(.+):(\\d+):(\\d+:)?\\s((warning)|(error)):\\s(.+)$");
 	rxBuild.setPattern ("^g\\+\\+.+([^\\s]+\\.cpp)");
 	rxUndefRef.setPattern ("^.*(In\\sfunction\\s.*:.*:).+(\\sundefined\\sreference\\sto.+)$");
