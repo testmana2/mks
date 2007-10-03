@@ -32,6 +32,8 @@ pConsoleManager::pConsoleManager( QObject* o )
 	mTimerId = startTimer( 100 );
     connect (&parserProcess, SIGNAL (readyReadStandardOutput ()), this, SLOT (readyReadParser()));
 	parserProcess.start ("/data/a/monkeyrepos/v2/branches/noproject2/trunk/bin/parser.py");
+    qWarning ()<<"executed parser...";
+    parserProcess.write ("asdfaslk\n");
 }
 
 pConsoleManager::~pConsoleManager()
@@ -108,8 +110,8 @@ void pConsoleManager::readyRead()
 		}
 */ 
 	parserProcess.write (a);
+    //parserProcess.write (QString('\n').toUtf8 ());
 	// emit signal
-	qWarning ()<<"writed to parser"<<a;
 	emit commandReadyRead( c, a );
 }
 
@@ -229,5 +231,6 @@ void pConsoleManager::executeProcess()
 
 void pConsoleManager::readyReadParser()
 {
+    qWarning () << "reading process..";
 	qWarning () << parserProcess.readAll();
 }
