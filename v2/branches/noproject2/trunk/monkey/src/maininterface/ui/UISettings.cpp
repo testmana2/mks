@@ -413,6 +413,7 @@ void UISettings::saveSettings()
 	pMonkeyStudio::setDefaultDocumentColours( gbDefaultDocumentColours->isChecked() );
 	pMonkeyStudio::setDefaultDocumentPen( iconBackgroundColor( tbDefaultDocumentPen->icon() ) );
 	pMonkeyStudio::setDefaultDocumentPaper( iconBackgroundColor( tbDefaultDocumentPaper->icon() ) );
+	
 	//  Auto Completion
 	pMonkeyStudio::setAutoCompletionSource( QsciScintilla::AcsNone );
 	if ( gbAutoCompletionEnabled->isChecked() )
@@ -504,7 +505,11 @@ void UISettings::saveSettings()
 	}
 	//  Lexers Highlighting
 	foreach ( QsciLexer* l, mLexers )
+	{
+		l->setDefaultPaper( iconBackgroundColor( tbDefaultDocumentPaper->icon() ));
+		l->setDefaultColor( iconBackgroundColor( tbDefaultDocumentPen->icon() ));
 		l->writeSettings( *pSettings::instance(), qPrintable( pMonkeyStudio::scintillaSettingsPath() ) );
+	}
 
 	//  Abbreviations
 	sp = "Abbreviations";
