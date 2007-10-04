@@ -1,0 +1,34 @@
+WebIssues Server, version 0.8.2 (February 12, 2007)
+Copyright (C) 2006-2007 Michał Męciński
+This program is licensed under the GNU General Public License
+
+Introduction
+============
+
+WebIssues is a system supporting team collaboration across the Internet.
+It can be used for storing bugs and other information with customizable
+attributes, comments and file attachments. The server can be installed
+on any host with PHP and MySQL or PostgreSQL. The client is a KDE
+application which is faster and more comfortable than web-based
+interfaces.
+
+This application is the server for the WebIssues system.
+
+Requirements
+============
+
+ * An HTTP server supporting PHP version 4.3 or newer
+ * A MySQL or PostgreSQL database server
+
+Installation
+============
+
+See INSTALL for detailed information about installing and upgrading
+the server.
+
+Contact
+=======
+
+Application website: http://webissues.mimec.org
+
+Report bugs to: mimec@mimec.org

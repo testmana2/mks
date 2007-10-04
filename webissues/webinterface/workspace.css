@@ -1,0 +1,33 @@
+.treeview-toplevel{
+cursor:pointer; 
+cursor:hand; 
+font-family:Verdana;  
+font-weight:bold
+}
+
+.treeview-item{
+cursor:pointer; 
+cursor:hand; 
+text-indent:20px;
+}
+
+#workspace
+{
+	position:fixed;
+	width:70%;
+	height:100%;
+	top: 0px;
+	left: 30%;
+	border:-5px solid rgb(239,239,239);
+	padding:-10px;
+}
+
+#menu {
+	position:fixed;
+	width:30%;
+	height:100%;
+	top: 0px;
+	left: 0px;
+	border:-5px solid rgb(239,239,239);
+	padding:-10px;
+}
