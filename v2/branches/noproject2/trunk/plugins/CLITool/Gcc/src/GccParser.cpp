@@ -46,16 +46,6 @@ GccParser::GccParser()
 			"%1%2", //text
 			"%0" //full text
 		},
-		{
-			QRegExp("^make: \\*\\*\\* (No rule to make target `.+', needed by `.+')\\.  Stop\\.$"), //reg exp
-			"No rule for make target", //desctiption
-			"", //file name
-			"0", //column
-			"0", //row
-			pConsoleManager::Error, //type
-			"%1", //text
-			"%0" //full text
-		},
 		{QRegExp(), "", "", "", "", pConsoleManager::Unknown,"",""} //this item must be last
 	};
 	for ( int i = 0; !ps[i].regExp.isEmpty(); i++)
