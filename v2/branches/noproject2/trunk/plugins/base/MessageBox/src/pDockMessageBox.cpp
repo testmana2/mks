@@ -314,7 +314,7 @@ void pDockMessageBox::commandFinished( pCommand* c, int i, QProcess::ExitStatus 
 	QListWidgetItem* lastIt = lwBuildSteps->item( lwBuildSteps->count() -1 );
 	if ( lastIt )
 		t = (pConsoleManager::MessageType)lastIt->data( Qt::UserRole +1 ).toInt();
-	if ( t == pConsoleManager::State)
+	if ( t == pConsoleManager::Compiling)
 		delete lastIt;
 }
 
