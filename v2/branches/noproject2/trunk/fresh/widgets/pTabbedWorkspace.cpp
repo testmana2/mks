@@ -646,7 +646,7 @@ void pTabbedWorkspace::setTabsHaveShortcut( bool b )
 
 void pTabbedWorkspace::setCurrentTabModified( bool b )
 {
-	mTabBar->setTabIcon( mTabBar->currentIndex(), b ? QIcon( ":/project/icons/project/save.png" ) : QIcon() );   
+	mTabBar->setTabIcon( mTabBar->currentIndex(), b ? QIcon( ":/application/icons/application/closetab.png" ) : QIcon(":/application/icons/application/addtab.png") );   
 }
 
 void pTabbedWorkspace::updateTabsNumber( int i )
