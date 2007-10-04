@@ -1,0 +1,484 @@
+
+               WebIssues Protocol Version 0.8
+
+Messages
+========
+
+The messages used in the WebIssues protocol are based on the HTTP/1.1
+specification [RFC 2616].
+
+The contents of a WebIssues request is a 'multipart/form-data'
+[RFC 2388] message containing the following fields:
+
+  command - field containing the command to be executed
+
+  file    - optional field containing the data of the uploaded file
+
+The response of the server is either a 'text/plain' message containing
+the result of the command execution or an 'application/octet-stream'
+message containing the data of the downloaded file.
+
+The WebIssues client must correctly handle the 'Set-Cookie' and
+'Cookie' headers as described in [RFC 2109]. The name of the session
+cookie is 'WebIssuesSID'.
+
+
+Headers
+=======
+
+X-WebIssues-Version
+
+  Required header in the server's response containing the version
+  of the WebIssues protocol.
+
+  Current version of the protocol is '0.8'.
+
+
+Line Format
+===========
+
+The command in a single line consisting of one or two keywords
+and zero or more arguments separated by single spaces.
+
+The reply of the server consists of one or more lines separated
+by CR LF bytes. Each line of the reply consists of one keyword
+and zero or more arguments separated by single spaces.
+
+A keyword consists of uppercase ASCII letters.
+
+An argument may be one of the following type:
+
+  integer - optional minus sign followed by one or more decimal digits
+
+  string  - a sequence of characters enclosed in single qoutes, with
+            single quote, backslash and new line characters escaped as
+            \', \\ and \n respectively
+
+Reply indicating an empty list is a single line containing the following
+keyword:
+
+  NULL
+
+Reply indicating an error is a single line with the following format:
+
+  ERROR code 'message'
+
+
+Commands Syntax
+===============
+
+System Commands
+
+  HELLO
+
+		<SERVER>
+		<server_name>Webissues server</server_name>
+		<server_uuid>0a6230be-cb28-4a79-acf3-9d827c8b386b</server_uuid>
+		</SERVER>
+
+  LOGIN 'login' 'password'
+
+	    <LOGINED_USER>
+		<user_id>1</user_id>
+		<user_name>Administrator</user_name>
+		<user_access>2</user_access>
+		</LOGINED_USER>
+
+User Management
+
+  LIST USERS
+
+		<USER>
+		<user_id>2</user_id>
+		<user_login>a</user_login>
+		<user_name>Andrey</user_name>
+		<user_access>1</user_access>
+		</USER>
+		...all users
+		<USER_ACCESS>
+		<user_id>2</user_id>
+		<project_id>1</project_id>
+		<access>2</access>
+		</USER_ACCESS>
+		...all accesses
+    USER_ACCESS userId projectId access
+
+  ADD USER 'login' 'name' 'password'
+
+    <user_id>5</user_id>
+
+  SET PASSWORD userId 'password'
+
+    <result>OK</result>
+
+  RENAME USER userId 'newName'
+
+    <result>NULL</result>
+    or
+    <result>OK</result>
+
+  GRANT USER userId access
+
+    <result>OK</result>
+
+  GRANT MEMBER userId projectId access
+
+	<result>NULL</result> 
+	or
+    <result>OK</result>
+
+Type Management
+
+  LIST TYPES
+
+		<ISSUE_TYPE>
+		<type_id>1</type_id>
+		<type_name>Bugs</type_name>
+		</ISSUE_TYPE>
+		...
+		<ATTRIBUTE_TYPE>
+		<attr_id>1</attr_id>
+		<type_id>1</type_id>
+		<attr_name>Status</attr_name>
+		<attr_def>ENUM items={"New","Assigned","Solved","Closed","Reopened"} required=1 default="New"</attr_def>
+		</ATTRIBUTE_TYPE>
+		...
+
+
+  ADD TYPE 'name'
+
+    <TYPE_ID>8</TYPE_ID>
+
+  RENAME TYPE typeId 'newName'
+
+	<result>NULL</result> 
+	or
+    <result>OK</result>
+
+  DELETE TYPE typeId
+
+    <result>OK</result>
+
+  ADD ATTRIBUTE typeId 'name' 'definition'
+
+    <attribute_id>4</attribute_id>
+
+  RENAME ATTRIBUTE attributeId 'newName'
+
+    <result>OK</result>
+
+  MODIFY ATTRIBUTE attributeId 'definition'
+
+	<result>NULL</result> 
+	or
+    <result>OK</result>
+
+  DELETE ATTRIBUTE attributeId
+
+    <result>OK</result>
+
+Project Management
+
+  LIST PROJECTS
+
+    <PROJECT>
+	<project_id>1</project_id>
+	<project_name>Monkey Studio</project_name>
+	</PROJECT>
+	<PROJECT>
+	<FOLDER>
+	<folder_id>3</folder_id>
+	<project_id>2</project_id>
+	<folder_name>Ideas about I</folder_name>
+	<type_id>1</type_id>
+	<stamp_id>0</stamp_id>
+	</FOLDER>
+
+  ADD PROJECT 'name'
+
+    <project_id>3</project_id>
+
+  RENAME PROJECT projectId 'newName'
+
+	<result>NULL</result> 
+	or
+    <result>OK</result>
+
+  DELETE PROJECT projectId
+
+    <result>OK</result>
+
+  ADD FOLDER projectId typeId 'name'
+
+    <folder_id>4</folder_id>
+
+  RENAME FOLDER folderId 'newName'
+
+	<result>NULL</result> 
+	or
+    <result>OK</result>
+
+  DELETE FOLDER folderId
+
+    <result>OK</result>
+
+Issue Operations
+
+  LIST ISSUES folderId sinceStamp
+	
+	<result>NULL</result> 
+	or
+	<ISSUE>
+	<issue_id>1</issue_id>
+	<issue_name>BUG IN THE CODE</issue_name>
+	<stamp_id>2</stamp_id>
+	<created>1183195071</created>
+	<created_by>1</created_by>
+	<modified>1183195125</modified>
+	<modified_by>1</modified_by>
+	</ISSUE>
+	...
+	<ISSUE_VALUE>
+	<issue_id>1</issue_id>
+	<attr_id>2</attr_id>
+	<attr_value>2</attr_value>
+	</ISSUE_VALUE>
+	...
+
+  GET DETAILS issueId sinceStamp
+	
+	<result>NULL</result> 
+	or
+	<ISSUE>
+	<folder_id>1</folder_id>
+	<issue_name>BUGS IN THE FUCKIN CODE</issue_name>
+	<stamp_id>4</stamp_id>
+	<created>1183195071</created>
+	<created_by>1</created_by>
+	<modified>1183196253</modified>
+	<modified_by>1</modified_by>
+	</ISSUE>
+	<ISSUE_VALUE>
+	<attr_id>1</attr_id>
+	<attr_value>New</attr_value>
+	</ISSUE_VALUE>
+	<ISSUE_VALUE>
+	<attr_id>2</attr_id>
+	<attr_value>2</attr_value>
+	</ISSUE_VALUE>
+	<ISSUE_COMMENT>
+	<comment_id>2</comment_id>
+	<stamp_time>1183195125</stamp_time>
+	<user_id>1</user_id>
+	<comment_text>Your code have bugs fuckin loosers</comment_text>
+	</ISSUE_COMMENT>
+	<ISSUE_ATACHMENT>
+	<file_id>3</file_id>
+	<stamp_time>1183195907</stamp_time>
+	<user_id>1</user_id>
+	<file_name>fantasy.txt</file_name>
+	<file_size>2794</file_size>
+	<file_descr>Here is useless atachment</file_descr>
+	</ISSUE_ATACHMENT>
+	<ISSUE_HISTORY>
+	<change_id>4</change_id>
+	<stamp_time>1183196253</stamp_time>
+	<user_id>1</user_id>
+	<attr_id>0</attr_id>
+	<value_old>BUG IN THE CODE</value_old>
+	<value_new>BUGS IN THE FUCKIN CODE</value_new>
+	</ISSUE_HISTORY>
+
+  ADD ISSUE folderId 'name'
+
+    <issue_id>4</issue_id>
+
+  RENAME ISSUE issueId 'newName'
+	
+	<result>NULL</result> 
+	or
+    <stamp_id>4</stamp_id>
+
+  SET VALUE issueId attributeId 'newValue'
+	
+	<result>NULL</result> 
+	or
+    <stamp_id>4</stamp_id>
+
+  ADD COMMENT issueId 'text'
+
+    <comment_id>4</comment_id>
+
+  ADD ATTACHMENT issueId 'name' 'description'
+
+    <file_id>4</file_id>
+
+  GET ATTACHMENT attachmentId
+
+    <binary response>
+
+  FIND ITEM itemId
+	
+	<result>NULL</result> 
+	or
+	<item_id>7<item_id>
+	or
+	<issue_id>7<issue_id>
+
+  REGISTER USER 'login' 'name' 'email' 'password'
+
+
+
+
+Arguments
+=========
+
+All strings are represented using the UTF-8 encoding. Control characters
+(ASCII codes 0 - 8 and 11 - 31) are not allowed.
+
+Names consist of up to 40 characters and cannot be empty. Tabs and line breaks
+are not allowed, trailing spaces are removed. Names are case-sensitive
+and must be unique.
+
+Issue names and attribute values consist of up to 80 characters. Issue names
+need not be unique. Attribute values can be empty.
+
+Descriptions consist of up to 80 characters and can be empty.
+
+Identifiers are non-negative integer values.
+
+Stamps are non-negative integer values increasing for every modification
+of the data.
+
+Dates are integers representing the number of seconds since the Unix Epoch.
+
+Access levels for users and project members are:
+
+  0 none
+  1 normal
+  2 admin
+
+The server UUID follows the [RFC 4122] specification.
+
+
+Attribute Types
+===============
+
+Attribute definition consists of a type keyword and zero or more metadata
+separated by single spaces. Each metadata consists of a name and value
+separated by the equals sign.
+
+Metadata names start with lowercase letters and may contain lowercase
+letters and hyphens.
+
+Metadata values can be one of the following:
+
+  integer
+    optional minus sign followed by one or more decimal digits
+
+  string
+    a sequence of characters enclosed in double qoutes, with double
+    quote and backslash characters escaped as \" and \\ respectively
+
+  array of strings
+    zero or more strings separated by commas and enclosed in curly
+    braces
+
+The following metadata are supported by all attribute types:
+
+  default (string)
+    initial value of the attribute for new issues (default: '')
+
+  required (int)
+    if 1, the value of the attribute cannot be empty, initial value
+    must be specified (default: 0)
+
+TEXT attribute type:
+
+  Any sequence of characters is accepted.
+
+  max-length (int)
+    maximum number of characters (default: 80)
+
+ENUM attribute type:
+
+  One of the predefined values is accepted.
+
+  items (array of strings)
+    list of allowed values of the attribute (required)
+
+  editable (int)
+    if 1, any other value is also accepted (default: 0)
+
+NUMERIC attribute type:
+
+  A number with optional fixed-point fraction is accepted.
+
+  Leading zeros are removed. Trailing zeros are added if
+  necessary.
+
+  min-value (string)
+    minimum allowed numeric value
+
+  max-value (string)
+    maximum allowed numeric value
+
+  decimal (int)
+    number of digits after the decimal point (default: 0)
+
+DATETIME attribute type:
+
+  Date with optional time is accepted.
+
+  Date format is yyyy-mm-dd, time format is hh:mm.
+
+  time (int)
+    if 1, time is also required (default: 0)
+
+USER attribute type:
+
+  A user name is accepted.
+
+  member (int)
+    if 1, only project members are accepted (default: 0)
+
+
+Error Codes
+===========
+
+The following error codes are defined:
+
+  300 Login Required
+  301 Access Denied
+  302 Incorrect Login
+
+  310 Unknown Project
+  311 Unknown Folder
+  312 Unknown Issue
+  313 Unknown File
+  314 Unknown User
+  315 Unknown Type
+  316 Unknown Attribute
+
+  320 Project Already Exists
+  321 Folder Already Exists
+  324 User Already Exists
+  325 Type Already Exists
+  326 Attribute Already Exists
+
+  330 Cannot Delete Project
+  331 Cannot Delete Folder
+  335 Cannot Delete Type
+
+  340 Invalid String
+  341 Invalid Access Level
+  342 Invalid Value
+  343 Invalid Definition
+
+  400 Syntax Error
+  401 Unknown Command
+  402 Invalid Arguments
+  403 Upload Error
+
+  500 Server Error
+  501 Database Error

@@ -1,0 +1,16 @@
+0.8.2 (2007-02-12)
+    * added: storing attachments as files
+    * added: script for updating the database
+    * fixed: show error message when connecting to pgsql database failed
+
+0.8.1 (2006-10-02)
+    * added: support for PostgreSQL
+    * added: versioning of database schema to make updating possible
+    * fixed: database schema reviewed for consistency and compatibility
+    * fixed: setup script now uses database.inc
+
+0.8.0 (2006-09-19)
+    * first alpha release
+
+0.1.1 (2005-11-08)
+    * initial, unofficial prototype version

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>
+		Webissues Web interface. Login page
+	</title>
+	<link	href="index.css"	type="text/css"	rel="stylesheet"/>
+</head>
+<script type="text/javascript" src="scripts/login.js"/>
+<body>
+	<a href="index.html">Monkey Developer Studio home</a><br/>
+	<br/>
+	<br/>	
+	<br/>
+	<p class="window-title">
+		Login into the system
+	</p>
+	<form class="window" action="workspace.html" method="post" name="loginform">
+		Not registered users:<br/>
+		<p class="frame">
+			Your name:	<input name="uname" id="uname"/><br/>
+			<br/>
+			Mail:<input name="uemail" id="uemail"/><br/>
+			<font class="it">(optional) Email may be need for additional information about bugs, you finded. Not availible for other users.<br/>
+			</font>
+			<a href="register.html">Registration page</font></a>
+			<input type="submit" value="Login" class="button"
+				onClick="return onUnregSubmit()"/><br/>
+		</p>
+		</p>
+		<hr/>
+		Registered users:<br/>
+		<p class="frame">
+			Login:	<input name="login" id="login" value="w"/><br/>
+			<br/>
+			Password:	<input type="password" name="password" id="password" value="w"/><br/>
+			<br/>
+			<input type="checkbox" name="remember" id="remember"/>Remember me<br/>
+			<a href="restore.html">Forgoted password</a>
+			<input type="submit" value="Login" class="button" 
+				onClick="return onRegisteredSubmit()"/><br/>
+			<div id="messageLabel" class="messageLabel"/>
+			<br/>
+	</form>
+	</p>
+</body>

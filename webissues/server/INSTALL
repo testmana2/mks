@@ -1,0 +1,145 @@
+Table of Contents
+=================
+
+  I. Installing the Server
+ II. Upgrading the Server
+III. Configuring the Attachment Storage
+
+
+I. Installing the Server
+========================
+
+This section describes the steps necessary to install a new WebIssues server.
+
+1) Create a database and set up a user with access rights to this database.
+
+    See below for instructions for MySQL or PostgreSQL command line tools.
+    You can also use a web-based database administration tool.
+
+    You may skip this step if you already have a database that you want to use.
+    You can configure WebIssues to use a prefix for table names to avoid
+    clashes with existing tables.
+
+1a) Using MySQL command line tools
+
+    Create the database (<dbauser> is a database administrator user's login,
+    <database> is the name of the database to create):
+
+        mysqladmin -u <dbauser> -p create <database>
+
+    Login to the database:
+
+        mysql -u <dbauser> -p
+
+    From the MySQL command prompt execute the following command to create
+    a user with access to the database (<user> is the user's login, <password>
+    is the user's password and <database> is the name of the database):
+
+        GRANT ALL PRIVILEGES ON <database>.*
+        TO '<user>'@'localhost' IDENTIFIED BY '<password>';
+
+1b) Using PostgreSQL command line tools:
+
+    Create the user account (<user> is the user's login):
+
+        createuser --pwprompt --encrypted --no-adduser --no-createdb <user>
+
+    You will be prompted for the user's password.
+
+    Create the database (<user> is the user's login, <database> is the name
+    of the database):
+
+        createdb --encoding=UNICODE --owner=<user> <database>
+
+2) Copy the following files and subdirectories to a location
+accessible by the HTTP server:
+
+    config/
+    include/
+    setup/
+    index.php
+    setup.php
+
+3) Edit the config/config.inc file and enter database configuration.
+
+    You have to select the database engine to use (MySQL or PostgreSQL),
+    enter the name of the database and the database user's login and password.
+
+    You also have to enter the name of the database host if the database server
+    uses a non-standard port or is installed on another machine.
+
+4) Create the storage subdirectory and make it writable by the HTTP server.
+
+    Refer to section III for more information about configuring the attachment
+    storage.
+
+5) Run the setup.php script using a web browser and follow the steps.
+
+    The setup script will create database tables, set up the server's identity,
+    create an Administrator user and import an example set of issue types.
+
+6) Remove the setup.php file and the setup subdirectory and make sure
+the config and include subdirectories are not accessible from the network.
+
+    You can use the .htaccess files provided in this package if you use Apache.
+
+7) Use the client application to create projects, folders and users.
+
+    Run the WebIssues client application and select 'Open Connection...'.
+    Enter the URL of the server and login as 'admin' with the password provided
+    during the setup.
+
+
+II. Upgrading the Server
+========================
+
+This section describes the steps necessary to upgrade an existing WebIssues server
+to a newer version.
+
+1) Copy the following files and subdirectories to the location where
+the previous version of the WebIssues server is installed:
+
+    config/
+    include/
+    setup/
+    index.php
+    update.php
+
+2) Edit the config/config.inc file and enter database configuration.
+
+    You have to select the database engine to use (MySQL or PostgreSQL),
+    enter the name of the database and the database user's login and password.
+
+    You also have to enter the name of the database host if the database server
+    uses a non-standard port or is installed on another machine.
+
+3) Create the storage subdirectory and make it writable by the HTTP server.
+
+    Refer to section III for more information about configuring the attachment
+    storage.
+
+4) Backup you database to prevent losing data if something goes wrong.
+
+5) Run the update.php script using a web browser and follow the steps.
+
+    The update script will update database tables to the new version.
+
+6) Remove the update.php file and the setup subdirectory and make sure
+the config and include subdirectories are not accessible from the network.
+
+    You can use the .htaccess files provided in this package if you use Apache.
+
+
+III. Configuring the Attachment Storage
+=======================================
+
+Since version 0.8.2, attachments can be stored either in the database or
+in the file system. Storing attachments as files is recommended if your
+database space is limited or if your server must handle large attachments.
+
+Edit the config/config.inc file to change the path where attachments
+are stored and the minimum size of attachments which are stored as files.
+
+If you want the server to handle large file attachments, you may have to
+change the max_upload_size and related parameters in the PHP configuration.
+Refer to the PHP manual for more details.
