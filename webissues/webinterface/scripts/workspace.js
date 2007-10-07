@@ -13,7 +13,7 @@ function main ()
 		alert ("Can't create XmlHttp objects");
 		return;
 	}
-	//createMenu();
+	createMenu();
  	resp = processRequest ("HELLO");
  	document.getElementById ("serverName").innerHTML = resp.getElementsByTagName("server_name")[0].firstChild.data;
 	listProjects ("treeview");

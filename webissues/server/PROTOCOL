@@ -76,6 +76,13 @@ System Commands
 		<server_uuid>0a6230be-cb28-4a79-acf3-9d827c8b386b</server_uuid>
 		</SERVER>
 
+  WHOAMI
+	    <LOGINED_USER>
+		<user_id>1</user_id>
+		<user_name>Administrator</user_name>
+		<user_access>2</user_access>
+		</LOGINED_USER>
+		
   LOGIN 'login' 'password'
 
 	    <LOGINED_USER>

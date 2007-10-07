@@ -38,7 +38,8 @@ function oops(data)
 function generateMenu (where, menu_id, menu_text)
 {
 html = '<div id="'+menu_id+'" onClick="showhide(this.id)" class="treeview-toplevel">';
-html +=	'<img id="'+menu_id+'Sign" src="img/closed.gif" alt=""> ';
+html +=	'<img id="'+menu_id+'Sign" src="img/closed.gif" class="horizontal-center">';
+html +=	'<img src="img/project-16.png"> ';
 html += menu_text;
 html += '</div>';
 html += '<div id="'+menu_id+'Outline" class="treeview-item" style="display:none"> '
@@ -48,7 +49,10 @@ document.getElementById(where).innerHTML += html;
 
 function generateMenuItem (where, item_id, itemtext)
 {
-	html = '<div id="'+item_id+'" onclick="oops(this)">'+itemtext+'</div>';
+	html = '<div id="'+item_id+'" onclick="oops(this)">'
+	html +=	'<img src="img/folder-16.png"> ';
+	html +=itemtext;
+	html +='</div>';
 	document.getElementById (where).innerHTML += html;
 }
 document.onload=preload();

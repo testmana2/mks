@@ -47,7 +47,7 @@ function onRegisteredSubmit()
 		alert ("Can not create request to server");
 		return false;
 	}
-	request = "http://localhost/webissues-server/index.php?command=LOGIN '"+login+"' '"+password+"'";
+	request = "http://localhost/server/index.php?command=LOGIN '"+login+"' '"+password+"'";
 	xmlHttp.open ("GET", request, false);
 	xmlHttp.send (null);
 	if ( xmlHttp.readyState != 4 )
