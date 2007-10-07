@@ -67,6 +67,28 @@ function main()
         wi_error( 302 );
     }
 
+    if ( $keyword == 'WHOAMI' ) {
+        $login = wi_string( $args[ 1 ], 40 );
+        $password = wi_string( $args[ 2 ], 40 );
+
+        unset( $_SESSION[ 'user_id' ] );
+        unset( $_SESSION[ 'user_access' ] );
+
+        $query = 'SELECT user_id, user_name, user_access FROM {users}'
+            . ' WHERE user_id =%s';
+
+        $row = wi_query_row( $query, $_SESSION[ 'user_id' ] );
+        if ( $row ) {
+            if ( $row[ 'user_access' ] == ACCESS_NONE )
+                wi_error( 302 );
+
+            wi_reply( $row ,'LOGINED_USER');
+            wi_finish_reply ();
+        }
+
+        wi_error( 302 );
+    }
+	
     if ( !isset( $_SESSION[ 'user_id' ] ) )
         wi_error( 300 );
 

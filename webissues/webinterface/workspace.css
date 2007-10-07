@@ -1,4 +1,5 @@
 .treeview-toplevel{
+	position:static;
 cursor:pointer; 
 cursor:hand; 
 font-family:Verdana;  
@@ -8,26 +9,81 @@ font-weight:bold
 .treeview-item{
 cursor:pointer; 
 cursor:hand; 
-text-indent:20px;
+text-indent:25px;
 }
 
-#workspace
+.horizontal-center{
+	position:absolute;
+	top:50%;
+	margin-top:-7px
+}
+
+body{
+font-size:14px
+}
+
+#test{
+	position:absolute;
+	background-color:red;
+	left:100px;
+	top:100px;
+	width:50px;
+	height:50px;
+}
+
+#workspace-border{
+	background-color: #0f0;
+	position:absolute;
+	width:75%;
+	top: 0px;
+	left:25%;
+	bottom:25px
+}
+
+#menu-border{
+	background-color: #00f;
+	position:absolute;
+	width:25%;
+	top: 0px;
+	left:0px;
+	bottom:25px
+}
+
+#statusbar-border{
+	background-color: #f00;
+	position:absolute;
+	width:100%;
+	height:25px;
+	bottom: 0px;
+	left:0px;
+}
+
+#workspace {
+	position:absolute;
+	top:10px;
+	bottom:10px;
+	right:10px;
+	left:5px;
+	background-color: #f5f;
+}
+
+#menu
 {
-	position:fixed;
-	width:70%;
-	height:100%;
-	top: 0px;
-	left: 30%;
-	border:-5px solid rgb(239,239,239);
-	padding:-10px;
+	position:absolute;
+	top:10px;
+	bottom:10px;
+	right:5px;
+	left:10px;
+	background-color: #ff5;
+	padding:5px;
 }
 
-#menu {
-	position:fixed;
-	width:30%;
-	height:100%;
-	top: 0px;
-	left: 0px;
-	border:-5px solid rgb(239,239,239);
-	padding:-10px;
+#statusbar
+{
+	position:absolute;
+	top:5px;
+	bottom:5px;
+	right:10px;
+	left:10px;
+	background-color: #5ff;
 }
