@@ -43,6 +43,6 @@ $config[ 'storage_min_size' ] = 4000;
 * Paths can be absolute or relative to index.php.
 */
 
-$config[ 'log_errors' ]       = '/tmp/errors.log';
-$config[ 'log_commands' ]     = '/tmp/commands.log';
+$config[ 'log_errors' ]       = '/tmp/nerrors.log';
+$config[ 'log_commands' ]     = '/tmp/ncommands.log';
 $config[ 'log_sql' ]          = '';

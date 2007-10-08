@@ -62,6 +62,7 @@ function wi_parse_command( $command )
 function wi_verify_command( $args )
 {
     $command_args[ 'HELLO' ] = '';
+    $command_args[ 'WHOAMI' ] = '';
     $command_args[ 'LOGIN' ] = 'ss';
 
     $command_args[ 'LIST USERS' ] = '';

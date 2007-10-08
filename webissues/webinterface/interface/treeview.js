@@ -12,8 +12,8 @@ function preload()
 	{
 		Open = new Image(16,13);   
 		Closed = new Image(16,13);
-		Open.src = 'img/open.gif';
-		Closed.src = 'img/closed.gif';
+		Open.src = 'img/open.png';
+		Closed.src = 'img/closed.png';
 	}
 }
 
@@ -38,7 +38,7 @@ function oops(data)
 function generateMenu (where, menu_id, menu_text)
 {
 html = '<div id="'+menu_id+'" onClick="showhide(this.id)" class="treeview-toplevel">';
-html +=	'<img id="'+menu_id+'Sign" src="img/closed.gif" class="horizontal-center">';
+html +=	'<img id="'+menu_id+'Sign" src="img/closed.png">';
 html +=	'<img src="img/project-16.png"> ';
 html += menu_text;
 html += '</div>';

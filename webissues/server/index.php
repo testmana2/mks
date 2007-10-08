@@ -68,11 +68,6 @@ function main()
     }
 
     if ( $keyword == 'WHOAMI' ) {
-        $login = wi_string( $args[ 1 ], 40 );
-        $password = wi_string( $args[ 2 ], 40 );
-
-        unset( $_SESSION[ 'user_id' ] );
-        unset( $_SESSION[ 'user_access' ] );
 
         $query = 'SELECT user_id, user_name, user_access FROM {users}'
             . ' WHERE user_id =%s';
@@ -484,25 +479,25 @@ function main()
         $rs = wi_query( $query, $user_id );
 
         $reply = array();
-        /*while ( */$row = wi_fetch( $rs ); /*) {*/
+        while ( $row = wi_fetch( $rs ) ) {
             $project_id = $row[ 'project_id' ];
             $name = wi_quote( $row[ 'project_name' ] );
             wi_reply ( $row,'PROJECT');
-//         }
+         }
 
-//         $query = 'SELECT f.folder_id, f.project_id, f.folder_name, f.type_id, f.stamp_id FROM {folders} AS f';
-//         if ( $_SESSION[ 'user_access' ] < ACCESS_ADMIN )
-//             $query .= ' JOIN {rights} AS r ON r.project_id = f.project_id AND r.user_id = %d';
-//         $rs = wi_query( $query, $user_id );
-// 
-//         while ( $row = wi_fetch( $rs ) ) {
-//             $folder_id = $row[ 'folder_id' ];
-//             $project_id = $row[ 'project_id' ];
-//             $name = wi_quote( $row[ 'folder_name' ] );
-//             $type_id = $row[ 'type_id' ];
-//             $stamp = $row[ 'stamp_id' ];
-//             wi_reply ( $row, 'FOLDER');
-//         }
+         $query = 'SELECT f.folder_id, f.project_id, f.folder_name, f.type_id, f.stamp_id FROM {folders} AS f';
+         if ( $_SESSION[ 'user_access' ] < ACCESS_ADMIN )
+             $query .= ' JOIN {rights} AS r ON r.project_id = f.project_id AND r.user_id = %d';
+         $rs = wi_query( $query, $user_id );
+ 
+         while ( $row = wi_fetch( $rs ) ) {
+             $folder_id = $row[ 'folder_id' ];
+             $project_id = $row[ 'project_id' ];
+             $name = wi_quote( $row[ 'folder_name' ] );
+             $type_id = $row[ 'type_id' ];
+             $stamp = $row[ 'stamp_id' ];
+             wi_reply ( $row, 'FOLDER');
+         }
 		wi_finish_reply ();
     }
 
