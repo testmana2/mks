@@ -1,11 +1,11 @@
-function createMenu()
+/*function createMenu()
 {
 	generateMenu("treeview", "project", "Monkey studio");
 	generateMenuItem ("projectOutline","bugs", "Bugs");
 	generateMenuItem ("projectOutline","features", "Features");
 	generateMenu ("treeview", "project2","Webissues web interface");
 }
-
+*/
 function main ()
 {
 	if ( !syncXH || !aSyncXH )
@@ -13,9 +13,11 @@ function main ()
 		alert ("Can't create XmlHttp objects");
 		return;
 	}
-	createMenu();
+	//createMenu();
  	resp = processRequest ("HELLO");
  	document.getElementById ("serverName").innerHTML = resp.getElementsByTagName("server_name")[0].firstChild.data;
+ 	resp = processRequest ("WHOAMI");
+ 	document.getElementById ("userName").innerHTML = "Logined as "+resp.getElementsByTagName("user_name")[0].firstChild.data;	
 	listProjects ("treeview");
 }
 

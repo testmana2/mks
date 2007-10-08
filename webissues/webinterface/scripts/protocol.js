@@ -1,4 +1,4 @@
-var serverAddress = "http://localhost/webissues-server/index.php";
+var serverAddress = "http://localhost/server/index.php";
 var commandPrefix = serverAddress+"?command=";
 var tryingInterral
 var syncXH = createXmlHttpRequestObject ();  // for synchronous queryes
