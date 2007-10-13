@@ -38,28 +38,10 @@ function onUnregSubmit ()
 
 function onRegisteredSubmit()
 {
-	xmlHttp = createXmlHttpRequestObject ();
 	document.getElementById ('messageLabel').innerHTML = "Logining...";
 	login = document.getElementById ("login").value;
 	password = document.getElementById ("password").value;
-	if ( !xmlHttp )
-	{	
-		alert ("Can not create request to server");
-		return false;
-	}
-	request = "http://localhost/server/index.php?command=LOGIN '"+login+"' '"+password+"'";
-	xmlHttp.open ("GET", request, false);
-	xmlHttp.send (null);
-	if ( xmlHttp.readyState != 4 )
-	{	
-		return false;
-	}
-	if ( xmlHttp.status != 200 )
-	{
-		alert ("Request to server failed");
-		return false;
-	}
-  	var xmlRoot = xmlHttp.responseXML.documentElement;
+	xmlRoot = processRequest (LOGIN '"'+login+"' '"+password+"'");
   	errElement = xmlRoot.childNodes[0];
   	var html = '';
 	alert (xmlHttp.responseText);
