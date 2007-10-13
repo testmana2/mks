@@ -31,7 +31,7 @@ else {
 
 function oops(data)
 {
-    alert ('oops'+data.innerHTML);
+    alert ('oops'+data.id+data.parentElement.id);
 }
 
 
@@ -47,12 +47,12 @@ html += '</div>';
 document.getElementById(where).innerHTML += html;
 }
 
-function generateMenuItem (where, item_id, itemtext)
+function generateMenuItem (where, item_id, itemtext, on_click)
 {
-	html = '<div id="'+item_id+'" onclick="oops(this)">'
+	html = '<div id="'+item_id+'" onclick='+on_click+'">'
 	html +=	'<img src="img/folder-16.png"> ';
 	html +=itemtext;
 	html +='</div>';
-	document.getElementById (where).innerHTML += html;
+	document.getElementById (where+"Outline").innerHTML += html;
 }
 document.onload=preload();

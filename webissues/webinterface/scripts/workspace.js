@@ -7,39 +7,21 @@
 }
 */
 
-function initWi ()
-{
-	Wi = new Object(); //Webissues global
-}
 function main ()
 {
+	wi = new Wi ();
 	alert ('main');
 	if ( !syncXH || !aSyncXH )
 	{
 		alert ("Can't create XmlHttp objects");
 		return;
 	}
-	//createMenu();
- 	resp = processRequest ("HELLO");
- 	document.getElementById ("serverName").innerHTML = resp.getElementsByTagName("server_name")[0].firstChild.data;
- 	resp = processRequest ("WHOAMI");
- 	document.getElementById ("userName").innerHTML = "Logined as "+resp.getElementsByTagName("user_name")[0].firstChild.data;	
-	listProjects ("treeview");
+	process_HELLO ();
+	process_WHOAMI ();
+	process_LIST_PROJECTS ();
 }
 
-function listProjects ( where)
+function show_folder (folder_id)
 {
-	initWi();
-	resp = processRequest ("LIST PROJECTS");
-	names = resp.getElementsByTagName ("project_name");
-	ids = resp.getElementsByTagName ("project_id");
-	Wi.projects = new Array (names.length);
-	for (i = 0; i < names.length; i++)
-	{
-		Wi.projects[i] = new Object();
-		Wi.projects[i].name = names[i].firstChild.data;
-		Wi.projects[i].id = ids[i].firstChild.data;
-	}
-	for (i = 0; i< Wi.projects.length; i++)
-		generateMenu (where, "project_"+Wi.projects[i].id,Wi.projects[i].name);
+	process_LIST_ISSUES (folder_id,0);
 }
