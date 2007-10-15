@@ -10,7 +10,6 @@
 function main ()
 {
 	wi = new Wi ();
-	alert ('main');
 	if ( !syncXH || !aSyncXH )
 	{
 		alert ("Can't create XmlHttp objects");

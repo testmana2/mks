@@ -1,4 +1,4 @@
-var serverAddress = "http://127.0.0.1/server/index.php";
+var serverAddress = "http://localhost/server/index.php";
 var commandPrefix = serverAddress+"?command=";
 var tryingInterral
 var syncXH = createXmlHttpRequestObject ();  // for synchronous queryes
@@ -56,7 +56,7 @@ function processRequest (command)
 		alert ("Not right sever response");
 		return;
 	}
-	alert ( syncXH.responseText );
+	//alert ( syncXH.responseText );
 	return xmlRoot;
 }
 

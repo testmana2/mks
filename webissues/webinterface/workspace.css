@@ -46,6 +46,7 @@ font-size:14px
 	right:10px;
 	left:5px;
 	background-color: #f5f;
+	overflow:scroll;
 }
 
 #issue-content-border {
@@ -102,4 +103,51 @@ font-size:14px
 	padding-left:10px;
 	padding-right:10px;
 
+}
+
+.issue_id, .issue_name, .issue_created, .issue_created_by, .issue_modified, .issue_modified_by, .issue_status, .issue_severity{
+	position:absolute;
+	text-align:center;
+	background-color:red;
+	border:1px solid black;
+}
+
+.issue_id{
+	left:0%;
+	width:5%;
+}
+
+.issue_name{
+	left:5%;
+	width:35%;
+}
+
+.issue_created{
+	left:40%;
+	width:20%;
+}
+
+.issue_created_by{
+	left:60%;
+	width:5%;
+}
+
+.issue_modified{
+	left:65%;
+	width:20%;
+}
+
+.issue_modified_by{
+	left:85%;
+	width:5%;
+}
+
+.issue_status{
+	left:90%;
+	width:5%;
+}
+
+.issue_severity{
+	left:95%;
+	width:5%;
 }

@@ -41,10 +41,8 @@ function onRegisteredSubmit()
 	document.getElementById ('messageLabel').innerHTML = "Logining...";
 	login = document.getElementById ("login").value;
 	password = document.getElementById ("password").value;
-	xmlRoot = processRequest (LOGIN '"'+login+"' '"+password+"'");
-  	errElement = xmlRoot.childNodes[0];
+	xmlRoot = processRequest ("LOGIN"+" '"+login+"' '"+password+"'");
   	var html = '';
-	alert (xmlHttp.responseText);
 	errElement = xmlRoot.getElementsByTagName ("ERROR")[0];
   	if ( errElement )
 	{
