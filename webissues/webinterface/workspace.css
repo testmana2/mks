@@ -105,49 +105,56 @@ font-size:14px
 
 }
 
-.issue_id, .issue_name, .issue_created, .issue_created_by, .issue_modified, .issue_modified_by, .issue_status, .issue_severity{
+.issue{
+	position:absolute;
+	text-align:center;
+	background-color:blue;
+	border:1px solid #555555;
+	width: 100%
+}
+
+.issue_status_h, .issue_id_h, .issue_name_h, .issue_created_by_h, .issue_modified_h, .issue_modified_by_h{
+	position:absolute;
+	text-align:center;
+	background-color:blue;
+	border-left:1px solid #555555;
+	border-right:1px solid #555555;
+}
+
+.issue_status, .issue_id, .issue_name, .issue_created_by, .issue_modified, .issue_modified_by{
 	position:absolute;
 	text-align:center;
 	background-color:red;
-	border:1px solid black;
+	border-left:1px solid #555555;
+	border-right:1px solid #555555;
 }
 
-.issue_id{
+.issue_status, .issue_status_h{
 	left:0%;
 	width:5%;
 }
 
-.issue_name{
+.issue_id, .issue_id_h{
 	left:5%;
+	width:5%;
+}
+
+.issue_name, .issue_name_h{
+	left:10%;
 	width:35%;
 }
 
-.issue_created{
-	left:40%;
+.issue_created_by, .issue_created_by_h{
+	left:45%;
 	width:20%;
 }
 
-.issue_created_by{
-	left:60%;
-	width:5%;
-}
-
-.issue_modified{
+.issue_modified, .issue_modified_h{
 	left:65%;
+	width:15%;
+}
+
+.issue_modified_by, .issue_modified_by_h{
+	left:80%;
 	width:20%;
-}
-
-.issue_modified_by{
-	left:85%;
-	width:5%;
-}
-
-.issue_status{
-	left:90%;
-	width:5%;
-}
-
-.issue_severity{
-	left:95%;
-	width:5%;
 }
