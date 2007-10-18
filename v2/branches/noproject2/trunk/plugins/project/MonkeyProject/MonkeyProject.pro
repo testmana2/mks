@@ -1,4 +1,4 @@
-include( ../../plugins.inc )
+include( ../../plugins.incasdfaslfjalsejfaklej )
 
 DESTDIR	= $$MONKEY_PLUGINS_DIR/project
 TARGET	= MonkeyProject
