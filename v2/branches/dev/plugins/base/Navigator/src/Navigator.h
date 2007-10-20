@@ -1,5 +1,5 @@
-#ifndef CLASSBROUSER_H
-#define CLASSBROUSER_H
+#ifndef NAVIGATOR_H
+#define NAVIGATOR_H
 //
 #include <QDockWidget>
 #include <QVBoxLayout>
@@ -55,4 +55,4 @@ public slots:
 };
 //
 
-#endif //  CLASSBROUSER_H
+#endif //  NAVIGATOR_H
