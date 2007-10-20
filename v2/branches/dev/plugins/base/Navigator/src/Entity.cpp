@@ -21,6 +21,8 @@ QIcon Entity::iTYPEDEF;
 Entity::Entity ( TagEntry* entry, QString fileName, QDateTime time)
 {
 	updateSelf (entry, fileName, time);
+	qDebug () <<"adding entity" <<entry->name;
+	setExpanded (true);
 }
 
 Entity::Entity (EntityType ttype, QString tname)
@@ -31,6 +33,8 @@ Entity::Entity (EntityType ttype, QString tname)
 	file = QString::null;
 	updateTime = QDateTime();
 	updateGUI ();
+	qDebug () <<"adding entity with name" <<tname;
+	setExpanded (true);
 }
 
 

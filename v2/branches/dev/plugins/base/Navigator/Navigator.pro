@@ -7,7 +7,7 @@ CONFIG	+= warn_on debug lib_bundle thread x11 dll plugin
 DESTDIR	= $$MONKEY_PLUGINS_DIR/base
 INCLUDEPATH += ../../../monkey/src/ctags
 INCLUDEPATH += ../../../monkey/src/3rdparty/exuberantCtags
-RESOURCES	= icons/Navigator.qrc
+RESOURCES	= icons/icons.qrc
 
 SOURCES	= src/Navigator.cpp  \
 		src/Entity.cpp  \
