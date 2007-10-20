@@ -21,8 +21,6 @@ QIcon Entity::iTYPEDEF;
 Entity::Entity ( TagEntry* entry, QString fileName, QDateTime time)
 {
 	updateSelf (entry, fileName, time);
-	qDebug () <<"adding entity" <<entry->name;
-	setExpanded (true);
 }
 
 Entity::Entity (EntityType ttype, QString tname)
@@ -33,8 +31,6 @@ Entity::Entity (EntityType ttype, QString tname)
 	file = QString::null;
 	updateTime = QDateTime();
 	updateGUI ();
-	qDebug () <<"adding entity with name" <<tname;
-	setExpanded (true);
 }
 
 
@@ -158,6 +154,7 @@ void Entity::updateSelf (TagEntry* entry, QString fileName, QDateTime time)
 void Entity::updateGUI ()
 {
 	QString tip;
+	QString newText = name;
 	switch (type )
 	{
 		case NAMESPACE :
@@ -167,6 +164,7 @@ void Entity::updateGUI ()
 		case CLASS:
 			setIcon (0,iCLASS);
 			tip = "Class";
+			newText = QString("class ")+name;
 			break;
 		case CONSTRUCTOR:
 			tip = "Constructor";
@@ -225,6 +223,6 @@ void Entity::updateGUI ()
 		tip = tip + QFileInfo (file).fileName() + QString(":%1").arg(line);
 	else
 		tip += "Location of this element unknown";
-	setText ( 0, name + signature);
+	setText ( 0, newText + signature);
 	setToolTip (0,tip);
 }

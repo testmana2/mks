@@ -106,6 +106,7 @@ Entity*EntityContainer::getScopeEntity ( QString scope0, QString scope1)
 	{
 		scopeEntity = new Entity ( UNKNOWN, scopes[0]);
 		addTopLevelItem ( scopeEntity);
+		scopeEntity->setExpanded (true);
 	}
 	scopes.removeAt (0);
 	
