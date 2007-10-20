@@ -1,5 +1,5 @@
-#ifndef CLASSBROUSERSETTINGS_H
-#define CLASSBROUSERSETTINGS_H
+#ifndef NAVIGATORSETTINGS_H
+#define NAVIGATORSETTINGS_H
 
 #include <QCheckBox>
 
@@ -22,4 +22,4 @@ private slots:
 	void setSettings();
 };
 
-#endif //CLASSBROUSERSETTINGS_H
+#endif //NAVIGATORSETTINGS_H
