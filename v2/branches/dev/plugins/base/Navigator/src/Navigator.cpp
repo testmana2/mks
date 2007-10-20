@@ -21,11 +21,11 @@
 Navigator::Navigator ()
 {
 	// set plugin infos
-	mPluginInfos.Caption = tr( "Class Brouser" );
-	mPluginInfos.Description = tr( "Uses Exuberant Ctags library for analizing source files, and displaying information about current file and project" );
+	mPluginInfos.Caption = tr( "Navigator" );
+	mPluginInfos.Description = tr( "Plugin uses Exuberant Ctags library for analizing source files. It's allowing to view file structure, and quickly move cursor to needed place" );
 	mPluginInfos.Author = "Kopats Andrei aka hlamer <hlamer@tut.by>";
 	mPluginInfos.Type = BasePlugin::iBase;
-	mPluginInfos.Name =  "Class Brouser";
+	mPluginInfos.Name =  "Navigator";
 	mPluginInfos.Version = "0.0.1";
 	mPluginInfos.Enabled = false;
 }
@@ -61,7 +61,7 @@ bool Navigator::setEnabled (bool e)
 // 		tabw->addTab ( projectWidget, "Project Tree");
 //		tabw->addTab ( fileWidget, "File Tree");
 		dockwgt->setWidget (fileWidget);
-		UIMain::instance()->dockToolBar( Qt::RightToolBarArea )->addDock( dockwgt,  tr( "Class Brouser" ), QPixmap( ":/icons/Navigator.png" ) );
+		UIMain::instance()->dockToolBar( Qt::RightToolBarArea )->addDock( dockwgt,  tr( "Navigator" ), QPixmap( ":/icons/Navigator.png" ) );
 		connect ( pFileManager::instance(), SIGNAL (currentFileChanged( const QString& )) , this, SLOT (currentFileChanged( const QString )));
 	}
 	else
@@ -160,28 +160,29 @@ void Navigator::showFile (const QString& absPath)
 {
 	QStringList files (absPath); //  'files' contains list of all paths
 	QFileInfo finfo (absPath);
-	QString nameWithoutDot = finfo.path()+"/"+finfo.completeBaseName ();
+//	QString nameWithoutDot = finfo.path()+"/"+finfo.completeBaseName ();
 	//if .cpp for the .h exists
-	if ( ( absPath.endsWith (".h") and ( QFileInfo(nameWithoutDot+".cpp").exists() )))
-		files.append (nameWithoutDot+".cpp");
+//	if ( ( absPath.endsWith (".h") and ( QFileInfo(nameWithoutDot+".cpp").exists() )))
+//		files.append (nameWithoutDot+".cpp");
 	//if .h for the .cpp exists
-	else if ( ( absPath.endsWith (".cpp") and ( QFileInfo(nameWithoutDot+".h").exists() )))
-		files.append (nameWithoutDot+".h");
+//	else if ( ( absPath.endsWith (".cpp") and ( QFileInfo(nameWithoutDot+".h").exists() )))
+//		files.append (nameWithoutDot+".h");
 //  	pDockToolBar* bar = mWorkspace->tabToolBar()->bar( TabToolBar::Right );
 // 	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
 // 		return;  //do not need do something, if tab not active
 	EntityContainer* oldWidget = currFileTreew; //save current TreeView
- 	currFileTreew = fileTrees [nameWithoutDot]; //Try to find Treew for requested file in the cache
+ 	currFileTreew = fileTrees [absPath]; //Try to find Treew for requested file in the cache
 	if ( currFileTreew == NULL ) //not finded
 	{
 		currFileTreew = new EntityContainer ( NULL, "", false );
-		fileTrees.insert ( nameWithoutDot, currFileTreew );
+		fileTrees.insert ( absPath, currFileTreew );
 	}//OK, not currFileTreew - actual for requested file
     for ( int i = 0; i< files.size(); i++)
 	{
         currFileTreew->updateFileInfo ( files[i] );	
 	}
-	currFileTreew->setHeaderLabel ( QFileInfo (absPath).baseName() );
+	//currFileTreew->setHeaderLabel ( QFileInfo (absPath).fileName() );
+	dockwgt->setWindowTitle (tr("Navigator")+": "+ QFileInfo (absPath).fileName());
 	fileWidget->setUpdatesEnabled(false);
 	fileBox->removeWidget (oldWidget );
 	oldWidget->hide();

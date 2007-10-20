@@ -10,14 +10,14 @@
 EntityContainer::EntityContainer ( QWidget* parent, QString tname, int tdisplayMask): QTreeWidget (parent)
 {
 	displayMask = tdisplayMask; // -1 == 0xff...ff
-	setHeaderLabel ( tname );
-	connect (this, SIGNAL (doubleClicked ( const QModelIndex)),this, SLOT (makeGoto()));
+	headerItem ()->setHidden (true);
+	connect (this, SIGNAL (clicked ( const QModelIndex)),this, SLOT (makeGoto()));
 	Entity::initIcons ();
 }
 
 EntityContainer::~EntityContainer ()
 {
-	disconnect (this, SIGNAL (doubleClicked ( const QModelIndex)),this, SLOT (makeGoto()));
+	disconnect (this, SIGNAL (clicked ( const QModelIndex)),this, SLOT (makeGoto()));
 }
 
 
