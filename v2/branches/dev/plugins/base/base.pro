@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS	= FileBrowser MessageBox AStyle QtAssistant ClassBrouser
+SUBDIRS	= FileBrowser MessageBox AStyle QtAssistant Navigator
