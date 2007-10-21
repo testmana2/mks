@@ -10,17 +10,6 @@ extern "C" void installLanguageMapDefaults (void);
 extern "C" void initializeParsing (void);
 extern "C" void freeParserResources (void);
 
-Ctags* Ctags::mSelf = 0L;
-//
-Ctags* Ctags::self()
-{
-	if ( !mSelf )
-		mSelf = new Ctags();
-	return mSelf;
-}
-
-
-
 Ctags::Ctags ()
 {
 	initializeParsing ();
