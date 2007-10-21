@@ -5,6 +5,7 @@
 #include <QString>
 #include <QList>
 #include<QVector>
+#include "QSingleton.h"
 #include "entry.h"
 
 
@@ -48,7 +49,7 @@ struct FileRecord {
 
 typedef QVector<FileRecord*> RecordsList;
 
-class Ctags: public QObject 
+class Ctags: public QObject, public QSingleton<Ctags>
 {
 Q_OBJECT
 private:
@@ -67,7 +68,6 @@ private:
 	void freeTagEntryList (TagEntryListItem*);
 	static Ctags* mSelf;	
 public:
-	static Ctags* self();
 	Ctags ();
 	~Ctags ();
 	FileRecord* GetTagsForFile (QString);

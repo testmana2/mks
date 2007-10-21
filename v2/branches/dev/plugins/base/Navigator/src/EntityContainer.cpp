@@ -76,8 +76,7 @@ void EntityContainer::addTagsFromRecord ( FileRecord*  fileRecord )
 
 void EntityContainer::updateFileInfo ( QString fileName )
 {
-	Ctags* tags = Ctags::self();
-	FileRecord* rd = tags->GetTagsForFile (fileName); 
+	FileRecord* rd = Ctags::instance()->GetTagsForFile (fileName); 
 	addTagsFromRecord(rd);//add of update existing entityes
 	deleteFileInfo ( rd->file, rd->time);//deltete not updated  
 }
