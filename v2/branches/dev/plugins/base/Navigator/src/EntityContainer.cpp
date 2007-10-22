@@ -1,6 +1,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "pFileManager.h"
 #include "EntityContainer.h"
@@ -105,6 +106,7 @@ Entity*EntityContainer::getScopeEntity ( QString scope0, QString scope1)
 	{
 		scopeEntity = new Entity ( UNKNOWN, scopes[0]);
 		addTopLevelItem ( scopeEntity);
+		//qDebug ()<<"created entity "<<scopes[0];
 		scopeEntity->setExpanded (true);
 	}
 	scopes.removeAt (0);
@@ -124,9 +126,10 @@ Entity*EntityContainer::getScopeEntity ( QString scope0, QString scope1)
 			}
 		if ( findResult == NULL )
 		{
-			qDebug ( qPrintable ("Not finded parent scope for "+scope0+'|'+scope1 ));
+			//qDebug ( qPrintable ("Not finded parent scope for "+scope0+'|'+scope1 ));
 			findResult = new Entity ( ttype, scopes[0]);
 			scopeEntity->addChild ( findResult);
+			findResult->setExpanded (true);
 		}
 		//qDebug ( qPrintable ("Finded parent scope for "+scopes[0]+" in "+name+ " it's "+findResult->name ));
 		scopeEntity = findResult;
@@ -164,7 +167,10 @@ Entity* EntityContainer::findEntityInEntity (Entity* where, EntityType type, QSt
 void EntityContainer::addChild ( Entity* parEnt,TagEntry* entry, QString fileName, QDateTime time )
 {
 	if (parEnt)
+	{
 		addChildInEntity ( parEnt, entry, fileName, time );
+		parEnt->setExpanded (true);
+	}
 	else
 		addChildInContainer ( entry, fileName, time);
 }
