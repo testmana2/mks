@@ -13,8 +13,69 @@ class QMakeProxy;
 class ProjectItem;
 class QDirModel;
 
-typedef QStringList Key;
-typedef QHash<Key, QStringList> QtSettings; // scope|operator|variable, values
+struct ProjectVariable
+{
+	ProjectVariable() {}
+	ProjectVariable( const QString& v, const QString& o )
+	{ setVariable( v ); setOperator( o ); }
+	
+	bool operator== ( const ProjectVariable& v ) const
+	{ return getVariable() == v.getVariable() && getOperator() == v.getOperator(); }
+	
+	ProjectVariable& operator=( const ProjectVariable& o )
+	{ setVariable( o.getVariable() ); setOperator( o.getOperator() ); return *this; }
+	
+	QString getVariable() const
+	{ return mVariable; }
+	void setVariable( const QString& s )
+	{ mVariable = s; }
+	
+	QString getOperator() const
+	{ return mOperator; }
+	void setOperator( const QString& s )
+	{ mOperator = s; }
+	
+	QString mVariable;
+	QString mOperator;
+};
+
+struct ProjectKey
+{
+	ProjectKey() {}
+	ProjectKey( ProjectItem* s, const ProjectVariable& v )
+	{ setScope( s ); setProjectVariable( v ); }
+	
+	bool operator== ( const ProjectKey& v ) const
+	{ return getScope() == v.getScope() && getProjectVariable() == v.getProjectVariable(); }
+	
+	ProjectKey& operator=( const ProjectKey& o )
+	{ setScope( o.getScope() ); setProjectVariable( o.getProjectVariable() ); return *this; }
+	
+	ProjectItem* getScope() const
+	{ return mScope; }
+	void setScope( ProjectItem* s )
+	{ mScope = s; }
+	
+	QString getVariable() const
+	{ return mVariable.getVariable(); }
+	void setVariable( const QString& s )
+	{ mVariable.setVariable( s ); }
+	
+	QString getOperator() const
+	{ return mVariable.getOperator(); }
+	void setOperator( const QString& s )
+	{ mVariable.setOperator( s ); }
+	
+	ProjectVariable getProjectVariable() const
+	{ return mVariable; }
+	void setProjectVariable( const ProjectVariable& v )
+	{ mVariable = v; }
+	
+	ProjectItem* mScope;
+	ProjectVariable mVariable;
+};
+
+typedef QHash<ProjectKey, QStringList> QtSettings;
 
 class UIQMakeProjectSettings : public QDialog, public Ui::UIQMakeProjectSettings, public QSingleton<UIQMakeProjectSettings>
 {
@@ -29,6 +90,7 @@ protected:
 	QtSettings mOriginalSettings;
 	QDirModel* mDirs;
 	QMakeProxy* mScopesProxy;
+	QMakeProxy* mVariablesProxy;
 	QMakeProxy* mContentProxy;
 	QStringList mBlackList;
 
@@ -42,16 +104,16 @@ protected:
 	const QString checkTranslationsPath();
 	void checkOthersVariables();
 	void updateOthersValues();
-	Key currentKey( const QString& ) const;
-	void addValue( const Key& s, const QString& v );
-	void addValues( const Key& s, const QStringList& v );
-	void setValue( const Key& s, const QString& v );
-	void setValues( const Key& s, const QStringList& v );
-	void removeValue( const Key& s, const QString& v );
-	void removeValues( const Key& s, const QStringList& v );
-	void clearValues( const Key& s );
-	QStringList values( const Key& s ) const;
-	QString value( const Key& s ) const;
+	ProjectKey currentKey( const QString& ) const;
+	void addValue( const ProjectKey& s, const QString& v );
+	void addValues( const ProjectKey& s, const QStringList& v );
+	void setValue( const ProjectKey& s, const QString& v );
+	void setValues( const ProjectKey& s, const QStringList& v );
+	void removeValue( const ProjectKey& s, const QString& v );
+	void removeValues( const ProjectKey& s, const QStringList& v );
+	void clearValues( const ProjectKey& s );
+	QStringList values( const ProjectKey& s ) const;
+	QString value( const ProjectKey& s ) const;
 	QModelIndex currentIndex();
 	void setCurrentIndex( const QModelIndex& );
 
@@ -75,7 +137,8 @@ protected slots:
 	void cb_highlighted( int );
 	void tb_clicked();
 	void sb_valueChanged( int );
-	void on_cbScopes_currentIndexChanged( const QString& );
+	void on_cbScopes_highlighted( const QModelIndex& );
+	void on_cbScopes_currentChanged( const QModelIndex& );
 	void on_cbOperators_currentIndexChanged( const QString& );
 	void on_cbTemplate_currentIndexChanged( const QString& );
 	void lw_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
