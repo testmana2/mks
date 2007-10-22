@@ -67,3 +67,4 @@ void MessageBox::restoreSettings()
 }
 
 Q_EXPORT_PLUGIN2( BaseMessageBox, MessageBox )
+ 
