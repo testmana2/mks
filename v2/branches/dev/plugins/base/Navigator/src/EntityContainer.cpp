@@ -207,4 +207,4 @@ void EntityContainer::setDisplayMask (int mask)
 int EntityContainer::getDisplayMask ()
 {
 	return displayMask;
-}
+} 
