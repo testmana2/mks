@@ -11,6 +11,7 @@
 	AsmParser, \
 	AspParser, \
 	AwkParser, \
+	BasicParser, \
 	BetaParser, \
 	CParser, \
 	CppParser, \

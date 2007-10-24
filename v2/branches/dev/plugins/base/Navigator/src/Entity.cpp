@@ -18,7 +18,7 @@ QIcon Entity::iMEMBER;
 QIcon Entity::iSTRUCT;
 QIcon Entity::iTYPEDEF;
 
-Entity::Entity ( TagEntry* entry, QString fileName, QDateTime time)
+Entity::Entity ( sTagEntryInfo* entry, QString fileName, QDateTime time)
 {
 	updateSelf (entry, fileName, time);
 }
@@ -137,16 +137,16 @@ void Entity::deleteFileInfo ( QString file, QDateTime olderThan )
 	}
 }
 
-void Entity::updateSelf (TagEntry* entry, QString fileName, QDateTime time)
+void Entity::updateSelf (sTagEntryInfo* entry, QString fileName, QDateTime time)
 {
 	name = entry->name;  //  do possible make this assigmengs automaticaly ???
 	file = fileName;
 	type = getEntityType (entry->kind );
 	line = entry->lineNumber;
 	updateTime = time;
-	if ( entry-> signature != NULL )
+	if ( entry->extensionFields.signature != NULL )
 	{	
-		signature = entry->signature;
+		signature = entry->extensionFields.signature;
 	}
 	updateGUI ();
 }

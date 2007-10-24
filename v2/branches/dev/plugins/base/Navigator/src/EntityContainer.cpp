@@ -55,31 +55,30 @@ void EntityContainer::deleteFileInfo ( QString file, QDateTime olderThan )
 	}
 }
 
-void EntityContainer::addTagsFromRecord ( FileRecord*  fileRecord )
+void EntityContainer::addTagsFromRecord (QString fileName, FileRecord*  fileRecord)
 {
-	QString fileName = fileRecord->file ;
 	Entity* newEnt;
 	Entity* parEnt;
-	TagEntry* entry;
+	sTagEntryInfo* entry;
 	EntityType entType;
-	TagEntryListItem* item = fileRecord->firstTagEntry;
+	sTagEntryListItem* item = fileRecord->firstTagEntry;
 	while ( item != NULL )
 	{
-		entry = &item->entry;	
+		entry = &item->tag;	
 		item = item->next ;
         entType = Entity::getEntityType (entry->kind);
 //         if ( not (entType & displayMask) )  FIXME uncomment
 //             continue; // if mask not set for it's entity - ignore it 
-		parEnt = getScopeEntity ( entry->scope[0], entry->scope[1]);
-		addChild ( parEnt, entry,fileRecord->file,fileRecord->time );
+		parEnt = getScopeEntity ( entry->extensionFields.scope[0], entry->extensionFields.scope[1]);
+		addChild ( parEnt, entry,fileName,fileRecord->time );
 	}
 };
 
 void EntityContainer::updateFileInfo ( QString fileName )
 {
 	FileRecord* rd = Ctags::instance()->GetTagsForFile (fileName); 
-	addTagsFromRecord(rd);//add of update existing entityes
-	deleteFileInfo ( rd->file, rd->time);//deltete not updated  
+	addTagsFromRecord(fileName, rd);//add of update existing entityes
+	deleteFileInfo (fileName, rd->time);//deltete not updated  
 }
 
 Entity*EntityContainer::getScopeEntity ( QString scope0, QString scope1)
@@ -164,7 +163,7 @@ Entity* EntityContainer::findEntityInEntity (Entity* where, EntityType type, QSt
 	return NULL; //not finded
 }
 
-void EntityContainer::addChild ( Entity* parEnt,TagEntry* entry, QString fileName, QDateTime time )
+void EntityContainer::addChild ( Entity* parEnt,sTagEntryInfo* entry, QString fileName, QDateTime time )
 {
 	if (parEnt)
 	{
@@ -175,7 +174,7 @@ void EntityContainer::addChild ( Entity* parEnt,TagEntry* entry, QString fileNam
 		addChildInContainer ( entry, fileName, time);
 }
 
-void EntityContainer::addChildInContainer ( TagEntry* entry, QString fileName, QDateTime time )
+void EntityContainer::addChildInContainer ( sTagEntryInfo* entry, QString fileName, QDateTime time )
 {
 	Entity* existing = findEntityInContainer ( Entity::getEntityType ( entry->kind), entry->name);
 	if ( not existing )
@@ -184,7 +183,7 @@ void EntityContainer::addChildInContainer ( TagEntry* entry, QString fileName, Q
 		existing->updateSelf (entry, fileName, time);
 }
 
-void EntityContainer::addChildInEntity ( Entity* parEnt, TagEntry* entry, QString fileName, QDateTime time )
+void EntityContainer::addChildInEntity ( Entity* parEnt, sTagEntryInfo* entry, QString fileName, QDateTime time )
 {
 	Entity* existing = findEntityInEntity( parEnt,Entity::getEntityType ( entry->kind), entry->name);
 	if ( not existing )

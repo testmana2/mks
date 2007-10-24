@@ -33,14 +33,3 @@ extern sTagEntryListItem* parseFile ( const char* fileName, const char* langName
 		}while ( retried);
 	return firstTagEntry;
 }
-
-extern void freeSTagEntryList ( sTagEntryListItem* item )
-{
-//do not need free char*   strings, it's will be used further, and will be freed by Ctags class
-	while ( item != NULL )
-	{
-		sTagEntryListItem* temp = item->next;
-		free (item);
-		item = temp;
-	}	
-}

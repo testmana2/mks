@@ -63,14 +63,19 @@ enum eState {
 typedef struct sCppState {
 	int		ungetch, ungetch2;   /* ungotten characters, if any */
 	boolean resolveRequired;     /* must resolve if/else/elif/endif branch */
+	boolean hasAtLiteralStrings; /* supports @"c:\" strings */
 	struct sDirective {
 		enum eState state;       /* current directive being processed */
-		boolean	accept;          /* is a directive syntatically permitted? */
+		boolean	accept;          /* is a directive syntactically permitted? */
 		vString * name;          /* macro name */
 		unsigned int nestLevel;  /* level 0 is not used */
 		conditionalInfo ifdef [MaxCppNestingLevel];
 	} directive;
 } cppState;
+
+/*
+*   DATA DEFINITIONS
+*/
 
 /*
 *   DATA DEFINITIONS
@@ -83,6 +88,7 @@ static boolean BraceFormat = FALSE;
 static cppState Cpp = {
 	'\0', '\0',  /* ungetch characters */
 	FALSE,       /* resolveRequired */
+	FALSE,       /* hasAtLiteralStrings */
 	{
 		DRCTV_NONE,  /* state */
 		FALSE,       /* accept */
@@ -106,13 +112,14 @@ extern unsigned int getDirectiveNestLevel (void)
 	return Cpp.directive.nestLevel;
 }
 
-extern void cppInit (const boolean state)
+extern void cppInit (const boolean state, const boolean hasAtLiteralStrings)
 {
 	BraceFormat = state;
 
 	Cpp.ungetch         = '\0';
 	Cpp.ungetch2        = '\0';
 	Cpp.resolveRequired = FALSE;
+	Cpp.hasAtLiteralStrings = hasAtLiteralStrings;
 
 	Cpp.directive.state     = DRCTV_NONE;
 	Cpp.directive.accept    = TRUE;
@@ -432,9 +439,9 @@ static Comment isComment (void)
 }
 
 /*  Skips over a C style comment. According to ANSI specification a comment
- *  is treated as white space, so we perform this subsitution.
+ *  is treated as white space, so we perform this substitution.
  */
-static int skipOverCComment (void)
+int skipOverCComment (void)
 {
 	int c = fileGetc ();
 
