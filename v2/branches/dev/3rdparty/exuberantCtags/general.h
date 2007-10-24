@@ -1,5 +1,6 @@
 #ifndef  _GENERAL_H
 #define  _GENERAL_H
+#include <stdbool.h>
 #include "string.h"
 
 # define errout	stderr
@@ -10,11 +11,8 @@
 #include <stdlib.h>
 #include "ctype.h" //need for parsers
 
-#ifndef __cplusplus
-typedef enum { FALSE =0, TRUE =1 } boolean;
-#else
-typedef enum { BFALSE =0, BTRUE =1 } boolean;
-#endif
-
+typedef bool boolean;
+#define FALSE false
+#define TRUE true
 
 #endif  /* _GENERAL_H */

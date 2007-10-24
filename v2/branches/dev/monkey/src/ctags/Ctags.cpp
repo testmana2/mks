@@ -22,9 +22,11 @@ Ctags::~Ctags ()
 	freeParserResources ();
 }
 
-bool Ctags::updateRecord (FileRecord* record) //reparse file if need, or parse first time
+bool Ctags::updateFileRecord (QString file) //reparse file if need, or parse first time
 {
-	QFSFileEngine fsEng ( record->file );
+	FileRecord* record = fileRecords[file];
+	Q_ASSERT (record); //just already existing record can be updated
+	QFSFileEngine fsEng (file);
 	QDateTime fileTime = fsEng.fileTime ( QAbstractFileEngine::ModificationTime );
 
 	if ( record->time >= fileTime )  //record up to date, not need parse
@@ -32,104 +34,36 @@ bool Ctags::updateRecord (FileRecord* record) //reparse file if need, or parse f
 	if ( record->firstTagEntry ) //exist old list, need to free it
 			freeTagEntryList ( record->firstTagEntry);
 
-	record->firstTagEntry = get_tags (record->file);
+	record->firstTagEntry = get_tags (file);
 	record->time = fileTime;
 	return true;
 }
 
 FileRecord* Ctags::GetTagsForFile (QString file )
 {
-	FileRecord* result = NULL; //need to find record for file we need, or create record
-	for ( int index = 0; index< records.size(); index++)//find
-	{
-		if ( records[index]->file == file)
-		{
-			result = records[index];
-		}
-	}
-	if ( result == NULL )  //not finded
+	FileRecord* result = fileRecords[file];
+	if ( not result )  //not parsed yet
 	{
 		result = new FileRecord;
 		result->firstTagEntry = NULL;
-		result->file = file;
 		result->time = QDateTime(); //null Time
-		records.append (result);
+		fileRecords[file] =result;
 	}		
 	//ok,  now we can fill record, if it's new, or update, if if's already exist
-	updateRecord (result);
+	updateFileRecord (file);
 	return result;
-}		
-
-TagEntryListItem* Ctags::get_tags ( QString file )
-{
-	sTagEntryListItem* tags =  parseFile ( file.toStdString().c_str(), NULL);
-	if ( tags == NULL ) 
-		return NULL;
-	TagEntryListItem* pItem;
-	TagEntryListItem* result = NULL; // will be pointer to the first item
-	//now need to convert recieved C tag entry list to the C++ tag entry list
-	while ( tags != NULL) {
-
-		if (result == NULL ) //first item
-		{
-			pItem = (TagEntryListItem*) calloc (1, sizeof (TagEntryListItem));
-			result = pItem;			
-		}
-		else
-		{
-			pItem->next=(TagEntryListItem*) calloc (1, sizeof (TagEntryListItem));
-			pItem = pItem->next ;
-		}
-		pItem->entry.lineNumber = tags->tag.lineNumber;
-		pItem->entry.filePosition = tags->tag.filePosition;
-		pItem->entry.language = tags->tag.language;
-		pItem->entry.sourceFileName = tags->tag.sourceFileName;
-		pItem->entry.name = tags->tag.name;
-		pItem->entry.kindName = tags->tag.kindName;
-		pItem->entry.kind =   tags->tag.kind;
-		pItem->entry.access = tags->tag.extensionFields.access;
-		pItem->entry.fileScope = tags->tag.extensionFields.fileScope;
-		pItem->entry.implementation = tags->tag.extensionFields.implementation;
-		pItem->entry.inheritance = tags->tag.extensionFields.inheritance;
-		pItem->entry.scope[0] = tags->tag.extensionFields.scope[0];
-		pItem->entry.scope[1] = tags->tag.extensionFields.scope[1];
-		pItem->entry.signature = tags->tag.extensionFields.signature;
-		pItem->entry.typeRef[0] = tags->tag.extensionFields.typeRef[0];
-		pItem->entry.typeRef[1] = tags->tag.extensionFields.typeRef[1];
-
-		if ( tags->tag.lineNumberEntry == BTRUE)
-			pItem->entry.lineNumberEntry = true;
-		else
-			pItem->entry.lineNumberEntry = false;
-
-		if ( tags->tag.isFileScope == BTRUE)
-			pItem->entry.isFileScope = true;
-		else
-			pItem->entry.isFileScope = false;
-
-		if ( tags->tag.isFileEntry == BTRUE)
-			pItem->entry.isFileEntry = true;
-		else
-			pItem->entry.isFileEntry = false;
-
-		if ( tags->tag.truncateLine == BTRUE)
-			pItem->entry.truncateLine = true;
-		else
-			pItem->entry.truncateLine = false;
-
-		tags = tags->next;
-	}
-	freeSTagEntryList ( tags );
-	return result;
-
 }
 
-
-RecordsList* Ctags::GetTagsForAllFiles ()
+sTagEntryListItem* Ctags::get_tags ( QString file )
 {
+	return parseFile ( file.toStdString().c_str(), NULL);
+}
+
+//RecordsList* Ctags::GetTagsForAllFiles ()
+//{
 // 	checkForChanges ();
 // 	return &records;
-}
+//}
 
 //void Ctags::checkForChanges ()
 //{
@@ -146,11 +80,11 @@ RecordsList* Ctags::GetTagsForAllFiles ()
 //}
 
 
-void Ctags::freeTagEntryList (TagEntryListItem* item)
+void Ctags::freeTagEntryList (sTagEntryListItem* item)
 {
 	while ( item != NULL )
 	{
-		TagEntry* entry = &item->entry;
+		sTagEntryInfo* entry = &item->tag;
 		if (entry->language)
 			free ( (void*)entry->language );
 		if ( entry->sourceFileName)
@@ -159,44 +93,44 @@ void Ctags::freeTagEntryList (TagEntryListItem* item)
 			free ( (void*)entry->name );
 		if ( entry->kindName)
 			free ( (void*)entry->kindName );
-		if ( entry->access)
+		if ( entry->extensionFields.access)
 		{
-			free ( (void*)entry->access );
+			free ( (void*)entry->extensionFields.access );
 		}
-		if ( entry->fileScope)
+		if ( entry->extensionFields.fileScope)
 		{
-			free ( (void*)entry->fileScope );
+			free ( (void*)entry->extensionFields.fileScope );
 		}
-		if ( entry->implementation)
+		if ( entry->extensionFields.implementation)
 		{
-			free ( (void*)entry->implementation  );
+			free ( (void*)entry->extensionFields.implementation  );
 		}
-		if ( entry->inheritance)
+		if ( entry->extensionFields.inheritance)
 		{
-			free ( (void*)entry->inheritance );
+			free ( (void*)entry->extensionFields.inheritance );
 		}
-		if ( entry->scope[0])
+		if ( entry->extensionFields.scope[0])
 		{
-			free ( (void*)entry->scope[0] );
+			free ( (void*)entry->extensionFields.scope[0] );
 		}
-		if ( entry->scope[1])
+		if ( entry->extensionFields.scope[1])
 		{
-			free (  (void*)entry->scope[1] );
+			free (  (void*)entry->extensionFields.scope[1] );
 		}
-		if ( entry->typeRef[0])
+		if ( entry->extensionFields.typeRef[0])
 		{
-			free ( (void*)entry->typeRef[0] );
+			free ( (void*)entry->extensionFields.typeRef[0] );
 		}
-		if ( entry->typeRef[1])
+		if ( entry->extensionFields.typeRef[1])
 		{
-			free ( (void*)entry->typeRef[1] );
+			free ( (void*)entry->extensionFields.typeRef[1] );
 		}
-		if ( entry->signature)
+		if ( entry->extensionFields.signature)
 		{
-			free ( (void*)entry->signature );
+			free ( (void*)entry->extensionFields.signature );
 		}
-		TagEntryListItem* temp = item->next;
-		free ( item  );
+		sTagEntryListItem* temp = item->next;
+		delete item;
 		item = temp;
 	}
 }
