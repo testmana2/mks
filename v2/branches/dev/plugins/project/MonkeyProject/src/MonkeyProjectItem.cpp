@@ -30,12 +30,14 @@ MonkeyProjectItem::MonkeyProjectItem (  ProjectItem::NodeType t, ProjectItem* i 
 {
 	init();
 	setType( t );
+	mBuilder = new GenericBuilder;
 	if ( i )
 		i->appendRow( this );
 }
 
 MonkeyProjectItem::~MonkeyProjectItem ()
 {
+	delete mBuilder;
 	uninstallCommands ();
 }
 
@@ -152,7 +154,7 @@ void MonkeyProjectItem::uninstallCommands ()
 
 void MonkeyProjectItem::installCommands ()
 {
-	QMenu* menu = pMenuBar::instance()->menu( "mBuild" );
+	QMenu* menu = pMenuBar::instance()->menu( "mBuilder" );
 	menu->setEnabled (true);	
 	for (int i = 0; i < targets.size(); i++)
 	{

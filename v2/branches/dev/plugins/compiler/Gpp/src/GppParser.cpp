@@ -2,8 +2,6 @@
 
 #include <QTextCodec>
 
-#include <QDebug>
-
 GppParser::GppParser()
 {
 	Pattern ps[] = 
