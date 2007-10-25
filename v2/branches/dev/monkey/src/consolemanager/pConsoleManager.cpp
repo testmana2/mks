@@ -138,6 +138,8 @@ void pConsoleManager::error( QProcess::ProcessError e )
 
 void pConsoleManager::finished( int i, QProcess::ExitStatus e )
 {
+	//clear output buffer
+	mBuffer.readAll ();
 	// emit signal finished
 	emit commandFinished( currentCommand(), i, e );
 	// remove command from list
@@ -145,6 +147,8 @@ void pConsoleManager::finished( int i, QProcess::ExitStatus e )
 	// disable stop action
 	mStopAction->setEnabled( false );
 }
+
+#include <QDebug> //FIXME
 
 void pConsoleManager::readyRead()
 {
@@ -155,16 +159,27 @@ void pConsoleManager::readyRead()
 	// get current command
 	pCommand c = currentCommand();
 	// try parse output
+	qWarning () << "read something";
 	if ( c.isValid() )
 	{
+		qWarning () << "valid command";
+		qWarning () << "parsers are " <<mCurrentParsers;
 		// read complete lines
 		while ( mBuffer.canReadLine() )
 		{
+			qWarning () << "parsing pcons";
 			QByteArray a = mBuffer.readLine();
 			foreach ( QString s, mCurrentParsers )
+			{
+				qWarning () << "trying parser";
 				if ( pCommandParser* p = mParsers.value( s ) )
+				{
 					if ( p->processParsing( a ) )
 						break;
+					qWarning () << "using parser";
+				}
+				
+			}
 		}
 	}
 	// emit signal

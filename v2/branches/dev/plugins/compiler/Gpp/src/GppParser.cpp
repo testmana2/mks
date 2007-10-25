@@ -66,8 +66,11 @@ GppParser::~GppParser()
 {
 }
 
+#include <QDebug>
+
 bool GppParser::processParsing(const QByteArray& arr)
 {
+	qWarning () <<"parsing" << arr;
 	QStringList l = QTextCodec::codecForLocale()->toUnicode( arr ).split( '\n' );
 	foreach (QString s, l)
 	{
