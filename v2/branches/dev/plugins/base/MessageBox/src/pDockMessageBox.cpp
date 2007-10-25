@@ -26,8 +26,6 @@
 #include <QScrollBar>
 #include <QTextCodec>
 
-#include <QDebug>
-
 pDockMessageBox::pDockMessageBox( QWidget* w )
 	: QDockWidget( w ), mShown( false )
 {
@@ -283,7 +281,6 @@ void pDockMessageBox::lwBuildSteps_itemDoubleClicked( QListWidgetItem* it )
 		s = pi->canonicalFilePath( s );
 	const QPoint p = it->data( Qt::UserRole +3 ).toPoint();
 	pFileManager::instance()->goToLine( s, p, true );
-	qWarning ()<<"make goto"<<s<<p;
 }
 
 void pDockMessageBox::leRawCommand_returnPressed()
@@ -371,6 +368,9 @@ void pDockMessageBox::commandStarted( const pCommand& c )
 	s.append( tr( "* Working Directory: %1" ).arg( colourText( c.workingDirectory() ) ) );
 	// appendOutput to console log
 	appendInBox( colourText( s, Qt::blue ), Qt::red );
+	// show dock if needed
+	if ( !isVisible() )
+		setVisible( true );
 }
 
 void pDockMessageBox::commandStateChanged( const pCommand& c, QProcess::ProcessState s )
