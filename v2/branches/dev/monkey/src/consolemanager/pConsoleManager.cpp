@@ -138,8 +138,6 @@ void pConsoleManager::error( QProcess::ProcessError e )
 
 void pConsoleManager::finished( int i, QProcess::ExitStatus e )
 {
-	//clear output buffer
-	mBuffer.readAll ();
 	// emit signal finished
 	emit commandFinished( currentCommand(), i, e );
 	// remove command from list
@@ -147,8 +145,6 @@ void pConsoleManager::finished( int i, QProcess::ExitStatus e )
 	// disable stop action
 	mStopAction->setEnabled( false );
 }
-
-#include <QDebug> //FIXME
 
 void pConsoleManager::readyRead()
 {
@@ -159,27 +155,16 @@ void pConsoleManager::readyRead()
 	// get current command
 	pCommand c = currentCommand();
 	// try parse output
-	qWarning () << "read something";
 	if ( c.isValid() )
 	{
-		qWarning () << "valid command";
-		qWarning () << "parsers are " <<mCurrentParsers;
 		// read complete lines
 		while ( mBuffer.canReadLine() )
 		{
-			qWarning () << "parsing pcons";
 			QByteArray a = mBuffer.readLine();
 			foreach ( QString s, mCurrentParsers )
-			{
-				qWarning () << "trying parser";
 				if ( pCommandParser* p = mParsers.value( s ) )
-				{
 					if ( p->processParsing( a ) )
 						break;
-					qWarning () << "using parser";
-				}
-				
-			}
 		}
 	}
 	// emit signal
@@ -275,11 +260,13 @@ void pConsoleManager::executeProcess()
 		mCurrentParsers = c.parsers();
 		// check if need tryall, and had all other parsers if needed at end
 		if ( c.tryAllParsers() )
+		{
 			foreach ( QString s, parsersName() )
 				if ( !mCurrentParsers.contains( s ) )
 					mCurrentParsers << s;
+		}
 		// clear buffer
-		mBuffer.buffer().clear();
+		mBuffer.readAll();
 		// execute command
 		setWorkingDirectory( c.workingDirectory() );
 		start( QString( "%1 %2" ).arg( c.command() ).arg( c.arguments() ) );
