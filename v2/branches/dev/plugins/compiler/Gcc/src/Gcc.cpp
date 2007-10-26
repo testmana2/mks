@@ -12,6 +12,8 @@ Gcc::Gcc()
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.5.0";
 	mPluginInfos.Enabled = false;
+	foreach ( QString s, availableParsers() )
+		pConsoleManager::instance()->addParser( getParser( s ) );
 }
 
 bool Gcc::setEnabled( bool b)
@@ -21,9 +23,6 @@ bool Gcc::setEnabled( bool b)
 	mPluginInfos.Enabled = b;
  	if ( b )
 	{
-		foreach ( QString s, availableParsers() )
-			pConsoleManager::instance()->addParser( getParser( s ) );
-		
 		pMenuBar* mb = pMenuBar::instance();
 		foreach ( pCommand c, userCommands() )
 		{
@@ -35,9 +34,6 @@ bool Gcc::setEnabled( bool b)
 	}
  	else
 	{
-		foreach ( QString s, availableParsers() )
-			pConsoleManager::instance()->removeParser( s );
-		
 		pMenuBar* mb = pMenuBar::instance();
 		foreach ( QAction* a, mb->menu( "mBuilder/mUserCommands" )->actions() )
 			if ( a->data().toString() == mPluginInfos.Name )

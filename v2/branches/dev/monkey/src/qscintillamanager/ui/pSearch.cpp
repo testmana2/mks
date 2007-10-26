@@ -126,8 +126,8 @@ bool pSearch::on_tbReplace_clicked()
 		return false;
 
 	// cancel if no replace text
-	if ( leReplace->text().isEmpty() )
-		return false;
+// 	if ( leReplace->text().isEmpty() )
+// 		return false;  //FIXME 
 
 	// if no selection and not found cancel
 	if ( mEditor->selectedText().isEmpty()	&& !on_tbNext_clicked() )
