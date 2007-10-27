@@ -120,6 +120,7 @@ void UIMain::initMenuBar()
 		mb->action( "aSeparator5" );
 		mb->action( "aExpandAbbreviation", tr( "Expand Abbreviation" ), QIcon( ":/edit/icons/edit/abbreviation.png" ), tr( "Ctrl+L" ), tr( "Expand Abbreviation" ) )->setEnabled( false );
 		mb->action( "aPrepareAPIs", tr( "Prepare APIs" ), QIcon( ":/edit/icons/edit/prepareapis.png" ), tr( "Ctrl+Alt+P" ), tr( "Prepare the APIs files for auto completion / calltips" ) );
+		mb->menu( "mAllCommands", tr( "&All Commands" ) );
 	mb->endGroup();
 	mb->menu( "mView", tr( "&View" ) );
 	mb->beginGroup( "mView" );
