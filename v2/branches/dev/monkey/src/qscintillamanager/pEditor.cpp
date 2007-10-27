@@ -1,8 +1,9 @@
-#include "pEditor.h"
 #include "pSearch.h"
 #include "pMonkeyStudio.h"
 
 #include "qsciprinter.h"
+#include "qSciShortcutsManager.h"
+#include "pEditor.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -36,6 +37,7 @@ pEditor::pEditor( QWidget* p )
 		mPasteAvailableInit = true;
 		mPasteAvailable = !QApplication::clipboard()->text().isEmpty();
 	}
+	qSciShortcutsManager::instance()->initEditor (this);
 }
 
 pEditor::~pEditor()
@@ -164,7 +166,6 @@ bool pEditor::openFile( const QString& s )
 	// convert eol
 	if ( pMonkeyStudio::autoEolConversion() )
 		convertEols( eolMode() );
-
 	return true;
 }
 
