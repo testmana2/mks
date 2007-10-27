@@ -32,11 +32,8 @@ qSciShortcutsManager::qSciShortcutsManager ()
 
 void qSciShortcutsManager::initEditor (pEditor* editor)
 {
-	foreach (SciAction sact, sactions)
-	{
-		//TODO Uncomment, when sactions will be filled
-		//editor->SendScintilla (QsciScintilla::SCI_CLEARALLCMDKEYS);
-	}
+	//TODO Uncomment, when sactions will be filled
+	//editor->SendScintilla (QsciScintilla::SCI_CLEARALLCMDKEYS);
 }
 
 void qSciShortcutsManager::keyBoardShortcutPressed ()
