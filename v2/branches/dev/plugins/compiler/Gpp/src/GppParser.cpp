@@ -101,5 +101,5 @@ QString GppParser::replaceWithMatch(QRegExp rex, QString s)
     int i = 0;
     while ( (i = s.indexOf("%")) != -1)
         s.replace (i,2,rex.cap(QString(s[i+1]).toInt()));
-	return s;
+    return s;
 }

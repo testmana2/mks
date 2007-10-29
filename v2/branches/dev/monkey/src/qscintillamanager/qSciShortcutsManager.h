@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** 		Created using Monkey Studio v1.7.0
+**         Created using Monkey Studio v1.7.0
 ** Author    : Kopats Andrei aka hlamer <hlamer at tut by>
 ** Project   : SciShortcutsManager
 ** FileName  : SciShortcutsManager.h
@@ -30,31 +30,31 @@ class pEditor;
 
 struct SciAction
 {
-	QString name;
-	QString text;
-	QIcon icon;
-	QString defaultShortcut;
-	QString toolTip;
-	int messageCode;
+    QString name;
+    QString text;
+    QIcon icon;
+    QString defaultShortcut;
+    QString toolTip;
+    int messageCode;
 };
 
 
 class Q_MONKEY_EXPORT qSciShortcutsManager: public QObject, public QSingleton<qSciShortcutsManager>
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	qSciShortcutsManager ();
+    qSciShortcutsManager ();
 
-	//will be called from pEditor constructor
-	//Method clearing QScintilla own shortcuts
-	void initEditor (pEditor*);
+    //will be called from pEditor constructor
+    //Method clearing QScintilla own shortcuts
+    void initEditor (pEditor*);
 
 protected:
-	QList<SciAction> sactions;
+    QList<SciAction> sactions;
 
-protected slots:	
-	void keyBoardShortcutPressed ();
+protected slots:    
+    void keyBoardShortcutPressed ();
 };
 
 #endif QSCISHORTCUTSMANAGER
-	
+    
