@@ -105,11 +105,6 @@ qSciShortcutsManager::qSciShortcutsManager ()
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_BACKTAB", tr("Back tab"), QIcon(), QString("Shift+Tab"), tr(""),QsciScintilla::SCI_BACKTAB};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_SELECTIONDUPLICATE", tr("Selection duplicate"), QIcon(), QString("Ctrl+D"), tr(""),QsciScintilla::SCI_SELECTIONDUPLICATE};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_CLEAR", tr("Delete"), QIcon(), QString("Del"), tr(""),QsciScintilla::SCI_CLEAR};
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_CUT", tr("Cut"), QIcon(), QString("Ctrl+X"), tr(""),QsciScintilla::SCI_CUT};    
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_PASTE", tr("Paste"), QIcon(), QString("Ctrl+V"), tr(""),QsciScintilla::SCI_PASTE}; 
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_COPY", tr("Copy"), QIcon(), QString("Ctrl+C"), tr(""),QsciScintilla::SCI_COPY}; 
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_UNDO", tr("Undo"), QIcon(), QString("Ctrl+Z"), tr(""),QsciScintilla::SCI_COPY}; 
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_REDO", tr("Redo"), QIcon(), QString("Ctrl+Y"), tr(""),QsciScintilla::SCI_COPY}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_SELECTALL", tr("Select All"), QIcon(), QString("Ctrl+A"), tr(""),QsciScintilla::SCI_COPY}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_ZOOMIN", tr("Zoom In"), QIcon(), QString("Ctrl++"), tr(""),QsciScintilla::SCI_ZOOMIN}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_ZOOMOUT", tr("Zoom Out"), QIcon(), QString("Ctrl+-"), tr(""),QsciScintilla::SCI_ZOOMOUT}; 
