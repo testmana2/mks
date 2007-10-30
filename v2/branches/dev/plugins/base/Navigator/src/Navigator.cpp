@@ -17,6 +17,7 @@
 #include "ProjectItem.h"
 #include "UIMain.h"
 #include "pFileManager.h"
+#include "pSettings.h"
 
 Navigator::Navigator ()
 {
@@ -28,6 +29,8 @@ Navigator::Navigator ()
 	mPluginInfos.Name =  "Navigator";
 	mPluginInfos.Version = "0.0.1";
 	mPluginInfos.Enabled = false;
+	displayMask = pSettings::instance()->value ("Plugins/Navigator/DisplayMask",65535).toInt();
+	expandMask = pSettings::instance()->value ("Plugins/Navigator/ExpandMask",3).toInt();
 }
 
 bool Navigator::setEnabled (bool e)
@@ -40,26 +43,14 @@ bool Navigator::setEnabled (bool e)
 		dockwgt = new QDockWidget( pWorkspace::instance());
 		//dockwgt->hide ();
 		dockwgt->setMinimumWidth (100);
-//		tabw = new QTabWidget ();
-// 		projectWidget = new QWidget (dockwgt);
-// 		projectBox = new QVBoxLayout ( projectWidget);
-// 		projectWidget->setLayout ( projectBox );
-// 		currProjectTreew = new EntityContainer (projectWidget,"No project selected",pSettings::instance()->value ("Plugins/Navigator/projectDisplayMask",-1).toInt());
-// 		projectTrees.insert ( NULL, currProjectTreew);
-// 		projectBox->addWidget ( currProjectTreew);
-// 		projectLock = new QPushButton (tr("Lock view"), projectWidget);
-// 		projectLock->setCheckable ( true );
-// 		projectBox->addWidget (projectLock);
 		fileWidget = new QWidget (dockwgt);
 		fileBox = new QVBoxLayout ( fileWidget);
-		currFileTreew = new EntityContainer (fileWidget,"No file selected",pSettings::instance()->value ("Plugins/Navigator/fileDisplayMask",-1).toInt());
+		currFileTreew = new EntityContainer (fileWidget);
 		fileTrees.insert ( NULL, currFileTreew);
 		fileBox->addWidget ( currFileTreew);
 		fileLock = new QPushButton (tr("Lock view"), fileWidget);
 		fileLock->setCheckable ( true );
 		fileBox->addWidget (fileLock);
-// 		tabw->addTab ( projectWidget, "Project Tree");
-//		tabw->addTab ( fileWidget, "File Tree");
 		dockwgt->setWidget (fileWidget);
 		UIMain::instance()->dockToolBar( Qt::RightToolBarArea )->addDock( dockwgt,  tr( "Navigator" ), QPixmap( ":/icons/Navigator.png" ) );
 		connect ( pFileManager::instance(), SIGNAL (currentFileChanged( const QString& )) , this, SLOT (currentFileChanged( const QString )));
@@ -72,82 +63,28 @@ bool Navigator::setEnabled (bool e)
 	return true;
 }
 
-// QWidget* Navigator::settingsWidget ()
-// {
-// 	return new NavigatorSettings (this,currProjectTreew->getDisplayMask (),currFileTreew->getDisplayMask ());
-// }
-
-// void Navigator::setProjectMask (int mask)
-// {
-// 	currProjectTreew->setDisplayMask (mask);
-// 	Settings::current()->setValue ("Plugins/Navigator/projectDisplayMask",QVariant(mask));
-// }
-// 
-// void Navigator::setFileMask (int mask)
-// {
-// 	currFileTreew->setDisplayMask (mask);
-// 	Settings::current()->setValue ("Plugins/Navigator/fileDisplayMask",QVariant(mask));	
-// }
-
-/*void Navigator::freeProjectView(AbstractProjectModel* p)
+QWidget* Navigator::settingsWidget ()
 {
-	if ( not projectTrees.contains ( p))
-		return;
-	if ( currProjectTreew == projectTrees.take (p) )
-	{//current project will be closed, need to change displaying widget
-		projectWidget->setUpdatesEnabled(false);
-		projectBox->removeWidget (currProjectTreew );
-		currProjectTreew->hide();
-		currProjectTreew = projectTrees.take (NULL);
-		projectBox->addWidget ( currProjectTreew);
-		currProjectTreew->show();
-		if ( currProjectTreew->topLevelItemCount () == 0 )
-			dockwgt->hide();
-		else
-			dockwgt->show();
-		projectWidget->setUpdatesEnabled(true);
-	}
-	delete ( projectTrees.take(p));
-	projectTrees.remove ( p);
-	qDebug ( "Project was deleted");
+	return new NavigatorSettings ();
 }
-*/
 
-// void Navigator::currentProjectChanged( ProjectItem* it)
-// {
-// 	if ( it == NULL)
-// 		return;
-// 	if (projectLock->isChecked())
-//         return;  //view is locked, do not need to change
-//     qDebug ("trying to change project view");
-// 	pDockToolBar* bar = pWorkspace::instance()->tabToolBar()->bar( TabToolBar::Right );
-// 	if (	not bar->isTabRaised (bar->tabIndexOf (dockwgt)) )
-// 		return;  //do not need do something, if tab not active
-// 	EntityContainer* oldWidget = currProjectTreew;
-// 	currProjectTreew = projectTrees[it];
-// 	if ( currProjectTreew == NULL )
-// 	{
-// 		currProjectTreew = new EntityContainer ( NULL, "", true );
-// 		projectTrees.insert ( it,currProjectTreew );
-// 	}
-// 	ProjectItemList list =  it->project()->getItemList (it, ProjectItem::ValueType, "","");
-// 	foreach ( file, list)
-// 	{
-// 		currProjectTreew->updateFileInfo ( file->getFilePath() );	
-// 	}
-// 	currProjectTreew->setHeaderLabel (file->text());
-// 	projectWidget->setUpdatesEnabled(false);
-// 	projectBox->removeWidget (oldWidget );
-// 	oldWidget->hide();
-// 	projectBox->insertWidget (0, currProjectTreew);
-// 	currProjectTreew->show();
-// //	if ( currProjectTreew->topLevelItemCount () == 0 )
-// //		dockwgt->hide();
-// //	else
-// //		dockwgt->show();
-//  //
-// 	projectWidget->setUpdatesEnabled(true);
-// }
+void Navigator::setDisplayMask (int mask)
+{
+	displayMask = mask;
+	pSettings::instance()->setValue ("Plugins/Navigator/DisplayMask",QVariant(mask));
+}
+	
+int Navigator::getDisplayMask (void)
+{return displayMask;}
+
+void Navigator::setExpandMask (int mask)
+{
+	expandMask = mask;
+	pSettings::instance()->setValue ("Plugins/Navigator/ExpandMask",QVariant(mask));	
+}
+
+int Navigator::getExpandMask (void)
+{return expandMask;}
 
 void Navigator::currentFileChanged(const QString absPath)
 {
@@ -174,14 +111,13 @@ void Navigator::showFile (const QString& absPath)
  	currFileTreew = fileTrees [absPath]; //Try to find Treew for requested file in the cache
 	if ( currFileTreew == NULL ) //not finded
 	{
-		currFileTreew = new EntityContainer ( NULL, "", false );
+		currFileTreew = new EntityContainer ( NULL);
 		fileTrees.insert ( absPath, currFileTreew );
 	}//OK, not currFileTreew - actual for requested file
     for ( int i = 0; i< files.size(); i++)
 	{
         currFileTreew->updateFileInfo ( files[i] );	
 	}
-	//currFileTreew->setHeaderLabel ( QFileInfo (absPath).fileName() );
 	dockwgt->setWindowTitle (tr("Navigator")+": "+ QFileInfo (absPath).fileName());
 	fileWidget->setUpdatesEnabled(false);
 	fileBox->removeWidget (oldWidget );
