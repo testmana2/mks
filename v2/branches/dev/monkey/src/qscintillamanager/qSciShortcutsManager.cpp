@@ -99,7 +99,7 @@ qSciShortcutsManager::qSciShortcutsManager ()
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_UPPERCASE", tr("Upper case"), QIcon(), QString("Shift+Ctrl+U"), tr(""),QsciScintilla::SCI_UPPERCASE};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_CANCEL", tr("Cansel"), QIcon(), QString("Esc"), tr(""),QsciScintilla::SCI_CANCEL};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_EDITTOGGLEOVERTYPE", tr("Edit toggle over type"), QIcon(), QString("Ins"), tr(""),QsciScintilla::SCI_EDITTOGGLEOVERTYPE};
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_NEWLINE", tr("New line"), QIcon(), QString(""), tr(""),QsciScintilla::SCI_NEWLINE};
+    sactions << (SciAction) { "mEdit/mAllCommands/SCI_NEWLINE", tr("New line"), QIcon(), QString("Return"), tr(""),QsciScintilla::SCI_NEWLINE};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_FORMFEED", tr("Form feed"), QIcon(), QString(""), tr(""),QsciScintilla::SCI_FORMFEED};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_TAB", tr("Tab"), QIcon(), QString("Tab"), tr(""),QsciScintilla::SCI_TAB};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_BACKTAB", tr("Back tab"), QIcon(), QString("Shift+Tab"), tr(""),QsciScintilla::SCI_BACKTAB};
@@ -111,7 +111,6 @@ qSciShortcutsManager::qSciShortcutsManager ()
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_UNDO", tr("Undo"), QIcon(), QString("Ctrl+Z"), tr(""),QsciScintilla::SCI_COPY}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_REDO", tr("Redo"), QIcon(), QString("Ctrl+Y"), tr(""),QsciScintilla::SCI_COPY}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_SELECTALL", tr("Select All"), QIcon(), QString("Ctrl+A"), tr(""),QsciScintilla::SCI_COPY}; 
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_NEWLINE", tr("New line"), QIcon(), QString("Return"), tr(""),QsciScintilla::SCI_NEWLINE}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_ZOOMIN", tr("Zoom In"), QIcon(), QString("Ctrl++"), tr(""),QsciScintilla::SCI_ZOOMIN}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_ZOOMOUT", tr("Zoom Out"), QIcon(), QString("Ctrl+-"), tr(""),QsciScintilla::SCI_ZOOMOUT}; 
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_SETZOOM", tr("Set Zoom"), QIcon(), QString("Ctrl+/"), tr(""),QsciScintilla::SCI_SETZOOM}; 
