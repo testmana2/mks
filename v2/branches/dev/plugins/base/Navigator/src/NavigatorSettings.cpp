@@ -1,60 +1,61 @@
-#include "NavigatorSettings.h"
-
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
 
-NavigatorSettings::NavigatorSettings (Navigator* tcb, int projectMask, int fileMask)
+#include "NavigatorSettings.h"
+#include "Navigator.h"
+
+NavigatorSettings::NavigatorSettings ()
 {
-/*	classBrouser = tcb;
 	names <<"Namespaces"<<	"Classes"<<"Constructors"<<"Destrutors";
 	names <<"Enums"<<"Enumerators"<<"Externs"<<"Functions";
 	names <<"Macroses"<<"Members"<<"Prototypes"<<"Structures";
 	names <<"Typedefs"<<"Unions"<<"Variables"<<	"Uncknown";
 
 	QVBoxLayout* vbox = new QVBoxLayout (this);
-	QHBoxLayout* settingsBox = new QHBoxLayout (this);
-	vbox->addLayout (settingsBox);
-	QVBoxLayout* projectBox = new QVBoxLayout ();
-	QVBoxLayout* fileBox = new QVBoxLayout ();
-	projectBox->addWidget ( new QLabel ("Display in project tree:"));
-	fileBox->addWidget ( new QLabel ("Display in file tree:"));
-	for (int i = 0; i < typesCount; i++)
+	QHBoxLayout* settingsBox = new QHBoxLayout ();
+	QVBoxLayout* displayBox = new QVBoxLayout ();
+	QVBoxLayout* expandBox = new QVBoxLayout ();
+	displayBox->addWidget ( new QLabel ("Display:"));
+	expandBox->addWidget ( new QLabel ("Automaticaly expand:"));
+	
+	for (int i = 0; i < names.size(); i++)
 	{
-		projectFlags[i] = new QCheckBox(names[i],this);
-		projectBox->addWidget (projectFlags[i]);
-		projectFlags[i]->setChecked ( projectMask & (1<<i));
-		fileFlags[i] = new QCheckBox(names[i],this);
-		fileBox->addWidget (fileFlags[i]);
-		fileFlags[i]->setChecked ( fileMask & (1<<i));
+		displayFlags.append (new QCheckBox(names[i],this));
+		displayBox->addWidget (displayFlags[i]);
+		displayFlags[i]->setChecked ( Navigator::instance()->getDisplayMask() & (1<<i));
+		expandFlags.append(new QCheckBox(names[i],this));
+		expandBox->addWidget (expandFlags[i]);
+		expandFlags[i]->setChecked ( Navigator::instance()->getExpandMask() & (1<<i));
 	}
-	settingsBox->addLayout (projectBox);
 
-	settingsBox->addLayout (fileBox);	
+	settingsBox->addLayout (displayBox);
+	settingsBox->addLayout (expandBox);
+
 	QHBoxLayout* applyBox = new QHBoxLayout (this);
-	vbox->addLayout (applyBox);
 	QPushButton* applyBtn = new QPushButton (tr("Apply"), this);
 	applyBox->addWidget (applyBtn, 0, Qt::AlignRight);
+	
+	vbox->addLayout (settingsBox);
+	vbox->addLayout (applyBox);
+	
 	connect ( applyBtn, SIGNAL ( clicked()), this, SLOT (setSettings()));
-*/
 }
 
 NavigatorSettings::~NavigatorSettings ()
 {
-	
 }
 
 void NavigatorSettings::setSettings()
 {
-/*	int projectMask = 0;
-	int fileMask = 0;
-	for (int i = 0; i < typesCount; i++)
+	int displayMask = 0;
+	int expandMask = 0;
+	for (int i = 0; i < names.size(); i++)
 	{
-		projectMask |=  (projectFlags[i]->isChecked())<<i;
-		fileMask |=  (fileFlags[i]->isChecked())<<i;
+		displayMask |=  (displayFlags[i]->isChecked())<<i;
+		expandMask |=  (expandFlags[i]->isChecked())<<i;
 	}
-	classBrouser->setProjectMask ( projectMask );
-	classBrouser->setFileMask ( fileMask );	
-*/
+	Navigator::instance()->setDisplayMask (displayMask);
+	Navigator::instance()->setExpandMask (expandMask);	
 }

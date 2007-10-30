@@ -14,11 +14,12 @@
 #include "EntityContainer.h"
 #include "ProjectsModel.h"
 #include "pWorkspace.h"
+#include "QSingleton.h"
 
 class ProjectItem;
 // I am not sure with the English language terminology, if you ( reader) know it better, correct it
 
-class Navigator : public BasePlugin 
+class Navigator : public BasePlugin, public QSingleton<Navigator>
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin )
@@ -27,31 +28,27 @@ private:
 	QHash <ProjectItem* , EntityContainer*> projectTrees;
 	QHash <QString , EntityContainer*> fileTrees;
 	QDockWidget* dockwgt;
-//	QTabWidget* tabw;
-//	QWidget* projectWidget ;
 	QWidget* fileWidget ;
-//	QVBoxLayout* projectBox;
 	QVBoxLayout* fileBox;
-//	EntityContainer* currProjectTreew;
 	EntityContainer* currFileTreew;
-//	QPushButton* projectLock;
 	QPushButton* fileLock;
+	int displayMask;
+	int expandMask;
 
 public:
 	Navigator ();
 	bool setEnabled (bool e);
-//	virtual QWidget* settingsWidget ();
+	QWidget* settingsWidget ();
 
-//	void setProjectMask (int mask);
-//	void setFileMask (int mask);
-	//
+	void setDisplayMask (int mask);
+	int getDisplayMask (void);
+	void setExpandMask (int mask);
+	int getExpandMask (void);
+
 public slots:
-	//void changeProjectView(AbstractProjectModel*, QModelIndex);
-	//void freeProjectView(AbstractProjectModel*);
-	//void changeFileView();
+	
     void showFile (const QString&);
 	void currentFileChanged(const QString);
-	void currentProjectChanged( ProjectItem* );
 };
 //
 

@@ -7,12 +7,11 @@ class EntityContainer  : public QTreeWidget
 {
 Q_OBJECT
 public:
-	EntityContainer ( QWidget* parent, QString tname, int tdisplayMask = -1);
+	EntityContainer ( QWidget* parent);
 	~EntityContainer ();
 	void updateFileInfo ( QString fileName );	
 	void deleteFileInfo ( QString file, QDateTime olderThan );
-	void setDisplayMask (int);
-	int getDisplayMask ();
+
 private:
 	void addTagsFromRecord (QString fileName, FileRecord*  fileRecord);
 
@@ -29,13 +28,6 @@ private:
 	void addChildInEntity ( Entity* parEnt, sTagEntryInfo* entry, QString fileName, QDateTime time );
 	//setting. If true - entity will allow to add to self only compex entityes and his members
 	bool complex_only;
-    /*Which entityes need to display, and wich not need configured by setting bits of mask. 
-    See EntityType enum for values. 
-    Example: If
-    displayMask == CONSTRUCTOR | DESTRUCTOR | FUNCTION
-    only constructors, destructors and functions will be displayed
-    */
-    int displayMask;
 
 	Entity* findEntityInContainer ( EntityType type, QString name );
 	Entity* findEntityInEntity (Entity* where, EntityType type, QString name );

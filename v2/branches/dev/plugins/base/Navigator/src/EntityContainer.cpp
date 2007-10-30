@@ -7,10 +7,10 @@
 #include "EntityContainer.h"
 #include "Ctags.h"
 #include "Entity.h"
+#include "Navigator.h"
 
-EntityContainer::EntityContainer ( QWidget* parent, QString tname, int tdisplayMask): QTreeWidget (parent)
+EntityContainer::EntityContainer ( QWidget* parent): QTreeWidget (parent)
 {
-	displayMask = tdisplayMask; // -1 == 0xff...ff
 	headerItem ()->setHidden (true);
 	connect (this, SIGNAL (clicked ( const QModelIndex)),this, SLOT (makeGoto()));
 	Entity::initIcons ();
@@ -57,19 +57,16 @@ void EntityContainer::deleteFileInfo ( QString file, QDateTime olderThan )
 
 void EntityContainer::addTagsFromRecord (QString fileName, FileRecord*  fileRecord)
 {
-	Entity* newEnt;
-	Entity* parEnt;
-	sTagEntryInfo* entry;
-	EntityType entType;
 	sTagEntryListItem* item = fileRecord->firstTagEntry;
+	int displayMask = Navigator::instance()->getDisplayMask();
 	while ( item != NULL )
 	{
-		entry = &item->tag;	
+		sTagEntryInfo* entry = &item->tag;	
 		item = item->next ;
-        entType = Entity::getEntityType (entry->kind);
-//         if ( not (entType & displayMask) )  FIXME uncomment
-//             continue; // if mask not set for it's entity - ignore it 
-		parEnt = getScopeEntity ( entry->extensionFields.scope[0], entry->extensionFields.scope[1]);
+        EntityType entType = Entity::getEntityType (entry->kind);
+        if ( not (entType & displayMask) )
+             continue; // if mask not set for it's entity - ignore it 
+		Entity* parEnt = getScopeEntity ( entry->extensionFields.scope[0], entry->extensionFields.scope[1]);
 		addChild ( parEnt, entry,fileName,fileRecord->time );
 	}
 };
@@ -106,7 +103,6 @@ Entity*EntityContainer::getScopeEntity ( QString scope0, QString scope1)
 		scopeEntity = new Entity ( UNKNOWN, scopes[0]);
 		addTopLevelItem ( scopeEntity);
 		//qDebug ()<<"created entity "<<scopes[0];
-		scopeEntity->setExpanded (true);
 	}
 	scopes.removeAt (0);
 	
@@ -128,7 +124,6 @@ Entity*EntityContainer::getScopeEntity ( QString scope0, QString scope1)
 			//qDebug ( qPrintable ("Not finded parent scope for "+scope0+'|'+scope1 ));
 			findResult = new Entity ( ttype, scopes[0]);
 			scopeEntity->addChild ( findResult);
-			findResult->setExpanded (true);
 		}
 		//qDebug ( qPrintable ("Finded parent scope for "+scopes[0]+" in "+name+ " it's "+findResult->name ));
 		scopeEntity = findResult;
@@ -166,19 +161,21 @@ Entity* EntityContainer::findEntityInEntity (Entity* where, EntityType type, QSt
 void EntityContainer::addChild ( Entity* parEnt,sTagEntryInfo* entry, QString fileName, QDateTime time )
 {
 	if (parEnt)
-	{
 		addChildInEntity ( parEnt, entry, fileName, time );
-		parEnt->setExpanded (true);
-	}
 	else
 		addChildInContainer ( entry, fileName, time);
+
 }
 
 void EntityContainer::addChildInContainer ( sTagEntryInfo* entry, QString fileName, QDateTime time )
 {
 	Entity* existing = findEntityInContainer ( Entity::getEntityType ( entry->kind), entry->name);
 	if ( not existing )
-		addTopLevelItem ( new Entity ( entry, fileName, time));
+	{
+		Entity* entity = new Entity ( entry, fileName, time);
+		addTopLevelItem (entity);
+		entity->setExpanded (Navigator::instance()->getExpandMask() & entity->type);
+	}
 	else
 		existing->updateSelf (entry, fileName, time);
 }
@@ -187,7 +184,11 @@ void EntityContainer::addChildInEntity ( Entity* parEnt, sTagEntryInfo* entry, Q
 {
 	Entity* existing = findEntityInEntity( parEnt,Entity::getEntityType ( entry->kind), entry->name);
 	if ( not existing )
-		parEnt->addChild( new Entity ( entry, fileName, time));
+	{
+		Entity* entity = new Entity ( entry, fileName, time);
+		parEnt->addChild (entity);
+		entity->setExpanded (Navigator::instance()->getExpandMask() & entity->type);
+	}
 	else
 		existing->updateSelf ( entry, fileName, time);
 }
@@ -198,12 +199,3 @@ void EntityContainer::makeGoto ()
 	Q_ASSERT (activeEntity);
 	pFileManager::instance()->goToLine(activeEntity->file, QPoint(0,activeEntity->line), false);
 }
-
-void EntityContainer::setDisplayMask (int mask)
-{
-	displayMask = mask;
-}
-int EntityContainer::getDisplayMask ()
-{
-	return displayMask;
-} 
