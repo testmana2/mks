@@ -45,10 +45,6 @@ class Q_MONKEY_EXPORT qSciShortcutsManager: public QObject, public QSingleton<qS
 public:
     qSciShortcutsManager ();
 
-    //will be called from pEditor constructor
-    //Method clearing QScintilla own shortcuts
-    void initEditor (pEditor*);
-
 protected:
     QList<SciAction> sactions;
 
