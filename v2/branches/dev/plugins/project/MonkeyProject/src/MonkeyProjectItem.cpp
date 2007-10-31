@@ -156,7 +156,7 @@ void MonkeyProjectItem::installCommands ()
     menu->setEnabled (true);    
     for (int i = 0; i < targets.size(); i++)
     {
-            targets[i].action = (pAction*)pMenuBar::instance()->action(QString("mBuild/aAction%1").arg(i),targets[i].text);
+            targets[i].action = (pAction*)pMenuBar::instance()->action(QString("mBuilder/aAction%1").arg(i),targets[i].text);
             targets[i].action->setEnabled ( !targets[i].command.isEmpty() );
             connect ( targets[i].action, SIGNAL (triggered()), this, SLOT (buildMenuTriggered()));
     }

@@ -41,7 +41,7 @@ qSciShortcutsManager::qSciShortcutsManager ()
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_CHARRIGHTRECTEXTEND", tr("Right rec text end"), QIcon(), QString("Shift+Alt+Right"), tr(""),QsciScintilla::SCI_CHARRIGHTRECTEXTEND};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_WORDLEFT", tr("Move on word left"), QIcon(), QString("Ctrl+Left"), tr(""),QsciScintilla::SCI_WORDLEFT};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_WORDLEFTEXTEND", tr("Extend selection on word left"), QIcon(), QString("Shift+Ctrl+Left"), tr(""),QsciScintilla::SCI_WORDLEFTEXTEND};
-    sactions << (SciAction) { "mEdit/mAllCommands/SCI_WORDRIGHT", tr("Move word right"), QIcon(), QString(""), tr("Ctrl+Right"),QsciScintilla::SCI_WORDRIGHT};
+    sactions << (SciAction) { "mEdit/mAllCommands/SCI_WORDRIGHT", tr("Move word right"), QIcon(), QString("Ctrl+Right"), tr(""),QsciScintilla::SCI_WORDRIGHT};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_WORDRIGHTEXTEND", tr("Extend selection on word right"), QIcon(), QString("Ctrl+Shift+Right"), tr(""),QsciScintilla::SCI_WORDRIGHTEXTEND};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_WORDLEFTEND", tr("Move word left end"), QIcon(), QString(""), tr(""),QsciScintilla::SCI_WORDLEFTEND};
     sactions << (SciAction) { "mEdit/mAllCommands/SCI_WORDLEFTENDEXTEND", tr("Extend selection on word left"), QIcon(), QString(""), tr(""),QsciScintilla::SCI_WORDLEFTENDEXTEND};
