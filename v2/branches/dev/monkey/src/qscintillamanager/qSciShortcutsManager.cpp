@@ -126,7 +126,7 @@ void qSciShortcutsManager::keyBoardShortcutPressed ()
     if (child)
     {
         pEditor* editor = child->currentEditor ();
-        if (editor)
+        if (editor and editor->hasFocus())
         {
             editor->SendScintilla (messageCode);
         }
