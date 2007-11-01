@@ -16,8 +16,16 @@
 #include <QHash>
 #include <QDateTime>
 
+pTemplatesManager::pTemplatesManager
+{
+	translations.insert ("Project", tr("Project"));
+	translations.insert ("File", tr("File"));
+	translations.insert ("Estra", tr("Extra"));
+}
+/*
 const QList<pTemplate> pTemplatesManager::defaultTemplates()
 {
+	QDir templatesPath = 
 	return QList<pTemplate>()
 	// C++ Files
 	<< pTemplate( "C++", pTemplate::ttFiles, "Header", "Simple Header", ":/templates/icons/templates/misc.png", unTokenize( QStringList( "$TEMPLATE_PATH$/C++/Files/header.h" ) ) )
@@ -40,7 +48,63 @@ const QList<pTemplate> pTemplatesManager::defaultTemplates()
 	<< pTemplate( "C++", pTemplate::ttProjects, "QMake C++ Dll", "QMake Based C++ Dll", ":/templates/icons/templates/qt_dll.png", unTokenize( QStringList( "$TEMPLATE_PATH$/C++/Projects/qt_cpp_dll.pro" ) ) )
 	<< pTemplate( "C++", pTemplate::ttProjects, "QMake C++ Static Lib", "QMake Based C++ Static Lib", ":/templates/icons/templates/qt_static_lib.png", unTokenize( QStringList( "$TEMPLATE_PATH$/C++/Projects/qt_cpp_static_lib.pro" ) ) );
 }
+*/
 
+QString pTemplatesManager::translate(QString s)
+{
+	return translations.contains (s)? translations[s] : s;
+}
+
+const QList<pTemplate> pTemplatesManager::getTemplatesFromDir (QString d)
+{
+	dirrectory = QDir (d);
+	result = QList<pTemplate>;
+	if ( !dirrecotry.exists())
+	{
+		qWarning ()<<"Dirrectory not exist: "<<d;
+		return;
+	}
+	dirrectory.setFilter (QDir::Dirs);
+	foreach (subdir, dirrectory.entryInfoList())
+	{
+		subdir
+		if (!QFileInfo (subdir.absoluteDir()+"/template.ini").exist())
+		{
+			qWarning () <<"Not exist 'template.ini' file in the "<<subdir.absoluteDir();
+		}
+		set = QSettings (subdir.absoluteDir()+"/template.ini", QSettings::IniFormat);
+		if (set.status() != QSettings::NoError)
+		{
+			qWarning ()<<"Error reading file "<<subdir.absoluteDir()+"/template.ini "<<"Ignored";
+			break;
+		}
+		pTemplate templ = { set.value ("Type","Wrong templates").toString(),
+							set.value ("Name","Wrong template").toString(),
+							set.value ("Desctiption","No desctiption").toString(),
+							QIcon (subdir.absoluteDir()+'/'+set.value ("Icon").toString()), //just an empty icon, if not exist
+							subdir,
+							set.value ("FileNames").toStringList(),
+							set.value ("ProjectType").toString(),
+							QHash(),
+							QHash(),
+							set.value ("FileNames").toStringList(),
+							QHash() }
+		QStringList textVariables = set.value ("TextVariables").toStringList();
+		foreach (var, textVariables)
+			templ.TextVariables.insert(var, set.value(var).toString());
+		
+		QStringList selectableVariables = set.value("SelecableVariables").toStringList();
+		foreach (var, selectableVariables)
+			templ.SelectableVariables.insert(var, set.value(var).toStringList());
+							
+		QStringList filesForRename = set.value ("FilesForRename").toStringList();
+		foreach (var, filesForRename)
+			templ.FilesForRename.insert(var, set.value(var).toString());
+		
+		result.append (pTemplate);
+	}
+	return result;
+}
 const QList<pTemplate> pTemplatesManager::availableTemplates()
 {
 	// get settings
