@@ -22,48 +22,41 @@ class ProjectItem;
 
 struct Q_MONKEY_EXPORT pTemplate
 {
-	enum TemplateType { ttUnknow = 0, ttFiles, ttProjects, ttExtras, ttEnd };
-	pTemplate() {}
-	pTemplate( const QString& l, TemplateType t, const QString& n, const QString& d, const QString& i, const QStringList& f )
-		: Language( l ), Type( t ), Name( n ), Description( d ), Icon( i ), FileNames( f ) {}
-
-	static void fillComboBox( QComboBox* cb )
-	{
-		// if no cb, cancel
-		if ( !cb )
-			return;
-		// clear combo
-		cb->clear();
-		// add entries
-		for ( int i = ttUnknow +1; i < pTemplate::ttEnd; i++ )
-			cb->addItem( stringForType( (pTemplate::TemplateType)i ), i );
-	}
-
-	static QString stringForType( pTemplate::TemplateType t )
-	{
-		switch( t )
-		{
-			case ttFiles:
-				return QObject::tr( "Files" );
-			case ttExtras:
-				return QObject::tr( "Extras" );
-			case ttProjects:
-				return QObject::tr( "Projects" );
-			default:
-				return QString();
-		}
-	}
-
 	QString Language;
-	TemplateType Type;
+	QString Type;
 	QString Name;
 	QString Description;
-	QString Icon;
+	QIcon Icon;
+	QString DirPath; //with '/' at end
 	QStringList FileNames;
+	QString ProjectType;  // name of Project plugin, just for projects
+	
+	QHash <QString,QStringList> TextVariables;
+	
+	/*
+	Will be displayed in the ComboBox. 
+	First value are default. Result will be returned in the TextVariables hash
+	*/
+	QHash <QString,QStringList> SelectableVariables;
+	
+	/*
+	Key - name of file in the template dir
+	Value - Name of text variable, that will be used as new name
+	Values of variables, used there, can't be empty. (Controled by UI)
+	*/
+	QHash <QString, QString> FilesForRename;
 };
 
-struct Q_MONKEY_EXPORT pTemplateContent
+class Q_MONKEY_EXPORT pTemplatesManager : public QSingleton
 {
+	
+public:
+	//return all availible types of templates ( "Files", "Projects" ...)
+	QStringList getTemplateTypes ();
+
+	//Can translate some known strings
+	const QString translate(QString);
+
 	QString Name;
 	QString Author;
 	QString License;
@@ -71,26 +64,25 @@ struct Q_MONKEY_EXPORT pTemplateContent
 	QString FileName;
 	QString Comment;
 	QString Content;
-};
 
-namespace pTemplatesManager
-{
-	const QList<pTemplate> defaultTemplates();
+	/*Templates, that are provided by Monkey Developer Studio team
+	(Templates from standard dirrecotry, for example /usr/share/monkey/templates)
+	*/
+	const QList<pTemplate> standardTemplates();
+	//Templates from other locations
 	const QList<pTemplate> availableTemplates();
 
-	void setTemplatesPath( const QString& );
-	const QString templatesPath();
+	QStringList userTemplatesPath; //fuck off incapsulating and useless methods
 
 	void setTemplatesHeader( const QString& );
 	const QString templatesHeader();
 
 	const QString tokenize( QString );
 	const QString unTokenize( QString );
-
-	const QStringList tokenize( QStringList );
-	const QStringList unTokenize( QStringList );
-
-	const QString processContent( pTemplateContent );
+	
+	void realiseTemplate (pTemplate)
+protected:
+	const QList<pTemplate> getTemplatesFromDir (QString);
+	QHash <QString, QString> translations;
 };
-
 #endif // PTEMPLATESMANAGER_H
