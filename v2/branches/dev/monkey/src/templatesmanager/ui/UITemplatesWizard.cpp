@@ -18,11 +18,12 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 {
     setupUi( this );
     setAttribute( Qt::WA_DeleteOnClose );
-    QList <pTemplate> mTemplates = pTemplatesManager::inscance()->getTemplates();
+	pTemplatesManager* mg = pTemplatesManager::instance();
+    mg->getTemplates();
     // fill available languages
     cbLanguages->addItems( getLanguages ());
     // fill type comboobox
-    pTemplate::fillComboBox( getTypes ());
+    cbTypes->addItems (getTypes ());
     // assign projects combobox
     mProjects = UIProjectsManager::instance()->model();
     cbProjects->setModel( mProjects->scopesProxy() );
@@ -41,8 +42,10 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
     cbOperators->addItems( QStringList() << "=" << "+=" << "-=" << "*=" << "~=" );
 }
 
-void UITemplatesWizard::setType( pTemplate::TemplateType t )
-{ cbTypes->setCurrentIndex( cbTypes->findData( t ) ); }
+void UITemplatesWizard::setType (QString t)
+{
+	cbTypes->setCurrentIndex( cbTypes->findData( t ) ); 
+}
 
 void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
 {
@@ -57,7 +60,7 @@ void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
     // create tempaltes
     foreach ( pTemplate t, mTemplates)
     {
-        if ( t.Language == s && pTemplate::stringForType( t.Type ) == cbTypes->currentText() )
+        if ( t.Language == s && t.Type == cbTypes->currentText() )
         {
             it = new QListWidgetItem( lwTemplates );
             it->setIcon( QIcon( t.Icon ) );
@@ -143,7 +146,7 @@ bool UITemplatesWizard::checkTemplates()
             information( tr( "Add To Project..." ), tr( "You need to select a project to add to." ), this );
             return false;
         }
-        else if ( cbTypes->itemData( cbTypes->currentIndex() ).toInt() == pTemplate::ttProjects && !it->isProjectsContainer() )
+        else if ( cbTypes->currentText() == "Projects" && !it->isProjectsContainer() )
         {
             information( tr( "Add To Project..." ), tr( "The project you select is not a projects container." ), this );
             return false;
@@ -205,6 +208,7 @@ void UITemplatesWizard::generatePreview()
 
 void UITemplatesWizard::accept()
 {
+/*
     // get current template type
     pTemplate::TemplateType t = (pTemplate::TemplateType)cbTypes->itemData( cbTypes->currentIndex() ).toInt();
     // get project item
@@ -265,4 +269,5 @@ void UITemplatesWizard::accept()
     s->setValue( "Recents/FileWizard/Open", cbOpen->isChecked() );
     // close dialog
     QDialog::accept();
+*/
 }

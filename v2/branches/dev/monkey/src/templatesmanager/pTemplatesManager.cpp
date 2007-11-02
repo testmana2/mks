@@ -74,7 +74,7 @@ const QList<pTemplate> pTemplatesManager::getTemplatesFromDir (QString d)
     return result;
 }
 
-const QList<pTemplate> pTemplatesManager::getTemplates()
+TemplateList pTemplatesManager::getTemplates()
 //FIXME read settings for path.
 {
     return getTemplatesFromDir (QApplication::applicationDirPath ()+"/templates");

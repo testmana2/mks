@@ -11,13 +11,10 @@ class ProjectsModel;
 class Q_MONKEY_EXPORT UITemplatesWizard : public QDialog, public Ui::UITemplatesWizard, public QSingleton<UITemplatesWizard>
 {
     Q_OBJECT
-    friend class QSingleton<UITemplatesWizard>;
     
-public:
-    void setType( pTemplate::TemplateType );
-
 private:
-    QList <pTemplate> mTemplates;
+	void setType(QString type);
+    TemplateList mTemplates;
     ProjectsModel* mProjects;
     UITemplatesWizard( QWidget* = 0 );
     QStringList getLanguages ();

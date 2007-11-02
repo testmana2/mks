@@ -46,17 +46,21 @@ struct Q_MONKEY_EXPORT pTemplate
     QHash <QString,QStringList> SelectableVariables;
 };
 
+typedef QList<pTemplate> TemplateList;
+
 class Q_MONKEY_EXPORT pTemplatesManager : public QObject, 
                                 public QSingleton<pTemplatesManager>
 {
-    
-public:
+	Q_OBJECT
+	friend class QSingleton<pTemplatesManager>;
+private:
     pTemplatesManager ();
 
+public:
     //Can translate some known strings
     //const QString translate(QString);
 
-    const QList<pTemplate> getTemplates();
+    TemplateList getTemplates();
 
     //FIXME: remove this line and line below
     //I temporary removed headers processing. We must use some other way. 
@@ -69,4 +73,5 @@ protected:
     const QList<pTemplate> getTemplatesFromDir (QString);
     //QHash <QString, QString> translations;
 };
+
 #endif // PTEMPLATESMANAGER_H
