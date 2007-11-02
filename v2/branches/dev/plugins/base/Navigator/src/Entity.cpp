@@ -160,12 +160,12 @@ void Entity::updateGUI ()
         case NAMESPACE :
             setIcon (0,iNAMESPACE);
             tip = "Namespace";
-            newText = QString("namespace ")+name;
+            newText = name+ " namespace";
             break;
         case CLASS:
             setIcon (0,iCLASS);
             tip = "Class";
-            newText = QString("class ")+name;
+            newText = name + " class";
             break;
         case CONSTRUCTOR:
             tip = "Constructor";
@@ -176,7 +176,7 @@ void Entity::updateGUI ()
         case ENUM:
             tip = "Enum";
             setIcon (0,iENUM);
-            newText = QString("enum ")+name;
+            newText = name + " enum";
             break;
         case ENUMERATOR:
             tip = "Enumerator";
@@ -190,7 +190,7 @@ void Entity::updateGUI ()
             break;
         case MACRO:
             tip = "Macro";
-            newText = QString("macro ")+name;
+            newText = name + " macro";
             break;
         case MEMBER:
             tip = "Member";
@@ -202,16 +202,16 @@ void Entity::updateGUI ()
         case STRUCT:
             tip = "Struct";
             setIcon (0,iSTRUCT);
-            newText = QString("struct ")+name;
+            newText = name + " struct";
             break;
         case TYPEDEF:
             tip = "Typedef";
             setIcon (0,iTYPEDEF);
-            newText = QString("typedef ")+name;
+            newText = name + " typedef";
             break;
         case UNION:
             tip = "Union";
-            newText = QString("union ")+name;
+            newText = name + " union";
             break;
         case VARIABLE:
             tip = "Variable";
