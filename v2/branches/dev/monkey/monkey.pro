@@ -103,7 +103,8 @@ HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/projectsmanager/ProjectsModel.h \
 	src/projectsmanager/ProjectsProxy.h \
 	src/projectsmanager/ProjectItem.h \
-	src/ctags/Ctags.h
+	src/ctags/Ctags.h \
+	src/variablesmanager/VariablesManager.h
 
 SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
@@ -139,6 +140,7 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/projectsmanager/ProjectsProxy.cpp \
 	src/projectsmanager/ProjectItem.cpp \
 	src/ctags/Ctags.cpp \
+	src/variablesmanager/VariablesManager.cpp \
 	src/main.cpp
 
 mac:SOURCES	*= src/toolsmanager/pDesktopApplications_mac.cpp
