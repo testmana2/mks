@@ -42,3 +42,6 @@ INCLUDEPATH	*= $${QPRO_PWD}/src/projectsmanager $${QPRO_PWD}/src/projectsmanager
 
 # Ctags
 INCLUDEPATH	*= $${QPRO_PWD}/src/ctags
+
+# Variables Manager
+INCLUDEPATH	*= $${QPRO_PWD}/src/projectsmanager $${QPRO_PWD}/src/variablesmanager

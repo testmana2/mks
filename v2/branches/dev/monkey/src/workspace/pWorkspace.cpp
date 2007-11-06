@@ -222,9 +222,10 @@ void pWorkspace::internal_aboutToCloseTab( int i, QCloseEvent* e )
 // file menu
 void pWorkspace::fileNew_triggered()
 {
-    UITemplatesWizard* d = UITemplatesWizard::instance( this );
+/*    UITemplatesWizard* d = UITemplatesWizard::instance( this );
     d->setType( pTemplate::ttFiles );
     d->exec();
+*/
 }
 
 void pWorkspace::fileOpen_triggered()

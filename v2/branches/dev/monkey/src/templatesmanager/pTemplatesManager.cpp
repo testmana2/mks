@@ -80,3 +80,9 @@ TemplateList pTemplatesManager::getTemplates()
     return getTemplatesFromDir (QApplication::applicationDirPath ()+"/templates");
 }
 
+QString pTemplatesManager::templatesPath ()
+{
+    return pSettings::instance()->value( "Templates/DefaultDirectory", 
+                QApplication::applicationDirPath().append( "/../templates" )
+                /*"$HOME$/.Monkey Studio/Templates"*/ ).toString() ;
+}

@@ -18,12 +18,12 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 {
     setupUi( this );
     setAttribute( Qt::WA_DeleteOnClose );
-	pTemplatesManager* mg = pTemplatesManager::instance();
+    pTemplatesManager* mg = pTemplatesManager::instance();
     mg->getTemplates();
     // fill available languages
-    cbLanguages->addItems( getLanguages ());
+//    cbLanguages->addItems( getLanguages ());
     // fill type comboobox
-    cbTypes->addItems (getTypes ());
+//    cbTypes->addItems (getTypes ());
     // assign projects combobox
     mProjects = UIProjectsManager::instance()->model();
     cbProjects->setModel( mProjects->scopesProxy() );
@@ -44,7 +44,7 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 
 void UITemplatesWizard::setType (QString t)
 {
-	cbTypes->setCurrentIndex( cbTypes->findData( t ) ); 
+    cbTypes->setCurrentIndex( cbTypes->findData( t ) ); 
 }
 
 void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
@@ -76,7 +76,7 @@ void UITemplatesWizard::on_cbTypes_currentIndexChanged( const QString& )
 
 void UITemplatesWizard::on_swPages_currentChanged( int i )
 {
-    switch ( i )
+/*    switch ( i )
     {
         case 0:
             lInformations->setText( tr( "Templates" ) );
@@ -90,7 +90,7 @@ void UITemplatesWizard::on_swPages_currentChanged( int i )
     pbPrevious->setEnabled( i != 0 );
     pbNext->setText( tr( "Next" ) );
     if ( swPages->currentIndex() == swPages->count() -1 )
-        pbNext->setText( tr( "Finish" ) );
+        pbNext->setText( tr( "Finish" ) );*/
 }
 
 void UITemplatesWizard::on_tbDestination_clicked()
@@ -271,3 +271,6 @@ void UITemplatesWizard::accept()
     QDialog::accept();
 */
 }
+
+void UITemplatesWizard::generatePreview ()
+{};
