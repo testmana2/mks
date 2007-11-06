@@ -44,6 +44,7 @@ struct Q_MONKEY_EXPORT pTemplate
     First value are default. Result will be returned in the TextVariables hash
     */
     QHash <QString,QStringList> SelectableVariables;
+
 };
 
 typedef QList<pTemplate> TemplateList;
@@ -51,8 +52,8 @@ typedef QList<pTemplate> TemplateList;
 class Q_MONKEY_EXPORT pTemplatesManager : public QObject, 
                                 public QSingleton<pTemplatesManager>
 {
-	Q_OBJECT
-	friend class QSingleton<pTemplatesManager>;
+    Q_OBJECT
+    friend class QSingleton<pTemplatesManager>;
 private:
     pTemplatesManager ();
 
@@ -68,6 +69,8 @@ public:
     //(or must be commented by language-specific comment)
 
     void realiseTemplate (pTemplate);
+
+    QString templatesPath ();
 protected:
 
     const QList<pTemplate> getTemplatesFromDir (QString);
