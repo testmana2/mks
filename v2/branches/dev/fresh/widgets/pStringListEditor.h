@@ -1,9 +1,9 @@
 /****************************************************************************
 **
 ** 		Created using Monkey Studio v1.8.0.0
-** Author    : I am
-** Project   : asdf
-** FileName  : asdf.h
+** Author    : Kopats Andrei aka hlamer  <hlamer@tut.by>
+** Project   : 
+** FileName  : pStringListEditor.h
 ** Date      : 2007-11-08T14:57:05
 ** License   : GPL
 ** Comment   : Your comment here
@@ -12,8 +12,8 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#ifndef ASDF_H
-#define ASDF_H
+#ifndef PSTRINGLISTEDITOR__H
+#define PSTRINGLISTEDITOR__H
 
 #include <QGroupBox>
 #include <QListWidget>
@@ -23,12 +23,12 @@ class pStringListEditor : public QGroupBox
     Q_OBJECT
 public:
 	pStringListEditor(QWidget* parent = NULL);
-	~pStringListEditor();
+	virtual ~pStringListEditor();
 
     QListWidget* list;
 
 protected slots:
-	void onActionTriggered (QAction*);
+	virtual void onActionTriggered (QAction*);
 };
 
-#endif // ASDF_H
+#endif // PSTRINGLISTEDITOR__H

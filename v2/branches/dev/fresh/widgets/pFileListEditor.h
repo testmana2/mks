@@ -1,9 +1,9 @@
 /****************************************************************************
 **
 ** 		Created using Monkey Studio v1.8.0.0
-** Author    : I am
-** Project   : asdf
-** FileName  : asdf.h
+** Author    : Kopats Andrei aka hlamer  <hlamer@tut.by>
+** Project   : 
+** FileName  : pFileListEditor.h
 ** Date      : 2007-11-08T14:57:05
 ** License   : GPL
 ** Comment   : Your comment here
@@ -12,23 +12,26 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#ifndef ASDF_H
-#define ASDF_H
+#ifndef PFILELISTEDITOR__H
+#define PFILELISTEDITOR__H
 
-#include <QGroupBox>
-#include <QListWidget>
+#include <QFileDialog>
 
-class pStringListEditor : public QGroupBox
+#include "pStringListEditor.h"
+
+class pFileListEditor: public pStringListEditor
 {
     Q_OBJECT
 public:
-	pStringListEditor(QWidget* parent = NULL);
-	~pStringListEditor();
-
-    QListWidget* list;
+	pFileListEditor(QString dir, QFileDialog::FileMode fm, QString filter, QWidget* parent = NULL);
+	virtual  ~pFileListEditor();
 
 protected slots:
 	void onActionTriggered (QAction*);
+private:
+	QString mDir;
+	QFileDialog::FileMode mFileMode;
+	QString mFilter;
 };
 
 #endif // ASDF_H
