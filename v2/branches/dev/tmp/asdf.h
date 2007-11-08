@@ -16,6 +16,7 @@
 #define ASDF_H
 
 #include <QGroupBox>
+#include <QListWidget>
 
 class pStringListEditor : public QGroupBox
 {
@@ -24,8 +25,15 @@ public:
 	pStringListEditor(QWidget* parent = NULL);
 	~pStringListEditor();
 
-protected:
     QListWidget* list;
+
+protected slots:
+  	void on_Add_clicked();
+	void on_Remove_clicked();
+	void on_Clear_clicked();
+	void on_Up_clicked();
+	void on_Down_clicked();
+
 };
 
 #endif // ASDF_H
