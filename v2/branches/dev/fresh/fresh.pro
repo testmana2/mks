@@ -50,3 +50,11 @@ SOURCES	+= pTabbedMainWindow.cpp
 # pTreeComboBox
 HEADERS	+= pTreeComboBox.h
 SOURCES	+= pTreeComboBox.cpp
+# pStringListEditor
+HEADERS	+= pStringListEditor.h
+SOURCES	+= pStringListEditor.cpp
+# pFileListEditor
+HEADERS	+= pFileListEditor.h
+SOURCES	+= pFileListEditor.cpp
+
+RESOURCES += resources.qrc
