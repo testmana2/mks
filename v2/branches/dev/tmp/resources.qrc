@@ -1,0 +1,9 @@
+<RCC>
+	<qresource>
+		<file>icons/add.png</file>
+		<file>icons/down.png</file>
+		<file>icons/remove.png</file>
+		<file>icons/up.png</file>
+		<file>icons/update.png</file>
+	</qresource>
+</RCC>
