@@ -63,7 +63,7 @@ bool CtagsWrapper::updateFileRecord (QString file) //reparse file if need, or pa
 FileRecord* CtagsWrapper::GetTagsForFile (QString file )
 {
 	FileRecord* result = fileRecords[file];
-	if ( not result )  //not parsed yet
+	if ( !result )  //not parsed yet
 	{
 		result = new FileRecord;
 		result->firstTagEntry = NULL;

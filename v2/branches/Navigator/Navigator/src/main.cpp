@@ -12,13 +12,13 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
-#include <QApplication>
+#include <QtGui>
 #include "EntityContainer.h"
 int main( int argc, char** argv )
 {
 	QApplication a( argc, argv );
 	EntityContainer c;
 	c.show();
-	c.updateFileInfo( "./CtagsWrapper/CtagsWrapper.h" );
+	c.updateFileInfo( QDir::toNativeSeparators( "./CtagsWrapper/CtagsWrapper.h" ) );
 	return a.exec();
 }
