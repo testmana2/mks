@@ -48,6 +48,9 @@
 #include "sort.h"
 #include "strlist.h"
 
+// PASNOX
+#include "exuberantCtags.h"
+
 /*
 *   MACROS
 */
@@ -808,6 +811,11 @@ static int writeCtagsEntry (const tagEntryInfo *const tag)
 
 extern void makeTagEntry (const tagEntryInfo *const tag)
 {
+	// PASNOX
+	addEntryToList( tag );
+	return;
+	
+	// ORIGINAL
 	Assert (tag->name != NULL);
 	if (tag->name [0] == '\0')
 		error (WARNING, "ignoring null tag in %s", vStringValue (File.name));
