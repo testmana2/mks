@@ -22,7 +22,7 @@ class pStringListEditor : public QGroupBox
 {
     Q_OBJECT
 public:
-	pStringListEditor(QWidget* parent = NULL);
+	pStringListEditor(QString title, QWidget* parent = NULL);
 	virtual ~pStringListEditor();
 
     QListWidget* list;

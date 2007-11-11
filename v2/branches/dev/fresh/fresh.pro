@@ -56,5 +56,3 @@ SOURCES	+= pStringListEditor.cpp
 # pFileListEditor
 HEADERS	+= pFileListEditor.h
 SOURCES	+= pFileListEditor.cpp
-
-RESOURCES += resources.qrc

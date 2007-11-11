@@ -1,3 +1,4 @@
+#include "general.h"
 #include "entry.h"
 #include "string.h"
 #include "parse.h"
@@ -5,8 +6,12 @@
 
 extern TagEntryListItem* parseFile ( const char* fileName, const char* langName)
 {
-	firstTagEntry = NULL; // generate new list
+	const parserDefinition*  language;
 	langType lang; 
+	unsigned int passCount;
+	boolean retried;
+
+	firstTagEntry = NULL; // generate new list
 	if ( (langName != NULL ) && (strlen ( langName) != 0 ))
 		lang = getNamedLanguage ( langName );
 	else
@@ -16,14 +21,14 @@ extern TagEntryListItem* parseFile ( const char* fileName, const char* langName)
 		printf ( "Will not parse %s\n",fileName);
 		return NULL;
 	}
-	const parserDefinition* const language = LanguageTable [lang];
+	language = LanguageTable [lang];
 	if ( language == NULL)
 		return NULL;
 	if (!fileOpen (fileName, lang))
 		return NULL;
 	
-	unsigned int passCount = 0;
-	boolean retried = FALSE;
+	passCount = 0;
+	retried = FALSE;
 	if (language->parser != NULL)
 		language->parser ();
 	else if (language->parser2 != NULL)

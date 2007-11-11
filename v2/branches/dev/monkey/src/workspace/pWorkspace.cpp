@@ -21,6 +21,7 @@
 #include "pMonkeyStudio.h"
 #include "pTemplatesManager.h"
 #include "UIProjectsManager.h"
+#include "TemplatesEditor.h"
 
 #include "pChild.h"
 #include "pEditor.h"
@@ -341,6 +342,9 @@ void pWorkspace::fileExit_triggered()
 // edit menu
 void pWorkspace::editSettings_triggered()
 { UISettings::instance( this )->exec(); }
+
+void pWorkspace::editTemplates_triggered()
+{ TemplatesEditor(this).exec(); }
 
 void pWorkspace::editUndo_triggered()
 {

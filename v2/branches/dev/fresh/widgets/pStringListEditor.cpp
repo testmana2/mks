@@ -21,12 +21,12 @@
 #include <QList>
 #include <QAction>
 
-pStringListEditor::pStringListEditor (QWidget* parent) : QGroupBox (parent)
+pStringListEditor::pStringListEditor (QString title, QWidget* parent) : QGroupBox (title, parent)
 {
     QVBoxLayout* vbox = new QVBoxLayout (this);
 	QList<QString> names; names << "add"<<"remove"<<"clear"<<"up"<<"down";
 	QList<QString> hints; hints << tr("Add item")<<tr("Remove item")<<tr ("Clean list")<<tr("Move item up")<<tr("Move item down");
-	QList<QString> icons; icons << ":/icons/add.png" << ":/icons/remove.png" << ":/icons/update.png" << ":/icons/up.png" << ":/icons/down.png";
+	QList<QString> icons; icons << ":/tools/icons/tools/add.png" << ":/tools/icons/tools/remove.png" << ":/tools/icons/tools/update.png" << ":/tools/icons/tools/up.png" << ":/tools/icons/tools/down.png";
 	
     vbox->setSpacing(0);
     QToolBar* buttons = new QToolBar (this);

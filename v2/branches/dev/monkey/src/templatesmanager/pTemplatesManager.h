@@ -16,6 +16,7 @@
 #include <QApplication>
 #include <QStringList>
 #include <QComboBox>
+#include <QStringList>
 
 class UITemplatesWizard;
 class pTemplatePreviewer;
@@ -70,10 +71,12 @@ public:
 
     void realiseTemplate (pTemplate);
 
-    QString templatesPath ();
+    QStringList getTemplatesPath ();
+	void setTemplatesPath (QStringList);
+
 protected:
 
-    const QList<pTemplate> getTemplatesFromDir (QString);
+    TemplateList getTemplatesFromDir (QString);
     //QHash <QString, QString> translations;
 };
 

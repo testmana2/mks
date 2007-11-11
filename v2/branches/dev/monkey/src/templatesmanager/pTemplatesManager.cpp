@@ -29,7 +29,7 @@ pTemplatesManager::pTemplatesManager ()
     return translations.contains (s)? translations[s] : s;
 }*/
 
-const QList<pTemplate> pTemplatesManager::getTemplatesFromDir (QString d)
+TemplateList pTemplatesManager::getTemplatesFromDir (QString d)
 {
     QDir dirrectory (d);
     QList<pTemplate> result;
@@ -75,14 +75,22 @@ const QList<pTemplate> pTemplatesManager::getTemplatesFromDir (QString d)
 }
 
 TemplateList pTemplatesManager::getTemplates()
-//FIXME read settings for path.
 {
-    return getTemplatesFromDir (QApplication::applicationDirPath ()+"/templates");
+	TemplateList result;
+	foreach (QString dir, getTemplatesPath ())
+		result << getTemplatesFromDir (dir);
+	return result;
 }
 
-QString pTemplatesManager::templatesPath ()
+QStringList pTemplatesManager::getTemplatesPath ()
 {
-    return pSettings::instance()->value( "Templates/DefaultDirectory", 
-                QApplication::applicationDirPath().append( "/../templates" )
-                /*"$HOME$/.Monkey Studio/Templates"*/ ).toString() ;
+    return pSettings::instance()->value
+				("Templates/TemplatePath", 
+					QStringList(QApplication::applicationDirPath().append( "/../templates" ))
+				).toStringList() ;
+}
+
+void pTemplatesManager::setTemplatesPath (QStringList path)
+{
+    pSettings::instance()->setValue("Templates/TemplatePath", QVariant(path));
 }
