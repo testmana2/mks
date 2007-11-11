@@ -3,8 +3,8 @@
 
 #include "pFileListEditor.h"
 
-pFileListEditor::pFileListEditor(QString dir, QFileDialog::FileMode fm, QString filter, QWidget* parent):
-	mDir (dir), mFileMode (fm), mFilter (filter), pStringListEditor (parent)
+pFileListEditor::pFileListEditor(QString title, QFileDialog::FileMode fm, QString filter, QWidget* parent):
+	pStringListEditor(title, parent), mFileMode (fm), mFilter (filter)
 {}
 
 pFileListEditor::~pFileListEditor()

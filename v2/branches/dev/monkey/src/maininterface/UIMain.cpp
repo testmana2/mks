@@ -103,6 +103,7 @@ void UIMain::initMenuBar()
     mb->menu( "mEdit", tr( "&Edit" ) );
     mb->beginGroup( "mEdit" );
         mb->action( "aSettings", tr( "Settings..." ), QIcon( ":/edit/icons/edit/settings.png" ), "", tr( "Edit the application settings" ) );
+        mb->action( "aTemplates", tr( "Edit templates..." ), QIcon(""), "", tr( "Edit file and project templates" ) );
         mb->action( "aShortcutsEditor", tr( "Shortcuts Editor..." ), QIcon( ":/edit/icons/edit/shortcuts.png" ), tr( "Ctrl+E" ), tr( "Edit the application shortcuts" ) );
         mb->action( "aSeparator1" );
         mb->action( "aUndo", tr( "&Undo" ), QIcon( ":/edit/icons/edit/undo.png" ), tr( "Ctrl+Z" ), tr( "Undo" ) )->setEnabled( false );
@@ -264,6 +265,7 @@ void UIMain::initConnections()
     connect( menuBar()->action( "mFile/aQuit" ), SIGNAL( triggered() ), workspace(), SLOT( fileExit_triggered() ) );
     // edit connection
     connect( menuBar()->action( "mEdit/aSettings" ), SIGNAL( triggered() ), workspace(), SLOT( editSettings_triggered() ) );
+    connect( menuBar()->action( "mEdit/aTemplates" ), SIGNAL( triggered() ), workspace(), SLOT( editTemplates_triggered() ) );
     connect( menuBar()->action( "mEdit/aShortcutsEditor" ), SIGNAL( triggered() ), pActionManager::instance(), SLOT( showSettings() ) );
     connect( menuBar()->action( "mEdit/aUndo" ), SIGNAL( triggered() ), workspace(), SLOT( editUndo_triggered() ) );
     connect( menuBar()->action( "mEdit/aRedo" ), SIGNAL( triggered() ), workspace(), SLOT( editRedo_triggered() ) );

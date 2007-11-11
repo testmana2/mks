@@ -23,15 +23,15 @@ class pFileListEditor: public pStringListEditor
 {
     Q_OBJECT
 public:
-	pFileListEditor(QString dir, QFileDialog::FileMode fm, QString filter, QWidget* parent = NULL);
+	pFileListEditor(QString title, QFileDialog::FileMode fm, QString filter, QWidget* parent = NULL);
 	virtual  ~pFileListEditor();
 
 protected slots:
 	void onActionTriggered (QAction*);
 private:
+	QString mFilter;
 	QString mDir;
 	QFileDialog::FileMode mFileMode;
-	QString mFilter;
 };
 
-#endif // ASDF_H
+#endif //PFILELISTEDITOR__H

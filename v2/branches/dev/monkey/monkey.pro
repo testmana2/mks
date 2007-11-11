@@ -80,6 +80,7 @@ HEADERS	*= src/maininterface/ui/UITranslator.h \
 	src/templatesmanager/pTemplatesManager.h \
 	src/templatesmanager/pTemplatePreviewer.h \
 #	src/templatesmanager/ui/UIEditTemplate.h \
+	src/templatesmanager/TemplatesEditor.h \
 	src/templatesmanager/ui/UITemplatesWizard.h \
 	src/pMonkeyStudio.h \
 	src/toolsmanager/pDesktopApplications.h \
@@ -123,6 +124,7 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/templatesmanager/pTemplatesManager.cpp \
 	src/templatesmanager/pTemplatePreviewer.cpp \
 #	src/templatesmanager/ui/UIEditTemplate.cpp \
+	src/templatesmanager/TemplatesEditor.cpp \
 	src/templatesmanager/ui/UITemplatesWizard.cpp \
 	src/pMonkeyStudio.cpp \
 	src/toolsmanager/pDesktopApplications.cpp \
