@@ -23,6 +23,7 @@
 #include <QGroupBox>
 #include "pFileListEditor.h"
 #include "pStringListEditor.h"
+#include "pTemplatesManager.h"
 
 class TemplatesEditor : public QDialog
 {
@@ -43,8 +44,12 @@ private:
 	QComboBox* mLanguage;
 	QComboBox* mType;
 	pFileListEditor* mFiles;
+	QGroupBox* paramsBox;
 	pStringListEditor* mVariables;
+	pStringListEditor* mValues;
 	QLineEdit* mFullName;
+	QLineEdit* mScript;
+	QPushButton* mScriptBtn;
 
 	void createGUI ();
 private slots:
