@@ -41,6 +41,7 @@ pStringListEditor::pStringListEditor (QString title, QWidget* parent) : QGroupBo
     vbox->addWidget (buttons);
 	
     list = new QListWidget (this);
+	list->setMinimumHeight (40);
     vbox->addWidget (list);
 }
 

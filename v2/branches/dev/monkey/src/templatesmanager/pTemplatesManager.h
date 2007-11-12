@@ -74,8 +74,6 @@ public:
     QStringList getTemplatesPath ();
 	void setTemplatesPath (QStringList);
 
-protected:
-
     TemplateList getTemplatesFromDir (QString);
     //QHash <QString, QString> translations;
 };
