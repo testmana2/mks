@@ -38,9 +38,10 @@ TemplateList pTemplatesManager::getTemplatesFromDir (QString d)
         qWarning ()<<"Dirrectory not exist: "<<d;
         return result;
     }
-    dirrectory.setFilter (QDir::Dirs);
+    dirrectory.setFilter (QDir::Dirs|QDir::NoDotAndDotDot);
     foreach (QFileInfo subdir, dirrectory.entryInfoList())
     {
+		qWarning () <<"Checking dirrectory" << subdir.absolutePath();
         if (!QFileInfo (subdir.absolutePath()+QString("/template.ini")).exists())
         {
             qWarning () <<"Not exist 'template.ini' file in the "<<subdir.absoluteDir();
@@ -51,7 +52,7 @@ TemplateList pTemplatesManager::getTemplatesFromDir (QString d)
             qWarning ()<<"Error reading file "<<subdir.absolutePath()+"/template.ini "<<"Ignored";
             break;
         }
-        pTemplate templ = { set.value ("Name","Wrong template").toString(),
+        pTemplate templ = { subdir.fileName (),
                             set.value ("Language","Other").toString(),
                             set.value ("Type","Wrong template path").toString(),
                             set.value ("Desctiption","No desctiption").toString(),
