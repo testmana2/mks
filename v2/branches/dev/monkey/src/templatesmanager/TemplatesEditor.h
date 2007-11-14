@@ -27,6 +27,7 @@
 
 class TemplatesEditor : public QDialog
 {
+Q_OBJECT
 public:
 	TemplatesEditor(QWidget* parent = NULL);
 	~TemplatesEditor();
@@ -37,7 +38,6 @@ private:
 	pStringListEditor* mTemplatesList;
 	QGroupBox* mEditSpace;
 	QLineEdit* mName;
-	QLineEdit* mDirectoryName;
 	QLineEdit* mIcon;
 	QPushButton* mIconBtn;
 	QTextEdit* mDesctiption;

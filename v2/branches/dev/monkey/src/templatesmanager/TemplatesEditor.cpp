@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QDebug>
 
 #include "TemplatesEditor.h"
 #include "pTemplatesManager.h"
@@ -41,11 +42,12 @@ void TemplatesEditor::createGUI()
 	vbox->addWidget (mTemplatesPath);
 	
 	mTemplatesList = new pStringListEditor(tr("T&emplates list"));
+	mTemplatesList->setMinimumHeight (150);
 	vbox->addWidget (mTemplatesList);
 	
 	mEditSpace = new QGroupBox (tr("Te&mplate"));
-	QVBoxLayout* vbox1 = new QVBoxLayout ();
-		QHBoxLayout* hbox1 = new QHBoxLayout ();
+	QGridLayout* box = new QGridLayout ();
+/*		QHBoxLayout* hbox1 = new QHBoxLayout ();
 			QVBoxLayout* nameLayout = new QVBoxLayout ();
 				QLabel* nameLabel = new QLabel (tr("&Name"));
 				nameLayout->addWidget (nameLabel);
@@ -65,40 +67,42 @@ void TemplatesEditor::createGUI()
 			hbox1->addLayout (dirLayout);
 			
 		vbox1->addLayout (hbox1);
-		
+*/		
 		QLabel* iconLabel = new QLabel (tr("&Template icon"));
-		vbox1->addWidget (iconLabel);
+		box->addWidget (iconLabel,0,0);
+				
+		mIcon = new QLineEdit ();
+		iconLabel->setBuddy (mIcon);
+		box->addWidget (mIcon,1,0);
+				
+		mIconBtn = new QPushButton ();
+		mIconBtn->setIcon (QIcon(":/file/icons/file/open.png"));
+		box->addWidget (mIconBtn,1,1);
 			
-		QHBoxLayout* iconLayout = new QHBoxLayout ();
-			mIcon = new QLineEdit ();
-			iconLabel->setBuddy (mIcon);
-			iconLayout->addWidget (mIcon);
-			
-			mIconBtn = new QPushButton ();
-			mIconBtn->setIcon (QIcon(":/file/icons/file/open.png"));
-			iconLayout->addWidget (mIconBtn);
-		vbox1->addLayout (iconLayout);
-		
-		QHBoxLayout* hbox3 = new QHBoxLayout ();
-			QVBoxLayout* descBox = new QVBoxLayout ();
-				QLabel* descLabel = new QLabel (tr("Template description"));
-				descBox->addWidget (descLabel);
+		QLabel* scriptLabel = new QLabel (tr("&Sctipt for configuring template"));
+		box->addWidget (scriptLabel,0,2);
 
-				mDesctiption = new QTextEdit ();
-				descBox->addWidget (mDesctiption);
-			hbox3->addLayout (descBox);
+		mScript = new QLineEdit ();
+		scriptLabel->setBuddy (mScript);
+		box->addWidget (mScript,1,2);
+				
+		mScriptBtn = new QPushButton ();
+		mScriptBtn->setIcon (QIcon(":/file/icons/file/open.png"));
+		box->addWidget (mScriptBtn,1,3);
 		
-			QVBoxLayout* filesBox = new QVBoxLayout ();
-				mFiles = new pFileListEditor (tr("Template file(s)"), QFileDialog::ExistingFiles, "*");
-				filesBox->addWidget (mFiles);
-			hbox3->addLayout (filesBox);
-		vbox1->addLayout (hbox3);
+		QLabel* descLabel = new QLabel (tr("Template description"));
+		box->addWidget (descLabel,2,0);
+
+		mDesctiption = new QTextEdit ();
+		box->addWidget (mDesctiption,3,0,1,2);
 		
-		QHBoxLayout* hbox4 = new QHBoxLayout ();
-			mVariables= new pStringListEditor (tr("Template variables"));
-			hbox4->addWidget (mVariables);
+		mFiles = new pFileListEditor (tr("Template file(s)"), QFileDialog::ExistingFiles, "*");
+		box->addWidget (mFiles,3,2,1,2);
+		
+		mVariables= new pStringListEditor (tr("Template variables"));
+		box->addWidget (mVariables,4,0,1,2);
 			
-			paramsBox = new QGroupBox (tr("Variable parametres"));
+		paramsBox = new QGroupBox (tr("Variable parametres"));
 			QVBoxLayout* varParamsLayout = new QVBoxLayout ();
 				QLabel* fullNameLabel = new QLabel(tr("&Human readible name"));
 				varParamsLayout->addWidget (fullNameLabel);
@@ -110,35 +114,25 @@ void TemplatesEditor::createGUI()
 				mValues= new pStringListEditor (tr("Variable values"));
 				varParamsLayout->addWidget (mValues);
 			paramsBox->setLayout (varParamsLayout);
-			hbox4->addWidget (paramsBox);
-		vbox1->addLayout (hbox4);
-
-		QLabel* scriptLabel = new QLabel (tr("&Sctipt for configuring template"));
-		vbox1->addWidget (scriptLabel);
+		box->addWidget (paramsBox,4,2,1,2);
 		
-		QHBoxLayout* scriptLayout = new QHBoxLayout ();
-			mScript = new QLineEdit ();
-			scriptLabel->setBuddy (mScript);
-			scriptLayout->addWidget (mScript);
-			
-			mScriptBtn = new QPushButton ();
-			mScriptBtn->setIcon (QIcon(":/file/icons/file/open.png"));
-			scriptLayout->addWidget (mScriptBtn);
-		vbox1->addLayout (scriptLayout);
-		
-	mEditSpace->setLayout (vbox1);
+	mEditSpace->setLayout (box);
 	mEditSpace->setEnabled (false);
 	vbox->addWidget (mEditSpace);
-	
+
 	setLayout (vbox);
 	
+	connect (mTemplatesPath, SIGNAL (activated(QString)), this, SLOT (on_pathSelect (QString)));	
 	//initialisation
 	mTemplatesPath->addItems (pTemplatesManager::instance()->getTemplatesPath());
+	on_pathSelect (mTemplatesPath->currentText());
 }
 
 void TemplatesEditor::on_pathSelect (QString dir)
 {
+	qWarning () << "On template select";
 	TemplateList tl = pTemplatesManager::instance()->getTemplatesFromDir (dir);
+	mTemplatesList->list->clear();
 	foreach (pTemplate t, tl)
 		mTemplatesList->list->addItem (t.Name);
 }
