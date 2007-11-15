@@ -28,24 +28,17 @@ struct Q_MONKEY_EXPORT pTemplate
     QString Language;
     QString Type;
     QString Description;
-    QIcon Icon;
+    QString Icon;
+	QString Script;
     QString DirPath; //with '/' at end
     
     /*
     NOTE Filenames can contain variables. Example: Project$name$.pro
     This files will be renamed
     */
-    QStringList FileNames;
-    QString ProjectType;  // name of Project plugin, just for projects
+    QStringList Files;
     
-    QHash <QString,QStringList> TextVariables;
-    
-    /*
-    Will be displayed in the ComboBox. 
-    First value are default. Result will be returned in the TextVariables hash
-    */
-    QHash <QString,QStringList> SelectableVariables;
-
+    QHash <QString,QStringList> Variables;
 };
 
 typedef QList<pTemplate> TemplateList;
@@ -74,8 +67,11 @@ public:
     QStringList getTemplatesPath ();
 	void setTemplatesPath (QStringList);
 
-    TemplateList getTemplatesFromDir (QString);
-    //QHash <QString, QString> translations;
+	//returns names of templates, that are on the path.
+	QStringList getTemplatesNames (QString path);
+
+    pTemplate getTemplate (QString);
+    void setTemplate (pTemplate);
 };
 
 #endif // PTEMPLATESMANAGER_H

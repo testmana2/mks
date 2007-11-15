@@ -40,7 +40,7 @@ private:
 	QLineEdit* mName;
 	QLineEdit* mIcon;
 	QPushButton* mIconBtn;
-	QTextEdit* mDesctiption;
+	QTextEdit* mDescription;
 	QComboBox* mLanguage;
 	QComboBox* mType;
 	pFileListEditor* mFiles;

@@ -93,8 +93,8 @@ void TemplatesEditor::createGUI()
 		QLabel* descLabel = new QLabel (tr("Template description"));
 		box->addWidget (descLabel,2,0);
 
-		mDesctiption = new QTextEdit ();
-		box->addWidget (mDesctiption,3,0,1,2);
+		mDescription = new QTextEdit ();
+		box->addWidget (mDescription,3,0,1,2);
 		
 		mFiles = new pFileListEditor (tr("Template file(s)"), QFileDialog::ExistingFiles, "*");
 		box->addWidget (mFiles,3,2,1,2);
@@ -123,6 +123,7 @@ void TemplatesEditor::createGUI()
 	setLayout (vbox);
 	
 	connect (mTemplatesPath, SIGNAL (activated(QString)), this, SLOT (on_pathSelect (QString)));	
+	connect (mTemplatesList->list, SIGNAL (currentTextChanged(QString)), this, SLOT (on_TemplateSelect (QString)));	
 	//initialisation
 	mTemplatesPath->addItems (pTemplatesManager::instance()->getTemplatesPath());
 	on_pathSelect (mTemplatesPath->currentText());
@@ -131,17 +132,25 @@ void TemplatesEditor::createGUI()
 void TemplatesEditor::on_pathSelect (QString dir)
 {
 	qWarning () << "On template select";
-	TemplateList tl = pTemplatesManager::instance()->getTemplatesFromDir (dir);
 	mTemplatesList->list->clear();
-	foreach (pTemplate t, tl)
-		mTemplatesList->list->addItem (t.Name);
+	foreach (QString name, pTemplatesManager::instance()->getTemplatesNames (dir))
+		mTemplatesList->list->addItem (name);
 }
 
-void TemplatesEditor::on_TemplateSelect (QString)
+void TemplatesEditor::on_TemplateSelect (QString name)
 {
-	
+	qWarning () <<"Selected template"<<name;
+	pTemplate templ = pTemplatesManager::instance()->
+		getTemplate (mTemplatesPath->currentText() + "/" + name);
+	mEditSpace->setEnabled (true);
+	mIcon->setText (templ.Icon);
+	mScript->setText (templ.Script);
+	mDescription->setText (templ.Description);
+	mFiles->list->clear();
+	mFiles->list->addItems (templ.Files);
+	mVariables->list->clear();
+	mVariables->list->addItems (templ.Variables.keys());
 }
-
 
 
 int TemplatesEditor::exec ()

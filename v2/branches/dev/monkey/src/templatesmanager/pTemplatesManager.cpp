@@ -29,57 +29,80 @@ pTemplatesManager::pTemplatesManager ()
     return translations.contains (s)? translations[s] : s;
 }*/
 
-TemplateList pTemplatesManager::getTemplatesFromDir (QString d)
+
+QStringList pTemplatesManager::getTemplatesNames (QString path)
 {
-    QDir dirrectory (d);
-    QList<pTemplate> result;
+	QStringList result;
+    QDir dirrectory (path);
     if ( !dirrectory.exists())
     {
-        qWarning ()<<"Dirrectory not exist: "<<d;
+        qWarning ()<<"Dirrectory not exist: "<<path;
         return result;
     }
     dirrectory.setFilter (QDir::Dirs|QDir::NoDotAndDotDot);
     foreach (QFileInfo subdir, dirrectory.entryInfoList())
-    {
-		qWarning () <<"Checking dirrectory" << subdir.absolutePath();
-        if (!QFileInfo (subdir.absolutePath()+QString("/template.ini")).exists())
-        {
-            qWarning () <<"Not exist 'template.ini' file in the "<<subdir.absoluteDir();
-        }
-        QSettings set (subdir.absolutePath()+"/template.ini", QSettings::IniFormat);
-        if (set.status() != QSettings::NoError)
-        {
-            qWarning ()<<"Error reading file "<<subdir.absolutePath()+"/template.ini "<<"Ignored";
-            break;
-        }
-        pTemplate templ = { subdir.fileName (),
-                            set.value ("Language","Other").toString(),
-                            set.value ("Type","Wrong template path").toString(),
-                            set.value ("Desctiption","No desctiption").toString(),
-                            QIcon (subdir.absolutePath()+'/'+set.value ("Icon").toString()), //just an empty icon, if not exist
-                            subdir.absolutePath(),
-                            set.value ("FileNames").toStringList(),
-                            set.value ("ProjectType").toString(),
-                            QHash <QString,QStringList> (),
-                            QHash <QString,QStringList> ()};
-        QStringList textVariables = set.value ("TextVariables").toStringList();
-        foreach (QString var, textVariables)
-            templ.TextVariables.insert(var, set.value(var).toStringList());
-        
-        QStringList selectableVariables = set.value("SelecableVariables").toStringList();
-        foreach (QString var, selectableVariables)
-            templ.SelectableVariables.insert(var, set.value(var).toStringList());
-        
-        result.append (templ);
-    }
-    return result;
+		result.append (subdir.fileName ());
+
+	return result;
+}
+
+pTemplate pTemplatesManager::getTemplate (QString d)
+{
+	QSettings set (d+"/template.ini", QSettings::IniFormat);
+	if (set.status() != QSettings::NoError)
+	{
+		qWarning ()<<"Error reading file "<< d + "/template.ini "<<"Ignored";
+		return pTemplate ();
+	}
+	pTemplate templ = { QFileInfo(d).fileName (),
+						set.value ("Language","Other").toString(),
+						set.value ("Type","Wrong template path").toString(),
+						set.value ("Desctiption","No desctiption").toString(),
+						set.value ("Script").toString(),
+						set.value ("Icon").toString(), //just an empty icon, if not exist
+						d,
+						set.value ("Files").toStringList(),
+						QHash <QString,QStringList> (),
+					   };
+	
+	QStringList variables = set.value("Variables").toStringList();
+	foreach (QString var, variables)
+		templ.Variables.insert(var, set.value(var).toStringList());
+	
+    return templ;
+}
+
+void pTemplatesManager::setTemplate (pTemplate templ)
+{
+	QSettings set (d+"/template.ini", QSettings::IniFormat);
+	if (set.status() != QSettings::NoError)
+	{
+		qWarning ()<<"Error reading file "<< d + "/template.ini "<<"Ignored";
+		return ;
+	}
+	
+	pTemplate templ = { QFileInfo(d).fileName (),
+						set.value ("Language","Other").toString(),
+						set.value ("Type","Wrong template path").toString(),
+						set.value ("Desctiption","No desctiption").toString(),
+						set.value ("Script").toString(),
+						set.value ("Icon").toString(), //just an empty icon, if not exist
+						d,
+						set.value ("Files").toStringList(),
+						QHash <QString,QStringList> (),
+					   };
+	
+	QStringList variables = set.value("Variables").toStringList();
+	foreach (QString var, variables)
+		templ.Variables.insert(var, set.value(var).toStringList());
 }
 
 TemplateList pTemplatesManager::getTemplates()
 {
 	TemplateList result;
 	foreach (QString dir, getTemplatesPath ())
-		result << getTemplatesFromDir (dir);
+		foreach (QString templateName, getTemplatesNames (dir))
+			result << getTemplate (dir +"/" + templateName);
 	return result;
 }
 
