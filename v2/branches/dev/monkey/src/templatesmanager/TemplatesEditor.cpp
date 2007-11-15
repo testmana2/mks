@@ -97,7 +97,7 @@ void TemplatesEditor::createGUI()
 		box->addWidget (mDescription,3,0,1,2);
 		
 		mFiles = new pFileListEditor (tr("Template file(s)"), QFileDialog::ExistingFiles, "*");
-		box->addWidget (mFiles,3,2,1,2);
+		box->addWidget (mFiles,2,2,2,2);
 		
 		mVariables= new pStringListEditor (tr("Template variables"));
 		box->addWidget (mVariables,4,0,1,2);

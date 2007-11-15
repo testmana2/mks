@@ -74,28 +74,21 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 
 void pTemplatesManager::setTemplate (pTemplate t)
 {
-	QSettings set (t.DirPath+"/", t.Name);
+	QSettings set (t.DirPath+"/"+ t.Name+ "/"+"template.ini");
 	if (set.status() != QSettings::NoError)
 	{
-		qWarning ()<<"Error reading file "<< d + "/template.ini "<<"Ignored";
+		qWarning ()<<"Error reading file "<<  + "/template.ini "<<"Ignored";
 		return ;
 	}
 	
-	set.setValue ("Language", t
-	pTemplate templ = { QFileInfo(d).fileName (),
-						set.value ("Language","Other").toString(),
-						set.value ("Type","Wrong template path").toString(),
-						set.value ("Desctiption","No desctiption").toString(),
-						set.value ("Script").toString(),
-						set.value ("Icon").toString(), //just an empty icon, if not exist
-						d,
-						set.value ("Files").toStringList(),
-						QHash <QString,QStringList> (),
-					   };
-	
-	QStringList variables = set.value("Variables").toStringList();
-	foreach (QString var, variables)
-		templ.Variables.insert(var, set.value(var).toStringList());
+	set.setValue ("Language", QVariant(t.Language));
+	set.setValue ("Type", QVariant(t.Type));
+	set.setValue ("Description", QVariant(t.Description));
+	set.setValue ("Script", QVariant(t.Script));
+	set.setValue ("Icon", QVariant(t.Icon));
+	set.setValue ("Files", QVariant(t.Files));
+	foreach (QString var, t.Variables.keys())
+		set.setValue (var, t.Variables[var]);
 }
 
 TemplateList pTemplatesManager::getTemplates()
