@@ -72,15 +72,16 @@ pTemplate pTemplatesManager::getTemplate (QString d)
     return templ;
 }
 
-void pTemplatesManager::setTemplate (pTemplate templ)
+void pTemplatesManager::setTemplate (pTemplate t)
 {
-	QSettings set (d+"/template.ini", QSettings::IniFormat);
+	QSettings set (t.DirPath+"/", t.Name);
 	if (set.status() != QSettings::NoError)
 	{
 		qWarning ()<<"Error reading file "<< d + "/template.ini "<<"Ignored";
 		return ;
 	}
 	
+	set.setValue ("Language", t
 	pTemplate templ = { QFileInfo(d).fileName (),
 						set.value ("Language","Other").toString(),
 						set.value ("Type","Wrong template path").toString(),
