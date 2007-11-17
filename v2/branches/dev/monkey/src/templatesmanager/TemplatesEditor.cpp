@@ -70,39 +70,53 @@ void TemplatesEditor::createGUI()
 			
 		vbox1->addLayout (hbox1);
 */		
+		QLabel* typeLabel = new QLabel (tr("Template type"));
+		box->addWidget (typeLabel,0,0,1,2);
+				
+		mType = new QComboBox ();
+		typeLabel->setBuddy (mType);
+		box->addWidget (mType,1,0,1,2);	
+		
+		QLabel* languageLabel = new QLabel (tr("Template language"));
+		box->addWidget (languageLabel,0,2,1,2);
+				
+		mLanguage = new QComboBox ();
+		languageLabel->setBuddy (mLanguage);
+		box->addWidget (mLanguage,1,2,1,2);		
+		
 		QLabel* iconLabel = new QLabel (tr("&Template icon"));
-		box->addWidget (iconLabel,0,0);
+		box->addWidget (iconLabel,2,0);
 				
 		mIcon = new QLineEdit ();
 		iconLabel->setBuddy (mIcon);
-		box->addWidget (mIcon,1,0);
+		box->addWidget (mIcon,3,0);
 				
 		mIconBtn = new QPushButton ();
 		mIconBtn->setIcon (QIcon(":/file/icons/file/open.png"));
-		box->addWidget (mIconBtn,1,1);
+		box->addWidget (mIconBtn,3,1);
 			
 		QLabel* scriptLabel = new QLabel (tr("&Sctipt for configuring template"));
-		box->addWidget (scriptLabel,0,2);
+		box->addWidget (scriptLabel,2,2);
 
 		mScript = new QLineEdit ();
 		scriptLabel->setBuddy (mScript);
-		box->addWidget (mScript,1,2);
+		box->addWidget (mScript,3,2);
 				
 		mScriptBtn = new QPushButton ();
 		mScriptBtn->setIcon (QIcon(":/file/icons/file/open.png"));
-		box->addWidget (mScriptBtn,1,3);
+		box->addWidget (mScriptBtn,3,3);
 		
 		QLabel* descLabel = new QLabel (tr("Template description"));
-		box->addWidget (descLabel,2,0);
+		box->addWidget (descLabel,4,0);
 
 		mDescription = new QTextEdit ();
-		box->addWidget (mDescription,3,0,1,2);
+		box->addWidget (mDescription,5,0,1,2);
 		
 		mFiles = new pFileListEditor (tr("Template file(s)"), QFileDialog::ExistingFiles, "*");
-		box->addWidget (mFiles,2,2,2,2);
+		box->addWidget (mFiles,4,2,2,2);
 		
 		mVariables= new pStringListEditor (tr("Template variables"));
-		box->addWidget (mVariables,4,0,1,2);
+		box->addWidget (mVariables,6,0,1,2);
 			
 		paramsBox = new QGroupBox (tr("Variable parametres"));
 			QVBoxLayout* varParamsLayout = new QVBoxLayout ();
@@ -116,15 +130,26 @@ void TemplatesEditor::createGUI()
 				mValues= new pStringListEditor (tr("Variable values"));
 				varParamsLayout->addWidget (mValues);
 			paramsBox->setLayout (varParamsLayout);
-		box->addWidget (paramsBox,4,2,1,2);
+		box->addWidget (paramsBox,6,2,1,2);
 	mEditSpace->setLayout (box);
-	mEditSpace->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
 	QScrollArea* scroll = new QScrollArea ();
 	scroll->setWidget (mEditSpace);
 	mEditSpace->setEnabled (false);
 	vbox->addWidget (scroll);
 
 	setLayout (vbox);
+	
+	//connect (mName, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+	connect (mIcon, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+	connect (mDescription, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+	connect (mLanguage, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+	connect (mType, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+	connect (mFiles, SIGNAL (edited()), this, SLOT (on_TemplateEditing()));	
+	connect (mVariables, SIGNAL (edited()), this, SLOT (on_TemplateEditing()));	
+	connect (mValues, SIGNAL (edited()), this, SLOT (on_TemplateEditing()));	
+	connect (mFullName, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+	connect (mScript, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+
 	
 	connect (mTemplatesPath, SIGNAL (activated(QString)), this, SLOT (on_pathSelect (QString)));	
 	connect (mTemplatesList->list, SIGNAL (currentTextChanged(QString)), this, SLOT (on_TemplateSelect (QString)));	
@@ -154,4 +179,16 @@ void TemplatesEditor::on_TemplateSelect (QString name)
 	mFiles->list->addItems (templ.Files);
 	mVariables->list->clear();
 	mVariables->list->addItems (templ.Variables.keys());
+}
+
+void TemplatesEditor::on_TemplateEditing ()
+{
+	emit modifiedChanged(true);
+	emit redoAvailible(true);
+}
+
+void TemplatesEditor::saveCurrentFile()
+{
+	emit modifiedChanged (false);
+	emit redoAvailible(false);
 }
