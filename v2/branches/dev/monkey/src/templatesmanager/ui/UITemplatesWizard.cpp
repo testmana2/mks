@@ -49,7 +49,7 @@ void UITemplatesWizard::setType (QString t)
 
 void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
 {
-    // clear lwTemplates
+/*    // clear lwTemplates
     lwTemplates->clear();
     // create blank file
     QListWidgetItem* it = new QListWidgetItem( lwTemplates );
@@ -68,7 +68,7 @@ void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
             it->setText( t.Name );
             it->setData( Qt::UserRole +1, t.FileNames );
         }
-    }
+    }*/
 }
 
 void UITemplatesWizard::on_cbTypes_currentIndexChanged( const QString& )
@@ -95,17 +95,16 @@ void UITemplatesWizard::on_swPages_currentChanged( int i )
 
 void UITemplatesWizard::on_tbDestination_clicked()
 {
-    QString s = getExistingDirectory( tr( "Select the file(s) destination" ), leDestination->text(), window() );
-    if ( !s.isNull() )
-        leDestination->setText( s );
+/*    if ( !s.isNull() )
+        leDestination->setText( s );*/
 }
 
 void UITemplatesWizard::on_pbPrevious_clicked()
-{ swPages->setCurrentIndex( swPages->currentIndex() -1 ); }
+{/* swPages->setCurrentIndex( swPages->currentIndex() -1 ); */}
 
 void UITemplatesWizard::on_pbNext_clicked()
 {
-    if ( !checkTemplates() )
+/*    if ( !checkTemplates() )
         return;
     
     int i = swPages->currentIndex();
@@ -114,12 +113,12 @@ void UITemplatesWizard::on_pbNext_clicked()
         swPages->setCurrentIndex( i +1 );
     
     if ( i == swPages->count() -1 )
-        accept();
+        accept();*/
 }
 
 bool UITemplatesWizard::checkTemplates()
 {
-    if ( !lwTemplates->selectedItems().count() )
+/*    if ( !lwTemplates->selectedItems().count() )
     {
         information( tr( "Templates..." ), tr( "Choose a template to continue." ), this );
         return false;
@@ -152,7 +151,7 @@ bool UITemplatesWizard::checkTemplates()
             return false;
         }
     }
-    
+    */
     return true;
 }
 

@@ -55,6 +55,14 @@ private:
 private slots:
 	void on_pathSelect (QString);
 	void on_TemplateSelect (QString);
+	void on_TemplateEditing ();
+
+public slots:
+	void saveCurrentFile();
+
+signals:
+	void redoAvailible(bool);
+	void modifiedChanged(bool);
 };
 
 #endif // TEMPLATESEDITOR_H
