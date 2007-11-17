@@ -24,15 +24,15 @@
 #include "pFileListEditor.h"
 #include "pStringListEditor.h"
 #include "pTemplatesManager.h"
+#include "pAbstractChild.h"
 
-class TemplatesEditor : public QDialog
+class TemplatesEditor : public pAbstractChild
 {
 Q_OBJECT
 public:
-	TemplatesEditor(QWidget* parent = NULL);
+	TemplatesEditor();
 	~TemplatesEditor();
 
-	int exec ();
 private:
 	QComboBox* mTemplatesPath;
 	pStringListEditor* mTemplatesList;

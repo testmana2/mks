@@ -344,7 +344,9 @@ void pWorkspace::editSettings_triggered()
 { UISettings::instance( this )->exec(); }
 
 void pWorkspace::editTemplates_triggered()
-{ TemplatesEditor(this).exec(); }
+{
+	pWorkspace::instance()->addTab( new TemplatesEditor, tr("Templates Editor") );
+}
 
 void pWorkspace::editUndo_triggered()
 {
