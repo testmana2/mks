@@ -47,34 +47,34 @@ public:
 	{ return QString(); }
 	
 	// return cursor position if available
-	virtual QPoint cursorPosition() const = 0;
+	virtual QPoint cursorPosition() const {return QPoint();};
 	// return files that this child manage
 	virtual QStringList files() const
 	{ return mFiles; }
 	// the current visible / focused file
-	virtual QString currentFile() const = 0;
+	virtual QString currentFile() const {return QString();};
 	// the current visible / focused file name ( without path )
-	virtual QString currentFileName() const = 0;
+	virtual QString currentFileName() const {return QString ();};
 	// the current visible editor
-	virtual pEditor* currentEditor() const = 0;
+	virtual pEditor* currentEditor() const {return NULL;};
 	// return the current file modified flag
-	virtual bool isModified() const = 0;
+	virtual bool isModified() const {return false;};
 	// return the current file undo flag
-	virtual bool isUndoAvailable() const = 0;
+	virtual bool isUndoAvailable() const {return false;};
 	// return the current file redo flag
-	virtual bool isRedoAvailable() const = 0;
+	virtual bool isRedoAvailable() const {return false;};
 	// return the current file copy available
-	virtual bool isCopyAvailable() const = 0;
+	virtual bool isCopyAvailable() const {return false;};
 	// return the current file paste available
-	virtual bool isPasteAvailable() const = 0;
+	virtual bool isPasteAvailable() const {return false;};
 	// return is search/replace is available
-	virtual bool isSearchReplaceAvailable() const = 0;
+	virtual bool isSearchReplaceAvailable() const {return false;};
 	// return is goto is available
-	virtual bool isGoToAvailable() const = 0;
+	virtual bool isGoToAvailable() const {return false;};
 	// return the modified state of file
-	virtual bool isModified( const QString& ) const = 0;
+	virtual bool isModified( const QString& ) const {return false;};
 	// return if print is available
-	virtual bool isPrintAvailable() const = 0;
+	virtual bool isPrintAvailable() const {return false;};
 
 public slots:
 	// set the child document mode
@@ -100,38 +100,38 @@ public slots:
 	{ QWidget::setWindowTitle( QFileInfo( s.isEmpty() ? currentFile() : s ).fileName() ); }
 	
 	// show/focus the file in child
-	virtual void showFile( const QString& ) = 0;
+	virtual void showFile( const QString& ) {};
 	// undo
-	virtual void undo() = 0;
+	virtual void undo() {};
 	// redo
-	virtual void redo() = 0;
+	virtual void redo() {};
 	// cut
-	virtual void cut() = 0;
+	virtual void cut() {};
 	// copy
-	virtual void copy() = 0;
+	virtual void copy() {};
 	// paste
-	virtual void paste() = 0;
+	virtual void paste() {};
 	// search/replace in the current child
-	virtual void searchReplace() = 0;
+	virtual void searchReplace() {};
 	// search previous
-	virtual void searchPrevious() = 0;
+	virtual void searchPrevious() {};
 	// search next
-	virtual void searchNext() = 0;
+	virtual void searchNext() {};
 	// go to in the current child
-	virtual void goTo() = 0;
+	virtual void goTo() {};
 	// go to position for file and highlight line according to bool
-	virtual void goTo( const QString&, const QPoint&, bool = false ) = 0;
+	virtual void goTo( const QString&, const QPoint&, bool = false ) {};
 	// ask to save file
-	virtual void saveFile( const QString& ) = 0;
+	virtual void saveFile( const QString& ) {};
 	// ask to backup current file
-	virtual void backupCurrentFile( const QString& ) = 0;
+	virtual void backupCurrentFile( const QString& ) {};
 	// ask to save the current file
 	virtual void saveCurrentFile()
 	{ saveFile( currentFile() ); }
 	// ask to save all files
-	virtual void saveFiles() = 0;
+	virtual void saveFiles() {};
 	// ask to load file
-	virtual void openFile( const QString&, const QPoint& = QPoint(), QTextCodec* = 0 ) = 0;
+	virtual void openFile( const QString&, const QPoint& = QPoint(), QTextCodec* =0 ) {};
 	// ask to load these files
 	virtual void openFiles( const QStringList& l )
 	{
@@ -139,16 +139,16 @@ public slots:
 			openFile( s, QPoint() );
 	}
 	// ask to close file
-	virtual void closeFile( const QString& ) = 0;
+	virtual void closeFile( const QString& ) {};
 	// ask to close the current file
 	virtual void closeCurrentFile()
 	{ closeFile( currentFile() ); }
 	// ask to close all files
-	virtual void closeFiles() = 0;
+	virtual void closeFiles() {};
 	// ask to print this file
-	virtual void printFile( const QString& ) = 0;
+	virtual void printFile( const QString& ) {};
 	// ask to quick print this file
-	virtual void quickPrintFile( const QString& ) = 0;
+	virtual void quickPrintFile( const QString& ) {};
 	// ask to print the current file
 	virtual void printCurrentFile()
 	{ printFile( currentFile() ); }

@@ -16,12 +16,13 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QScrollArea>
 #include <QDebug>
 
 #include "TemplatesEditor.h"
 #include "pTemplatesManager.h"
 
-TemplatesEditor::TemplatesEditor(QWidget* parent) :QDialog (parent)
+TemplatesEditor::TemplatesEditor() :pAbstractChild()
 {
 	createGUI();
 }
@@ -42,11 +43,12 @@ void TemplatesEditor::createGUI()
 	vbox->addWidget (mTemplatesPath);
 	
 	mTemplatesList = new pStringListEditor(tr("T&emplates list"));
-	mTemplatesList->setMinimumHeight (150);
+	mTemplatesList->setFixedHeight (170);
 	vbox->addWidget (mTemplatesList);
 	
 	mEditSpace = new QGroupBox (tr("Te&mplate"));
 	QGridLayout* box = new QGridLayout ();
+
 /*		QHBoxLayout* hbox1 = new QHBoxLayout ();
 			QVBoxLayout* nameLayout = new QVBoxLayout ();
 				QLabel* nameLabel = new QLabel (tr("&Name"));
@@ -115,10 +117,12 @@ void TemplatesEditor::createGUI()
 				varParamsLayout->addWidget (mValues);
 			paramsBox->setLayout (varParamsLayout);
 		box->addWidget (paramsBox,4,2,1,2);
-		
 	mEditSpace->setLayout (box);
+	mEditSpace->setSizePolicy( QSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum ) );
+	QScrollArea* scroll = new QScrollArea ();
+	scroll->setWidget (mEditSpace);
 	mEditSpace->setEnabled (false);
-	vbox->addWidget (mEditSpace);
+	vbox->addWidget (scroll);
 
 	setLayout (vbox);
 	
@@ -150,10 +154,4 @@ void TemplatesEditor::on_TemplateSelect (QString name)
 	mFiles->list->addItems (templ.Files);
 	mVariables->list->clear();
 	mVariables->list->addItems (templ.Variables.keys());
-}
-
-
-int TemplatesEditor::exec ()
-{
-	return QDialog::exec ();
 }
