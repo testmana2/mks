@@ -223,7 +223,7 @@ void TemplatesEditor::saveCurrentFile()
 					QHash <QString, QStringList>()
 	};
 	qWarning () << mDescription->toPlainText();
-	qWarning () << t.Description();
+	qWarning () << t.Description;
 	
 	
 	qWarning () << "Save template";
