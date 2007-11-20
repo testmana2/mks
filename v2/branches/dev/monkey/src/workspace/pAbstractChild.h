@@ -32,6 +32,7 @@ public:
 		setAttribute( Qt::WA_DeleteOnClose );
 		mDocument = mNone;
 		mLayout = lNone;
+		emit modifiedChanged(true);
 	}
 
 	// return child document mode

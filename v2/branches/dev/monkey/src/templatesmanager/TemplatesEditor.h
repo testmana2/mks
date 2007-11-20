@@ -51,6 +51,9 @@ private:
 	QLineEdit* mScript;
 	QPushButton* mScriptBtn;
 
+	QString mCurrentName;
+	QString mVarHash;
+
 	void createGUI ();
 private slots:
 	void on_pathSelect (QString);
@@ -61,8 +64,8 @@ public slots:
 	void saveCurrentFile();
 
 signals:
-	void redoAvailible(bool);
-	void modifiedChanged(bool);
+	void ch_undoAvailableChanged(bool);
+	void ch_modifiedChanged(bool);
 };
 
 #endif // TEMPLATESEDITOR_H

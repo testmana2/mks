@@ -21,6 +21,10 @@ class Q_MONKEY_EXPORT pWorkspace : public pTabbedWorkspace, public QSingleton<pW
 	friend class QSingleton<pWorkspace>;
 
 public:
+	//NOTE PasNox, let's use one function default icon = QIcon()
+	int addTab (pAbstractChild*, QString);
+	int addTab (pAbstractChild*,QIcon, QString);
+
 	pAbstractChild* currentChild() const;
 	pAbstractChild* child( int ) const;
 	QList<pAbstractChild*> children() const;
