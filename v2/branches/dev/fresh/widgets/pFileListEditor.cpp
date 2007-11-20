@@ -12,7 +12,7 @@ pFileListEditor::~pFileListEditor()
 
 void pFileListEditor::onActionTriggered (QAction* act)
 {
-	if (act->objectName() == "add")
+	if (act->text () == "add")
 	{
 		list->addItems(QFileDialog::getOpenFileNames ( this, tr ("Choose file(s)"), mDir, mFilter));
 		QListWidgetItem* it = list->item( list->count() -1 );
@@ -21,5 +21,10 @@ void pFileListEditor::onActionTriggered (QAction* act)
 		it->setFlags( it->flags() | Qt::ItemIsEditable );
 	}
 	else
-		pStringListEditor::onActionTriggered (act);
+		return pStringListEditor::onActionTriggered (act);
+}
+
+void pFileListEditor::setDir (QString s)
+{
+	mDir = s;
 }

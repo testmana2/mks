@@ -57,7 +57,7 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 	pTemplate templ = { QFileInfo(d).fileName (),
 						set.value ("Language","Other").toString(),
 						set.value ("Type","Wrong template type").toString(),
-						set.value ("Desctiption","No desctiption").toString(),
+						set.value ("Description","No desctiption").toString(),
 						set.value ("Script").toString(),
 						set.value ("Icon").toString(), //just an empty icon, if not exist
 						d,
@@ -88,6 +88,7 @@ void pTemplatesManager::setTemplate (pTemplate t)
 	set.setValue ("Script", QVariant(t.Script));
 	set.setValue ("Icon", QVariant(t.Icon));
 	set.setValue ("Files", QVariant(t.Files));
+	set.setValue ("Variables", QVariant (t.Variables.keys()));
 	foreach (QString var, t.Variables.keys())
 		set.setValue (var, t.Variables[var]);
 }
