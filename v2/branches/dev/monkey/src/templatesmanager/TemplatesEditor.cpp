@@ -17,6 +17,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QScrollArea>
+#include <QMessageBox>
 #include <QDebug>
 
 #include "TemplatesEditor.h"
@@ -49,27 +50,6 @@ void TemplatesEditor::createGUI()
 	mEditSpace = new QGroupBox (tr("Te&mplate"));
 	QGridLayout* box = new QGridLayout ();
 
-/*		QHBoxLayout* hbox1 = new QHBoxLayout ();
-			QVBoxLayout* nameLayout = new QVBoxLayout ();
-				QLabel* nameLabel = new QLabel (tr("&Name"));
-				nameLayout->addWidget (nameLabel);
-
-				mName = new QLineEdit ();
-				nameLabel->setBuddy (mName);	
-				nameLayout->addWidget (mName);
-			hbox1->addLayout (nameLayout);
-		
-			QVBoxLayout* dirLayout = new QVBoxLayout ();
-				QLabel* dirLabel = new QLabel (tr("&Directory name"));
-				dirLayout->addWidget (dirLabel);
-		
-				mDirectoryName = new QLineEdit ();
-				dirLabel->setBuddy (mDirectoryName);
-				dirLayout->addWidget (mDirectoryName);
-			hbox1->addLayout (dirLayout);
-			
-		vbox1->addLayout (hbox1);
-*/		
 		QLabel* typeLabel = new QLabel (tr("Template type"));
 		box->addWidget (typeLabel,0,0,1,2);
 				
@@ -155,6 +135,13 @@ void TemplatesEditor::createGUI()
 	
 	connect (mTemplatesPath, SIGNAL (activated(QString)), this, SLOT (on_pathSelect (QString)));	
 	connect (mTemplatesList->list, SIGNAL (currentTextChanged(QString)), this, SLOT (on_TemplateSelect (QString)));	
+	
+	connect (mIconBtn, SIGNAL(clicked()), this, SLOT( on_iconPressed()));
+	connect (mScriptBtn, SIGNAL(clicked()), this,SLOT( on_scriptPressed()));
+	connect (mVariables->list, SIGNAL (currentItemChanged (QListWidgetItem*, QListWidgetItem*)), this, SLOT (on_variableSelected (QListWidgetItem*, QListWidgetItem*)));
+	connect (mValues, SIGNAL (edited()), this, SLOT(on_variableValueEdited ()));
+	connect (mFiles->list, SIGNAL (itemChanged(QListWidgetItem*)), this, SLOT(on_fileChanged (QListWidgetItem*)));
+	
 	//initialisation
 	mTemplatesPath->addItems (pTemplatesManager::instance()->getTemplatesPath());
 	on_pathSelect (mTemplatesPath->currentText());
@@ -196,6 +183,8 @@ void TemplatesEditor::on_TemplateSelect (QString name)
 	mFiles->list->addItems (templ.Files);
 	mVariables->list->clear();
 	mVariables->list->addItems (templ.Variables.keys());
+	mVarHash = templ.Variables;
+	mFiles->setDir (mTemplatesPath->currentText() + "/" + name);
 }
 
 void TemplatesEditor::on_TemplateEditing ()
@@ -220,16 +209,82 @@ void TemplatesEditor::saveCurrentFile()
 					mScript->text(),
 					mTemplatesPath->currentText(),
 					files,
-					QHash <QString, QStringList>()
+					mVarHash
 	};
-	qWarning () << mDescription->toPlainText();
-	qWarning () << t.Description;
-	
-	
-	qWarning () << "Save template";
 	
 	pTemplatesManager::instance()->setTemplate (t);
 
 	emit ch_modifiedChanged(false);
 	emit ch_undoAvailableChanged(false);	
+}
+
+void TemplatesEditor::on_iconPressed()
+{
+	QString path = mTemplatesPath->currentText() + "/"+mTemplatesList->list->currentItem()->text();
+	QString fileName = QFileDialog::getOpenFileName ( this, "Choose icon", path,QString(), 0, QFileDialog::DontUseNativeDialog);
+	if (fileName.isNull ())
+		return;
+	if (QFileInfo(fileName).absolutePath() != QFileInfo(path).absoluteFilePath())
+	{
+		QMessageBox::warning (this, "Wrongh path", "You can select only templates in the template dirrectory", QMessageBox::Ok);
+		return;
+	}
+	mIcon->setText (QFileInfo(fileName).fileName());
+}
+
+void TemplatesEditor::on_scriptPressed()
+{
+	QString path = mTemplatesPath->currentText() + "/"+mTemplatesList->list->currentItem()->text();
+	QString fileName = QFileDialog::getOpenFileName ( this, "Choose script", path, QString(), 0, QFileDialog::DontUseNativeDialog);
+	if (fileName.isNull())
+		return;
+	if (QFileInfo(fileName).absolutePath() != QFileInfo(path).absoluteFilePath())
+	{
+		QMessageBox::warning (this, "Wrongh path", "You can select only scripts in the template dirrectory", QMessageBox::Ok);
+		return;
+	}
+	mScript->setText (QFileInfo(fileName).fileName());
+}
+
+
+void TemplatesEditor::on_variableSelected (QListWidgetItem * current, QListWidgetItem * previous )
+{
+	if (!previous)
+		return;
+	QStringList sl;
+	for (int i = 0; i< mValues->list->count(); i++)
+	{
+		sl << mValues->list->item(i)->text();
+	}
+	mVarHash[previous->text()] = sl;
+	mValues->list->clear();
+	if (current)
+		mValues->list->addItems (mVarHash[current->text()]);
+}
+
+void TemplatesEditor::on_variableValueEdited ()
+{
+	QStringList sl;
+	for (int i = 0; i< mValues->list->count(); i++)
+	{
+		sl << mValues->list->item(i)->text();
+	}
+	mVarHash[mVariables->list->currentItem()->text()] = sl;	
+}
+
+
+void TemplatesEditor::on_fileChanged (QListWidgetItem* item)
+{
+	QString path = mTemplatesPath->currentText() + "/"+mTemplatesList->list->currentItem()->text();
+	QString fileName = item->text();
+/*	if (fileName.isNull())
+		return;
+	if (not QFileInfo(fileName).absolutePath().startsWith (QFileInfo(path).absoluteFilePath()))
+	{
+		QMessageBox::warning (this, "Wrongh path", "You can select only files in the template dirrectory", QMessageBox::Ok);
+		delete item;
+		return;
+	}
+*/
+	item->setText (fileName.remove (QFileInfo(path).absoluteFilePath()+"/"));	
 }

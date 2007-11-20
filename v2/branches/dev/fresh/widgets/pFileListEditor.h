@@ -25,6 +25,7 @@ class pFileListEditor: public pStringListEditor
 public:
 	pFileListEditor(QString title, QFileDialog::FileMode fm, QString filter, QWidget* parent = NULL);
 	virtual  ~pFileListEditor();
+	void setDir (QString);
 
 protected slots:
 	void onActionTriggered (QAction*);

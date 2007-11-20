@@ -52,7 +52,7 @@ private:
 	QPushButton* mScriptBtn;
 
 	QString mCurrentName;
-	QString mVarHash;
+	QHash <QString, QStringList> mVarHash;
 
 	void createGUI ();
 private slots:
@@ -62,6 +62,11 @@ private slots:
 
 public slots:
 	void saveCurrentFile();
+	void on_iconPressed();
+	void on_scriptPressed();
+	void on_variableSelected (QListWidgetItem* current, QListWidgetItem* previous); //works also if variable was edited
+	void on_variableValueEdited ();
+	void on_fileChanged (QListWidgetItem*);
 
 signals:
 	void ch_undoAvailableChanged(bool);
