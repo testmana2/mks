@@ -37,12 +37,14 @@ pStringListEditor::pStringListEditor (QString title, QWidget* parent) : QGroupBo
 		act->setToolTip (hints[i]);
 	}
 	
-    connect (buttons, SIGNAL (actionTriggered (QAction*)), this, SLOT (onActionTriggered (QAction*)));
     vbox->addWidget (buttons);
 	
     list = new QListWidget (this);
 	list->setMinimumHeight (40);
     vbox->addWidget (list);
+	
+    connect (buttons, SIGNAL (actionTriggered (QAction*)), this, SLOT (onActionTriggered (QAction*)));
+	connect (list, SIGNAL(itemChanged (QListWidgetItem*)), this, SIGNAL (edited()));
 }
 
 pStringListEditor::~pStringListEditor ()
@@ -88,4 +90,5 @@ void pStringListEditor::onActionTriggered (QAction* act)
 			list->setCurrentItem( it );
 		}
 	}
+	emit edited ();
 }

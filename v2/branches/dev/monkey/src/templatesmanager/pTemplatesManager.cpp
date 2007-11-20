@@ -56,7 +56,7 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 	}
 	pTemplate templ = { QFileInfo(d).fileName (),
 						set.value ("Language","Other").toString(),
-						set.value ("Type","Wrong template path").toString(),
+						set.value ("Type","Wrong template type").toString(),
 						set.value ("Desctiption","No desctiption").toString(),
 						set.value ("Script").toString(),
 						set.value ("Icon").toString(), //just an empty icon, if not exist
@@ -74,7 +74,8 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 
 void pTemplatesManager::setTemplate (pTemplate t)
 {
-	QSettings set (t.DirPath+"/"+ t.Name+ "/"+"template.ini");
+	qWarning () << "Saving template" << t.DirPath+"/"+ t.Name+ "/"+"template.ini";
+	QSettings set (t.DirPath+"/"+ t.Name+ "/"+"template.ini", QSettings::IniFormat);
 	if (set.status() != QSettings::NoError)
 	{
 		qWarning ()<<"Error reading file "<<  + "/template.ini "<<"Ignored";

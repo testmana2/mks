@@ -29,6 +29,9 @@ public:
 
 protected slots:
 	virtual void onActionTriggered (QAction*);
+
+signals:
+	void edited ();
 };
 
 #endif // PSTRINGLISTEDITOR__H

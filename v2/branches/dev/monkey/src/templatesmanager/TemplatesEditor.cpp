@@ -74,6 +74,7 @@ void TemplatesEditor::createGUI()
 		box->addWidget (typeLabel,0,0,1,2);
 				
 		mType = new QComboBox ();
+		mType->setEditable (true);
 		typeLabel->setBuddy (mType);
 		box->addWidget (mType,1,0,1,2);	
 		
@@ -81,6 +82,7 @@ void TemplatesEditor::createGUI()
 		box->addWidget (languageLabel,0,2,1,2);
 				
 		mLanguage = new QComboBox ();
+		mLanguage->setEditable (true);
 		languageLabel->setBuddy (mLanguage);
 		box->addWidget (mLanguage,1,2,1,2);		
 		
@@ -141,9 +143,9 @@ void TemplatesEditor::createGUI()
 	
 	//connect (mName, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
 	connect (mIcon, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
-	connect (mDescription, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
-	connect (mLanguage, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
-	connect (mType, SIGNAL (textEdited(QString)), this, SLOT (on_TemplateEditing()));	
+	connect (mDescription, SIGNAL (textChanged ()), this, SLOT (on_TemplateEditing()));	
+	connect (mLanguage, SIGNAL (activated (int)), this, SLOT (on_TemplateEditing()));	
+	connect (mType, SIGNAL (activated (int)), this, SLOT (on_TemplateEditing()));	
 	connect (mFiles, SIGNAL (edited()), this, SLOT (on_TemplateEditing()));	
 	connect (mVariables, SIGNAL (edited()), this, SLOT (on_TemplateEditing()));	
 	connect (mValues, SIGNAL (edited()), this, SLOT (on_TemplateEditing()));	
@@ -156,6 +158,22 @@ void TemplatesEditor::createGUI()
 	//initialisation
 	mTemplatesPath->addItems (pTemplatesManager::instance()->getTemplatesPath());
 	on_pathSelect (mTemplatesPath->currentText());
+	
+	connect (this, SIGNAL (ch_undoAvailableChanged(bool)), SIGNAL (undoAvailableChanged(bool)));
+	connect (this, SIGNAL (ch_modifiedChanged(bool)), SIGNAL (modifiedChanged(bool)));
+	
+	QStringList langs;
+	QStringList types;
+	TemplateList tl = pTemplatesManager::instance()->getTemplates ();
+	foreach (pTemplate t, tl)
+	{
+		if (not langs.contains (t.Language))
+			langs << t.Language;
+		if (not types.contains (t.Type))
+			types << t.Type;
+	}
+	mLanguage->addItems (langs);
+	mType->addItems (types);
 }
 
 void TemplatesEditor::on_pathSelect (QString dir)
@@ -168,7 +186,6 @@ void TemplatesEditor::on_pathSelect (QString dir)
 
 void TemplatesEditor::on_TemplateSelect (QString name)
 {
-	qWarning () <<"Selected template"<<name;
 	pTemplate templ = pTemplatesManager::instance()->
 		getTemplate (mTemplatesPath->currentText() + "/" + name);
 	mEditSpace->setEnabled (true);
@@ -183,12 +200,36 @@ void TemplatesEditor::on_TemplateSelect (QString name)
 
 void TemplatesEditor::on_TemplateEditing ()
 {
-	emit modifiedChanged(true);
-	emit redoAvailible(true);
+	emit ch_modifiedChanged(true);
+	emit ch_undoAvailableChanged(true);
 }
 
 void TemplatesEditor::saveCurrentFile()
 {
-	emit modifiedChanged (false);
-	emit redoAvailible(false);
+	QStringList files;
+	for (int i = 0; i< mFiles->list->count(); i++)
+	{
+		files << mFiles->list->item(i)->text();
+	}
+	
+	pTemplate t	 ={ mTemplatesList->list->currentItem()->text(),
+					mLanguage->currentText (),
+					mType->currentText(),
+					mDescription->toPlainText(),
+					mIcon->text(),
+					mScript->text(),
+					mTemplatesPath->currentText(),
+					files,
+					QHash <QString, QStringList>()
+	};
+	qWarning () << mDescription->toPlainText();
+	qWarning () << t.Description();
+	
+	
+	qWarning () << "Save template";
+	
+	pTemplatesManager::instance()->setTemplate (t);
+
+	emit ch_modifiedChanged(false);
+	emit ch_undoAvailableChanged(false);	
 }
