@@ -17,27 +17,39 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
     : QDialog( w )
 {
     setupUi( this );
+	mTemplates = pTemplatesManager::instance()->getTemplates();
     setAttribute( Qt::WA_DeleteOnClose );
-    pTemplatesManager* mg = pTemplatesManager::instance();
-    mg->getTemplates();
-    // fill available languages
-//    cbLanguages->addItems( getLanguages ());
-    // fill type comboobox
-//    cbTypes->addItems (getTypes ());
+    //fill available languages
+	QStringList langs;
+	QStringList types;
+	TemplateList tl = pTemplatesManager::instance()->getTemplates ();
+	foreach (pTemplate t, tl)
+	{
+		if (not langs.contains (t.Language))
+			langs << t.Language;
+		if (not types.contains (t.Type))
+			types << t.Type;
+	}
+	cbLanguages->addItems(langs);
+	cbTypes->addItems (types);
+	
+	cbLanguages->addItem (tr("Any"));
+	cbTypes->addItem (tr("Any"));
+	
     // assign projects combobox
     mProjects = UIProjectsManager::instance()->model();
     cbProjects->setModel( mProjects->scopesProxy() );
     ProjectItem* p = UIProjectsManager::instance()->currentProject();
     cbProjects->setCurrentIndex( mProjects->scopesProxy()->mapFromSource( p ? p->index() : QModelIndex() ) );
     // show correct page
-    on_swPages_currentChanged( 0 );
+    //on_swPages_currentChanged( 0 );
     // restore infos
     pSettings* s = pSettings::instance();
     cbLanguages->setCurrentIndex( cbLanguages->findText( s->value( "Recents/FileWizard/Language", "C++" ).toString() ) );
     leDestination->setText( s->value( "Recents/FileWizard/Destination" ).toString() );
     leAuthor->setText( s->value( "Recents/FileWizard/Author" ).toString() );
     cbLicenses->setEditText( s->value( "Recents/FileWizard/License", "GPL" ).toString() );
-    cbOpen->setChecked( s->value( "Recents/FileWizard/Open", true ).toBool() );
+    //cbOpen->setChecked( s->value( "Recents/FileWizard/Open", true ).toBool() );
     //
     cbOperators->addItems( QStringList() << "=" << "+=" << "-=" << "*=" << "~=" );
 }
@@ -49,34 +61,37 @@ void UITemplatesWizard::setType (QString t)
 
 void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
 {
-/*    // clear lwTemplates
+    // clear lwTemplates
     lwTemplates->clear();
     // create blank file
     QListWidgetItem* it = new QListWidgetItem( lwTemplates );
     it->setIcon( QIcon( ":/templates/icons/templates/empty.png" ) );
     it->setToolTip( tr( "Blank File" ) );
     it->setText( tr( "Blank" ) );
-    it->setData( Qt::UserRole +1, QString() );
+	it->setData( Qt::UserRole, -1);
     // create tempaltes
-    foreach ( pTemplate t, mTemplates)
+    for (int i = 0; i < mTemplates.size(); i++)
     {
-        if ( t.Language == s && t.Type == cbTypes->currentText() )
+		pTemplate t = mTemplates[i];
+        if (  (	s == tr("Any") || t.Language == s) && 
+				cbTypes->currentText() == tr("Any") || t.Type == cbTypes->currentText() )
         {
             it = new QListWidgetItem( lwTemplates );
-            it->setIcon( QIcon( t.Icon ) );
+            it->setIcon( QIcon(QIcon(t.getPath() + t.Icon)) );
             it->setToolTip( t.Description );
             it->setText( t.Name );
-            it->setData( Qt::UserRole +1, t.FileNames );
+            it->setData( Qt::UserRole, i);
         }
-    }*/
+    }
 }
 
 void UITemplatesWizard::on_cbTypes_currentIndexChanged( const QString& )
-{ on_cbLanguages_currentIndexChanged( cbLanguages->currentText() ); }
+{on_cbLanguages_currentIndexChanged( cbLanguages->currentText() );}
 
+#if 0
 void UITemplatesWizard::on_swPages_currentChanged( int i )
 {
-/*    switch ( i )
+    switch ( i )
     {
         case 0:
             lInformations->setText( tr( "Templates" ) );
@@ -92,13 +107,16 @@ void UITemplatesWizard::on_swPages_currentChanged( int i )
     if ( swPages->currentIndex() == swPages->count() -1 )
         pbNext->setText( tr( "Finish" ) );*/
 }
+#endif
 
 void UITemplatesWizard::on_tbDestination_clicked()
 {
-/*    if ( !s.isNull() )
-        leDestination->setText( s );*/
+	QString s = getExistingDirectory( tr( "Select the file(s) destination" ), leDestination->text(), window() );
+	if ( !s.isNull() )
+		leDestination->setText( s );
 }
 
+#if 0
 void UITemplatesWizard::on_pbPrevious_clicked()
 {/* swPages->setCurrentIndex( swPages->currentIndex() -1 ); */}
 
@@ -116,9 +134,9 @@ void UITemplatesWizard::on_pbNext_clicked()
         accept();*/
 }
 
-bool UITemplatesWizard::checkTemplates()
+bool UITemplatesWizard::checkTemplate()
 {
-/*    if ( !lwTemplates->selectedItems().count() )
+    if ( !lwTemplates->selectedItems().count() )
     {
         information( tr( "Templates..." ), tr( "Choose a template to continue." ), this );
         return false;
@@ -204,8 +222,9 @@ void UITemplatesWizard::generatePreview()
     }
 }
 */
+#endif
 
-void UITemplatesWizard::accept()
+void UITemplatesWizard::on_accept()
 {
 /*
     // get current template type
@@ -270,6 +289,3 @@ void UITemplatesWizard::accept()
     QDialog::accept();
 */
 }
-
-void UITemplatesWizard::generatePreview ()
-{};

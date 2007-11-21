@@ -22,8 +22,9 @@ class UITemplatesWizard;
 class pTemplatePreviewer;
 class ProjectItem;
 
-struct Q_MONKEY_EXPORT pTemplate
+class Q_MONKEY_EXPORT pTemplate
 {
+public:
     QString Name;
     QString Language;
     QString Type;
@@ -39,6 +40,8 @@ struct Q_MONKEY_EXPORT pTemplate
     QStringList Files;
     
     QHash <QString,QStringList> Variables;
+
+	QString getPath() { return DirPath + "/" + Name + "/";};
 };
 
 typedef QList<pTemplate> TemplateList;

@@ -10,6 +10,7 @@ class ProjectsModel;
 
 class Q_MONKEY_EXPORT UITemplatesWizard : public QDialog, public Ui::UITemplatesWizard, public QSingleton<UITemplatesWizard>
 {
+	friend class QSingleton<UITemplatesWizard>;
     Q_OBJECT
     
 private:
@@ -23,13 +24,15 @@ private:
 private slots:
     void on_cbLanguages_currentIndexChanged( const QString& );
     void on_cbTypes_currentIndexChanged( const QString& );
-    void on_swPages_currentChanged( int );
     void on_tbDestination_clicked();
+#if 0
+    void on_swPages_currentChanged( int );
     void on_pbPrevious_clicked();
     void on_pbNext_clicked();
-    bool checkTemplates();
-    void generatePreview();
-    void accept();
+#endif
+//    bool checkTemplate();
+//    void generatePreview();
+    void on_accept();
 };
 
 #endif // UITEMPLATESWIZARD
