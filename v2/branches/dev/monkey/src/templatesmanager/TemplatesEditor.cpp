@@ -25,6 +25,7 @@
 
 TemplatesEditor::TemplatesEditor() :pAbstractChild()
 {
+	setAttribute( Qt::WA_DeleteOnClose );
 	createGUI();
 }
 
