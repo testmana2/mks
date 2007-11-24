@@ -128,8 +128,8 @@ int main( int argc, char** argv )
     
     
     // start application
-    VarHash v;
-    v.insert ("$fuck$", "Fuck");
+    VariablesManager::Dictionary v;
+    v.insert ("fuck", "Fuck");
     qWarning () <<VariablesManager::instance()->replaceAllVariables ("hehe$date$ huhu $fuck$", v);
     return a.exec();
 }

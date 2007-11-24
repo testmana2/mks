@@ -14,6 +14,10 @@ class Q_MONKEY_EXPORT UITemplatesWizard : public QDialog, public Ui::UITemplates
     Q_OBJECT
     
 private:
+	QList <QLabel*> mLabels;
+	QList <QComboBox*> mCombos;
+
+
 	void setType(QString type);
     TemplateList mTemplates;
     ProjectsModel* mProjects;
@@ -22,17 +26,12 @@ private:
     QStringList getTypes ();
 
 private slots:
-    void on_cbLanguages_currentIndexChanged( const QString& );
-    void on_cbTypes_currentIndexChanged( const QString& );
+    void onFiltersChanged ();
+	void onTemplateSelected (QListWidgetItem*);
     void on_tbDestination_clicked();
-#if 0
-    void on_swPages_currentChanged( int );
-    void on_pbPrevious_clicked();
-    void on_pbNext_clicked();
-#endif
-//    bool checkTemplate();
-//    void generatePreview();
-    void on_accept();
+
+    bool checkTemplate();
+    void on_pbCreate_clicked();
 };
 
 #endif // UITEMPLATESWIZARD

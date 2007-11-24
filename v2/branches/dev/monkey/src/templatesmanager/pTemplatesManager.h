@@ -12,6 +12,7 @@
 
 #include "MonkeyExport.h"
 #include "QSingleton.h"
+#include "VariablesManager.h"
 
 #include <QApplication>
 #include <QStringList>
@@ -21,6 +22,8 @@
 class UITemplatesWizard;
 class pTemplatePreviewer;
 class ProjectItem;
+
+typedef QHash <QString,QStringList> VarList;
 
 class Q_MONKEY_EXPORT pTemplate
 {
@@ -39,12 +42,12 @@ public:
     */
     QStringList Files;
     
-    QHash <QString,QStringList> Variables;
+    VarList Variables;
 
-	QString getPath() { return DirPath + "/" + Name + "/";};
 };
 
 typedef QList<pTemplate> TemplateList;
+
 
 class Q_MONKEY_EXPORT pTemplatesManager : public QObject, 
                                 public QSingleton<pTemplatesManager>
@@ -65,7 +68,7 @@ public:
     //Templates are not generic for various languages 
     //(or must be commented by language-specific comment)
 
-    void realiseTemplate (pTemplate);
+    bool realiseTemplate (pTemplate, VariablesManager::Dictionary = VariablesManager::Dictionary());
 
     QStringList getTemplatesPath ();
 	void setTemplatesPath (QStringList);
