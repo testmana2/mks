@@ -12,23 +12,12 @@
 #include "pSettings.h"
 #include "ProjectItem.h"
 
-#include <QDir>
 #include <QHash>
-#include <QDateTime>
 #include <QDebug>
+#include <QMessageBox>
 
 pTemplatesManager::pTemplatesManager ()
-{
-//    translations.insert ("Project", tr("Project"));
-//    translations.insert ("File", tr("File"));
-//    translations.insert ("Estra", tr("Extra"));
-}
-
-/*QString pTemplatesManager::translate(QString s)//TODO move to separate kernel class
-{
-    return translations.contains (s)? translations[s] : s;
-}*/
-
+{}
 
 QStringList pTemplatesManager::getTemplatesNames (QString path)
 {
@@ -42,7 +31,7 @@ QStringList pTemplatesManager::getTemplatesNames (QString path)
     dirrectory.setFilter (QDir::Dirs|QDir::NoDotAndDotDot);
     foreach (QFileInfo subdir, dirrectory.entryInfoList())
 		result.append (subdir.fileName ());
-
+	
 	return result;
 }
 
@@ -60,7 +49,7 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 						set.value ("Description","No desctiption").toString(),
 						set.value ("Script").toString(),
 						set.value ("Icon").toString(), //just an empty icon, if not exist
-						d,
+						QFileInfo(d).filePath()+"/",
 						set.value ("Files").toStringList(),
 						QHash <QString,QStringList> (),
 					   };
@@ -101,6 +90,54 @@ TemplateList pTemplatesManager::getTemplates()
 			result << getTemplate (dir +"/" + templateName);
 	return result;
 }
+
+bool pTemplatesManager::realiseTemplate (pTemplate t, VariablesManager::Dictionary dict)
+{
+	QString dest = dict["Destination"];
+	if ( (! QDir(dest).exists ()) || dest.isEmpty())
+	{
+		QMessageBox::information (NULL, tr("Error"), tr ("Not exist dirrectory '%1'").arg(dict["Destination"]));
+		return false;
+	}
+	if ( ! dest.endsWith ("/"))
+		dest += "/";
+		
+	QHash <QString,QString> files;
+	qDebug () << t.Files;
+	qDebug () << dict;
+	foreach (QString f, t.Files)
+	{
+		QString newName = VariablesManager::instance()->replaceAllVariables (f,dict);
+		if (newName.isEmpty())
+		{
+			QMessageBox::information (NULL, tr("Error"), tr("Empty filename detected for file ") + f);
+			return false;
+		}
+		files[f] = newName;
+	}
+	
+	foreach (QString f, files.keys())
+	{
+		QString newFile = dest+files[f];
+		if ( ! QFile::copy (t.DirPath+f, newFile ))
+		{
+			QMessageBox::information (NULL, tr("Error"), tr("Can't copy '%1' to '%2'").arg(t.DirPath+f ).arg(newFile));
+			return false;
+		}
+		QFile file (newFile);
+		if ( ! file.open(QIODevice::ReadWrite))
+		{
+			QMessageBox::information(NULL, tr("Error"), tr ("Can't edit file %1: %2").arg(newFile).arg(file.errorString()));
+			return false;
+		}
+		QString content = QString::fromLocal8Bit (file.readAll ());
+		file.resize (0);
+		file.write (VariablesManager::instance()->replaceAllVariables (content,dict).toLocal8Bit());
+		file.close();
+	}
+	return true;
+}
+
 
 QStringList pTemplatesManager::getTemplatesPath ()
 {

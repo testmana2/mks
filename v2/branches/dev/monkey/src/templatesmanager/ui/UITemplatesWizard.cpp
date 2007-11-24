@@ -1,3 +1,5 @@
+#include <QDir>
+
 #include "UITemplatesWizard.h"
 #include "pFileManager.h"
 #include "pMonkeyStudio.h"
@@ -6,10 +8,7 @@
 #include "ProjectsModel.h"
 #include "ProjectsProxy.h"
 #include "UIProjectsManager.h"
-
-#include <QFileInfo>
-#include <QDir>
-#include <QDateTime>
+#include "VariablesManager.h"
 
 using namespace pMonkeyStudio;
 
@@ -47,11 +46,14 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
     pSettings* s = pSettings::instance();
     cbLanguages->setCurrentIndex( cbLanguages->findText( s->value( "Recents/FileWizard/Language", "C++" ).toString() ) );
     leDestination->setText( s->value( "Recents/FileWizard/Destination" ).toString() );
-    leAuthor->setText( s->value( "Recents/FileWizard/Author" ).toString() );
-    cbLicenses->setEditText( s->value( "Recents/FileWizard/License", "GPL" ).toString() );
     //cbOpen->setChecked( s->value( "Recents/FileWizard/Open", true ).toBool() );
     //
     cbOperators->addItems( QStringList() << "=" << "+=" << "-=" << "*=" << "~=" );
+	
+	connect (lwTemplates, SIGNAL (itemPressed(QListWidgetItem*)), this, SLOT (onTemplateSelected(QListWidgetItem*)));
+	connect (cbLanguages, SIGNAL (currentIndexChanged(int)), this, SLOT (onFiltersChanged()));
+	connect (cbTypes, SIGNAL (currentIndexChanged(int)), this, SLOT (onFiltersChanged()));
+	onFiltersChanged ();
 }
 
 void UITemplatesWizard::setType (QString t)
@@ -59,8 +61,11 @@ void UITemplatesWizard::setType (QString t)
     cbTypes->setCurrentIndex( cbTypes->findData( t ) ); 
 }
 
-void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
+void UITemplatesWizard::onFiltersChanged()
 {
+	QString type = cbTypes->currentText();
+	QString language = cbLanguages->currentText();
+	
     // clear lwTemplates
     lwTemplates->clear();
     // create blank file
@@ -68,46 +73,49 @@ void UITemplatesWizard::on_cbLanguages_currentIndexChanged( const QString& s )
     it->setIcon( QIcon( ":/templates/icons/templates/empty.png" ) );
     it->setToolTip( tr( "Blank File" ) );
     it->setText( tr( "Blank" ) );
-	it->setData( Qt::UserRole, -1);
+	it->setData( Qt::UserRole+1, -1);
     // create tempaltes
     for (int i = 0; i < mTemplates.size(); i++)
     {
 		pTemplate t = mTemplates[i];
-        if (  (	s == tr("Any") || t.Language == s) && 
-				cbTypes->currentText() == tr("Any") || t.Type == cbTypes->currentText() )
+        if (  (	language == tr("Any") || t.Language == language) && 
+				cbTypes->currentText() == tr("Any") || t.Type == type )
         {
             it = new QListWidgetItem( lwTemplates );
-            it->setIcon( QIcon(QIcon(t.getPath() + t.Icon)) );
+			QString icon = t.Icon.isEmpty() ? ":/templates/icons/templates/empty.png" : (t.DirPath + t.Icon);
+            it->setIcon( QIcon(icon) );
             it->setToolTip( t.Description );
             it->setText( t.Name );
-            it->setData( Qt::UserRole, i);
+            it->setData( Qt::UserRole+1, i);
         }
     }
+	gbInformations->setEnabled (false);
 }
 
-void UITemplatesWizard::on_cbTypes_currentIndexChanged( const QString& )
-{on_cbLanguages_currentIndexChanged( cbLanguages->currentText() );}
-
-#if 0
-void UITemplatesWizard::on_swPages_currentChanged( int i )
+void UITemplatesWizard::onTemplateSelected (QListWidgetItem* it)
 {
-    switch ( i )
-    {
-        case 0:
-            lInformations->setText( tr( "Templates" ) );
-            break;
-        case 1:
-            lInformations->setText( tr( "Templates Preview" ) );
-            generatePreview();
-            break;
-    }
-    // set correct text/state to buttons
-    pbPrevious->setEnabled( i != 0 );
-    pbNext->setText( tr( "Next" ) );
-    if ( swPages->currentIndex() == swPages->count() -1 )
-        pbNext->setText( tr( "Finish" ) );*/
+	while (mLabels.size())
+	{
+		delete mLabels.takeAt(0);
+		delete mCombos.takeAt(0);
+	}
+	int i = it->data (Qt::UserRole+1).toInt();
+	if (i == -1)
+		return;
+	int row = 1;
+	foreach (QString var, mTemplates[i].Variables.keys())
+	{
+		QLabel* label = new QLabel (var);
+		gridLayout->addWidget (label, row, 0);
+		mLabels << label;
+		QComboBox* combo = new QComboBox ();
+		combo->setEditable (true);
+		combo->addItems (mTemplates[i].Variables[var]);
+		gridLayout->addWidget (combo, row++, 1);
+		mCombos << combo;
+	}
+	gbInformations->setEnabled (true);
 }
-#endif
 
 void UITemplatesWizard::on_tbDestination_clicked()
 {
@@ -116,176 +124,34 @@ void UITemplatesWizard::on_tbDestination_clicked()
 		leDestination->setText( s );
 }
 
-#if 0
-void UITemplatesWizard::on_pbPrevious_clicked()
-{/* swPages->setCurrentIndex( swPages->currentIndex() -1 ); */}
-
-void UITemplatesWizard::on_pbNext_clicked()
-{
-/*    if ( !checkTemplates() )
-        return;
-    
-    int i = swPages->currentIndex();
-    
-    if ( i < swPages->count() -1 )
-        swPages->setCurrentIndex( i +1 );
-    
-    if ( i == swPages->count() -1 )
-        accept();*/
-}
-
 bool UITemplatesWizard::checkTemplate()
 {
-    if ( !lwTemplates->selectedItems().count() )
+    if ( ! QDir (leDestination->text()).exists())
     {
-        information( tr( "Templates..." ), tr( "Choose a template to continue." ), this );
+        information( tr( "Destination..." ), tr( "Destination dirrectory not right" ), this );
         return false;
     }
-    
-    if ( leBaseName->text().isEmpty() )
-    {
-        information( tr( "Base Name..." ), tr( "Choose a base name for your file(s)." ), this );
-        return false;
-    }
-    
-    if ( leDestination->text().isEmpty() )
-    {
-        information( tr( "Destination..." ), tr( "Choose a destination for your file(s)." ), this );
-        return false;
-    }
-    
-    ProjectItem* it = mProjects->itemFromIndex( mProjects->scopesProxy()->mapToSource( cbProjects->currentIndex() ) );
-    
-    if ( cbAddToProject->isChecked() )
-    {
-        if ( !it )
-        {
-            information( tr( "Add To Project..." ), tr( "You need to select a project to add to." ), this );
-            return false;
-        }
-        else if ( cbTypes->currentText() == "Projects" && !it->isProjectsContainer() )
-        {
-            information( tr( "Add To Project..." ), tr( "The project you select is not a projects container." ), this );
-            return false;
-        }
-    }
-    */
     return true;
 }
 
-/*
-void UITemplatesWizard::generatePreview()
+void UITemplatesWizard::on_pbCreate_clicked()
 {
-    // delete all existing preview
-    qDeleteAll( sView->findChildren<pTemplatePreviewer*>() );
-    //
-    int i = 0;
-    // create new preview
-    foreach ( QListWidgetItem* it, lwTemplates->selectedItems() )
-    {
-        // get template files
-        foreach ( QString s, it->data( Qt::UserRole +1 ).toStringList() )
-        {
-            pTemplatePreviewer* p = new pTemplatePreviewer;
-            if ( s.isEmpty() )
-            {
-                p->setFileName( leBaseName->text() );
-                if ( it->text() == tr( "Blank" ) )
-                    p->setOpen( true );
-            }
-            else
-            {
-                p->setFileName( leBaseName->text().append( QString( ".%1" ).arg( QFileInfo( s ).suffix() ) ) );
-                p->open( s );
-                if ( cbTypes->itemData( cbTypes->currentIndex() ).toInt() != pTemplate::ttProjects || ( i != 0 && cbTypes->itemData( cbTypes->currentIndex() ).toInt() == pTemplate::ttProjects ) )
-                    p->editor()->insertAt( pTemplatesManager::templatesHeader(), 0, 0 );
-            }
-            p->setDestination( leDestination->text() );
-            // process content parsing
-            pTemplateContent tc;
-            tc.Name = leBaseName->text();
-            tc.Author = leAuthor->text();
-            tc.License = cbLicenses->currentText();
-            tc.Project = mProjects->itemFromIndex( mProjects->scopesProxy()->mapToSource( cbProjects->currentIndex() ) );
-            if ( !cbAddToProject->isChecked() )
-                tc.Project = 0;
-            tc.FileName = p->fileName();
-            tc.Comment = tr( "Your comment here" );
-            tc.Content = p->editor()->text();
-            // set content
-            p->editor()->setText( tc.Content.isEmpty() ? "\n" : pTemplatesManager::processContent( tc ) );
-            // add widget to splitter
-            sView->addWidget( p );
-        }
-        // increase i
-        i++;
-    }
-}
-*/
-#endif
-
-void UITemplatesWizard::on_accept()
-{
-/*
-    // get current template type
-    pTemplate::TemplateType t = (pTemplate::TemplateType)cbTypes->itemData( cbTypes->currentIndex() ).toInt();
-    // get project item
-    ProjectItem* it = mProjects->itemFromIndex( mProjects->scopesProxy()->mapToSource( cbProjects->currentIndex() ) );
-    //
-    int i = 0;
-    // create files
-    foreach ( pTemplatePreviewer* p, sView->findChildren<pTemplatePreviewer*>() )
-    {
-        // if open
-        if ( p->open() )
-        {
-            // set filename
-            QString s = QDir::cleanPath( p->destination().append( "/" ).append( p->fileName() ) );
-            // check if file already existing
-            if ( QFile::exists( s ) && !question( tr( "Overwrite File..." ), tr( "The file '%1' already exists, do you want to continue ?" ).arg( p->fileName() ) ) )
-                continue;
-            // if can save
-            if ( p->editor()->saveFile( s ) )
-            {
-                if ( cbAddToProject->isChecked() )
-                {
-                    if ( t == pTemplate::ttProjects && i == 0 )
-                    {
-                        if ( !it->project()->addProject( s, it, cbOperators->currentText() ) )
-                            warning( "Adding Project...", tr( "Can't add project:\n%1" ).arg( s ) );
-                    }
-                    else if ( t != pTemplate::ttProjects )
-                    {
-                        it->project()->addExistingFile( s, it, cbOperators->currentText() );
-                        if ( cbOpen->isChecked() )
-                            pFileManager::instance()->openFile( s );
-                    }
-                }
-                else if ( cbOpen->isChecked() )
-                {
-                    if ( t == pTemplate::ttProjects && i == 0 )
-                        pFileManager::instance()->openProject( s );
-                    else
-                        pFileManager::instance()->openFile( s );
-                }
-            }
-            else
-            {
-                warning( "Create File...", tr( "Can't create file:\n%1\nAborting." ).arg( s ) );
-                return;
-            }
-        }
-        // increase i
-        i++;
-    }
+	VariablesManager::Dictionary variables;
+	variables["Destination"]=leDestination->text();
+	int i = 0;
+	
+	while (i < mLabels.size())
+	{
+		variables [mLabels[i++]->text()] =  mCombos[i]->currentText();
+	}
+	int index = lwTemplates->currentItem ()->data( Qt::UserRole).toInt();	
+	if ( ! pTemplatesManager::instance()->realiseTemplate (mTemplates[index], variables))
+		return;
     // remember some infos
     pSettings* s = pSettings::instance();
     s->setValue( "Recents/FileWizard/Language", cbLanguages->currentText() );
     s->setValue( "Recents/FileWizard/Destination", leDestination->text() );
-    s->setValue( "Recents/FileWizard/Author", leAuthor->text() );
-    s->setValue( "Recents/FileWizard/License", cbLicenses->currentText() );
     s->setValue( "Recents/FileWizard/Open", cbOpen->isChecked() );
     // close dialog
-    QDialog::accept();
-*/
+    QDialog::accept();	
 }
