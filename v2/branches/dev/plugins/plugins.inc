@@ -30,6 +30,7 @@ CONFIG	*= warn_on lib_bundle thread x11 dll plugin
 MONKEY_PLUGINS_DIR	= ../../../bin/plugins
 #DEFINES	= __COVERAGESCANNER__
 LIBS	= -L$${BUILD_PATH}
+mac:*-g++:LIBS	*= -Wl,-undefined,dynamic_lookup
 win32:LIBS += -lmonkey
 
 win32:QMAKE_LIBDIR	+= ../../../bin
