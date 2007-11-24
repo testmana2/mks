@@ -1,5 +1,5 @@
 #! /bin/sh
-qmake-qt4 "CONFIG += debug_and_release"
+qmake -spec macx-g++ "CONFIG += debug_and_release"
 make -f Makefile distclean
-qmake-qt4 "CONFIG += debug_and_release"
+qmake -spec macx-g++ "CONFIG += debug_and_release"
 make -f Makefile release

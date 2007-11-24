@@ -1,6 +1,6 @@
 #include "UISettings.h"
 #include "pSettings.h"
-#include "UIEditTemplate.h"
+//#include "UIEditTemplate.h"
 #include "UIAddAbbreviation.h"
 #include "pFileManager.h"
 #include "pTemplatesManager.h"
