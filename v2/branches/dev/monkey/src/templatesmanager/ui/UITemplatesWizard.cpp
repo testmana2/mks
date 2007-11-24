@@ -19,6 +19,9 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 	mTemplates = pTemplatesManager::instance()->getTemplates();
     setAttribute( Qt::WA_DeleteOnClose );
     //fill available languages
+	cbLanguages->addItem (tr("Any"));
+	cbTypes->addItem (tr("Any"));
+	
 	QStringList langs;
 	QStringList types;
 	TemplateList tl = pTemplatesManager::instance()->getTemplates ();
@@ -31,9 +34,6 @@ UITemplatesWizard::UITemplatesWizard( QWidget* w )
 	}
 	cbLanguages->addItems(langs);
 	cbTypes->addItems (types);
-	
-	cbLanguages->addItem (tr("Any"));
-	cbTypes->addItem (tr("Any"));
 	
     // assign projects combobox
     mProjects = UIProjectsManager::instance()->model();
@@ -92,6 +92,7 @@ void UITemplatesWizard::onFiltersChanged()
 	gbInformations->setEnabled (false);
 }
 
+#include <QDebug>
 void UITemplatesWizard::onTemplateSelected (QListWidgetItem* it)
 {
 	while (mLabels.size())
@@ -115,6 +116,8 @@ void UITemplatesWizard::onTemplateSelected (QListWidgetItem* it)
 		mCombos << combo;
 	}
 	gbInformations->setEnabled (true);
+	int index = lwTemplates->currentItem ()->data( Qt::UserRole+1).toInt();	
+	qDebug () << mTemplates[index].Files<<index;
 }
 
 void UITemplatesWizard::on_tbDestination_clicked()
@@ -144,7 +147,8 @@ void UITemplatesWizard::on_pbCreate_clicked()
 	{
 		variables [mLabels[i++]->text()] =  mCombos[i]->currentText();
 	}
-	int index = lwTemplates->currentItem ()->data( Qt::UserRole).toInt();	
+	int index = lwTemplates->currentItem ()->data( Qt::UserRole+1).toInt();	
+	qDebug () << mTemplates[index].Files;
 	if ( ! pTemplatesManager::instance()->realiseTemplate (mTemplates[index], variables))
 		return;
     // remember some infos
