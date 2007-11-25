@@ -56,7 +56,7 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 	
 	QStringList variables = set.value("Variables").toStringList();
 	foreach (QString var, variables)
-		templ.Variables.insert(var, set.value(var).toStringList());
+		templ.Variables.insert(var, set.value(var+"Values").toStringList());
 	
     return templ;
 }
@@ -85,9 +85,14 @@ void pTemplatesManager::setTemplate (pTemplate t)
 TemplateList pTemplatesManager::getTemplates()
 {
 	TemplateList result;
-	foreach (QString dir, getTemplatesPath ())
-		foreach (QString templateName, getTemplatesNames (dir))
-			result << getTemplate (dir +"/" + templateName);
+	foreach (QString dir1, getTemplatesPath ())
+	{
+		foreach (QString dir2, QDir(dir1).entryList (QDir::Dirs | QDir::NoDotAndDotDot))
+		{
+			foreach (QString templateName, getTemplatesNames (dir1+"/"+dir2))
+				result << getTemplate (dir1+"/"+dir2 +"/" + templateName);
+		}
+	}
 	return result;
 }
 
