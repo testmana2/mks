@@ -129,7 +129,7 @@ int main( int argc, char** argv )
     
     // start application
     VariablesManager::Dictionary v;
-    v.insert ("fuck", "Fuck");
-    qWarning () <<VariablesManager::instance()->replaceAllVariables ("hehe$date$ huhu $fuck$", v);
+    v.insert ("fuck", "Big Fuck");
+    qWarning () <<VariablesManager::instance()->replaceAllVariables ("hehe$date$ huhu $fuck.upper$  $fuck.lower$ ", v);
     return a.exec();
 }

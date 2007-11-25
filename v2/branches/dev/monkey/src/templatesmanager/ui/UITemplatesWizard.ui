@@ -5,9 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
-    <height>402</height>
+    <width>491</width>
+    <height>420</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle" >
    <string>Templates Wizard</string>
@@ -58,6 +64,24 @@
    </item>
    <item>
     <widget class="QListWidget" name="lwTemplates" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>473</width>
+       <height>196</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>473</width>
+       <height>196</height>
+      </size>
+     </property>
      <property name="toolTip" >
       <string>Choose a template</string>
      </property>

@@ -56,8 +56,25 @@ QString VariablesManager::replaceAllVariables (QString text, Dictionary locals)
     foreach ( QString s, findedVariables )
 	{
 		QString fuckDollar = QString(s).remove(s.size()-1,1).remove(0,1);
-		qWarning() << fuckDollar;
-        text.replace( s, getVariable(fuckDollar,locals));
+		bool toup = false;
+		bool tolow = false;
+		if (fuckDollar.endsWith (".upper"))
+		{
+			toup = true;
+			fuckDollar.remove (".upper");
+		}
+		else if (fuckDollar.endsWith (".lower"))
+		{
+			tolow = true;
+			fuckDollar.remove (".lower");
+		}
+		QString replaceWith = getVariable(fuckDollar,locals);
+		if (toup)
+			replaceWith = replaceWith.toUpper();
+		else if (tolow)
+			replaceWith = replaceWith.toLower();
+        text.replace( s, replaceWith);
+		text.replace( "\\n", "\n");
 	}
     // return value
     return text;
