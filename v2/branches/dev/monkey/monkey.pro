@@ -54,7 +54,6 @@ FORMS	*= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UISettings.ui \
 	src/qscintillamanager/ui/pSearch.ui \
 	src/abbreviationsmanager/ui/UIAddAbbreviation.ui \
-#src/templatesmanager/ui/UIEditTemplate.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui \
 	src/toolsmanager/ui/UIDesktopTools.ui \
 	src/toolsmanager/ui/UIToolsEdit.ui \

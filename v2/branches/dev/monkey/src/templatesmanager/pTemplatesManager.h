@@ -42,6 +42,7 @@ public:
     */
     QStringList Files;
     QStringList FilesToOpen;
+    QStringList ProjectsToOpen;
     
     VarList Variables;
 
@@ -78,7 +79,6 @@ public:
 	QStringList getTemplatesNames (QString path);
 
     pTemplate getTemplate (QString);
-    void setTemplate (pTemplate);
 };
 
 #endif // PTEMPLATESMANAGER_H

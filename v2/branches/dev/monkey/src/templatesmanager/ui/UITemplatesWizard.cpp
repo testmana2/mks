@@ -118,7 +118,7 @@ void UITemplatesWizard::on_tbDestination_clicked()
 
 bool UITemplatesWizard::checkTemplate()
 {
-    if ( ! QDir (leDestination->text()).exists())
+    if ( leDestination->text().isEmpty ())
     {
         information( tr( "Destination..." ), tr( "Destination dirrectory not right" ), this );
         return false;
@@ -128,6 +128,7 @@ bool UITemplatesWizard::checkTemplate()
 
 void UITemplatesWizard::on_pbCreate_clicked()
 {
+    checkTemplate();
 	VariablesManager::Dictionary variables;
 	variables["Destination"]=leDestination->text();
 	int i = 0;
@@ -136,7 +137,12 @@ void UITemplatesWizard::on_pbCreate_clicked()
 	{
 		variables [mLabels[i++]->text()] =  mCombos[i]->currentText();
 	}
-	int index = lwTemplates->currentItem ()->data( Qt::UserRole+1).toInt();	
+    int index = lwTemplates->currentItem ()->data( Qt::UserRole+1).toInt();	
+    if (!cbOpen->isChecked())
+    {
+        mTemplates[index].FilesToOpen.clear();
+        mTemplates[index].ProjectsToOpen.clear();
+    }
 	if ( ! pTemplatesManager::instance()->realiseTemplate (mTemplates[index], variables))
 		return;
     // remember some infos

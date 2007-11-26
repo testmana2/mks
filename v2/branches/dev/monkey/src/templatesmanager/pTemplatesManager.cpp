@@ -53,6 +53,7 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 						QFileInfo(d).filePath()+"/",
 						set.value ("Files").toStringList(),
                         set.value ("FilesToOpen").toStringList(),
+                        set.value ("ProjectsToOpen").toStringList(),
 						QHash <QString,QStringList> (),
 					   };
 	
@@ -61,27 +62,6 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 		templ.Variables.insert(var, set.value(var+"Values").toStringList());
 	
     return templ;
-}
-
-void pTemplatesManager::setTemplate (pTemplate t)
-{
-	qWarning () << "Saving template" << t.DirPath+"/"+ t.Name+ "/"+"template.ini";
-	QSettings set (t.DirPath+"/"+ t.Name+ "/"+"template.ini", QSettings::IniFormat);
-	if (set.status() != QSettings::NoError)
-	{
-		qWarning ()<<"Error reading file "<<  + "/template.ini "<<"Ignored";
-		return ;
-	}
-	
-	set.setValue ("Language", QVariant(t.Language));
-	set.setValue ("Type", QVariant(t.Type));
-	set.setValue ("Description", QVariant(t.Description));
-	set.setValue ("Script", QVariant(t.Script));
-	set.setValue ("Icon", QVariant(t.Icon));
-	set.setValue ("Files", QVariant(t.Files));
-	set.setValue ("Variables", QVariant (t.Variables.keys()));
-	foreach (QString var, t.Variables.keys())
-		set.setValue (var, t.Variables[var]);
 }
 
 TemplateList pTemplatesManager::getTemplates()
@@ -151,6 +131,8 @@ bool pTemplatesManager::realiseTemplate (pTemplate t, VariablesManager::Dictiona
 		file.close();
         if (t.FilesToOpen.contains (f))
             pFileManager::instance()->openFile (newFile);
+        if (t.ProjectsToOpen.contains (f))
+            pFileManager::instance()->openProject (newFile);
 	}
 	return true;
 }
