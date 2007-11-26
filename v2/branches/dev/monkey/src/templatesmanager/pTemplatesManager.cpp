@@ -11,6 +11,7 @@
 #include "pMonkeyStudio.h"
 #include "pSettings.h"
 #include "ProjectItem.h"
+#include "pFileManager.h"
 
 #include <QHash>
 #include <QDebug>
@@ -51,6 +52,7 @@ pTemplate pTemplatesManager::getTemplate (QString d)
 						set.value ("Icon").toString(), //just an empty icon, if not exist
 						QFileInfo(d).filePath()+"/",
 						set.value ("Files").toStringList(),
+                        set.value ("FilesToOpen").toStringList(),
 						QHash <QString,QStringList> (),
 					   };
 	
@@ -99,10 +101,18 @@ TemplateList pTemplatesManager::getTemplates()
 bool pTemplatesManager::realiseTemplate (pTemplate t, VariablesManager::Dictionary dict)
 {
 	QString dest = dict["Destination"];
-	if ( (! QDir(dest).exists ()) || dest.isEmpty())
+	if ( dest.isEmpty())
 	{
-		QMessageBox::information (NULL, tr("Error"), tr ("Not exist dirrectory '%1'").arg(dict["Destination"]));
+		QMessageBox::information (NULL, tr("Error"), tr ("Not set dirrectory for template"));
 		return false;
+	}
+	if ( ! QDir(dest).exists ())
+	{
+        if ( ! QDir().mkpath (dest))
+        {
+            QMessageBox::information (NULL, tr("Error"), tr ("Can't create dirrectory'%1'").arg(dict["Destination"]));
+            return false;
+        }
 	}
 	if ( ! dest.endsWith ("/"))
 		dest += "/";
@@ -139,6 +149,8 @@ bool pTemplatesManager::realiseTemplate (pTemplate t, VariablesManager::Dictiona
 		file.resize (0);
 		file.write (VariablesManager::instance()->replaceAllVariables (content,dict).toLocal8Bit());
 		file.close();
+        if (t.FilesToOpen.contains (f))
+            pFileManager::instance()->openFile (newFile);
 	}
 	return true;
 }

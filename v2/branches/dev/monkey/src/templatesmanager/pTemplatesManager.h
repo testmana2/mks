@@ -41,6 +41,7 @@ public:
     This files will be renamed
     */
     QStringList Files;
+    QStringList FilesToOpen;
     
     VarList Variables;
 
