@@ -68,20 +68,14 @@ void UITemplatesWizard::onFiltersChanged()
 	
     // clear lwTemplates
     lwTemplates->clear();
-    // create blank file
-    QListWidgetItem* it = new QListWidgetItem( lwTemplates );
-    it->setIcon( QIcon( ":/templates/icons/templates/empty.png" ) );
-    it->setToolTip( tr( "Blank File" ) );
-    it->setText( tr( "Blank" ) );
-	it->setData( Qt::UserRole+1, -1);
     // create tempaltes
     for (int i = 0; i < mTemplates.size(); i++)
     {
 		pTemplate t = mTemplates[i];
-        if (  (	language == tr("Any") || t.Language == language) && 
-				cbTypes->currentText() == tr("Any") || t.Type == type )
+        if (  (	language == tr("Any") || t.Language == language || t.Language == "Any") && 
+              ( cbTypes->currentText() == tr("Any") || t.Type == type || t.Type == "Any"))
         {
-            it = new QListWidgetItem( lwTemplates );
+            QListWidgetItem* it = new QListWidgetItem( lwTemplates );
 			QString icon = t.Icon.isEmpty() ? ":/templates/icons/templates/empty.png" : (t.DirPath + t.Icon);
             it->setIcon( QIcon(icon) );
             it->setToolTip( t.Description );
@@ -92,7 +86,6 @@ void UITemplatesWizard::onFiltersChanged()
 	gbInformations->setEnabled (false);
 }
 
-#include <QDebug>
 void UITemplatesWizard::onTemplateSelected (QListWidgetItem* it)
 {
 	while (mLabels.size())
@@ -101,8 +94,6 @@ void UITemplatesWizard::onTemplateSelected (QListWidgetItem* it)
 		delete mCombos.takeAt(0);
 	}
 	int i = it->data (Qt::UserRole+1).toInt();
-	if (i == -1)
-		return;
 	int row = 1;
 	foreach (QString var, mTemplates[i].Variables.keys())
 	{
@@ -116,8 +107,6 @@ void UITemplatesWizard::onTemplateSelected (QListWidgetItem* it)
 		mCombos << combo;
 	}
 	gbInformations->setEnabled (true);
-	int index = lwTemplates->currentItem ()->data( Qt::UserRole+1).toInt();	
-	qDebug () << mTemplates[index].Files<<index;
 }
 
 void UITemplatesWizard::on_tbDestination_clicked()
@@ -148,7 +137,6 @@ void UITemplatesWizard::on_pbCreate_clicked()
 		variables [mLabels[i++]->text()] =  mCombos[i]->currentText();
 	}
 	int index = lwTemplates->currentItem ()->data( Qt::UserRole+1).toInt();	
-	qDebug () << mTemplates[index].Files;
 	if ( ! pTemplatesManager::instance()->realiseTemplate (mTemplates[index], variables))
 		return;
     // remember some infos
