@@ -22,6 +22,7 @@ class QBoxLayout;
 class QStackedLayout;
 class QStackedWidget;
 class QMdiArea;
+class QMdiSubWindow;
 class pAction;
 
 class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
@@ -31,7 +32,6 @@ class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
 	
 public:
 	enum DocumentMode { dmSDI = 0, dmMDI, dmTopLevel };
-	//enum DocumentSize { dmMaximized = 0, dmCascade, dmTile, dmIcons, dmMinimizeAll, dmRestoreAll};
 
 	pTabbedWorkspace( QMainWindow* , pTabbedWorkspace::DocumentMode = pTabbedWorkspace::dmSDI );
 	~pTabbedWorkspace();
@@ -69,10 +69,14 @@ public slots:
 	void setCurrentIndex( int );
 	void setCurrentDocument( QWidget* );
 
-	virtual void closeDocument(QWidget* doc);
-	virtual void closeDocument(int pos);
-	virtual void closeAllDocuments ();
-	virtual void closeCurrentDocument ();
+	/*
+	Do not make this functions virtual!!
+	closeAllDocuments must not call functions of child classes
+	*/
+	void closeDocument(QWidget* doc);
+	void closeDocument(int pos);
+	void closeAllDocuments ();
+	void closeCurrentDocument ();
 
 	void activateNextDocument();
 	void activatePreviousDocument();
@@ -86,6 +90,9 @@ public slots:
     void restore ();
 
 protected:
+
+	// main window of application
+	QMainWindow* mMainWindow;
 
 	// workspace properties
 	pTabbedWorkspace::DocumentMode mDocMode;
@@ -102,8 +109,12 @@ protected:
 	pFilesListWidget* mFilesList;
 	// document widget
 	QStackedLayout* mStackedLayout;
-	QStackedWidget* mStackedWidget;
-	QMdiArea* mWorkspaceWidget;
+	/* Stacked widget used for SDI mode, because we can't use maximized windows on QMdiArea on Mac*/
+	QStackedWidget* mStackedWidget; 
+	QMdiArea* mMdiAreaWidget;
+
+protected slots:
+	void setCurrentDocument( QMdiSubWindow* );
 
 signals:
 	void documentInserted( int, QString, QIcon );

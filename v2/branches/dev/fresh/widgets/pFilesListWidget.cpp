@@ -1,3 +1,11 @@
+/********************************************************************************************************
+ * PROGRAM      : fresh
+ * DATE - TIME  : 2007/12/29
+ * AUTHOR       : Kopats Andrei aka hlamer( hlamer@tut.by )
+ * FILENAME     : pFilesListWidget.cpp
+ * LICENSE      : GPL
+ * COMMENTARY   : Widget with list of files, opened on workspace, for activating needed file
+ ********************************************************************************************************/
 #include <QMenu>
 
 #include "pFilesListWidget.h"
