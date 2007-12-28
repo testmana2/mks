@@ -52,7 +52,7 @@ pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMo
 	//mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
 	
 	mDocMode = (DocumentMode)-1; //for avoid return on start method setDocMode (m)
-	setDocMode (m);
+	setDocMode (/*m*/dmMDI);
 }
 
 pTabbedWorkspace::~pTabbedWorkspace()
@@ -74,7 +74,7 @@ bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 	
 	// child modified state
 	if (t == QEvent::ModifiedChange && td && (indexOf (td) != -1))
-		emit modifiedChanged (indexOf (td), td->isWindowModified());
+		;//emit modifiedChanged (indexOf (td), td->isWindowModified());
 
 	// remove document from workspace
 	else if ( t == QEvent::Close && td && (indexOf (td) != -1))
@@ -147,21 +147,21 @@ int pTabbedWorkspace::insertDocument(int pos, QWidget* td, const QString& s,  co
 	// append to document list
 	mDocuments.insert( pos, td );
 	
-    switch ( mDocMode )
-    {
-    case dmSDI:
-        mWorkspaceWidget->addSubWindow( td );
-        td->showMaximized();
-        break;
-    case dmMDI:
-        mWorkspaceWidget->addSubWindow( td );
-        td->showNormal();
-        break;
-    case dmTopLevel:
-        td->setParent( 0 );
-        td->show();
-        break;
-    }
+	switch ( mDocMode )
+	{
+	case dmSDI:
+		mStackedLayout->setCurrentWidget( mStackedWidget );
+		mStackedWidget->addWidget( td );
+		//mStackedWidget->setCurrentWidget (td);
+		break;
+	case dmMDI:
+		mWorkspaceWidget->addSubWindow( td )->showNormal();
+		break;
+	case dmTopLevel:
+		td->setParent( 0 );
+		td->showNormal();
+		break;
+	}	
 	
 	// emit tab inserted
 	emit documentInserted( pos, s, i );
@@ -205,6 +205,7 @@ void pTabbedWorkspace::closeCurrentDocument()
 	closeDocument (currentIndex());
 }
 
+#include <QDebug>
 void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 {
 	if ( mDocMode == dm )
@@ -213,11 +214,9 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 	mDocMode = dm;
 
     if (mDocMode == dmSDI)
-        if ( mStackedLayout->currentWidget() != mStackedWidget )
-				mStackedLayout->setCurrentWidget( mStackedWidget );
-    else
-        if ( mStackedLayout->currentWidget() != mWorkspaceWidget )
-				mStackedLayout->setCurrentWidget( mWorkspaceWidget );
+        mStackedLayout->setCurrentWidget( mStackedWidget );
+    else if (mDocMode ==dmMDI )
+		mStackedLayout->setCurrentWidget( mWorkspaceWidget );
 
 	if (!count())
 		return;
@@ -235,8 +234,7 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 		case dmMDI:
             if (td->parent () == mStackedWidget )
                 mStackedWidget->removeWidget (td);
-            mWorkspaceWidget->addSubWindow( td );
-            td->showNormal ();
+			mWorkspaceWidget->addSubWindow( td )->showNormal();
 			break;
 		case dmTopLevel:
 			td->setParent( 0 );
@@ -244,14 +242,13 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 			break;
 		}	
 	}
-	
 	// restore current index
-	int i = mCurrIndex; //for avoid return from function because index not changed
-	mCurrIndex = -1;
-	setCurrentIndex( i );
+	//int i = mCurrIndex; //for avoid return from function because index not changed
+	//mCurrIndex = -1;
+	//setCurrentIndex( i );
     
-    if (mDocMode == dmMDI)
-        tile ();
+    //if (mDocMode == dmMDI)
+    //    tile ();
     
 	// emit tab mode changed
 	emit docModeChanged( mDocMode );
@@ -300,9 +297,9 @@ void pTabbedWorkspace::setCurrentIndex( int i )
 	switch ( mDocMode )
 	{
 		case dmSDI:
-            //mStackedWidget->setCurrentWidget (document(mCurrIndex));
+            mStackedWidget->setCurrentWidget (document(mCurrIndex));
 		case dmMDI:
-			//mWorkspaceWidget->setActiveSubWindow( static_cast<QMdiSubWindow*>(document(mCurrIndex)) );
+			mWorkspaceWidget->setActiveSubWindow( static_cast<QMdiSubWindow*>(document(mCurrIndex)) );
 			break;
 		case dmTopLevel:
 			if (! document(mCurrIndex)->isActiveWindow ())
