@@ -21,7 +21,7 @@
 class QBoxLayout;
 class QStackedLayout;
 class QStackedWidget;
-class QWorkspace;
+class QMdiArea;
 class pAction;
 
 class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
@@ -101,7 +101,9 @@ protected:
 	//list widget
 	pFilesListWidget* mFilesList;
 	// document widget
-	QWorkspace* mWorkspaceWidget;
+	QStackedLayout* mStackedLayout;
+	QStackedWidget* mStackedWidget;
+	QMdiArea* mWorkspaceWidget;
 
 signals:
 	void documentInserted( int, QString, QIcon );

@@ -9,12 +9,15 @@
 #include "pTabbedWorkspace.h"
 
 #include <QBoxLayout>
-#include <QWorkspace>
+#include <QMdiArea>
+#include <QMdiSubWindow>
 #include <QIcon>
 #include <QCloseEvent>
 #include <QFile>
 #include <QMenu>
 #include <QMainWindow>
+#include <QStackedLayout>
+#include <QStackedWidget>
 
 
 pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMode m )
@@ -30,15 +33,16 @@ pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMo
 	mFilesList = new pFilesListWidget (tr("Files list"), w, this);
 	
 	// document widget
-    mWorkspaceWidget = new QWorkspace ();
-	mWorkspaceWidget->setScrollBarsEnabled( true );
+	mStackedLayout = new QStackedLayout;
+	mStackedLayout->addWidget( ( mStackedWidget = new QStackedWidget ) );
+	mStackedLayout->addWidget( ( mWorkspaceWidget = new QMdiArea ) );
 
 	// main layout
 	mLayout = new QBoxLayout( QBoxLayout::TopToBottom, this );
 	mLayout->setSpacing( 0 );
 	mLayout->setMargin( 0 );
 	mLayout->addLayout( mTabLayout );
-	mLayout->addWidget ( mWorkspaceWidget );
+    mLayout->addLayout( mStackedLayout );
 
 	connect( mWorkspaceWidget, SIGNAL( windowActivated( QWidget* ) ), this, SLOT( setCurrentDocument( QWidget* ) ) );
 	
@@ -114,7 +118,12 @@ int pTabbedWorkspace::currentIndex() const
 { return mCurrIndex; }
 
 QWidget* pTabbedWorkspace::currentDocument() const
-{ return mWorkspaceWidget->activeWindow(); }
+{
+    if (mWorkspaceWidget->activeSubWindow())
+        return mWorkspaceWidget->activeSubWindow()->widget();
+    else
+        return NULL;
+}
 
 int pTabbedWorkspace::indexOf(QWidget* w) const
 { return mDocuments.indexOf (w); }
@@ -141,11 +150,11 @@ int pTabbedWorkspace::insertDocument(int pos, QWidget* td, const QString& s,  co
     switch ( mDocMode )
     {
     case dmSDI:
-        mWorkspaceWidget->addWindow( td );
+        mWorkspaceWidget->addSubWindow( td );
         td->showMaximized();
         break;
     case dmMDI:
-        mWorkspaceWidget->addWindow( td );
+        mWorkspaceWidget->addSubWindow( td );
         td->showNormal();
         break;
     case dmTopLevel:
@@ -176,7 +185,7 @@ void pTabbedWorkspace::closeDocument(int i)
 	
 	if (i == currentIndex())
 	{
-        mWorkspaceWidget->activatePreviousWindow ();
+        setCurrentIndex (0);
 	}
 }
 
@@ -203,21 +212,30 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 	
 	mDocMode = dm;
 
+    if (mDocMode == dmSDI)
+        if ( mStackedLayout->currentWidget() != mStackedWidget )
+				mStackedLayout->setCurrentWidget( mStackedWidget );
+    else
+        if ( mStackedLayout->currentWidget() != mWorkspaceWidget )
+				mStackedLayout->setCurrentWidget( mWorkspaceWidget );
+
 	if (!count())
 		return;
-	
+
 	// add document to correct workspace
 	foreach ( QWidget* td, mDocuments )
 	{
 		switch ( mDocMode )
 		{
 		case dmSDI:
-            mWorkspaceWidget->addWindow( td );
-            td->showMaximized();
+            if (td->parent () == mWorkspaceWidget )
+                mWorkspaceWidget->removeSubWindow( td );
+            mStackedWidget->addWidget( td );
 			break;
 		case dmMDI:
-            if ( !td->parent ())
-                mWorkspaceWidget->addWindow( td );
+            if (td->parent () == mStackedWidget )
+                mStackedWidget->removeWidget (td);
+            mWorkspaceWidget->addSubWindow( td );
             td->showNormal ();
 			break;
 		case dmTopLevel:
@@ -231,7 +249,10 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 	int i = mCurrIndex; //for avoid return from function because index not changed
 	mCurrIndex = -1;
 	setCurrentIndex( i );
-
+    
+    if (mDocMode == dmMDI)
+        tile ();
+    
 	// emit tab mode changed
 	emit docModeChanged( mDocMode );
 }
@@ -279,8 +300,9 @@ void pTabbedWorkspace::setCurrentIndex( int i )
 	switch ( mDocMode )
 	{
 		case dmSDI:
+            //mStackedWidget->setCurrentWidget (document(mCurrIndex));
 		case dmMDI:
-			mWorkspaceWidget->setActiveWindow( document(mCurrIndex) );
+			//mWorkspaceWidget->setActiveSubWindow( static_cast<QMdiSubWindow*>(document(mCurrIndex)) );
 			break;
 		case dmTopLevel:
 			if (! document(mCurrIndex)->isActiveWindow ())
@@ -333,13 +355,13 @@ void pTabbedWorkspace::setTopLevel ()
 void pTabbedWorkspace::cascade ()
 {
     setDocMode (dmMDI);
-    mWorkspaceWidget->cascade ();
+    mWorkspaceWidget->cascadeSubWindows ();
 };
 
 void pTabbedWorkspace::tile ()
 {
     setDocMode (dmMDI);
-    mWorkspaceWidget->tile ();
+    mWorkspaceWidget->tileSubWindows ();
 };
 
 void pTabbedWorkspace::minimize ()
