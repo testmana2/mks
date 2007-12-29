@@ -67,27 +67,33 @@ pTabbedWorkspace::~pTabbedWorkspace()
 
 bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 {
-	// get event type
-	QEvent::Type t = e->type();
-	
 	// get document
 	QWidget* td = qobject_cast<QWidget*>( o );
 	
+	if (indexOf (td) == -1)
+		return QWidget::eventFilter( o, e );
+	
+	// get event type
+	QEvent::Type t = e->type();
+	
 	// child modified state
-	if (t == QEvent::ModifiedChange && td && (indexOf (td) != -1))
-		emit modifiedChanged (indexOf (td), td->isWindowModified());
-
-	// remove document from workspace
-	else if ( t == QEvent::Close && td && (indexOf (td) != -1))
+	switch ( t )
 	{
+	case QEvent::ModifiedChange:
+		emit modifiedChanged (indexOf (td), td->isWindowModified());
+		break;
+	case QEvent::Close:
 		closeDocument (td);
 		return true;
+		break; // :D
+	case QEvent::WindowActivate:
+		if (mDocMode == dmTopLevel)
+			setCurrentDocument (td);
+	case QEvent::WindowTitleChange:
+		emit docTitleChanged (indexOf (td), td->windowTitle().replace ("[*]", ""));
+	default:
+		break;
 	}
-	else if (mDocMode == dmTopLevel && 
-			 t == QEvent::WindowActivate && 
-			 td &&
-             (indexOf (td) != -1))
-		setCurrentDocument (td);
 
 	// return default event filter
 	return QWidget::eventFilter( o, e );
@@ -166,7 +172,7 @@ int pTabbedWorkspace::insertDocument(int pos, QWidget* td, const QString& s,  co
 	}	
 	
 	// emit tab inserted
-	emit documentInserted( pos, s, i );
+	emit documentInserted( pos, /*s*/td->windowTitle ().replace("[*]", ""), i );
 
 	// emit tab current changed
 	emit currentChanged( pos );

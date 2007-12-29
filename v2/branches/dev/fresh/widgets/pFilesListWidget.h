@@ -33,6 +33,7 @@ protected slots:
 
 	void setCurrentIndex (int);
     void modifiedChanged (int, bool);
+    void docTitleChanged (int, QString);
     void documentInserted( int, QString, QIcon );
     void documentClosed ( int );
 

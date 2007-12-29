@@ -124,6 +124,7 @@ signals:
 	void tabShapeChanged( QTabBar::Shape );
 	void docModeChanged( pTabbedWorkspace::DocumentMode );
 	void modifiedChanged (int, bool);
+	void docTitleChanged (int, QString);
 	
 //	void aboutToCloseDocument (int, QCloseEvent*);
 //	void aboutToCloseAll ();
