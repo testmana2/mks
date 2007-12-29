@@ -496,18 +496,18 @@ void pWorkspace::helpTestReport_triggered()
 { UITestReport::instance( this )->exec(); }
 #endif
 
-void pWorkspace::closeDocument(int i)
+void pWorkspace::closeCurrentDocument()
 {
-	if ( UISaveFiles::saveDocument( window(), child( i ), false ) == UISaveFiles::bCancelClose )
+	if ( UISaveFiles::saveDocument( window(), currentChild(), false ) == UISaveFiles::bCancelClose )
 		return;
 	
-	pTabbedWorkspace::closeDocument (i);
+	pTabbedWorkspace::closeCurrentDocument ();
 }
 
 void pWorkspace::closeAllDocuments ()
 {
 	// try save documents
-	UISaveFiles::Buttons cb = UISaveFiles::saveDocuments( window(), children(), true );
+	UISaveFiles::Buttons cb = UISaveFiles::saveDocuments( window(), children(), false );
 	
 	// close all object, disconnecting them
 	if ( cb != UISaveFiles::bCancelClose )

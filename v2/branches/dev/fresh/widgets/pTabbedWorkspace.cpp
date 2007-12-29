@@ -31,7 +31,7 @@ pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMo
 	//mTabLayout->addWidget( ( mTabBar ) );
 
 	mFilesList = new pFilesListWidget (tr("Files list"), w, this);
-	mMainWindow->addDockWidget (Qt::AllDockWidgetAreas, mFilesList);
+	mMainWindow->addDockWidget (Qt::LeftDockWidgetArea, mFilesList);
 	
 	// document widget
 	mStackedLayout = new QStackedLayout;
@@ -120,10 +120,10 @@ int pTabbedWorkspace::currentIndex() const
 
 QWidget* pTabbedWorkspace::currentDocument() const
 {
-    if (mMdiAreaWidget->activeSubWindow())
-        return mMdiAreaWidget->activeSubWindow()->widget();
-    else
-        return NULL;
+	if (count ())
+    	return document (mCurrIndex);
+	else
+		return NULL;
 }
 
 int pTabbedWorkspace::indexOf(QWidget* w) const
@@ -144,6 +144,7 @@ int pTabbedWorkspace::insertDocument(int pos, QWidget* td, const QString& s,  co
 {
 	// filter the document
 	td->installEventFilter( this );
+	td->setAttribute (Qt::WA_DeleteOnClose, true);
 
 	// append to document list
 	mDocuments.insert( pos, td );
@@ -180,7 +181,7 @@ void pTabbedWorkspace::closeDocument(int i)
 	//signal must be processed while widget is exists for avoid crashs
 	emit documentClosed( i );
 	
-	mDocuments[i]->deleteLater ();
+	mDocuments[i]->close ();
 	
 	// remove document
 	mDocuments.removeAt(i);
