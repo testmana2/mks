@@ -177,7 +177,7 @@ void pChild::openFile( const QString& s, QTextCodec* c )
 	mFiles.append( s );
 
 	// change window title
-	setWindowTitle( s );
+	setWindowTitle( s+ "[*]" );
 
 	emit fileOpened( s );
 }

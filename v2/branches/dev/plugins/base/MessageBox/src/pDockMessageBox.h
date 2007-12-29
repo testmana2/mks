@@ -63,7 +63,7 @@ public slots:
 	void showNextError ();
 
 private slots:
-	void lwBuildSteps_currentItemChanged( QListWidgetItem * it, QListWidgetItem * );
+	void lwBuildSteps_itemPressed( QListWidgetItem * it);
 	void leRawCommand_returnPressed();
 	void commandError( const pCommand&, QProcess::ProcessError );
 	void commandFinished( const pCommand&, int, QProcess::ExitStatus );

@@ -84,10 +84,9 @@ bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 		return true;
 	}
 	else if (mDocMode == dmTopLevel && 
-			 t == QEvent::ActivationChange && 
+			 t == QEvent::WindowActivate && 
 			 td &&
-             (indexOf (td) != -1) &&
-			 td->isActiveWindow ())
+             (indexOf (td) != -1))
 		setCurrentDocument (td);
 
 	// return default event filter
@@ -181,6 +180,7 @@ void pTabbedWorkspace::closeDocument(int i)
 	//signal must be processed while widget is exists for avoid crashs
 	emit documentClosed( i );
 	
+	mDocuments[i]->removeEventFilter( this );
 	mDocuments[i]->close ();
 	
 	// remove document
@@ -229,26 +229,27 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 		switch ( mDocMode )
 		{
 		case dmSDI:
-            if (td->parent () == mMdiAreaWidget )
-                mMdiAreaWidget->removeSubWindow( td );
             mStackedWidget->addWidget( td );
-			foreach (QAction* act, mMainWindow->actions ()) // not working !!! FIXME
-				td->removeAction (act);
+			//foreach (QAction* act, mMainWindow->actions ()) // not working !!! FIXME
+			//	td->removeAction (act);
 			break;
 		case dmMDI:
-            if (td->parent () == mStackedWidget )
-                mStackedWidget->removeWidget (td);
 			mMdiAreaWidget->addSubWindow( td )->widget()->showNormal();
-			foreach (QAction* act, mMainWindow->actions ())
-				td->removeAction (act);
+			//foreach (QAction* act, mMainWindow->actions ())
+			//	td->removeAction (act);
 			break;
 		case dmTopLevel:
 			td->setParent( 0 );
-			td->addActions (mMainWindow->actions());
+			//td->addActions (mMainWindow->actions());
 			td->showNormal();
 			break;
 		}	
 	}
+	
+	//cleanup QMdiArea - remove it's empty QMdiSubWindows
+	if ( mDocMode != dmMDI )
+		foreach (QMdiSubWindow* sw, mMdiAreaWidget->subWindowList ())
+			delete  sw; //if just remove - widget will not be deleted
 	// restore current index
 	int i = mCurrIndex; //for avoid return from function because index not changed
 	mCurrIndex = -1;
@@ -317,7 +318,10 @@ void pTabbedWorkspace::setCurrentDocument( QWidget* d )
 { setCurrentIndex( indexOf( d ) ); }
 
 void pTabbedWorkspace::setCurrentDocument( QMdiSubWindow* d )
-{ setCurrentIndex( indexOf( d->widget() ) ); }
+{ 
+	if (d)
+		setCurrentIndex( indexOf( d->widget() ) ); 
+}
 
 void pTabbedWorkspace::activateNextDocument()
 {
