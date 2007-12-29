@@ -30,6 +30,7 @@ pFilesListWidget::pFilesListWidget(QString s, QWidget* w, pTabbedWorkspace* p) :
     //workspace ->this
 	connect( mWorkspace, SIGNAL( currentChanged( int ) ), this, SLOT( setCurrentIndex( int ) ) );
     connect( mWorkspace, SIGNAL( modifiedChanged( int, bool ) ), this, SLOT( modifiedChanged( int, bool ) ) );
+    connect( mWorkspace, SIGNAL( docTitleChanged( int, QString) ), this, SLOT( docTitleChanged( int, QString ) ) );
     connect (mWorkspace, SIGNAL (documentInserted (int, QString, QIcon)), this, SLOT (documentInserted( int, QString, QIcon )));
     connect( mWorkspace, SIGNAL( documentClosed( int ) ), this, SLOT( documentClosed( int ) ) );
 }
@@ -74,6 +75,11 @@ void pFilesListWidget::setCurrentIndex (int i)
 void pFilesListWidget::modifiedChanged (int i, bool b)
 {
     list.item(i)->setIcon ( b ? QIcon (":/file/icons/file/save.png") : QIcon (":/file/icons/file/transparent.png"));
+}
+
+void pFilesListWidget::docTitleChanged (int i, QString s)
+{
+    list.item(i)->setText ( s );
 }
 
 void pFilesListWidget::documentInserted( int pos, QString s, QIcon )
