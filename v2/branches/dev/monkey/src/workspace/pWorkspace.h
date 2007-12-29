@@ -39,9 +39,6 @@ public:
 private:
 	pWorkspace( QMainWindow* = 0 );
 
-	void closeCurrentDocument();
-	void closeAllDocuments ();
-
 private slots:
 	void internal_currentFileChanged( const QString& );
 	void internal_currentChanged( int );
@@ -56,7 +53,7 @@ public slots:
 	void fileSaveCurrent_triggered();
 	void fileSaveAll_triggered();
 	void fileCloseCurrent_triggered();
-	void fileCloseAll_triggered( bool = false );
+	void fileCloseAll_triggered();
 	void fileSaveAsBackup_triggered();
 	void fileQuickPrint_triggered();
 	void filePrint_triggered();
@@ -86,6 +83,10 @@ public slots:
 #ifdef __COVERAGESCANNER__
 	void helpTestReport_triggered();
 #endif
+
+	void closeCurrentDocument();
+	// if returned false - documents not closed because user canseled
+	bool closeAllDocuments ();
 
 signals:
 	// a file has been opened

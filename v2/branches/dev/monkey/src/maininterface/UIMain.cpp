@@ -42,17 +42,21 @@ UIMain::UIMain( QWidget* p )
 	initConnections();
 }
 
-void UIMain::closeEvent( QCloseEvent* )
+void UIMain::closeEvent( QCloseEvent* e)
 {
+	// force to close all documents
+	if ( ! workspace()->closeAllDocuments ()) //user rejected
+	{
+		e->ignore ();
+		return;
+	}
+	
 	// save session if needed
 	if ( pMonkeyStudio::saveSessionOnClose() )
 		workspace()->fileSessionSave_triggered();
 	
 	// force to close all projects
 	projectsManager()->projectCloseAll_triggered();
-
-	// force to close all documents
-	workspace()->fileCloseAll_triggered( true );
 }
 
 QMenu* UIMain::createPopupMenu()
