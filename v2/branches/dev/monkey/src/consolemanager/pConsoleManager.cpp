@@ -328,11 +328,10 @@ void pConsoleManager::parseOutput (bool commandFinished)
 			if ( ! p )
 				continue; //for
 			linesToRemove =  p->processParsing(&mStringBuffer);
-			if ( linesToRemove ) //not finded something
+			if (linesToRemove)
 				break; //for
 		}
-		
-		if (linesToRemove == 0 && commandFinished) //need to remove one
+		if (linesToRemove == 0 || commandFinished) //need to remove one
 			linesToRemove = 1;
 		
 		if ( ! linesToRemove )

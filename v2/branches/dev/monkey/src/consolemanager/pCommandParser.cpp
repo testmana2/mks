@@ -1,6 +1,6 @@
 #include "pCommandParser.h"
 
-#define PARSERS_DEBUG 0
+#define PARSERS_DEBUG 1
 
 pCommandParser::~pCommandParser()
 {
@@ -24,7 +24,7 @@ int pCommandParser::processParsing(QString* buf)
 		int pos = p.regExp.indexIn(*buf);
 #if PARSERS_DEBUG
 		qDebug () << "parser " << name();
-		qDebug () << "parsing  " << buf << "with" << p.regExp.pattern();
+		qDebug () << "parsing  " << *buf << "with" << p.regExp.pattern();
 #endif
         if (pos != -1)
         {
