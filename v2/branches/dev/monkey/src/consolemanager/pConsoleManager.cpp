@@ -165,10 +165,10 @@ void pConsoleManager::error( QProcess::ProcessError e )
 
 void pConsoleManager::finished( int i, QProcess::ExitStatus e )
 {
+	parseOutput (true);
 	// emit signal finished
 	emit commandFinished( currentCommand(), i, e );
 	// remove command from list
-	parseOutput (true);
 	removeCommand( currentCommand() );
 	// disable stop action
 	mStopAction->setEnabled( false );
