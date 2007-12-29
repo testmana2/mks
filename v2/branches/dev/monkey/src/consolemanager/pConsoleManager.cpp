@@ -303,13 +303,8 @@ void pConsoleManager::executeProcess()
 	}
 }
 
- #include <QDebug>
- #include <QTime>
 void pConsoleManager::parseOutput (bool commandFinished)
 {
-	static int allTime;
-	QTime time1;
-	
 	bool finished;
 	do 
 	{
@@ -332,9 +327,7 @@ void pConsoleManager::parseOutput (bool commandFinished)
 			pCommandParser* p = mParsers.value( s );
 			if ( ! p )
 				continue; //for
-			time1.start(); //!!!!!!!!!!!!!!!!!!!!
 			linesToRemove =  p->processParsing(&mStringBuffer);
-			allTime += time1.elapsed (); // !!!!!!!!!!!
 			if ( linesToRemove ) //not finded something
 				break; //for
 		}
@@ -356,6 +349,5 @@ void pConsoleManager::parseOutput (bool commandFinished)
 
 	}
 	while (!finished && mLinesInStringBuffer);
-	qDebug () << "All time" <<allTime;
 }
 
