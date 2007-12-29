@@ -361,7 +361,7 @@ void pWorkspace::fileSaveAll_triggered()
 void pWorkspace::fileCloseCurrent_triggered()
 { closeCurrentDocument(); }
 
-void pWorkspace::fileCloseAll_triggered( bool )
+void pWorkspace::fileCloseAll_triggered()
 {
 	closeAllDocuments();
 }
@@ -506,12 +506,17 @@ void pWorkspace::closeCurrentDocument()
 	pTabbedWorkspace::closeCurrentDocument ();
 }
 
-void pWorkspace::closeAllDocuments ()
+bool pWorkspace::closeAllDocuments ()
 {
 	// try save documents
 	UISaveFiles::Buttons cb = UISaveFiles::saveDocuments( window(), children(), false );
 	
 	// close all object, disconnecting them
 	if ( cb != UISaveFiles::bCancelClose )
+	{
 		pTabbedWorkspace::closeAllDocuments();
+		return true;
+	}
+	else
+		return false; //not close IDE
 }
