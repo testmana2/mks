@@ -88,8 +88,8 @@ pDockMessageBox::pDockMessageBox( QWidget* w )
 	// set central widget to tabwidget
 	setWidget( twMessageBox );
 	// connections
-	connect( lwBuildSteps, SIGNAL( currentItemChanged ( QListWidgetItem *, QListWidgetItem *)), 
-			this, SLOT( lwBuildSteps_currentItemChanged( QListWidgetItem *, QListWidgetItem * ) ) );
+	connect( lwBuildSteps, SIGNAL( itemPressed ( QListWidgetItem *)), 
+			this, SLOT( lwBuildSteps_itemPressed( QListWidgetItem * ) ) );
 	connect( leRawCommand, SIGNAL( returnPressed() ), this, SLOT( leRawCommand_returnPressed() ) );
 	connect( pConsoleManager::instance(), SIGNAL( commandError( const pCommand&, QProcess::ProcessError ) ), this, SLOT( commandError( const pCommand&, QProcess::ProcessError ) ) );
 	connect( pConsoleManager::instance(), SIGNAL( commandFinished( const pCommand&, int, QProcess::ExitStatus ) ), this, SLOT( commandFinished( const pCommand&, int, QProcess::ExitStatus ) ) );
@@ -291,20 +291,21 @@ void pDockMessageBox::showNextError()
 			lwBuildSteps->item (i)->data( Qt::UserRole +2 ).toString().isNull ())
 		i++;
 	if ( i < lwBuildSteps->count()) //finded item with setted file name
+	{
 		lwBuildSteps->setCurrentRow(i);
+		lwBuildSteps_itemPressed (lwBuildSteps->item(i));
+	}
 }
 
-#include <QDebug>
-void pDockMessageBox::lwBuildSteps_currentItemChanged( QListWidgetItem * it, QListWidgetItem* )
+void pDockMessageBox::lwBuildSteps_itemPressed( QListWidgetItem * it )
 {
 	// get filename
 	QString s = it->data( Qt::UserRole +2 ).toString();
 	
 	// cancel if no file
-	if ( s.isNull() )
+	if ( s.isEmpty() )
 		return;
 	
-	qWarning () << s;
 	// get current project
 	if ( ProjectItem* pi = pFileManager::instance()->currentProject() )
 	{
