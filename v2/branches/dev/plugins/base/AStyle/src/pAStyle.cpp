@@ -104,4 +104,4 @@ void pAStyle::applyFormatter()
 	}
 }
 
-Q_EXPORT_PLUGIN2( BasepAStyle, pAStyle )
+Q_EXPORT_PLUGIN2( BasepAStyle, pAStyle ) 

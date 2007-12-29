@@ -39,7 +39,7 @@ public:
 private:
 	pWorkspace( QMainWindow* = 0 );
 
-	void closeDocument(int pos);
+	void closeCurrentDocument();
 	void closeAllDocuments ();
 
 private slots:

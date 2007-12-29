@@ -125,8 +125,8 @@ void pChild::goTo( const QString& s, const QPoint& p, bool b )
 	if ( !mFiles.contains( s ) )
 		return;
 
-	mEditor->setCursorPosition( p.y() , p.x() );
-	mEditor->ensureLineVisible( p.y()  );
+	mEditor->setCursorPosition( p.y() -1, p.x() );
+	mEditor->ensureLineVisible( p.y() -1 );
 	mEditor->setFocus();
 }
 
@@ -177,7 +177,7 @@ void pChild::openFile( const QString& s, QTextCodec* c )
 	mFiles.append( s );
 
 	// change window title
-	setWindowTitle( s+" [*]" );
+	setWindowTitle( s );
 
 	emit fileOpened( s );
 }
