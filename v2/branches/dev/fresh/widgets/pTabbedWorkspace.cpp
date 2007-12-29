@@ -181,15 +181,22 @@ void pTabbedWorkspace::closeDocument(int i)
 	emit documentClosed( i );
 	
 	mDocuments[i]->removeEventFilter( this );
+	if (mDocMode == dmMDI)
+		foreach (QMdiSubWindow* sw, mMdiAreaWidget->subWindowList ())
+			if (sw->widget () == mDocuments[i])
+				delete (sw);
+	mDocuments[i]->setParent (NULL);
 	mDocuments[i]->close ();
 	
 	// remove document
 	mDocuments.removeAt(i);
 	
-	if (i == currentIndex())
+	if (i == currentIndex() && count() > 0 )
 	{
         setCurrentIndex (0);
 	}
+	else if ( count() == 0 ) //last was closed 
+		emit currentChanged (-1);
 }
 
 void pTabbedWorkspace::closeDocument( QWidget* td )

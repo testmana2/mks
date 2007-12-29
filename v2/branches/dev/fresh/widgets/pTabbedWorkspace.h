@@ -119,6 +119,7 @@ protected slots:
 signals:
 	void documentInserted( int, QString, QIcon );
 	void documentClosed( int );
+	// -1 if last file was closed
 	void currentChanged( int );
 	void tabShapeChanged( QTabBar::Shape );
 	void docModeChanged( pTabbedWorkspace::DocumentMode );

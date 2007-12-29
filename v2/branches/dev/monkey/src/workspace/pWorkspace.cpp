@@ -192,6 +192,8 @@ void pWorkspace::internal_currentFileChanged( const QString& )
 
 void pWorkspace::internal_currentChanged( int i )
 {
+	if (i == -1 )
+		return; // -1 if last file was closed
 	// get child
 	pAbstractChild* c = child( i );
 	bool ic = c;
