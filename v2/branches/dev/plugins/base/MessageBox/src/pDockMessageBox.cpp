@@ -294,6 +294,7 @@ void pDockMessageBox::showNextError()
 		lwBuildSteps->setCurrentRow(i);
 }
 
+#include <QDebug>
 void pDockMessageBox::lwBuildSteps_currentItemChanged( QListWidgetItem * it, QListWidgetItem* )
 {
 	// get filename
@@ -303,6 +304,7 @@ void pDockMessageBox::lwBuildSteps_currentItemChanged( QListWidgetItem * it, QLi
 	if ( s.isNull() )
 		return;
 	
+	qWarning () << s;
 	// get current project
 	if ( ProjectItem* pi = pFileManager::instance()->currentProject() )
 	{
