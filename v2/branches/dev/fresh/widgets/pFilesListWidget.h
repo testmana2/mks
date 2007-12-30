@@ -19,7 +19,7 @@ class pFilesListWidget : public QDockWidget
 {
 	Q_OBJECT
 public:
-	pFilesListWidget(QString, QWidget* w, pTabbedWorkspace* p );
+	pFilesListWidget(QString, QMainWindow* w, pTabbedWorkspace* p );
 	~pFilesListWidget();
 protected:
 	QListWidget list;

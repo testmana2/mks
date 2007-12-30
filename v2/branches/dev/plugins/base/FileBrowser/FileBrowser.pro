@@ -4,8 +4,11 @@ DESTDIR	= $$MONKEY_PLUGINS_DIR/base
 TARGET	= FileBrowser
 RESOURCES	= src/resources/FileBrowser.qrc
 
-HEADERS = src/FileBrowser.h \
-	src/pDockFileBrowser.h
+HEADERS	= src/FileBrowser.h \
+	src/pDockFileBrowser.h \
+	src/FileBrowserSettings.h
 
 SOURCES	= src/FileBrowser.cpp \
-	src/pDockFileBrowser.cpp
+	src/pDockFileBrowser.cpp \
+	src/FileBrowserSettings.cpp
+EXECUTE_DEBUG	= ../../../bin/monkey_debug

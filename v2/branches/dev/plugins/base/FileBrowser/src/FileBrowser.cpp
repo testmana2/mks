@@ -2,6 +2,7 @@
 #include "UIMain.h"
 #include "pDockToolBar.h"
 #include "pDockFileBrowser.h"
+#include "FileBrowserSettings.h"
 
 #include <QIcon>
 
@@ -45,6 +46,11 @@ bool FileBrowser::setEnabled( bool b )
 	
 	// return default value
 	return true;
+}
+
+QWidget* FileBrowser::settingsWidget ()
+{
+	return new FileBrowserSettings ();
 }
 
 void FileBrowser::saveSettings()

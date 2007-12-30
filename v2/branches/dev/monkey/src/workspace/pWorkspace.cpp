@@ -27,6 +27,7 @@
 #include "pChild.h"
 #include "pEditor.h"
 #include "pSearch.h"
+#include "UIMain.h"
 
 #include <QToolButton>
 #include <QCloseEvent>

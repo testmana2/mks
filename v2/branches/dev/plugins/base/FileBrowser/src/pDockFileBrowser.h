@@ -19,6 +19,7 @@
 
 #include <QDockWidget>
 #include <QModelIndex>
+#include <QSortFilterProxyModel>
 
 class pTreeComboBox;
 class QLineEdit;
@@ -30,7 +31,17 @@ class pDockFileBrowser : public QDockWidget, public QSingleton<pDockFileBrowser>
 {
 	Q_OBJECT
 	friend class QSingleton<pDockFileBrowser>;
+	friend class FileBrowserSettings;
 
+	class FilteredModel: public QSortFilterProxyModel
+	{
+	protected:
+		bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+	public:
+		FilteredModel(QObject *parent = 0): QSortFilterProxyModel(parent) {};
+		QStringList wildCards;
+	};
+	
 public:
 	QString currentPath() const;
 	void setCurrentPath( const QString& );
@@ -42,8 +53,16 @@ protected:
 	QListView* mList;
 	QTreeView* mTree;
 	QDirModel* mDirsModel;
+	FilteredModel* mFilteredModel;
+
+	QString mPath;
+
 	void showEvent( QShowEvent* );
 	void hideEvent( QHideEvent* );
+	
+	//negative filter
+	QStringList getFilterWildCards ();
+	void setFilterWildCards (QStringList l);
 
 private:
 	pDockFileBrowser( QWidget* = 0 );
