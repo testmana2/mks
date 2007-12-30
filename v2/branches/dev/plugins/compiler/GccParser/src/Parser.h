@@ -62,6 +62,16 @@ public:
 				"%1 %4", //text
 				"%0" //full text
 			},
+			{
+				//Missing library
+				QRegExp("^/[\\w:/]+ld: cannot find -l(\\w+)\\n", Qt::CaseSensitive, QRegExp::RegExp2), //reg exp
+				"", //file name
+				"", //column
+				"", //row
+				pConsoleManager::stError, //type
+				"%1 library not finded", //text
+				"%0" //full text
+			},
 			{QRegExp(), "", "", "", pConsoleManager::stUnknown,"",""} //this item must be last
 		};
 		for ( int i = 0; !ps[i].regExp.isEmpty(); i++)
