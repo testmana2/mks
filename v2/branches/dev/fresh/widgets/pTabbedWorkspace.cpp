@@ -18,6 +18,8 @@
 #include <QMainWindow>
 #include <QStackedLayout>
 #include <QStackedWidget>
+#include <QDockWidget>
+#include <Qt>
 
 
 pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMode m )
@@ -31,7 +33,6 @@ pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMo
 	//mTabLayout->addWidget( ( mTabBar ) );
 
 	mFilesList = new pFilesListWidget (tr("Files list"), w, this);
-	mMainWindow->addDockWidget (Qt::LeftDockWidgetArea, mFilesList);
 	
 	// document widget
 	mStackedLayout = new QStackedLayout;

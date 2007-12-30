@@ -16,6 +16,7 @@
 #include "pFileManager.h"
 #include "pMonkeyStudio.h"
 #include "pTreeComboBox.h"
+#include "pSettings.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -28,6 +29,18 @@
 #include <QTabWidget>
 #include <QTreeView>
 #include <QHeaderView>
+
+#include <QDebug>
+
+bool pDockFileBrowser::FilteredModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+	if (sourceParent == QModelIndex()) 
+		return true;
+	foreach (QString s, wildCards)
+		if ( QRegExp(s,Qt::CaseSensitive, QRegExp::Wildcard).exactMatch(sourceModel()->data(QModelIndex(sourceModel()->index(sourceRow, 0, sourceParent))).toString()) )
+				return false;
+	return true;
+}
 
 pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	: QDockWidget( w ), mShown( false )
@@ -79,6 +92,13 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	mDirsModel->setFilter( QDir::AllEntries | QDir::Readable | QDir::CaseSensitive | QDir::NoDotAndDotDot );
 	mDirsModel->setSorting( QDir::DirsFirst | QDir::Name );
 	
+	mFilteredModel = new FilteredModel ( this );
+	QStringList def;
+	def << "*~" << "*.o" << "*.pyc" << "*.bak";
+	mFilteredModel->wildCards =  pSettings::instance()->value ("Plugins/FileBrowser/FilterWildcards",QVariant(def)).toStringList();
+	//mFilteredModel->setFilterWildcard ("*.h");
+	mFilteredModel->setSourceModel (mDirsModel);
+	
 	// tabwidget
 	QTabWidget* tabs = new QTabWidget;
 	v->addWidget( tabs );
@@ -94,7 +114,7 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	// assign model to views
 	mCombo->setModel( mDirsModel );
 	mList->setModel( mDirsModel );
-	mTree->setModel( mDirsModel );
+	mTree->setModel( mFilteredModel );
 	
 	// custom view
 	mCombo->view()->setColumnHidden( 1, true );
@@ -190,13 +210,27 @@ QString pDockFileBrowser::currentPath() const
 
 void pDockFileBrowser::setCurrentPath( const QString& s )
 {
+	mPath = s;
 	// get index
-	QModelIndex i = mDirsModel->index( s );
+	QModelIndex i = mDirsModel->index( mPath );
 	// set current path
 	mCombo->setCurrentIndex( i );
 	mList->setRootIndex( i );
-	mTree->setRootIndex( i );
+	mFilteredModel->invalidate ();
+	mTree->setRootIndex( mFilteredModel->mapFromSource ( i ) );
 	// set lineedit path
 	mLineEdit->setText( mDirsModel->filePath( i ) );
 	mLineEdit->setToolTip( mLineEdit->text() );
 }
+
+void pDockFileBrowser::setFilterWildCards (QStringList l)
+{
+	mFilteredModel->wildCards = l;
+	setCurrentPath ( mPath );
+	pSettings::instance()->setValue ("Plugins/FileBrowser/FilterWildcards",QVariant(l));
+}
+
+QStringList pDockFileBrowser::getFilterWildCards ()
+{
+	return mFilteredModel->wildCards;
+};

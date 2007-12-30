@@ -29,9 +29,13 @@
 UIMain::UIMain( QWidget* p )
 	: pMainWindow( p )
 {	
+	//init workspace
+	//If workspace will be created without valid pointer to parent - will be crash
+	pWorkspace::instance (this);
+	
 	// create menubar
 	initMenuBar();
-
+	
 	// init toolbar
 	initToolBar();
 

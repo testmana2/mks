@@ -7,12 +7,14 @@
  * COMMENTARY   : Widget with list of files, opened on workspace, for activating needed file
  ********************************************************************************************************/
 #include <QMenu>
+#include <QMainWindow>
 
 #include "pFilesListWidget.h"
 #include "pTabbedWorkspace.h"
 
-pFilesListWidget::pFilesListWidget(QString s, QWidget* w, pTabbedWorkspace* p) : QDockWidget (s, w), mWorkspace (p)
+pFilesListWidget::pFilesListWidget(QString s, QMainWindow* w, pTabbedWorkspace* p) : QDockWidget (s, w), mWorkspace (p)
 {
+	//Q_ASSERT ( w != NULL );    FIXME UNCOMMENT
 	setObjectName ("FilesListWidget");
 	setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
@@ -29,10 +31,12 @@ pFilesListWidget::pFilesListWidget(QString s, QWidget* w, pTabbedWorkspace* p) :
 	
     //workspace ->this
 	connect( mWorkspace, SIGNAL( currentChanged( int ) ), this, SLOT( setCurrentIndex( int ) ) );
-    connect( mWorkspace, SIGNAL( modifiedChanged( int, bool ) ), this, SLOT( modifiedChanged( int, bool ) ) );
+	connect( mWorkspace, SIGNAL( modifiedChanged( int, bool ) ), this, SLOT( modifiedChanged( int, bool ) ) );
     connect( mWorkspace, SIGNAL( docTitleChanged( int, QString) ), this, SLOT( docTitleChanged( int, QString ) ) );
     connect (mWorkspace, SIGNAL (documentInserted (int, QString, QIcon)), this, SLOT (documentInserted( int, QString, QIcon )));
-    connect( mWorkspace, SIGNAL( documentClosed( int ) ), this, SLOT( documentClosed( int ) ) );
+	connect( mWorkspace, SIGNAL( documentClosed( int ) ), this, SLOT( documentClosed( int ) ) );
+	
+	//w->addDockWidget (Qt::LeftDockWidgetArea, this); FIXME UNCOMMENT
 }
 
 pFilesListWidget::~pFilesListWidget()
