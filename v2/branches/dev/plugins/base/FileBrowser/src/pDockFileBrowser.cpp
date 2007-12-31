@@ -30,15 +30,15 @@
 #include <QTreeView>
 #include <QHeaderView>
 
-#include <QDebug>
-
 bool pDockFileBrowser::FilteredModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
 	if (sourceParent == QModelIndex()) 
 		return true;
 	foreach (QString s, wildCards)
+	{
 		if ( QRegExp(s,Qt::CaseSensitive, QRegExp::Wildcard).exactMatch(sourceModel()->data(QModelIndex(sourceModel()->index(sourceRow, 0, sourceParent))).toString()) )
 				return false;
+	}
 	return true;
 }
 
@@ -79,6 +79,12 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	mCombo->setToolTip( tr( "Quick Navigation" ) );
 	h->addWidget( mCombo );
 	
+	// set current path button
+	QToolButton* tbSetCurrent = new QToolButton;
+	tbSetCurrent->setIcon( QIcon( ":/icons/goto.png" ) );
+	tbSetCurrent->setToolTip( tr( "Set selected item as root" ) );
+	h->addWidget( tbSetCurrent );
+	
 	// add horizontal layout into vertical one
 	v->addLayout( h );
 	
@@ -100,20 +106,21 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	mFilteredModel->setSourceModel (mDirsModel);
 	
 	// tabwidget
-	QTabWidget* tabs = new QTabWidget;
-	v->addWidget( tabs );
+	//QTabWidget* tabs = new QTabWidget;
+	//v->addWidget( tabs );
 	
 	// folders view
-	mList = new QListView;
-	tabs->addTab( mList, tr( "List View" ) );
+	//mList = new QListView;
+	//tabs->addTab( mList, tr( "List View" ) );
 	
 	// files view
 	mTree = new QTreeView;
-	tabs->addTab( mTree, tr( "Tree View" ) );
+	//tabs->addTab( mTree, tr( "Tree View" ) );
+	v->addWidget ( mTree );
 	
 	// assign model to views
 	mCombo->setModel( mDirsModel );
-	mList->setModel( mDirsModel );
+	//mList->setModel( mDirsModel );
 	mTree->setModel( mFilteredModel );
 	
 	// custom view
@@ -136,13 +143,14 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	setCurrentPath( mDirsModel->filePath( mCombo->rootIndex() ) );
 	
 	// set page 1 visible
-	tabs->setCurrentIndex( 1 );
+	//tabs->setCurrentIndex( 1 );
 	
 	// connections
 	connect( tbUp, SIGNAL( clicked() ), this, SLOT( tbUp_clicked() ) );
 	connect( tbRefresh, SIGNAL( clicked() ), this, SLOT( tbRefresh_clicked() ) );
+	connect( tbSetCurrent, SIGNAL( clicked() ), this, SLOT( tbSetCurrent_clicked() ) );
 	connect( mCombo, SIGNAL( currentChanged( const QModelIndex& ) ), this, SLOT( cb_currentChanged( const QModelIndex& ) ) );
-	connect( mList, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( lv_doubleClicked( const QModelIndex& ) ) );
+//	connect( mList, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( lv_doubleClicked( const QModelIndex& ) ) );
 	connect( mTree, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( tv_doubleClicked( const QModelIndex& ) ) );
 }
 
@@ -181,19 +189,33 @@ void pDockFileBrowser::tbRefresh_clicked()
 	mDirsModel->refresh( mCombo->currentIndex() );
 }
 
-void pDockFileBrowser::lv_doubleClicked( const QModelIndex& i )
+void pDockFileBrowser::tbSetCurrent_clicked()
+{
+	// seet root of model to path of selected item
+	QModelIndex curItem = mTree->currentIndex ();
+	if ( !curItem.isValid () )
+		return;
+	QModelIndex ind = mFilteredModel->mapToSource ( mTree->
+currentIndex () );
+	// open file
+	if ( mDirsModel->isDir( ind ) )
+		setCurrentPath ( mDirsModel->filePath( ind ) );
+}
+
+/*void pDockFileBrowser::lv_doubleClicked( const QModelIndex& i )
 {
 	if ( mDirsModel->isDir( i ) )
 		setCurrentPath( mDirsModel->filePath( i ) );
 	else
 		pFileManager::instance()->openFile( mDirsModel->filePath( i ) );
 }
-
+*/
 void pDockFileBrowser::tv_doubleClicked( const QModelIndex& i )
 {
+	QModelIndex ind = mFilteredModel->mapToSource ( i );
 	// open file
-	if ( !mDirsModel->isDir( i ) )
-		pFileManager::instance()->openFile( mDirsModel->filePath( i ) );
+	if ( !mDirsModel->isDir( ind ) )
+		pFileManager::instance()->openFile( mDirsModel->filePath( ind ) );
 }
 
 void pDockFileBrowser::cb_currentChanged( const QModelIndex& i )
@@ -215,7 +237,7 @@ void pDockFileBrowser::setCurrentPath( const QString& s )
 	QModelIndex i = mDirsModel->index( mPath );
 	// set current path
 	mCombo->setCurrentIndex( i );
-	mList->setRootIndex( i );
+//	mList->setRootIndex( i );
 	mFilteredModel->invalidate ();
 	mTree->setRootIndex( mFilteredModel->mapFromSource ( i ) );
 	// set lineedit path
