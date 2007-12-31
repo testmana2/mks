@@ -50,7 +50,7 @@ protected:
 	bool mShown;
 	pTreeComboBox* mCombo;
 	QLineEdit* mLineEdit;
-	QListView* mList;
+	//QListView* mList;
 	QTreeView* mTree;
 	QDirModel* mDirsModel;
 	FilteredModel* mFilteredModel;
@@ -70,8 +70,9 @@ private:
 private slots:
 	void tbUp_clicked();
 	void tbRefresh_clicked();
+	void tbSetCurrent_clicked();
 	void cb_currentChanged( const QModelIndex& );
-	void lv_doubleClicked( const QModelIndex& );
+	//void lv_doubleClicked( const QModelIndex& );
 	void tv_doubleClicked( const QModelIndex& );
 
 signals:
