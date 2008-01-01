@@ -90,6 +90,7 @@ bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 	case QEvent::WindowActivate:
 		if (mDocMode == dmTopLevel)
 			setCurrentDocument (td);
+		break;
 	case QEvent::WindowTitleChange:
 		emit docTitleChanged (indexOf (td), td->windowTitle().replace ("[*]", ""));
 	default:
@@ -321,7 +322,8 @@ void pTabbedWorkspace::setCurrentIndex( int i )
 			mMdiAreaWidget->setActiveSubWindow( dynamic_cast<QMdiSubWindow*>(document(mCurrIndex)->parent() ));
 			break;
 		case dmTopLevel:
-			document(mCurrIndex)->activateWindow();
+			if (!document(mCurrIndex)->isActiveWindow ())
+				document(mCurrIndex)->activateWindow();
 			break;
 	}
 	// emit document change
