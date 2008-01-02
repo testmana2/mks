@@ -7,6 +7,7 @@
  * COMMENTARY   : This class provide a workspace that can at run time be switched in SDI / MDI or Top Level
  ********************************************************************************************************/
 #include "pTabbedWorkspace.h"
+#include "pFilesListWidget.h"
 
 #include <QBoxLayout>
 #include <QMdiArea>
@@ -20,10 +21,10 @@
 #include <QStackedWidget>
 #include <QDockWidget>
 #include <Qt>
+#include <QApplication>
 
-
-pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMode m )
-	: QWidget( w ), mMainWindow (w)
+pTabbedWorkspace::pTabbedWorkspace( QWidget* w, pTabbedWorkspace::DocumentMode m )
+	: QWidget( w )
 {
 	// tab widget
 	mTabLayout = new QBoxLayout( QBoxLayout::LeftToRight );
@@ -32,7 +33,7 @@ pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMo
 	//mTabBar = new pTabBar (this);
 	//mTabLayout->addWidget( ( mTabBar ) );
 
-	mFilesList = new pFilesListWidget (tr("Files list"), w, this);
+	mFilesList = new pFilesListWidget( tr( "Files List"), this );
 	
 	// document widget
 	mStackedLayout = new QStackedLayout;
@@ -45,16 +46,15 @@ pTabbedWorkspace::pTabbedWorkspace( QMainWindow* w, pTabbedWorkspace::DocumentMo
 	mLayout->setMargin( 0 );
 	mLayout->addLayout( mTabLayout );
     mLayout->addLayout( mStackedLayout );
-
-	connect( mMdiAreaWidget, SIGNAL( subWindowActivated( QMdiSubWindow* ) ), this, SLOT( setCurrentDocument( QMdiSubWindow* ) ) );
 	
 	// init view
-	setAttribute( Qt::WA_DeleteOnClose );
 	//mTabBar->setDrawBase( false );
 	//mTabBar->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred ) );
 	
-	mDocMode = (DocumentMode)-1; //for avoid return on start method setDocMode (m)
-	setDocMode (m);
+	mDocMode = (DocumentMode) -1; //for avoid return on start method setDocMode (m)
+	setDocMode( m );
+	
+	connect( mMdiAreaWidget, SIGNAL( subWindowActivated( QMdiSubWindow* ) ), this, SLOT( setCurrentDocument( QMdiSubWindow* ) ) );
 }
 
 pTabbedWorkspace::~pTabbedWorkspace()
@@ -71,7 +71,7 @@ bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 	// get document
 	QWidget* td = qobject_cast<QWidget*>( o );
 	
-	if (indexOf (td) == -1)
+	if ( indexOf( td ) == -1 )
 		return QWidget::eventFilter( o, e );
 	
 	// get event type
@@ -81,18 +81,18 @@ bool pTabbedWorkspace::eventFilter( QObject* o, QEvent* e )
 	switch ( t )
 	{
 	case QEvent::ModifiedChange:
-		emit modifiedChanged (indexOf (td), td->isWindowModified());
+		emit modifiedChanged( indexOf( td ), td->isWindowModified() );
 		break;
 	case QEvent::Close:
-		closeDocument (td);
+		closeDocument( td );
 		return true;
-		break; // :D
+		break;
 	case QEvent::WindowActivate:
-		if (mDocMode == dmTopLevel)
-			setCurrentDocument (td);
+		if ( mDocMode == dmTopLevel )
+			setCurrentDocument( td );
 		break;
 	case QEvent::WindowTitleChange:
-		emit docTitleChanged (indexOf (td), td->windowTitle().replace ("[*]", ""));
+		emit docTitleChanged( indexOf( td ), td->windowTitle().replace( "[*]", QString() ) );
 	default:
 		break;
 	}
@@ -116,21 +116,34 @@ QTabBar::Shape pTabbedWorkspace::tabShape () const
 QWidgetList pTabbedWorkspace::documents() const
 { return mDocuments; }
 
-QWidget* pTabbedWorkspace::document(int i) const
-{ return mDocuments[i]; }
+QWidget* pTabbedWorkspace::document( int i ) const
+{ return mDocuments.value( i ); }
 
 int pTabbedWorkspace::count() const
-{ return mDocuments.size(); }
+{ return mDocuments.count(); }
 
 int pTabbedWorkspace::currentIndex() const
-{ return mCurrIndex; }
+{ return indexOf( currentDocument() ); }
 
 QWidget* pTabbedWorkspace::currentDocument() const
 {
-	if (count ())
-    	return document (mCurrIndex);
-	else
-		return NULL;
+	switch ( mDocMode )
+	{
+		case dmSDI:
+			return mStackedWidget->currentWidget();
+			break;
+		case dmMDI:
+			return mMdiAreaWidget->currentSubWindow() ? mMdiAreaWidget->currentSubWindow()->widget() : 0;
+			break;
+		case dmTopLevel:
+			foreach ( QWidget* w, mDocuments )
+				if ( qApp->activeWindow() == w )
+					return w;
+			return 0;
+			break;
+		default:
+			Q_ASSERT( 0 );
+	}
 }
 
 int pTabbedWorkspace::indexOf(QWidget* w) const
@@ -168,7 +181,7 @@ int pTabbedWorkspace::insertDocument(int pos, QWidget* td, const QString& s,  co
 		break;
 	case dmTopLevel:
 		td->setParent( 0 );
-		td->addActions (mMainWindow->actions());//not working !!!! FIXME
+		//td->addActions (mMainWindow->actions());//not working !!!! FIXME
 		td->showNormal();
 		break;
 	}	
@@ -237,6 +250,8 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 
 	if (!count())
 		return;
+	
+	int i = currentIndex(); //for avoid return from function because index not changed
 
 	// add document to correct workspace
 	foreach ( QWidget* td, mDocuments )
@@ -265,9 +280,8 @@ void pTabbedWorkspace::setDocMode( pTabbedWorkspace::DocumentMode dm )
 	if ( mDocMode != dmMDI )
 		foreach (QMdiSubWindow* sw, mMdiAreaWidget->subWindowList ())
 			delete  sw; //if just remove - widget will not be deleted
+	
 	// restore current index
-	int i = mCurrIndex; //for avoid return from function because index not changed
-	mCurrIndex = -1;
 	setCurrentIndex( i );
     
 	// emit tab mode changed
@@ -309,25 +323,23 @@ void pTabbedWorkspace::setTabShape( QTabBar::Shape s )
 
 void pTabbedWorkspace::setCurrentIndex( int i )
 {
-	if ( mCurrIndex == i || i < 0)
+	if ( currentIndex() == i || i < 0)
 		return;
-	
-	mCurrIndex = i;
 	
 	switch ( mDocMode )
 	{
 		case dmSDI:
-            mStackedWidget->setCurrentWidget (document(mCurrIndex));
+            mStackedWidget->setCurrentWidget (document( i ));
 		case dmMDI:
-			mMdiAreaWidget->setActiveSubWindow( dynamic_cast<QMdiSubWindow*>(document(mCurrIndex)->parent() ));
+			mMdiAreaWidget->setActiveSubWindow( qobject_cast<QMdiSubWindow*>(document( i )->parent() ));
 			break;
 		case dmTopLevel:
-			if (!document(mCurrIndex)->isActiveWindow ())
-				document(mCurrIndex)->activateWindow();
+			if (!document( i )->isActiveWindow ())
+				document( i )->activateWindow();
 			break;
 	}
 	// emit document change
-	emit currentChanged( mCurrIndex );
+	emit currentChanged( i );
 }
 
 void pTabbedWorkspace::setCurrentDocument( QWidget* d )

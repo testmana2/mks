@@ -23,6 +23,7 @@
 #include "pTemplatesManager.h"
 #include "UIProjectsManager.h"
 #include "PluginsManager.h"
+#include "pFilesListWidget.h"
 
 #include "pChild.h"
 #include "pEditor.h"
@@ -37,6 +38,10 @@ using namespace pMonkeyStudio;
 pWorkspace::pWorkspace( QMainWindow* p )
 	: pTabbedWorkspace( p )
 {
+	Q_ASSERT( p );
+	// add dock to main window
+	p->addDockWidget( Qt::LeftDockWidgetArea, listWidget() );
+	
 	// set background
 	//setBackground( ":/application/icons/application/background.png" );
 
@@ -48,6 +53,7 @@ pWorkspace::pWorkspace( QMainWindow* p )
 
 	//connect( tabBar(), SIGNAL( urlsDropped( const QList<QUrl>& ) ), this, SLOT( internal_urlsDropped( const QList<QUrl>& ) ) );
 	connect( listWidget(), SIGNAL( urlsDropped( const QList<QUrl>& ) ), this, SLOT( internal_urlsDropped( const QList<QUrl>& ) ) );
+	connect( listWidget(), SIGNAL( customContextMenuRequested( const QPoint& ) ), this, SLOT( internal_listWidget_customContextMenuRequested( const QPoint& ) ) );
 }
 
 void pWorkspace::loadSettings()
@@ -182,19 +188,13 @@ void pWorkspace::goToLine( const QString& s, const QPoint& p, bool b )
 	}
 }
 
-void pWorkspace::addFileActions (QMenu* menu)
-{
-	menu->addAction (pMenuBar::instance()->action( "mFile/mClose/aCurrent" ));
-	menu->addAction (pMenuBar::instance()->action( "mFile/mSave/aCurrent" ));
-};
-
 void pWorkspace::internal_currentFileChanged( const QString& )
 { internal_currentChanged( indexOf( qobject_cast<pAbstractChild*>( sender() ) ) ); }
 
 void pWorkspace::internal_currentChanged( int i )
 {
-	if (i == -1 )
-		return; // -1 if last file was closed
+	//if (i == -1 )
+		//return; // -1 if last file was closed
 	// get child
 	pAbstractChild* c = child( i );
 	bool ic = c;
@@ -274,6 +274,14 @@ void pWorkspace::internal_urlsDropped( const QList<QUrl>& l )
 			if ( !u.toLocalFile().trimmed().isEmpty() )
 				UIProjectsManager::instance()->openProject( u.toLocalFile() );
 	}
+}
+
+void pWorkspace::internal_listWidget_customContextMenuRequested( const QPoint& p )
+{
+	QMenu m;
+	m.addAction( pMenuBar::instance()->action( "mFile/mClose/aCurrent" ) );
+	m.addAction( pMenuBar::instance()->action( "mFile/mSave/aCurrent" ) );
+	m.exec( listWidget()->mapToGlobal( p ) );
 }
 
 // file menu

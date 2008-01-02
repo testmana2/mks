@@ -10,10 +10,11 @@
 #define PWORKSPACE_H
 
 #include "MonkeyExport.h"
-#include "QSingleton.h"
 #include "pTabbedWorkspace.h"
+#include "QSingleton.h"
 
 class pAbstractChild;
+class QMainWindow;
 
 class Q_MONKEY_EXPORT pWorkspace : public pTabbedWorkspace, public QSingleton<pWorkspace>
 {
@@ -32,9 +33,6 @@ public:
 	void closeFile( const QString& );
 	// goto to position inside file, highlight line according to bool, opening it if needed
 	void goToLine( const QString&, const QPoint&, bool );
-
-	//used for generating custom menu for file
-	void addFileActions (QMenu*);
 	
 private:
 	pWorkspace( QMainWindow* = 0 );
@@ -43,6 +41,7 @@ private slots:
 	void internal_currentFileChanged( const QString& );
 	void internal_currentChanged( int );
 	void internal_urlsDropped( const QList<QUrl>& );
+	void internal_listWidget_customContextMenuRequested( const QPoint& );
 
 public slots:
 	// file menu
@@ -86,7 +85,7 @@ public slots:
 
 	void closeCurrentDocument();
 	// if returned false - documents not closed because user canseled
-	bool closeAllDocuments ();
+	bool closeAllDocuments();
 
 signals:
 	// a file has been opened
