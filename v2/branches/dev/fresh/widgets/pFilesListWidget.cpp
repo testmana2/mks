@@ -6,41 +6,31 @@
  * LICENSE      : GPL
  * COMMENTARY   : Widget with list of files, opened on workspace, for activating needed file
  ********************************************************************************************************/
-#include <QMenu>
-#include <QMainWindow>
-
 #include "pFilesListWidget.h"
 #include "pTabbedWorkspace.h"
 
-pFilesListWidget::pFilesListWidget(QString s, QMainWindow* w, pTabbedWorkspace* p) : QDockWidget (s, w), mWorkspace (p)
-{
-	//Q_ASSERT ( w != NULL );    FIXME UNCOMMENT
-	setObjectName ("FilesListWidget");
-	setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	setFeatures (QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-	setAcceptDrops( true );
-	setContextMenuPolicy (Qt::CustomContextMenu);
-	
-	setWidget (&list);
-	
-	//this
-	connect (this, SIGNAL (customContextMenuRequested ( const QPoint & )), this, SLOT (showMenu (const QPoint & )));
-	
-    //this -> workspace
-	connect ( &list, SIGNAL (currentRowChanged (int)), mWorkspace, SLOT( setCurrentIndex( int ) ) );
-	
-    //workspace ->this
-	connect( mWorkspace, SIGNAL( currentChanged( int ) ), this, SLOT( setCurrentIndex( int ) ) );
-	connect( mWorkspace, SIGNAL( modifiedChanged( int, bool ) ), this, SLOT( modifiedChanged( int, bool ) ) );
-    connect( mWorkspace, SIGNAL( docTitleChanged( int, QString) ), this, SLOT( docTitleChanged( int, QString ) ) );
-    connect (mWorkspace, SIGNAL (documentInserted (int, QString, QIcon)), this, SLOT (documentInserted( int, QString, QIcon )));
-	connect( mWorkspace, SIGNAL( documentClosed( int ) ), this, SLOT( documentClosed( int ) ) );
-	
-	//w->addDockWidget (Qt::LeftDockWidgetArea, this); FIXME UNCOMMENT
-}
+#include <QListWidget>
+#include <QMainWindow>
+#include <QDropEvent>
 
-pFilesListWidget::~pFilesListWidget()
+pFilesListWidget::pFilesListWidget( const QString& s, pTabbedWorkspace* p )
+	: QDockWidget( s ), mWorkspace( p )
 {
+	Q_ASSERT ( mWorkspace );
+	setParent( mWorkspace );
+	setObjectName( "FilesListWidget" );
+	setAllowedAreas( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
+	setFeatures( QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable );
+	setAcceptDrops( true );
+	setContextMenuPolicy( Qt::CustomContextMenu );
+	setWidget( mList = new QListWidget() );
+	// connection
+	connect( mList, SIGNAL( currentRowChanged( int ) ), mWorkspace, SLOT( setCurrentIndex( int ) ) );
+	connect( mWorkspace, SIGNAL( currentChanged( int ) ), this, SLOT( setCurrentRow( int ) ) );
+	connect( mWorkspace, SIGNAL( modifiedChanged( int, bool ) ), this, SLOT( modifiedChanged( int, bool ) ) );
+    connect( mWorkspace, SIGNAL( docTitleChanged( int, const QString& ) ), this, SLOT( docTitleChanged( int, const QString& ) ) );
+    connect( mWorkspace, SIGNAL( documentInserted( int, const QString&, const QIcon& ) ), this, SLOT( documentInserted( int, const QString&, const QIcon& ) ) );
+	connect( mWorkspace, SIGNAL( documentClosed( int ) ), this, SLOT( documentClosed( int ) ) );
 }
 
 void pFilesListWidget::dragEnterEvent( QDragEnterEvent* e )
@@ -51,12 +41,11 @@ void pFilesListWidget::dragEnterEvent( QDragEnterEvent* e )
 		// accept drag
 		e->acceptProposedAction();
 	}
-	
 	// default event
 	QDockWidget::dragEnterEvent( e );
 }
 
-void pFilesListWidget::dropEvent (QDropEvent* e)
+void pFilesListWidget::dropEvent( QDropEvent* e )
 {
 	if ( e->mimeData()->hasUrls() )
 		emit urlsDropped( e->mimeData()->urls () );
@@ -64,34 +53,17 @@ void pFilesListWidget::dropEvent (QDropEvent* e)
 	QDockWidget::dropEvent( e );
 }
 
-void pFilesListWidget::showMenu( const QPoint & pos )
-{
-	QMenu menu;
-	mWorkspace->addFileActions (&menu);
-	menu.exec (mapToGlobal (pos));
-}
+void pFilesListWidget::modifiedChanged( int i, bool b )
+{ mList->item( i )->setIcon( b ? QIcon( ":/file/icons/file/save.png" ) : QIcon( ":/file/icons/file/transparent.png" ) ); }
 
-void pFilesListWidget::setCurrentIndex (int i)
-{
-	list.setCurrentRow (i);
-}
+void pFilesListWidget::docTitleChanged( int i, const QString& s )
+{ mList->item( i )->setText( s ); }
 
-void pFilesListWidget::modifiedChanged (int i, bool b)
-{
-    list.item(i)->setIcon ( b ? QIcon (":/file/icons/file/save.png") : QIcon (":/file/icons/file/transparent.png"));
-}
-
-void pFilesListWidget::docTitleChanged (int i, QString s)
-{
-    list.item(i)->setText ( s );
-}
-
-void pFilesListWidget::documentInserted( int pos, QString s, QIcon )
-{
-    list.insertItem (pos, s);
-}
+void pFilesListWidget::documentInserted( int i, const QString& s, const QIcon& )
+{ mList->insertItem( i, s ); }
 
 void pFilesListWidget::documentClosed( int i )
-{
-    delete list.item ( i );
-}
+{ delete mList->takeItem( i ); }
+
+void pFilesListWidget::setCurrentRow( int i )
+{ mList->setCurrentRow( i ); }

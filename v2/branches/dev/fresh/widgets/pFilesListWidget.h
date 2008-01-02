@@ -10,32 +10,33 @@
 #define PFILESLISTWIDGET_H
 
 #include <QDockWidget>
-#include <QListWidget>
-#include <QDropEvent>
+#include <QUrl>
 
 class pTabbedWorkspace;
+class QListWidget;
+class QDragEnterEvent;
+class QDropEvent;
 
 class pFilesListWidget : public QDockWidget
 {
 	Q_OBJECT
+	
 public:
-	pFilesListWidget(QString, QMainWindow* w, pTabbedWorkspace* p );
-	~pFilesListWidget();
+	pFilesListWidget( const QString&, pTabbedWorkspace* );
+
 protected:
-	QListWidget list;
+	QListWidget* mList;
     pTabbedWorkspace* mWorkspace;
 
-	void dragEnterEvent (QDragEnterEvent*);
-	void dropEvent (QDropEvent*);
+	void dragEnterEvent( QDragEnterEvent* );
+	void dropEvent( QDropEvent* );
 
 protected slots:
-	void showMenu ( const QPoint & );
-
-	void setCurrentIndex (int);
-    void modifiedChanged (int, bool);
-    void docTitleChanged (int, QString);
-    void documentInserted( int, QString, QIcon );
-    void documentClosed ( int );
+    void modifiedChanged( int, bool );
+    void docTitleChanged( int, const QString& );
+    void documentInserted( int, const QString&, const QIcon& );
+    void documentClosed( int );
+	void setCurrentRow( int );
 
 signals:
 	void urlsDropped( const QList<QUrl>& );

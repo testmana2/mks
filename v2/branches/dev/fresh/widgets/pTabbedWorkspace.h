@@ -9,14 +9,12 @@
 #ifndef PTABBEDWORKSPACE_H
 #define PTABBEDWORKSPACE_H
 
-#include <QWidget>
-#include <QList>
-#include <QDockWidget>
-#include <QMenu>
-
 #include "MonkeyExport.h"
 #include "pTabBar.h"
-#include "pFilesListWidget.h"
+
+#include <QWidget>
+#include <QList>
+#include <QIcon>
 
 class QBoxLayout;
 class QStackedLayout;
@@ -24,6 +22,7 @@ class QStackedWidget;
 class QMdiArea;
 class QMdiSubWindow;
 class pAction;
+class pFilesListWidget;
 
 class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
 {
@@ -33,7 +32,7 @@ class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
 public:
 	enum DocumentMode { dmSDI = 0, dmMDI, dmTopLevel };
 
-	pTabbedWorkspace( QMainWindow* , pTabbedWorkspace::DocumentMode = pTabbedWorkspace::dmSDI );
+	pTabbedWorkspace( QWidget* , pTabbedWorkspace::DocumentMode = pTabbedWorkspace::dmSDI );
 	~pTabbedWorkspace();
 	
 	virtual bool eventFilter( QObject*, QEvent* );
@@ -43,7 +42,7 @@ public:
 	pFilesListWidget* listWidget() const;
 	
 	pTabbedWorkspace::DocumentMode docMode() const;
-	QTabBar::Shape tabShape () const;
+	QTabBar::Shape tabShape() const;
 
 	QWidgetList documents() const;	
 	QWidget* document( int ) const;
@@ -56,11 +55,8 @@ public:
 	void setBackground( const QPixmap& );
 	void setBackground( const QString& );
 	
-	int addDocument( QWidget*, const QString&,  const QIcon& = QIcon());
-	int insertDocument( int, QWidget*, const QString&, const QIcon& = QIcon());
-	
-	//used for generating custom menu for file
-	virtual void addFileActions (QMenu*) {};
+	int addDocument( QWidget*, const QString&,  const QIcon& = QIcon() );
+	int insertDocument( int, QWidget*, const QString&, const QIcon& = QIcon() );
 	
 public slots:
 	void setDocMode( pTabbedWorkspace::DocumentMode );
@@ -73,32 +69,27 @@ public slots:
 	Do not make this functions virtual!!
 	closeAllDocuments must not call functions of child classes
 	*/
-	void closeDocument(QWidget* doc);
-	void closeDocument(int pos);
-	void closeAllDocuments ();
-	void closeCurrentDocument ();
+	void closeDocument( QWidget* document );
+	void closeDocument( int index );
+	void closeAllDocuments();
+	void closeCurrentDocument();
 
 	void activateNextDocument();
 	void activatePreviousDocument();
 
-    void setSDI ();
-    void setMDI ();
-    void setTopLevel ();
-    void cascade ();
-    void tile ();
-    void minimize ();
-    void restore ();
+    void setSDI();
+    void setMDI();
+    void setTopLevel();
+    void cascade();
+    void tile();
+    void minimize();
+    void restore();
 
 protected:
-
-	// main window of application
-	QMainWindow* mMainWindow;
-
 	// workspace properties
 	pTabbedWorkspace::DocumentMode mDocMode;
 
 	QList<QWidget*> mDocuments;
-	int mCurrIndex;
 
 	// main layout
 	QBoxLayout* mLayout;
@@ -117,14 +108,14 @@ protected slots:
 	void setCurrentDocument( QMdiSubWindow* );
 
 signals:
-	void documentInserted( int, QString, QIcon );
+	void documentInserted( int, const QString&, const QIcon& );
 	void documentClosed( int );
 	// -1 if last file was closed
 	void currentChanged( int );
 	void tabShapeChanged( QTabBar::Shape );
 	void docModeChanged( pTabbedWorkspace::DocumentMode );
-	void modifiedChanged (int, bool);
-	void docTitleChanged (int, QString);
+	void modifiedChanged( int, bool );
+	void docTitleChanged( int, const QString& );
 	
 //	void aboutToCloseDocument (int, QCloseEvent*);
 //	void aboutToCloseAll ();

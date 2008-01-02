@@ -25,6 +25,7 @@
 #include <QActionGroup>
 #include <QStyleFactory>
 #include <QStatusBar>
+#include <QCloseEvent>
 
 UIMain::UIMain( QWidget* p )
 	: pMainWindow( p )
@@ -49,9 +50,9 @@ UIMain::UIMain( QWidget* p )
 void UIMain::closeEvent( QCloseEvent* e)
 {
 	// force to close all documents
-	if ( ! workspace()->closeAllDocuments ()) //user rejected
+	if ( !workspace()->closeAllDocuments() ) //user rejected
 	{
-		e->ignore ();
+		e->ignore();
 		return;
 	}
 	
