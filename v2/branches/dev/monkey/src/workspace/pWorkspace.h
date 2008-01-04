@@ -10,13 +10,13 @@
 #define PWORKSPACE_H
 
 #include "MonkeyExport.h"
-#include "pTabbedWorkspace.h"
+#include "pExtendedWorkspace.h"
 #include "QSingleton.h"
 
 class pAbstractChild;
 class QMainWindow;
 
-class Q_MONKEY_EXPORT pWorkspace : public pTabbedWorkspace, public QSingleton<pWorkspace>
+class Q_MONKEY_EXPORT pWorkspace : public pExtendedWorkspace, public QSingleton<pWorkspace>
 {
 	Q_OBJECT
 	friend class QSingleton<pWorkspace>;

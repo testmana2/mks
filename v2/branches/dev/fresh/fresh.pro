@@ -2,16 +2,16 @@
 
 include( fresh.pri )
 
-BUILD_PATH	= ../build
+BUILD_PATH	 = ../build
 
-TEMPLATE	= lib
+TEMPLATE = lib
 CONFIG	*= qt staticlib warn_on thread x11 windows debug_and_release
 DESTDIR	= $${BUILD_PATH}
 
 # make library exportable
 DEFINES	*= MONKEY_CORE_BUILD
 
-CONFIG(debug, debug|release) {
+CONFIG(DebugBuild)|CONFIG(debug, debug|release) {
 	#Debug
 	CONFIG	+= console
 	unix:TARGET	= $$join(TARGET,,,_debug)
@@ -49,16 +49,15 @@ SOURCES	+= pSettings.cpp
 # pTabBar
 HEADERS	+= pTabBar.h
 SOURCES	+= pTabBar.cpp
-# pFilesList
-HEADERS	+= pFilesListWidget.h 
-SOURCES	+= pFilesListWidget.cpp 
 # pTabbedWorkspace
 HEADERS	+= pTabbedWorkspaceCorner.h \
 	pTabbedWorkspaceCornerButton.h \
-	pTabbedWorkspace.h 
-SOURCES	+= pTabbedWorkspaceCorner.cpp\
+	pTabbedWorkspace.h \
+	pTabbedWorkspaceRightCorner.h
+SOURCES	+= pTabbedWorkspaceCorner.cpp \
 	pTabbedWorkspaceCornerButton.cpp \
-	pTabbedWorkspace.cpp 
+	pTabbedWorkspace.cpp \
+	pTabbedWorkspaceRightCorner.cpp
 # action manager
 HEADERS	+= pAction.h \
 	pActionManager.h \
@@ -94,4 +93,12 @@ SOURCES	+= pFileListEditor.cpp
 # pPathListEditor
 HEADERS	+= pPathListEditor.h
 SOURCES	+= pPathListEditor.cpp
-EXECUTE_DEBUG	= ../bin/monkey_debug
+# pDockWidget
+HEADERS	+= pDockWidget.h
+SOURCES	+= pDockWidget.cpp
+# pExtendedWorkspace
+# pFilesList
+HEADERS	+= pFilesListWidget.h \
+	pExtendedWorkspace.h
+SOURCES	+= pFilesListWidget.cpp \
+	pExtendedWorkspace.cpp

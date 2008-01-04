@@ -11,7 +11,6 @@
 #include "pAbstractChild.h"
 #include "pMenuBar.h"
 #include "pRecentsManager.h"
-#include "pTabbedWorkspaceCorner.h"
 #include "pFileManager.h"
 #include "UISettings.h"
 #include "UITranslator.h"
@@ -36,7 +35,7 @@
 using namespace pMonkeyStudio;
 
 pWorkspace::pWorkspace( QMainWindow* p )
-	: pTabbedWorkspace( p )
+	: pExtendedWorkspace( p )
 {
 	Q_ASSERT( p );
 	// add dock to main window
@@ -193,26 +192,24 @@ void pWorkspace::internal_currentFileChanged( const QString& )
 
 void pWorkspace::internal_currentChanged( int i )
 {
-	//if (i == -1 )
-		//return; // -1 if last file was closed
 	// get child
 	pAbstractChild* c = child( i );
-	bool ic = c;
-	bool modified = ic ? c->isModified() : false;
-	bool print = ic ? c->isPrintAvailable() : false;
-	bool undo = c ? c->isUndoAvailable() : false;
-	bool redo = c ? c->isRedoAvailable() : false;
-	bool copy = c ? c->isCopyAvailable() : false;
-	bool paste = c ? c->isPasteAvailable() : false;
-	bool search = c ? c->isSearchReplaceAvailable() : false;
-	bool go = c ? c->isGoToAvailable() : false;
+	bool hasChild = c;
+	bool modified = hasChild ? c->isModified() : false;
+	bool print = hasChild ? c->isPrintAvailable() : false;
+	bool undo = hasChild ? c->isUndoAvailable() : false;
+	bool redo = hasChild ? c->isRedoAvailable() : false;
+	bool copy = hasChild ? c->isCopyAvailable() : false;
+	bool paste = hasChild ? c->isPasteAvailable() : false;
+	bool search = hasChild ? c->isSearchReplaceAvailable() : false;
+	bool go = hasChild ? c->isGoToAvailable() : false;
 
 	// update file menu
 	pMenuBar::instance()->action( "mFile/mSave/aCurrent" )->setEnabled( modified );
-	pMenuBar::instance()->action( "mFile/mSave/aAll" )->setEnabled( ic );
-	pMenuBar::instance()->action( "mFile/mClose/aCurrent" )->setEnabled( ic );
-	pMenuBar::instance()->action( "mFile/mClose/aAll" )->setEnabled( ic );
-	pMenuBar::instance()->action( "mFile/aSaveAsBackup" )->setEnabled( ic );
+	pMenuBar::instance()->action( "mFile/mSave/aAll" )->setEnabled( hasChild );
+	pMenuBar::instance()->action( "mFile/mClose/aCurrent" )->setEnabled( hasChild );
+	pMenuBar::instance()->action( "mFile/mClose/aAll" )->setEnabled( hasChild );
+	pMenuBar::instance()->action( "mFile/aSaveAsBackup" )->setEnabled( hasChild );
 	pMenuBar::instance()->action( "mFile/aQuickPrint" )->setEnabled( print );
 	pMenuBar::instance()->action( "mFile/aPrint" )->setEnabled( print );
 
@@ -226,11 +223,11 @@ void pWorkspace::internal_currentChanged( int i )
 	pMenuBar::instance()->action( "mEdit/aSearchPrevious" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aSearchNext" )->setEnabled( search );
 	pMenuBar::instance()->action( "mEdit/aGoTo" )->setEnabled( go );
-	pMenuBar::instance()->action( "mEdit/aExpandAbbreviation" )->setEnabled( ic );
+	pMenuBar::instance()->action( "mEdit/aExpandAbbreviation" )->setEnabled( hasChild );
 
 	// update view menu
-	pMenuBar::instance()->action( "mView/aNext" )->setEnabled( ic );
-	pMenuBar::instance()->action( "mView/aPrevious" )->setEnabled( ic );
+	pMenuBar::instance()->action( "mView/aNext" )->setEnabled( hasChild );
+	pMenuBar::instance()->action( "mView/aPrevious" )->setEnabled( hasChild );
 
 	// update status bar
 	//pMenuBar::instance()->setCursorPosition( c ? c->cursorPosition() : QPoint( -1, -1 ) );
@@ -243,10 +240,10 @@ void pWorkspace::internal_currentChanged( int i )
 	//
 
 	// search dock
-	pSearch::instance()->setEditor( ic ? c->currentEditor() : 0 );
+	pSearch::instance()->setEditor( hasChild ? c->currentEditor() : 0 );
 	
 	// emit file changed
-	emit currentFileChanged( c, ic ? c->currentFile() : QString() );
+	emit currentFileChanged( c, hasChild ? c->currentFile() : QString() );
 }
 
 void pWorkspace::internal_urlsDropped( const QList<QUrl>& l )
@@ -512,7 +509,7 @@ void pWorkspace::closeCurrentDocument()
 	if ( UISaveFiles::saveDocument( window(), currentChild(), false ) == UISaveFiles::bCancelClose )
 		return;
 	
-	pTabbedWorkspace::closeCurrentDocument ();
+	pExtendedWorkspace::closeCurrentDocument ();
 }
 
 bool pWorkspace::closeAllDocuments ()
@@ -523,7 +520,7 @@ bool pWorkspace::closeAllDocuments ()
 	// close all object, disconnecting them
 	if ( cb != UISaveFiles::bCancelClose )
 	{
-		pTabbedWorkspace::closeAllDocuments();
+		pExtendedWorkspace::closeAllDocuments();
 		return true;
 	}
 	else
