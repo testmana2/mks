@@ -14,7 +14,6 @@
 **
 ****************************************************************************/
 #include "pTabBar.h"
-#include "pTabbedWorkspace.h"
 #include "pAction.h"
 
 #include <QMouseEvent>
@@ -24,9 +23,8 @@
 
 #include <QDebug>
 
-pTabBar::pTabBar( pTabbedWorkspace* w )
-	: QTabBar( w ), 
-    mWorkspace (w)
+pTabBar::pTabBar( QWidget* w )
+	: QTabBar( w )
 {
 	// set default colors
 	mTabsColor = Qt::black;
@@ -58,17 +56,6 @@ pTabBar::pTabBar( pTabbedWorkspace* w )
 	connect( aToggleTabsHaveCloseButton, SIGNAL( toggled( bool ) ), this, SLOT( setTabsHaveCloseButton( bool ) ) );
 	connect( aToggleTabsHaveShortcut, SIGNAL( toggled( bool ) ), this, SLOT( setTabsHaveShortcut( bool ) ) );
 	connect( aToggleTabsElided, SIGNAL( toggled( bool ) ), this, SLOT( setTabsElided( bool ) ) );
-	
-	//connections with workspace
-    // this -> workspace
-	connect( this, SIGNAL( closeButtonClicked( int ) ), mWorkspace, SLOT( removeDocument( int ) ) );
-	connect( this, SIGNAL( currentChanged( int ) ), mWorkspace, SLOT( setCurrentIndex( int ) ) );
-	
-    //workspace ->this
-	connect( mWorkspace, SIGNAL( currentChanged( int ) ), this, SLOT( setCurrentIndex( int ) ) );
-    connect( mWorkspace, SIGNAL( modifiedChanged( int, bool ) ), this, SLOT( modifiedChanged( int, bool ) ) );
-    connect (mWorkspace, SIGNAL (documentInserted (int, QString, QIcon)), this, SLOT (documentInserted( int, QString, QIcon )));
-    connect( mWorkspace, SIGNAL( documentRemoved( int ) ), this, SLOT( documentRemoved( int ) ) );
 }
 
 void pTabBar::paintEvent( QPaintEvent* e )
@@ -434,19 +421,3 @@ QAction* pTabBar::toggleTabsHaveShortcutAction() const
 
 QAction* pTabBar::toggleTabsElidedAction() const
 { return aToggleTabsElided; }
-
-void pTabBar::modifiedChanged (int i, bool b)
-{
-    QWidget* document = mWorkspace->document (i);
-    setTabText( i, document->windowTitle().append( b ? QString( "*" ) : QString::null ) );
-}
-
-void pTabBar::documentInserted( int pos, QString s, QIcon )
-{
-    insertTab (pos, s);
-}
-
-void pTabBar::documentRemoved( int i )
-{
-    removeTab ( i );
-}

@@ -97,8 +97,8 @@ namespace pMonkeyStudio
 	Q_MONKEY_EXPORT const QColor tabsTextColor();
 	Q_MONKEY_EXPORT void setCurrentTabTextColor( const QColor& );
 	Q_MONKEY_EXPORT const QColor currentTabTextColor();
-	Q_MONKEY_EXPORT void setDocMode( pTabbedWorkspace::DocumentMode );
-	Q_MONKEY_EXPORT const pTabbedWorkspace::DocumentMode docMode();
+	Q_MONKEY_EXPORT void setDocMode( pExtendedWorkspace::DocumentMode );
+	Q_MONKEY_EXPORT const pExtendedWorkspace::DocumentMode docMode();
 	Q_MONKEY_EXPORT void setExternalChanges( pMonkeyStudio::ExternalChangesMode );
 	Q_MONKEY_EXPORT const pMonkeyStudio::ExternalChangesMode externalchanges();
 	Q_MONKEY_EXPORT void setSaveSessionOnClose( bool );

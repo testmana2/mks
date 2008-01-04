@@ -17,7 +17,8 @@ int main( int argc, char** argv )
 
 	// set tabbed sample settings
 	p.tabbedWorkspace()->setTabShape( QTabBar::RoundedNorth );
-	p.tabbedWorkspace()->setDocMode( pTabbedWorkspace::dmMDI );
+	p.tabbedWorkspace()->setTabMode( pTabbedWorkspace::tmMDI );
+	p.tabbedWorkspace()->setDocumentMode( pTabbedWorkspace::dmMaximized );
 
 	// set sample menu
 	p.menuBar()->menu( "mTools" )->setTitle( "Tools" );
@@ -34,12 +35,9 @@ int main( int argc, char** argv )
 		QTextEdit* e = new QTextEdit;
 		e->setWindowTitle( QString( "Tab: %1" ).arg( i ) );
 		e->setPlainText( e->windowTitle() );
-		p.tabbedWorkspace()->addDocument( e, e->windowTitle() );
+		p.tabbedWorkspace()->addTab( e, e->windowTitle() );
 	}
 
-    p.tabbedWorkspace()->setCurrentIndex (4);
-    //p.tabbedWorkspace()->activatePreviousDocument();
-    //p.tabbedWorkspace()->cascade ();
 	// restore window state
 	p.restoreState();
 

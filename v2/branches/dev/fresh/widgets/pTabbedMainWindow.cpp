@@ -10,7 +10,7 @@
 #include "pTabbedWorkspace.h"
 
 pTabbedMainWindow::pTabbedMainWindow( QWidget* w, Qt::WindowFlags f )
-	: pMainWindow( w, f ), mWorkspace( new pTabbedWorkspace (this) )
+	: pMainWindow( w, f ), mWorkspace( new pTabbedWorkspace )
 {
 	// init tabbed workspace
 	setCentralWidget( mWorkspace );

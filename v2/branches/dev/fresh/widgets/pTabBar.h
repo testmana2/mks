@@ -20,8 +20,6 @@
 #include <QList>
 #include <QUrl>
 
-class pTabbedWorkspace;
-
 class QAction;
 class pAction;
 
@@ -30,7 +28,7 @@ class pTabBar : public QTabBar
 	Q_OBJECT
 
 public:
-	pTabBar( pTabbedWorkspace* );
+	pTabBar( QWidget* = 0 );
 
 	QColor tabsColor() const;
 	QColor currentTabColor() const;
@@ -62,7 +60,6 @@ protected:
 	virtual bool inCloseButtonRect( int, const QPoint& );
 	void updateTabsNumber( int = -1 );
 
-    pTabbedWorkspace* mWorkspace;
 	QPoint dragStartPosition;
 	QColor mTabsColor;
 	QColor mCurrentTabColor;
@@ -70,12 +67,6 @@ protected:
 	pAction* aToggleTabsHaveCloseButton;
 	pAction* aToggleTabsHaveShortcut;
 	pAction* aToggleTabsElided;
-
-protected slots:
-    
-    void modifiedChanged (int, bool);
-    void documentInserted( int, QString, QIcon );
-    void documentRemoved ( int );
 
 signals:
 	void leftButtonPressed( int, const QPoint& );

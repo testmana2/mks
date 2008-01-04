@@ -10,19 +10,18 @@
 #define PTABBEDWORKSPACE_H
 
 #include "MonkeyExport.h"
-#include "pTabBar.h"
 
 #include <QWidget>
+#include "pTabBar.h"
 #include <QList>
-#include <QIcon>
 
 class QBoxLayout;
 class QStackedLayout;
 class QStackedWidget;
-class QMdiArea;
-class QMdiSubWindow;
+class QWorkspace;
+class pTabbedWorkspaceCorner;
 class pAction;
-class pFilesListWidget;
+class pTabBar;
 
 class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
 {
@@ -30,96 +29,85 @@ class Q_MONKEY_EXPORT pTabbedWorkspace : public QWidget
 	Q_ENUMS( TabMode DocumentMode )
 	
 public:
-	enum DocumentMode { dmSDI = 0, dmMDI, dmTopLevel };
+	enum TabMode { tmSDI = 0, tmMDI, tmTopLevel };
+	enum DocumentMode { dmMaximized = 0, dmCascade, dmTile, dmIcons, dmMinimizeAll, dmRestoreAll };
 
-	pTabbedWorkspace( QWidget* , pTabbedWorkspace::DocumentMode = pTabbedWorkspace::dmSDI );
+	pTabbedWorkspace( QWidget* = 0, pTabbedWorkspace::TabMode = pTabbedWorkspace::tmMDI );
 	~pTabbedWorkspace();
 	
 	virtual bool eventFilter( QObject*, QEvent* );
 
-	//getters
 	pTabBar* tabBar() const;
-	pFilesListWidget* listWidget() const;
-	
-	pTabbedWorkspace::DocumentMode docMode() const;
 	QTabBar::Shape tabShape() const;
-
-	QWidgetList documents() const;	
-	QWidget* document( int ) const;
-	int count() const;
-	
+	pTabbedWorkspace::TabMode tabMode() const;
+	pTabbedWorkspace::DocumentMode documentMode() const;
 	int currentIndex() const;
 	QWidget* currentDocument() const;
 	int indexOf( QWidget* ) const;
+	QWidget* document( int ) const;
+	int count() const;
+	QList<QWidget*> documents() const;
+	pTabbedWorkspaceCorner* cornerWidget( Qt::Corner = Qt::TopRightCorner ) const;
+	int addTab( QWidget*, const QString& );
+	int addTab( QWidget*, const QIcon&, const QString& );
+	int insertTab( int, QWidget*, const QString& );
+	int insertTab( int, QWidget*, const QIcon&, const QString& );
 
+public slots:
 	void setBackground( const QPixmap& );
 	void setBackground( const QString& );
-	
-	int addDocument( QWidget*, const QString&,  const QIcon& = QIcon() );
-	int insertDocument( int, QWidget*, const QString&, const QIcon& = QIcon() );
-	
-public slots:
-	void setDocMode( pTabbedWorkspace::DocumentMode );
 	void setTabShape( QTabBar::Shape );
-
+	void setTabMode( pTabbedWorkspace::TabMode );
+	void setDocumentMode( pTabbedWorkspace::DocumentMode );
 	void setCurrentIndex( int );
 	void setCurrentDocument( QWidget* );
-
-	/*
-	Do not make this functions virtual!!
-	closeAllDocuments must not call functions of child classes
-	*/
-	void closeDocument( QWidget* document );
-	void closeDocument( int index );
-	void closeAllDocuments();
-	void closeCurrentDocument();
-
+	void setCornerWidget( pTabbedWorkspaceCorner*, Qt::Corner = Qt::TopRightCorner );
+	void removeTab( int );
+	void removeDocument( QWidget* );
+	void closeCurrentTab();
+	void closeAllTabs( bool = false, bool = false );
 	void activateNextDocument();
 	void activatePreviousDocument();
 
-    void setSDI();
-    void setMDI();
-    void setTopLevel();
-    void cascade();
-    void tile();
-    void minimize();
-    void restore();
-
 protected:
+	void updateCorners();
+	void updateView( QWidget* = 0 );
+	void addDocument( QWidget* d, int = -1 );
+
 	// workspace properties
-	pTabbedWorkspace::DocumentMode mDocMode;
-
-	QList<QWidget*> mDocuments;
-
+	pTabbedWorkspace::TabMode mTabMode;
+	pTabbedWorkspace::DocumentMode mDocumentMode;
 	// main layout
 	QBoxLayout* mLayout;
+	QList<QWidget*> mDocuments;
 	// tab widget
 	pTabBar* mTabBar;
 	QBoxLayout* mTabLayout;
-	//list widget
-	pFilesListWidget* mFilesList;
 	// document widget
 	QStackedLayout* mStackedLayout;
-	/* Stacked widget used for SDI mode, because we can't use maximized windows on QMdiArea on Mac*/
-	QStackedWidget* mStackedWidget; 
-	QMdiArea* mMdiAreaWidget;
+	QStackedWidget* mStackedWidget;
+	QWorkspace* mWorkspaceWidget;
 
 protected slots:
-	void setCurrentDocument( QMdiSubWindow* );
+	void internal_midButtonPressed( int, const QPoint& );
+	void internal_closeButtonClicked( int );
+	void internal_rightButtonPressed( int, const QPoint& );
+	void internal_tabDropped( int, int );
+	void internal_currentChanged( int );
+	void workspaceWidget_windowActivated( QWidget* );
+	void removeDocument( QObject* );
 
 signals:
-	void documentInserted( int, const QString&, const QIcon& );
-	void documentClosed( int );
-	// -1 if last file was closed
+	void tabInserted( int );
+	void aboutToCloseTab( int, QCloseEvent* );
+	void aboutToCloseDocument( QWidget*, QCloseEvent* );
+	void tabRemoved( int );
 	void currentChanged( int );
 	void tabShapeChanged( QTabBar::Shape );
-	void docModeChanged( pTabbedWorkspace::DocumentMode );
-	void modifiedChanged( int, bool );
-	void docTitleChanged( int, const QString& );
-	
-//	void aboutToCloseDocument (int, QCloseEvent*);
-//	void aboutToCloseAll ();
-    
+	void tabModeChanged( pTabbedWorkspace::TabMode );
+	void documentModeChanged( pTabbedWorkspace::DocumentMode );
+	void closeAllRequested();
+
 };
 
 #endif // PTABBEDWORKSPACE_H

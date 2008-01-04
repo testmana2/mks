@@ -50,7 +50,7 @@ pTabbedWorkspaceRightCorner::pTabbedWorkspaceRightCorner( pTabbedWorkspace* p )
 		pAction* a = new pAction( e.key( i ), e.key( i ), QKeySequence(), tr( "Tabbed Workspace/Tab Mode" ) );
 		agTabMode->addAction( a );
 		a->setCheckable( true );
-		if ( p->docMode() == e.value( i ) )
+		if ( p->tabMode() == e.value( i ) )
 			a->setChecked( true );
 		a->setData( i );
 	}
@@ -102,12 +102,12 @@ void pTabbedWorkspaceRightCorner::agTabShape_triggered( QAction* a )
 
 void pTabbedWorkspaceRightCorner::agTabMode_triggered( QAction* a )
 {
-	emit requestChangeDocMode( (pTabbedWorkspace::DocumentMode)a->data().toInt() );
+	emit requestChangeTabMode( (pTabbedWorkspace::TabMode)a->data().toInt() );
 }
 
 void pTabbedWorkspaceRightCorner::agDocumentMode_triggered( QAction* a )
 {
-	emit requestChangeDocSize( (pTabbedWorkspace::DocumentMode)a->data().toInt() );
+	emit requestChangeDocumentMode( (pTabbedWorkspace::DocumentMode)a->data().toInt() );
 }
 
 void pTabbedWorkspaceRightCorner::tabShapeChanged( QTabBar::Shape s )
@@ -124,7 +124,7 @@ void pTabbedWorkspaceRightCorner::tabShapeChanged( QTabBar::Shape s )
 	}
 }
 
-void pTabbedWorkspaceRightCorner::docModeChanged( pTabbedWorkspace::DocumentMode m )
+void pTabbedWorkspaceRightCorner::tabModeChanged( pTabbedWorkspace::TabMode m )
 {
 	QList<QAction*> l = agTabMode->actions();
 	foreach ( QAction* a, l )
@@ -133,13 +133,13 @@ void pTabbedWorkspaceRightCorner::docModeChanged( pTabbedWorkspace::DocumentMode
 		{
 			if ( !a->isChecked() )
 				a->setChecked( true );
-			agDocumentMode->setEnabled( m == pTabbedWorkspace::dmMDI ? true : false );
+			agDocumentMode->setEnabled( m == pTabbedWorkspace::tmMDI ? true : false );
 			return;
 		}
 	}
 }
 
-void pTabbedWorkspaceRightCorner::docSizeChanged( pTabbedWorkspace::DocumentSize m )
+void pTabbedWorkspaceRightCorner::documentModeChanged( pTabbedWorkspace::DocumentMode m )
 {
 	QList<QAction*> l = agDocumentMode->actions();
 	foreach ( QAction* a, l )

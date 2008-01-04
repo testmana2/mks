@@ -7,13 +7,13 @@
  * COMMENTARY   : Widget with list of files, opened on workspace, for activating needed file
  ********************************************************************************************************/
 #include "pFilesListWidget.h"
-#include "pTabbedWorkspace.h"
+#include "pExtendedWorkspace.h"
 
 #include <QListWidget>
 #include <QMainWindow>
 #include <QDropEvent>
 
-pFilesListWidget::pFilesListWidget( const QString& s, pTabbedWorkspace* p )
+pFilesListWidget::pFilesListWidget( const QString& s, pExtendedWorkspace* p )
 	: QDockWidget( s ), mWorkspace( p )
 {
 	Q_ASSERT ( mWorkspace );
@@ -30,7 +30,7 @@ pFilesListWidget::pFilesListWidget( const QString& s, pTabbedWorkspace* p )
 	connect( mWorkspace, SIGNAL( modifiedChanged( int, bool ) ), this, SLOT( modifiedChanged( int, bool ) ) );
     connect( mWorkspace, SIGNAL( docTitleChanged( int, const QString& ) ), this, SLOT( docTitleChanged( int, const QString& ) ) );
     connect( mWorkspace, SIGNAL( documentInserted( int, const QString&, const QIcon& ) ), this, SLOT( documentInserted( int, const QString&, const QIcon& ) ) );
-	connect( mWorkspace, SIGNAL( documentClosed( int ) ), this, SLOT( documentClosed( int ) ) );
+	connect( mWorkspace, SIGNAL( documentAboutToClose( int ) ), this, SLOT( documentAboutToClose( int ) ) );
 }
 
 void pFilesListWidget::dragEnterEvent( QDragEnterEvent* e )
@@ -62,7 +62,7 @@ void pFilesListWidget::docTitleChanged( int i, const QString& s )
 void pFilesListWidget::documentInserted( int i, const QString& s, const QIcon& )
 { mList->insertItem( i, s ); }
 
-void pFilesListWidget::documentClosed( int i )
+void pFilesListWidget::documentAboutToClose( int i )
 { delete mList->takeItem( i ); }
 
 void pFilesListWidget::setCurrentRow( int i )

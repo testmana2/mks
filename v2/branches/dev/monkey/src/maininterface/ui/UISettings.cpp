@@ -61,9 +61,9 @@ UISettings::UISettings( QWidget* p )
 	bgExternalChanges->addButton( rbReloadAutomatically, pMonkeyStudio::ecmReload );
 	
 	// tab mode
-	cbTabModes->addItem( tr( "SDI" ), pTabbedWorkspace::dmSDI );
-	cbTabModes->addItem( tr( "MDI" ), pTabbedWorkspace::dmMDI );
-	cbTabModes->addItem( tr( "Top Level" ), pTabbedWorkspace::dmTopLevel );
+	cbTabModes->addItem( tr( "SDI" ), pExtendedWorkspace::dmSDI );
+	cbTabModes->addItem( tr( "MDI" ), pExtendedWorkspace::dmMDI );
+	cbTabModes->addItem( tr( "Top Level" ), pExtendedWorkspace::dmTopLevel );
 
 	// loads text codecs
 	cbDefaultEncoding->addItems( availableTextCodecs() );
@@ -364,7 +364,7 @@ void UISettings::saveSettings()
 	setTabsElided( cbTabsElided->isChecked() );
 	setTabsTextColor( QColor( tbTabsTextColor->toolTip() ) );
 	setCurrentTabTextColor( QColor( tbCurrentTabTextColor->toolTip() ) );
-	setDocMode( (pTabbedWorkspace::DocumentMode)cbTabModes->itemData( cbTabModes->currentIndex() ).toInt() );
+	setDocMode( (pExtendedWorkspace::DocumentMode)cbTabModes->itemData( cbTabModes->currentIndex() ).toInt() );
 	setExternalChanges( (pMonkeyStudio::ExternalChangesMode)bgExternalChanges->checkedId() );
 	setSaveSessionOnClose( cbSaveSession->isChecked() );
 	setRestoreSessionOnStartup( cbRestoreSession->isChecked() );

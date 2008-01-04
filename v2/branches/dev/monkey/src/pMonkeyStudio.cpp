@@ -971,11 +971,11 @@ void pMonkeyStudio::setCurrentTabTextColor( const QColor& c )
 const QColor pMonkeyStudio::currentTabTextColor()
 { return pSettings::instance()->value( settingsPath() +"/CurrentTabTextColor", QColor( Qt::blue ) ).value<QColor>(); }
 
-void pMonkeyStudio::setDocMode( pTabbedWorkspace::DocumentMode m )
+void pMonkeyStudio::setDocMode( pExtendedWorkspace::DocumentMode m )
 { pSettings::instance()->setValue( settingsPath() +"/DocMode", m ); }
 
-const pTabbedWorkspace::DocumentMode pMonkeyStudio::docMode()
-{ return (pTabbedWorkspace::DocumentMode)pSettings::instance()->value( settingsPath() +"/DocMode", pTabbedWorkspace::dmSDI ).toInt(); }
+const pExtendedWorkspace::DocumentMode pMonkeyStudio::docMode()
+{ return (pExtendedWorkspace::DocumentMode)pSettings::instance()->value( settingsPath() +"/DocMode", pExtendedWorkspace::dmSDI ).toInt(); }
 
 void pMonkeyStudio::setExternalChanges( pMonkeyStudio::ExternalChangesMode e )
 { pSettings::instance()->setValue( settingsPath() +"/ExternalChanges", e ); }

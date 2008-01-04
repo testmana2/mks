@@ -37,12 +37,12 @@ protected slots:
 	void agDocumentMode_triggered( QAction* );
 
 	void tabShapeChanged( QTabBar::Shape );
-	void docModeChanged( pTabbedWorkspace::DocumentMode );
-	void docSizeChanged( pTabbedWorkspace::DocumentSize );
+	void tabModeChanged( pTabbedWorkspace::TabMode );
+	void documentModeChanged( pTabbedWorkspace::DocumentMode );
 
 signals:
-	void requestChangeDocMode( pTabbedWorkspace::DocumentMode );
-	void requestChangeDocSize( pTabbedWorkspace::DocumentMode );
+	void requestChangeTabMode( pTabbedWorkspace::TabMode );
+	void requestChangeDocumentMode( pTabbedWorkspace::DocumentMode );
 	void requestChangeTabShape( QTabBar::Shape );
 
 };
