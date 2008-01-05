@@ -17,20 +17,23 @@ It's extendable with a powerfull plugins system.
 #ifndef FILEBROWSERSETTINGS_H
 #define FILEBROWSERSETTINGS_H
 
-#include "pStringListEditor.h"
-#include "FileBrowser.h"
+#include <QWidget>
+
+class pStringListEditor;
 
 class FileBrowserSettings : public QWidget
 {
-Q_OBJECT
+	Q_OBJECT
+	
 public:
-	FileBrowserSettings ();
-	~FileBrowserSettings ();	
+	FileBrowserSettings();
+
 private:
-	pStringListEditor* list;
-	FileBrowser * mFileBrowser;
+	pStringListEditor* mEditor;
+
 private slots:
 	void setSettings();
+
 };
 
-#endif //FILEBROWSERSETTINGS_H
+#endif // FILEBROWSERSETTINGS_H

@@ -11,4 +11,3 @@ HEADERS	= src/FileBrowser.h \
 SOURCES	= src/FileBrowser.cpp \
 	src/pDockFileBrowser.cpp \
 	src/FileBrowserSettings.cpp
-EXECUTE_DEBUG	= ../../../bin/monkey_debug

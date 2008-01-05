@@ -14,38 +14,40 @@ It's extendable with a powerfull plugins system.
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
+#include "FileBrowserSettings.h"
+#include "pStringListEditor.h"
+#include "pDockFileBrowser.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
-#include <QLabel>
 
-#include "FileBrowserSettings.h"
-#include "FileBrowser.h"
-#include "pDockFileBrowser.h"
-
-FileBrowserSettings::FileBrowserSettings ()
+FileBrowserSettings::FileBrowserSettings()
 {
-	QVBoxLayout* vbox = new QVBoxLayout (this);
-
-	list = new pStringListEditor (this, tr("Except filenames"));
-	list->setValues ( pDockFileBrowser::instance()->getFilterWildCards () );
+	// window attribute
+	setAttribute( Qt::WA_DeleteOnClose );
 	
-	vbox->addWidget (list);
-
-	QHBoxLayout* applyBox = new QHBoxLayout (this);
-	QPushButton* applyBtn = new QPushButton (tr("Apply"), this);
-	applyBox->addWidget (applyBtn, 0, Qt::AlignRight);
-
-	vbox->addLayout (applyBox);
+	// list editor
+	mEditor = new pStringListEditor( this, tr( "Except Suffixes" ) );
+	mEditor->setValues( pDockFileBrowser::instance()->wildcards() );
 	
-	connect ( applyBtn, SIGNAL ( clicked()), this, SLOT (setSettings()));
-}
-
-FileBrowserSettings::~FileBrowserSettings ()
-{
+	// apply button
+	QPushButton* applyBtn = new QPushButton( tr( "Apply" ), this );
+	
+	// button layout
+	QHBoxLayout* applyBox = new QHBoxLayout;
+	applyBox->addWidget( applyBtn, 0, Qt::AlignRight );
+	
+	// global layout
+	QVBoxLayout* vbox = new QVBoxLayout( this );
+	vbox->setMargin( 5 );
+	vbox->setSpacing( 3 );
+	vbox->addWidget( mEditor );
+	vbox->addLayout( applyBox );
+	
+	// connections
+	connect ( applyBtn, SIGNAL ( clicked() ), this, SLOT ( setSettings() ) );
 }
 
 void FileBrowserSettings::setSettings()
-{
-	pDockFileBrowser::instance()->setFilterWildCards ( list->values() );
-}
+{ pDockFileBrowser::instance()->setWildcards( mEditor->values() ); }
