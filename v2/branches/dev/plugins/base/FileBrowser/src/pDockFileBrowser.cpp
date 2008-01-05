@@ -30,20 +30,18 @@
 #include <QTreeView>
 #include <QHeaderView>
 
-bool pDockFileBrowser::FilteredModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+bool pDockFileBrowser::FilteredModel::filterAcceptsRow( int row, const QModelIndex& parent ) const
 {
-	if (sourceParent == QModelIndex()) 
+	if ( parent == QModelIndex() ) 
 		return true;
-	foreach (QString s, wildCards)
-	{
-		if ( QRegExp(s,Qt::CaseSensitive, QRegExp::Wildcard).exactMatch(sourceModel()->data(QModelIndex(sourceModel()->index(sourceRow, 0, sourceParent))).toString()) )
+	foreach ( const QString s, mWildcards )
+		if ( QRegExp( s, Qt::CaseSensitive, QRegExp::Wildcard ).exactMatch( parent.child( row, 0 ).data().toString() ) )
 				return false;
-	}
 	return true;
 }
 
 pDockFileBrowser::pDockFileBrowser( QWidget* w )
-	: QDockWidget( w ), mShown( false )
+	: pDockWidget( w ), mShown( false )
 {
 	// restrict areas
 	setAllowedAreas( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
@@ -80,10 +78,10 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	h->addWidget( mCombo );
 	
 	// set current path button
-	QToolButton* tbSetCurrent = new QToolButton;
-	tbSetCurrent->setIcon( QIcon( ":/icons/goto.png" ) );
-	tbSetCurrent->setToolTip( tr( "Set selected item as root" ) );
-	h->addWidget( tbSetCurrent );
+	QToolButton* tbRoot = new QToolButton;
+	tbRoot->setIcon( QIcon( ":/icons/goto.png" ) );
+	tbRoot->setToolTip( tr( "Set selected item as root" ) );
+	h->addWidget( tbRoot );
 	
 	// add horizontal layout into vertical one
 	v->addLayout( h );
@@ -99,28 +97,14 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	mDirsModel->setSorting( QDir::DirsFirst | QDir::Name );
 	
 	mFilteredModel = new FilteredModel ( this );
-	QStringList def;
-	def << "*~" << "*.o" << "*.pyc" << "*.bak";
-	mFilteredModel->wildCards =  pSettings::instance()->value ("Plugins/FileBrowser/FilterWildcards",QVariant(def)).toStringList();
-	//mFilteredModel->setFilterWildcard ("*.h");
-	mFilteredModel->setSourceModel (mDirsModel);
-	
-	// tabwidget
-	//QTabWidget* tabs = new QTabWidget;
-	//v->addWidget( tabs );
-	
-	// folders view
-	//mList = new QListView;
-	//tabs->addTab( mList, tr( "List View" ) );
+	mFilteredModel->setSourceModel( mDirsModel );
 	
 	// files view
 	mTree = new QTreeView;
-	//tabs->addTab( mTree, tr( "Tree View" ) );
 	v->addWidget ( mTree );
 	
 	// assign model to views
 	mCombo->setModel( mDirsModel );
-	//mList->setModel( mDirsModel );
 	mTree->setModel( mFilteredModel );
 	
 	// custom view
@@ -142,15 +126,11 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	// set lineedit path
 	setCurrentPath( mDirsModel->filePath( mCombo->rootIndex() ) );
 	
-	// set page 1 visible
-	//tabs->setCurrentIndex( 1 );
-	
 	// connections
 	connect( tbUp, SIGNAL( clicked() ), this, SLOT( tbUp_clicked() ) );
 	connect( tbRefresh, SIGNAL( clicked() ), this, SLOT( tbRefresh_clicked() ) );
-	connect( tbSetCurrent, SIGNAL( clicked() ), this, SLOT( tbSetCurrent_clicked() ) );
+	connect( tbRoot, SIGNAL( clicked() ), this, SLOT( tbRoot_clicked() ) );
 	connect( mCombo, SIGNAL( currentChanged( const QModelIndex& ) ), this, SLOT( cb_currentChanged( const QModelIndex& ) ) );
-//	connect( mList, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( lv_doubleClicked( const QModelIndex& ) ) );
 	connect( mTree, SIGNAL( doubleClicked( const QModelIndex& ) ), this, SLOT( tv_doubleClicked( const QModelIndex& ) ) );
 }
 
@@ -189,70 +169,53 @@ void pDockFileBrowser::tbRefresh_clicked()
 	mDirsModel->refresh( mCombo->currentIndex() );
 }
 
-void pDockFileBrowser::tbSetCurrent_clicked()
+void pDockFileBrowser::tbRoot_clicked()
 {
 	// seet root of model to path of selected item
-	QModelIndex curItem = mTree->currentIndex ();
-	if ( !curItem.isValid () )
+	QModelIndex index = mTree->selectionModel()->selectedIndexes().value( 0 );
+	if ( !index.isValid() )
 		return;
-	QModelIndex ind = mFilteredModel->mapToSource ( mTree->
-currentIndex () );
-	// open file
-	if ( mDirsModel->isDir( ind ) )
-		setCurrentPath ( mDirsModel->filePath( ind ) );
+	index = mFilteredModel->mapToSource( index );
+	if ( !mDirsModel->isDir( index ) )
+		index = index.parent();
+	setCurrentPath( mDirsModel->filePath( index ) );
 }
 
-/*void pDockFileBrowser::lv_doubleClicked( const QModelIndex& i )
-{
-	if ( mDirsModel->isDir( i ) )
-		setCurrentPath( mDirsModel->filePath( i ) );
-	else
-		pFileManager::instance()->openFile( mDirsModel->filePath( i ) );
-}
-*/
 void pDockFileBrowser::tv_doubleClicked( const QModelIndex& i )
 {
-	QModelIndex ind = mFilteredModel->mapToSource ( i );
+	// open file corresponding to index
+	QModelIndex index = mFilteredModel->mapToSource( i );
 	// open file
-	if ( !mDirsModel->isDir( ind ) )
-		pFileManager::instance()->openFile( mDirsModel->filePath( ind ) );
+	if ( !mDirsModel->isDir( index ) )
+		pFileManager::instance()->openFile( mDirsModel->filePath( index ) );
 }
 
 void pDockFileBrowser::cb_currentChanged( const QModelIndex& i )
-{
-	// set current path
-	setCurrentPath( mDirsModel->filePath( i ) );
-}
+{ setCurrentPath( mDirsModel->filePath( i ) ); }
 
 QString pDockFileBrowser::currentPath() const
-{
-	// return current path
-	return mDirsModel->filePath( mCombo->currentIndex() );
-}
+{ return mDirsModel->filePath( mCombo->currentIndex() ); }
 
 void pDockFileBrowser::setCurrentPath( const QString& s )
 {
-	mPath = s;
 	// get index
-	QModelIndex i = mDirsModel->index( mPath );
+	QModelIndex index = mDirsModel->index( s );
 	// set current path
-	mCombo->setCurrentIndex( i );
-//	mList->setRootIndex( i );
-	mFilteredModel->invalidate ();
-	mTree->setRootIndex( mFilteredModel->mapFromSource ( i ) );
+	mCombo->setCurrentIndex( index );
+	mFilteredModel->invalidate();
+	mTree->setRootIndex( mFilteredModel->mapFromSource( index ) );
 	// set lineedit path
-	mLineEdit->setText( mDirsModel->filePath( i ) );
+	mLineEdit->setText( mDirsModel->filePath( index ) );
 	mLineEdit->setToolTip( mLineEdit->text() );
 }
 
-void pDockFileBrowser::setFilterWildCards (QStringList l)
-{
-	mFilteredModel->wildCards = l;
-	setCurrentPath ( mPath );
-	pSettings::instance()->setValue ("Plugins/FileBrowser/FilterWildcards",QVariant(l));
-}
+QStringList pDockFileBrowser::wildcards() const
+{ return mFilteredModel->mWildcards; }
 
-QStringList pDockFileBrowser::getFilterWildCards ()
+void pDockFileBrowser::setWildcards( const QStringList& l )
 {
-	return mFilteredModel->wildCards;
-};
+	const QString s = currentPath();
+	mFilteredModel->mWildcards = l;
+	mFilteredModel->invalidate();
+	setCurrentPath( s );
+}

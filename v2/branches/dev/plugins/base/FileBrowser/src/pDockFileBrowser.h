@@ -16,8 +16,8 @@
 #define PDOCKFILEBROWSER_H
 
 #include "QSingleton.h"
+#include "pDockWidget.h"
 
-#include <QDockWidget>
 #include <QModelIndex>
 #include <QSortFilterProxyModel>
 
@@ -27,58 +27,56 @@ class QListView;
 class QDirModel;
 class QTreeView;
 
-class pDockFileBrowser : public QDockWidget, public QSingleton<pDockFileBrowser>
+class pDockFileBrowser : public pDockWidget, public QSingleton<pDockFileBrowser>
 {
 	Q_OBJECT
 	friend class QSingleton<pDockFileBrowser>;
-	friend class FileBrowserSettings;
 
 	class FilteredModel: public QSortFilterProxyModel
 	{
+		friend class pDockFileBrowser;
+			
 	protected:
-		bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+		QStringList mWildcards;
+	
+		bool filterAcceptsRow( int row, const QModelIndex& parent ) const;
+	
 	public:
-		FilteredModel(QObject *parent = 0): QSortFilterProxyModel(parent) {};
-		QStringList wildCards;
+		FilteredModel( QObject* parent = 0 ) : QSortFilterProxyModel( parent ) {}
 	};
 	
 public:
 	QString currentPath() const;
-	void setCurrentPath( const QString& );
+	QStringList wildcards() const;
 
 protected:
 	bool mShown;
 	pTreeComboBox* mCombo;
 	QLineEdit* mLineEdit;
-	//QListView* mList;
 	QTreeView* mTree;
 	QDirModel* mDirsModel;
 	FilteredModel* mFilteredModel;
 
-	QString mPath;
-
 	void showEvent( QShowEvent* );
 	void hideEvent( QHideEvent* );
-	
-	//negative filter
-	QStringList getFilterWildCards ();
-	void setFilterWildCards (QStringList l);
 
 private:
 	pDockFileBrowser( QWidget* = 0 );
 
+public slots:
+	void setCurrentPath( const QString& );
+	void setWildcards( const QStringList& );
+
 private slots:
 	void tbUp_clicked();
 	void tbRefresh_clicked();
-	void tbSetCurrent_clicked();
+	void tbRoot_clicked();
 	void cb_currentChanged( const QModelIndex& );
-	//void lv_doubleClicked( const QModelIndex& );
 	void tv_doubleClicked( const QModelIndex& );
 
 signals:
 	void saveSettings();
 	void restoreSettings();
-
 };
 
 #endif // PDOCKFILEBROWSER_H
