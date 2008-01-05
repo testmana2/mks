@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/icons" >
-        <file>builderror.png</file>
-        <file>builderrorR.png</file>
-        <file>buildwarning.png</file>
-        <file>clock.png</file>
-        <file>tabconsole.png</file>
-    </qresource>
-</RCC>
