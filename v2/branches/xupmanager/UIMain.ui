@@ -1,0 +1,57 @@
+<ui version="4.0" >
+ <class>UIMain</class>
+ <widget class="QMainWindow" name="UIMain" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>539</width>
+    <height>345</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Main Test Form</string>
+  </property>
+  <widget class="QWidget" name="wCentral" >
+   <layout class="QVBoxLayout" name="verticalLayout_3" >
+    <item>
+     <widget class="QSplitter" name="splitter" >
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QWidget" name="" >
+       <layout class="QVBoxLayout" name="verticalLayout" >
+        <item>
+         <widget class="QLabel" name="lNative" >
+          <property name="text" >
+           <string>Native:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="tvNative" />
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="" >
+       <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <item>
+         <widget class="QLabel" name="lFiltered" >
+          <property name="text" >
+           <string>Filtered:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="tvFiltered" />
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
