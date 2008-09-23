@@ -2,6 +2,7 @@
 #include "XUPItem.h"
 
 #include <QTextCodec>
+#include <QIcon>
 #include <QDebug>
 
 XUPProjectModel::XUPProjectModel( QObject* parent )
@@ -64,7 +65,7 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 int XUPProjectModel::columnCount( const QModelIndex& parent ) const
 {
 	Q_UNUSED( parent );
-	return 2;
+	return 1;
 }
 
 QVariant XUPProjectModel::headerData( int section, Qt::Orientation orientation, int role ) const
@@ -74,9 +75,7 @@ QVariant XUPProjectModel::headerData( int section, Qt::Orientation orientation, 
 		switch ( section )
 		{
 			case 0:
-				return tr( "Name" );
-			case 1:
-				return tr( "Value" );
+				return tr( "Project(s)" );
 			default:
 				return QVariant();
 		}
@@ -89,7 +88,7 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 	if ( !index.isValid() )
 		return QVariant();
 
-	if ( role != Qt::DisplayRole && role != Qt::ToolTipRole )
+	if ( role != Qt::DecorationRole && role != Qt::DisplayRole && role != Qt::ToolTipRole )
 		return QVariant();
 
 	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
@@ -101,8 +100,33 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 	switch ( index.column() )
 	{
 		case 0:
-			if ( role == Qt::DisplayRole )
-				return node.nodeName();
+			if ( role == Qt::DecorationRole )
+			{
+				QString fn = QString( ":/items/%1.png" ).arg( item->name() );
+				if ( isType( item, "value" ) && isFileBased( item->parent() ) )
+					fn = ":/items/file.png";
+				return QIcon( fn );
+			}
+			else if ( role == Qt::DisplayRole )
+			{
+				const QString name = node.nodeName();
+				const QDomElement e = node.toElement();
+				if ( name == "project" )
+					return e.attribute( "name", tr( "No Name" ) );
+				else if ( name == "comment" )
+					return e.attribute( "value" );
+				else if ( name == "emptyline" )
+					return tr( "%1 empty line(s)" ).arg( e.attribute( "count" ) );
+				else if ( name == "variable" )
+					return e.attribute( "name" );
+				else if ( name == "value" )
+					return e.attribute( "content" );
+				else if ( name == "function" )
+					return QString( "%1(%2)" ).arg( e.attribute( "name" ) ).arg( e.attribute( "parameters" ) );
+				else if ( name == "scope" )
+					return e.attribute( "name" );
+				return QString();
+			}
 			else
 			{
 				for ( int i = 0; i < attributeMap.count(); i++ )
@@ -110,10 +134,8 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 					QDomNode attribute = attributeMap.item( i );
 					attributes << attribute.nodeName() +"=\"" +attribute.nodeValue() +"\"";
 				}
-				return attributes.join("\n");
+				return attributes.join( "\n" );
 			}
-		case 1:
-			return node.nodeValue().split( "\n" ).join( " " );
 		default:
 			return QVariant();
 	}
@@ -121,9 +143,9 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 
 Qt::ItemFlags XUPProjectModel::flags( const QModelIndex& index ) const
 {
-    if ( !index.isValid() )
-        return 0;
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+	if ( !index.isValid() )
+		return 0;
+	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 void XUPProjectModel::setLastError( const QString& error )
@@ -134,6 +156,21 @@ void XUPProjectModel::setLastError( const QString& error )
 QString XUPProjectModel::lastError() const
 {
 	return mLastError;
+}
+
+bool XUPProjectModel::isType( XUPItem* item, const QString& type ) const
+{
+	return item->name() == type;
+}
+
+bool XUPProjectModel::isFileBased( XUPItem* item ) const
+{
+	return item->name() == "variable" && item->attributeValue( "name" ) == "FILES";
+}
+
+bool XUPProjectModel::isPathBased( XUPItem* item ) const
+{
+	return item->name() == "variable" && item->attributeValue( "name" ) == "FILES";
 }
 
 bool XUPProjectModel::open( const QString& fileName, const QString& encoding )

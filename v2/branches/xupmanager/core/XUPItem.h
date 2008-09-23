@@ -12,6 +12,8 @@ public:
 	XUPItem* child( int i );
 	XUPItem* parent();
 	QDomNode node() const;
+	QString name() const;
+	QString attributeValue( const QString& attribute ) const;
 	int row();
 
 private:

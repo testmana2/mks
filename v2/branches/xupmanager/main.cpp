@@ -1,6 +1,7 @@
 #include <QtGui>
 #include <QDebug>
 
+#include "UIMain.h"
 #include "core/XUPProjectModel.h"
 
 int main( int argc, char** argv )
@@ -9,12 +10,14 @@ int main( int argc, char** argv )
 	
 	const QString fn = app.applicationDirPath().append( "/monkey.xup" );
 	
-	QTreeView tv;
-	XUPProjectModel* model = new XUPProjectModel( &tv );
+	UIMain* w = new UIMain();
+	XUPProjectModel* model = new XUPProjectModel( w );
+	w->tvNative->setModel( model );
+	
 	if ( !model->open( fn ) )
 		qWarning() << model->lastError();
-	tv.setModel( model );
-	tv.show();
+	
+	w->show();
 	
 	return app.exec();
 }

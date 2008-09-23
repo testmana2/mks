@@ -10,7 +10,8 @@ QT	*= xml
 
 SOURCES	*= $${XUP_PWD}/main.cpp \
 	core/XUPProjectModel.cpp \
-	core/XUPItem.cpp
+	core/XUPItem.cpp \
+	UIMain.cpp
 
 ProjectSettings {
 	EDITOR	= QMakeProjectEditor
@@ -18,4 +19,7 @@ ProjectSettings {
 	EXECUTE_DEBUG	= xupmanager
 }
 HEADERS	*= core/XUPProjectModel.h \
-	core/XUPItem.h
+	core/XUPItem.h \
+	UIMain.h
+FORMS	*= UIMain.ui
+RESOURCES	*= resources/XUPManager.qrc
