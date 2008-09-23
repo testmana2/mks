@@ -18,6 +18,16 @@ QDomNode XUPItem::node() const
 	return domNode;
 }
 
+QString XUPItem::name() const
+{
+	return domNode.nodeName();
+}
+
+QString XUPItem::attributeValue( const QString& attribute ) const
+{
+	return domNode.toElement().attribute( attribute );
+}
+
 XUPItem* XUPItem::parent()
 {
 	return parentItem;
