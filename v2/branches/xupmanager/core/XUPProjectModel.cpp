@@ -1,19 +1,18 @@
 #include "XUPProjectModel.h"
-#include "XUPItem.h"
+#include "XUPProjectItem.h"
 
-#include <QTextCodec>
-#include <QIcon>
 #include <QDebug>
 
 XUPProjectModel::XUPProjectModel( QObject* parent )
 	: QAbstractItemModel( parent )
 {
-	mRootItem = 0;
+	mRootProject = 0;
 }
 
 XUPProjectModel::~XUPProjectModel()
 {
-	close();
+	if ( mRootProject )
+		mRootProject->close();
 }
 
 QModelIndex XUPProjectModel::index( int row, int column, const QModelIndex& parent ) const
@@ -23,7 +22,7 @@ QModelIndex XUPProjectModel::index( int row, int column, const QModelIndex& pare
 	
 	XUPItem* parentItem;
 	if ( !parent.isValid() )
-		parentItem = mRootItem;
+		parentItem = mRootProject;
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
 	
@@ -42,7 +41,7 @@ QModelIndex XUPProjectModel::parent( const QModelIndex& index ) const
 	XUPItem* childItem = static_cast<XUPItem*>( index.internalPointer() );
 	XUPItem* parentItem = childItem->parent();
 
-	if ( !parentItem || parentItem == mRootItem )
+	if ( !parentItem || parentItem == mRootProject )
 		return QModelIndex();
 
 	return createIndex( parentItem->row(), 0, parentItem );
@@ -55,11 +54,34 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 
 	XUPItem* parentItem;
 	if ( !parent.isValid() )
-		parentItem = mRootItem;
+		parentItem = mRootProject;
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
+	
+	// try opening include projects if needed
+	int count = parentItem->node().childNodes().count();
+	if ( parentItem->isType( XUPItem::Function ) && parentItem->attribute( "name", QString::null ).toLower() == "include" )
+	{
+		XUPItem* child = parentItem->child( count );
+		if ( child )
+		{
+			count++;
+		}
+		else
+		{
+			const QString fn = parentItem->value();
+			XUPProjectItem* project = new XUPProjectItem();
+			if ( project->open( fn, mEncoding ) )
+			{
+				project->mParentItem = parentItem;
+				project->mRowNumber = count;
+				parentItem->mChildItems[ count ] = project;
+				count++;
+			}
+		}
+	}
 
-	return parentItem->node().childNodes().count();
+	return count;
 }
 
 int XUPProjectModel::columnCount( const QModelIndex& parent ) const
@@ -70,15 +92,17 @@ int XUPProjectModel::columnCount( const QModelIndex& parent ) const
 
 QVariant XUPProjectModel::headerData( int section, Qt::Orientation orientation, int role ) const
 {
-	if ( orientation == Qt::Horizontal && role == Qt::DisplayRole )
+	if ( orientation == Qt::Horizontal && section == 0 )
 	{
-		switch ( section )
+		if ( mRootProject )
 		{
-			case 0:
-				return tr( "Project(s)" );
-			default:
-				return QVariant();
+			if ( role == Qt::DecorationRole )
+				return mRootProject->icon();
+			else if ( role == Qt::DisplayRole )
+				return mRootProject->text();
 		}
+		else if ( role == Qt::DisplayRole )
+			return tr( "No opened project" );
 	}
 	return QVariant();
 }
@@ -102,30 +126,11 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 		case 0:
 			if ( role == Qt::DecorationRole )
 			{
-				QString fn = QString( ":/items/%1.png" ).arg( item->name() );
-				if ( isType( item, "value" ) && isFileBased( item->parent() ) )
-					fn = ":/items/file.png";
-				return QIcon( fn );
+				return item->icon();
 			}
 			else if ( role == Qt::DisplayRole )
 			{
-				const QString name = node.nodeName();
-				const QDomElement e = node.toElement();
-				if ( name == "project" )
-					return e.attribute( "name", tr( "No Name" ) );
-				else if ( name == "comment" )
-					return e.attribute( "value" );
-				else if ( name == "emptyline" )
-					return tr( "%1 empty line(s)" ).arg( e.attribute( "count" ) );
-				else if ( name == "variable" )
-					return e.attribute( "name" );
-				else if ( name == "value" )
-					return e.attribute( "content" );
-				else if ( name == "function" )
-					return QString( "%1(%2)" ).arg( e.attribute( "name" ) ).arg( e.attribute( "parameters" ) );
-				else if ( name == "scope" )
-					return e.attribute( "name" );
-				return QString();
+				return item->text();
 			}
 			else
 			{
@@ -158,76 +163,21 @@ QString XUPProjectModel::lastError() const
 	return mLastError;
 }
 
-bool XUPProjectModel::isType( XUPItem* item, const QString& type ) const
-{
-	return item->name() == type;
-}
-
-bool XUPProjectModel::isFileBased( XUPItem* item ) const
-{
-	return item->name() == "variable" && item->attributeValue( "name" ) == "FILES";
-}
-
-bool XUPProjectModel::isPathBased( XUPItem* item ) const
-{
-	return item->name() == "variable" && item->attributeValue( "name" ) == "FILES";
-}
-
 bool XUPProjectModel::open( const QString& fileName, const QString& encoding )
 {
-	// get QFile
-	QFile file( fileName );
-	
-	// check existence
-	if ( !file.exists() )
+	XUPProjectItem* tmpProject = new XUPProjectItem();
+	if ( tmpProject->open( fileName, encoding ) )
 	{
-		setLastError( "file not exists" );
-		return false;
+		mEncoding = encoding;
+		mRootProject = tmpProject;
+		return true;
 	}
-	
-	// try open it for reading
-	if ( !file.open( QIODevice::ReadOnly ) )
-	{
-		setLastError( "can't open file for reading" );
-		return false;
-	}
-	
-	// decode content
-	QTextCodec* codec = QTextCodec::codecForName( encoding.toUtf8() );
-	QString buffer = codec->toUnicode( file.readAll() );
-	
-	// parse content
-	QDomDocument doc;
-	QString errorMsg;
-	int errorLine;
-	int errorColumn;
-	if ( !doc.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
-	{
-		setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
-		return false;
-	}
-	
-	// check project validity
-	if ( doc.firstChildElement( "project" ).isNull() )
-	{
-		setLastError("no project node" );
-		return false;
-	}
-	
-	// all is ok
-	mLastError.clear();
-	mDocument = doc;
-	mRootItem = new XUPItem( mDocument, 0 );
-	file.close();
-	return true;
+	return false;
 }
 
 bool XUPProjectModel::close()
 {
-	if ( mRootItem )
-	{
-		delete mRootItem;
-		mRootItem = 0;
-	}
+	if ( mRootProject )
+		return mRootProject->close();
 	return true;
 }
