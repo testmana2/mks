@@ -1,0 +1,9 @@
+<!DOCTYPE XUPProject>
+<project name="Monkey Studio Include" >
+	<comment value="Include project file" />
+	<emptyline count="1" />
+	<variable name="INCLUDE_PATH" >
+		<value content="../include" />
+	</variable>
+	<function name="include" parameters="no_existing_file.xui" />
+</project>
