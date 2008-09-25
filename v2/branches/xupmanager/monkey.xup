@@ -6,17 +6,8 @@
 		<value content="../build" />
 	</variable>
 	<emptyline count="1" />
-	<comment value="include qscintilla framework" />
-	<function name="include" parameters="../qscintilla/qscintilla.pri" />
-	<emptyline count="1" />
-	<comment value="include fresh framework" />
-	<function name="include" parameters="../fresh/fresh.pri" />
-	<emptyline count="1" />
-	<comment value="include ctags framework" />
-	<function name="include" parameters="../ctags/ctags.pri" />
-	<emptyline count="1" />
 	<comment value="include monkey framework" />
-	<function name="include" parameters="monkey.pri" />
+	<function name="include" parameters="monkey.xui" />
 	<emptyline count="1" />
 	<variable name="TEMPLATE" >
 		<value content="app" />
