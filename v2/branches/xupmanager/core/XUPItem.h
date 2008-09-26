@@ -23,7 +23,7 @@ public:
 	};
 	
 	// dtor
-	~XUPItem();
+	virtual ~XUPItem();
 	
 	// return the i child item
 	XUPItem* child( int i );

@@ -172,12 +172,29 @@ bool XUPProjectModel::open( const QString& fileName, const QString& encoding )
 		mRootProject = tmpProject;
 		return true;
 	}
+	else
+	{
+		delete tmpProject;
+	}
 	return false;
 }
 
-bool XUPProjectModel::close()
+void XUPProjectModel::close()
 {
 	if ( mRootProject )
-		return mRootProject->close();
-	return true;
+	{
+		delete mRootProject;
+		mRootProject = 0;
+	}
+}
+
+bool XUPProjectModel::save()
+{
+	setLastError( tr( "Can't save project, not yet implemented !" ) );
+	return false;
+}
+
+QString XUPProjectModel::rootProjectName() const
+{
+	return mRootProject ? mRootProject->text() : QString::null;
 }

@@ -70,7 +70,6 @@ bool XUPProjectItem::open( const QString& fileName, const QString& encoding )
 	return true;
 }
 
-bool XUPProjectItem::close()
+void XUPProjectItem::close()
 {
-	return true;
 }

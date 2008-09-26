@@ -1,4 +1,5 @@
 #include "XUPItem.h"
+#include "../iconmanager/pIconManager.h"
 
 XUPItem::XUPItem( const QDomElement& node, int row, XUPItem* parent )
 {
@@ -121,10 +122,10 @@ QString XUPItem::text() const
 
 QIcon XUPItem::icon() const
 {
-	QString fn = QString( ":/items/%1.png" ).arg( type() );
+	QString fn = QString( "%1.png" ).arg( type() );
 	if ( isType( XUPItem::Value ) && mParentItem->isFileBased() )
-		fn = ":/items/file.png";
-	return QIcon( fn );
+		fn = "file.png";
+	return pIconManager::icon( fn, ":/items" );
 }
 
 QString XUPItem::value( const QString& defaultValue ) const

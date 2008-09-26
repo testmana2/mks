@@ -24,7 +24,10 @@ public:
 	QString lastError() const;
 	
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
-	virtual bool close();
+	virtual void close();
+	virtual bool save();
+	
+	QString rootProjectName() const;
 
 protected:
 	XUPProjectItem* mRootProject;
