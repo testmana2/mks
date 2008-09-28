@@ -163,9 +163,9 @@ QString XUPProjectModel::lastError() const
 	return mLastError;
 }
 
-bool XUPProjectModel::open( const QString& fileName, const QString& encoding )
+bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName, const QString& encoding )
 {
-	XUPProjectItem* tmpProject = new XUPProjectItem();
+	XUPProjectItem* tmpProject = projectItem;
 	if ( tmpProject->open( fileName, encoding ) )
 	{
 		mEncoding = encoding;

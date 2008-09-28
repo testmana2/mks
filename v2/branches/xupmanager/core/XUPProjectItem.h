@@ -2,26 +2,35 @@
 #define XUPPROJECTITEM_H
 
 #include "XUPItem.h"
+#include "XUPProjectItemInfos.h"
+
+#include <QApplication>
 
 class XUPProjectItem : public XUPItem
 {
 public:
+	enum ProjectType { XUPProject = 0 };
 	XUPProjectItem();
 	virtual ~XUPProjectItem();
-	
-	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
-	virtual void close();
 	
 	void setLastError( const QString& error );
 	QString lastError() const;
 	
 	inline QString fileName() const { return mFileName; }
+	inline static XUPProjectItemInfos* projectInfos() { return mXUPProjectInfos; }
+	
+	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
+	inline virtual QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }
+	virtual void registerProjectType() const;
+	inline virtual XUPProjectItem* newItem() const { return new XUPProjectItem(); }
+	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
+	virtual void close();
 
 protected:
 	QString mFileName;
 	QDomDocument mDocument;
 	QString mLastError;
-	QList<XUPProjectItem*> mSubProjects;
+	static XUPProjectItemInfos* mXUPProjectInfos;
 };
 
 #endif // XUPPROJECTITEM_H

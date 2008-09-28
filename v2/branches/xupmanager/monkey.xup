@@ -1,5 +1,5 @@
 <!DOCTYPE XUPProject>
-<project compiler="MSVC" version="1.1.0" expanded="true" plugin="XUPProjectEditor" builder="MSVCMake" name="Monkey Studio" >
+<project compiler="MSVC" version="1.1.0" expanded="true" plugin="XUPProjectEditor" builder="MSVCMake" name="Monkey Studio.xup" >
 	<comment value="Monkey Studio 2 project file" />
 	<emptyline count="1" />
 	<variable name="BUILD_PATH" >

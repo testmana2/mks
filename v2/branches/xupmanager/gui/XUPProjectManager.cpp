@@ -1,8 +1,11 @@
 #include "XUPProjectManager.h"
 #include "../iconmanager/pIconManager.h"
 #include "../core/XUPProjectModel.h"
+#include "../core/XUPProjectItem.h"
 
 #include <QFileDialog>
+
+#include <QDebug>
 
 XUPProjectManager::XUPProjectManager( QWidget* parent )
 	: QWidget( parent )
@@ -14,6 +17,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 
 XUPProjectManager::~XUPProjectManager()
 {
+	delete XUPProjectItem::projectInfos();
 }
 
 void XUPProjectManager::on_lwOpenedProjects_itemSelectionChanged()
@@ -53,16 +57,30 @@ QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 	return action;
 }
 
+XUPProjectItem* XUPProjectManager::newProjectItem( const QString& fileName ) const
+{
+	int projectType = XUPProjectItem::projectInfos()->projectTypeForFileName( fileName );
+	if ( mRegisteredProjectItems.value ( projectType ) )
+		return mRegisteredProjectItems[ projectType ]->newItem();
+	return 0;
+}
+
 void XUPProjectManager::openProject()
 {
-	const QString fn = QFileDialog::getOpenFileName( this, tr( "Choose a project to open" ), QLatin1String( "." ), tr( "XUP Projects (*.xup)" ) );
+	const QString fn = QFileDialog::getOpenFileName( this, tr( "Choose a project to open" ), QLatin1String( "." ), XUPProjectItem::projectInfos()->projectsFilter() );
 	if ( fn.isNull() )
 	{
 		return;
 	}
 	
+	XUPProjectItem* projectItem = newProjectItem( fn );
+	if ( !projectItem )
+	{
+		return;
+	}
+	
 	XUPProjectModel* project = new XUPProjectModel( this );
-	if ( project->open( fn ) )
+	if ( project->open( projectItem, fn ) )
 	{
 		QListWidgetItem* item = new QListWidgetItem( project->rootProjectName(), lwOpenedProjects );
 		mProjects[ item ] = project;
@@ -105,5 +123,23 @@ void XUPProjectManager::setCurrentProject( XUPProjectModel* project )
 	if ( lwOpenedProjects->selectedItems().value( 0 ) != item )
 	{
 		lwOpenedProjects->setCurrentItem( item );
+	}
+}
+
+void XUPProjectManager::registerProjectItem( XUPProjectItem* item )
+{
+	int pType = item->projectType();
+	if ( mRegisteredProjectItems.keys().contains( pType ) )
+		return;
+	item->registerProjectType();
+	mRegisteredProjectItems[ pType ] = item;
+}
+
+void XUPProjectManager::unRegisterProjectType( int projectType )
+{
+	if ( mRegisteredProjectItems.keys().contains( projectType ) )
+	{
+		XUPProjectItem::projectInfos()->unRegisterType( projectType );
+		delete mRegisteredProjectItems.take( projectType );
 	}
 }
