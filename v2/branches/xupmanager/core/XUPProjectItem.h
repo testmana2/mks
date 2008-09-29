@@ -22,6 +22,10 @@ public:
 	bool isFileBased( XUPItem* item ) const;
 	// return true if item is a variable wich values are paths
 	bool isPathBased( XUPItem* item ) const;
+	// return icon filename for item
+	QString iconFileName( XUPItem* item ) const;
+	// return the icons path
+	QString iconsPath() const;
 	
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
 	inline virtual QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }

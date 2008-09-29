@@ -38,11 +38,12 @@ QString pIconManager::filePath( const QString& fileName, const QString& prefix )
 QPixmap pIconManager::pixmap( const QString& fileName, const QString& prefix )
 {
 	QPixmap pixmap;
-	if ( !QPixmapCache::find( fileName, pixmap ) )
+	const QString fn = filePath( fileName, prefix );
+	if ( !QPixmapCache::find( fn, pixmap ) )
 	{
-		if ( pixmap.load( filePath( fileName, prefix ) ) )
+		if ( pixmap.load( fn ) )
 		{
-			QPixmapCache::insert( fileName, pixmap );
+			QPixmapCache::insert( fn, pixmap );
 		}
 	}
 	return pixmap;
@@ -51,9 +52,10 @@ QPixmap pIconManager::pixmap( const QString& fileName, const QString& prefix )
 QIcon pIconManager::icon( const QString& fileName, const QString& prefix )
 {
 	QIcon* icon = 0;
-	if ( mIconCache.contains( fileName ) )
+	const QString fn = filePath( fileName, prefix );
+	if ( mIconCache.contains( fn ) )
 	{
-		icon = mIconCache[ fileName ];
+		icon = mIconCache[ fn ];
 	}
 	else
 	{
@@ -65,7 +67,7 @@ QIcon pIconManager::icon( const QString& fileName, const QString& prefix )
 		}
 		else
 		{
-			mIconCache.insert( fileName, icon );
+			mIconCache.insert( fn, icon );
 		}
 	}
 	return icon ? QIcon( *icon ) : QIcon();

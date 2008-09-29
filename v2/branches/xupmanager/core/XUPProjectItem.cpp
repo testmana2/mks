@@ -9,7 +9,9 @@ XUPProjectItem::XUPProjectItem()
 	: XUPItem( QDomElement(), -1, 0 )
 {
 	if ( !mXUPProjectInfos->isRegisteredType( projectType() ) )
+	{
 		registerProjectType();
+	}
 }
 
 XUPProjectItem::~XUPProjectItem()
@@ -36,6 +38,40 @@ bool XUPProjectItem::isPathBased( XUPItem* item ) const
 	return item->isType( XUPItem::Variable ) && mXUPProjectInfos->isPathBased( projectType(), item->value() );
 }
 
+QString XUPProjectItem::iconFileName( XUPItem* item ) const
+{
+	int pType = projectType();
+	QString fn;
+	
+	if ( item->isType( XUPItem::Variable ) )
+	{
+		fn = mXUPProjectInfos->iconName( pType, item->value() );
+	}
+	
+	if ( fn.isEmpty() )
+	{
+		fn = item->type();
+	}
+	
+	if ( !fn.isEmpty() )
+	{
+		fn.append( ".png" );
+	}
+	
+	return fn;
+}
+
+QString XUPProjectItem::iconsPath() const
+{
+	int pType = projectType();
+	QString path = mXUPProjectInfos->pixmapsPath( pType );
+	if ( path.isEmpty() && pType != XUPProjectItem::XUPProject )
+	{
+		path = mXUPProjectInfos->pixmapsPath( XUPProjectItem::XUPProject );
+	}
+	return path;
+}
+
 void XUPProjectItem::registerProjectType() const
 {
 	// get proejct type
@@ -46,6 +82,7 @@ void XUPProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType );
 	
 	// values
+	const QString mPixmapsPath = ":/items";
 	const QStringList mOperators = QStringList( "=" );
 	const QStringList mFilteredVariables = QStringList( "FILES" );
 	const QStringList mFileVariables = QStringList( "FILES" );
@@ -60,6 +97,7 @@ void XUPProjectItem::registerProjectType() const
 		<< qMakePair( QString( "FILES" ), QStringList( "*" ) );
 	
 	// register values
+	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
