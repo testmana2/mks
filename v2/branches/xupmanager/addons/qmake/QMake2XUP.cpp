@@ -312,7 +312,16 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& version )
 					file.append("<scope name=\""+MyEscape(s.trimmed())+"\" nested=\"true\">\n");
 					tmp_end += "</scope>\n";
 				}
-				file.append("<function"+(liste[4].trimmed() != "" ? " comment=\""+MyEscape(liste[4].trimmed())+"\"" : "")+" name=\""+MyEscape(liste[2].trimmed())+"\" />\n");
+				QStringList explode_params = liste[2].split("(");
+				QString func_name = explode_params[0].trimmed();
+				QString params;
+				if(explode_params.size() > 2)
+					params = explode_params.join("(");
+				else
+					params = explode_params[1];
+				params = params.trimmed();
+				params.chop(1);
+				file.append("<function"+(liste[4].trimmed() != "" ? " comment=\""+MyEscape(liste[4].trimmed())+"\"" : "")+" name=\""+MyEscape(func_name)+"\" parameters=\""+MyEscape(params)+"\" />\n");
 				file.append(tmp_end);
 			}
 			else if(end_bloc_continuing.exactMatch(v[i]))
