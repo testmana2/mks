@@ -139,3 +139,13 @@ int XUPProjectItemInfos::projectTypeForFileName( const QString& fileName ) const
 	}
 	return -1;
 }
+
+bool XUPProjectItemInfos::isFileBased( int projectType, const QString& variableName ) const
+{
+	return mFileVariables.value( projectType ).contains( variableName );
+}
+
+bool XUPProjectItemInfos::isPathBased( int projectType, const QString& variableName ) const
+{
+	return mPathVariables.value( projectType ).contains( variableName );
+}

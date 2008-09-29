@@ -5,6 +5,8 @@
 #include <QHash>
 #include <QIcon>
 
+class XUPProjectItem;
+
 class XUPItem
 {
 	friend class XUPProjectModel;
@@ -25,10 +27,12 @@ public:
 	// dtor
 	virtual ~XUPItem();
 	
+	// project item
+	XUPProjectItem* project() const;
 	// return the i child item
 	XUPItem* child( int i );
 	// return the parent item
-	XUPItem* parent();
+	XUPItem* parent() const;
 	// return the item row
 	int row();
 	
@@ -48,11 +52,6 @@ public:
 	// return true if item is type
 	bool isType( const QString& type ) const;
 	bool isType( XUPItem::Type type ) const;
-	
-	// return true if item is a variable wich values are files
-	bool isFileBased() const;
-	// return true if item is a variable wich values are paths
-	bool isPathBased() const;
 	
 	// return the value associate with the item type, or defaultValue if null/invalid
 	QString value( const QString& defaultValue = null() ) const;
@@ -77,21 +76,3 @@ protected:
 };
 
 #endif // XUPITEM_H
-
-/*
-// Project. Never NULL
-XUPProjectItem project();
-
-// Parent. Are NULL only for top level project 
-XUPItem parent ();
-void setParent (XUPItem*);
-
-// Childreen 
-int childCount();
-XUPItem child (int index);
-QList<XUPItem*> childreen();
-
-addChild (XUPItem* child);
-XUPItem* takeChild (XUPItem* child)
-*/
-

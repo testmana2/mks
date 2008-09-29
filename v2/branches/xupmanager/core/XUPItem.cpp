@@ -1,4 +1,5 @@
 #include "XUPItem.h"
+#include "XUPProjectItem.h"
 #include "../iconmanager/pIconManager.h"
 
 XUPItem::XUPItem( const QDomElement& node, int row, XUPItem* parent )
@@ -19,7 +20,12 @@ QDomElement XUPItem::node() const
 	return mDomElement;
 }
 
-XUPItem* XUPItem::parent()
+XUPProjectItem* XUPItem::project() const
+{
+	return mParentItem ? mParentItem->project() : static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) );
+}
+
+XUPItem* XUPItem::parent() const
 {
 	return mParentItem;
 }
@@ -79,16 +85,6 @@ bool XUPItem::isType( XUPItem::Type _type ) const
 	return typeId() == _type;
 }
 
-bool XUPItem::isFileBased() const
-{
-	return isType( XUPItem::Variable ) && value() == "FILES";
-}
-
-bool XUPItem::isPathBased() const
-{
-	return isType( XUPItem::Variable ) && value() == "FILES";
-}
-
 QString XUPItem::text() const
 {
 	switch ( typeId() )
@@ -123,7 +119,7 @@ QString XUPItem::text() const
 QIcon XUPItem::icon() const
 {
 	QString fn = QString( "%1.png" ).arg( type() );
-	if ( isType( XUPItem::Value ) && mParentItem->isFileBased() )
+	if ( isType( XUPItem::Value ) && project()->isFileBased( mParentItem ) )
 		fn = "file.png";
 	return pIconManager::icon( fn, ":/items" );
 }
