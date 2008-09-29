@@ -2,6 +2,8 @@
 #include "XUPProjectItem.h"
 #include "../iconmanager/pIconManager.h"
 
+#include <QFile>
+
 XUPItem::XUPItem( const QDomElement& node, int row, XUPItem* parent )
 {
 	mDomElement = node;
@@ -118,10 +120,17 @@ QString XUPItem::text() const
 
 QIcon XUPItem::icon() const
 {
-	QString fn = QString( "%1.png" ).arg( type() );
-	if ( isType( XUPItem::Value ) && project()->isFileBased( mParentItem ) )
-		fn = "file.png";
-	return pIconManager::icon( fn, ":/items" );
+	XUPProjectItem* pItem = project();
+	XUPItem* item = const_cast<XUPItem*>( this );
+	QString path = pItem->iconsPath();
+	QString fn = pIconManager::filePath( pItem->iconFileName( item ), path );
+	
+	if ( !QFile::exists( fn ) )
+	{
+		path = pItem->projectInfos()->pixmapsPath( XUPProjectItem::XUPProject );
+	}
+	
+	return pIconManager::icon( pItem->iconFileName( item ), path );
 }
 
 QString XUPItem::value( const QString& defaultValue ) const
@@ -129,25 +138,25 @@ QString XUPItem::value( const QString& defaultValue ) const
 	switch ( typeId() )
 	{
 		case XUPItem::Project:
-			return attribute( "name" );
+			return attribute( "name", defaultValue );
 			break;
 		case XUPItem::Comment:
-			return attribute( "value" );
+			return attribute( "value", defaultValue );
 			break;
 		case XUPItem::EmptyLine:
-			return attribute( "count" );
+			return attribute( "count", defaultValue );
 			break;
 		case XUPItem::Variable:
-			return attribute( "name" );
+			return attribute( "name", defaultValue );
 			break;
 		case XUPItem::Value:
-			return attribute( "content" );
+			return attribute( "content", defaultValue );
 			break;
 		case XUPItem::Function:
-			return attribute( "parameters" );
+			return attribute( "parameters", defaultValue );
 			break;
 		case XUPItem::Scope:
-			return attribute( "name" );
+			return attribute( "name", defaultValue );
 			break;
 		default:
 			return defaultValue;

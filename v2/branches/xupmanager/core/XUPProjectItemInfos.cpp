@@ -20,6 +20,7 @@ void XUPProjectItemInfos::registerType( int projectType )
 void XUPProjectItemInfos::unRegisterType( int projectType )
 {
 	mRegistered.removeAll( projectType );
+	mPixmapsPath.remove( projectType );
 	mOperators.remove( projectType );
 	mFilteredVariables.remove( projectType );
 	mFileVariables.remove( projectType );
@@ -28,6 +29,16 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 	mVariableLabels.remove( projectType );
 	mVariableIcons.remove( projectType );
 	mVariableSuffixes.remove( projectType );
+}
+
+void XUPProjectItemInfos::registerPixmapsPath( int projectType, const QString& path )
+{
+	mPixmapsPath[ projectType ] = path;
+}
+
+QString XUPProjectItemInfos::pixmapsPath( int projectType ) const
+{
+	return mPixmapsPath.value( projectType );
 }
 
 void XUPProjectItemInfos::registerOperators( int projectType, const QStringList& operators )
@@ -148,4 +159,14 @@ bool XUPProjectItemInfos::isFileBased( int projectType, const QString& variableN
 bool XUPProjectItemInfos::isPathBased( int projectType, const QString& variableName ) const
 {
 	return mPathVariables.value( projectType ).contains( variableName );
+}
+
+QString XUPProjectItemInfos::iconName( int projectType, const QString& variableName ) const
+{
+	foreach ( const PairStringString& pair, mVariableIcons.value( projectType ) )
+	{
+		if ( pair.first == variableName )
+			return pair.second;
+	}
+	return QString::null;
 }

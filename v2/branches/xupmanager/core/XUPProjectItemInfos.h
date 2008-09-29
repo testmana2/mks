@@ -25,6 +25,9 @@ public:
 	void registerType( int projectType );
 	void unRegisterType( int projectType );
 	
+	void registerPixmapsPath( int projectType, const QString& path );
+	QString pixmapsPath( int projectType ) const;
+	
 	void registerOperators( int projectType, const QStringList& operators );
 	QStringList operators( int projectType ) const;
 	
@@ -55,6 +58,8 @@ public:
 	bool isFileBased( int projectType, const QString& variableName ) const;
 	// return true if variable name is variable wich values are paths
 	bool isPathBased( int projectType, const QString& variableName ) const;
+	// return the icon name for a variable name
+	QString iconName( int projectType, const QString& variableName ) const;
 	
 	/*
 	QStringList variablesList() const
@@ -68,6 +73,7 @@ public:
 	*/
 protected:
 	QList<int> mRegistered; // registered project type
+	QMap<int, QString> mPixmapsPath;
 	QMap<int, QStringList> mOperators; // project type, operators
 	QMap<int, QStringList> mFilteredVariables; // project type, filtered variable name
 	QMap<int, QStringList> mFileVariables; // project type, filename based variable name

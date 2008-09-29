@@ -10,7 +10,8 @@ QT	*= xml
 
 XUP_PWD	= $$PWD
 
-RESOURCES	*= $${XUP_PWD}/resources/XUPManager.qrc
+RESOURCES	*= $${XUP_PWD}/resources/XUPManager.qrc \
+	addons/qmake/resources/QMake.qrc
 
 FORMS	*= gui/XUPProjectManager.ui
 

@@ -27,6 +27,7 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType );
 	
 	// values
+	const QString mPixmapsPath = ":/qmakeitems";
 	const QStringList mOperators = QStringList( "=" ) << "+=" << "-=" << "*=" << "~=";
 	const QStringList mFilteredVariables = QStringList( "SUBDIRS" ) << "FORMS" << "FORMS3"
 		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "TRANSLATIONS" << "RESOURCES"
@@ -127,6 +128,7 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( QString( "RES_FILE" ), QStringList( "*.res" ) );
 	
 	// register values
+	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
