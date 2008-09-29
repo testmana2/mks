@@ -12,6 +12,7 @@ public:
 	XUPProjectModel( QObject* parent = 0 );
 	virtual ~XUPProjectModel();
 
+	// QAbstractItemModel reimplementation
 	virtual QModelIndex index( int row, int column, const QModelIndex& parent = QModelIndex() ) const;
 	virtual QModelIndex parent( const QModelIndex& index ) const;
 	virtual int rowCount( const QModelIndex& parent = QModelIndex() ) const;
@@ -20,13 +21,16 @@ public:
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 	virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
 	
+	// error handler
 	void setLastError( const QString& error );
 	QString lastError() const;
 	
+	// XUP Project members
 	virtual bool open( XUPProjectItem* projectItem, const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
 	virtual bool save();
 	
+	// name of root project
 	QString rootProjectName() const;
 
 protected:

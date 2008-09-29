@@ -51,6 +51,10 @@ public:
 	
 	QString projectsFilter();
 	int projectTypeForFileName( const QString& fileName ) const;
+	// return true if variable name is variable wich values are files
+	bool isFileBased( int projectType, const QString& variableName ) const;
+	// return true if variable name is variable wich values are paths
+	bool isPathBased( int projectType, const QString& variableName ) const;
 	
 	/*
 	QStringList variablesList() const

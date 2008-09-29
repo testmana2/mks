@@ -26,6 +26,16 @@ QString XUPProjectItem::lastError() const
 	return mLastError;
 }
 
+bool XUPProjectItem::isFileBased( XUPItem* item ) const
+{
+	return item->isType( XUPItem::Variable ) && mXUPProjectInfos->isFileBased( projectType(), item->value() );
+}
+
+bool XUPProjectItem::isPathBased( XUPItem* item ) const
+{
+	return item->isType( XUPItem::Variable ) && mXUPProjectInfos->isPathBased( projectType(), item->value() );
+}
+
 void XUPProjectItem::registerProjectType() const
 {
 	// get proejct type

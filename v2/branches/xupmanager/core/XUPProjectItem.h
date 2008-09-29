@@ -18,6 +18,10 @@ public:
 	
 	inline QString fileName() const { return mFileName; }
 	inline static XUPProjectItemInfos* projectInfos() { return mXUPProjectInfos; }
+	// return true if item is a variable wich values are files
+	bool isFileBased( XUPItem* item ) const;
+	// return true if item is a variable wich values are paths
+	bool isPathBased( XUPItem* item ) const;
 	
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
 	inline virtual QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }
