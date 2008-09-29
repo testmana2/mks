@@ -319,8 +319,9 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& version )
 					params = explode_params.join("(");
 				else
 					params = explode_params[1];
-				params = params.trimmed();
-				params.chop(1);
+				params = params.trimmed(); // to be sure that the last char is the last ")"
+				params.chop(1); // pop the last ")"
+				params = params.trimmed(); // to pop off the ending spaces
 				file.append("<function"+(liste[4].trimmed() != "" ? " comment=\""+MyEscape(liste[4].trimmed())+"\"" : "")+" name=\""+MyEscape(func_name)+"\" parameters=\""+MyEscape(params)+"\" />\n");
 				file.append(tmp_end);
 			}
