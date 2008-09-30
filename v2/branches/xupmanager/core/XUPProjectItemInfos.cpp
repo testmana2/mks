@@ -170,3 +170,13 @@ QString XUPProjectItemInfos::iconName( int projectType, const QString& variableN
 	}
 	return QString::null;
 }
+
+QString XUPProjectItemInfos::displayText( int projectType, const QString& variableName ) const
+{
+	foreach ( const PairStringString& pair, mVariableLabels.value( projectType ) )
+	{
+		if ( pair.first == variableName )
+			return pair.second;
+	}
+	return variableName;
+}

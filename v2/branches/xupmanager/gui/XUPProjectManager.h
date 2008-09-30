@@ -25,7 +25,6 @@ public:
 
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
-	QMap<QListWidgetItem*, XUPProjectModel*> mProjects;
 	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
 	
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
@@ -36,7 +35,7 @@ public slots:
 	void setCurrentProject( XUPProjectModel* project );
 
 protected slots:
-	void on_lwOpenedProjects_itemSelectionChanged();
+	void on_cbProjects_currentIndexChanged( int id );
 };
 
 #endif // XUPPROJECTMANAGER_H

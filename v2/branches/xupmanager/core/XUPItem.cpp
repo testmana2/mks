@@ -101,8 +101,10 @@ QString XUPItem::text() const
 			return QString( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( value() );
 			break;
 		case XUPItem::Variable:
-			return value();
+		{
+			return project()->displayText( value() );
 			break;
+		}
 		case XUPItem::Value:
 			return value();
 			break;

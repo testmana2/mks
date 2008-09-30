@@ -32,11 +32,14 @@ public:
 	
 	// name of root project
 	QString rootProjectName() const;
+	QIcon rootProjectIcon() const;
 
 protected:
 	XUPProjectItem* mRootProject;
 	QString mEncoding;
 	QString mLastError;
 };
+
+Q_DECLARE_METATYPE( XUPProjectModel* )
 
 #endif // XUPPROJECTMODEL_H

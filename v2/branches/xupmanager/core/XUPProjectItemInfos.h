@@ -60,6 +60,8 @@ public:
 	bool isPathBased( int projectType, const QString& variableName ) const;
 	// return the icon name for a variable name
 	QString iconName( int projectType, const QString& variableName ) const;
+	// return the display text for a variable name
+	QString displayText( int projectType, const QString& variableName ) const;
 	
 	/*
 	QStringList variablesList() const

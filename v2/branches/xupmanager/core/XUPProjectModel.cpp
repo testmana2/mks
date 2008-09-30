@@ -198,3 +198,8 @@ QString XUPProjectModel::rootProjectName() const
 {
 	return mRootProject ? mRootProject->text() : QString::null;
 }
+
+QIcon XUPProjectModel::rootProjectIcon() const
+{
+	return mRootProject ? mRootProject->icon() : QIcon();
+}
