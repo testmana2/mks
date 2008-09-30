@@ -20,10 +20,9 @@ XUPProjectManager::~XUPProjectManager()
 	delete XUPProjectItem::projectInfos();
 }
 
-void XUPProjectManager::on_lwOpenedProjects_itemSelectionChanged()
+void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 {
-	QListWidgetItem* item = lwOpenedProjects->selectedItems().value( 0 );
-	XUPProjectModel* project = mProjects.value( item );
+	XUPProjectModel* project = cbProjects->itemData( id ).value<XUPProjectModel*>();
 	setCurrentProject( project );
 }
 
@@ -60,8 +59,10 @@ QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 XUPProjectItem* XUPProjectManager::newProjectItem( const QString& fileName ) const
 {
 	int projectType = XUPProjectItem::projectInfos()->projectTypeForFileName( fileName );
-	if ( mRegisteredProjectItems.value ( projectType ) )
+	if ( mRegisteredProjectItems.value( projectType ) )
+	{
 		return mRegisteredProjectItems[ projectType ]->newItem();
+	}
 	return 0;
 }
 
@@ -82,9 +83,10 @@ void XUPProjectManager::openProject()
 	XUPProjectModel* project = new XUPProjectModel( this );
 	if ( project->open( projectItem, fn ) )
 	{
-		QListWidgetItem* item = new QListWidgetItem( project->rootProjectName(), lwOpenedProjects );
-		mProjects[ item ] = project;
-		setCurrentProject( project );
+		int id = cbProjects->count();
+		cbProjects->addItem( project->rootProjectName(), QVariant::fromValue<XUPProjectModel*>( project ) );
+		cbProjects->setItemIcon( id, project->rootProjectIcon() );
+		cbProjects->setCurrentIndex( id );
 	}
 	else
 	{
@@ -103,9 +105,8 @@ void XUPProjectManager::XUPProjectManager::closeProject()
 			pteLog->appendPlainText( project->lastError() );
 		}
 		project->close();
-		QListWidgetItem* item = mProjects.key( project );
-		mProjects.remove( item );
-		delete item;
+		int id = cbProjects->findData( QVariant::fromValue<XUPProjectModel*>( project ) );
+		cbProjects->removeItem( id );
 		delete project;
 	}
 }
@@ -119,10 +120,11 @@ void XUPProjectManager::setCurrentProject( XUPProjectModel* project )
 {
 	tvCurrentProject->setModel( project );
 	tvNative->setModel( project );
-	QListWidgetItem* item = mProjects.key( project );
-	if ( lwOpenedProjects->selectedItems().value( 0 ) != item )
+	
+	int id = cbProjects->findData( QVariant::fromValue<XUPProjectModel*>( project ) );
+	if ( cbProjects->currentIndex() != id )
 	{
-		lwOpenedProjects->setCurrentItem( item );
+		cbProjects->setCurrentIndex( id );
 	}
 }
 

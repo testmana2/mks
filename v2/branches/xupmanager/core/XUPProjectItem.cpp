@@ -72,6 +72,11 @@ QString XUPProjectItem::iconsPath() const
 	return path;
 }
 
+QString XUPProjectItem::displayText( const QString& variableName ) const
+{
+	return mXUPProjectInfos->displayText( projectType(), variableName );
+}
+
 void XUPProjectItem::registerProjectType() const
 {
 	// get proejct type
@@ -90,7 +95,7 @@ void XUPProjectItem::registerProjectType() const
 		<< qMakePair( tr( QT_TR_NOOP( "XUP Project" ) ), QStringList( "*.xup" ) )
 		<< qMakePair( tr( QT_TR_NOOP( "XUP Include Project" ) ), QStringList( "*.xui" ) );
 	const StringStringList mVariableLabels = StringStringList()
-		<< qMakePair( QString( "FILES" ), tr( QT_TR_NOOP( "files" ) ) );
+		<< qMakePair( QString( "FILES" ), tr( QT_TR_NOOP( "Files" ) ) );
 	const StringStringList mVariableIcons = StringStringList()
 		<< qMakePair( QString( "FILES" ), QString( "files" ) );
 	const StringStringListList mVariableSuffixes = StringStringListList()

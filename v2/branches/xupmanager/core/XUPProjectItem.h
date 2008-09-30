@@ -26,6 +26,8 @@ public:
 	QString iconFileName( XUPItem* item ) const;
 	// return the icons path
 	QString iconsPath() const;
+	// return the display text of a variable name
+	QString displayText( const QString& variableName ) const;
 	
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
 	inline virtual QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }

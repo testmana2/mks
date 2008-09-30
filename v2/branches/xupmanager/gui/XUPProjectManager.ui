@@ -71,65 +71,52 @@
     </widget>
    </item>
    <item>
-    <widget class="QToolBox" name="tbPages" >
-     <property name="currentIndex" >
-      <number>0</number>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QLabel" name="lProjects" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>Projects:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cbProjects" />
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Filtered</string>
      </property>
-     <widget class="QWidget" name="wCurrentProject" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>330</width>
-        <height>145</height>
-       </rect>
-      </property>
-      <attribute name="label" >
-       <string>Current Project</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2" >
-       <item>
-        <widget class="QTreeView" name="tvCurrentProject" />
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="wOpenedProjects" >
-      <attribute name="label" >
-       <string>Opened Projects</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4" >
-       <item>
-        <widget class="QListWidget" name="lwOpenedProjects" />
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="wProjectsNative" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>319</width>
-        <height>145</height>
-       </rect>
-      </property>
-      <attribute name="label" >
-       <string>Native Projects</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3" >
-       <item>
-        <widget class="QTreeView" name="tvNative" />
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
    <item>
+    <widget class="QTreeView" name="tvCurrentProject" />
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Native</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTreeView" name="tvNative" />
+   </item>
+   <item>
     <widget class="QPlainTextEdit" name="pteLog" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Maximum" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>100</height>
+      </size>
      </property>
     </widget>
    </item>
