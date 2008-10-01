@@ -4,6 +4,7 @@
 #include <QDomElement>
 #include <QHash>
 #include <QIcon>
+#include <QApplication>
 
 class XUPProjectItem;
 
@@ -35,9 +36,13 @@ public:
 	XUPItem* parent() const;
 	// return the item row
 	int row();
+	// return child count
+	int count() const;
 	
 	// a string to show when requesting null/invalid content
-	inline static QString null() { return QT_TR_NOOP( "#Null" ); }
+	inline static QString null() { return "#Null"; }
+	// static tr member
+	inline QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }
 	
 	// view text
 	QString text() const;

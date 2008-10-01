@@ -52,6 +52,16 @@ int XUPItem::row()
 	return mRowNumber;
 }
 
+int XUPItem::count() const
+{
+	int count = mDomElement.childNodes().count();
+	if ( !mChildItems.isEmpty() )
+	{
+		count = qMax( count, mChildItems.keys().last() +1 );
+	}
+	return count;
+}
+
 QString XUPItem::type() const
 {
 	return mDomElement.nodeName();
@@ -98,7 +108,7 @@ QString XUPItem::text() const
 			return value();
 			break;
 		case XUPItem::EmptyLine:
-			return QString( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( value() );
+			return tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( value() );
 			break;
 		case XUPItem::Variable:
 		{
@@ -109,13 +119,13 @@ QString XUPItem::text() const
 			return value();
 			break;
 		case XUPItem::Function:
-			return QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( value() );
+			return QString( "%1(%2)" ).arg( value() ).arg( attribute( "parameters" ) );
 			break;
 		case XUPItem::Scope:
 			return value();
 			break;
 		default:
-			return QT_TR_NOOP( "#Unknow" );
+			return "#Unknow";
 			break;
 	}
 }
@@ -155,7 +165,7 @@ QString XUPItem::value( const QString& defaultValue ) const
 			return attribute( "content", defaultValue );
 			break;
 		case XUPItem::Function:
-			return attribute( "parameters", defaultValue );
+			return attribute( "name", defaultValue );
 			break;
 		case XUPItem::Scope:
 			return attribute( "name", defaultValue );

@@ -58,30 +58,7 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
 	
-	// try opening include projects if needed
-	int count = parentItem->node().childNodes().count();
-	if ( parentItem->isType( XUPItem::Function ) && parentItem->attribute( "name", QString::null ).toLower() == "include" )
-	{
-		XUPItem* child = parentItem->child( count );
-		if ( child )
-		{
-			count++;
-		}
-		else
-		{
-			const QString fn = parentItem->value();
-			XUPProjectItem* project = new XUPProjectItem();
-			if ( project->open( fn, mEncoding ) )
-			{
-				project->mParentItem = parentItem;
-				project->mRowNumber = count;
-				parentItem->mChildItems[ count ] = project;
-				count++;
-			}
-		}
-	}
-
-	return count;
+	return parentItem->count();
 }
 
 int XUPProjectModel::columnCount( const QModelIndex& parent ) const
@@ -112,18 +89,21 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 	if ( !index.isValid() )
 		return QVariant();
 
-	if ( role != Qt::DecorationRole && role != Qt::DisplayRole && role != Qt::ToolTipRole )
-		return QVariant();
-
-	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
-
-	QDomNode node = item->node();
-	QStringList attributes;
-	QDomNamedNodeMap attributeMap = node.attributes();
-
-	switch ( index.column() )
+	switch ( role )
 	{
-		case 0:
+		case Qt::DecorationRole:
+		case Qt::DisplayRole:
+		case Qt::ToolTipRole:
+		case TypeRole:
+		case TypeIdRole:
+		case ValueRole:
+		{
+			XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
+
+			QDomNode node = item->node();
+			QStringList attributes;
+			QDomNamedNodeMap attributeMap = node.attributes();
+			
 			if ( role == Qt::DecorationRole )
 			{
 				return item->icon();
@@ -132,7 +112,7 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 			{
 				return item->text();
 			}
-			else
+			else if ( role == Qt::ToolTipRole )
 			{
 				for ( int i = 0; i < attributeMap.count(); i++ )
 				{
@@ -141,9 +121,23 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 				}
 				return attributes.join( "\n" );
 			}
+			else if ( role == TypeRole )
+			{
+				return item->type();
+			}
+			else if ( role == TypeIdRole )
+			{
+				return item->typeId();
+			}
+			else if ( role == ValueRole )
+			{
+				return item->value();
+			}
+		}
 		default:
-			return QVariant();
+			break;
 	}
+	return QVariant();
 }
 
 Qt::ItemFlags XUPProjectModel::flags( const QModelIndex& index ) const
@@ -170,6 +164,9 @@ bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName
 	{
 		mEncoding = encoding;
 		mRootProject = tmpProject;
+		
+		handleIncludes();
+		
 		return true;
 	}
 	else
@@ -177,6 +174,30 @@ bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName
 		delete tmpProject;
 	}
 	return false;
+}
+
+void XUPProjectModel::handleIncludes()
+{
+	// get functions index
+	QModelIndexList functions = match( index( 0, 0 ), TypeIdRole, XUPItem::Function, -1, Qt::MatchExactly | Qt::MatchWrap | Qt::MatchRecursive );
+	// check include functions
+	foreach ( const QModelIndex& index, functions )
+	{
+		XUPItem* function = static_cast<XUPItem*>( index.internalPointer() );
+		XUPProjectItem* pProject = function->project();
+		if ( function->value() == "include" )
+		{
+			const QString fn = pProject->filePath( function->attribute( "parameters" ) );
+			XUPProjectItem* project = pProject->newItem();
+			if ( project->open( fn, mEncoding ) )
+			{
+				int count = function->count();
+				project->mParentItem = function;
+				project->mRowNumber = count;
+				function->mChildItems[ count ] = project;
+			}
+		}
+	}
 }
 
 void XUPProjectModel::close()

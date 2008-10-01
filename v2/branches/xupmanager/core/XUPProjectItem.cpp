@@ -2,6 +2,10 @@
 
 #include <QTextCodec>
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
+
+#include <QDebug>
 
 XUPProjectItemInfos* XUPProjectItem::mXUPProjectInfos = new XUPProjectItemInfos();
 
@@ -26,6 +30,23 @@ void XUPProjectItem::setLastError( const QString& error )
 QString XUPProjectItem::lastError() const
 {
 	return mLastError;
+}
+
+QString XUPProjectItem::fileName() const
+{
+	return mFileName;
+}
+
+QString XUPProjectItem::filePath( const QString& fileName ) const
+{
+	QString fn = QFileInfo( mFileName ).path().append( "/" );
+	fn.append( fileName );
+	return QDir::cleanPath( fn );
+}
+
+XUPProjectItemInfos* XUPProjectItem::projectInfos()
+{
+	return mXUPProjectInfos;
 }
 
 bool XUPProjectItem::isFileBased( XUPItem* item ) const
@@ -155,12 +176,49 @@ bool XUPProjectItem::open( const QString& fileName, const QString& encoding )
 	}
 	
 	// all is ok
+	mFileName = fileName;
 	mLastError.clear();
 	mRowNumber = 0;
 	file.close();
+	
+	openRelatedProjects();
+	
 	return true;
 }
 
 void XUPProjectItem::close()
 {
+}
+
+void XUPProjectItem::openRelatedProjects()
+{
+/*
+	for ( int i = 0; i < count(); i++ )
+	{
+	}
+*/
+	/*
+	// try opening include projects if needed
+	int count = parentItem->node().childNodes().count();
+	if ( parentItem->isType( XUPItem::Function ) && parentItem->attribute( "name", QString::null ).toLower() == "include" )
+	{
+		XUPItem* child = parentItem->child( count );
+		if ( child )
+		{
+			count++;
+		}
+		else
+		{
+			const QString fn = parentItem->value();
+			XUPProjectItem* project = new XUPProjectItem();
+			if ( project->open( fn, mEncoding ) )
+			{
+				project->mParentItem = parentItem;
+				project->mRowNumber = count;
+				parentItem->mChildItems[ count ] = project;
+				count++;
+			}
+		}
+	}
+	*/
 }
