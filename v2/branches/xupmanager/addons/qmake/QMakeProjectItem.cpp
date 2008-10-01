@@ -162,8 +162,12 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
 	}
 	
 	// all is ok
+	mFileName = fileName;
 	mLastError.clear();
 	mRowNumber = 0;
+	
+	openRelatedProjects();
+	
 	return true;
 }
 

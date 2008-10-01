@@ -4,8 +4,6 @@
 #include "XUPItem.h"
 #include "XUPProjectItemInfos.h"
 
-#include <QApplication>
-
 class XUPProjectItem : public XUPItem
 {
 public:
@@ -16,8 +14,9 @@ public:
 	void setLastError( const QString& error );
 	QString lastError() const;
 	
-	inline QString fileName() const { return mFileName; }
-	inline static XUPProjectItemInfos* projectInfos() { return mXUPProjectInfos; }
+	QString fileName() const;
+	QString filePath( const QString& fileName ) const;
+	static XUPProjectItemInfos* projectInfos();
 	// return true if item is a variable wich values are files
 	bool isFileBased( XUPItem* item ) const;
 	// return true if item is a variable wich values are paths
@@ -30,7 +29,6 @@ public:
 	QString displayText( const QString& variableName ) const;
 	
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
-	inline virtual QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }
 	virtual void registerProjectType() const;
 	inline virtual XUPProjectItem* newItem() const { return new XUPProjectItem(); }
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
@@ -41,6 +39,8 @@ protected:
 	QDomDocument mDocument;
 	QString mLastError;
 	static XUPProjectItemInfos* mXUPProjectInfos;
+	
+	virtual void openRelatedProjects();
 };
 
 #endif // XUPPROJECTITEM_H
