@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 
 class XUPProjectItem;
+class XUPItem;
 
 class XUPProjectModel : public QAbstractItemModel
 {
@@ -40,7 +41,7 @@ protected:
 	QString mEncoding;
 	QString mLastError;
 	
-	void handleIncludes();
+	void handleIncludeItem( XUPItem* function ) const;
 };
 
 Q_DECLARE_METATYPE( XUPProjectModel* )

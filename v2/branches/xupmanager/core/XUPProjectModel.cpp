@@ -58,6 +58,11 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
 	
+	if ( parentItem->typeId() == XUPItem::Function && parentItem->value().toLower() == "include" )
+	{
+		handleIncludeItem( parentItem );
+	}
+	
 	return parentItem->count();
 }
 
@@ -164,9 +169,6 @@ bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName
 	{
 		mEncoding = encoding;
 		mRootProject = tmpProject;
-		
-		handleIncludes();
-		
 		return true;
 	}
 	else
@@ -176,27 +178,21 @@ bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName
 	return false;
 }
 
-void XUPProjectModel::handleIncludes()
+void XUPProjectModel::handleIncludeItem( XUPItem* function ) const
 {
-	// get functions index
-	QModelIndexList functions = match( index( 0, 0 ), TypeIdRole, XUPItem::Function, -1, Qt::MatchExactly | Qt::MatchWrap | Qt::MatchRecursive );
-	// check include functions
-	foreach ( const QModelIndex& index, functions )
+	if ( !function->customValue( "includeHandled", false ).toBool() )
 	{
-		XUPItem* function = static_cast<XUPItem*>( index.internalPointer() );
 		XUPProjectItem* pProject = function->project();
-		if ( function->value() == "include" )
+		const QString fn = pProject->filePath( function->attribute( "parameters" ) );
+		XUPProjectItem* project = pProject->newItem();
+		if ( project->open( fn, mEncoding ) )
 		{
-			const QString fn = pProject->filePath( function->attribute( "parameters" ) );
-			XUPProjectItem* project = pProject->newItem();
-			if ( project->open( fn, mEncoding ) )
-			{
-				int count = function->count();
-				project->mParentItem = function;
-				project->mRowNumber = count;
-				function->mChildItems[ count ] = project;
-			}
+			int count = function->count();
+			project->mParentItem = function;
+			project->mRowNumber = count;
+			function->mChildItems[ count ] = project;
 		}
+		function->setCustomValue( "includeHandled", true );
 	}
 }
 
