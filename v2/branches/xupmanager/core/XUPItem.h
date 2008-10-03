@@ -2,9 +2,10 @@
 #define XUPITEM_H
 
 #include <QDomElement>
-#include <QHash>
+#include <QMap>
 #include <QIcon>
 #include <QApplication>
+#include <QVariant>
 
 class XUPProjectItem;
 
@@ -67,12 +68,18 @@ public:
 	QString attribute( const QString& name, const QString& defaultValue = null() ) const;
 	// set the attribute value
 	void setAttribute( const QString& name, const QString& value );
+	
+	// return the custom value associate with the item type, or defaultValue if null/invalid
+	QVariant customValue( const QString& key, const QVariant& defaultValue = QVariant() ) const;
+	// set the custom value associate with item type
+	void setCustomValue( const QString& key, const QVariant& value );
 
 protected:
 	QDomElement mDomElement;
-	QHash<int, XUPItem*> mChildItems;
+	QMap<int, XUPItem*> mChildItems;
 	XUPItem* mParentItem;
 	int mRowNumber;
+	QMap<QString, QVariant> mCustomValues;
 	
 	// developer must not be able to create/instanciate items itself, it must be done by the model
 	XUPItem( const QDomElement& node, int row, XUPItem* parent = 0 );

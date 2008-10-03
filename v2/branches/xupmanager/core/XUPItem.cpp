@@ -215,3 +215,15 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 {
 	mDomElement.setAttribute( name, value );
 }
+
+QVariant XUPItem::customValue( const QString& key, const QVariant& defaultValue ) const
+{
+	if ( mCustomValues.contains( key ) )
+		return mCustomValues[ key ];
+	return defaultValue;
+}
+
+void XUPItem::setCustomValue( const QString& key, const QVariant& value )
+{
+	mCustomValues[ key ] = value;
+}
