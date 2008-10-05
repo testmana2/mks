@@ -32,6 +32,11 @@ XUPItem* XUPItem::parent() const
 	return mParentItem;
 }
 
+void XUPItem::setParent( XUPItem* parentItem )
+{
+	mParentItem = parentItem;
+}
+
 XUPItem* XUPItem::child( int i )
 {
 	if ( mChildItems.contains( i ) )
@@ -47,9 +52,19 @@ XUPItem* XUPItem::child( int i )
 	return 0;
 }
 
+void XUPItem::setChild( int row, XUPItem* item )
+{
+	mChildItems[ row ] = item;
+}
+
 int XUPItem::row()
 {
 	return mRowNumber;
+}
+
+void XUPItem::setRow( int row )
+{
+	mRowNumber = row;
 }
 
 int XUPItem::count() const
@@ -62,14 +77,9 @@ int XUPItem::count() const
 	return count;
 }
 
-QString XUPItem::type() const
-{
-	return mDomElement.nodeName();
-}
-
 XUPItem::Type XUPItem::typeId() const
 {
-	const QString mType = type();
+	const QString mType = mDomElement.nodeName();
 	if ( mType == "project" )
 		return XUPItem::Project;
 	else if ( mType == "comment" )
@@ -87,42 +97,32 @@ XUPItem::Type XUPItem::typeId() const
 	return XUPItem::Unknow;
 }
 
-bool XUPItem::isType( const QString& _type ) const
-{
-	return type() == _type;
-}
-
-bool XUPItem::isType( XUPItem::Type _type ) const
-{
-	return typeId() == _type;
-}
-
-QString XUPItem::text() const
+QString XUPItem::displayText() const
 {
 	switch ( typeId() )
 	{
 		case XUPItem::Project:
-			return value();
+			return attribute( "name" );
 			break;
 		case XUPItem::Comment:
-			return value();
+			return attribute( "value" );
 			break;
 		case XUPItem::EmptyLine:
-			return tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( value() );
+			return tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( attribute( "count" ) );
 			break;
 		case XUPItem::Variable:
 		{
-			return project()->displayText( value() );
+			return project()->variableDisplayText( attribute( "name" ) );
 			break;
 		}
 		case XUPItem::Value:
-			return value();
+			return attribute( "content" );
 			break;
 		case XUPItem::Function:
-			return QString( "%1(%2)" ).arg( value() ).arg( attribute( "parameters" ) );
+			return QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
 			break;
 		case XUPItem::Scope:
-			return value();
+			return attribute( "name" );
 			break;
 		default:
 			return "#Unknow";
@@ -130,7 +130,7 @@ QString XUPItem::text() const
 	}
 }
 
-QIcon XUPItem::icon() const
+QIcon XUPItem::displayIcon() const
 {
 	XUPProjectItem* pItem = project();
 	XUPItem* item = const_cast<XUPItem*>( this );
@@ -145,67 +145,6 @@ QIcon XUPItem::icon() const
 	return pIconManager::icon( pItem->iconFileName( item ), path );
 }
 
-QString XUPItem::value( const QString& defaultValue ) const
-{
-	switch ( typeId() )
-	{
-		case XUPItem::Project:
-			return attribute( "name", defaultValue );
-			break;
-		case XUPItem::Comment:
-			return attribute( "value", defaultValue );
-			break;
-		case XUPItem::EmptyLine:
-			return attribute( "count", defaultValue );
-			break;
-		case XUPItem::Variable:
-			return attribute( "name", defaultValue );
-			break;
-		case XUPItem::Value:
-			return attribute( "content", defaultValue );
-			break;
-		case XUPItem::Function:
-			return attribute( "name", defaultValue );
-			break;
-		case XUPItem::Scope:
-			return attribute( "name", defaultValue );
-			break;
-		default:
-			return defaultValue;
-			break;
-	}
-}
-
-void XUPItem::setValue( const QString& value )
-{
-	switch ( typeId() )
-	{
-		case XUPItem::Project:
-			setAttribute( "name", value );
-			break;
-		case XUPItem::Comment:
-			setAttribute( "value", value );
-			break;
-		case XUPItem::EmptyLine:
-			setAttribute( "count", value );
-			break;
-		case XUPItem::Variable:
-			setAttribute( "name", value );
-			break;
-		case XUPItem::Value:
-			setAttribute( "content", value );
-			break;
-		case XUPItem::Function:
-			setAttribute( "parameters", value );
-			break;
-		case XUPItem::Scope:
-			setAttribute( "name", value );
-			break;
-		default:
-			break;
-	}
-}
-
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
 {
 	return mDomElement.attribute( name, defaultValue );
@@ -216,14 +155,14 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 	mDomElement.setAttribute( name, value );
 }
 
-QVariant XUPItem::customValue( const QString& key, const QVariant& defaultValue ) const
+QVariant XUPItem::temporaryValue( const QString& key, const QVariant& defaultValue ) const
 {
-	if ( mCustomValues.contains( key ) )
-		return mCustomValues[ key ];
+	if ( mTemporaryValues.contains( key ) )
+		return mTemporaryValues[ key ];
 	return defaultValue;
 }
 
-void XUPItem::setCustomValue( const QString& key, const QVariant& value )
+void XUPItem::setTemporaryValue( const QString& key, const QVariant& value )
 {
-	mCustomValues[ key ] = value;
+	mTemporaryValues[ key ] = value;
 }
