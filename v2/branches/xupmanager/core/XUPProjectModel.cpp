@@ -58,10 +58,12 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
 	
-	if ( parentItem->typeId() == XUPItem::Function && parentItem->value().toLower() == "include" )
+	if ( parentItem->typeId() == XUPItem::Function && parentItem->attribute( "name" ).toLower() == "include" )
 	{
 		handleIncludeItem( parentItem );
 	}
+	
+	parentItem->project()->customRowCount( parentItem );
 	
 	return parentItem->count();
 }
@@ -79,9 +81,9 @@ QVariant XUPProjectModel::headerData( int section, Qt::Orientation orientation, 
 		if ( mRootProject )
 		{
 			if ( role == Qt::DecorationRole )
-				return mRootProject->icon();
+				return mRootProject->displayIcon();
 			else if ( role == Qt::DisplayRole )
-				return mRootProject->text();
+				return mRootProject->displayText();
 		}
 		else if ( role == Qt::DisplayRole )
 			return tr( "No opened project" );
@@ -99,9 +101,6 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 		case Qt::DecorationRole:
 		case Qt::DisplayRole:
 		case Qt::ToolTipRole:
-		case TypeRole:
-		case TypeIdRole:
-		case ValueRole:
 		{
 			XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
 
@@ -111,11 +110,11 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 			
 			if ( role == Qt::DecorationRole )
 			{
-				return item->icon();
+				return item->displayIcon();
 			}
 			else if ( role == Qt::DisplayRole )
 			{
-				return item->text();
+				return item->displayText();
 			}
 			else if ( role == Qt::ToolTipRole )
 			{
@@ -125,18 +124,6 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 					attributes << attribute.nodeName() +"=\"" +attribute.nodeValue() +"\"";
 				}
 				return attributes.join( "\n" );
-			}
-			else if ( role == TypeRole )
-			{
-				return item->type();
-			}
-			else if ( role == TypeIdRole )
-			{
-				return item->typeId();
-			}
-			else if ( role == ValueRole )
-			{
-				return item->value();
 			}
 		}
 		default:
@@ -180,7 +167,7 @@ bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName
 
 void XUPProjectModel::handleIncludeItem( XUPItem* function ) const
 {
-	if ( !function->customValue( "includeHandled", false ).toBool() )
+	if ( !function->temporaryValue( "includeHandled", false ).toBool() )
 	{
 		XUPProjectItem* pProject = function->project();
 		const QString fn = pProject->filePath( function->attribute( "parameters" ) );
@@ -192,7 +179,11 @@ void XUPProjectModel::handleIncludeItem( XUPItem* function ) const
 			project->mRowNumber = count;
 			function->mChildItems[ count ] = project;
 		}
-		function->setCustomValue( "includeHandled", true );
+		else
+		{
+			delete project;
+		}
+		function->setTemporaryValue( "includeHandled", true );
 	}
 }
 
@@ -213,10 +204,10 @@ bool XUPProjectModel::save()
 
 QString XUPProjectModel::rootProjectName() const
 {
-	return mRootProject ? mRootProject->text() : QString::null;
+	return mRootProject ? mRootProject->displayText() : QString::null;
 }
 
 QIcon XUPProjectModel::rootProjectIcon() const
 {
-	return mRootProject ? mRootProject->icon() : QIcon();
+	return mRootProject ? mRootProject->displayIcon() : QIcon();
 }
