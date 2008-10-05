@@ -16,6 +16,7 @@ public:
 	inline virtual XUPProjectItem* newItem() const { return new QMakeProjectItem(); }
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
+	virtual void customRowCount( XUPItem* item );
 };
 
 #endif // QMAKEPROJECTITEM_H
