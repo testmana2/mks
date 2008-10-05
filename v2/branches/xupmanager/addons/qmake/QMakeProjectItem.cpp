@@ -164,8 +164,9 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
 	}
 	
 	// all is ok
-	mFileName = fileName;
-	mLastError.clear();
+	setAttribute( "encoding", encoding );
+	setTemporaryValue( "filename", fileName );
+	setLastError( QString::null );
 	mRowNumber = 0;
 	
 	return true;
@@ -237,7 +238,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item )
 						fi.setFile( fn, QString( "%1.pro" ).arg( subdir ) );
 					// open project
 					XUPProjectItem* project = newItem();
-					if ( project->open( fi.absoluteFilePath(), "mEncoding" ) )
+					if ( project->open( fi.absoluteFilePath(), attribute( "encoding" ) ) )
 					{
 					qWarning() << "opened" << fi.absoluteFilePath() << fi.exists();
 						int count = item->count();

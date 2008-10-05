@@ -36,9 +36,7 @@ public:
 	virtual void customRowCount( XUPItem* item );
 
 protected:
-	QString mFileName;
 	QDomDocument mDocument;
-	QString mLastError;
 	static XUPProjectItemInfos* mXUPProjectInfos;
 };
 
