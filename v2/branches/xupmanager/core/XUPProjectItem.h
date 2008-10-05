@@ -27,6 +27,8 @@ public:
 	QString iconsPath() const;
 	// return the display text of a variable name
 	QString variableDisplayText( const QString& variableName ) const;
+	// return the display text of a value
+	QString valueDisplayText( XUPItem* valueItem ) const;
 	
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
 	virtual void registerProjectType() const;
