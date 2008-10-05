@@ -24,7 +24,7 @@ QDomElement XUPItem::node() const
 
 XUPProjectItem* XUPItem::project() const
 {
-	return typeId() == XUPItem::Project ? static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) ) : mParentItem->project();
+	return type() == XUPItem::Project ? static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) ) : mParentItem->project();
 }
 
 XUPItem* XUPItem::parent() const
@@ -37,7 +37,7 @@ void XUPItem::setParent( XUPItem* parentItem )
 	mParentItem = parentItem;
 }
 
-XUPItem* XUPItem::child( int i )
+XUPItem* XUPItem::child( int i ) const
 {
 	if ( mChildItems.contains( i ) )
 		return mChildItems[ i ];
@@ -45,7 +45,7 @@ XUPItem* XUPItem::child( int i )
 	if ( i >= 0 && i < mDomElement.childNodes().count() )
 	{
 		QDomElement childElement = mDomElement.childNodes().item( i ).toElement();
-		XUPItem* childItem = new XUPItem( childElement, i, this );
+		XUPItem* childItem = new XUPItem( childElement, i, const_cast<XUPItem*>( this ) );
 		mChildItems[ i ] = childItem;
 		return childItem;
 	}
@@ -77,7 +77,7 @@ int XUPItem::count() const
 	return count;
 }
 
-XUPItem::Type XUPItem::typeId() const
+XUPItem::Type XUPItem::type() const
 {
 	const QString mType = mDomElement.nodeName();
 	if ( mType == "project" )
@@ -99,7 +99,7 @@ XUPItem::Type XUPItem::typeId() const
 
 QString XUPItem::displayText() const
 {
-	switch ( typeId() )
+	switch ( type() )
 	{
 		case XUPItem::Project:
 			return attribute( "name" );

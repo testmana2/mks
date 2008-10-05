@@ -14,9 +14,13 @@ public:
 	inline virtual QString tr( const char* text ) const { return qApp->translate( "QMakeProjectItem", text ); }
 	virtual void registerProjectType() const;
 	inline virtual XUPProjectItem* newItem() const { return new QMakeProjectItem(); }
+	virtual void customRowCount( XUPItem* item ) const;
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
-	virtual void customRowCount( XUPItem* item );
+	
+	virtual QList<XUPItem*> getVariables( const XUPItem* root, const QString& variableName, const XUPItem* stopItem = 0 ) const;
+	virtual QString interpreteVariable( const QString& variableName, const XUPItem* stopItem = 0, const QString& defaultValue = QString::null ) const;
+	virtual QString interpretValue( XUPItem* valueItem ) const;
 };
 
 #endif // QMAKEPROJECTITEM_H

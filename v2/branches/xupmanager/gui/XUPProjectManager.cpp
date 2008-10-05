@@ -33,8 +33,8 @@ void XUPProjectManager::on_tbDebug_clicked()
 		return;
 	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
 	pteLog->appendPlainText( "------------------" );
-	pteLog->appendPlainText( item->displayText() );
-	pteLog->appendPlainText( item->project()->displayText() );
+	pteLog->appendPlainText( item->attribute( "content" ).prepend( "Content: " ) );
+	pteLog->appendPlainText( item->project()->interpretValue( item ) );
 }
 
 QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )

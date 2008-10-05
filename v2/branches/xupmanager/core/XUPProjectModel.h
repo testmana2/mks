@@ -38,8 +38,6 @@ public:
 protected:
 	XUPProjectItem* mRootProject;
 	QString mLastError;
-	
-	void handleIncludeItem( XUPItem* function ) const;
 };
 
 Q_DECLARE_METATYPE( XUPProjectModel* )
