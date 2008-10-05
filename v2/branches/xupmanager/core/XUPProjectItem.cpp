@@ -98,6 +98,12 @@ QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
 	return mXUPProjectInfos->displayText( projectType(), variableName );
 }
 
+QString XUPProjectItem::valueDisplayText( XUPItem* valueItem ) const
+{
+	bool mIsFileBased = isFileBased( valueItem->parent() );
+	return mIsFileBased ? QFileInfo( valueItem->attribute( "content" ) ).fileName() : valueItem->attribute( "content" );
+}
+
 void XUPProjectItem::registerProjectType() const
 {
 	// get proejct type
