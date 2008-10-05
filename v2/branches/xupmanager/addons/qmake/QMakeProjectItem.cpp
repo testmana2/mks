@@ -240,7 +240,6 @@ void QMakeProjectItem::customRowCount( XUPItem* item )
 					XUPProjectItem* project = newItem();
 					if ( project->open( fi.absoluteFilePath(), attribute( "encoding" ) ) )
 					{
-					qWarning() << "opened" << fi.absoluteFilePath() << fi.exists();
 						int count = item->count();
 						project->setParent( item );
 						project->setRow( count );
@@ -248,7 +247,6 @@ void QMakeProjectItem::customRowCount( XUPItem* item )
 					}
 					else
 					{
-					qWarning() << "failed" << fi.absoluteFilePath() << fi.exists();
 						delete project;
 					}
 				}
