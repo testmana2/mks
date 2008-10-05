@@ -111,12 +111,10 @@ QString XUPItem::displayText() const
 			return tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( attribute( "count" ) );
 			break;
 		case XUPItem::Variable:
-		{
 			return project()->variableDisplayText( attribute( "name" ) );
 			break;
-		}
 		case XUPItem::Value:
-			return attribute( "content" );
+			return project()->valueDisplayText( const_cast<XUPItem*>( this ) );
 			break;
 		case XUPItem::Function:
 			return QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
