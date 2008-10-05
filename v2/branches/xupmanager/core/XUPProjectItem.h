@@ -15,6 +15,7 @@ public:
 	QString lastError() const;
 	
 	QString fileName() const;
+	QString path() const;
 	QString filePath( const QString& fileName ) const;
 	static XUPProjectItemInfos* projectInfos();
 	// return true if item is a variable wich values are files
@@ -33,9 +34,14 @@ public:
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
 	virtual void registerProjectType() const;
 	inline virtual XUPProjectItem* newItem() const { return new XUPProjectItem(); }
+	virtual void handleIncludeItem( XUPItem* function ) const;
+	virtual void customRowCount( XUPItem* item ) const;
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
-	virtual void customRowCount( XUPItem* item );
+	
+	virtual QList<XUPItem*> getVariables( const XUPItem* root, const QString& variableName, const XUPItem* stopItem = 0 ) const;
+	virtual QString interpreteVariable( const QString& variableName, const XUPItem* stopItem = 0, const QString& defaultValue = QString::null ) const;
+	virtual QString interpretValue( XUPItem* valueItem ) const;
 
 protected:
 	QDomDocument mDocument;

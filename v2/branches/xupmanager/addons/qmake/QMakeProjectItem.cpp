@@ -141,41 +141,6 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerVariableSuffixes( pType, mVariableSuffixes );
 }
 
-bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
-{
-	QString buffer = QMake2XUP::convertFromPro( fileName, encoding );
-	
-	// parse content
-	QString errorMsg;
-	int errorLine;
-	int errorColumn;
-	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
-	{
-		setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
-		return false;
-	}
-	
-	// check project validity
-	mDomElement = mDocument.firstChildElement( "project" );
-	if ( mDomElement.isNull() )
-	{
-		setLastError("no project node" );
-		return false;
-	}
-	
-	// all is ok
-	setAttribute( "encoding", encoding );
-	setTemporaryValue( "filename", fileName );
-	setLastError( QString::null );
-	mRowNumber = 0;
-	
-	return true;
-}
-
-void QMakeProjectItem::close()
-{
-}
-
 QStringList splitSubdirs( const QString& value )
 {
 	QStringList tmpValues = value.split(" ");
@@ -208,9 +173,9 @@ QStringList splitSubdirs( const QString& value )
 	return multivalues;
 }
 
-void QMakeProjectItem::customRowCount( XUPItem* item )
+void QMakeProjectItem::customRowCount( XUPItem* item ) const
 {
-	if ( item->typeId() == XUPItem::Variable && item->attribute( "name" ) == "SUBDIRS" )
+	if ( item->type() == XUPItem::Variable && item->attribute( "name" ) == "SUBDIRS" )
 	{
 		if ( !item->temporaryValue( "subdirsHandled", false ).toBool() )
 		{
@@ -219,7 +184,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item )
 			for ( int i = 0; i < item->count(); i++ )
 			{
 				XUPItem* cit = item->child( i );
-				if ( cit->typeId() == XUPItem::Value )
+				if ( cit->type() == XUPItem::Value )
 				{
 					subdirs << splitSubdirs( cit->attribute( "content" ) );
 				}
@@ -255,4 +220,166 @@ void QMakeProjectItem::customRowCount( XUPItem* item )
 			item->setTemporaryValue( "subdirsHandled", true );
 		}
 	}
+}
+
+bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
+{
+	QString buffer = QMake2XUP::convertFromPro( fileName, encoding );
+	
+	// parse content
+	QString errorMsg;
+	int errorLine;
+	int errorColumn;
+	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
+	{
+		setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
+		return false;
+	}
+	
+	// check project validity
+	mDomElement = mDocument.firstChildElement( "project" );
+	if ( mDomElement.isNull() )
+	{
+		setLastError("no project node" );
+		return false;
+	}
+	
+	// all is ok
+	setAttribute( "encoding", encoding );
+	setTemporaryValue( "filename", fileName );
+	setLastError( QString::null );
+	mRowNumber = 0;
+	
+	return true;
+}
+
+void QMakeProjectItem::close()
+{
+}
+
+QList<XUPItem*> QMakeProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* stopItem ) const
+{
+	QList<XUPItem*> variables;
+	
+	for ( int i = 0; i < root->count(); i++ )
+	{
+		XUPItem* item = root->child( i );
+		
+		if ( stopItem && item == stopItem )
+			break;
+		
+		switch ( item->type() )
+		{
+			case XUPItem::Project:
+			{
+				XUPItem* pItem = item->parent();
+				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
+					variables << getVariables( item, variableName, stopItem );
+				break;
+			}
+			case XUPItem::Comment:
+				break;
+			case XUPItem::EmptyLine:
+				break;
+			case XUPItem::Variable:
+				if ( item->attribute( "name" ) == variableName )
+					variables << item;
+				break;
+			case XUPItem::Value:
+				break;
+			case XUPItem::Function:
+			{
+				XUPProjectItem* project = item->project();
+				project->handleIncludeItem( item );
+				variables << getVariables( item, variableName, stopItem );
+				break;
+			}
+			case XUPItem::Scope:
+				variables << getVariables( item, variableName, stopItem );
+				break;
+			default:
+				break;
+		}
+	}
+	
+	return variables;
+}
+
+QString QMakeProjectItem::interpreteVariable( const QString& variableName, const XUPItem* stopItem, const QString& defaultValue ) const
+{
+/*
+	Q_UNUSED( variableName );
+	Q_UNUSED( stopItem );
+	Q_UNUSED( defaultValue );
+	return defaultValue;
+*/
+
+	/*
+		$$[QT_INSTALL_HEADERS] : read content from qt conf
+		$${QT_INSTALL_HEADERS} or $$QT_INSTALL_HEADERS : read content from var
+		$$(QT_INSTALL_HEADERS) : read from environment when qmake run
+		$(QTDIR) : read from generated makefile
+	*/
+	
+	QString dv = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
+	// environment var
+	if ( variableName.startsWith( "$$(" ) || dv == "PWD" )
+		return dv != "PWD" ? qgetenv( dv.toLocal8Bit().constData() ) : path();
+	else if ( variableName.startsWith( "$(" ) )
+		qWarning() << "Don't know how to proceed: " << variableName;
+	else if ( variableName.startsWith( "$$[" ) )
+		qWarning() << "Don't know how to proceed: " << variableName;
+	else
+	{
+		QString v;
+		QList<XUPItem*> variables = getVariables( this, dv, stopItem );
+		foreach ( XUPItem* cit, variables )
+		{
+			if ( stopItem && cit == stopItem )
+				return v;
+			
+			const QString o = cit->attribute( "operator", "=" );
+			QString cv;
+			for ( int i = 0; i < cit->count(); i++ )
+			{
+				XUPItem* ccit = cit->child( i );
+				cv += interpretValue( ccit ) +" ";
+				cv = cv.trimmed();
+				if ( o == "=" )
+					v = cv;
+				else if ( o == "-=" )
+					v.remove( cv );
+				else if ( o == "+=" )
+					v.append( " " +cv );
+				else if ( o == "*=" )
+				{
+					if ( !v.contains( cv ) )
+						v.append( " " +cv );
+				}
+				else if ( o == "~=" )
+				{
+					qWarning() << "Don't know how to interpretate ~= operator";
+				}
+			}
+		}
+		return v;
+	}
+	
+	return defaultValue;
+}
+
+QString QMakeProjectItem::interpretValue( XUPItem* valueItem ) const
+{
+	//QRegExp rx( "\\$\\$?[\\{\\(\\[]?(\\w+)[\\}\\)\\]]?" );
+	//\$\$?[\w\s]+[\{\(\[]
+	QRegExp rx( "\\$\\$?[\\{\\(\\[]?(\\w+(?!\\w*\\s*[()]))[\\}\\)\\]]?" );
+	const QString dv = valueItem->attribute( "content" );
+	QString v = dv;
+	int p = 0;
+	while ( ( p = rx.indexIn( dv, p ) ) != -1 )
+	{
+		v.replace( rx.capturedTexts().value( 0 ), interpreteVariable( rx.capturedTexts().value( 0 ), valueItem ) );
+		p += rx.matchedLength();
+	}
+	return v;
 }

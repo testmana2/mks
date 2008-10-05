@@ -33,7 +33,7 @@ public:
 	// project item
 	XUPProjectItem* project() const;
 	// return the i child item
-	XUPItem* child( int i );
+	XUPItem* child( int i ) const;
 	void setChild( int row, XUPItem* item );
 	// return the parent item
 	XUPItem* parent() const;
@@ -57,7 +57,7 @@ public:
 	QIcon displayIcon() const;
 	
 	// the enum version of type()
-	XUPItem::Type typeId() const;
+	XUPItem::Type type() const;
 
 	// return the content of attribute name or defaultValue if null/invalid
 	QString attribute( const QString& name, const QString& defaultValue = null() ) const;
@@ -71,7 +71,7 @@ public:
 
 protected:
 	QDomElement mDomElement;
-	QMap<int, XUPItem*> mChildItems;
+	mutable QMap<int, XUPItem*> mChildItems;
 	XUPItem* mParentItem;
 	int mRowNumber;
 	QMap<QString, QVariant> mTemporaryValues;
