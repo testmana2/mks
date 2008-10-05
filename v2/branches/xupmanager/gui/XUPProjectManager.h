@@ -36,6 +36,7 @@ public slots:
 
 protected slots:
 	void on_cbProjects_currentIndexChanged( int id );
+	void on_tbDebug_clicked();
 };
 
 #endif // XUPPROJECTMANAGER_H

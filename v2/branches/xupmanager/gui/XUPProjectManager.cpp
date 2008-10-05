@@ -26,6 +26,17 @@ void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 	setCurrentProject( project );
 }
 
+void XUPProjectManager::on_tbDebug_clicked()
+{
+	const QModelIndex index = tvCurrentProject->currentIndex();
+	if ( !index.isValid() )
+		return;
+	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
+	pteLog->appendPlainText( "------------------" );
+	pteLog->appendPlainText( item->displayText() );
+	pteLog->appendPlainText( item->project()->displayText() );
+}
+
 QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 {
 	if ( mActions.contains( type ) )
