@@ -12,7 +12,7 @@
   <property name="windowTitle" >
    <string>Project Manager</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout_3" >
    <item>
     <widget class="QFrame" name="frame" >
      <property name="frameShape" >
@@ -91,24 +91,39 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label" >
-     <property name="text" >
-      <string>Filtered</string>
+    <widget class="QSplitter" name="splitter" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
      </property>
+     <widget class="QWidget" name="" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <widget class="QLabel" name="label" >
+         <property name="text" >
+          <string>Filtered</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeView" name="tvCurrentProject" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <widget class="QLabel" name="label_2" >
+         <property name="text" >
+          <string>Native</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeView" name="tvNative" />
+       </item>
+      </layout>
+     </widget>
     </widget>
-   </item>
-   <item>
-    <widget class="QTreeView" name="tvCurrentProject" />
-   </item>
-   <item>
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
-      <string>Native</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTreeView" name="tvNative" />
    </item>
    <item>
     <widget class="QPlainTextEdit" name="pteLog" >
