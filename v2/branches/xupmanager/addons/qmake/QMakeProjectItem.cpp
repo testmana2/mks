@@ -5,6 +5,8 @@
 #include <QApplication>
 #include <QTextCodec>
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
 
 #include <QDebug>
 
@@ -166,11 +168,92 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
 	mLastError.clear();
 	mRowNumber = 0;
 	
-	openRelatedProjects();
-	
 	return true;
 }
 
 void QMakeProjectItem::close()
 {
+}
+
+QStringList splitSubdirs( const QString& value )
+{
+	QStringList tmpValues = value.split(" ");
+	bool inStr = false;
+	QStringList multivalues;
+	QString ajout;
+
+	for(int ku = 0;ku < tmpValues.size();ku++)
+	{
+		if(tmpValues.value(ku).startsWith('"') )
+				inStr = true;
+		if(inStr)
+		{
+			if(ajout != "")
+					ajout += " ";
+			ajout += tmpValues.value(ku);
+			if(tmpValues.value(ku).endsWith('"') )
+			{
+					multivalues += ajout;
+					ajout = "";
+					inStr = false;
+			}
+		}
+		else
+		{
+			multivalues += tmpValues.value(ku);
+		}
+	}
+
+	return multivalues;
+}
+
+void QMakeProjectItem::customRowCount( XUPItem* item )
+{
+	if ( item->typeId() == XUPItem::Variable && item->attribute( "name" ) == "SUBDIRS" )
+	{
+		if ( !item->temporaryValue( "subdirsHandled", false ).toBool() )
+		{
+			QStringList subdirs;
+			
+			for ( int i = 0; i < item->count(); i++ )
+			{
+				XUPItem* cit = item->child( i );
+				if ( cit->typeId() == XUPItem::Value )
+				{
+					subdirs << splitSubdirs( cit->attribute( "content" ) );
+				}
+			}
+			
+			if ( !subdirs.isEmpty() )
+			{
+				foreach ( const QString& subdir, subdirs )
+				{
+					// generate project filepath
+					QString fn = subdir;
+					if ( QDir::isRelativePath( subdir ) )
+						fn = filePath( subdir );
+					QFileInfo fi( fn );
+					if ( fi.isDir() )
+						fi.setFile( fn, QString( "%1.pro" ).arg( subdir ) );
+					// open project
+					XUPProjectItem* project = newItem();
+					if ( project->open( fi.absoluteFilePath(), "mEncoding" ) )
+					{
+					qWarning() << "opened" << fi.absoluteFilePath() << fi.exists();
+						int count = item->count();
+						project->setParent( item );
+						project->setRow( count );
+						item->setChild( count, project );
+					}
+					else
+					{
+					qWarning() << "failed" << fi.absoluteFilePath() << fi.exists();
+						delete project;
+					}
+				}
+			}
+			
+			item->setTemporaryValue( "subdirsHandled", true );
+		}
+	}
 }
