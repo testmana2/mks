@@ -10,7 +10,6 @@ class XUPProjectModel : public QAbstractItemModel
 {
 	Q_OBJECT
 public:
-	enum Roles { TypeRole = Qt::UserRole, TypeIdRole, ValueRole };
 	XUPProjectModel( QObject* parent = 0 );
 	virtual ~XUPProjectModel();
 
