@@ -58,11 +58,8 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
 	
-	if ( parentItem->typeId() == XUPItem::Function && parentItem->attribute( "name" ).toLower() == "include" )
-	{
-		handleIncludeItem( parentItem );
-	}
 	
+	handleIncludeItem( parentItem );
 	parentItem->project()->customRowCount( parentItem );
 	
 	return parentItem->count();
@@ -152,38 +149,39 @@ QString XUPProjectModel::lastError() const
 bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName, const QString& encoding )
 {
 	XUPProjectItem* tmpProject = projectItem;
+	
 	if ( tmpProject->open( fileName, encoding ) )
 	{
-		mEncoding = encoding;
 		mRootProject = tmpProject;
 		return true;
 	}
-	else
-	{
-		delete tmpProject;
-	}
+	
+	delete tmpProject;
 	return false;
 }
 
 void XUPProjectModel::handleIncludeItem( XUPItem* function ) const
 {
-	if ( !function->temporaryValue( "includeHandled", false ).toBool() )
+	if ( function->typeId() == XUPItem::Function && function->attribute( "name" ).toLower() == "include" )
 	{
-		XUPProjectItem* pProject = function->project();
-		const QString fn = pProject->filePath( function->attribute( "parameters" ) );
-		XUPProjectItem* project = pProject->newItem();
-		if ( project->open( fn, mEncoding ) )
+		if ( !function->temporaryValue( "includeHandled", false ).toBool() )
 		{
-			int count = function->count();
-			project->mParentItem = function;
-			project->mRowNumber = count;
-			function->mChildItems[ count ] = project;
+			XUPProjectItem* pProject = function->project();
+			const QString fn = pProject->filePath( function->attribute( "parameters" ) );
+			XUPProjectItem* project = pProject->newItem();
+			if ( project->open( fn, pProject->attribute( "encoding" ) ) )
+			{
+				int count = function->count();
+				project->mParentItem = function;
+				project->mRowNumber = count;
+				function->mChildItems[ count ] = project;
+			}
+			else
+			{
+				delete project;
+			}
+			function->setTemporaryValue( "includeHandled", true );
 		}
-		else
-		{
-			delete project;
-		}
-		function->setTemporaryValue( "includeHandled", true );
 	}
 }
 

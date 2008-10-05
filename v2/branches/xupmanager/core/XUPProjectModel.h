@@ -37,7 +37,6 @@ public:
 
 protected:
 	XUPProjectItem* mRootProject;
-	QString mEncoding;
 	QString mLastError;
 	
 	void handleIncludeItem( XUPItem* function ) const;

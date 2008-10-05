@@ -26,7 +26,7 @@ QString tabsString( int i )
 QString MyEscape( QString b )
 { return Qt::escape( b ).replace( "\"" , "&quot;" ); }
 
-QString QMake2XUP::convertFromPro( const QString& s, const QString& version )
+QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 {
 	// check if file exists
 	if ( !QFile::exists( s ) )
@@ -62,7 +62,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& version )
 	const QStringList fileVariables; // = xi.fileVariables();
 	const QStringList pathVariables; // = xi.pathVariables();
 	
-	file.append( QString( "<!DOCTYPE XUPProject>\n<project version=\"%1\" name=\"%2\" expanded=\"false\">\n" ).arg( version ).arg( QFileInfo( s ).fileName() ) );
+	file.append( QString( "<!DOCTYPE XUPProject>\n<project encoding=\"%1\" name=\"%2\" expanded=\"false\">\n" ).arg( encoding ).arg( QFileInfo( s ).fileName() ) );
 	try
 	{
 		for(int i = 0;i < v.size();i++)
@@ -415,7 +415,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& version )
 	catch ( const QString& s )
 	{
 		// re-init the XML output
-		file.append( QString( "<!DOCTYPE XUPProject>\n<project version=\"%1\" name=\"%2\" expanded=\"false\">\n" ).arg( version ).arg( QFileInfo( s ).fileName() ) );
+		file.append( QString( "<!DOCTYPE XUPProject>\n<project encoding=\"%1\" name=\"%2\" expanded=\"false\">\n" ).arg( encoding ).arg( QFileInfo( s ).fileName() ) );
 		// empty both stacks
 		isNested.clear();
 		pile.pop();

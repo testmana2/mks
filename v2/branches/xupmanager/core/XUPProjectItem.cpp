@@ -24,24 +24,24 @@ XUPProjectItem::~XUPProjectItem()
 
 void XUPProjectItem::setLastError( const QString& error )
 {
-	mLastError = error;
+	setTemporaryValue( "lasterror", error );
 }
 
 QString XUPProjectItem::lastError() const
 {
-	return mLastError;
+	return temporaryValue( "lasterror" ).toString();
 }
 
 QString XUPProjectItem::fileName() const
 {
-	return mFileName;
+	return temporaryValue( "filename" ).toString();
 }
 
-QString XUPProjectItem::filePath( const QString& fileName ) const
+QString XUPProjectItem::filePath( const QString& fn ) const
 {
-	QString fn = QFileInfo( mFileName ).path().append( "/" );
-	fn.append( fileName );
-	return QDir::cleanPath( fn );
+	QString fname = QFileInfo( fileName() ).path().append( "/" );
+	fname.append( fn );
+	return QDir::cleanPath( fname );
 }
 
 XUPProjectItemInfos* XUPProjectItem::projectInfos()
@@ -176,8 +176,9 @@ bool XUPProjectItem::open( const QString& fileName, const QString& encoding )
 	}
 	
 	// all is ok
-	mFileName = fileName;
-	mLastError.clear();
+	setAttribute( "encoding", encoding );
+	setTemporaryValue( "filename", fileName );
+	setLastError( QString::null );
 	mRowNumber = 0;
 	file.close();
 	
