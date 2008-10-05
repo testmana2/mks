@@ -24,7 +24,7 @@ QDomElement XUPItem::node() const
 
 XUPProjectItem* XUPItem::project() const
 {
-	return mParentItem ? mParentItem->project() : static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) );
+	return typeId() == XUPItem::Project ? static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) ) : mParentItem->project();
 }
 
 XUPItem* XUPItem::parent() const
