@@ -26,21 +26,20 @@ public:
 	// return the icons path
 	QString iconsPath() const;
 	// return the display text of a variable name
-	QString displayText( const QString& variableName ) const;
+	QString variableDisplayText( const QString& variableName ) const;
 	
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
 	virtual void registerProjectType() const;
 	inline virtual XUPProjectItem* newItem() const { return new XUPProjectItem(); }
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
+	virtual void customRowCount( XUPItem* item );
 
 protected:
 	QString mFileName;
 	QDomDocument mDocument;
 	QString mLastError;
 	static XUPProjectItemInfos* mXUPProjectInfos;
-	
-	virtual void openRelatedProjects();
 };
 
 #endif // XUPPROJECTITEM_H

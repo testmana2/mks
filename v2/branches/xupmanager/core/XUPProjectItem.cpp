@@ -51,12 +51,12 @@ XUPProjectItemInfos* XUPProjectItem::projectInfos()
 
 bool XUPProjectItem::isFileBased( XUPItem* item ) const
 {
-	return item->isType( XUPItem::Variable ) && mXUPProjectInfos->isFileBased( projectType(), item->value() );
+	return item->typeId() == XUPItem::Variable && mXUPProjectInfos->isFileBased( projectType(), item->attribute( "name" ) );
 }
 
 bool XUPProjectItem::isPathBased( XUPItem* item ) const
 {
-	return item->isType( XUPItem::Variable ) && mXUPProjectInfos->isPathBased( projectType(), item->value() );
+	return item->typeId() == XUPItem::Variable && mXUPProjectInfos->isPathBased( projectType(), item->attribute( "name" ) );
 }
 
 QString XUPProjectItem::iconFileName( XUPItem* item ) const
@@ -64,14 +64,14 @@ QString XUPProjectItem::iconFileName( XUPItem* item ) const
 	int pType = projectType();
 	QString fn;
 	
-	if ( item->isType( XUPItem::Variable ) )
+	if ( item->typeId() == XUPItem::Variable )
 	{
-		fn = mXUPProjectInfos->iconName( pType, item->value() );
+		fn = mXUPProjectInfos->iconName( pType, item->attribute( "name" ) );
 	}
 	
 	if ( fn.isEmpty() )
 	{
-		fn = item->type();
+		fn = item->mDomElement.nodeName();
 	}
 	
 	if ( !fn.isEmpty() )
@@ -93,7 +93,7 @@ QString XUPProjectItem::iconsPath() const
 	return path;
 }
 
-QString XUPProjectItem::displayText( const QString& variableName ) const
+QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
 {
 	return mXUPProjectInfos->displayText( projectType(), variableName );
 }
@@ -181,8 +181,6 @@ bool XUPProjectItem::open( const QString& fileName, const QString& encoding )
 	mRowNumber = 0;
 	file.close();
 	
-	openRelatedProjects();
-	
 	return true;
 }
 
@@ -190,35 +188,7 @@ void XUPProjectItem::close()
 {
 }
 
-void XUPProjectItem::openRelatedProjects()
+void XUPProjectItem::customRowCount( XUPItem* item )
 {
-/*
-	for ( int i = 0; i < count(); i++ )
-	{
-	}
-*/
-	/*
-	// try opening include projects if needed
-	int count = parentItem->node().childNodes().count();
-	if ( parentItem->isType( XUPItem::Function ) && parentItem->attribute( "name", QString::null ).toLower() == "include" )
-	{
-		XUPItem* child = parentItem->child( count );
-		if ( child )
-		{
-			count++;
-		}
-		else
-		{
-			const QString fn = parentItem->value();
-			XUPProjectItem* project = new XUPProjectItem();
-			if ( project->open( fn, mEncoding ) )
-			{
-				project->mParentItem = parentItem;
-				project->mRowNumber = count;
-				parentItem->mChildItems[ count ] = project;
-				count++;
-			}
-		}
-	}
-	*/
+	Q_UNUSED( item );
 }
