@@ -13,6 +13,8 @@ int main( int argc, char** argv )
 	pm.registerProjectItem( new XUPProjectItem() );
 	pm.registerProjectItem( new QMakeProjectItem() );
 	pm.show();
+	pm.move( 0, 0 );
+	pm.resize( 400, app.desktop()->availableGeometry().height() );
 	
 	return app.exec();
 }

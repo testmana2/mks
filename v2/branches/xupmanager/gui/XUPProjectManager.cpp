@@ -13,6 +13,8 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	setupUi( this );
 	tbOpen->setDefaultAction( action( atOpen ) );
 	tbClose->setDefaultAction( action( atClose ) );
+	
+	verticalLayout_2->parentWidget()->hide();
 }
 
 XUPProjectManager::~XUPProjectManager()
@@ -34,7 +36,7 @@ void XUPProjectManager::on_tbDebug_clicked()
 	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
 	pteLog->appendPlainText( "------------------" );
 	pteLog->appendPlainText( item->attribute( "content" ).prepend( "Content: " ) );
-	pteLog->appendPlainText( item->project()->interpretValue( item ) );
+	pteLog->appendPlainText( item->project()->interpretValue( item, "content" ) );
 }
 
 QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )

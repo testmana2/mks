@@ -151,7 +151,9 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 	{
 		if ( !function->temporaryValue( "includeHandled", false ).toBool() )
 		{
-			const QString fn = filePath( function->attribute( "parameters" ) );
+#warning Need use a highLevelProject wich is the most appropriate toplevel project
+			const QString parameters = function->project()->interpretValue( function, "parameters" );
+			const QString fn = QFileInfo( parameters ).isRelative() ? filePath( parameters ) : parameters;
 			XUPProjectItem* project = newItem();
 			if ( project->open( fn, attribute( "encoding" ) ) )
 			{
@@ -162,6 +164,7 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 			}
 			else
 			{
+				qWarning() << "Failed to handle include" << function->attribute( "parameters" ) << parameters;
 				delete project;
 			}
 			function->setTemporaryValue( "includeHandled", true );
@@ -229,7 +232,7 @@ void XUPProjectItem::close()
 {
 }
 
-QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* stopItem ) const
+QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem ) const
 {
 	QList<XUPItem*> variables;
 	
@@ -237,7 +240,7 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 	{
 		XUPItem* item = root->child( i );
 		
-		if ( stopItem && item == stopItem )
+		if ( callerItem && item == callerItem )
 			break;
 		
 		switch ( item->type() )
@@ -246,7 +249,7 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 			{
 				XUPItem* pItem = item->parent();
 				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
-					variables << getVariables( item, variableName, stopItem );
+					variables << getVariables( item, variableName, callerItem );
 				break;
 			}
 			case XUPItem::Comment:
@@ -265,12 +268,12 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 			{
 				XUPProjectItem* project = item->project();
 				project->handleIncludeItem( item );
-				variables << getVariables( item, variableName, stopItem );
+				variables << getVariables( item, variableName, callerItem );
 				break;
 			}
 			case XUPItem::Scope:
 			{
-				variables << getVariables( item, variableName, stopItem );
+				variables << getVariables( item, variableName, callerItem );
 				break;
 			}
 			default:
@@ -281,7 +284,7 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 	return variables;
 }
 
-QString XUPProjectItem::interpreteVariable( const QString& variableName, const XUPItem* stopItem, const QString& defaultValue ) const
+QString XUPProjectItem::interpreteVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
 {
 	/*
 		$${varName} or $$varName : read content from defined variable
@@ -291,11 +294,11 @@ QString XUPProjectItem::interpreteVariable( const QString& variableName, const X
 	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '(', "" ).replace( ')', "" );
 	// environment var
 	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
-		return name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : path();
+		return name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
 	else
 	{
 		QString value;
-		QList<XUPItem*> variableItems = getVariables( this, name, stopItem );
+		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
 		foreach ( XUPItem* variableItem, variableItems )
 		{
 			const QString op = variableItem->attribute( "operator", "=" );
@@ -303,10 +306,15 @@ QString XUPProjectItem::interpreteVariable( const QString& variableName, const X
 			for ( int i = 0; i < variableItem->count(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
-				tmp += interpretValue( valueItem ) +" ";
-				tmp = tmp.trimmed();
-				if ( op == "=" )
-					value = tmp;
+				if ( valueItem->type() == XUPItem::Value )
+				{
+					tmp += interpretValue( valueItem, "content" ) +" ";
+					tmp = tmp.trimmed();
+					if ( op == "=" )
+					{
+						value = tmp;
+					}
+				}
 			}
 		}
 		return value;
@@ -315,15 +323,15 @@ QString XUPProjectItem::interpreteVariable( const QString& variableName, const X
 	return defaultValue;
 }
 
-QString XUPProjectItem::interpretValue( XUPItem* valueItem ) const
+QString XUPProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
 {
 	QRegExp rx( "\\$\\$[\\{\\(]?(\\w+(?!\\w*\\s*[()]))[\\}\\)]?" );
-	const QString content = valueItem->attribute( "content" );
+	const QString content = callerItem->attribute( attribute );
 	QString value = content;
 	int pos = 0;
 	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
 	{
-		value.replace( rx.cap( 0 ), interpreteVariable( rx.cap( 0 ), valueItem ) );
+		value.replace( rx.cap( 0 ), interpreteVariable( rx.cap( 0 ), callerItem ) );
 		pos += rx.matchedLength();
 	}
 	return value;

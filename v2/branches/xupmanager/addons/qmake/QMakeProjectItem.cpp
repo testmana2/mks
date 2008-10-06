@@ -257,63 +257,8 @@ void QMakeProjectItem::close()
 {
 }
 
-QList<XUPItem*> QMakeProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* stopItem ) const
+QString QMakeProjectItem::interpreteVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
 {
-	QList<XUPItem*> variables;
-	
-	for ( int i = 0; i < root->count(); i++ )
-	{
-		XUPItem* item = root->child( i );
-		
-		if ( stopItem && item == stopItem )
-			break;
-		
-		switch ( item->type() )
-		{
-			case XUPItem::Project:
-			{
-				XUPItem* pItem = item->parent();
-				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
-					variables << getVariables( item, variableName, stopItem );
-				break;
-			}
-			case XUPItem::Comment:
-				break;
-			case XUPItem::EmptyLine:
-				break;
-			case XUPItem::Variable:
-				if ( item->attribute( "name" ) == variableName )
-					variables << item;
-				break;
-			case XUPItem::Value:
-				break;
-			case XUPItem::Function:
-			{
-				XUPProjectItem* project = item->project();
-				project->handleIncludeItem( item );
-				variables << getVariables( item, variableName, stopItem );
-				break;
-			}
-			case XUPItem::Scope:
-				variables << getVariables( item, variableName, stopItem );
-				break;
-			default:
-				break;
-		}
-	}
-	
-	return variables;
-}
-
-QString QMakeProjectItem::interpreteVariable( const QString& variableName, const XUPItem* stopItem, const QString& defaultValue ) const
-{
-/*
-	Q_UNUSED( variableName );
-	Q_UNUSED( stopItem );
-	Q_UNUSED( defaultValue );
-	return defaultValue;
-*/
-
 	/*
 		$$[QT_INSTALL_HEADERS] : read content from qt conf
 		$${QT_INSTALL_HEADERS} or $$QT_INSTALL_HEADERS : read content from var
@@ -324,7 +269,7 @@ QString QMakeProjectItem::interpreteVariable( const QString& variableName, const
 	QString dv = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
 	// environment var
 	if ( variableName.startsWith( "$$(" ) || dv == "PWD" )
-		return dv != "PWD" ? qgetenv( dv.toLocal8Bit().constData() ) : path();
+		return dv != "PWD" ? qgetenv( dv.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
 	else if ( variableName.startsWith( "$(" ) )
 		qWarning() << "Don't know how to proceed: " << variableName;
 	else if ( variableName.startsWith( "$$[" ) )
@@ -332,10 +277,10 @@ QString QMakeProjectItem::interpreteVariable( const QString& variableName, const
 	else
 	{
 		QString v;
-		QList<XUPItem*> variables = getVariables( this, dv, stopItem );
+		QList<XUPItem*> variables = getVariables( this, dv, callerItem );
 		foreach ( XUPItem* cit, variables )
 		{
-			if ( stopItem && cit == stopItem )
+			if ( callerItem && cit == callerItem )
 				return v;
 			
 			const QString o = cit->attribute( "operator", "=" );
@@ -343,22 +288,25 @@ QString QMakeProjectItem::interpreteVariable( const QString& variableName, const
 			for ( int i = 0; i < cit->count(); i++ )
 			{
 				XUPItem* ccit = cit->child( i );
-				cv += interpretValue( ccit ) +" ";
-				cv = cv.trimmed();
-				if ( o == "=" )
-					v = cv;
-				else if ( o == "-=" )
-					v.remove( cv );
-				else if ( o == "+=" )
-					v.append( " " +cv );
-				else if ( o == "*=" )
+				if ( ccit->type() == XUPItem::Value )
 				{
-					if ( !v.contains( cv ) )
+					cv += interpretValue( ccit, "content" ) +" ";
+					cv = cv.trimmed();
+					if ( o == "=" )
+						v = cv;
+					else if ( o == "-=" )
+						v.remove( cv );
+					else if ( o == "+=" )
 						v.append( " " +cv );
-				}
-				else if ( o == "~=" )
-				{
-					qWarning() << "Don't know how to interpretate ~= operator";
+					else if ( o == "*=" )
+					{
+						if ( !v.contains( cv ) )
+							v.append( " " +cv );
+					}
+					else if ( o == "~=" )
+					{
+						qWarning() << "Don't know how to interpretate ~= operator";
+					}
 				}
 			}
 		}
@@ -368,18 +316,16 @@ QString QMakeProjectItem::interpreteVariable( const QString& variableName, const
 	return defaultValue;
 }
 
-QString QMakeProjectItem::interpretValue( XUPItem* valueItem ) const
+QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
 {
-	//QRegExp rx( "\\$\\$?[\\{\\(\\[]?(\\w+)[\\}\\)\\]]?" );
-	//\$\$?[\w\s]+[\{\(\[]
 	QRegExp rx( "\\$\\$?[\\{\\(\\[]?(\\w+(?!\\w*\\s*[()]))[\\}\\)\\]]?" );
-	const QString dv = valueItem->attribute( "content" );
-	QString v = dv;
-	int p = 0;
-	while ( ( p = rx.indexIn( dv, p ) ) != -1 )
+	const QString content = callerItem->attribute( attribute );
+	QString value = content;
+	int pos = 0;
+	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
 	{
-		v.replace( rx.capturedTexts().value( 0 ), interpreteVariable( rx.capturedTexts().value( 0 ), valueItem ) );
-		p += rx.matchedLength();
+		value.replace( rx.cap( 0 ), interpreteVariable( rx.cap( 0 ), callerItem ) );
+		pos += rx.matchedLength();
 	}
-	return v;
+	return value;
 }
