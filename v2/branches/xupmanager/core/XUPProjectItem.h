@@ -39,9 +39,9 @@ public:
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
 	
-	virtual QList<XUPItem*> getVariables( const XUPItem* root, const QString& variableName, const XUPItem* stopItem = 0 ) const;
-	virtual QString interpreteVariable( const QString& variableName, const XUPItem* stopItem = 0, const QString& defaultValue = QString::null ) const;
-	virtual QString interpretValue( XUPItem* valueItem ) const;
+	virtual QList<XUPItem*> getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem = 0 ) const;
+	virtual QString interpreteVariable( const QString& variableName, const XUPItem* callerItem = 0, const QString& defaultValue = QString::null ) const;
+	virtual QString interpretValue( XUPItem* callerItem, const QString& attribute ) const;
 
 protected:
 	QDomDocument mDocument;
