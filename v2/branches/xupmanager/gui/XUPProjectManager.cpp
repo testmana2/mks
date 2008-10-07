@@ -6,6 +6,7 @@
 #include <QFileDialog>
 
 #include <QDebug>
+#include <QMenu>
 
 XUPProjectManager::XUPProjectManager( QWidget* parent )
 	: QWidget( parent )
@@ -15,6 +16,15 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	tbClose->setDefaultAction( action( atClose ) );
 	
 	verticalLayout_2->parentWidget()->hide();
+	
+	mDebugMenu = new QMenu( tbDebug );
+	tbDebug->setMenu( mDebugMenu );
+	tbDebug->setPopupMode( QToolButton::InstantPopup );
+	
+	mDebugMenu->addAction( "interpretValue" );
+	mDebugMenu->addAction( "project" );
+	mDebugMenu->addAction( "topLevelProject" );
+	mDebugMenu->addAction( "rootIncludeProject" );
 }
 
 XUPProjectManager::~XUPProjectManager()
@@ -28,15 +38,61 @@ void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 	setCurrentProject( project );
 }
 
-void XUPProjectManager::on_tbDebug_clicked()
+void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 {
 	const QModelIndex index = tvCurrentProject->currentIndex();
 	if ( !index.isValid() )
 		return;
 	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
+	
 	pteLog->appendPlainText( "------------------" );
-	pteLog->appendPlainText( item->attribute( "content" ).prepend( "Content: " ) );
-	pteLog->appendPlainText( item->project()->interpretValue( item, "content" ) );
+	
+	QString attribute;
+	
+	switch ( item->type() )
+	{
+		case XUPItem::Project:
+			attribute = "name";
+			break;
+		case XUPItem::Comment:
+			attribute = "value";
+			break;
+		case XUPItem::EmptyLine:
+			attribute = "count";
+			break;
+		case XUPItem::Variable:
+			attribute = "name";
+			break;
+		case XUPItem::Value:
+			attribute = "content";
+			break;
+		case XUPItem::Function:
+			attribute = "parameters";
+			break;
+		case XUPItem::Scope:
+			attribute = "name";
+			break;
+		case XUPItem::Unknow:
+			break;
+	}
+	
+	if ( action->text() == "interpretValue" )
+	{
+		pteLog->appendPlainText( item->attribute( attribute ).prepend( "Content: " ) );
+		pteLog->appendPlainText( item->project()->rootIncludeProject()->interpretValue( item, attribute ) );
+	}
+	else if ( action->text() == "project" )
+	{
+		pteLog->appendPlainText( item->project()->displayText() );
+	}
+	else if ( action->text() == "topLevelProject" )
+	{
+		pteLog->appendPlainText( item->project()->topLevelProject()->displayText() );
+	}
+	else if ( action->text() == "rootIncludeProject" )
+	{
+		pteLog->appendPlainText( item->project()->rootIncludeProject()->displayText() );
+	}
 }
 
 QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
@@ -97,8 +153,8 @@ void XUPProjectManager::openProject()
 	if ( project->open( projectItem, fn ) )
 	{
 		int id = cbProjects->count();
-		cbProjects->addItem( project->rootProjectName(), QVariant::fromValue<XUPProjectModel*>( project ) );
-		cbProjects->setItemIcon( id, project->rootProjectIcon() );
+		cbProjects->addItem( project->headerData( 0, Qt::Horizontal, Qt::DisplayRole ).toString(), QVariant::fromValue<XUPProjectModel*>( project ) );
+		cbProjects->setItemIcon( id, project->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
 		cbProjects->setCurrentIndex( id );
 	}
 	else

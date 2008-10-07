@@ -30,10 +30,6 @@ public:
 	virtual bool open( XUPProjectItem* projectItem, const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
 	virtual bool save();
-	
-	// name of root project
-	QString rootProjectName() const;
-	QIcon rootProjectIcon() const;
 
 protected:
 	XUPProjectItem* mRootProject;

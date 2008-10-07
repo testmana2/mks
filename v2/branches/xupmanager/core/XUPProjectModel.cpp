@@ -174,13 +174,3 @@ bool XUPProjectModel::save()
 	setLastError( tr( "Can't save project, not yet implemented !" ) );
 	return false;
 }
-
-QString XUPProjectModel::rootProjectName() const
-{
-	return mRootProject ? mRootProject->displayText() : QString::null;
-}
-
-QIcon XUPProjectModel::rootProjectIcon() const
-{
-	return mRootProject ? mRootProject->displayIcon() : QIcon();
-}

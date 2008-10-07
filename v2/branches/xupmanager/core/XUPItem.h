@@ -34,6 +34,7 @@ public:
 	XUPProjectItem* project() const;
 	// return the i child item
 	XUPItem* child( int i ) const;
+	// set a child item for row i
 	void setChild( int row, XUPItem* item );
 	// return the parent item
 	XUPItem* parent() const;
@@ -45,16 +46,6 @@ public:
 	void setRow( int row );
 	// return child count
 	int count() const;
-	
-	// a string to show when requesting null/invalid content
-	inline static QString null() { return "#Null"; }
-	// static tr member
-	inline QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }
-	
-	// view text, the text to shown in the item view
-	QString displayText() const;
-	// view icon, the icon to shown in the item view
-	QIcon displayIcon() const;
 	
 	// the enum version of type()
 	XUPItem::Type type() const;
@@ -68,6 +59,16 @@ public:
 	QVariant temporaryValue( const QString& key, const QVariant& defaultValue = QVariant() ) const;
 	// set the custom value associate with item type
 	void setTemporaryValue( const QString& key, const QVariant& value );
+	
+	// a string to show when requesting null/invalid content
+	inline static QString null() { return "#Null"; }
+	// static tr member
+	inline QString tr( const char* text ) const { return qApp->translate( "XUPItem", text ); }
+	
+	// view text, the text to shown in the item view
+	QString displayText() const;
+	// view icon, the icon to shown in the item view
+	QIcon displayIcon() const;
 
 protected:
 	QDomElement mDomElement;

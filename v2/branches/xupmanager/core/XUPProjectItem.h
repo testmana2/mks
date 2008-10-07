@@ -18,6 +18,10 @@ public:
 	QString path() const;
 	QString filePath( const QString& fileName ) const;
 	static XUPProjectItemInfos* projectInfos();
+	// return the most toplevel project ( ie: the model root project )
+	XUPProjectItem* topLevelProject() const;
+	// return the parent project for include project ( recursive parent project for include project, else return project itself )
+	XUPProjectItem* rootIncludeProject() const;
 	// return true if item is a variable wich values are files
 	bool isFileBased( XUPItem* item ) const;
 	// return true if item is a variable wich values are paths

@@ -26,6 +26,7 @@ public:
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
 	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
+	QMenu* mDebugMenu;
 	
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 
@@ -36,7 +37,7 @@ public slots:
 
 protected slots:
 	void on_cbProjects_currentIndexChanged( int id );
-	void on_tbDebug_clicked();
+	void on_tbDebug_triggered( QAction* action );
 };
 
 #endif // XUPPROJECTMANAGER_H
