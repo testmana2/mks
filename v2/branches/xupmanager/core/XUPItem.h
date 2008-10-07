@@ -59,6 +59,8 @@ public:
 	QVariant temporaryValue( const QString& key, const QVariant& defaultValue = QVariant() ) const;
 	// set the custom value associate with item type
 	void setTemporaryValue( const QString& key, const QVariant& value );
+	// clear temporary data represented by key
+	void clearTemporaryValue( const QString& key );
 	
 	// a string to show when requesting null/invalid content
 	inline static QString null() { return "#Null"; }
@@ -66,9 +68,9 @@ public:
 	inline QString tr( const char* text ) const { return qApp->translate( "XUPItem", text ); }
 	
 	// view text, the text to shown in the item view
-	QString displayText() const;
+	QString displayText();
 	// view icon, the icon to shown in the item view
-	QIcon displayIcon() const;
+	QIcon displayIcon();
 
 protected:
 	QDomElement mDomElement;
