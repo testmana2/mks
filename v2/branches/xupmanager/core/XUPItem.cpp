@@ -97,50 +97,76 @@ XUPItem::Type XUPItem::type() const
 	return XUPItem::Unknow;
 }
 
-QString XUPItem::displayText() const
+QString XUPItem::displayText()
 {
-	switch ( type() )
+	QString text;
+	
+	if ( temporaryValue( "hasDisplayText", false ).toBool() )
 	{
-		case XUPItem::Project:
-			return attribute( "name" );
-			break;
-		case XUPItem::Comment:
-			return attribute( "value" );
-			break;
-		case XUPItem::EmptyLine:
-			return tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( attribute( "count" ) );
-			break;
-		case XUPItem::Variable:
-			return project()->variableDisplayText( attribute( "name" ) );
-			break;
-		case XUPItem::Value:
-			return project()->valueDisplayText( const_cast<XUPItem*>( this ) );
-			break;
-		case XUPItem::Function:
-			return QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
-			break;
-		case XUPItem::Scope:
-			return attribute( "name" );
-			break;
-		default:
-			return "#Unknow";
-			break;
+		text = temporaryValue( "DisplayText" ).toString();
 	}
+	else
+	{
+		switch ( type() )
+		{
+			case XUPItem::Project:
+				text = attribute( "name" );
+				break;
+			case XUPItem::Comment:
+				text = attribute( "value" );
+				break;
+			case XUPItem::EmptyLine:
+				text = tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( attribute( "count" ) );
+				break;
+			case XUPItem::Variable:
+				text = project()->variableDisplayText( attribute( "name" ) );
+				break;
+			case XUPItem::Value:
+				text = project()->valueDisplayText( const_cast<XUPItem*>( this ) );
+				break;
+			case XUPItem::Function:
+				text = QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
+				break;
+			case XUPItem::Scope:
+				text = attribute( "name" );
+				break;
+			default:
+				text = "#Unknow";
+				break;
+		}
+		setTemporaryValue( "hasDisplayText", true );
+		setTemporaryValue( "DisplayText", text );
+	}
+	
+	return text;
 }
 
-QIcon XUPItem::displayIcon() const
+QIcon XUPItem::displayIcon()
 {
-	XUPProjectItem* pItem = project();
-	XUPItem* item = const_cast<XUPItem*>( this );
-	QString path = pItem->iconsPath();
-	QString fn = pIconManager::filePath( pItem->iconFileName( item ), path );
+	QIcon icon;
 	
-	if ( !QFile::exists( fn ) )
+	if ( temporaryValue( "hasDisplayIcon", false ).toBool() )
 	{
-		path = pItem->projectInfos()->pixmapsPath( XUPProjectItem::XUPProject );
+		icon = temporaryValue( "DisplayIcon" ).value<QIcon>();
+	}
+	else
+	{
+		XUPProjectItem* pItem = project();
+		XUPItem* item = const_cast<XUPItem*>( this );
+		QString path = pItem->iconsPath();
+		QString fn = pIconManager::filePath( pItem->iconFileName( item ), path );
+		
+		if ( !QFile::exists( fn ) )
+		{
+			path = pItem->projectInfos()->pixmapsPath( XUPProjectItem::XUPProject );
+		}
+		
+		icon = pIconManager::icon( pItem->iconFileName( item ), path );
+		setTemporaryValue( "hasDisplayIcon", true );
+		setTemporaryValue( "DisplayIcon", icon );
 	}
 	
-	return pIconManager::icon( pItem->iconFileName( item ), path );
+	return icon;
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
@@ -163,4 +189,9 @@ QVariant XUPItem::temporaryValue( const QString& key, const QVariant& defaultVal
 void XUPItem::setTemporaryValue( const QString& key, const QVariant& value )
 {
 	mTemporaryValues[ key ] = value;
+}
+
+void XUPItem::clearTemporaryValue( const QString& key )
+{
+	mTemporaryValues.remove( key );
 }
