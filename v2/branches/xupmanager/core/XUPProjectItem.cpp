@@ -54,6 +54,20 @@ XUPProjectItemInfos* XUPProjectItem::projectInfos()
 	return mXUPProjectInfos;
 }
 
+XUPProjectItem* XUPProjectItem::topLevelProject() const
+{
+	if ( mParentItem )
+		return mParentItem->project()->topLevelProject();
+	return const_cast<XUPProjectItem*>( this );
+}
+
+XUPProjectItem* XUPProjectItem::rootIncludeProject() const
+{
+	if ( mParentItem && mParentItem->type() == XUPItem::Function && mParentItem->attribute( "name" ).toLower() == "include" )
+		return mParentItem->project()->rootIncludeProject();
+	return const_cast<XUPProjectItem*>( this );
+}
+
 bool XUPProjectItem::isFileBased( XUPItem* item ) const
 {
 	return item->type() == XUPItem::Variable && mXUPProjectInfos->isFileBased( projectType(), item->attribute( "name" ) );
@@ -151,8 +165,7 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 	{
 		if ( !function->temporaryValue( "includeHandled", false ).toBool() )
 		{
-#warning Need use a highLevelProject wich is the most appropriate toplevel project
-			const QString parameters = function->project()->interpretValue( function, "parameters" );
+			const QString parameters = function->project()->rootIncludeProject()->interpretValue( function, "parameters" );
 			const QString fn = QFileInfo( parameters ).isRelative() ? filePath( parameters ) : parameters;
 			XUPProjectItem* project = newItem();
 			if ( project->open( fn, attribute( "encoding" ) ) )
