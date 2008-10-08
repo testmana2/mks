@@ -257,7 +257,7 @@ void QMakeProjectItem::close()
 {
 }
 
-QString QMakeProjectItem::interpreteVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
+QString QMakeProjectItem::interpretVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
 {
 	/*
 		$$[QT_INSTALL_HEADERS] : read content from qt conf
@@ -324,7 +324,7 @@ QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& at
 	int pos = 0;
 	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
 	{
-		value.replace( rx.cap( 0 ), interpreteVariable( rx.cap( 0 ), callerItem ) );
+		value.replace( rx.cap( 0 ), interpretVariable( rx.cap( 0 ), callerItem ) );
 		pos += rx.matchedLength();
 	}
 	return value;

@@ -44,7 +44,7 @@ public:
 	virtual void close();
 	
 	virtual QList<XUPItem*> getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem = 0 ) const;
-	virtual QString interpreteVariable( const QString& variableName, const XUPItem* callerItem = 0, const QString& defaultValue = QString::null ) const;
+	virtual QString interpretVariable( const QString& variableName, const XUPItem* callerItem = 0, const QString& defaultValue = QString::null ) const;
 	virtual QString interpretValue( XUPItem* callerItem, const QString& attribute ) const;
 
 protected:
