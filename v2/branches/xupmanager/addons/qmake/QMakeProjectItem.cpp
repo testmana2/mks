@@ -206,7 +206,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 					if ( project->open( fi.absoluteFilePath(), attribute( "encoding" ) ) )
 					{
 						int count = item->count();
-						project->setParent( item );
+						project->XUPItem::setParent( item );
 						project->setRow( count );
 						item->setChild( count, project );
 					}

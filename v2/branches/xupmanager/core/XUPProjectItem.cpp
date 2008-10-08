@@ -1,4 +1,5 @@
 #include "XUPProjectItem.h"
+#include "../iconmanager/pIconManager.h"
 
 #include <QTextCodec>
 #include <QFile>
@@ -121,6 +122,76 @@ QString XUPProjectItem::valueDisplayText( XUPItem* valueItem ) const
 {
 	bool mIsFileBased = isFileBased( valueItem->parent() );
 	return mIsFileBased ? QFileInfo( valueItem->attribute( "content" ) ).fileName() : valueItem->attribute( "content" );
+}
+
+QString XUPProjectItem::itemDisplayText( XUPItem* item )
+{
+	QString text;
+	
+	if ( item->temporaryValue( "hasDisplayText", false ).toBool() )
+	{
+		text = item->temporaryValue( "displayText" ).toString();
+	}
+	else
+	{
+		switch ( item->type() )
+		{
+			case XUPItem::Project:
+				text = item->attribute( "name" );
+				break;
+			case XUPItem::Comment:
+				text = item->attribute( "value" );
+				break;
+			case XUPItem::EmptyLine:
+				text = tr( "%1 empty line(s)" ).arg( item->attribute( "count" ) );
+				break;
+			case XUPItem::Variable:
+				text = variableDisplayText( item->attribute( "name" ) );
+				break;
+			case XUPItem::Value:
+				text = valueDisplayText( item );
+				break;
+			case XUPItem::Function:
+				text = QString( "%1(%2)" ).arg( item->attribute( "name" ) ).arg( item->attribute( "parameters" ) );
+				break;
+			case XUPItem::Scope:
+				text = item->attribute( "name" );
+				break;
+			default:
+				text = "#Unknow";
+				break;
+		}
+		item->setTemporaryValue( "hasDisplayText", true );
+		item->setTemporaryValue( "displayText", text );
+	}
+	
+	return text;
+}
+
+QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
+{
+	QIcon icon;
+	
+	if ( item->temporaryValue( "hasDisplayIcon", false ).toBool() )
+	{
+		icon = item->temporaryValue( "displayIcon" ).value<QIcon>();
+	}
+	else
+	{
+		QString path = iconsPath();
+		QString fn = pIconManager::filePath( iconFileName( item ), path );
+		
+		if ( !QFile::exists( fn ) )
+		{
+			path = mXUPProjectInfos->pixmapsPath( XUPProjectItem::XUPProject );
+		}
+		
+		icon = pIconManager::icon( iconFileName( item ), path );
+		item->setTemporaryValue( "hasDisplayIcon", true );
+		item->setTemporaryValue( "displayIcon", icon );
+	}
+	
+	return icon;
 }
 
 void XUPProjectItem::registerProjectType() const

@@ -1,8 +1,5 @@
 #include "XUPItem.h"
 #include "XUPProjectItem.h"
-#include "../iconmanager/pIconManager.h"
-
-#include <QFile>
 
 XUPItem::XUPItem( const QDomElement& node, int row, XUPItem* parent )
 {
@@ -97,76 +94,14 @@ XUPItem::Type XUPItem::type() const
 	return XUPItem::Unknow;
 }
 
-QString XUPItem::displayText()
+QString XUPItem::displayText() const
 {
-	QString text;
-	
-	if ( temporaryValue( "hasDisplayText", false ).toBool() )
-	{
-		text = temporaryValue( "DisplayText" ).toString();
-	}
-	else
-	{
-		switch ( type() )
-		{
-			case XUPItem::Project:
-				text = attribute( "name" );
-				break;
-			case XUPItem::Comment:
-				text = attribute( "value" );
-				break;
-			case XUPItem::EmptyLine:
-				text = tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( attribute( "count" ) );
-				break;
-			case XUPItem::Variable:
-				text = project()->variableDisplayText( attribute( "name" ) );
-				break;
-			case XUPItem::Value:
-				text = project()->valueDisplayText( const_cast<XUPItem*>( this ) );
-				break;
-			case XUPItem::Function:
-				text = QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
-				break;
-			case XUPItem::Scope:
-				text = attribute( "name" );
-				break;
-			default:
-				text = "#Unknow";
-				break;
-		}
-		setTemporaryValue( "hasDisplayText", true );
-		setTemporaryValue( "DisplayText", text );
-	}
-	
-	return text;
+	return project()->itemDisplayText( const_cast<XUPItem*>( this ) );
 }
 
-QIcon XUPItem::displayIcon()
+QIcon XUPItem::displayIcon() const
 {
-	QIcon icon;
-	
-	if ( temporaryValue( "hasDisplayIcon", false ).toBool() )
-	{
-		icon = temporaryValue( "DisplayIcon" ).value<QIcon>();
-	}
-	else
-	{
-		XUPProjectItem* pItem = project();
-		XUPItem* item = const_cast<XUPItem*>( this );
-		QString path = pItem->iconsPath();
-		QString fn = pIconManager::filePath( pItem->iconFileName( item ), path );
-		
-		if ( !QFile::exists( fn ) )
-		{
-			path = pItem->projectInfos()->pixmapsPath( XUPProjectItem::XUPProject );
-		}
-		
-		icon = pIconManager::icon( pItem->iconFileName( item ), path );
-		setTemporaryValue( "hasDisplayIcon", true );
-		setTemporaryValue( "DisplayIcon", icon );
-	}
-	
-	return icon;
+	return project()->itemDisplayIcon( const_cast<XUPItem*>( this ) );
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
