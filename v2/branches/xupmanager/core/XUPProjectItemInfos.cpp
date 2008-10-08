@@ -121,7 +121,7 @@ StringStringListList XUPProjectItemInfos::variableSuffixes( int projectType ) co
 	return mVariableSuffixes.value( projectType );
 }
 
-QString XUPProjectItemInfos::projectsFilter()
+QString XUPProjectItemInfos::projectsFilter() const
 {
 	QStringList suffixes;
 	QStringList filters;

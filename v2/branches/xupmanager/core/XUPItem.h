@@ -4,7 +4,6 @@
 #include <QDomElement>
 #include <QMap>
 #include <QIcon>
-#include <QApplication>
 #include <QVariant>
 
 class XUPProjectItem;
@@ -47,30 +46,25 @@ public:
 	// return child count
 	int count() const;
 	
-	// the enum version of type()
+	// the type enum of this item
 	XUPItem::Type type() const;
 
 	// return the content of attribute name or defaultValue if null/invalid
-	QString attribute( const QString& name, const QString& defaultValue = null() ) const;
-	// set the attribute value
+	QString attribute( const QString& name, const QString& defaultValue = QString::null ) const;
+	// set the attribute value for name
 	void setAttribute( const QString& name, const QString& value );
 	
-	// return the custom value associate with the item type, or defaultValue if null/invalid
+	// return the stored temporary value for key or defaultValue
 	QVariant temporaryValue( const QString& key, const QVariant& defaultValue = QVariant() ) const;
-	// set the custom value associate with item type
+	// set the temporary value for key
 	void setTemporaryValue( const QString& key, const QVariant& value );
 	// clear temporary data represented by key
 	void clearTemporaryValue( const QString& key );
 	
-	// a string to show when requesting null/invalid content
-	inline static QString null() { return "#Null"; }
-	// static tr member
-	inline QString tr( const char* text ) const { return qApp->translate( "XUPItem", text ); }
-	
 	// view text, the text to shown in the item view
-	QString displayText();
+	QString displayText() const;
 	// view icon, the icon to shown in the item view
-	QIcon displayIcon();
+	QIcon displayIcon() const;
 
 protected:
 	QDomElement mDomElement;
