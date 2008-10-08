@@ -18,7 +18,7 @@ public:
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();
 	
-	virtual QString interpreteVariable( const QString& variableName, const XUPItem* callerItem = 0, const QString& defaultValue = QString::null ) const;
+	virtual QString interpretVariable( const QString& variableName, const XUPItem* callerItem = 0, const QString& defaultValue = QString::null ) const;
 	virtual QString interpretValue( XUPItem* callerItem, const QString& attribute ) const;
 };
 

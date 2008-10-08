@@ -297,7 +297,7 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 	return variables;
 }
 
-QString XUPProjectItem::interpreteVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
+QString XUPProjectItem::interpretVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
 {
 	/*
 		$${varName} or $$varName : read content from defined variable
@@ -344,7 +344,7 @@ QString XUPProjectItem::interpretValue( XUPItem* callerItem, const QString& attr
 	int pos = 0;
 	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
 	{
-		value.replace( rx.cap( 0 ), interpreteVariable( rx.cap( 0 ), callerItem ) );
+		value.replace( rx.cap( 0 ), interpretVariable( rx.cap( 0 ), callerItem ) );
 		pos += rx.matchedLength();
 	}
 	return value;

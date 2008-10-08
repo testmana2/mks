@@ -22,6 +22,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	tbDebug->setPopupMode( QToolButton::InstantPopup );
 	
 	mDebugMenu->addAction( "interpretValue" );
+	mDebugMenu->addAction( "interpretHandValue" );
 	mDebugMenu->addAction( "project" );
 	mDebugMenu->addAction( "topLevelProject" );
 	mDebugMenu->addAction( "rootIncludeProject" );
@@ -80,6 +81,10 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 	{
 		pteLog->appendPlainText( item->attribute( attribute ).prepend( "Content: " ) );
 		pteLog->appendPlainText( item->project()->rootIncludeProject()->interpretValue( item, attribute ) );
+	}
+	else if ( action->text() == "interpretHandValue" )
+	{
+		pteLog->appendPlainText( "'" +item->attribute( attribute ) +"'" +" content: " +item->project()->rootIncludeProject()->interpretVariable( item->attribute( attribute ), item, "#Null" ) );
 	}
 	else if ( action->text() == "project" )
 	{
