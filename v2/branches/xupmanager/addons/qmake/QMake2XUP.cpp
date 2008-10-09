@@ -1,4 +1,5 @@
 #include "QMake2XUP.h"
+#include "QMakeProjectItem.h"
 
 /**************************
 WARNING :
@@ -11,6 +12,7 @@ si "nested" n'existe pas, il vaut "false"
 #include <QtCore>
 #include <QtGui>
 #include <QtXml>
+#include <QTextCodec>
 
 #include <exception>
 
@@ -35,7 +37,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 	QFile f( s );
 	if( !f.open( QIODevice::ReadOnly | QIODevice::Text ) )
 		return QString();
-	QString data = QString::fromUtf8( f.readAll() );
+	QString data = QTextCodec::codecForName( encoding.toUtf8() )->toUnicode( f.readAll() );
 	
 	QVector<QString> temp_v = data.split( '\n' ).toVector();
 	QVector<QString> v;
@@ -58,9 +60,8 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 	QRegExp comments("^#(.*)");
 	QRegExp varLine("^(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
 	
-	//QMakeXUPItem xi;
-	const QStringList fileVariables; // = xi.fileVariables();
-	const QStringList pathVariables; // = xi.pathVariables();
+	const QStringList fileVariables = QMakeProjectItem::projectInfos()->fileVariables( QMakeProjectItem::QMakeProject );
+	const QStringList pathVariables = QMakeProjectItem::projectInfos()->pathVariables( QMakeProjectItem::QMakeProject );
 	
 	file.append( QString( "<!DOCTYPE XUPProject>\n<project encoding=\"%1\" name=\"%2\" expanded=\"false\">\n" ).arg( encoding ).arg( QFileInfo( s ).fileName() ) );
 	try
