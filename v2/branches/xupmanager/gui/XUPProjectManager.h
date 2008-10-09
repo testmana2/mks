@@ -19,13 +19,9 @@ public:
 	
 	QAction* action( XUPProjectManager::ActionType type );
 	XUPProjectModel* currentProject() const;
-	
-	void registerProjectItem( XUPProjectItem* item );
-	void unRegisterProjectType( int projectType );
 
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
-	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
 	QMenu* mDebugMenu;
 	
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;

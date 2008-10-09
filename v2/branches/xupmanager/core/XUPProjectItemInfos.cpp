@@ -1,6 +1,9 @@
 #include "XUPProjectItemInfos.h"
+#include "XUPProjectItem.h"
 
 #include <QDir>
+
+#include <QDebug>
 
 XUPProjectItemInfos::XUPProjectItemInfos()
 {
@@ -8,18 +11,18 @@ XUPProjectItemInfos::XUPProjectItemInfos()
 
 bool XUPProjectItemInfos::isRegisteredType( int projectType ) const
 {
-	return mRegistered.contains( projectType );
+	return mRegisteredProjectItems.keys().contains( projectType );
 }
 
-void XUPProjectItemInfos::registerType( int projectType )
+void XUPProjectItemInfos::registerType( int projectType, XUPProjectItem* projectItem )
 {
 	if ( !isRegisteredType( projectType ) )
-		mRegistered << projectType;
+		mRegisteredProjectItems[ projectType ] = projectItem;
 }
 
 void XUPProjectItemInfos::unRegisterType( int projectType )
 {
-	mRegistered.removeAll( projectType );
+	delete mRegisteredProjectItems.take( projectType );
 	mPixmapsPath.remove( projectType );
 	mOperators.remove( projectType );
 	mFilteredVariables.remove( projectType );
@@ -29,6 +32,12 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 	mVariableLabels.remove( projectType );
 	mVariableIcons.remove( projectType );
 	mVariableSuffixes.remove( projectType );
+}
+
+XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) const
+{
+	int projectType = projectTypeForFileName( fileName );
+	return projectType == XUPProjectItem::InvalidProject ? 0 : mRegisteredProjectItems[ projectType ]->newProject();
 }
 
 void XUPProjectItemInfos::registerPixmapsPath( int projectType, const QString& path )
@@ -148,7 +157,7 @@ int XUPProjectItemInfos::projectTypeForFileName( const QString& fileName ) const
 				return projectType;
 		}
 	}
-	return -1;
+	return XUPProjectItem::InvalidProject;
 }
 
 bool XUPProjectItemInfos::isFileBased( int projectType, const QString& variableName ) const

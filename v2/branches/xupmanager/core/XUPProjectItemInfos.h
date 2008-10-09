@@ -12,6 +12,8 @@ typedef QList<PairStringStringList> StringStringListList;
 typedef QPair<QString, QString> PairStringString;
 typedef QList<PairStringString> StringStringList;
 
+class XUPProjectItem;
+
 class XUPProjectItemInfos
 {
 	friend class XUPProjectItem;
@@ -24,9 +26,12 @@ public:
 	// return true if proejct type is a registered proejct type else false
 	bool isRegisteredType( int projectType ) const;
 	// register the proejct type
-	void registerType( int projectType );
+	void registerType( int projectType, XUPProjectItem* projectItem );
 	// unregister the projecttype
 	void unRegisterType( int projectType );
+	
+	// return a valid project item for fileName
+	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 	
 	// register the resource path for project type pixmap
 	void registerPixmapsPath( int projectType, const QString& path );
@@ -87,7 +92,7 @@ public:
 	QString displayText( int projectType, const QString& variableName ) const;
 	
 protected:
-	QList<int> mRegistered; // registered project type
+	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
 	QMap<int, QString> mPixmapsPath; // project type, path
 	QMap<int, QStringList> mOperators; // project type, operators
 	QMap<int, QStringList> mFilteredVariables; // project type, filtered variable name

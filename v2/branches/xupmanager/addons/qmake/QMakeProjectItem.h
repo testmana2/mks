@@ -5,15 +5,17 @@
 
 class QMakeProjectItem : public XUPProjectItem
 {
+	Q_OBJECT
+	
 public:
 	enum ProjectType { QMakeProject = 1 };
+	
 	QMakeProjectItem();
 	virtual ~QMakeProjectItem();
 	
 	inline virtual int projectType() const { return QMakeProjectItem::QMakeProject; }
-	inline virtual QString tr( const char* text ) const { return qApp->translate( "QMakeProjectItem", text ); }
 	virtual void registerProjectType() const;
-	inline virtual XUPProjectItem* newItem() const { return new QMakeProjectItem(); }
+	inline virtual XUPProjectItem* newProject() const { return new QMakeProjectItem(); }
 	virtual void customRowCount( XUPItem* item ) const;
 	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
 	virtual void close();

@@ -2,9 +2,8 @@
 #include "../iconmanager/pIconManager.h"
 
 #include <QTextCodec>
-#include <QFile>
-#include <QDir>
 #include <QFileInfo>
+#include <QDir>
 #include <QRegExp>
 
 #include <QDebug>
@@ -14,10 +13,6 @@ XUPProjectItemInfos* XUPProjectItem::mXUPProjectInfos = new XUPProjectItemInfos(
 XUPProjectItem::XUPProjectItem()
 	: XUPItem( QDomElement(), -1, 0 )
 {
-	if ( !mXUPProjectInfos->isRegisteredType( projectType() ) )
-	{
-		registerProjectType();
-	}
 }
 
 XUPProjectItem::~XUPProjectItem()
@@ -26,17 +21,17 @@ XUPProjectItem::~XUPProjectItem()
 
 void XUPProjectItem::setLastError( const QString& error )
 {
-	setTemporaryValue( "lasterror", error );
+	setTemporaryValue( "lastError", error );
 }
 
 QString XUPProjectItem::lastError() const
 {
-	return temporaryValue( "lasterror" ).toString();
+	return temporaryValue( "lastError" ).toString();
 }
 
 QString XUPProjectItem::fileName() const
 {
-	return temporaryValue( "filename" ).toString();
+	return temporaryValue( "fileName" ).toString();
 }
 
 QString XUPProjectItem::path() const
@@ -46,6 +41,8 @@ QString XUPProjectItem::path() const
 
 QString XUPProjectItem::filePath( const QString& fn ) const
 {
+	if ( fn.isEmpty() )
+		return QString::null;
 	QString fname = path().append( "/" ).append( fn );
 	return QDir::cleanPath( fname );
 }
@@ -106,10 +103,12 @@ QString XUPProjectItem::iconsPath() const
 {
 	int pType = projectType();
 	QString path = mXUPProjectInfos->pixmapsPath( pType );
+	
 	if ( path.isEmpty() && pType != XUPProjectItem::XUPProject )
 	{
 		path = mXUPProjectInfos->pixmapsPath( XUPProjectItem::XUPProject );
 	}
+	
 	return path;
 }
 
@@ -194,128 +193,6 @@ QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
 	return icon;
 }
 
-void XUPProjectItem::registerProjectType() const
-{
-	// get proejct type
-	int pType = projectType();
-	
-	// register it
-	mXUPProjectInfos->unRegisterType( pType );
-	mXUPProjectInfos->registerType( pType );
-	
-	// values
-	const QString mPixmapsPath = ":/items";
-	const QStringList mOperators = QStringList( "=" );
-	const QStringList mFilteredVariables = QStringList( "FILES" );
-	const QStringList mFileVariables = QStringList( "FILES" );
-	const StringStringListList mSuffixes = StringStringListList()
-		<< qMakePair( tr( QT_TR_NOOP( "XUP Project" ) ), QStringList( "*.xup" ) )
-		<< qMakePair( tr( QT_TR_NOOP( "XUP Include Project" ) ), QStringList( "*.xui" ) );
-	const StringStringList mVariableLabels = StringStringList()
-		<< qMakePair( QString( "FILES" ), tr( QT_TR_NOOP( "Files" ) ) );
-	const StringStringList mVariableIcons = StringStringList()
-		<< qMakePair( QString( "FILES" ), QString( "files" ) );
-	const StringStringListList mVariableSuffixes = StringStringListList()
-		<< qMakePair( QString( "FILES" ), QStringList( "*" ) );
-	
-	// register values
-	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
-	mXUPProjectInfos->registerOperators( pType, mOperators );
-	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
-	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
-	mXUPProjectInfos->registerPathVariables( pType, mFileVariables );
-	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
-	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
-	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerVariableSuffixes( pType, mVariableSuffixes );
-}
-
-void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
-{
-	if ( function->type() == XUPItem::Function && function->attribute( "name" ).toLower() == "include" )
-	{
-		if ( !function->temporaryValue( "includeHandled", false ).toBool() )
-		{
-			const QString parameters = function->project()->rootIncludeProject()->interpretValue( function, "parameters" );
-			const QString fn = QFileInfo( parameters ).isRelative() ? filePath( parameters ) : parameters;
-			XUPProjectItem* project = newItem();
-			if ( project->open( fn, attribute( "encoding" ) ) )
-			{
-				int count = function->count();
-				project->mParentItem = function;
-				project->mRowNumber = count;
-				function->mChildItems[ count ] = project;
-			}
-			else
-			{
-				qWarning() << "Failed to handle include" << function->attribute( "parameters" ) << parameters;
-				delete project;
-			}
-			function->setTemporaryValue( "includeHandled", true );
-		}
-	}
-}
-
-void XUPProjectItem::customRowCount( XUPItem* item ) const
-{
-	Q_UNUSED( item );
-}
-
-bool XUPProjectItem::open( const QString& fileName, const QString& encoding )
-{
-	// get QFile
-	QFile file( fileName );
-	
-	// check existence
-	if ( !file.exists() )
-	{
-		setLastError( "file not exists" );
-		return false;
-	}
-	
-	// try open it for reading
-	if ( !file.open( QIODevice::ReadOnly ) )
-	{
-		setLastError( "can't open file for reading" );
-		return false;
-	}
-	
-	// decode content
-	QTextCodec* codec = QTextCodec::codecForName( encoding.toUtf8() );
-	QString buffer = codec->toUnicode( file.readAll() );
-	
-	// parse content
-	QString errorMsg;
-	int errorLine;
-	int errorColumn;
-	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
-	{
-		setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
-		return false;
-	}
-	
-	// check project validity
-	mDomElement = mDocument.firstChildElement( "project" );
-	if ( mDomElement.isNull() )
-	{
-		setLastError("no project node" );
-		return false;
-	}
-	
-	// all is ok
-	setAttribute( "encoding", encoding );
-	setTemporaryValue( "filename", fileName );
-	setLastError( QString::null );
-	mRowNumber = 0;
-	file.close();
-	
-	return true;
-}
-
-void XUPProjectItem::close()
-{
-}
-
 QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem ) const
 {
 	QList<XUPItem*> variables;
@@ -376,12 +253,13 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 	*/
 	
 	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '(', "" ).replace( ')', "" );
+	QString value;
+	
 	// environment var
 	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
-		return name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
+		value = name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
 	else
 	{
-		QString value;
 		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
 		foreach ( XUPItem* variableItem, variableItems )
 		{
@@ -401,10 +279,9 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 				}
 			}
 		}
-		return value;
 	}
 	
-	return defaultValue;
+	return value.isEmpty() ? defaultValue.trimmed() : value.trimmed();
 }
 
 QString XUPProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
@@ -413,10 +290,134 @@ QString XUPProjectItem::interpretValue( XUPItem* callerItem, const QString& attr
 	const QString content = callerItem->attribute( attribute );
 	QString value = content;
 	int pos = 0;
+	
 	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
 	{
 		value.replace( rx.cap( 0 ), interpretVariable( rx.cap( 0 ), callerItem ) );
 		pos += rx.matchedLength();
 	}
+	
 	return value;
+}
+
+void XUPProjectItem::registerProjectType() const
+{
+	// get proejct type
+	int pType = projectType();
+	
+	// register it
+	mXUPProjectInfos->unRegisterType( pType );
+	mXUPProjectInfos->registerType( pType, const_cast<XUPProjectItem*>( this ) );
+	
+	// values
+	const QString mPixmapsPath = ":/items";
+	const QStringList mOperators = QStringList( "=" );
+	const QStringList mFilteredVariables = QStringList( "FILES" );
+	const QStringList mFileVariables = QStringList( "FILES" );
+	const StringStringListList mSuffixes = StringStringListList()
+		<< qMakePair( tr( QT_TR_NOOP( "XUP Project" ) ), QStringList( "*.xup" ) )
+		<< qMakePair( tr( QT_TR_NOOP( "XUP Include Project" ) ), QStringList( "*.xui" ) );
+	const StringStringList mVariableLabels = StringStringList()
+		<< qMakePair( QString( "FILES" ), tr( "Files" ) );
+	const StringStringList mVariableIcons = StringStringList()
+		<< qMakePair( QString( "FILES" ), QString( "files" ) );
+	const StringStringListList mVariableSuffixes = StringStringListList()
+		<< qMakePair( QString( "FILES" ), QStringList( "*" ) );
+	
+	// register values
+	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
+	mXUPProjectInfos->registerOperators( pType, mOperators );
+	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
+	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
+	mXUPProjectInfos->registerPathVariables( pType, mFileVariables );
+	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
+	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
+	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
+	mXUPProjectInfos->registerVariableSuffixes( pType, mVariableSuffixes );
+}
+
+void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
+{
+	if ( function->type() == XUPItem::Function && function->attribute( "name" ).toLower() == "include" )
+	{
+		if ( !function->temporaryValue( "includeHandled", false ).toBool() )
+		{
+			const QString parameters = function->project()->rootIncludeProject()->interpretValue( function, "parameters" );
+			const QString fn = QFileInfo( parameters ).isRelative() ? filePath( parameters ) : parameters;
+			XUPProjectItem* project = newProject();
+			if ( project->open( fn, attribute( "encoding" ) ) )
+			{
+				int count = function->count();
+				project->mParentItem = function;
+				project->mRowNumber = count;
+				function->mChildItems[ count ] = project;
+			}
+			else
+			{
+				qWarning() << "Failed to handle include" << function->attribute( "parameters" ) << parameters << fn;
+				delete project;
+			}
+			function->setTemporaryValue( "includeHandled", true );
+		}
+	}
+}
+
+void XUPProjectItem::customRowCount( XUPItem* item ) const
+{
+	Q_UNUSED( item );
+}
+
+bool XUPProjectItem::open( const QString& fileName, const QString& encoding )
+{
+	// get QFile
+	QFile file( fileName );
+	
+	// check existence
+	if ( !file.exists() )
+	{
+		setLastError( "file not exists" );
+		return false;
+	}
+	
+	// try open it for reading
+	if ( !file.open( QIODevice::ReadOnly ) )
+	{
+		setLastError( "can't open file for reading" );
+		return false;
+	}
+	
+	// decode content
+	QTextCodec* codec = QTextCodec::codecForName( encoding.toUtf8() );
+	QString buffer = codec->toUnicode( file.readAll() );
+	
+	// parse content
+	QString errorMsg;
+	int errorLine;
+	int errorColumn;
+	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
+	{
+		setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
+		return false;
+	}
+	
+	// check project validity
+	mDomElement = mDocument.firstChildElement( "project" );
+	if ( mDomElement.isNull() )
+	{
+		setLastError( "no project node" );
+		return false;
+	}
+	
+	// all is ok
+	setAttribute( "encoding", encoding );
+	setTemporaryValue( "fileName", fileName );
+	setLastError( QString::null );
+	mRowNumber = 0;
+	file.close();
+	
+	return true;
+}
+
+void XUPProjectItem::close()
+{
 }
