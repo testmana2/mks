@@ -9,9 +9,12 @@ int main( int argc, char** argv )
 {
 	QApplication app( argc, argv );
 	
+	// register project type
+	( new XUPProjectItem() )->registerProjectType();
+	( new QMakeProjectItem() )->registerProjectType();
+	
+	// create project manager
 	XUPProjectManager pm;
-	pm.registerProjectItem( new XUPProjectItem() );
-	pm.registerProjectItem( new QMakeProjectItem() );
 	pm.show();
 	pm.move( 0, 0 );
 	pm.resize( 400, app.desktop()->availableGeometry().height() );

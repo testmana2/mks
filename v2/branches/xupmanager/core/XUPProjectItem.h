@@ -10,7 +10,7 @@ class XUPProjectItem : public QObject, public XUPItem
 	
 public:
 	// project type id
-	enum ProjectType { XUPProject = 0 };
+	enum ProjectType { InvalidProject = -1, XUPProject = 0 };
 	
 	// ctor
 	XUPProjectItem();
@@ -57,17 +57,26 @@ public:
 	// return the display icon for the project item
 	QIcon itemDisplayIcon( XUPItem* item );
 	
-	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
-	virtual void registerProjectType() const;
-	inline virtual XUPProjectItem* newItem() const { return new XUPProjectItem(); }
-	virtual void handleIncludeItem( XUPItem* function ) const;
-	virtual void customRowCount( XUPItem* item ) const;
-	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
-	virtual void close();
-	
+	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned
 	virtual QList<XUPItem*> getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem = 0 ) const;
+	// return the result of interpreting the variable variableName until caller item if defined, or until complete tree is scaned or default value if variable is empty
 	virtual QString interpretVariable( const QString& variableName, const XUPItem* callerItem = 0, const QString& defaultValue = QString::null ) const;
 	virtual QString interpretValue( XUPItem* callerItem, const QString& attribute ) const;
+	
+	// return the project type id
+	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
+	// register the project type
+	virtual void registerProjectType() const;
+	// return a new instance of this kind of projecttype
+	inline virtual XUPProjectItem* newProject() const { return new XUPProjectItem(); }
+	// if the given item is a include function, try handling it if needed
+	virtual void handleIncludeItem( XUPItem* function ) const;
+	// reimplement this member to allow custom row count, by example to open subproject
+	virtual void customRowCount( XUPItem* item ) const;
+	// open a project with encoding
+	virtual bool open( const QString& fileName, const QString& encoding = QLatin1String( "UTF-8" ) );
+	// close the proejct
+	virtual void close();
 
 protected:
 	QDomDocument mDocument;

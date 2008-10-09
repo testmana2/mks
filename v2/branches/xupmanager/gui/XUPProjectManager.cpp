@@ -132,12 +132,7 @@ QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 
 XUPProjectItem* XUPProjectManager::newProjectItem( const QString& fileName ) const
 {
-	int projectType = XUPProjectItem::projectInfos()->projectTypeForFileName( fileName );
-	if ( mRegisteredProjectItems.value( projectType ) )
-	{
-		return mRegisteredProjectItems[ projectType ]->newItem();
-	}
-	return 0;
+	return XUPProjectItem::projectInfos()->newProjectItem( fileName );
 }
 
 void XUPProjectManager::openProject()
@@ -199,23 +194,5 @@ void XUPProjectManager::setCurrentProject( XUPProjectModel* project )
 	if ( cbProjects->currentIndex() != id )
 	{
 		cbProjects->setCurrentIndex( id );
-	}
-}
-
-void XUPProjectManager::registerProjectItem( XUPProjectItem* item )
-{
-	int pType = item->projectType();
-	if ( mRegisteredProjectItems.keys().contains( pType ) )
-		return;
-	item->registerProjectType();
-	mRegisteredProjectItems[ pType ] = item;
-}
-
-void XUPProjectManager::unRegisterProjectType( int projectType )
-{
-	if ( mRegisteredProjectItems.keys().contains( projectType ) )
-	{
-		XUPProjectItem::projectInfos()->unRegisterType( projectType );
-		delete mRegisteredProjectItems.take( projectType );
 	}
 }
