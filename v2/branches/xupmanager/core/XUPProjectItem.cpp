@@ -121,7 +121,7 @@ QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
 QString XUPProjectItem::valueDisplayText( XUPItem* valueItem ) const
 {
 	bool mIsFileBased = isFileBased( valueItem->parent() );
-	return mIsFileBased ? QFileInfo( valueItem->attribute( "content" ) ).fileName() : valueItem->attribute( "content" );
+	return mIsFileBased ? QFileInfo( valueItem->attribute( "content" ).remove( '"' ) ).fileName() : valueItem->attribute( "content" );
 }
 
 QString XUPProjectItem::itemDisplayText( XUPItem* item )
