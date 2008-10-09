@@ -81,6 +81,7 @@ public:
 protected:
 	QDomDocument mDocument;
 	static XUPProjectItemInfos* mXUPProjectInfos;
+	static bool mFoundCallerItem;
 };
 
 #endif // XUPPROJECTITEM_H

@@ -22,7 +22,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	tbDebug->setPopupMode( QToolButton::InstantPopup );
 	
 	mDebugMenu->addAction( "interpretValue" );
-	mDebugMenu->addAction( "interpretHandValue" );
+	mDebugMenu->addAction( "interpretVariable" );
 	mDebugMenu->addAction( "project" );
 	mDebugMenu->addAction( "topLevelProject" );
 	mDebugMenu->addAction( "rootIncludeProject" );
@@ -79,12 +79,19 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 	
 	if ( action->text() == "interpretValue" )
 	{
-		pteLog->appendPlainText( item->attribute( attribute ).prepend( "Content: " ) );
-		pteLog->appendPlainText( item->project()->rootIncludeProject()->interpretValue( item, attribute ) );
+		if ( item->type() == XUPItem::Value )
+		{
+			pteLog->appendPlainText( item->attribute( attribute ).prepend( "Interpret value '" ).append( "'" ) );
+			pteLog->appendPlainText( item->project()->rootIncludeProject()->interpretValue( item, attribute ) );
+		}
 	}
-	else if ( action->text() == "interpretHandValue" )
+	else if ( action->text() == "interpretVariable" )
 	{
-		pteLog->appendPlainText( "'" +item->attribute( attribute ) +"'" +" content: " +item->project()->rootIncludeProject()->interpretVariable( item->attribute( attribute ), item, "#Null" ) );
+		if ( item->type() == XUPItem::Variable )
+		{
+			pteLog->appendPlainText( item->attribute( attribute ).prepend( "Interpret variable '" ).append( "'" ) );
+			pteLog->appendPlainText( item->project()->rootIncludeProject()->interpretVariable( item->attribute( attribute ), item, "#Null" ) );
+		}
 	}
 	else if ( action->text() == "project" )
 	{
@@ -130,37 +137,24 @@ QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 	return action;
 }
 
-XUPProjectItem* XUPProjectManager::newProjectItem( const QString& fileName ) const
-{
-	return XUPProjectItem::projectInfos()->newProjectItem( fileName );
-}
-
 void XUPProjectManager::openProject()
 {
 	const QString fn = QFileDialog::getOpenFileName( this, tr( "Choose a project to open" ), QLatin1String( "." ), XUPProjectItem::projectInfos()->projectsFilter() );
-	if ( fn.isNull() )
+	if ( !fn.isNull() )
 	{
-		return;
-	}
-	
-	XUPProjectItem* projectItem = newProjectItem( fn );
-	if ( !projectItem )
-	{
-		return;
-	}
-	
-	XUPProjectModel* project = new XUPProjectModel( this );
-	if ( project->open( projectItem, fn ) )
-	{
-		int id = cbProjects->count();
-		cbProjects->addItem( project->headerData( 0, Qt::Horizontal, Qt::DisplayRole ).toString(), QVariant::fromValue<XUPProjectModel*>( project ) );
-		cbProjects->setItemIcon( id, project->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
-		cbProjects->setCurrentIndex( id );
-	}
-	else
-	{
-		pteLog->appendPlainText( project->lastError() );
-		delete project;
+		XUPProjectModel* project = new XUPProjectModel( this );
+		if ( project->open( fn ) )
+		{
+			int id = cbProjects->count();
+			cbProjects->addItem( project->headerData( 0, Qt::Horizontal, Qt::DisplayRole ).toString(), QVariant::fromValue<XUPProjectModel*>( project ) );
+			cbProjects->setItemIcon( id, project->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
+			cbProjects->setCurrentIndex( id );
+		}
+		else
+		{
+			pteLog->appendPlainText( project->lastError() );
+			delete project;
+		}
 	}
 }
 
