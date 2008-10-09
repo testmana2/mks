@@ -23,8 +23,6 @@ public:
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
 	QMenu* mDebugMenu;
-	
-	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 
 public slots:
 	void openProject();

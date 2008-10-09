@@ -146,9 +146,14 @@ QString XUPProjectModel::lastError() const
 	return mLastError;
 }
 
-bool XUPProjectModel::open( XUPProjectItem* projectItem, const QString& fileName, const QString& encoding )
+bool XUPProjectModel::open( const QString& fileName, const QString& encoding )
 {
-	XUPProjectItem* tmpProject = projectItem;
+	XUPProjectItem* tmpProject = XUPProjectItem::projectInfos()->newProjectItem( fileName );
+	if ( !tmpProject )
+	{
+		setLastError( tr( "No project handler for this kind of project" ) );
+		return false;
+	}
 	
 	if ( tmpProject->open( fileName, encoding ) )
 	{

@@ -9,6 +9,7 @@
 #include <QDebug>
 
 XUPProjectItemInfos* XUPProjectItem::mXUPProjectInfos = new XUPProjectItemInfos();
+bool XUPProjectItem::mFoundCallerItem = false;
 
 XUPProjectItem::XUPProjectItem()
 	: XUPItem( QDomElement(), -1, 0 )
@@ -195,14 +196,12 @@ QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
 
 QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem ) const
 {
+	mFoundCallerItem = false;
 	QList<XUPItem*> variables;
 	
 	for ( int i = 0; i < root->count(); i++ )
 	{
 		XUPItem* item = root->child( i );
-		
-		if ( callerItem && item == callerItem )
-			break;
 		
 		switch ( item->type() )
 		{
@@ -240,6 +239,15 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 			default:
 				break;
 		}
+		
+		if ( callerItem && item == callerItem )
+		{
+			mFoundCallerItem = true;
+			break;
+		}
+		
+		if ( mFoundCallerItem )
+			break;
 	}
 	
 	return variables;
@@ -257,10 +265,13 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 	
 	// environment var
 	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
+	{
 		value = name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
+	}
 	else
 	{
 		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
+		
 		foreach ( XUPItem* variableItem, variableItems )
 		{
 			const QString op = variableItem->attribute( "operator", "=" );
@@ -281,7 +292,7 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 		}
 	}
 	
-	return value.isEmpty() ? defaultValue.trimmed() : value.trimmed();
+	return value.trimmed().isEmpty() ? defaultValue.trimmed() : value.trimmed();
 }
 
 QString XUPProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const

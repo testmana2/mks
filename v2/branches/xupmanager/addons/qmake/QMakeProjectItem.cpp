@@ -266,54 +266,64 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 		$(QTDIR) : read from generated makefile
 	*/
 	
-	QString dv = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
+	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
+	QString value;
+	
 	// environment var
-	if ( variableName.startsWith( "$$(" ) || dv == "PWD" )
-		return dv != "PWD" ? qgetenv( dv.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
+	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
+	{
+		return name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
+	}
 	else if ( variableName.startsWith( "$(" ) )
+	{
 		qWarning() << "Don't know how to proceed: " << variableName;
+	}
 	else if ( variableName.startsWith( "$$[" ) )
+	{
 		qWarning() << "Don't know how to proceed: " << variableName;
+	}
 	else
 	{
-		QString v;
-		QList<XUPItem*> variables = getVariables( this, dv, callerItem );
-		foreach ( XUPItem* cit, variables )
+		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
+		
+		foreach ( XUPItem* variableItem, variableItems )
 		{
-			if ( callerItem && cit == callerItem )
-				return v;
-			
-			const QString o = cit->attribute( "operator", "=" );
-			QString cv;
-			for ( int i = 0; i < cit->count(); i++ )
+			const QString op = variableItem->attribute( "operator", "=" );
+			QString tmp;
+			for ( int i = 0; i < variableItem->count(); i++ )
 			{
-				XUPItem* ccit = cit->child( i );
-				if ( ccit->type() == XUPItem::Value )
+				XUPItem* valueItem = variableItem->child( i );
+				if ( valueItem->type() == XUPItem::Value )
 				{
-					cv += interpretValue( ccit, "content" ) +" ";
-					cv = cv.trimmed();
-					if ( o == "=" )
-						v = cv;
-					else if ( o == "-=" )
-						v.remove( cv );
-					else if ( o == "+=" )
-						v.append( " " +cv );
-					else if ( o == "*=" )
+					tmp += interpretValue( valueItem, "content" ) +" ";
+					tmp = tmp.trimmed();
+					if ( op == "=" )
 					{
-						if ( !v.contains( cv ) )
-							v.append( " " +cv );
+						value = tmp;
 					}
-					else if ( o == "~=" )
+					else if ( op == "-=" )
+					{
+						value.remove( tmp );
+					}
+					else if ( op == "+=" )
+					{
+						value.append( " " +tmp );
+					}
+					else if ( op == "*=" )
+					{
+						if ( !value.contains( tmp ) )
+							value.append( " " +tmp );
+					}
+					else if ( op == "~=" )
 					{
 						qWarning() << "Don't know how to interpretate ~= operator";
 					}
 				}
 			}
 		}
-		return v;
 	}
 	
-	return defaultValue;
+	return value.trimmed().isEmpty() ? defaultValue.trimmed() : value.trimmed();
 }
 
 QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
