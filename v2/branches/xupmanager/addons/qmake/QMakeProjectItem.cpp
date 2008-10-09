@@ -19,6 +19,90 @@ QMakeProjectItem::~QMakeProjectItem()
 {
 }
 
+
+QString QMakeProjectItem::interpretVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
+{
+	/*
+		$$[QT_INSTALL_HEADERS] : read content from qt conf
+		$${QT_INSTALL_HEADERS} or $$QT_INSTALL_HEADERS : read content from var
+		$$(QT_INSTALL_HEADERS) : read from environment when qmake run
+		$(QTDIR) : read from generated makefile
+	*/
+	
+	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
+	QString value;
+	
+	// environment var
+	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
+	{
+		return name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
+	}
+	else if ( variableName.startsWith( "$(" ) )
+	{
+		qWarning() << "Don't know how to proceed: " << variableName;
+	}
+	else if ( variableName.startsWith( "$$[" ) )
+	{
+		qWarning() << "Don't know how to proceed: " << variableName;
+	}
+	else
+	{
+		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
+		
+		foreach ( XUPItem* variableItem, variableItems )
+		{
+			const QString op = variableItem->attribute( "operator", "=" );
+			QString tmp;
+			for ( int i = 0; i < variableItem->count(); i++ )
+			{
+				XUPItem* valueItem = variableItem->child( i );
+				if ( valueItem->type() == XUPItem::Value )
+				{
+					tmp += interpretValue( valueItem, "content" ) +" ";
+					tmp = tmp.trimmed();
+					if ( op == "=" )
+					{
+						value = tmp;
+					}
+					else if ( op == "-=" )
+					{
+						value.remove( tmp );
+					}
+					else if ( op == "+=" )
+					{
+						value.append( " " +tmp );
+					}
+					else if ( op == "*=" )
+					{
+						if ( !value.contains( tmp ) )
+							value.append( " " +tmp );
+					}
+					else if ( op == "~=" )
+					{
+						qWarning() << "Don't know how to interpretate ~= operator";
+					}
+				}
+			}
+		}
+	}
+	
+	return value.trimmed().isEmpty() ? defaultValue.trimmed() : value.trimmed();
+}
+
+QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
+{
+	QRegExp rx( "\\$\\$?[\\{\\(\\[]?(\\w+(?!\\w*\\s*[()]))[\\}\\)\\]]?" );
+	const QString content = callerItem->attribute( attribute );
+	QString value = content;
+	int pos = 0;
+	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
+	{
+		value.replace( rx.cap( 0 ), interpretVariable( rx.cap( 0 ), callerItem ) );
+		pos += rx.matchedLength();
+	}
+	return value;
+}
+
 void QMakeProjectItem::registerProjectType() const
 {
 	// get proejct type
@@ -143,7 +227,7 @@ void QMakeProjectItem::registerProjectType() const
 
 QStringList splitSubdirs( const QString& value )
 {
-	QStringList tmpValues = value.split(" ");
+	QStringList tmpValues = value.split( " " );
 	bool inStr = false;
 	QStringList multivalues;
 	QString ajout;
@@ -255,87 +339,4 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
 
 void QMakeProjectItem::close()
 {
-}
-
-QString QMakeProjectItem::interpretVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
-{
-	/*
-		$$[QT_INSTALL_HEADERS] : read content from qt conf
-		$${QT_INSTALL_HEADERS} or $$QT_INSTALL_HEADERS : read content from var
-		$$(QT_INSTALL_HEADERS) : read from environment when qmake run
-		$(QTDIR) : read from generated makefile
-	*/
-	
-	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
-	QString value;
-	
-	// environment var
-	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
-	{
-		return name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
-	}
-	else if ( variableName.startsWith( "$(" ) )
-	{
-		qWarning() << "Don't know how to proceed: " << variableName;
-	}
-	else if ( variableName.startsWith( "$$[" ) )
-	{
-		qWarning() << "Don't know how to proceed: " << variableName;
-	}
-	else
-	{
-		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
-		
-		foreach ( XUPItem* variableItem, variableItems )
-		{
-			const QString op = variableItem->attribute( "operator", "=" );
-			QString tmp;
-			for ( int i = 0; i < variableItem->count(); i++ )
-			{
-				XUPItem* valueItem = variableItem->child( i );
-				if ( valueItem->type() == XUPItem::Value )
-				{
-					tmp += interpretValue( valueItem, "content" ) +" ";
-					tmp = tmp.trimmed();
-					if ( op == "=" )
-					{
-						value = tmp;
-					}
-					else if ( op == "-=" )
-					{
-						value.remove( tmp );
-					}
-					else if ( op == "+=" )
-					{
-						value.append( " " +tmp );
-					}
-					else if ( op == "*=" )
-					{
-						if ( !value.contains( tmp ) )
-							value.append( " " +tmp );
-					}
-					else if ( op == "~=" )
-					{
-						qWarning() << "Don't know how to interpretate ~= operator";
-					}
-				}
-			}
-		}
-	}
-	
-	return value.trimmed().isEmpty() ? defaultValue.trimmed() : value.trimmed();
-}
-
-QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
-{
-	QRegExp rx( "\\$\\$?[\\{\\(\\[]?(\\w+(?!\\w*\\s*[()]))[\\}\\)\\]]?" );
-	const QString content = callerItem->attribute( attribute );
-	QString value = content;
-	int pos = 0;
-	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
-	{
-		value.replace( rx.cap( 0 ), interpretVariable( rx.cap( 0 ), callerItem ) );
-		pos += rx.matchedLength();
-	}
-	return value;
 }
