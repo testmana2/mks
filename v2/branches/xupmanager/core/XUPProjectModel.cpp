@@ -57,12 +57,13 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 		parentItem = mRootProject;
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
-	
+
+#warning handle include ans custom row count, should be call directly by XUPItem::childCount();
 	XUPProjectItem* project = parentItem->project();
 	project->handleIncludeItem( parentItem );
 	project->customRowCount( parentItem );
 	
-	return parentItem->childreenCount();
+	return parentItem->childCount();
 }
 
 int XUPProjectModel::columnCount( const QModelIndex& parent ) const
@@ -155,13 +156,13 @@ bool XUPProjectModel::open( const QString& fileName, const QString& encoding )
 	
 	if ( tmpProject->open( fileName, encoding ) )
 	{
-		mRootProject = tmpProject;
 		setLastError( QString::null );
+		mRootProject = tmpProject;
 		return true;
 	}
 	
-	delete tmpProject;
 	setLastError( tr( "Can't open this project file" ) );
+	delete tmpProject;
 	return false;
 }
 
@@ -169,6 +170,7 @@ void XUPProjectModel::close()
 {
 	if ( mRootProject )
 	{
+		setLastError( QString::null );
 		delete mRootProject;
 		mRootProject = 0;
 	}

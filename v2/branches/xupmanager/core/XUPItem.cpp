@@ -20,7 +20,7 @@ QDomElement XUPItem::node() const
 
 XUPProjectItem* XUPItem::project() const
 {
-	if (type() == XUPItem::Project)
+	if ( type() == XUPItem::Project )
 		return static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) );
 	else
 		return mParentItem->project();
@@ -51,27 +51,26 @@ XUPItem* XUPItem::child( int i ) const
 	return 0;
 }
 
-int XUPItem::childIndex (XUPItem* child)
+int XUPItem::childIndex( XUPItem* child )
 {
-	return mChildItems.key (child, -1);
+	return mChildItems.key( child, -1 );
 }
 
 void XUPItem::addChild( XUPItem* item )
 {
-	mChildItems[ childreenCount() ] = item;
+	mChildItems[ childCount() ] = item;
 	item->setParent (this);
 }
 
 int XUPItem::row()
 {
-	if (mParentItem)
-		return mParentItem->childIndex (this);
+	if ( mParentItem )
+		return mParentItem->childIndex( this );
 	else
-		return -1;
+		return 0;
 }
 
-// TODO review it
-int XUPItem::childreenCount() const
+int XUPItem::childCount() const
 {
 	int count = mDomElement.childNodes().count();
 	if ( !mChildItems.isEmpty() )
@@ -123,9 +122,7 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 
 QVariant XUPItem::temporaryValue( const QString& key, const QVariant& defaultValue ) const
 {
-	if ( mTemporaryValues.contains( key ) )
-		return mTemporaryValues[ key ];
-	return defaultValue;
+	return mTemporaryValues.value( key, defaultValue );
 }
 
 void XUPItem::setTemporaryValue( const QString& key, const QVariant& value )

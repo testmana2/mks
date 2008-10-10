@@ -53,7 +53,7 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 		{
 			const QString op = variableItem->attribute( "operator", "=" );
 			QString tmp;
-			for ( int i = 0; i < variableItem->childreenCount(); i++ )
+			for ( int i = 0; i < variableItem->childCount(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
 				if ( valueItem->type() == XUPItem::Value )
@@ -265,7 +265,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 		{
 			QStringList subdirs;
 			
-			for ( int i = 0; i < item->childreenCount(); i++ )
+			for ( int i = 0; i < item->childCount(); i++ )
 			{
 				XUPItem* cit = item->child( i );
 				if ( cit->type() == XUPItem::Value )
