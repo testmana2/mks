@@ -82,8 +82,6 @@ QVariant XUPProjectModel::headerData( int section, Qt::Orientation orientation, 
 			else if ( role == Qt::DisplayRole )
 				return mRootProject->displayText();
 		}
-		else if ( role == Qt::DisplayRole )
-			return tr( "No opened project" );
 	}
 	return QVariant();
 }
@@ -151,17 +149,19 @@ bool XUPProjectModel::open( const QString& fileName, const QString& encoding )
 	XUPProjectItem* tmpProject = XUPProjectItem::projectInfos()->newProjectItem( fileName );
 	if ( !tmpProject )
 	{
-		setLastError( tr( "No project handler for this kind of project" ) );
+		setLastError( tr( "No project handler for this project file" ) );
 		return false;
 	}
 	
 	if ( tmpProject->open( fileName, encoding ) )
 	{
 		mRootProject = tmpProject;
+		setLastError( QString::null );
 		return true;
 	}
 	
 	delete tmpProject;
+	setLastError( tr( "Can't open this project file" ) );
 	return false;
 }
 
