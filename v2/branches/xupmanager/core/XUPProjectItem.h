@@ -68,6 +68,7 @@ public:
 	// register the project type
 	virtual void registerProjectType() const;
 	// return a new instance of this kind of projecttype
+	// FIXME AK in future I think XUPProject will be abstract class
 	inline virtual XUPProjectItem* newProject() const { return new XUPProjectItem(); }
 	// if the given item is a include function, try handling it if needed
 	virtual void handleIncludeItem( XUPItem* function ) const;

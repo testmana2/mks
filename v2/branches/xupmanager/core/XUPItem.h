@@ -33,18 +33,16 @@ public:
 	XUPProjectItem* project() const;
 	// return the i child item
 	XUPItem* child( int i ) const;
+	// index of a child
+	int childIndex (XUPItem* child);
 	// set a child item for row i
-	void setChild( int row, XUPItem* item );
+	void addChild(XUPItem* item );
 	// return the parent item
 	XUPItem* parent() const;
-	// set the parent item
-	void setParent( XUPItem* parentItem );
-	// return the item row
+	// return the item row. If item hasn't parent - -1 will be return
 	int row();
-	// set the item row
-	void setRow( int row );
 	// return child count
-	int count() const;
+	int childreenCount() const;
 	
 	// the type enum of this item
 	XUPItem::Type type() const;
@@ -70,11 +68,13 @@ protected:
 	QDomElement mDomElement;
 	mutable QMap<int, XUPItem*> mChildItems;
 	XUPItem* mParentItem;
-	int mRowNumber;
 	QMap<QString, QVariant> mTemporaryValues;
 	
 	// developer must not be able to create/instanciate items itself, it must be done by the model
-	XUPItem( const QDomElement& node, int row, XUPItem* parent = 0 );
+	XUPItem( const QDomElement& node, XUPItem* parent = 0 );
+	// set the parent item. Call automaticaly from parent's insertChild
+	void setParent( XUPItem* parentItem );
+
 	// return the node element associate with this item
 	QDomElement node() const;
 };

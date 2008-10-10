@@ -1,10 +1,9 @@
 #include "XUPItem.h"
 #include "XUPProjectItem.h"
 
-XUPItem::XUPItem( const QDomElement& node, int row, XUPItem* parent )
+XUPItem::XUPItem( const QDomElement& node, XUPItem* parent )
 {
 	mDomElement = node;
-	mRowNumber = row;
 	mParentItem = parent;
 }
 
@@ -21,7 +20,10 @@ QDomElement XUPItem::node() const
 
 XUPProjectItem* XUPItem::project() const
 {
-	return type() == XUPItem::Project ? static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) ) : mParentItem->project();
+	if (type() == XUPItem::Project)
+		return static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) );
+	else
+		return mParentItem->project();
 }
 
 XUPItem* XUPItem::parent() const
@@ -42,29 +44,34 @@ XUPItem* XUPItem::child( int i ) const
 	if ( i >= 0 && i < mDomElement.childNodes().count() )
 	{
 		QDomElement childElement = mDomElement.childNodes().item( i ).toElement();
-		XUPItem* childItem = new XUPItem( childElement, i, const_cast<XUPItem*>( this ) );
+		XUPItem* childItem = new XUPItem( childElement, const_cast<XUPItem*>( this ) );
 		mChildItems[ i ] = childItem;
 		return childItem;
 	}
 	return 0;
 }
 
-void XUPItem::setChild( int row, XUPItem* item )
+int XUPItem::childIndex (XUPItem* child)
 {
-	mChildItems[ row ] = item;
+	return mChildItems.key (child, -1);
+}
+
+void XUPItem::addChild( XUPItem* item )
+{
+	mChildItems[ childreenCount() ] = item;
+	item->setParent (this);
 }
 
 int XUPItem::row()
 {
-	return mRowNumber;
+	if (mParentItem)
+		return mParentItem->childIndex (this);
+	else
+		return -1;
 }
 
-void XUPItem::setRow( int row )
-{
-	mRowNumber = row;
-}
-
-int XUPItem::count() const
+// TODO review it
+int XUPItem::childreenCount() const
 {
 	int count = mDomElement.childNodes().count();
 	if ( !mChildItems.isEmpty() )

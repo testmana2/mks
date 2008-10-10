@@ -53,7 +53,7 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 		{
 			const QString op = variableItem->attribute( "operator", "=" );
 			QString tmp;
-			for ( int i = 0; i < variableItem->count(); i++ )
+			for ( int i = 0; i < variableItem->childreenCount(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
 				if ( valueItem->type() == XUPItem::Value )
@@ -265,7 +265,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 		{
 			QStringList subdirs;
 			
-			for ( int i = 0; i < item->count(); i++ )
+			for ( int i = 0; i < item->childreenCount(); i++ )
 			{
 				XUPItem* cit = item->child( i );
 				if ( cit->type() == XUPItem::Value )
@@ -289,10 +289,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 					XUPProjectItem* project = newProject();
 					if ( project->open( fi.absoluteFilePath(), attribute( "encoding" ) ) )
 					{
-						int count = item->count();
-						project->XUPItem::setParent( item );
-						project->setRow( count );
-						item->setChild( count, project );
+						item->addChild( project );
 					}
 					else
 					{
@@ -332,7 +329,9 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
 	setAttribute( "encoding", encoding );
 	setTemporaryValue( "fileName", fileName );
 	setLastError( QString::null );
+#if 0
 	mRowNumber = 0;
+#endif
 	
 	return true;
 }
