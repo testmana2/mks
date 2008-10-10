@@ -95,15 +95,15 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 	}
 	else if ( action->text() == "project" )
 	{
-		pteLog->appendPlainText( item->project()->displayText() );
+		pteLog->appendPlainText( item->project()->displayText().prepend( "Project: " ) );
 	}
 	else if ( action->text() == "topLevelProject" )
 	{
-		pteLog->appendPlainText( item->project()->topLevelProject()->displayText() );
+		pteLog->appendPlainText( item->project()->topLevelProject()->displayText().prepend( "Top level project: " ) );
 	}
 	else if ( action->text() == "rootIncludeProject" )
 	{
-		pteLog->appendPlainText( item->project()->rootIncludeProject()->displayText() );
+		pteLog->appendPlainText( item->project()->rootIncludeProject()->displayText().prepend( "Root include project: " ) );
 	}
 }
 
