@@ -62,7 +62,7 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 	project->handleIncludeItem( parentItem );
 	project->customRowCount( parentItem );
 	
-	return parentItem->count();
+	return parentItem->childreenCount();
 }
 
 int XUPProjectModel::columnCount( const QModelIndex& parent ) const

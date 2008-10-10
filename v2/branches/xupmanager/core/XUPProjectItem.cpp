@@ -12,7 +12,7 @@ XUPProjectItemInfos* XUPProjectItem::mXUPProjectInfos = new XUPProjectItemInfos(
 bool XUPProjectItem::mFoundCallerItem = false;
 
 XUPProjectItem::XUPProjectItem()
-	: XUPItem( QDomElement(), -1, 0 )
+	: XUPItem( QDomElement(), 0 )
 {
 }
 
@@ -199,7 +199,7 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 	mFoundCallerItem = false;
 	QList<XUPItem*> variables;
 	
-	for ( int i = 0; i < root->count(); i++ )
+	for ( int i = 0; i < root->childreenCount(); i++ )
 	{
 		XUPItem* item = root->child( i );
 		
@@ -276,7 +276,7 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 		{
 			const QString op = variableItem->attribute( "operator", "=" );
 			QString tmp;
-			for ( int i = 0; i < variableItem->count(); i++ )
+			for ( int i = 0; i < variableItem->childreenCount(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
 				if ( valueItem->type() == XUPItem::Value )
@@ -358,9 +358,11 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 			XUPProjectItem* project = newProject();
 			if ( project->open( fn, attribute( "encoding" ) ) )
 			{
-				int count = function->count();
+				int count = function->childreenCount();
 				project->mParentItem = function;
+#if 0
 				project->mRowNumber = count;
+#endif
 				function->mChildItems[ count ] = project;
 			}
 			else
@@ -423,7 +425,9 @@ bool XUPProjectItem::open( const QString& fileName, const QString& encoding )
 	setAttribute( "encoding", encoding );
 	setTemporaryValue( "fileName", fileName );
 	setLastError( QString::null );
+#if 0
 	mRowNumber = 0;
+#endif
 	file.close();
 	
 	return true;
