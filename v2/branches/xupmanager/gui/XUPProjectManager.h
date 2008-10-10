@@ -14,6 +14,7 @@ class XUPProjectManager : public QWidget, public Ui::XUPProjectManager
 
 public:
 	enum ActionType { atOpen = 0, atClose };
+	
 	XUPProjectManager( QWidget* parent = 0 );
 	virtual ~XUPProjectManager();
 	
