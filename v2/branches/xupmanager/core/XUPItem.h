@@ -34,15 +34,15 @@ public:
 	// return the i child item
 	XUPItem* child( int i ) const;
 	// index of a child
-	int childIndex (XUPItem* child);
+	int childIndex( XUPItem* child );
 	// set a child item for row i
-	void addChild(XUPItem* item );
+	void addChild( XUPItem* item );
 	// return the parent item
 	XUPItem* parent() const;
 	// return the item row. If item hasn't parent - -1 will be return
 	int row();
 	// return child count
-	int childreenCount() const;
+	int childCount() const;
 	
 	// the type enum of this item
 	XUPItem::Type type() const;
@@ -72,7 +72,7 @@ protected:
 	
 	// developer must not be able to create/instanciate items itself, it must be done by the model
 	XUPItem( const QDomElement& node, XUPItem* parent = 0 );
-	// set the parent item. Call automaticaly from parent's insertChild
+	// set the parent item. Call automaticaly from parent's addChild
 	void setParent( XUPItem* parentItem );
 
 	// return the node element associate with this item
