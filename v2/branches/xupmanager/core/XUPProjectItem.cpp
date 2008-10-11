@@ -45,7 +45,7 @@ QString XUPProjectItem::filePath( const QString& fn ) const
 	if ( fn.isEmpty() )
 		return QString::null;
 	QString fname = QFileInfo( fn ).isRelative() ? path().append( "/" ).append( fn ) : fn;
-	return QDir::cleanPath( fname );
+	return QDir::cleanPath( fname.remove( '"' ) );
 }
 
 XUPProjectItemInfos* XUPProjectItem::projectInfos()
