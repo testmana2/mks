@@ -134,6 +134,7 @@ QString XUPProjectItem::itemDisplayText( XUPItem* item )
 	}
 	else
 	{
+		item->setTemporaryValue( "hasDisplayText", true );
 		switch ( item->type() )
 		{
 			case XUPItem::Project:
@@ -161,7 +162,6 @@ QString XUPProjectItem::itemDisplayText( XUPItem* item )
 				text = "#Unknow";
 				break;
 		}
-		item->setTemporaryValue( "hasDisplayText", true );
 		item->setTemporaryValue( "displayText", text );
 	}
 	
@@ -178,6 +178,7 @@ QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
 	}
 	else
 	{
+		item->setTemporaryValue( "hasDisplayIcon", true );
 		QString path = iconsPath();
 		QString fn = pIconManager::filePath( iconFileName( item ), path );
 		
@@ -187,7 +188,6 @@ QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
 		}
 		
 		icon = pIconManager::icon( iconFileName( item ), path );
-		item->setTemporaryValue( "hasDisplayIcon", true );
 		item->setTemporaryValue( "displayIcon", icon );
 	}
 	
@@ -261,12 +261,12 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 	*/
 	
 	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '(', "" ).replace( ')', "" );
-	QString value;
+	QList<QStringList> value;
 	
 	// environment var
 	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
 	{
-		value = name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
+		return name != "PWD" ? qgetenv( name.toLocal8Bit().constData() ) : ( callerItem ? callerItem->project()->path() : path() );
 	}
 	else
 	{
@@ -275,24 +275,41 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 		foreach ( XUPItem* variableItem, variableItems )
 		{
 			const QString op = variableItem->attribute( "operator", "=" );
-			QString tmp;
+			QStringList tmp;
 			for ( int i = 0; i < variableItem->childCount(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
 				if ( valueItem->type() == XUPItem::Value )
 				{
-					tmp += interpretValue( valueItem, "content" ) +" ";
-					tmp = tmp.trimmed();
-					if ( op == "=" )
-					{
-						value = tmp;
-					}
+					tmp << interpretValue( valueItem, "content" );
 				}
+			}
+			
+			if ( op == "=" )
+			{
+				value = QList<QStringList>() << QStringList( tmp );
+			}
+			else if ( op == "-=" )
+			{
+				value.removeAll( tmp );
+			}
+			else if ( op == "+=" )
+			{
+				value << tmp;
+			}
+			else if ( op == "*=" )
+			{
+				if ( !value.contains( tmp ) )
+					value << tmp;
 			}
 		}
 	}
 	
-	return value.trimmed().isEmpty() ? defaultValue.trimmed() : value.trimmed();
+	QStringList result;
+	foreach ( const QStringList& values, value )
+		result << values;
+	
+	return result.isEmpty() ? defaultValue : result.join( " " );
 }
 
 QString XUPProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
@@ -322,7 +339,7 @@ void XUPProjectItem::registerProjectType() const
 	
 	// values
 	const QString mPixmapsPath = ":/items";
-	const QStringList mOperators = QStringList( "=" );
+	const QStringList mOperators = QStringList( "=" ) << "+=" << "-=" << "*=";
 	const QStringList mFilteredVariables = QStringList( "FILES" );
 	const QStringList mFileVariables = QStringList( "FILES" );
 	const StringStringListList mSuffixes = StringStringListList()
@@ -353,8 +370,10 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 	{
 		if ( !function->temporaryValue( "includeHandled", false ).toBool() )
 		{
+			function->setTemporaryValue( "includeHandled", true );
 			const QString parameters = function->project()->rootIncludeProject()->interpretValue( function, "parameters" );
 			const QString fn = QFileInfo( parameters ).isRelative() ? filePath( parameters ) : parameters;
+			
 			XUPProjectItem* project = newProject();
 			if ( project->open( fn, attribute( "encoding" ) ) )
 			{
@@ -365,7 +384,6 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 				qWarning() << "Failed to handle include" << function->attribute( "parameters" ) << parameters << fn;
 				delete project;
 			}
-			function->setTemporaryValue( "includeHandled", true );
 		}
 	}
 }
