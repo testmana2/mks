@@ -39,11 +39,11 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 	}
 	else if ( variableName.startsWith( "$(" ) )
 	{
-		qWarning() << "Don't know how to proceed: " << variableName;
+		const_cast<QMakeProjectItem*>( this )->setLastError( tr( "Don't know how to interpret: %1" ).arg( variableName ) );
 	}
 	else if ( variableName.startsWith( "$$[" ) )
 	{
-		qWarning() << "Don't know how to proceed: " << variableName;
+		const_cast<QMakeProjectItem*>( this )->setLastError( tr( "Don't know how to interpret: %1" ).arg( variableName ) );
 	}
 	else
 	{
@@ -80,7 +80,7 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 			}
 			else if ( op == "~=" )
 			{
-				qWarning() << "Don't know how to interpretate ~= operator";
+				const_cast<QMakeProjectItem*>( this )->setLastError( tr( "Don't know how to interpret ~= operator" ) );
 			}
 		}
 	}
