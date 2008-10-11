@@ -44,7 +44,7 @@ QString XUPProjectItem::filePath( const QString& fn ) const
 {
 	if ( fn.isEmpty() )
 		return QString::null;
-	QString fname = path().append( "/" ).append( fn );
+	QString fname = QFileInfo( fn ).isRelative() ? path().append( "/" ).append( fn ) : fn;
 	return QDir::cleanPath( fname );
 }
 
@@ -372,7 +372,7 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 		{
 			function->setTemporaryValue( "includeHandled", true );
 			const QString parameters = function->project()->rootIncludeProject()->interpretValue( function, "parameters" );
-			const QString fn = QFileInfo( parameters ).isRelative() ? filePath( parameters ) : parameters;
+			const QString fn = filePath( parameters );
 			
 			XUPProjectItem* project = newProject();
 			if ( project->open( fn, attribute( "encoding" ) ) )
