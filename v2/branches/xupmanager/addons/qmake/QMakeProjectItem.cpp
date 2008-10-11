@@ -30,7 +30,7 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 	*/
 	
 	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
-	QString value;
+	QList<QStringList> value;
 	
 	// environment var
 	if ( variableName.startsWith( "$$(" ) || name == "PWD" )
@@ -48,45 +48,48 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 	else
 	{
 		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
-		
 		foreach ( XUPItem* variableItem, variableItems )
 		{
 			const QString op = variableItem->attribute( "operator", "=" );
-			QString tmp;
+			QStringList tmp;
 			for ( int i = 0; i < variableItem->childCount(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
 				if ( valueItem->type() == XUPItem::Value )
 				{
-					tmp += interpretValue( valueItem, "content" ) +" ";
-					tmp = tmp.trimmed();
-					if ( op == "=" )
-					{
-						value = tmp;
-					}
-					else if ( op == "-=" )
-					{
-						value.remove( tmp );
-					}
-					else if ( op == "+=" )
-					{
-						value.append( " " +tmp );
-					}
-					else if ( op == "*=" )
-					{
-						if ( !value.contains( tmp ) )
-							value.append( " " +tmp );
-					}
-					else if ( op == "~=" )
-					{
-						qWarning() << "Don't know how to interpretate ~= operator";
-					}
+					tmp << interpretValue( valueItem, "content" );
 				}
+			}
+			
+			if ( op == "=" )
+			{
+				value = QList<QStringList>() << QStringList( tmp );
+			}
+			else if ( op == "-=" )
+			{
+				value.removeAll( tmp );
+			}
+			else if ( op == "+=" )
+			{
+				value << tmp;
+			}
+			else if ( op == "*=" )
+			{
+				if ( !value.contains( tmp ) )
+					value << tmp;
+			}
+			else if ( op == "~=" )
+			{
+				qWarning() << "Don't know how to interpretate ~= operator";
 			}
 		}
 	}
 	
-	return value.trimmed().isEmpty() ? defaultValue.trimmed() : value.trimmed();
+	QStringList result;
+	foreach ( const QStringList& values, value )
+		result << values;
+	
+	return result.isEmpty() ? defaultValue : result.join( " " );
 }
 
 QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& attribute ) const
@@ -263,6 +266,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 	{
 		if ( !item->temporaryValue( "subdirsHandled", false ).toBool() )
 		{
+			item->setTemporaryValue( "subdirsHandled", true );
 			QStringList subdirs;
 			
 			for ( int i = 0; i < item->childCount(); i++ )
@@ -297,8 +301,6 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 					}
 				}
 			}
-			
-			item->setTemporaryValue( "subdirsHandled", true );
 		}
 	}
 }
@@ -329,9 +331,6 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& encoding )
 	setAttribute( "encoding", encoding );
 	setTemporaryValue( "fileName", fileName );
 	setLastError( QString::null );
-#if 0
-	mRowNumber = 0;
-#endif
 	
 	return true;
 }
