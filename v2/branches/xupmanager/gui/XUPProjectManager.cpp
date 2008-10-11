@@ -4,6 +4,7 @@
 #include "../core/XUPProjectItem.h"
 
 #include <QFileDialog>
+#include <QTextCodec>
 
 #include <QDebug>
 #include <QMenu>
@@ -31,6 +32,13 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 XUPProjectManager::~XUPProjectManager()
 {
 	delete XUPProjectItem::projectInfos();
+}
+
+void XUPProjectManager::fileClosed( QObject* object )
+{
+	QWidget* widget = qobject_cast<QWidget*>( object ); // fuck bug on casting to QPlainTextEdit that return 0
+	if ( widget )
+		mOpenedFiles.remove( widget->windowFilePath() );
 }
 
 void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
@@ -107,6 +115,20 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 	}
 }
 
+void XUPProjectManager::on_tvCurrentProject_activated( const QModelIndex& index )
+{
+	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
+	if ( item->type() == XUPItem::Value )
+	{
+		XUPProjectItem* pItem = item->project()->rootIncludeProject();
+		if ( pItem->isFileBased( item->parent() ) )
+		{
+			const QString fn = pItem->filePath( pItem->interpretValue( item, "content" ) );
+			openFile( fn );
+		}
+	}
+}
+
 QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 {
 	if ( mActions.contains( type ) )
@@ -135,6 +157,59 @@ QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 	}
 	
 	return action;
+}
+
+void XUPProjectManager::addError( const QString& error )
+{
+	pteLog->appendPlainText( error );
+}
+
+bool XUPProjectManager::openFile( const QString& fileName, const QString& encoding )
+{
+	// check already open file
+	QPlainTextEdit* pte = mOpenedFiles.value( fileName );
+	if ( pte )
+	{
+		if ( pte->isMinimized() )
+			pte->showNormal();
+		pte->activateWindow();
+		return true;
+	}
+	
+	// get QFile
+	QFile file( fileName );
+	
+	// check existence
+	if ( !file.exists() )
+	{
+		addError( tr( "file not exists: %1" ).arg( fileName ) );
+		return false;
+	}
+	
+	// try open it for reading
+	if ( !file.open( QIODevice::ReadOnly ) )
+	{
+		addError( tr( "Can't open file for reading: %1" ).arg( fileName ) );
+		return false;
+	}
+	
+	// decode content
+	QTextCodec* codec = QTextCodec::codecForName( encoding.toUtf8() );
+	QString buffer = codec->toUnicode( file.readAll() );
+	
+	pte = new QPlainTextEdit( this );
+	pte->setWindowFlags( Qt::Window );
+	pte->setAttribute( Qt::WA_DeleteOnClose );
+	pte->setWindowFilePath( fileName );
+	pte->setPlainText( buffer );
+	connect( pte, SIGNAL( modificationChanged( bool )), pte, SLOT( setWindowModified( bool ) ) );
+	connect( pte, SIGNAL( destroyed( QObject* )), this, SLOT( fileClosed( QObject* ) ) );
+	
+	mOpenedFiles[ fileName ] = pte;
+	
+	pte->show();
+	
+	return true;
 }
 
 void XUPProjectManager::openProject()
