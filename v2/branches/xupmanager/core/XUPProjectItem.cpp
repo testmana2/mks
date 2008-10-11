@@ -381,7 +381,7 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 			}
 			else
 			{
-				qWarning() << "Failed to handle include" << function->attribute( "parameters" ) << parameters << fn;
+				const_cast<XUPProjectItem*>( this )->setLastError( tr( "Failed to handle include project %1" ).arg( fn ) );
 				delete project;
 			}
 		}
