@@ -222,8 +222,6 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 				break;
 			case XUPItem::Function:
 			{
-				XUPProjectItem* project = item->project();
-				project->handleIncludeItem( item );
 				variables << getVariables( item, variableName, callerItem );
 				break;
 			}
@@ -275,7 +273,10 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 			for ( int i = 0; i < variableItem->childCount(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
-				if ( valueItem->type() == XUPItem::Value )
+				if ( valueItem->type() == XUPItem::Value ||
+					valueItem->type() == XUPItem::File ||
+					valueItem->type() == XUPItem::Path
+				)
 				{
 					tmp << interpretValue( valueItem, "content" );
 				}
