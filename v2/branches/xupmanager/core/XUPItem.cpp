@@ -72,6 +72,12 @@ int XUPItem::row()
 
 int XUPItem::childCount() const
 {
+	// handle include items and custom row count
+	XUPItem* item = const_cast<XUPItem*>( this );
+	XUPProjectItem* pItem = project();
+	pItem->handleIncludeItem( item );
+	pItem->customRowCount( item );
+	
 	int count = mDomElement.childNodes().count();
 	if ( !mChildItems.isEmpty() )
 	{
