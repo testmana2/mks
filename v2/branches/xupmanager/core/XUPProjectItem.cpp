@@ -158,6 +158,15 @@ QString XUPProjectItem::itemDisplayText( XUPItem* item )
 			case XUPItem::Scope:
 				text = item->attribute( "name" );
 				break;
+			case XUPItem::DynamicFolder:
+				text = item->attribute( "name" );
+				break;
+			case XUPItem::Folder:
+				text = item->attribute( "name" );
+				break;
+			case XUPItem::File:
+				text = QFileInfo( item->attribute( "name" ).remove( '"' ) ).fileName();
+				break;
 			default:
 				text = "#Unknow";
 				break;
