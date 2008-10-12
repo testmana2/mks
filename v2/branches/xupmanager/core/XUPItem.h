@@ -17,18 +17,18 @@ public:
 	// possible types for a node
 	enum Type {
 		Unknow = -1,
-		Project,
-		Comment,
-		EmptyLine,
-		Variable,
-		Value,
-		Function,
-		Scope,
+		Project, // a project node
+		Comment, // a comment node
+		EmptyLine, // a empty line node
+		Variable, // a variabel node
+		Value, // a value node
+		Function, // a function node
+		Scope, // a scope node
 		//
-		DynamicFolder,
-		Folder,
-		File,
-		Path
+		DynamicFolder, // a dynamic folder node (ie: children are populate by the folder path dynamically)
+		Folder, // a folder node
+		File, // a value that is a file node
+		Path // a value that is a path node
 	};
 	
 	// dtor
