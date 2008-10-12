@@ -33,3 +33,6 @@ SOURCES	*= $${XUP_PWD}/core/XUPProjectModel.cpp \
 	addons/qmake/QMake2XUP.cpp \
 	addons/qmake/QMakeProjectItem.cpp \
 	core/XUPProjectItemInfos.cpp
+
+SOURCES	+= core/XUPFilteredProjectModel.cpp
+HEADERS	+= core/XUPFilteredProjectModel.h
