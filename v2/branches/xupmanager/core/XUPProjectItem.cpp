@@ -45,7 +45,7 @@ QString XUPProjectItem::filePath( const QString& fn ) const
 	if ( fn.isEmpty() )
 		return QString::null;
 	QString fname = QFileInfo( fn ).isRelative() ? path().append( "/" ).append( fn ) : fn;
-	return QDir::cleanPath( fname.remove( '"' ) );
+	return QDir::cleanPath( fname );
 }
 
 XUPProjectItemInfos* XUPProjectItem::projectInfos()
@@ -65,16 +65,6 @@ XUPProjectItem* XUPProjectItem::rootIncludeProject() const
 	if ( mParentItem && mParentItem->type() == XUPItem::Function && mParentItem->attribute( "name" ).toLower() == "include" )
 		return mParentItem->project()->rootIncludeProject();
 	return const_cast<XUPProjectItem*>( this );
-}
-
-bool XUPProjectItem::isFileBased( XUPItem* item ) const
-{
-	return item->type() == XUPItem::Variable && mXUPProjectInfos->isFileBased( projectType(), item->attribute( "name" ) );
-}
-
-bool XUPProjectItem::isPathBased( XUPItem* item ) const
-{
-	return item->type() == XUPItem::Variable && mXUPProjectInfos->isPathBased( projectType(), item->attribute( "name" ) );
 }
 
 QString XUPProjectItem::iconFileName( XUPItem* item ) const
@@ -118,12 +108,6 @@ QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
 	return mXUPProjectInfos->displayText( projectType(), variableName );
 }
 
-QString XUPProjectItem::valueDisplayText( XUPItem* valueItem ) const
-{
-	bool mIsFileBased = isFileBased( valueItem->parent() );
-	return mIsFileBased ? QFileInfo( valueItem->attribute( "content" ).remove( '"' ) ).fileName() : valueItem->attribute( "content" );
-}
-
 QString XUPProjectItem::itemDisplayText( XUPItem* item )
 {
 	QString text;
@@ -150,7 +134,7 @@ QString XUPProjectItem::itemDisplayText( XUPItem* item )
 				text = variableDisplayText( item->attribute( "name" ) );
 				break;
 			case XUPItem::Value:
-				text = valueDisplayText( item );
+				text = item->attribute( "content" );
 				break;
 			case XUPItem::Function:
 				text = QString( "%1(%2)" ).arg( item->attribute( "name" ) ).arg( item->attribute( "parameters" ) );
