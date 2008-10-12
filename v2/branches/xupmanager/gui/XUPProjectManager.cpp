@@ -81,6 +81,18 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 		case XUPItem::Scope:
 			attribute = "name";
 			break;
+		case XUPItem::DynamicFolder:
+			attribute = "name";
+			break;
+		case XUPItem::Folder:
+			attribute = "name";
+			break;
+		case XUPItem::File:
+			attribute = "content";
+			break;
+		case XUPItem::Path:
+			attribute = "content";
+			break;
 		case XUPItem::Unknow:
 			break;
 	}
@@ -118,14 +130,11 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 void XUPProjectManager::on_tvCurrentProject_activated( const QModelIndex& index )
 {
 	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
-	if ( item->type() == XUPItem::Value )
+	if ( item->type() == XUPItem::File )
 	{
 		XUPProjectItem* pItem = item->project()->rootIncludeProject();
-		if ( pItem->isFileBased( item->parent() ) )
-		{
-			const QString fn = pItem->filePath( pItem->interpretValue( item, "content" ) );
-			openFile( fn );
-		}
+		const QString fn = pItem->filePath( pItem->interpretValue( item, "content" ) );
+		openFile( fn );
 	}
 }
 
@@ -183,6 +192,13 @@ bool XUPProjectManager::openFile( const QString& fileName, const QString& encodi
 	if ( !file.exists() )
 	{
 		addError( tr( "file not exists: %1" ).arg( fileName ) );
+		return false;
+	}
+	
+	// check is file
+	if ( !QFileInfo( fileName ).isFile() )
+	{
+		addError( tr( "file is not a file: %1" ).arg( fileName ) );
 		return false;
 	}
 	
