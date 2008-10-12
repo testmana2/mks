@@ -1,0 +1,12 @@
+<!DOCTYPE XUPProject>
+<project name="dynfolder.xup">
+	<comment value="DynFolder test" />
+	<dynamicfolder name="Php Files" path="./" filefilters="*" folderfilters="*" />
+	<folder name="Others files" path="./" >
+		<file content="test/ok/file.cpp" />
+		<file content="test/file name 4.cpp" />
+	</folder>
+	<variable name="INCLUDESPATH" operator="=">
+		<path content="path/to/folder" />
+	</variable>
+</project>
