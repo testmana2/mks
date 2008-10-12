@@ -152,8 +152,9 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 				QString isMulti = (liste[5].trimmed() == "\\" ? " multiline=\"true\"" : "");
 				QString theOp = (liste[3].trimmed() == "=" ? "" : " operator=\""+liste[3].trimmed()+"\"");
 				file.append("<variable name=\""+MyEscape(liste[2].trimmed())+"\""+theOp+isMulti+">\n");
-				
-				if(fileVariables.contains(liste[2].trimmed()) || pathVariables.contains(liste[2].trimmed()))
+				bool isFile = fileVariables.contains(liste[2].trimmed());
+				bool isPath = pathVariables.contains(liste[2].trimmed());
+				if ( isFile || isPath )
 				{
 					QStringList tmpValues = liste[4].trimmed().split(" ");
 					bool inStr = false;
@@ -190,10 +191,19 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 								ku++;
 								inVarComment = "# " +multivalues.value(ku).trimmed();
 							}
-							file.append( QString( "<comment value=\"%1\" />" ).arg( QString( inVarComment ) ) );
+							file.append( QString( "<comment value=\"%1\" />\n" ).arg( QString( inVarComment ) ) );
 						}
 						else
-							file.append("<value"+(liste[6].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste[6].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku))+"\" />\n");
+						{
+							if ( isFile )
+							{
+								file.append("<file"+(liste[6].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste[6].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+							}
+							else if ( isPath )
+							{
+								file.append("<path"+(liste[6].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste[6].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+							}
+						}
 					}
 				}
 				else
@@ -204,7 +214,9 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 					while(varLine.exactMatch(v[i]))
 					{
 						QStringList liste3 = varLine.capturedTexts();
-						if(fileVariables.contains(liste[2].trimmed()) || pathVariables.contains(liste[2].trimmed()))
+						bool isFile = fileVariables.contains(liste[2].trimmed());
+						bool isPath = pathVariables.contains(liste[2].trimmed());
+						if ( isFile || isPath )
 						{
 							QStringList tmpValues = liste3[1].trimmed().split(" ");
 							QStringList multivalues = QStringList();
@@ -241,10 +253,19 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 										ku++;
 										inVarComment = "# " +multivalues.value(ku).trimmed();
 									}
-									file.append( QString( "<comment value=\"%1\">" ).arg( QString( inVarComment ) ) );
+									file.append( QString( "<comment value=\"%1\" />\n" ).arg( QString( inVarComment ) ) );
 								}
 								else
-									file.append("<value"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku))+"\" />\n");
+								{
+									if ( isFile )
+									{
+										file.append("<file"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+									}
+									else if ( isPath )
+									{
+										file.append("<path"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+									}
+								}
 							}
 						}
 						else
@@ -255,7 +276,9 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 					QString comment;
 					if(liste3.size() == 2)
 						comment = "#"+liste3[1];
-					if(fileVariables.contains(liste[2].trimmed()) || pathVariables.contains(liste[2].trimmed()))
+					bool isFile = fileVariables.contains(liste[2].trimmed());
+					bool isPath = pathVariables.contains(liste[2].trimmed());
+					if ( isFile || isPath )
 					{
 						QStringList tmpValues = liste3[0].trimmed().split(" ");
 						QStringList multivalues = QStringList();
@@ -292,10 +315,19 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 									ku++;
 									inVarComment = "# " +MyEscape(multivalues.value(ku).trimmed());
 								}
-								file.append( QString( "<comment content=\"%1\">" ).arg( QString( inVarComment ) ) );
+								file.append( QString( "<comment content=\"%1\" />\n" ).arg( QString( inVarComment ) ) );
 							}
 							else
-								file.append("<value"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku))+"\" />\n");
+							{
+								if ( isFile )
+								{
+									file.append("<file"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+								}
+								else if ( isPath )
+								{
+									file.append("<path"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+								}
+							}
 						}
 					}
 					else
@@ -354,7 +386,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& encoding )
 				QString theOp = (liste[4].trimmed() == "=" ? "" : " operator=\""+liste[4].trimmed()+"\"");
 				file.append("<variable name=\""+MyEscape(liste[3].trimmed())+"\""+theOp+">\n");
 				if ( liste[7].trimmed().startsWith( "#" ) )
-					file.append( QString( "<comment value=\"%1\" />" ).arg( QString( liste[7].trimmed() ) ) );
+					file.append( QString( "<comment value=\"%1\" />\n" ).arg( QString( liste[7].trimmed() ) ) );
 				else
 					file.append("<value"+(liste[7].trimmed() != "" ? " comment=\""+MyEscape(liste[7].trimmed())+"\"" : "")+" content=\""+MyEscape(liste[5].trimmed())+"\" />\n");
 				file.append("</variable>\n");
