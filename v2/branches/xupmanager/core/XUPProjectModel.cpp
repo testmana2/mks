@@ -57,11 +57,6 @@ int XUPProjectModel::rowCount( const QModelIndex& parent ) const
 		parentItem = mRootProject;
 	else
 		parentItem = static_cast<XUPItem*>( parent.internalPointer() );
-
-#warning handle include ans custom row count, should be call directly by XUPItem::childCount();
-	XUPProjectItem* project = parentItem->project();
-	project->handleIncludeItem( parentItem );
-	project->customRowCount( parentItem );
 	
 	return parentItem->childCount();
 }
