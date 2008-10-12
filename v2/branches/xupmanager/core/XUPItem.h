@@ -23,7 +23,11 @@ public:
 		Variable,
 		Value,
 		Function,
-		Scope
+		Scope,
+		//
+		DynamicFolder,
+		Folder,
+		File
 	};
 	
 	// dtor
