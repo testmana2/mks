@@ -97,14 +97,14 @@ XUPItem::Type XUPItem::type() const
 		return XUPItem::Function;
 	else if ( mType == "scope" )
 		return XUPItem::Scope;
-	
 	else if ( mType == "dynamicfolder" )
 		return XUPItem::DynamicFolder;
 	else if ( mType == "folder" )
 		return XUPItem::Folder;
 	else if ( mType == "file" )
 		return XUPItem::File;
-		
+	else if ( mType == "path" )
+		return XUPItem::Path;
 	return XUPItem::Unknow;
 }
 

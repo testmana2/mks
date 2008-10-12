@@ -27,7 +27,8 @@ public:
 		//
 		DynamicFolder,
 		Folder,
-		File
+		File,
+		Path
 	};
 	
 	// dtor
