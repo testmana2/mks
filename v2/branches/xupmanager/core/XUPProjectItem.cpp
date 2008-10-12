@@ -165,7 +165,10 @@ QString XUPProjectItem::itemDisplayText( XUPItem* item )
 				text = item->attribute( "name" );
 				break;
 			case XUPItem::File:
-				text = QFileInfo( item->attribute( "name" ).remove( '"' ) ).fileName();
+				text = QFileInfo( item->attribute( "content" ) ).fileName();
+				break;
+			case XUPItem::Path:
+				text = item->attribute( "content" );
 				break;
 			default:
 				text = "#Unknow";
