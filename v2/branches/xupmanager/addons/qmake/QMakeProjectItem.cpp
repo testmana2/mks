@@ -54,7 +54,10 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 			for ( int i = 0; i < variableItem->childCount(); i++ )
 			{
 				XUPItem* valueItem = variableItem->child( i );
-				if ( valueItem->type() == XUPItem::Value )
+				if ( valueItem->type() == XUPItem::Value ||
+					valueItem->type() == XUPItem::File ||
+					valueItem->type() == XUPItem::Path
+				)
 				{
 					tmp << interpretValue( valueItem, "content" );
 				}
