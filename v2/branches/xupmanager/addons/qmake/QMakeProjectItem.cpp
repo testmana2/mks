@@ -19,7 +19,6 @@ QMakeProjectItem::~QMakeProjectItem()
 {
 }
 
-
 QString QMakeProjectItem::interpretVariable( const QString& variableName, const XUPItem* callerItem, const QString& defaultValue ) const
 {
 	/*
@@ -221,7 +220,7 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
-	mXUPProjectInfos->registerPathVariables( pType, mFileVariables );
+	mXUPProjectInfos->registerPathVariables( pType, mPathVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
@@ -272,7 +271,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 			for ( int i = 0; i < item->childCount(); i++ )
 			{
 				XUPItem* cit = item->child( i );
-				if ( cit->type() == XUPItem::Value )
+				if ( cit->type() == XUPItem::File )
 				{
 					subdirs << splitSubdirs( cit->attribute( "content" ) );
 				}
