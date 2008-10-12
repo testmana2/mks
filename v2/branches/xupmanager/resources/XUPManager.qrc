@@ -34,6 +34,7 @@
         <file alias="files.png" >icons/items/files.png</file>
         <file alias="project.png" >icons/items/project.png</file>
         <file alias="scope.png" >icons/items/scope.png</file>
+        <file alias="path.png" >icons/items/path.png</file>
         <file alias="value.png" >icons/items/value.png</file>
         <file alias="variable.png" >icons/items/variable.png</file>
     </qresource>
