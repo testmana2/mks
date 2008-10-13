@@ -1,6 +1,7 @@
 #include "XUPProjectManager.h"
 #include "../iconmanager/pIconManager.h"
 #include "../core/XUPProjectModel.h"
+#include "../core/XUPFilteredProjectModel.h"
 #include "../core/XUPProjectItem.h"
 
 #include <QFileDialog>
@@ -16,7 +17,8 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	tbOpen->setDefaultAction( action( atOpen ) );
 	tbClose->setDefaultAction( action( atClose ) );
 	
-	verticalLayout_2->parentWidget()->hide();
+	mFilteredModel = new XUPFilteredProjectModel( tvFiltered );
+	tvFiltered->setModel( mFilteredModel );
 	
 	mDebugMenu = new QMenu( tbDebug );
 	tbDebug->setMenu( mDebugMenu );
@@ -49,7 +51,7 @@ void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 
 void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 {
-	const QModelIndex index = tvCurrentProject->currentIndex();
+	const QModelIndex index = tvNative->currentIndex();
 	if ( !index.isValid() )
 		return;
 	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
@@ -127,7 +129,7 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 	}
 }
 
-void XUPProjectManager::on_tvCurrentProject_activated( const QModelIndex& index )
+void XUPProjectManager::on_tvNative_activated( const QModelIndex& index )
 {
 	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
 	if ( item->type() == XUPItem::File )
@@ -267,12 +269,12 @@ void XUPProjectManager::XUPProjectManager::closeProject()
 
 XUPProjectModel* XUPProjectManager::currentProject() const
 {
-	return qobject_cast<XUPProjectModel*>( tvCurrentProject->model() );
+	return qobject_cast<XUPProjectModel*>( tvNative->model() );
 }
 
 void XUPProjectManager::setCurrentProject( XUPProjectModel* project )
 {
-	tvCurrentProject->setModel( project );
+	mFilteredModel->setSourceModel( project );
 	tvNative->setModel( project );
 	
 	int id = cbProjects->findData( QVariant::fromValue<XUPProjectModel*>( project ) );

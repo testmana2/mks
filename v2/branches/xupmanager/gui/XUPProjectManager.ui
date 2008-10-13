@@ -111,7 +111,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QVBoxLayout" name="verticalLayout" >
        <item>
         <widget class="QLabel" name="label" >
@@ -121,11 +121,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QTreeView" name="tvCurrentProject" />
+        <widget class="QTreeView" name="tvFiltered" />
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QVBoxLayout" name="verticalLayout_2" >
        <item>
         <widget class="QLabel" name="label_2" >
