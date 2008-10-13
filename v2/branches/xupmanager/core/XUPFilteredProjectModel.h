@@ -2,12 +2,15 @@
 #define XUPFILTEREDPROJECTMODEL_H
 
 #include "XUPProjectModel.h"
+#include "XUPItem.h"
+
+#include <QMap>
 
 class XUPFilteredProjectModel : public QAbstractItemModel
 {
 	Q_OBJECT
 public:
-	XUPFilteredProjectModel( XUPProjectModel* sourceModel = 0 );
+	XUPFilteredProjectModel( QObject* parent = 0, XUPProjectModel* sourceModel = 0 );
 	virtual ~XUPFilteredProjectModel();
 
 	// QAbstractItemModel reimplementation
@@ -22,9 +25,11 @@ public:
 	void setSourceModel( XUPProjectModel* model );
 	XUPProjectModel* sourceModel() const;
 	
+	XUPItemList getFilteredVariables( const XUPItem* root ) const;
 
 protected:
 	XUPProjectModel* mSourceModel;
+	QMap<XUPItem*, XUPItemList> mItems; // parent, children
 };
 
 #endif // XUPFILTEREDPROJECTMODEL_H
