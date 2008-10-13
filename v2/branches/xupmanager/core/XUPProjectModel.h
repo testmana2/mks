@@ -9,6 +9,8 @@ class XUPItem;
 class XUPProjectModel : public QAbstractItemModel
 {
 	Q_OBJECT
+	friend class XUPFilteredProjectModel;
+	
 public:
 	XUPProjectModel( QObject* parent = 0 );
 	virtual ~XUPProjectModel();
