@@ -6,6 +6,7 @@
 #include <QMap>
 
 class XUPProjectModel;
+class XUPFilteredProjectModel;
 class XUPProjectItem;
 class QPlainTextEdit;
 
@@ -24,6 +25,7 @@ public:
 
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
+	XUPFilteredProjectModel* mFilteredModel;
 	QMap<QString, QPlainTextEdit*> mOpenedFiles;
 	QMenu* mDebugMenu;
 
@@ -38,7 +40,7 @@ protected slots:
 	void fileClosed( QObject* object );
 	void on_cbProjects_currentIndexChanged( int id );
 	void on_tbDebug_triggered( QAction* action );
-	void on_tvCurrentProject_activated( const QModelIndex& index );
+	void on_tvNative_activated( const QModelIndex& index );
 };
 
 #endif // XUPPROJECTMANAGER_H
