@@ -8,6 +8,8 @@
 
 class XUPProjectItem;
 
+typedef QList<class XUPItem*> XUPItemList;
+
 class XUPItem
 {
 	friend class XUPProjectModel;
