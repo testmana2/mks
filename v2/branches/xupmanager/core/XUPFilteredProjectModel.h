@@ -26,6 +26,9 @@ public:
 	XUPProjectModel* sourceModel() const;
 	
 	XUPItemList getFilteredVariables( const XUPItem* root ) const;
+	XUPItemList getValues( const XUPItem* root ) const;
+	
+	void populateFromItem( XUPItem* item );
 
 protected:
 	XUPProjectModel* mSourceModel;
