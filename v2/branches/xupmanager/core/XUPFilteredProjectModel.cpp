@@ -3,6 +3,11 @@
 
 #include <QDebug>
 
+bool xupItemLessThan( const XUPItem* left, const XUPItem* right )
+{
+	return left->operator<( *right );
+}
+
 XUPFilteredProjectModel::XUPFilteredProjectModel( QObject* parent, XUPProjectModel* sourceModel )
 	: QAbstractItemModel( parent )
 {
@@ -75,6 +80,7 @@ int XUPFilteredProjectModel::rowCount( const QModelIndex& parent ) const
 
 int XUPFilteredProjectModel::columnCount( const QModelIndex& parent ) const
 {
+	Q_UNUSED( parent );
 	return mSourceModel ? mSourceModel->columnCount() : 0;
 }
 
@@ -239,6 +245,7 @@ void XUPFilteredProjectModel::populateFromItem( XUPItem* item )
 	int oldCount = mItems.value( item ).count();
 	// populate tree...
 	XUPItemList variables = getFilteredVariables( mSourceModel->mRootProject );
+	qSort( variables.begin(), variables.end(), xupItemLessThan );
 	XUPItemList trueVariables;
 	
 	foreach ( XUPItem* variable, variables )
@@ -278,6 +285,8 @@ void XUPFilteredProjectModel::populateFromItem( XUPItem* item )
 				parentValues << value;
 			}
 		}
+		
+		qSort( parentValues.begin(), parentValues.end(), xupItemLessThan );
 	}
 	
 	mItems[ item ] = trueVariables;

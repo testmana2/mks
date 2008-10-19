@@ -36,18 +36,22 @@ public:
 	// dtor
 	virtual ~XUPItem();
 	
+	// the < operator for sorting items in tree
+	virtual bool sameTypeLess( const XUPItem& other ) const;
+	virtual bool operator<( const XUPItem& other ) const;
+	
 	// project item
 	XUPProjectItem* project() const;
 	// return the i child item
 	XUPItem* child( int i ) const;
 	// index of a child
-	int childIndex( XUPItem* child );
+	int childIndex( XUPItem* child ) const;
 	// set a child item for row i
 	void addChild( XUPItem* item );
 	// return the parent item
 	XUPItem* parent() const;
 	// return the item row. If item hasn't parent - -1 will be return
-	int row();
+	int row() const;
 	// return child count
 	int childCount() const;
 	
