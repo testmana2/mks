@@ -13,6 +13,44 @@ XUPItem::~XUPItem()
 	mChildItems.clear();
 }
 
+bool XUPItem::sameTypeLess( const XUPItem& other ) const
+{	
+	switch ( other.type() )
+	{
+		case XUPItem::Variable:
+		{
+			XUPProjectItem* pItem = project();
+			QStringList filteredVariables = pItem->projectInfos()->filteredVariables( pItem->projectType() );
+			return filteredVariables.indexOf( attribute( "name" ) ) < filteredVariables.indexOf( other.attribute( "name" ) );
+			break;
+		}
+		case XUPItem::Comment:
+			return row() < other.row();
+			break;
+		case XUPItem::EmptyLine:
+			return attribute( "count" ).toInt() < other.attribute( "count" ).toInt();
+			break;
+		case XUPItem::Project:
+		case XUPItem::Value:
+		case XUPItem::Function:
+		case XUPItem::Scope:
+		case XUPItem::DynamicFolder:
+		case XUPItem::Folder:
+		case XUPItem::File:
+		case XUPItem::Path:
+		default:
+			break;
+	}
+	return displayText().toLower() < other.displayText().toLower();
+}
+
+bool XUPItem::operator<( const XUPItem& other ) const
+{
+	if ( type() == other.type() )
+		return sameTypeLess( other );
+	return false;
+}
+
 QDomElement XUPItem::node() const
 {
 	return mDomElement;
@@ -51,7 +89,7 @@ XUPItem* XUPItem::child( int i ) const
 	return 0;
 }
 
-int XUPItem::childIndex( XUPItem* child )
+int XUPItem::childIndex( XUPItem* child ) const
 {
 	return mChildItems.key( child, -1 );
 }
@@ -62,10 +100,10 @@ void XUPItem::addChild( XUPItem* item )
 	item->setParent (this);
 }
 
-int XUPItem::row()
+int XUPItem::row() const
 {
 	if ( mParentItem )
-		return mParentItem->childIndex( this );
+		return mParentItem->childIndex( const_cast<XUPItem*>( this ) );
 	else
 		return 0;
 }
