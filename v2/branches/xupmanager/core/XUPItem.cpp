@@ -48,6 +48,7 @@ bool XUPItem::operator<( const XUPItem& other ) const
 {
 	if ( type() == other.type() )
 		return sameTypeLess( other );
+#warning XUPItem::operator< it may need a special test to do when not same type
 	return false;
 }
 
