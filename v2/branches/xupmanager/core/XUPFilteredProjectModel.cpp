@@ -3,9 +3,27 @@
 
 #include <QDebug>
 
+void debug( XUPItem* root, const QMap<XUPItem*, XUPItemList>& mItems )
+{
+	static int prof = 0;
+	QString prep = QString().fill( ' ', prof );
+	qWarning( root->displayText().prepend( prep ).toLocal8Bit().constData() );
+	foreach ( XUPItem* item, mItems.value( root ) )
+	{
+		prof += 4;
+		debug( item, mItems );
+		prof -= 4;
+	}
+}
+
 bool xupItemLessThan( const XUPItem* left, const XUPItem* right )
 {
 	return left->operator<( *right );
+}
+
+void qSortItems( XUPItemList& items )
+{
+	qSort( items.begin(), items.end(), xupItemLessThan );
 }
 
 XUPFilteredProjectModel::XUPFilteredProjectModel( QObject* parent, XUPProjectModel* sourceModel )
@@ -21,6 +39,7 @@ XUPFilteredProjectModel::~XUPFilteredProjectModel()
 
 QModelIndex XUPFilteredProjectModel::index( int row, int column, const QModelIndex& parent ) const
 {
+/*
 	if ( mSourceModel && mSourceModel->mRootProject && column < columnCount( parent ) && row < rowCount( parent ) )
 	{
 		XUPItem* parentItem = static_cast<XUPItem*>( parent.internalPointer() );
@@ -28,12 +47,14 @@ QModelIndex XUPFilteredProjectModel::index( int row, int column, const QModelInd
 			parentItem = mSourceModel->mRootProject;
 		return createIndex( row, column, mItems[ parentItem ].at( row ) );
 	}
-	
+*/
 	return QModelIndex();
 }
 
 QModelIndex XUPFilteredProjectModel::parent( const QModelIndex& index ) const
 {
+	return QModelIndex();
+/*
 	if ( !index.isValid() )
 		return QModelIndex();
 		
@@ -62,10 +83,13 @@ QModelIndex XUPFilteredProjectModel::parent( const QModelIndex& index ) const
 	}
 	
 	return createIndex( row, 0, parentItem );
+*/
 }
 
 int XUPFilteredProjectModel::rowCount( const QModelIndex& parent ) const
 {
+	return 0;
+/*
 	if ( parent.column() > 0 || !mSourceModel || !mSourceModel->mRootProject )
 		return 0;
 		
@@ -76,12 +100,16 @@ int XUPFilteredProjectModel::rowCount( const QModelIndex& parent ) const
 	}
 	
 	return mItems[ parentItem ].count();
+*/
 }
 
 int XUPFilteredProjectModel::columnCount( const QModelIndex& parent ) const
 {
+	return 0;
+/*
 	Q_UNUSED( parent );
 	return mSourceModel ? mSourceModel->columnCount() : 0;
+*/
 }
 
 QVariant XUPFilteredProjectModel::headerData( int section, Qt::Orientation orientation, int role ) const
@@ -91,6 +119,8 @@ QVariant XUPFilteredProjectModel::headerData( int section, Qt::Orientation orien
 
 QVariant XUPFilteredProjectModel::data( const QModelIndex& index, int role ) const
 {
+	return QVariant();
+/*
 	if ( !index.isValid() )
 		return QVariant();
 
@@ -120,6 +150,7 @@ QVariant XUPFilteredProjectModel::data( const QModelIndex& index, int role ) con
 	}
 	
 	return QVariant();
+*/
 }
 
 Qt::ItemFlags XUPFilteredProjectModel::flags( const QModelIndex& index ) const
@@ -129,17 +160,42 @@ Qt::ItemFlags XUPFilteredProjectModel::flags( const QModelIndex& index ) const
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-void debug( XUPItem* root, const QMap<XUPItem*, XUPItemList>& mItems )
+XUPItemMappingIterator XUPFilteredProjectModel::createMapping( XUPItem* item, bool sort ) const
 {
-	static int prof = 0;
-	QString prep = QString().fill( ' ', prof );
-	qWarning( root->displayText().prepend( prep ).toLocal8Bit().constData() );
-	foreach ( XUPItem* item, mItems.value( root ) )
+	XUPItemMappingIterator it = mItemsMapping.constFind( item );
+	if ( it != mItemsMapping.constEnd() ) // was mapped already
+		return it;
+
+	Mapping* m = new Mapping;
+	
+	/*
+	int count = item->childCount();
+	for ( int i = 0; i < count; ++i )
 	{
-		prof += 4;
-		debug( item, mItems );
-		prof -= 4;
+		m->mMappedChildren << item->child( i );
 	}
+	
+	if ( sort )
+	{
+		qSortItems( m->mMappedChildren );
+	}
+	*/
+
+	it = XUPItemMappingIterator( mItemsMapping.insert( item, m ) );
+	m->mIterator = it;
+/*
+	if ( item != mSourceModel->mRootProject )
+	{
+		XUPItem* parentItem = item->project()->parentProject();
+		XUPItemMappingIterator it2 = createMapping( parentItem );
+		Q_ASSERT( it2 != mItemsMapping.constEnd() );
+		it2.value()->mMappedChildren << item;
+	}
+*/
+	Q_ASSERT( it != mItemsMapping.constEnd() );
+	Q_ASSERT( it.value() );
+
+	return it;
 }
 
 void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
@@ -147,7 +203,7 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 	mSourceModel = model;
 	
 	reset();
-	mItems.clear();
+	mItemsMapping.clear();
 	
 	if ( !mSourceModel )
 		return;
@@ -186,7 +242,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 				XUPItem* pItem = item->parent();
 				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
 				*/
-					variables << getFilteredVariables( child );
+					//variables << getFilteredVariables( child );
 				break;
 			}
 			case XUPItem::Comment:
@@ -228,13 +284,17 @@ XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root ) const
 	for ( int i = 0; i < root->childCount(); i++ )
 	{
 		XUPItem* child = root->child( i );
-		if ( child->type() == XUPItem::Value || child->type() == XUPItem::File || child->type() == XUPItem::Path )
+		switch ( child->type() )
 		{
-			values << child;
-		}
-		else if ( child->type() == XUPItem::Folder )
-		{
-			values << getValues( child );
+			case XUPItem::Value:
+			case XUPItem::File:
+			case XUPItem::Path:
+				values << child;
+				break;
+			case XUPItem::Folder:
+				values << getValues( child );
+			default:
+				break;
 		}
 	}
 	return values;
@@ -242,59 +302,42 @@ XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root ) const
 
 void XUPFilteredProjectModel::populateFromItem( XUPItem* item )
 {
-	int oldCount = mItems.value( item ).count();
-	// populate tree...
-	XUPItemList variables = getFilteredVariables( mSourceModel->mRootProject );
-	qSort( variables.begin(), variables.end(), xupItemLessThan );
-	XUPItemList trueVariables;
+	XUPProjectItem* project = item->project();
+	XUPItemMappingIterator projectIterator = createMapping( project, false );
 	
+	XUPItemList variables = getFilteredVariables( item );
 	foreach ( XUPItem* variable, variables )
 	{
-		XUPItem* parent = 0;
-		foreach ( XUPItem* item, mItems.keys() )
+		XUPItem* tmp;
+		tmp = projectIterator.value()->findVariable( variable->attribute( "name" ) );
+		if ( tmp )
 		{
-			if ( item->type() == variable->type() && item->attribute( "name" ) == variable->attribute( "name" ) )
+			variable = tmp;
+		}
+		else
+		{
+			projectIterator.value()->mMappedChildren << variable;
+		}
+		
+		XUPItemMappingIterator variableIterator = createMapping( variable, false );
+		XUPItemList& variableValues = variableIterator.value()->mMappedChildren;
+		foreach ( XUPItem* value, getValues( variable ) )
+		{
+			if ( !variableIterator.value()->findValue( value->attribute( "content" ) ) )
 			{
-				parent = item;
-				break;
+				variableValues << value;
 			}
 		}
 		
-		if ( !parent )
-		{
-			parent = variable;
-			trueVariables << variable;
-		}
-		
-		XUPItemList& parentValues = mItems[ parent ];
-		XUPItemList values = getValues( variable );
-		foreach ( XUPItem* value, values )
-		{
-			bool contains = false;
-			foreach ( XUPItem* pValue, parentValues )
-			{
-				if ( value->type() == pValue->type() && value->attribute( "content" ) == pValue->attribute( "content" ) )
-				{
-					contains = true;
-					break;
-				}
-			}
-			
-			if ( !contains )
-			{
-				parentValues << value;
-			}
-		}
-		
-		qSort( parentValues.begin(), parentValues.end(), xupItemLessThan );
+		qSortItems( variableValues );
 	}
 	
-	mItems[ item ] = trueVariables;
-	
-	int count = trueVariables.count();
+	XUPItemList& projectVariables = projectIterator.value()->mMappedChildren;
+	qSortItems( projectVariables );
+	int count = projectVariables.count();
 	if ( count > 0 )
 	{
-		beginInsertRows( QModelIndex(), oldCount, count -1 );
+		beginInsertRows( QModelIndex(), 0, count -1 );
 		endInsertRows();
 	}
 }
