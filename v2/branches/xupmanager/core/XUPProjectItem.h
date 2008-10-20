@@ -32,6 +32,8 @@ public:
 	// return an absolute file name according to project path
 	QString filePath( const QString& fileName ) const;
 	
+	// return the direct parent proejct if one, else return itself
+	XUPProjectItem* parentProject() const;
 	// return the most toplevel project ( ie: the model root project )
 	XUPProjectItem* topLevelProject() const;
 	// return the parent project for include project ( recursive parent project for include project, else return project itself )

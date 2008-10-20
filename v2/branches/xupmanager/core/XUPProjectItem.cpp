@@ -53,6 +53,13 @@ XUPProjectItemInfos* XUPProjectItem::projectInfos()
 	return mXUPProjectInfos;
 }
 
+XUPProjectItem* XUPProjectItem::parentProject() const
+{
+	if ( mParentItem )
+		return mParentItem->project();
+	return const_cast<XUPProjectItem*>( this );
+}
+
 XUPProjectItem* XUPProjectItem::topLevelProject() const
 {
 	if ( mParentItem )
