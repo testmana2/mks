@@ -6,9 +6,52 @@
 
 #include <QMap>
 
+typedef QMap<XUPItem*, class Mapping*> XUPItemMapping;
+typedef XUPItemMapping::const_iterator XUPItemMappingIterator;
+
+struct Mapping
+{
+	QList<XUPItem*> mMappedChildren;
+	XUPItemMappingIterator mIterator;
+	
+	XUPItem* findVariable( const QString& name ) const
+	{
+		foreach ( XUPItem* item, mMappedChildren )
+		{
+			if ( item->type() == XUPItem::Variable && item->attribute( "name" ) == name )
+			{
+				return item;
+			}
+		}
+		return 0;
+	}
+	
+	XUPItem* findValue( const QString& content ) const
+	{
+		foreach ( XUPItem* item, mMappedChildren )
+		{
+			switch ( item->type() )
+			{
+				case XUPItem::Value:
+				case XUPItem::File:
+				case XUPItem::Path:
+					if ( item->attribute( "content" ) == content )
+					{
+						return item;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		return 0;
+	}
+};
+
 class XUPFilteredProjectModel : public QAbstractItemModel
 {
 	Q_OBJECT
+	
 public:
 	XUPFilteredProjectModel( QObject* parent = 0, XUPProjectModel* sourceModel = 0 );
 	virtual ~XUPFilteredProjectModel();
@@ -32,7 +75,9 @@ public:
 
 protected:
 	XUPProjectModel* mSourceModel;
-	QMap<XUPItem*, XUPItemList> mItems; // parent, children
+	mutable XUPItemMapping mItemsMapping;
+	
+	XUPItemMappingIterator createMapping( XUPItem* item, bool sort = true ) const;
 };
 
 #endif // XUPFILTEREDPROJECTMODEL_H
