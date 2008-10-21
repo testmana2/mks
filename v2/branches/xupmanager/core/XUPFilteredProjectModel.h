@@ -79,10 +79,10 @@ public:
 	void setSourceModel( XUPProjectModel* model );
 	XUPProjectModel* sourceModel() const;
 	
-	XUPItemList getFilteredVariables( const XUPItem* root ) const;
-	XUPItemList getValues( const XUPItem* root ) const;
+	XUPItemList getFilteredVariables( const XUPItem* root );
+	XUPItemList getValues( const XUPItem* root );
 	
-	void populateFromItem( XUPItem* item );
+	void populateProject( XUPProjectItem* item, bool updateView );
 
 protected:
 	XUPProjectModel* mSourceModel;
