@@ -120,7 +120,7 @@ void QMakeProjectItem::registerProjectType() const
 	// values
 	const QString mPixmapsPath = ":/qmakeitems";
 	const QStringList mOperators = QStringList( "=" ) << "+=" << "-=" << "*=" << "~=";
-	const QStringList mFilteredVariables = QStringList( "SUBDIRS" ) << "FORMS" << "FORMS3"
+	const QStringList mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
 		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "TRANSLATIONS" << "RESOURCES"
 		<< "RC_FILE" << "RES_FILE" << "DEF_FILE" << "INCLUDEPATH" << "DEPENDPATH" << "VPATH"
 		<< "LIBS" << "DEFINES" << "OTHER_FILES";
