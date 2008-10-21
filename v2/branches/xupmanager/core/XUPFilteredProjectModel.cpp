@@ -244,10 +244,10 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 	endInsertColumns();
 	
 	// tree items
-	populateFromItem( mSourceModel->mRootProject );
+	populateProject( mSourceModel->mRootProject, true );
 	
 	// debug
-	debug( mSourceModel->mRootProject, mItemsMapping );
+	//debug( mSourceModel->mRootProject, mItemsMapping );
 }
 
 XUPProjectModel* XUPFilteredProjectModel::sourceModel() const
@@ -255,7 +255,7 @@ XUPProjectModel* XUPFilteredProjectModel::sourceModel() const
 	return mSourceModel;
 }
 
-XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root ) const
+XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 {
 	XUPItemList variables;
 	XUPProjectItem* rootProject = mSourceModel->mRootProject;
@@ -268,39 +268,27 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 		switch ( child->type() )
 		{
 			case XUPItem::Project:
-			{
-				/*
-				XUPItem* pItem = item->parent();
-				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
-				*/
-					//variables << getFilteredVariables( child );
+				populateProject( child->project(), false );
 				break;
-			}
 			case XUPItem::Comment:
 				break;
 			case XUPItem::EmptyLine:
 				break;
 			case XUPItem::Variable:
-			{
 				if ( filteredVariables.contains( child->attribute( "name" ) ) )
 				{
 					variables << child;
 				}
 				variables << getFilteredVariables( child );
 				break;
-			}
 			case XUPItem::Value:
 				break;
 			case XUPItem::Function:
-			{
 				variables << getFilteredVariables( child );
 				break;
-			}
 			case XUPItem::Scope:
-			{
 				variables << getFilteredVariables( child );
 				break;
-			}
 			default:
 				break;
 		}
@@ -309,7 +297,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 	return variables;
 }
 
-XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root ) const
+XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root )
 {
 	XUPItemList values;
 	for ( int i = 0; i < root->childCount(); i++ )
@@ -331,45 +319,44 @@ XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root ) const
 	return values;
 }
 
-void XUPFilteredProjectModel::populateFromItem( XUPItem* item )
+void XUPFilteredProjectModel::populateProject( XUPProjectItem* project, bool updateView )
 {
-	XUPProjectItem* project = item->project();
 	XUPItemMappingIterator projectIterator = createMapping( project, project->parentProject() );
 	
-	XUPItemList variables = getFilteredVariables( item );
+	XUPItemList variables = getFilteredVariables( project );
 	foreach ( XUPItem* variable, variables )
 	{
-		XUPItem* tmp;
-		tmp = projectIterator.value()->findVariable( variable->attribute( "name" ) );
+		XUPItemList tmpValuesItem = getValues( variable );
+		XUPItem* tmp = projectIterator.value()->findVariable( variable->attribute( "name" ) );
 		if ( tmp )
 		{
 			variable = tmp;
 		}
-		else
-		{
-			//projectIterator.value()->mMappedChildren << variable;
-		}
 		
 		XUPItemMappingIterator variableIterator = createMapping( variable, project );
-		XUPItemList& variableValues = variableIterator.value()->mMappedChildren;
-		foreach ( XUPItem* value, getValues( variable ) )
+		foreach ( XUPItem* value, tmpValuesItem )
 		{
 			if ( !variableIterator.value()->findValue( value->attribute( "content" ) ) )
 			{
 				createMapping( value, variable );
-				//variableValues << value;
 			}
 		}
 		
+		XUPItemList& variableValues = variableIterator.value()->mMappedChildren;
 		qSortItems( variableValues );
 	}
 	
 	XUPItemList& projectVariables = projectIterator.value()->mMappedChildren;
 	qSortItems( projectVariables );
-	int count = projectVariables.count();
-	if ( count > 0 )
+	
+	if ( updateView )
 	{
-		beginInsertRows( QModelIndex(), 0, count -1 );
-		endInsertRows();
+		int count = projectVariables.count();
+		if ( count > 0 )
+		{
+			QModelIndex proxyIndex = mapFromSource( project );
+			beginInsertRows( proxyIndex, 0, count -1 );
+			endInsertRows();
+		}
 	}
 }
