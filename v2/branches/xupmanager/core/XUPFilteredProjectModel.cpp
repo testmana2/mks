@@ -3,16 +3,33 @@
 
 #include <QDebug>
 
-void debug( XUPItem* root, const QMap<XUPItem*, XUPItemList>& mItems )
+void debug( XUPItem* root, const XUPItemMapping& mItems, int mode = 0 )
 {
-	static int prof = 0;
-	QString prep = QString().fill( ' ', prof );
-	qWarning( root->displayText().prepend( prep ).toLocal8Bit().constData() );
-	foreach ( XUPItem* item, mItems.value( root ) )
+	if ( mode == 0 )
 	{
-		prof += 4;
-		debug( item, mItems );
-		prof -= 4;
+		static int prof = 0;
+		QString prep = QString().fill( ' ', prof );
+		qWarning( root->displayText().prepend( prep ).toLocal8Bit().constData() );
+		XUPItemMappingIterator it = mItems.constFind( root );
+		Q_ASSERT( it != mItems.constEnd() );
+		Q_ASSERT( it->value() );
+		foreach ( XUPItem* item, it.value()->mMappedChildren )
+		{
+			prof += 4;
+			debug( item, mItems );
+			prof -= 4;
+		}
+	}
+	else
+	{
+		foreach ( XUPItem* item, mItems.keys() )
+		{
+			qWarning() << "Mapped" << item->displayText();
+			foreach ( XUPItem* it, mItems.constFind( item ).value()->mMappedChildren )
+			{
+				qWarning() << "\tChild" << it->displayText();
+			}
+		}
 	}
 }
 
@@ -37,79 +54,70 @@ XUPFilteredProjectModel::~XUPFilteredProjectModel()
 {
 }
 
-QModelIndex XUPFilteredProjectModel::index( int row, int column, const QModelIndex& parent ) const
+QModelIndex XUPFilteredProjectModel::index( int row, int column, const QModelIndex& parentProxy ) const
 {
-/*
-	if ( mSourceModel && mSourceModel->mRootProject && column < columnCount( parent ) && row < rowCount( parent ) )
-	{
-		XUPItem* parentItem = static_cast<XUPItem*>( parent.internalPointer() );
-		if ( !parentItem )
-			parentItem = mSourceModel->mRootProject;
-		return createIndex( row, column, mItems[ parentItem ].at( row ) );
-	}
-*/
-	return QModelIndex();
-}
-
-QModelIndex XUPFilteredProjectModel::parent( const QModelIndex& index ) const
-{
-	return QModelIndex();
-/*
-	if ( !index.isValid() )
+	if ( !mSourceModel || column > 0 )
 		return QModelIndex();
-		
-	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
-	XUPItem* parentItem = 0;
-	foreach ( XUPItem* parent, mItems.keys() )
+	
+	XUPItem* item = parentProxy.isValid() ? mapToSource( parentProxy ) : mSourceModel->mRootProject;
+	XUPItemMappingIterator it = mItemsMapping.constFind( item );
+	
+	if ( it != mItemsMapping.constEnd() )
 	{
-		if ( mItems[ parent ].contains( item ) )
+		XUPItem* item = it.value()->mMappedChildren.value( row );
+		if ( item )
 		{
-			parentItem = parent;
-			break;
+			it = mItemsMapping.constFind( item );
+			if ( it != mItemsMapping.constEnd() )
+			{
+				QModelIndex index = createIndex( row, column, *it );
+				it.value()->mProxyIndex = index;
+				return index;
+			}
 		}
 	}
 	
-	if ( !parentItem || parentItem == mSourceModel->mRootProject )
-		return QModelIndex();
-	
-	int row = 0;
-	foreach ( XUPItem* parent, mItems.keys() )
+	return QModelIndex();
+}
+
+QModelIndex XUPFilteredProjectModel::parent( const QModelIndex& proxyIndex ) const
+{
+	XUPItem* item = proxyIndex.isValid() ? mapToSource( proxyIndex ) : mSourceModel->mRootProject;
+	XUPItemMappingIterator it = mItemsMapping.constFind( item );
+
+	if ( it != mItemsMapping.constEnd() )
 	{
-		if ( mItems[ parent ].contains( parentItem ) )
+		XUPItem* parentItem = it.value()->mParent;
+		it = mItemsMapping.constFind( parentItem );
+		if ( it != mItemsMapping.constEnd() )
 		{
-			row = mItems[ parent ].indexOf( parentItem );
-			break;
+			return it.value()->mProxyIndex;
+		}
+	}
+
+	return QModelIndex();
+}
+
+int XUPFilteredProjectModel::rowCount( const QModelIndex& proxyParent ) const
+{
+	if ( mSourceModel )
+	{
+		XUPItem* item = proxyParent.isValid() ? mapToSource( proxyParent ) : mSourceModel->mRootProject;
+		XUPItemMappingIterator it = mItemsMapping.constFind( item );
+		
+		if ( it != mItemsMapping.constEnd() )
+		{
+			return it.value()->mMappedChildren.count();
 		}
 	}
 	
-	return createIndex( row, 0, parentItem );
-*/
+	return 0;
 }
 
-int XUPFilteredProjectModel::rowCount( const QModelIndex& parent ) const
+int XUPFilteredProjectModel::columnCount( const QModelIndex& proxyParent ) const
 {
-	return 0;
-/*
-	if ( parent.column() > 0 || !mSourceModel || !mSourceModel->mRootProject )
-		return 0;
-		
-	XUPItem* parentItem = static_cast<XUPItem*>( parent.internalPointer() );
-	if ( !parentItem )
-	{
-		parentItem = mSourceModel->mRootProject;
-	}
-	
-	return mItems[ parentItem ].count();
-*/
-}
-
-int XUPFilteredProjectModel::columnCount( const QModelIndex& parent ) const
-{
-	return 0;
-/*
-	Q_UNUSED( parent );
-	return mSourceModel ? mSourceModel->columnCount() : 0;
-*/
+	Q_UNUSED( proxyParent );
+	return mSourceModel ? 1 : 0;
 }
 
 QVariant XUPFilteredProjectModel::headerData( int section, Qt::Orientation orientation, int role ) const
@@ -117,12 +125,12 @@ QVariant XUPFilteredProjectModel::headerData( int section, Qt::Orientation orien
 	return mSourceModel ? mSourceModel->headerData( section, orientation, role ) : QVariant();
 }
 
-QVariant XUPFilteredProjectModel::data( const QModelIndex& index, int role ) const
+QVariant XUPFilteredProjectModel::data( const QModelIndex& proxyIndex, int role ) const
 {
-	return QVariant();
-/*
-	if ( !index.isValid() )
+	if ( !proxyIndex.isValid() )
+	{
 		return QVariant();
+	}
 
 	switch ( role )
 	{
@@ -130,7 +138,9 @@ QVariant XUPFilteredProjectModel::data( const QModelIndex& index, int role ) con
 		case Qt::DisplayRole:
 		case Qt::ToolTipRole:
 		{
-			XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
+			XUPItem* item = mapToSource( proxyIndex );
+			
+			Q_ASSERT( item );
 			
 			if ( role == Qt::DecorationRole )
 			{
@@ -150,48 +160,69 @@ QVariant XUPFilteredProjectModel::data( const QModelIndex& index, int role ) con
 	}
 	
 	return QVariant();
-*/
 }
 
-Qt::ItemFlags XUPFilteredProjectModel::flags( const QModelIndex& index ) const
+Qt::ItemFlags XUPFilteredProjectModel::flags( const QModelIndex& proxyIndex ) const
 {
-	if ( !index.isValid() )
+	if ( !proxyIndex.isValid() )
+	{
 		return 0;
+	}
+	
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-XUPItemMappingIterator XUPFilteredProjectModel::createMapping( XUPItem* item, bool sort ) const
+// MAPPING
+
+XUPItemMappingIterator XUPFilteredProjectModel::indexToIterator( const QModelIndex& proxyIndex ) const
+{
+	Q_ASSERT( proxyIndex.isValid() );
+	const void* p = proxyIndex.internalPointer();
+	Q_ASSERT( p );
+	XUPItemMappingIterator it = static_cast<const Mapping*>( p )->mIterator;
+	Q_ASSERT( it != mItemsMapping.constEnd() );
+	Q_ASSERT( it.value() );
+	return it;
+}
+
+XUPItem* XUPFilteredProjectModel::mapToSource( const QModelIndex& proxyIndex ) const
+{
+    if ( proxyIndex.isValid() )
+	{
+		XUPItemMappingIterator it = indexToIterator( proxyIndex );
+		if ( it != mItemsMapping.constEnd() )
+			return it.key();
+	}
+	return 0;
+}
+
+QModelIndex XUPFilteredProjectModel::mapFromSource( XUPItem* sourceItem ) const
+{
+	XUPItemMappingIterator it = mItemsMapping.constFind( sourceItem );
+	if ( it != mItemsMapping.constEnd() )
+		return it.value()->mProxyIndex;
+	return QModelIndex();
+}
+
+XUPItemMappingIterator XUPFilteredProjectModel::createMapping( XUPItem* item, XUPItem* parent ) const
 {
 	XUPItemMappingIterator it = mItemsMapping.constFind( item );
 	if ( it != mItemsMapping.constEnd() ) // was mapped already
 		return it;
 
 	Mapping* m = new Mapping;
-	
-	/*
-	int count = item->childCount();
-	for ( int i = 0; i < count; ++i )
-	{
-		m->mMappedChildren << item->child( i );
-	}
-	
-	if ( sort )
-	{
-		qSortItems( m->mMappedChildren );
-	}
-	*/
-
 	it = XUPItemMappingIterator( mItemsMapping.insert( item, m ) );
+	m->mParent = parent;
 	m->mIterator = it;
-/*
+
 	if ( item != mSourceModel->mRootProject )
 	{
-		XUPItem* parentItem = item->project()->parentProject();
-		XUPItemMappingIterator it2 = createMapping( parentItem );
-		Q_ASSERT( it2 != mItemsMapping.constEnd() );
-		it2.value()->mMappedChildren << item;
+		Q_ASSERT( parent );
+		XUPItemMappingIterator parentIt = createMapping( parent );
+		Q_ASSERT( parentIt != mItemsMapping.constEnd() );
+		parentIt.value()->mMappedChildren << item;
 	}
-*/
+
 	Q_ASSERT( it != mItemsMapping.constEnd() );
 	Q_ASSERT( it.value() );
 
@@ -216,7 +247,7 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 	populateFromItem( mSourceModel->mRootProject );
 	
 	// debug
-	//debug( mSourceModel->mRootProject, mItems );
+	debug( mSourceModel->mRootProject, mItemsMapping );
 }
 
 XUPProjectModel* XUPFilteredProjectModel::sourceModel() const
@@ -303,7 +334,7 @@ XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root ) const
 void XUPFilteredProjectModel::populateFromItem( XUPItem* item )
 {
 	XUPProjectItem* project = item->project();
-	XUPItemMappingIterator projectIterator = createMapping( project, false );
+	XUPItemMappingIterator projectIterator = createMapping( project, project->parentProject() );
 	
 	XUPItemList variables = getFilteredVariables( item );
 	foreach ( XUPItem* variable, variables )
@@ -316,16 +347,17 @@ void XUPFilteredProjectModel::populateFromItem( XUPItem* item )
 		}
 		else
 		{
-			projectIterator.value()->mMappedChildren << variable;
+			//projectIterator.value()->mMappedChildren << variable;
 		}
 		
-		XUPItemMappingIterator variableIterator = createMapping( variable, false );
+		XUPItemMappingIterator variableIterator = createMapping( variable, project );
 		XUPItemList& variableValues = variableIterator.value()->mMappedChildren;
 		foreach ( XUPItem* value, getValues( variable ) )
 		{
 			if ( !variableIterator.value()->findValue( value->attribute( "content" ) ) )
 			{
-				variableValues << value;
+				createMapping( value, variable );
+				//variableValues << value;
 			}
 		}
 		
