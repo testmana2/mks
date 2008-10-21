@@ -50,7 +50,7 @@ public:
 	void addChild( XUPItem* item );
 	// return the parent item
 	XUPItem* parent() const;
-	// return the item row. If item hasn't parent - -1 will be return
+	// return the item row. If item hasn't parent -1 will be return
 	int row() const;
 	// return child count
 	int childCount() const;

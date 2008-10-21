@@ -11,6 +11,13 @@ typedef XUPItemMapping::const_iterator XUPItemMappingIterator;
 
 struct Mapping
 {
+	Mapping()
+	{
+		mParent = 0;
+	}
+	
+	QModelIndex mProxyIndex;
+	XUPItem* mParent;
 	QList<XUPItem*> mMappedChildren;
 	XUPItemMappingIterator mIterator;
 	
@@ -65,6 +72,10 @@ public:
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 	virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
 	
+	XUPItemMappingIterator indexToIterator( const QModelIndex& proxyIndex ) const;
+	XUPItem* mapToSource( const QModelIndex& proxyIndex ) const;
+	QModelIndex mapFromSource( XUPItem* sourceItem ) const;
+	
 	void setSourceModel( XUPProjectModel* model );
 	XUPProjectModel* sourceModel() const;
 	
@@ -77,7 +88,7 @@ protected:
 	XUPProjectModel* mSourceModel;
 	mutable XUPItemMapping mItemsMapping;
 	
-	XUPItemMappingIterator createMapping( XUPItem* item, bool sort = true ) const;
+	XUPItemMappingIterator createMapping( XUPItem* item, XUPItem* parent = 0 ) const;
 };
 
 #endif // XUPFILTEREDPROJECTMODEL_H
