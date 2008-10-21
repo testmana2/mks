@@ -48,8 +48,20 @@ bool XUPItem::operator<( const XUPItem& other ) const
 {
 	if ( type() == other.type() )
 		return sameTypeLess( other );
+	else
+	{
+		switch ( type() )
+		{
+			case XUPItem::Project:
+				return false;
+				break;
+			default:
+				return true;
+				break;
+		}
+	}
 #warning XUPItem::operator< it may need a special test to do when not same type
-	return false;
+	return displayText().toLower() < other.displayText().toLower();
 }
 
 QDomElement XUPItem::node() const
