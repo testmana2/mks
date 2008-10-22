@@ -147,7 +147,7 @@ void XUPProjectManager::on_tvFiltered_activated( const QModelIndex& index )
 				switch ( files.count() )
 				{
 					case 0:
-						fn = QString::null;
+						fn.clear();
 						break;
 					case 1:
 						fn = files.at( 0 ).absoluteFilePath();
