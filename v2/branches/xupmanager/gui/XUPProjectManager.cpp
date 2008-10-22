@@ -1,4 +1,5 @@
 #include "XUPProjectManager.h"
+#include "UIXUPFindFiles.h"
 #include "../iconmanager/pIconManager.h"
 #include "../core/XUPProjectModel.h"
 #include "../core/XUPFilteredProjectModel.h"
@@ -129,15 +130,54 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 	}
 }
 
+void XUPProjectManager::on_tvFiltered_activated( const QModelIndex& index )
+{
+	XUPItem* item = mFilteredModel->mapToSource( index );
+	if ( item )
+	{
+		if ( item->type() == XUPItem::File )
+		{
+			XUPProjectItem* pItem = item->project()->rootIncludeProject();
+			QString fn = pItem->filePath( pItem->interpretValue( item, "content" ) );
+			
+			if ( !QFile::exists( fn ) )
+			{
+				QString findFile = item->attribute( "content" ).remove( '"' );
+				QFileInfoList files = pItem->findFile( findFile );
+				switch ( files.count() )
+				{
+					case 0:
+						fn = QString::null;
+						break;
+					case 1:
+						fn = files.at( 0 ).absoluteFilePath();
+						break;
+					default:
+					{
+						UIXUPFindFiles dlg( findFile, this );
+						dlg.setFiles( files, pItem->path() );
+						fn.clear();
+						if ( dlg.exec() )
+						{
+							fn = dlg.selectedFile();
+						}
+						break;
+					}
+				}
+			}
+			
+			if ( QFile::exists( fn ) )
+			{
+				openFile( fn );
+			}
+		}
+	}
+}
+
 void XUPProjectManager::on_tvNative_activated( const QModelIndex& index )
 {
-	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
-	if ( item->type() == XUPItem::File )
-	{
-		XUPProjectItem* pItem = item->project()->rootIncludeProject();
-		const QString fn = pItem->filePath( pItem->interpretValue( item, "content" ) );
-		openFile( fn );
-	}
+	QModelIndex proxyIndex = mFilteredModel->mapFromSource( static_cast<XUPItem*>( index.internalPointer() ) );
+	on_tvFiltered_activated( proxyIndex );
 }
 
 QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
