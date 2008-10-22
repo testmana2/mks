@@ -187,7 +187,7 @@ XUPItemMappingIterator XUPFilteredProjectModel::indexToIterator( const QModelInd
 
 XUPItem* XUPFilteredProjectModel::mapToSource( const QModelIndex& proxyIndex ) const
 {
-    if ( proxyIndex.isValid() )
+	if ( proxyIndex.isValid() )
 	{
 		XUPItemMappingIterator it = indexToIterator( proxyIndex );
 		if ( it != mItemsMapping.constEnd() )
