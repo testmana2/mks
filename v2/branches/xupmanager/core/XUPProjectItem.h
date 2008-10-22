@@ -4,6 +4,8 @@
 #include "XUPItem.h"
 #include "XUPProjectItemInfos.h"
 
+#include <QFileInfo>
+
 class XUPProjectItem : public QObject, public XUPItem
 {
 	Q_OBJECT
@@ -31,6 +33,8 @@ public:
 	QString path() const;
 	// return an absolute file name according to project path
 	QString filePath( const QString& fileName ) const;
+	// return a list of QFileInfo having corresponding partial file path
+	QFileInfoList findFile( const QString& partialFilePath ) const;
 	
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
