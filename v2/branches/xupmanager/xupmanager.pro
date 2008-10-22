@@ -1,7 +1,7 @@
 ProjectSettings {
 	EDITOR	= QMakeProjectEditor
-	QT_VERSION	= 4.4.0
-	EXECUTE_DEBUG	= xupmanager
+	QT_VERSION	= 4.4.2
+	EXECUTE_DEBUG	= xupmanager.app/Contents/MacOS/xupmanager
 }
 
 # xup framework
