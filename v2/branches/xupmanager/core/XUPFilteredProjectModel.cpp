@@ -12,7 +12,7 @@ void debug( XUPItem* root, const XUPItemMapping& mItems, int mode = 0 )
 		qWarning( root->displayText().prepend( prep ).toLocal8Bit().constData() );
 		XUPItemMappingIterator it = mItems.constFind( root );
 		Q_ASSERT( it != mItems.constEnd() );
-		Q_ASSERT( it->value() );
+		Q_ASSERT( it.value() );
 		foreach ( XUPItem* item, it.value()->mMappedChildren )
 		{
 			prof += 4;
