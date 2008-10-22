@@ -40,6 +40,7 @@ protected slots:
 	void fileClosed( QObject* object );
 	void on_cbProjects_currentIndexChanged( int id );
 	void on_tbDebug_triggered( QAction* action );
+	void on_tvFiltered_activated( const QModelIndex& index );
 	void on_tvNative_activated( const QModelIndex& index );
 };
 
