@@ -2,7 +2,6 @@
 #include "../iconmanager/pIconManager.h"
 
 #include <QTextCodec>
-#include <QFileInfo>
 #include <QDir>
 #include <QRegExp>
 
@@ -46,6 +45,30 @@ QString XUPProjectItem::filePath( const QString& fn ) const
 		return QString::null;
 	QString fname = QFileInfo( fn ).isRelative() ? path().append( "/" ).append( fn ) : fn;
 	return QDir::cleanPath( fname );
+}
+
+#warning need use pMonkeyStudio::getFiles()
+const QFileInfoList getFiles( QDir fromDir, const QStringList& filters, bool recursive = true )
+{
+	QFileInfoList files;
+	foreach ( QFileInfo file, fromDir.entryInfoList( QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst | QDir::Name ) )
+	{
+		if ( file.isFile() && ( filters.isEmpty() || QDir::match( filters, file.fileName() ) ) )
+			files << file;
+		else if ( file.isDir() && recursive )
+		{
+			fromDir.cd( file.filePath() );
+			files << getFiles( fromDir, filters );
+			fromDir.cdUp();
+		}
+	}
+	return files;
+}
+
+QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
+{
+	QDir dir( path() );
+	return getFiles( dir, QStringList( partialFilePath ), true );
 }
 
 XUPProjectItemInfos* XUPProjectItem::projectInfos()
