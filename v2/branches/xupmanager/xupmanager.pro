@@ -1,7 +1,7 @@
 ProjectSettings {
 	EDITOR	= QMakeProjectEditor
 	QT_VERSION	= 4.4.2
-	EXECUTE_DEBUG	= xupmanager.app/Contents/MacOS/xupmanager
+	EXECUTE_DEBUG	= xupmanager
 }
 
 # xup framework
@@ -34,5 +34,8 @@ SOURCES	*= $${XUP_PWD}/core/XUPProjectModel.cpp \
 	addons/qmake/QMakeProjectItem.cpp \
 	core/XUPProjectItemInfos.cpp
 
-SOURCES	+= core/XUPFilteredProjectModel.cpp
-HEADERS	+= core/XUPFilteredProjectModel.h
+SOURCES	+= core/XUPFilteredProjectModel.cpp \
+	gui/UIXUPFindFiles.cpp
+HEADERS	+= core/XUPFilteredProjectModel.h \
+	gui/UIXUPFindFiles.h
+FORMS	+= gui/UIXUPFindFiles.ui
