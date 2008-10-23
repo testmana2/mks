@@ -33,8 +33,6 @@ public:
 	QString path() const;
 	// return an absolute file name according to project path
 	QString filePath( const QString& fileName ) const;
-	// return a list of QFileInfo having corresponding partial file path
-	QFileInfoList findFile( const QString& partialFilePath ) const;
 	
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
@@ -56,6 +54,10 @@ public:
 	// return the display icon for the project item
 	QIcon itemDisplayIcon( XUPItem* item );
 	
+	// split a multi line value into QStringList
+	QStringList splitMultiLineValue( const QString& value ) const;
+	// return a list of QFileInfo having corresponding partial file path
+	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
 	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned
 	virtual QList<XUPItem*> getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem = 0 ) const;
 	// return the result of interpreting the variable variableName until caller item if defined, or until complete tree is scaned or default value if variable is empty
