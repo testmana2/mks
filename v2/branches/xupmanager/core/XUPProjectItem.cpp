@@ -65,8 +65,62 @@ const QFileInfoList getFiles( QDir fromDir, const QStringList& filters, bool rec
 	return files;
 }
 
+QStringList XUPProjectItem::splitMultiLineValue( const QString& value ) const
+{
+	QStringList tmpValues = value.split( " " );
+	bool inStr = false;
+	QStringList multivalues;
+	QString ajout;
+
+	for(int ku = 0;ku < tmpValues.size();ku++)
+	{
+		if(tmpValues.value(ku).startsWith('"') )
+				inStr = true;
+		if(inStr)
+		{
+			if(ajout != "")
+					ajout += " ";
+			ajout += tmpValues.value(ku);
+			if(tmpValues.value(ku).endsWith('"') )
+			{
+					multivalues += ajout;
+					ajout = "";
+					inStr = false;
+			}
+		}
+		else
+		{
+			multivalues += tmpValues.value(ku);
+		}
+	}
+
+	return multivalues;
+}
+
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 {
+	const QString projectPath = path();
+	const QStringList variablesPath = mXUPProjectInfos->pathVariables( projectType() );
+	QStringList paths;
+	foreach ( const QString& variable, variablesPath )
+	{
+		QString tmpPaths = interpretVariable( variable );
+		foreach ( QString path, splitMultiLineValue( tmpPaths ) )
+		{
+			path = filePath( path.remove( '"' ) );
+			if ( !paths.contains( path ) && !path.startsWith( projectPath ) )
+			{
+				paths << path;
+			}
+		}
+	}
+	
+	// add project path
+	paths << projectPath;
+	// sort path
+	qSort( paths );
+	qWarning() << "paths" << paths;
+
 	QDir dir( path() );
 	return getFiles( dir, QStringList( partialFilePath ), true );
 }

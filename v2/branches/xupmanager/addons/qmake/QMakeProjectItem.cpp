@@ -108,6 +108,11 @@ QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& at
 	return value;
 }
 
+QFileInfoList QMakeProjectItem::findFile( const QString& partialFilePath ) const
+{	
+	return XUPProjectItem::findFile( partialFilePath );
+}
+
 void QMakeProjectItem::registerProjectType() const
 {
 	// get proejct type
@@ -230,38 +235,6 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerVariableSuffixes( pType, mVariableSuffixes );
 }
 
-QStringList splitSubdirs( const QString& value )
-{
-	QStringList tmpValues = value.split( " " );
-	bool inStr = false;
-	QStringList multivalues;
-	QString ajout;
-
-	for(int ku = 0;ku < tmpValues.size();ku++)
-	{
-		if(tmpValues.value(ku).startsWith('"') )
-				inStr = true;
-		if(inStr)
-		{
-			if(ajout != "")
-					ajout += " ";
-			ajout += tmpValues.value(ku);
-			if(tmpValues.value(ku).endsWith('"') )
-			{
-					multivalues += ajout;
-					ajout = "";
-					inStr = false;
-			}
-		}
-		else
-		{
-			multivalues += tmpValues.value(ku);
-		}
-	}
-
-	return multivalues;
-}
-
 void QMakeProjectItem::customRowCount( XUPItem* item ) const
 {
 	if ( item->type() == XUPItem::Variable && item->attribute( "name" ) == "SUBDIRS" )
@@ -276,7 +249,7 @@ void QMakeProjectItem::customRowCount( XUPItem* item ) const
 				XUPItem* cit = item->child( i );
 				if ( cit->type() == XUPItem::File )
 				{
-					subdirs << splitSubdirs( cit->attribute( "content" ) );
+					subdirs << splitMultiLineValue( cit->attribute( "content" ) );
 				}
 			}
 			
