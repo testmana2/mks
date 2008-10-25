@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>566</width>
-    <height>443</height>
+    <width>584</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -46,7 +46,18 @@
    </item>
    <item row="0" column="1" >
     <widget class="QStackedWidget" name="stackedWidget" >
+     <property name="currentIndex" >
+      <number>5</number>
+     </property>
      <widget class="QWidget" name="General_settings" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>455</width>
+        <height>401</height>
+       </rect>
+      </property>
       <layout class="QVBoxLayout" name="verticalLayout_6" >
        <item>
         <widget class="QGroupBox" name="groupBox" >
@@ -155,6 +166,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Qt_components" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>455</width>
+        <height>401</height>
+       </rect>
+      </property>
       <layout class="QGridLayout" name="gridLayout_3" >
        <item row="0" column="0" >
         <widget class="QGroupBox" name="groupBox_4" >
@@ -337,6 +356,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Build_options" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>455</width>
+        <height>401</height>
+       </rect>
+      </property>
       <layout class="QGridLayout" name="gridLayout_4" >
        <item rowspan="2" row="0" column="0" >
         <widget class="QGroupBox" name="groupBox_2" >
@@ -521,6 +548,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Project_files" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>455</width>
+        <height>401</height>
+       </rect>
+      </property>
       <layout class="QGridLayout" name="gridLayout_5" >
        <item row="0" column="0" >
         <spacer name="horizontalSpacer" >
@@ -562,14 +597,15 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Other_variables" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>455</width>
+        <height>401</height>
+       </rect>
+      </property>
       <layout class="QGridLayout" name="gridLayout_6" >
-       <item rowspan="3" row="0" column="0" >
-        <widget class="pStringListEditor" name="mOtherVariablesList" >
-         <property name="title" >
-          <string>Variables</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="1" >
         <widget class="QLabel" name="mVariableValueLabel" >
          <property name="text" >
@@ -587,11 +623,28 @@
          </property>
         </widget>
        </item>
+       <item rowspan="3" row="0" column="0" >
+        <widget class="pStringListEditor" name="mOtherVariablesList" >
+         <property name="title" >
+          <string>Variables</string>
+         </property>
+        </widget>
+       </item>
       </layout>
+      <zorder>mVariableValueLabel</zorder>
+      <zorder>mVariablValueEdit</zorder>
+      <zorder>mAddFilePathButton</zorder>
       <zorder>mOtherVariablesList</zorder>
-      <zorder></zorder>
      </widget>
      <widget class="QWidget" name="About" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>455</width>
+        <height>401</height>
+       </rect>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_6" >
        <item>
         <widget class="QTextBrowser" name="textBrowser" >
@@ -599,16 +652,16 @@
           <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">You are using &lt;span style=" font-weight:600;">Simple QMake project editor&lt;/span>.&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">This editor not allows you to use all QMake features.&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">Aslo it editor can make some changes in your project file structure, which you did not desired. (It's possible in case if your project was edited by Advanced QMake project editor or manualy.)&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">But, we can't provide support of all features of QMake, leave project file structure, unchanged, and provide simple interface in one thing.&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">So, if you working with advanced Qt project, you can use Advanced QMake editor, or edit project file manualy. &lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">Enjoy!&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">Andrei Kopats, Fileppe Azevedo and Monkey Studio team/&lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">You are using &lt;span style=" font-weight:600;">Simple QMake project editor&lt;/span>.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This editor not allows you to use all QMake features.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Aslo it editor can make some changes in your project file structure, which you did not desired. (It's possible in case if your project was edited by Advanced QMake project editor or manualy.)&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">But, we can't provide support of all features of QMake, leave project file structure, unchanged, and provide simple interface in one thing.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">So, if you working with advanced Qt project, you can use Advanced QMake editor, or edit project file manualy. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Enjoy!&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Andrei Kopats, Filipe Azevedo and the Monkey Studio team&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;/body>&lt;/html></string>
          </property>
         </widget>
        </item>
