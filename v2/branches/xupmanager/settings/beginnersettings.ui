@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>657</width>
-    <height>530</height>
+    <width>566</width>
+    <height>443</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -24,8 +24,8 @@
   <property name="windowTitle" >
    <string>Dialog</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_5" >
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2" >
+   <item rowspan="2" row="0" column="0" >
     <widget class="QListView" name="mPagesList" >
      <property name="minimumSize" >
       <size>
@@ -44,596 +44,591 @@
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_11" >
-     <item>
-      <widget class="QStackedWidget" name="stackedWidget" >
-       <property name="currentIndex" >
-        <number>5</number>
-       </property>
-       <widget class="QWidget" name="General_settings" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>531</width>
-          <height>471</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_9" >
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout" >
-           <item>
-            <widget class="QLabel" name="label" >
-             <property name="text" >
-              <string>Project name</string>
-             </property>
-             <property name="buddy" >
-              <cstring>mProjectNameEdit</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="mProjectNameEdit" />
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox" >
-           <property name="title" >
-            <string>Project type</string>
-           </property>
-           <property name="checkable" >
-            <bool>false</bool>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout" >
-            <item>
-             <widget class="QRadioButton" name="mApplicationProjectType" >
-              <property name="text" >
-               <string>Application</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mStaticLibraryProjectType" >
-              <property name="text" >
-               <string>Static library</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mSharedLibraryProjectType" >
-              <property name="text" >
-               <string>Shared library (DLL)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mSubdirsProjectType" >
-              <property name="text" >
-               <string>Subdirectory project (set of Qt projects)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mPluginProjectType" >
-              <property name="text" >
-               <string>Plugin (Qt specific)</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mDesignerPluginProjectType" >
-              <property name="text" >
-               <string>Qt Designer plugin</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2" >
-           <item>
-            <widget class="QLabel" name="label_2" >
-             <property name="text" >
-              <string>Destination dirrectory</string>
-             </property>
-             <property name="buddy" >
-              <cstring>mDestDirEdit</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="mDestDirEdit" />
-           </item>
-           <item>
-            <widget class="QToolButton" name="mDestDirButton" >
-             <property name="text" >
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_10" >
-           <property name="title" >
-            <string>Macintosh specific options</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_8" >
-            <item>
-             <widget class="QCheckBox" name="mBuildForX86" >
-              <property name="text" >
-               <string>Build version for x86</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mBuildForPPC" >
-              <property name="text" >
-               <string>Build for PowerPC</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mCreateBundle" >
-              <property name="text" >
-               <string>Create a bundle</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer" >
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="Qt_components" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>531</width>
-          <height>471</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6" >
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3" >
-           <item>
-            <widget class="QGroupBox" name="groupBox_4" >
-             <property name="title" >
-              <string>QT modules used</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_4" >
-              <item>
-               <widget class="QCheckBox" name="mQtCore" >
-                <property name="text" >
-                 <string>QtCore</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mQtGui" >
-                <property name="text" >
-                 <string>QtGui</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mQtNetwork" >
-                <property name="text" >
-                 <string>QtNetwork</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mQtOpenGL" >
-                <property name="text" >
-                 <string>QtOpenGL</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mQtSql" >
-                <property name="text" >
-                 <string>QtSql</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mQtSvg" >
-                <property name="text" >
-                 <string>QtSvg</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mQtXml" >
-                <property name="text" >
-                 <string>QtXml</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mQt3Support" >
-                <property name="text" >
-                 <string>Qt3Support</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBox_6" >
-             <property name="title" >
-              <string>Other modules</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_5" >
-              <item>
-               <widget class="QCheckBox" name="mOpenGL" >
-                <property name="text" >
-                 <string>OpenGL</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mPhonon" >
-                <property name="text" >
-                 <string>Phonon</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="mWebkit" >
-                <property name="text" >
-                 <string>Webkit</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_2" >
-                <property name="orientation" >
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0" >
-                 <size>
-                  <width>20</width>
-                  <height>116</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_3" >
-           <property name="text" >
-            <string>Qt version</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QListWidget" name="mQtVersionsList" />
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="Build_options" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>531</width>
-          <height>471</height>
-         </rect>
-        </property>
+   <item row="0" column="1" >
+    <widget class="QStackedWidget" name="stackedWidget" >
+     <widget class="QWidget" name="General_settings" >
+      <layout class="QVBoxLayout" name="verticalLayout_6" >
+       <item>
+        <widget class="QGroupBox" name="groupBox" >
+         <property name="title" >
+          <string>Project Type</string>
+         </property>
+         <property name="checkable" >
+          <bool>false</bool>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout" >
+          <item>
+           <widget class="QRadioButton" name="mApplicationProjectType" >
+            <property name="text" >
+             <string>Application</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mStaticLibraryProjectType" >
+            <property name="text" >
+             <string>Static Library</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mSharedLibraryProjectType" >
+            <property name="text" >
+             <string>Shared Library (DLL)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mSubdirsProjectType" >
+            <property name="text" >
+             <string>Solution Project (Set of Qt projects)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mPluginProjectType" >
+            <property name="text" >
+             <string>Qt Plugin</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mDesignerPluginProjectType" >
+            <property name="text" >
+             <string>Qt Designer Plugin</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <layout class="QGridLayout" name="gridLayout" >
-         <item rowspan="2" row="0" column="0" >
-          <widget class="QGroupBox" name="groupBox_2" >
-           <property name="title" >
-            <string>Build configuration</string>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string>Project name</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3" >
-            <item>
-             <widget class="QRadioButton" name="mReleaseConfig" >
-              <property name="text" >
-               <string>Release</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mDebugConfig" >
-              <property name="text" >
-               <string>Release</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mDebugAndReleaseConfig" >
-              <property name="text" >
-               <string>Debug  and release</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mBothConfigs" >
-              <property name="text" >
-               <string>Build both configurations</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <property name="buddy" >
+            <cstring>mProjectNameEdit</cstring>
+           </property>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="QGroupBox" name="groupBox_3" >
-           <property name="title" >
-            <string>Compiler warnings level</string>
+         <item row="0" column="1" colspan="2" >
+          <widget class="QLineEdit" name="mProjectNameEdit" />
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>Destination directory</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_2" >
-            <item>
-             <widget class="QRadioButton" name="mWarnOn" >
-              <property name="text" >
-               <string>As much, as possible</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mWarnNotSet" >
-              <property name="text" >
-               <string>Standard</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="mWarnOff" >
-              <property name="text" >
-               <string>As less, as possible</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <property name="buddy" >
+            <cstring>mDestDirEdit</cstring>
+           </property>
           </widget>
          </item>
          <item row="1" column="1" >
-          <widget class="QGroupBox" name="groupBox_7" >
-           <property name="title" >
-            <string>Compiler flags and defines</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_12" >
-            <item>
-             <widget class="QCheckBox" name="mExceptions" >
-              <property name="text" >
-               <string>Exceptions support</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mRTTI" >
-              <property name="text" >
-               <string>RTTI support</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mSTL" >
-              <property name="text" >
-               <string>STL support</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mMultiThread" >
-              <property name="text" >
-               <string>Multithreaded</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+          <widget class="QLineEdit" name="mDestDirEdit" />
          </item>
-         <item row="2" column="0" >
-          <widget class="QGroupBox" name="groupBox_8" >
-           <property name="title" >
-            <string>Windows specific</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_14" >
-            <item>
-             <widget class="QCheckBox" name="mConfigWindows" >
-              <property name="text" >
-               <string>Include Windows headers and libraryes</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mConfigConsole" >
-              <property name="text" >
-               <string>Create windows console application</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="mConfigManifest" >
-              <property name="text" >
-               <string>Include manifest to application (library)</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="2" column="1" >
-          <widget class="QGroupBox" name="groupBox_9" >
-           <property name="title" >
-            <string>Unix specific</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_13" >
-            <item>
-             <widget class="QCheckBox" name="mX11" >
-              <property name="text" >
-               <string>Include X11 headers and libraryes</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="Project_files" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>531</width>
-          <height>471</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_7" >
-         <item>
-          <widget class="pFileListEditor" name="mSources" >
-           <property name="title" >
-            <string>Sources (and headers)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="pFileListEditor" name="mForms" >
-           <property name="title" >
-            <string>Forms</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="pFileListEditor" name="mResources" >
-           <property name="title" >
-            <string>Resource files</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="pFileListEditor" name="groupBox_5" >
-           <property name="title" >
-            <string>Translation files</string>
+         <item row="1" column="2" >
+          <widget class="QToolButton" name="mDestDirButton" >
+           <property name="text" >
+            <string>...</string>
            </property>
           </widget>
          </item>
         </layout>
-       </widget>
-       <widget class="QWidget" name="Other_variables" >
-        <property name="geometry" >
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>531</width>
-          <height>471</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_4" >
-         <item>
-          <widget class="pStringListEditor" name="mOtherVariablesList" >
-           <property name="title" >
-            <string>Variables</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_10" >
-           <item>
-            <widget class="QLabel" name="mVariableValueLabel" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
+       </item>
+       <item>
+        <spacer name="verticalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Qt_components" >
+      <layout class="QGridLayout" name="gridLayout_3" >
+       <item row="0" column="0" >
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="title" >
+          <string>Qt Modules Used</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4" >
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QListWidget" name="lwQtModules" >
+            <property name="palette" >
+             <palette>
+              <active>
+               <colorrole role="Base" >
+                <brush brushstyle="SolidPattern" >
+                 <color alpha="0" >
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base" >
+                <brush brushstyle="SolidPattern" >
+                 <color alpha="0" >
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="Base" >
+                <brush brushstyle="SolidPattern" >
+                 <color alpha="255" >
+                  <red>244</red>
+                  <green>244</green>
+                  <blue>244</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="frameShape" >
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <item>
              <property name="text" >
-              <string>Value</string>
+              <string>QtCore</string>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPlainTextEdit" name="mVariablValueEdit" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="mAddFilePathButton" >
+            </item>
+            <item>
              <property name="text" >
-              <string>Add file path</string>
+              <string>QtGui</string>
              </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-        <zorder>mOtherVariablesList</zorder>
-        <zorder></zorder>
-       </widget>
-       <widget class="QWidget" name="About" >
-        <layout class="QHBoxLayout" name="horizontalLayout_6" >
-         <item>
-          <widget class="QTextBrowser" name="textBrowser" >
-           <property name="html" >
-            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+            </item>
+            <item>
+             <property name="text" >
+              <string>QtNetwork</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>QtOpenGL</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>QtSql</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>QtXml</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Qt3 Support</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QGroupBox" name="groupBox_6" >
+         <property name="title" >
+          <string>Others Modules</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5" >
+          <property name="leftMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QListWidget" name="lwOthersModules" >
+            <property name="palette" >
+             <palette>
+              <active>
+               <colorrole role="Base" >
+                <brush brushstyle="SolidPattern" >
+                 <color alpha="0" >
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base" >
+                <brush brushstyle="SolidPattern" >
+                 <color alpha="0" >
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="Base" >
+                <brush brushstyle="SolidPattern" >
+                 <color alpha="255" >
+                  <red>244</red>
+                  <green>244</green>
+                  <blue>244</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="frameShape" >
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <item>
+             <property name="text" >
+              <string>OpenGL</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Phonon</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Webkit</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QLabel" name="label_3" >
+         <property name="text" >
+          <string>Qt Version</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2" >
+        <widget class="QListWidget" name="mQtVersionsList" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Build_options" >
+      <layout class="QGridLayout" name="gridLayout_4" >
+       <item rowspan="2" row="0" column="0" >
+        <widget class="QGroupBox" name="groupBox_2" >
+         <property name="title" >
+          <string>Build configuration</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3" >
+          <item>
+           <widget class="QRadioButton" name="mReleaseConfig" >
+            <property name="text" >
+             <string>Release</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mDebugConfig" >
+            <property name="text" >
+             <string>Release</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mDebugAndReleaseConfig" >
+            <property name="text" >
+             <string>Debug  and release</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mBothConfigs" >
+            <property name="text" >
+             <string>Build both configurations</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QGroupBox" name="groupBox_3" >
+         <property name="title" >
+          <string>Compiler warnings level</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2" >
+          <item>
+           <widget class="QRadioButton" name="mWarnOn" >
+            <property name="text" >
+             <string>As much, as possible</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mWarnNotSet" >
+            <property name="text" >
+             <string>Standard</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="mWarnOff" >
+            <property name="text" >
+             <string>As less, as possible</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item rowspan="2" row="1" column="1" >
+        <widget class="QGroupBox" name="groupBox_7" >
+         <property name="title" >
+          <string>Compiler flags and defines</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_12" >
+          <item>
+           <widget class="QCheckBox" name="mExceptions" >
+            <property name="text" >
+             <string>Exceptions support</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mRTTI" >
+            <property name="text" >
+             <string>RTTI support</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mSTL" >
+            <property name="text" >
+             <string>STL support</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mMultiThread" >
+            <property name="text" >
+             <string>Multithreaded</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QGroupBox" name="groupBox_9" >
+         <property name="title" >
+          <string>Unix specific</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_13" >
+          <item>
+           <widget class="QCheckBox" name="mX11" >
+            <property name="text" >
+             <string>Include X11 headers and libraryes</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QGroupBox" name="groupBox_8" >
+         <property name="title" >
+          <string>Windows specific</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_14" >
+          <item>
+           <widget class="QCheckBox" name="mConfigWindows" >
+            <property name="text" >
+             <string>Include Windows headers and libraryes</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mConfigConsole" >
+            <property name="text" >
+             <string>Create windows console application</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mConfigManifest" >
+            <property name="text" >
+             <string>Include manifest to application (library)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QGroupBox" name="groupBox_10" >
+         <property name="title" >
+          <string>Macintosh specific options</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8" >
+          <item>
+           <widget class="QCheckBox" name="mBuildForX86" >
+            <property name="text" >
+             <string>Build version for x86</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mBuildForPPC" >
+            <property name="text" >
+             <string>Build for PowerPC</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="mCreateBundle" >
+            <property name="text" >
+             <string>Create a bundle</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Project_files" >
+      <layout class="QGridLayout" name="gridLayout_5" >
+       <item row="0" column="0" >
+        <spacer name="horizontalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QToolButton" name="toolButton" >
+         <property name="text" >
+          <string>+</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" >
+        <widget class="QToolButton" name="toolButton_2" >
+         <property name="text" >
+          <string>E</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3" >
+        <widget class="QToolButton" name="toolButton_3" >
+         <property name="text" >
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="4" >
+        <widget class="QTreeView" name="treeView" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Other_variables" >
+      <layout class="QGridLayout" name="gridLayout_6" >
+       <item rowspan="3" row="0" column="0" >
+        <widget class="pStringListEditor" name="mOtherVariablesList" >
+         <property name="title" >
+          <string>Variables</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLabel" name="mVariableValueLabel" >
+         <property name="text" >
+          <string>Value</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QPlainTextEdit" name="mVariablValueEdit" />
+       </item>
+       <item row="2" column="1" >
+        <widget class="QPushButton" name="mAddFilePathButton" >
+         <property name="text" >
+          <string>Add file path</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+      <zorder>mOtherVariablesList</zorder>
+      <zorder></zorder>
+     </widget>
+     <widget class="QWidget" name="About" >
+      <layout class="QHBoxLayout" name="horizontalLayout_6" >
+       <item>
+        <widget class="QTextBrowser" name="textBrowser" >
+         <property name="html" >
+          <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
 &lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">You are using &lt;span style=" font-weight:600;">Simple QMake project editor&lt;/span>.&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This editor not allows you to use all QMake features.&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Aslo it editor can make some changes in your project file structure, which you did not desired. (It's possible in case if your project was edited by Advanced QMake project editor or manualy.)&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">But, we can't provide support of all features of QMake, leave project file structure, unchanged, and provide simple interface in one thing.&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">So, if you working with advanced Qt project, you can use Advanced QMake editor, or edit project file manualy. &lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Enjoy!&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Andrei Kopats, Fileppe Azevedo and Monkey Studio team/&lt;/p>
-&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;/body>&lt;/html></string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDialogButtonBox" name="buttonBox" >
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="standardButtons" >
-        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
+&lt;/style>&lt;/head>&lt;body style=" font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">You are using &lt;span style=" font-weight:600;">Simple QMake project editor&lt;/span>.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">This editor not allows you to use all QMake features.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">Aslo it editor can make some changes in your project file structure, which you did not desired. (It's possible in case if your project was edited by Advanced QMake project editor or manualy.)&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">But, we can't provide support of all features of QMake, leave project file structure, unchanged, and provide simple interface in one thing.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">So, if you working with advanced Qt project, you can use Advanced QMake editor, or edit project file manualy. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">Enjoy!&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">Andrei Kopats, Fileppe Azevedo and Monkey Studio team/&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Sans Serif';">&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
    </item>
   </layout>
-  <zorder>mPagesList</zorder>
-  <zorder></zorder>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>pFileListEditor</class>
-   <extends>QGroupBox</extends>
-   <header location="global" >pfilelisteditor.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>pStringListEditor</class>
    <extends>QGroupBox</extends>
