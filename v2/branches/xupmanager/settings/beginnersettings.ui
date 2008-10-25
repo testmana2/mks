@@ -5,20 +5,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>689</width>
-    <height>493</height>
+    <width>657</width>
+    <height>530</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>689</width>
-    <height>493</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize" >
    <size>
-    <width>689</width>
-    <height>493</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -45,19 +45,19 @@
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_8" >
+    <layout class="QVBoxLayout" name="verticalLayout_11" >
      <item>
       <widget class="QStackedWidget" name="stackedWidget" >
        <property name="currentIndex" >
-        <number>3</number>
+        <number>5</number>
        </property>
        <widget class="QWidget" name="General_settings" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>563</width>
-          <height>434</height>
+          <width>531</width>
+          <height>471</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_9" >
@@ -95,16 +95,37 @@
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="mLibraryProjectType" >
+             <widget class="QRadioButton" name="mStaticLibraryProjectType" >
               <property name="text" >
-               <string>Library</string>
+               <string>Static library</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="mSharedLibraryProjectType" >
+              <property name="text" >
+               <string>Shared library (DLL)</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QRadioButton" name="mSubdirsProjectType" >
               <property name="text" >
-               <string>Subdirectory project (set of projects)</string>
+               <string>Subdirectory project (set of Qt projects)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="mPluginProjectType" >
+              <property name="text" >
+               <string>Plugin (Qt specific)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="mDesignerPluginProjectType" >
+              <property name="text" >
+               <string>Qt Designer plugin</string>
               </property>
              </widget>
             </item>
@@ -136,6 +157,36 @@
           </layout>
          </item>
          <item>
+          <widget class="QGroupBox" name="groupBox_10" >
+           <property name="title" >
+            <string>Macintosh specific options</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_8" >
+            <item>
+             <widget class="QCheckBox" name="mBuildForX86" >
+              <property name="text" >
+               <string>Build version for x86</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mBuildForPPC" >
+              <property name="text" >
+               <string>Build for PowerPC</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mCreateBundle" >
+              <property name="text" >
+               <string>Create a bundle</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <spacer name="verticalSpacer" >
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -150,89 +201,18 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="Build_options" >
+       <widget class="QWidget" name="Qt_components" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>563</width>
-          <height>434</height>
+          <width>531</width>
+          <height>471</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6" >
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3" >
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_5" >
-             <item>
-              <widget class="QGroupBox" name="groupBox_2" >
-               <property name="title" >
-                <string>Build configuration</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_3" >
-                <item>
-                 <widget class="QRadioButton" name="mReleaseConfig" >
-                  <property name="text" >
-                   <string>Release</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="mDebugConfig" >
-                  <property name="text" >
-                   <string>Release</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="mDebugAndReleaseConfig" >
-                  <property name="text" >
-                   <string>Debug  and release</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="mBothConfigs" >
-                  <property name="text" >
-                   <string>Build both configurations</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="groupBox_3" >
-               <property name="title" >
-                <string>Compiler warnings level</string>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_2" >
-                <item>
-                 <widget class="QRadioButton" name="mWarnOn" >
-                  <property name="text" >
-                   <string>As much, as possible</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="mWarnNotSet" >
-                  <property name="text" >
-                   <string>Standard</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="mWarnOff" >
-                  <property name="text" >
-                   <string>As less, as possible</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item>
             <widget class="QGroupBox" name="groupBox_4" >
              <property name="title" >
@@ -298,14 +278,50 @@
              </layout>
             </widget>
            </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_6" >
+             <property name="title" >
+              <string>Other modules</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5" >
+              <item>
+               <widget class="QCheckBox" name="mOpenGL" >
+                <property name="text" >
+                 <string>OpenGL</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="mPhonon" >
+                <property name="text" >
+                 <string>Phonon</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="mWebkit" >
+                <property name="text" >
+                 <string>Webkit</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2" >
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0" >
+                 <size>
+                  <width>20</width>
+                  <height>116</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
           </layout>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="mConfigConsole" >
-           <property name="text" >
-            <string>Console application (Windows)</string>
-           </property>
-          </widget>
          </item>
          <item>
           <widget class="QLabel" name="label_3" >
@@ -319,13 +335,175 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="Build_options" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>531</width>
+          <height>471</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout" >
+         <item rowspan="2" row="0" column="0" >
+          <widget class="QGroupBox" name="groupBox_2" >
+           <property name="title" >
+            <string>Build configuration</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3" >
+            <item>
+             <widget class="QRadioButton" name="mReleaseConfig" >
+              <property name="text" >
+               <string>Release</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="mDebugConfig" >
+              <property name="text" >
+               <string>Release</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="mDebugAndReleaseConfig" >
+              <property name="text" >
+               <string>Debug  and release</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mBothConfigs" >
+              <property name="text" >
+               <string>Build both configurations</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QGroupBox" name="groupBox_3" >
+           <property name="title" >
+            <string>Compiler warnings level</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2" >
+            <item>
+             <widget class="QRadioButton" name="mWarnOn" >
+              <property name="text" >
+               <string>As much, as possible</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="mWarnNotSet" >
+              <property name="text" >
+               <string>Standard</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="mWarnOff" >
+              <property name="text" >
+               <string>As less, as possible</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QGroupBox" name="groupBox_7" >
+           <property name="title" >
+            <string>Compiler flags and defines</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_12" >
+            <item>
+             <widget class="QCheckBox" name="mExceptions" >
+              <property name="text" >
+               <string>Exceptions support</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mRTTI" >
+              <property name="text" >
+               <string>RTTI support</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mSTL" >
+              <property name="text" >
+               <string>STL support</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mMultiThread" >
+              <property name="text" >
+               <string>Multithreaded</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QGroupBox" name="groupBox_8" >
+           <property name="title" >
+            <string>Windows specific</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_14" >
+            <item>
+             <widget class="QCheckBox" name="mConfigWindows" >
+              <property name="text" >
+               <string>Include Windows headers and libraryes</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mConfigConsole" >
+              <property name="text" >
+               <string>Create windows console application</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="mConfigManifest" >
+              <property name="text" >
+               <string>Include manifest to application (library)</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QGroupBox" name="groupBox_9" >
+           <property name="title" >
+            <string>Unix specific</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_13" >
+            <item>
+             <widget class="QCheckBox" name="mX11" >
+              <property name="text" >
+               <string>Include X11 headers and libraryes</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="Project_files" >
         <property name="geometry" >
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>563</width>
-          <height>434</height>
+          <width>531</width>
+          <height>471</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7" >
@@ -360,6 +538,14 @@
         </layout>
        </widget>
        <widget class="QWidget" name="Other_variables" >
+        <property name="geometry" >
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>531</width>
+          <height>471</height>
+         </rect>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout_4" >
          <item>
           <widget class="pStringListEditor" name="mOtherVariablesList" >
@@ -398,8 +584,30 @@
          </item>
         </layout>
         <zorder>mOtherVariablesList</zorder>
-        <zorder>mVariableValueLabel</zorder>
         <zorder></zorder>
+       </widget>
+       <widget class="QWidget" name="About" >
+        <layout class="QHBoxLayout" name="horizontalLayout_6" >
+         <item>
+          <widget class="QTextBrowser" name="textBrowser" >
+           <property name="html" >
+            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">You are using &lt;span style=" font-weight:600;">Simple QMake project editor&lt;/span>.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">This editor not allows you to use all QMake features.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Aslo it editor can make some changes in your project file structure, which you did not desired. (It's possible in case if your project was edited by Advanced QMake project editor or manualy.)&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">But, we can't provide support of all features of QMake, leave project file structure, unchanged, and provide simple interface in one thing.&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">So, if you working with advanced Qt project, you can use Advanced QMake editor, or edit project file manualy. &lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Enjoy!&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Andrei Kopats, Fileppe Azevedo and Monkey Studio team/&lt;/p>
+&lt;p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;/p>&lt;/body>&lt;/html></string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
@@ -416,16 +624,8 @@
     </layout>
    </item>
   </layout>
-  <zorder>buttonBox</zorder>
   <zorder>mPagesList</zorder>
-  <zorder>stackedWidget</zorder>
-  <zorder>mAddFilePathButton</zorder>
-  <zorder>mVariablValueEdit</zorder>
-  <zorder>mVariableValueLabel</zorder>
-  <zorder>mVariableValueLabel</zorder>
-  <zorder>mVariableValueLabel</zorder>
   <zorder></zorder>
-  <zorder>mDestDirButton</zorder>
  </widget>
  <customwidgets>
   <customwidget>
