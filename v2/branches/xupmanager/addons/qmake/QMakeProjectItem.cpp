@@ -108,11 +108,6 @@ QString QMakeProjectItem::interpretValue( XUPItem* callerItem, const QString& at
 	return value;
 }
 
-QFileInfoList QMakeProjectItem::findFile( const QString& partialFilePath ) const
-{	
-	return XUPProjectItem::findFile( partialFilePath );
-}
-
 void QMakeProjectItem::registerProjectType() const
 {
 	// get proejct type
