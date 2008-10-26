@@ -13,7 +13,6 @@ public:
 	QMakeProjectItem();
 	virtual ~QMakeProjectItem();
 	
-	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
 	inline virtual int projectType() const { return QMakeProjectItem::QMakeProject; }
 	virtual void registerProjectType() const;
 	inline virtual XUPProjectItem* newProject() const { return new QMakeProjectItem(); }
