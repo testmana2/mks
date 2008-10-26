@@ -56,6 +56,10 @@ public:
 	
 	// split a multi line value into QStringList
 	QStringList splitMultiLineValue( const QString& value ) const;
+	// return the matching path ( from start ) between left and right string or null string if result isa drive on windows, or / on unix like
+	QString matchingPath( const QString& left, const QString& right ) const;
+	// return the compressed result list of paths list given in parameter
+	QStringList compressedPaths( const QStringList& paths ) const;
 	// return a list of QFileInfo having corresponding partial file path
 	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
 	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned

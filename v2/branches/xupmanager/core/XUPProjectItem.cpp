@@ -97,11 +97,65 @@ QStringList XUPProjectItem::splitMultiLineValue( const QString& value ) const
 	return multivalues;
 }
 
+QString XUPProjectItem::matchingPath( const QString& left, const QString& right ) const
+{
+	QString result;
+	for ( int i = 1; i < left.count() +1; i++ )
+	{
+		result = left.left( i );
+		if ( !right.startsWith( result ) )
+		{
+			result.chop( 1 );
+			break;
+		}
+	}
+	
+	if ( QDir::drives().contains( result ) || result.isEmpty() )
+	{
+		return QString::null;
+	}
+	
+	return result;
+}
+
+QStringList XUPProjectItem::compressedPaths( const QStringList& paths ) const
+{
+	QStringList pathsList = paths;
+	QStringList result;
+	
+	qSort( pathsList );
+	foreach ( const QString& path, pathsList )
+	{
+		if ( result.isEmpty() )
+		{
+			result << path;
+		}
+		else
+		{
+			QString matching = matchingPath( path, result.last() );
+			if ( matching.isEmpty() )
+			{
+				result << path;
+			}
+			else
+			{
+				result.removeLast();
+				result << matching;
+			}
+		}
+	}
+	
+	return result;
+}
+
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 {
 	const QString projectPath = path();
 	const QStringList variablesPath = mXUPProjectInfos->pathVariables( projectType() );
 	QStringList paths;
+	
+	// add project path and variables content based on path
+	paths << projectPath;
 	foreach ( const QString& variable, variablesPath )
 	{
 		QString tmpPaths = interpretVariable( variable );
@@ -115,14 +169,20 @@ QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 		}
 	}
 	
-	// add project path
-	paths << projectPath;
-	// sort path
-	qSort( paths );
-	qWarning() << "paths" << paths;
+	// get compressed path list
+	paths = compressedPaths( paths );
+	
+	// get all matching files in paths
+	QFileInfoList files;
+	QDir dir;
+	
+	foreach ( const QString& path, paths )
+	{
+		dir.setPath( path );
+		files << getFiles( dir, QStringList( partialFilePath ), true );
+	}
 
-	QDir dir( path() );
-	return getFiles( dir, QStringList( partialFilePath ), true );
+	return files;
 }
 
 XUPProjectItemInfos* XUPProjectItem::projectInfos()
