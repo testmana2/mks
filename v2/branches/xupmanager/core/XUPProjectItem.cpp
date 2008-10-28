@@ -47,6 +47,12 @@ QString XUPProjectItem::filePath( const QString& fn ) const
 	return QDir::cleanPath( fname );
 }
 
+QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
+{
+	QDir dir( path() );
+	return dir.relativeFilePath( fileName );
+}
+
 #warning need use pMonkeyStudio::getFiles()
 const QFileInfoList getFiles( QDir fromDir, const QStringList& filters, bool recursive = true )
 {
