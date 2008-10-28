@@ -10,6 +10,7 @@ class XUPProjectModel : public QAbstractItemModel
 {
 	Q_OBJECT
 	friend class XUPFilteredProjectModel;
+	friend class XUPProjectManager;
 	
 public:
 	XUPProjectModel( QObject* parent = 0 );
