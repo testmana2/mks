@@ -35,7 +35,10 @@ SOURCES	*= $${XUP_PWD}/core/XUPProjectModel.cpp \
 	core/XUPProjectItemInfos.cpp
 
 SOURCES	+= core/XUPFilteredProjectModel.cpp \
-	gui/UIXUPFindFiles.cpp
+	gui/UIXUPFindFiles.cpp \
+	addons/qmake/gui/UISimpleQMakeEditor.cpp
 HEADERS	+= core/XUPFilteredProjectModel.h \
-	gui/UIXUPFindFiles.h
-FORMS	+= gui/UIXUPFindFiles.ui
+	gui/UIXUPFindFiles.h \
+	addons/qmake/gui/UISimpleQMakeEditor.h
+FORMS	+= gui/UIXUPFindFiles.ui \
+	addons/qmake/gui/UISimpleQMakeEditor.ui
