@@ -5,6 +5,8 @@
 #include "../core/XUPFilteredProjectModel.h"
 #include "../core/XUPProjectItem.h"
 
+#include "../addons/qmake/gui/UISimpleQMakeEditor.h"
+
 #include <QFileDialog>
 #include <QTextCodec>
 
@@ -17,6 +19,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	setupUi( this );
 	tbOpen->setDefaultAction( action( atOpen ) );
 	tbClose->setDefaultAction( action( atClose ) );
+	tbEdit->setDefaultAction( action( atEdit ) );
 	
 	mFilteredModel = new XUPFilteredProjectModel( tvFiltered );
 	tvFiltered->setModel( mFilteredModel );
@@ -200,6 +203,11 @@ QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 			action->setToolTip( tr( "Close the current project" ) );
 			connect( action, SIGNAL( triggered() ), this, SLOT( closeProject() ) );
 			break;
+		case XUPProjectManager::atEdit:
+			action = new QAction( pIconManager::icon( "settings.png" ), tr( "Edit..." ), this );
+			action->setToolTip( tr( "Edit the current project" ) );
+			connect( action, SIGNAL( triggered() ), this, SLOT( editProject() ) );
+			break;
 	}
 	
 	if ( action )
@@ -307,9 +315,45 @@ void XUPProjectManager::XUPProjectManager::closeProject()
 	}
 }
 
+void XUPProjectManager::editProject()
+{
+	XUPProjectItem* project = currentProjectItem();
+	
+	if ( project )
+	{
+		UISimpleQMakeEditor editor( project, this );
+		if ( editor.exec() == QDialog::Accepted )
+		{
+			
+		}
+	}
+}
+
 XUPProjectModel* XUPProjectManager::currentProject() const
 {
 	return qobject_cast<XUPProjectModel*>( tvNative->model() );
+}
+
+XUPProjectItem* XUPProjectManager::currentProjectItem() const
+{
+	XUPProjectModel* model = currentProject();
+	if ( !model )
+	{
+		return 0;
+	}
+	
+	XUPProjectItem* project = 0;
+	XUPItem* item = mFilteredModel->mapToSource( tvFiltered->currentIndex() );
+	if ( item )
+	{
+		project = item->project();
+	}
+	else
+	{
+		project = model->mRootProject;
+	}
+	
+	return project;
 }
 
 void XUPProjectManager::setCurrentProject( XUPProjectModel* project )

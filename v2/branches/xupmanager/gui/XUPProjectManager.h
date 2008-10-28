@@ -15,13 +15,14 @@ class XUPProjectManager : public QWidget, public Ui::XUPProjectManager
 	Q_OBJECT
 
 public:
-	enum ActionType { atOpen = 0, atClose };
+	enum ActionType { atOpen = 0, atClose, atEdit };
 	
 	XUPProjectManager( QWidget* parent = 0 );
 	virtual ~XUPProjectManager();
 	
 	QAction* action( XUPProjectManager::ActionType type );
 	XUPProjectModel* currentProject() const;
+	XUPProjectItem* currentProjectItem() const;
 
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
@@ -34,6 +35,7 @@ public slots:
 	bool openFile( const QString& fileName, const QString& encoding = "UTF-8" );
 	void openProject();
 	void closeProject();
+	void editProject();
 	void setCurrentProject( XUPProjectModel* project );
 
 protected slots:
