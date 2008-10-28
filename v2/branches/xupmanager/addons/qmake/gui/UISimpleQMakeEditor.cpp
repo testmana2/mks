@@ -245,27 +245,27 @@ void UISimpleQMakeEditor::on_tbProjectTarget_clicked()
 
 void UISimpleQMakeEditor::accept()
 {
-	QStringList tmplate;
+	QString tmplate;
 	QStringList config;
 	QStringList qt;
 	QStringList target;
-	QStringList destdir;
-	QStringList dlldestdir;
+	QString destdir;
+	QString dlldestdir;
 	
 	mValues.clear();
 	
 	// project
 	if ( rbApplication->isChecked() )
 	{
-		tmplate << "app";
+		tmplate = "app";
 	}
 	else if ( rbSubdirs->isChecked() )
 	{
-		tmplate << "subdirs";
+		tmplate = "subdirs";
 	}
 	else
 	{
-		tmplate << "lib";
+		tmplate = "lib";
 		if ( rbQtDesignerPlugin->isChecked() )
 		{
 			config << "designer";
@@ -289,11 +289,11 @@ void UISimpleQMakeEditor::accept()
 		target << leProjectName->text();
 		if ( rbApplication->isChecked() || rbStaticLib->isChecked() )
 		{
-			destdir << leProjectTarget->text();
+			destdir = leProjectTarget->text();
 		}
 		else
 		{
-			dlldestdir << leProjectTarget->text();
+			dlldestdir = leProjectTarget->text();
 		}
 	}
 	
@@ -316,12 +316,51 @@ void UISimpleQMakeEditor::accept()
 		}
 	}
 	
-	mValues[ "TEMPLATE" ] = tmplate.join( " " );
+	// compiler settings
+	foreach ( QAbstractButton* ab, wCompilerSettings->findChildren<QAbstractButton*>() )
+	{
+		if ( !ab->isChecked() || !ab->isEnabled() )
+		{
+			continue;
+		}
+		
+		if ( !ab->statusTip().isEmpty() )
+		{
+			config << ab->statusTip();
+		}
+		else
+		{
+			if ( ab == cbManifest )
+			{
+				if ( tmplate == "app" )
+				{
+					config << "embed_manifest_exe";
+				}
+				else if ( tmplate == "lib" )
+				{
+					config << "embed_manifest_dll";
+				}
+			}
+			else if ( ab == cbBundle )
+			{
+				if ( tmplate == "app" )
+				{
+					config << "app_bundle";
+				}
+				else if ( tmplate == "lib" )
+				{
+					config << "lib_bundle";
+				}
+			}
+		}
+	}
+	
+	mValues[ "TEMPLATE" ] = tmplate;
 	mValues[ "CONFIG" ] = config.join( " " );
 	mValues[ "QT" ] = qt.join( " " );
 	mValues[ "TARGET" ] = target.join( " " );
-	mValues[ "DESTDIR" ] = destdir.join( " " );
-	mValues[ "DLLDESTDIR" ] = dlldestdir.join( " " );
+	mValues[ "DESTDIR" ] = destdir;
+	mValues[ "DLLDESTDIR" ] = dlldestdir;
 	
 	qWarning() << mValues;
 }
