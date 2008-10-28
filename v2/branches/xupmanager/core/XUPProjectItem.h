@@ -33,6 +33,8 @@ public:
 	QString path() const;
 	// return an absolute file name according to project path
 	QString filePath( const QString& fileName ) const;
+	// return a filepath relative to project path
+	QString relativeFilePath( const QString& fileName ) const;
 	
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
