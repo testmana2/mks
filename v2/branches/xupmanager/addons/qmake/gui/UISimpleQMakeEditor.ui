@@ -77,7 +77,7 @@
    <item row="0" column="1" >
     <widget class="QStackedWidget" name="swPages" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="wAbout" >
       <layout class="QHBoxLayout" name="horizontalLayout_6" >
@@ -276,41 +276,6 @@ p, li { white-space: pre-wrap; }
             <property name="frameShape" >
              <enum>QFrame::NoFrame</enum>
             </property>
-            <item>
-             <property name="text" >
-              <string>QtCore</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>QtGui</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>QtNetwork</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>QtOpenGL</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>QtSql</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>QtXml</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Qt3 Support</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>
@@ -370,21 +335,6 @@ p, li { white-space: pre-wrap; }
             <property name="frameShape" >
              <enum>QFrame::NoFrame</enum>
             </property>
-            <item>
-             <property name="text" >
-              <string>OpenGL</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Phonon</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>Webkit</string>
-             </property>
-            </item>
            </widget>
           </item>
          </layout>
@@ -458,16 +408,6 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="mWarnNotSet" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>Standard</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QRadioButton" name="rbWarningOff" >
             <property name="text" >
              <string>As less, as possible</string>
@@ -505,7 +445,7 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="cbThreads" >
+           <widget class="QCheckBox" name="cbThread" >
             <property name="text" >
              <string>Multithreaded</string>
             </property>
@@ -521,7 +461,10 @@ p, li { white-space: pre-wrap; }
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_13" >
           <item>
-           <widget class="QCheckBox" name="rbX11" >
+           <widget class="QCheckBox" name="cbX11" >
+            <property name="toolTip" >
+             <string>The target is a X11 application or library. The proper include paths and libraries will automatically be added to the project.</string>
+            </property>
             <property name="text" >
              <string>Include X11 headers and libraryes</string>
             </property>
