@@ -50,8 +50,51 @@ UISimpleQMakeEditor::~UISimpleQMakeEditor()
 {
 }
 
+void UISimpleQMakeEditor::updateProjectFiles()
+{
+	int pType = mProject->projectType();
+	foreach ( const QString& variable, mFileVariables )
+	{
+		QTreeWidgetItem* topItem = mProjectFilesItems.value( variable );
+		QStringList files = mProject->splitMultiLineValue( mValues[ variable ] );
+		if ( topItem && files.isEmpty() )
+		{
+			delete mProjectFilesItems.take( variable );
+		}
+		else if ( !files.isEmpty() )
+		{
+			if ( !topItem )
+			{
+				topItem = new QTreeWidgetItem( twFiles, QTreeWidgetItem::UserType +1 );
+				topItem->setText( 0, mProject->projectInfos()->displayText( pType, variable ) );
+				topItem->setIcon( 0, mProject->projectInfos()->displayIcon( pType, variable ) );
+				mProjectFilesItems[ variable ] = topItem;
+			}
+			
+			for ( int i = 0; i < topItem->childCount(); i++ )
+			{
+				QTreeWidgetItem* item = topItem->child( i );
+				QString fn = item->data( 0, Qt::UserRole ).toString();
+				if ( files.contains( fn ) )
+				{
+					files.removeAll( fn );
+				}
+			}
+			
+			foreach ( const QString& fn, files )
+			{
+				QTreeWidgetItem* item = new QTreeWidgetItem( topItem, QTreeWidgetItem::UserType );
+				item->setText( 0, fn );
+				item->setData( 0, Qt::UserRole, fn );
+				item->setIcon( 0, mProject->projectInfos()->displayIcon( XUPProjectItem::XUPProject, "FILES" ) );
+			}
+		}
+	}
+}
+
 void UISimpleQMakeEditor::init( XUPProjectItem* project )
 {
+	mFileVariables = project->projectInfos()->fileVariables( project->projectType() );
 	QString value;
 	QStringList values;
 	mProject = project;
@@ -64,7 +107,10 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	mValues[ "DESTDIR" ] = project->interpretVariable( "DESTDIR" );
 	mValues[ "DLLDESTDIR" ] = project->interpretVariable( "DLLDESTDIR" );
 	
-	qWarning() << mValues;
+	foreach ( const QString& variable, mFileVariables )
+	{
+		mValues[ variable ] = project->interpretVariable( variable );
+	}
 	
 	// update gui
 	
@@ -224,6 +270,8 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	{
 		cbWindows->setChecked( true );
 	}
+	
+	updateProjectFiles();
 }
 
 void UISimpleQMakeEditor::projectTypeChanged()
@@ -240,6 +288,58 @@ void UISimpleQMakeEditor::on_tbProjectTarget_clicked()
 	if ( !path.isEmpty() )
 	{
 		leProjectTarget->setText( mProject->relativeFilePath( path ) );
+	}
+}
+
+void UISimpleQMakeEditor::on_tbAddFile_clicked()
+{
+	const QString filters = mProject->projectInfos()->variableSuffixesFilter( mProject->projectType() );
+	QStringList files = QFileDialog::getOpenFileNames( this, tr( "Choose the file(s) to add to your project" ), mProject->path(), filters );
+	
+	if ( !files.isEmpty() )
+	{
+		foreach ( QString fn, files )
+		{
+			fn = mProject->relativeFilePath( fn );
+			
+			if ( fn.contains( " " ) )
+			{
+				fn.prepend( '"' ).append( '"' );
+			}
+			
+			QString variable = mProject->projectInfos()->variableNameForFileName( mProject->projectType(), fn );
+			
+			if ( !mValues[ variable ].contains( fn ) )
+			{
+				mValues[ variable ] += " " +fn;
+			}
+		}
+		
+		updateProjectFiles();
+	}
+}
+
+void UISimpleQMakeEditor::on_tbRemoveFile_clicked()
+{
+	QList<QTreeWidgetItem*> selectedItems = twFiles->selectedItems();
+	
+	foreach ( QTreeWidgetItem* item, selectedItems )
+	{
+		if ( item->type() == QTreeWidgetItem::UserType +1 )
+		{
+			continue;
+		}
+		
+		const QString variable = mProjectFilesItems.key( item->parent() );
+		const QString fn = item->data( 0, Qt::UserRole ).toString();
+		
+		mValues[ variable ].remove( fn );
+		delete item;
+	}
+	
+	if ( !selectedItems.isEmpty() )
+	{
+		updateProjectFiles();
 	}
 }
 
