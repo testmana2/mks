@@ -116,17 +116,17 @@ void QMakeProjectItem::registerProjectType() const
 	// register it
 	mXUPProjectInfos->unRegisterType( pType );
 	mXUPProjectInfos->registerType( pType, const_cast<QMakeProjectItem*>( this ) );
-	
+		
 	// values
 	const QString mPixmapsPath = ":/qmakeitems";
 	const QStringList mOperators = QStringList( "=" ) << "+=" << "-=" << "*=" << "~=";
 	const QStringList mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
-		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "TRANSLATIONS" << "RESOURCES"
-		<< "RC_FILE" << "RES_FILE" << "DEF_FILE" << "INCLUDEPATH" << "DEPENDPATH" << "VPATH"
-		<< "LIBS" << "DEFINES" << "OTHER_FILES";
+		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
+		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE"
+		<< "INCLUDEPATH" << "DEPENDPATH" << "VPATH" << "LIBS" << "DEFINES" << "OTHER_FILES";
 	const QStringList mFileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
-		<< "SOURCES" << "OBJECTIVE_SOURCES" << "TRANSLATIONS" << "RESOURCES"
-		<< "RC_FILE" << "RES_FILE" << "DEF_FILE" << "SUBDIRS" << "OTHER_FILES";
+		<< "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
+		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE" << "SUBDIRS" << "OTHER_FILES";
 	const QStringList mPathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"
 		<< "VPATH";
 	const StringStringListList mSuffixes = StringStringListList()
@@ -152,7 +152,7 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( QString( "OTHER_FILES" ), tr( "Other Files" ) );
 	const StringStringList mVariableIcons = StringStringList()
 		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
-		<< qMakePair( QString( "FORMS3" ), QString( "forms3" ) )
+		<< qMakePair( QString( "FORMS3" ), QString( "forms" ) )
 		<< qMakePair( QString( "HEADERS" ), QString( "headers" ) )
 		<< qMakePair( QString( "SOURCES" ), QString( "sources" ) )
 		<< qMakePair( QString( "OBJECTIVE_SOURCES" ), QString( "objective_sources" ) )
@@ -167,7 +167,7 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( QString( "VPATH" ), QString( "vpath" ) )
 		<< qMakePair( QString( "LIBS" ), QString( "libs" ) )
 		<< qMakePair( QString( "DEFINES" ), QString( "defines" ) )
-		<< qMakePair( QString( "OTHER_FILES" ), QString( "other_files" ) );
+		<< qMakePair( QString( "OTHER_FILES" ), QString( "file" ) );
 #warning need use pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
 	const QStringList cf = QStringList()
 		<< "*.h" << "*.c"
@@ -194,10 +194,7 @@ void QMakeProjectItem::registerProjectType() const
 	QStringList lf;
 	foreach ( QString s, sf )
 		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !lf.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
-			yf << s;
-	// IMAGES filters
-#warning need use pMonkeyStudio::availableImageFormats();
-	const QStringList pf = QStringList( "*.png" ) << "*.jpg" << "*.bmp" << "*.gif";
+			lf << s;
 	// PROJECT filters
 	QStringList pjf;
 	foreach ( const PairStringStringList& p, mSuffixes )
@@ -208,7 +205,6 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( QString( "SOURCES" ), sf )
 		<< qMakePair( QString( "YACCSOURCES" ), yf )
 		<< qMakePair( QString( "LEXSOURCES" ), lf )
-		<< qMakePair( QString( "IMAGES" ), pf )
 		<< qMakePair( QString( "OBJECTIVE_SOURCES" ), QStringList( "*.m" ) << "*.mm" )
 		<< qMakePair( QString( "FORMS" ), QStringList( "*.ui" ) )
 		<< qMakePair( QString( "FORMS3" ), QStringList( "*.ui" ) )
