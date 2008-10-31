@@ -90,6 +90,14 @@ public:
 	QString iconName( int projectType, const QString& variableName ) const;
 	// return the display text for a variable name or itself if no match found
 	QString displayText( int projectType, const QString& variableName ) const;
+	// return the disply icon for a variable name
+	QIcon displayIcon( int projectType, const QString& variableName ) const;
+	// return the icons path for proejct type
+	QString iconsPath( int projectType ) const;
+	// return a files filter for variables base on files
+	QString variableSuffixesFilter( int projectType ) const;
+	// return the variable name associated with this filename
+	QString variableNameForFileName( int projectType, const QString& fileName ) const;
 	
 protected:
 	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item

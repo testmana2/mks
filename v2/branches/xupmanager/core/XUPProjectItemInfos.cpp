@@ -1,5 +1,6 @@
 #include "XUPProjectItemInfos.h"
 #include "XUPProjectItem.h"
+#include "../iconmanager/pIconManager.h"
 
 #include <QDir>
 
@@ -188,4 +189,79 @@ QString XUPProjectItemInfos::displayText( int projectType, const QString& variab
 			return pair.second;
 	}
 	return variableName;
+}
+
+QIcon XUPProjectItemInfos::displayIcon( int projectType, const QString& variableName ) const
+{
+	QIcon icon;
+	QString path = iconsPath( projectType );
+	QString fn = pIconManager::filePath( iconName( projectType, variableName ).append( ".png" ), path );
+	
+	if ( !QFile::exists( fn ) )
+	{
+		path = pixmapsPath( XUPProjectItem::XUPProject );
+	}
+	
+	icon = pIconManager::icon( iconName( projectType, variableName ).append( ".png" ), path );
+	
+	return icon;
+}
+
+QString XUPProjectItemInfos::iconsPath( int projectType ) const
+{
+	QString path = pixmapsPath( projectType );
+	
+	if ( path.isEmpty() && projectType != XUPProjectItem::XUPProject )
+	{
+		path = pixmapsPath( XUPProjectItem::XUPProject );
+	}
+	
+	return path;
+}
+
+QString XUPProjectItemInfos::variableSuffixesFilter( int projectType ) const
+{
+	const StringStringListList suffixes = variableSuffixes( projectType );
+	QStringList allSuffixesList;
+	QStringList suffixesList;
+	
+	foreach ( const PairStringStringList& pair, suffixes )
+	{
+		QString text = displayText( projectType, pair.first );
+		suffixesList << QString( "%1 (%2)" ).arg( text ).arg( pair.second.join( " " ) );
+		
+		foreach ( const QString& suffixe, pair.second )
+		{
+			if ( !allSuffixesList.contains( suffixe ) )
+			{
+				allSuffixesList << suffixe;
+			}
+		}
+	}
+	
+	suffixesList.prepend( tr( "All Files (*)" ) );
+	
+	if ( !allSuffixesList.isEmpty() )
+	{
+		suffixesList.prepend( tr( "All Supported Files (%2)" ).arg( allSuffixesList.join( " " ) ) );
+	}
+	
+	return suffixesList.join( ";;" );
+}
+
+QString XUPProjectItemInfos::variableNameForFileName( int projectType, const QString& fileName ) const
+{
+	const StringStringListList suffixes = variableSuffixes( projectType );
+	
+	foreach ( const PairStringStringList& pair, suffixes )
+	{
+		QString variable = pair.first;
+		
+		if ( QDir::match( pair.second, fileName ) )
+		{
+			return pair.first;
+		}
+	}
+	
+	return QString::null;
 }
