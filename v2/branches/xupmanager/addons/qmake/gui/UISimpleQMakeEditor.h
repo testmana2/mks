@@ -17,13 +17,18 @@ public:
 
 protected:
 	XUPProjectItem* mProject;
+	QStringList mFileVariables;
 	QMap<QString, QString> mValues;
+	QMap<QString, QTreeWidgetItem*> mProjectFilesItems;
 	
+	void updateProjectFiles();
 	void init( XUPProjectItem* project );
 
 protected slots:
 	void projectTypeChanged();
 	void on_tbProjectTarget_clicked();
+	void on_tbAddFile_clicked();
+	void on_tbRemoveFile_clicked();
 	void accept();
 };
 
