@@ -73,7 +73,7 @@ const QFileInfoList getFiles( QDir fromDir, const QStringList& filters, bool rec
 
 QStringList XUPProjectItem::splitMultiLineValue( const QString& value ) const
 {
-	QStringList tmpValues = value.split( " " );
+	QStringList tmpValues = value.split( " ", QString::SkipEmptyParts );
 	bool inStr = false;
 	QStringList multivalues;
 	QString ajout;
@@ -242,15 +242,7 @@ QString XUPProjectItem::iconFileName( XUPItem* item ) const
 
 QString XUPProjectItem::iconsPath() const
 {
-	int pType = projectType();
-	QString path = mXUPProjectInfos->pixmapsPath( pType );
-	
-	if ( path.isEmpty() && pType != XUPProjectItem::XUPProject )
-	{
-		path = mXUPProjectInfos->pixmapsPath( XUPProjectItem::XUPProject );
-	}
-	
-	return path;
+	return mXUPProjectInfos->iconsPath( projectType() );
 }
 
 QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
