@@ -1,8 +1,10 @@
 #include "XUPItem.h"
 #include "XUPProjectItem.h"
+#include "XUPProjectModel.h"
 
 XUPItem::XUPItem( const QDomElement& node, XUPItem* parent )
 {
+	mModel = 0;
 	mDomElement = node;
 	mParentItem = parent;
 }
@@ -135,6 +137,25 @@ int XUPItem::childCount() const
 		count = qMax( count, mChildItems.keys().last() +1 );
 	}
 	return count;
+}
+
+XUPProjectModel* XUPItem::model() const
+{
+	if ( mParentItem )
+	{
+		return mParentItem->model();
+	}
+	return mModel;
+}
+
+QModelIndex XUPItem::index() const
+{
+	XUPProjectModel* m = model();
+	if ( m )
+	{
+		return m->indexFromItem( const_cast<XUPItem*>( this ) );
+	}
+	return QModelIndex();
 }
 
 XUPItem::Type XUPItem::type() const
