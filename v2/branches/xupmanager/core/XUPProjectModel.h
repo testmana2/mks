@@ -11,6 +11,7 @@ class XUPProjectModel : public QAbstractItemModel
 	Q_OBJECT
 	friend class XUPFilteredProjectModel;
 	friend class XUPProjectManager;
+	friend class XUPItem;
 	
 public:
 	XUPProjectModel( QObject* parent = 0 );
@@ -40,6 +41,8 @@ public:
 protected:
 	XUPProjectItem* mRootProject;
 	QString mLastError;
+	
+	void itemChanged( XUPItem* item );
 };
 
 Q_DECLARE_METATYPE( XUPProjectModel* )
