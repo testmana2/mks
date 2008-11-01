@@ -25,6 +25,9 @@ public:
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 	virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
 	
+	//
+	QModelIndex indexFromItem( XUPItem* item ) const;
+	
 	// error handler
 	void setLastError( const QString& error );
 	QString lastError() const;
