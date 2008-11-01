@@ -204,6 +204,13 @@ QString XUPItem::attribute( const QString& name, const QString& defaultValue ) c
 void XUPItem::setAttribute( const QString& name, const QString& value )
 {
 	mDomElement.setAttribute( name, value );
+	
+	// update model if needed
+	XUPProjectModel* m = model();
+	if ( m )
+	{
+		m->itemChanged( this );
+	}
 }
 
 QVariant XUPItem::temporaryValue( const QString& key, const QVariant& defaultValue ) const
