@@ -5,8 +5,10 @@
 #include <QMap>
 #include <QIcon>
 #include <QVariant>
+#include <QModelIndex>
 
 class XUPProjectItem;
+class XUPProjectModel;
 
 typedef QList<class XUPItem*> XUPItemList;
 
@@ -54,6 +56,10 @@ public:
 	int row() const;
 	// return child count
 	int childCount() const;
+	// return the model associated with the item or null if item is not yet in a model
+	XUPProjectModel* model() const;
+	// return the QModelIndex of the item if it's in a model, else an invalid qmodelindex
+	QModelIndex index() const;
 	
 	// the type enum of this item
 	XUPItem::Type type() const;
@@ -76,6 +82,7 @@ public:
 	QIcon displayIcon() const;
 
 protected:
+	XUPProjectModel* mModel;
 	QDomElement mDomElement;
 	mutable QMap<int, XUPItem*> mChildItems;
 	XUPItem* mParentItem;
