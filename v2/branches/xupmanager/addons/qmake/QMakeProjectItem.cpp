@@ -38,11 +38,11 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 	}
 	else if ( variableName.startsWith( "$(" ) )
 	{
-		const_cast<QMakeProjectItem*>( this )->setLastError( tr( "Don't know how to interpret: %1" ).arg( variableName ) );
+		const_cast<QMakeProjectItem*>( this )->setLastError( tr( QT_TR_NOOP( "Don't know how to interpret: %1" ) ).arg( variableName ) );
 	}
 	else if ( variableName.startsWith( "$$[" ) )
 	{
-		const_cast<QMakeProjectItem*>( this )->setLastError( tr( "Don't know how to interpret: %1" ).arg( variableName ) );
+		const_cast<QMakeProjectItem*>( this )->setLastError( tr( QT_TR_NOOP( "Don't know how to interpret: %1" ) ).arg( variableName ) );
 	}
 	else
 	{
@@ -82,7 +82,7 @@ QString QMakeProjectItem::interpretVariable( const QString& variableName, const 
 			}
 			else if ( op == "~=" )
 			{
-				const_cast<QMakeProjectItem*>( this )->setLastError( tr( "Don't know how to interpret ~= operator" ) );
+				const_cast<QMakeProjectItem*>( this )->setLastError( tr( QT_TR_NOOP( "Don't know how to interpret ~= operator" ) ) );
 			}
 		}
 	}
@@ -130,26 +130,26 @@ void QMakeProjectItem::registerProjectType() const
 	const QStringList mPathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"
 		<< "VPATH";
 	const StringStringListList mSuffixes = StringStringListList()
-		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
-		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
+		<< qMakePair( tr( QT_TR_NOOP( "Qt Project" ) ), QStringList( "*.pro" ) )
+		<< qMakePair( tr( QT_TR_NOOP( "Qt Include Project" ) ), QStringList( "*.pri" ) );
 	const StringStringList mVariableLabels = StringStringList()
-		<< qMakePair( QString( "FORMS" ), tr( "Forms Files" ) )
-		<< qMakePair( QString( "FORMS3" ), tr( "Forms 3 Files" ) )
-		<< qMakePair( QString( "HEADERS" ), tr( "Headers Files" ) )
-		<< qMakePair( QString( "SOURCES" ), tr( "Sources Files" ) )
-		<< qMakePair( QString( "OBJECTIVE_SOURCES" ), tr( "Objective Sources Files" ) )
-		<< qMakePair( QString( "TRANSLATIONS" ), tr( "Qt Translations Files" ) )
-		<< qMakePair( QString( "RESOURCES" ), tr( "Qt Resources Files" ) )
-		<< qMakePair( QString( "RC_FILE" ), tr( "Resources Files" ) )
-		<< qMakePair( QString( "RES_FILE" ), tr( "Compiled Resources Files" ) )
-		<< qMakePair( QString( "DEF_FILE" ), tr( "Definitions Files" ) )
-		<< qMakePair( QString( "SUBDIRS" ), tr( "Sub Projects" ) )
-		<< qMakePair( QString( "INCLUDEPATH" ), tr( "Includes Paths" ) )
-		<< qMakePair( QString( "DEPENDPATH" ), tr( "Depends Paths" ) )
-		<< qMakePair( QString( "VPATH" ), tr( "Virtuals Paths" ) )
-		<< qMakePair( QString( "LIBS" ), tr( "Libraries Files" ) )
-		<< qMakePair( QString( "DEFINES" ), tr( "Defines" ) )
-		<< qMakePair( QString( "OTHER_FILES" ), tr( "Other Files" ) );
+		<< qMakePair( QString( "FORMS" ), tr( QT_TR_NOOP( "Forms Files" ) ) )
+		<< qMakePair( QString( "FORMS3" ), tr( QT_TR_NOOP( "Forms 3 Files" ) ) )
+		<< qMakePair( QString( "HEADERS" ), tr( QT_TR_NOOP( "Headers Files" ) ) )
+		<< qMakePair( QString( "SOURCES" ), tr( QT_TR_NOOP( "Sources Files" ) ) )
+		<< qMakePair( QString( "OBJECTIVE_SOURCES" ), tr( QT_TR_NOOP( "Objective Sources Files" ) ) )
+		<< qMakePair( QString( "TRANSLATIONS" ), tr( QT_TR_NOOP( "Qt Translations Files" ) ) )
+		<< qMakePair( QString( "RESOURCES" ), tr( QT_TR_NOOP( "Qt Resources Files" ) ) )
+		<< qMakePair( QString( "RC_FILE" ), tr( QT_TR_NOOP( "Resources Files" ) ) )
+		<< qMakePair( QString( "RES_FILE" ), tr( QT_TR_NOOP( "Compiled Resources Files" ) ) )
+		<< qMakePair( QString( "DEF_FILE" ), tr( QT_TR_NOOP( "Definitions Files" ) ) )
+		<< qMakePair( QString( "SUBDIRS" ), tr( QT_TR_NOOP( "Sub Projects" ) ) )
+		<< qMakePair( QString( "INCLUDEPATH" ), tr( QT_TR_NOOP( "Includes Paths" ) ) )
+		<< qMakePair( QString( "DEPENDPATH" ), tr( QT_TR_NOOP( "Depends Paths" ) ) )
+		<< qMakePair( QString( "VPATH" ), tr( QT_TR_NOOP( "Virtuals Paths" ) ) )
+		<< qMakePair( QString( "LIBS" ), tr( QT_TR_NOOP( "Libraries Files" ) ) )
+		<< qMakePair( QString( "DEFINES" ), tr( QT_TR_NOOP( "Defines" ) ) )
+		<< qMakePair( QString( "OTHER_FILES" ), tr( QT_TR_NOOP( "Other Files" ) ) );
 	const StringStringList mVariableIcons = StringStringList()
 		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
 		<< qMakePair( QString( "FORMS3" ), QString( "forms" ) )

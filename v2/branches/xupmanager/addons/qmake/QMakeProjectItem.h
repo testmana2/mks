@@ -4,14 +4,14 @@
 #include "../../core/XUPProjectItem.h"
 
 class QMakeProjectItem : public XUPProjectItem
-{
-	Q_OBJECT
-	
+{	
 public:
 	enum ProjectType { QMakeProject = 1 };
 	
 	QMakeProjectItem();
 	virtual ~QMakeProjectItem();
+	
+	virtual inline QString tr( const char* text ) const { return qApp->translate( "QMakeProjectItem", text ); }
 	
 	inline virtual int projectType() const { return QMakeProjectItem::QMakeProject; }
 	virtual void registerProjectType() const;
