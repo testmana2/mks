@@ -270,7 +270,7 @@ QString XUPProjectItem::itemDisplayText( XUPItem* item )
 				text = item->attribute( "value" );
 				break;
 			case XUPItem::EmptyLine:
-				text = tr( "%1 empty line(s)" ).arg( item->attribute( "count" ) );
+				text = tr( QT_TR_NOOP( "%1 empty line(s)" ) ).arg( item->attribute( "count" ) );
 				break;
 			case XUPItem::Variable:
 				text = variableDisplayText( item->attribute( "name" ) );
@@ -485,7 +485,7 @@ void XUPProjectItem::registerProjectType() const
 		<< qMakePair( tr( QT_TR_NOOP( "XUP Project" ) ), QStringList( "*.xup" ) )
 		<< qMakePair( tr( QT_TR_NOOP( "XUP Include Project" ) ), QStringList( "*.xui" ) );
 	const StringStringList mVariableLabels = StringStringList()
-		<< qMakePair( QString( "FILES" ), tr( "Files" ) );
+		<< qMakePair( QString( "FILES" ), tr( QT_TR_NOOP( "Files" ) ) );
 	const StringStringList mVariableIcons = StringStringList()
 		<< qMakePair( QString( "FILES" ), QString( "files" ) );
 	const StringStringListList mVariableSuffixes = StringStringListList()
@@ -520,7 +520,7 @@ void XUPProjectItem::handleIncludeItem( XUPItem* function ) const
 			}
 			else
 			{
-				const_cast<XUPProjectItem*>( this )->setLastError( tr( "Failed to handle include project %1" ).arg( fn ) );
+				const_cast<XUPProjectItem*>( this )->setLastError( tr( QT_TR_NOOP( "Failed to handle include project %1" ) ).arg( fn ) );
 				delete project;
 			}
 		}

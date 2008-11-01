@@ -6,10 +6,8 @@
 
 #include <QFileInfo>
 
-class XUPProjectItem : public QObject, public XUPItem
-{
-	Q_OBJECT
-	
+class XUPProjectItem : public XUPItem
+{	
 public:
 	// project type id
 	enum ProjectType { InvalidProject = -1, XUPProject = 0 };
@@ -18,6 +16,8 @@ public:
 	XUPProjectItem();
 	// dtor
 	virtual ~XUPProjectItem();
+	
+	virtual inline QString tr( const char* text ) const { return qApp->translate( "XUPProjectItem", text ); }
 	
 	// return the global static proejcts types informations
 	static XUPProjectItemInfos* projectInfos();
