@@ -174,6 +174,11 @@ void XUPProjectManager::on_tvFiltered_activated( const QModelIndex& index )
 				openFile( fn );
 			}
 		}
+		
+		// simply for testing XUPItem::index() member
+		QModelIndex index = item->index();
+		tvNative->setCurrentIndex( index );
+		tvNative->setExpanded( index, true );
 	}
 }
 
