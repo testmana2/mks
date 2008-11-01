@@ -12,6 +12,7 @@
 
 #include <QDebug>
 #include <QMenu>
+#include <QInputDialog>
 
 XUPProjectManager::XUPProjectManager( QWidget* parent )
 	: QWidget( parent )
@@ -33,6 +34,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	mDebugMenu->addAction( "project" );
 	mDebugMenu->addAction( "topLevelProject" );
 	mDebugMenu->addAction( "rootIncludeProject" );
+	mDebugMenu->addAction( "editAttribute" );
 }
 
 XUPProjectManager::~XUPProjectManager()
@@ -130,6 +132,15 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 	else if ( action->text() == "rootIncludeProject" )
 	{
 		pteLog->appendPlainText( item->project()->rootIncludeProject()->displayText().prepend( "Root include project: " ) );
+	}
+	else if ( action->text() == "editAttribute" )
+	{
+		bool ok;
+		QString value = QInputDialog::getText( this, "title", "label", QLineEdit::Normal, item->attribute( attribute ), &ok );
+		if ( ok && !value.isEmpty() )
+		{
+			item->setAttribute( attribute, value );
+		}
 	}
 }
 
