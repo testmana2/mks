@@ -20,7 +20,7 @@ QModelIndex XUPProjectModel::indexFromItem( XUPItem* item ) const
 	int column = 0;
 	int row = item->parent() ? item->parent()->childIndex( item ) : 0;
 	
-	return createIndex( row, column, item );
+	return item != mRootProject ? createIndex( row, column, item ) : QModelIndex();
 }
 
 QModelIndex XUPProjectModel::index( int row, int column, const QModelIndex& parent ) const
