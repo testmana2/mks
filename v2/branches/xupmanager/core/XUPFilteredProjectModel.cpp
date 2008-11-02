@@ -241,6 +241,7 @@ void XUPFilteredProjectModel::removeMapping( XUPItem* item )
 		if ( item != mSourceModel->mRootProject )
 		{
 			XUPItemMappingIterator parentIt = mItemsMapping.constFind( m->mParent );
+
 			if ( parentIt != mItemsMapping.constEnd() )
 			{
 				parentIt.value()->mMappedChildren.removeAll( item );
@@ -396,7 +397,7 @@ void XUPFilteredProjectModel::populateProject( XUPProjectItem* project, bool upd
 
 void XUPFilteredProjectModel::internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end )
 {
-	XUPItem* firstItem = static_cast<XUPItem*>( parent.child( start, 0 ).internalPointer() );
+	XUPItem* firstItem = static_cast<XUPItem*>( mSourceModel->index( start, 0, parent ).internalPointer() );
 	XUPItemMappingIterator firstIt = mItemsMapping.constFind( firstItem );
 	
 	if ( firstIt == mItemsMapping.constEnd() )
@@ -410,15 +411,17 @@ void XUPFilteredProjectModel::internal_rowsAboutToBeRemoved( const QModelIndex& 
 	if ( parentIt != mItemsMapping.constEnd() )
 	{
 		QModelIndex parentProxy = mapFromSource( parentItem );
+		
 		for ( int i = start; i < end +1; i++ )
 		{
-			XUPItem* childItem = static_cast<XUPItem*>( parent.child( i, 0 ).internalPointer() );
+			XUPItem* childItem = static_cast<XUPItem*>( mSourceModel->index( i, 0, parent ).internalPointer() );
 			XUPItemMappingIterator childIt = mItemsMapping.constFind( childItem );
 			
 			if ( childIt != mItemsMapping.constEnd() )
 			{
 				QModelIndex childProxy = mapFromSource( childItem );
 				int row = childProxy.row();
+				
 				beginRemoveRows( parentProxy, row, row );
 				removeMapping( childItem );
 				endRemoveRows();
