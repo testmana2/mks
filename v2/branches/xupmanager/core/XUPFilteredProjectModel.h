@@ -89,6 +89,11 @@ protected:
 	mutable XUPItemMapping mItemsMapping;
 	
 	XUPItemMappingIterator createMapping( XUPItem* item, XUPItem* parent = 0 ) const;
+	void removeMapping( XUPItem* item );
+	void clearMapping();
+
+protected slots:
+	void internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end );
 };
 
 #endif // XUPFILTEREDPROJECTMODEL_H
