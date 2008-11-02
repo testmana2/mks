@@ -41,8 +41,6 @@ public:
 protected:
 	XUPProjectItem* mRootProject;
 	QString mLastError;
-	
-	void itemChanged( XUPItem* item );
 };
 
 Q_DECLARE_METATYPE( XUPProjectModel* )
