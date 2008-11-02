@@ -332,10 +332,10 @@ QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
 	return icon;
 }
 
-QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem ) const
+XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem, bool recursive ) const
 {
 	mFoundCallerItem = false;
-	QList<XUPItem*> variables;
+	XUPItemList variables;
 	
 	for ( int i = 0; i < root->childCount(); i++ )
 	{
@@ -345,9 +345,14 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 		{
 			case XUPItem::Project:
 			{
-				XUPItem* pItem = item->parent();
-				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
-					variables << getVariables( item, variableName, callerItem );
+				if ( recursive )
+				{
+					XUPItem* pItem = item->parent();
+					if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
+					{
+						variables << getVariables( item, variableName, callerItem );
+					}
+				}
 				break;
 			}
 			case XUPItem::Comment:
@@ -357,19 +362,27 @@ QList<XUPItem*> XUPProjectItem::getVariables( const XUPItem* root, const QString
 			case XUPItem::Variable:
 			{
 				if ( item->attribute( "name" ) == variableName )
+				{
 					variables << item;
+				}
 				break;
 			}
 			case XUPItem::Value:
 				break;
 			case XUPItem::Function:
 			{
-				variables << getVariables( item, variableName, callerItem );
+				if ( recursive )
+				{
+					variables << getVariables( item, variableName, callerItem );
+				}
 				break;
 			}
 			case XUPItem::Scope:
 			{
-				variables << getVariables( item, variableName, callerItem );
+				if ( recursive )
+				{
+					variables << getVariables( item, variableName, callerItem );
+				}
 				break;
 			}
 			default:
@@ -406,7 +419,7 @@ QString XUPProjectItem::interpretVariable( const QString& variableName, const XU
 	}
 	else
 	{
-		QList<XUPItem*> variableItems = getVariables( this, name, callerItem );
+		XUPItemList variableItems = getVariables( this, name, callerItem );
 		
 		foreach ( XUPItem* variableItem, variableItems )
 		{
