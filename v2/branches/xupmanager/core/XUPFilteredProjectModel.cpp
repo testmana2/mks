@@ -229,25 +229,58 @@ XUPItemMappingIterator XUPFilteredProjectModel::createMapping( XUPItem* item, XU
 	return it;
 }
 
+void XUPFilteredProjectModel::removeMapping( XUPItem* item )
+{
+	if ( Mapping* m = mItemsMapping.take( item ) )
+	{
+		for ( int i = 0; i < m->mMappedChildren.size(); ++i )
+		{
+			removeMapping( m->mMappedChildren.at( i ) );
+		}
+		
+		if ( item != mSourceModel->mRootProject )
+		{
+			XUPItemMappingIterator parentIt = mItemsMapping.constFind( m->mParent );
+			if ( parentIt != mItemsMapping.constEnd() )
+			{
+				parentIt.value()->mMappedChildren.removeAll( item );
+			}
+		}
+		
+		delete m;
+	}
+}
+
+void XUPFilteredProjectModel::clearMapping()
+{
+	qDeleteAll( mItemsMapping );
+	mItemsMapping.clear();
+}
+
 void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 {
+	if ( mSourceModel )
+	{
+		disconnect( mSourceModel, SIGNAL( rowsAboutToBeRemoved( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsAboutToBeRemoved( const QModelIndex&, int, int ) ) );
+	}
+	
 	mSourceModel = model;
 	
-	reset();
-	mItemsMapping.clear();
-	
-	if ( !mSourceModel )
-		return;
-	
-	// header
-	beginInsertColumns( QModelIndex(), 0, 0 );
-	endInsertColumns();
-	
-	// tree items
-	populateProject( mSourceModel->mRootProject, true );
-	
-	// debug
-	//debug( mSourceModel->mRootProject, mItemsMapping );
+	if ( mSourceModel )
+	{
+		clearMapping();
+		
+		connect( mSourceModel, SIGNAL( rowsAboutToBeRemoved( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsAboutToBeRemoved( const QModelIndex&, int, int ) ) );
+		
+		reset();
+		
+		// header
+		beginInsertColumns( QModelIndex(), 0, 0 );
+		endInsertColumns();
+		
+		// tree items
+		populateProject( mSourceModel->mRootProject, true );
+	}
 }
 
 XUPProjectModel* XUPFilteredProjectModel::sourceModel() const
@@ -357,6 +390,39 @@ void XUPFilteredProjectModel::populateProject( XUPProjectItem* project, bool upd
 			QModelIndex proxyIndex = mapFromSource( project );
 			beginInsertRows( proxyIndex, 0, count -1 );
 			endInsertRows();
+		}
+	}
+}
+
+void XUPFilteredProjectModel::internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end )
+{
+	XUPItem* firstItem = static_cast<XUPItem*>( parent.child( start, 0 ).internalPointer() );
+	XUPItemMappingIterator firstIt = mItemsMapping.constFind( firstItem );
+	
+	if ( firstIt == mItemsMapping.constEnd() )
+	{
+		return;
+	}
+	
+	XUPItem* parentItem = firstIt.value()->mParent;
+	XUPItemMappingIterator parentIt = mItemsMapping.constFind( parentItem );
+	
+	if ( parentIt != mItemsMapping.constEnd() )
+	{
+		QModelIndex parentProxy = mapFromSource( parentItem );
+		for ( int i = start; i < end +1; i++ )
+		{
+			XUPItem* childItem = static_cast<XUPItem*>( parent.child( i, 0 ).internalPointer() );
+			XUPItemMappingIterator childIt = mItemsMapping.constFind( childItem );
+			
+			if ( childIt != mItemsMapping.constEnd() )
+			{
+				QModelIndex childProxy = mapFromSource( childItem );
+				int row = childProxy.row();
+				beginRemoveRows( parentProxy, row, row );
+				removeMapping( childItem );
+				endRemoveRows();
+			}
 		}
 	}
 }
