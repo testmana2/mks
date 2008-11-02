@@ -2,6 +2,8 @@
 #include "XUPProjectItem.h"
 #include "XUPProjectModel.h"
 
+#include <QDebug>
+
 XUPItem::XUPItem( const QDomElement& node, XUPItem* parent )
 {
 	mModel = 0;
@@ -139,6 +141,60 @@ int XUPItem::childCount() const
 	return count;
 }
 
+void XUPItem::removeChild( XUPItem* item )
+{
+	int id = childIndex( item );
+	if ( id != -1 )
+	{
+		// inform model of remove
+		XUPProjectModel* m = model();
+		if ( m )
+		{
+			// begin remove
+			m->beginRemoveRows( index(), id, id );
+			
+			// remove
+			bool isDirectChild = item->mDomElement.parentNode() == mDomElement;
+			
+			qWarning() << "remove" << index().data().toString() << id << isDirectChild;
+			qWarning() << mChildItems.keys();
+			
+			if ( isDirectChild )
+			{
+				foreach ( const int& key, mChildItems.keys() )
+				{
+					if ( key == id )
+					{
+						QDomNode node = item->mDomElement;
+						mDomElement.removeChild( node );
+						mChildItems.remove( key );
+						delete item;
+					}
+					else if ( key > id )
+					{
+						mChildItems[ key -1 ] = mChildItems[ key ];
+						mChildItems.remove( key );
+					}
+				}
+			}
+			else
+			{
+				delete mChildItems.take( id );
+			}
+			
+			qWarning() << "gg1";
+			qWarning() << mChildItems.keys();
+			// end remove
+			m->endRemoveRows();
+			qWarning() << "gg2";
+		}
+		else
+		{
+			delete mChildItems.take( id );
+		}
+	}
+}
+
 XUPProjectModel* XUPItem::model() const
 {
 	if ( mParentItem )
@@ -209,7 +265,12 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 	XUPProjectModel* m = model();
 	if ( m )
 	{
-		m->itemChanged( this );
+		//m->itemChanged( this );
+		setTemporaryValue( "hasDisplayText", false );
+		setTemporaryValue( "hasDisplayIcon", false );
+		
+		QModelIndex idx = index();
+		emit m->dataChanged( idx, idx );
 	}
 }
 
