@@ -2,6 +2,8 @@
 #include "../../../core/XUPProjectItem.h"
 
 #include <QFileDialog>
+#include <QInputDialog>
+#include <QMessageBox>
 #include <QDebug>
 
 UISimpleQMakeEditor::UISimpleQMakeEditor( XUPProjectItem* project, QWidget* parent )
@@ -44,6 +46,8 @@ UISimpleQMakeEditor::UISimpleQMakeEditor( XUPProjectItem* project, QWidget* pare
 	webkitkItem->setData( Qt::UserRole, "webkit" );
 	
 	init( project );
+	
+	lwPages->setCurrentRow( 1 );
 }
 
 UISimpleQMakeEditor::~UISimpleQMakeEditor()
@@ -274,6 +278,35 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	updateProjectFiles();
 }
 
+XUPItem* UISimpleQMakeEditor::getUniqueVariableItem( const QString& variableName, bool create )
+{
+	XUPItemList variables = mProject->getVariables( mProject, variableName, 0, false );
+	if ( variables.isEmpty() )
+	{
+		if ( create )
+		{
+		}
+		
+		return 0;
+	}
+	else if ( variables.count() == 1 )
+	{
+		return variables.first();
+	}
+	else
+	{
+		foreach ( XUPItem* variable, variables )
+		{
+			if ( variable != variables.first() )
+			{
+				variable->parent()->removeChild( variable );
+			}
+		}
+	}
+	
+	return variables.first();
+}
+
 void UISimpleQMakeEditor::projectTypeChanged()
 {
 	bool isSubdirs = rbSubdirs->isChecked();
@@ -319,27 +352,49 @@ void UISimpleQMakeEditor::on_tbAddFile_clicked()
 	}
 }
 
+void UISimpleQMakeEditor::on_tbEditFile_clicked()
+{
+	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
+	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
+	{
+		bool ok;
+		QString value = QInputDialog::getText( this, tr( "Edit filen ame" ), tr( "Type a new name for this file" ), QLineEdit::Normal, item->data( 0, Qt::UserRole ).toString(), &ok );
+		if ( ok && !value.isEmpty() )
+		{
+			item->setData( 0, Qt::UserRole, value );
+		}
+	}
+}
+
 void UISimpleQMakeEditor::on_tbRemoveFile_clicked()
 {
 	QList<QTreeWidgetItem*> selectedItems = twFiles->selectedItems();
 	
-	foreach ( QTreeWidgetItem* item, selectedItems )
+	if ( selectedItems.count() > 0 )
 	{
-		if ( item->type() == QTreeWidgetItem::UserType +1 )
+		if ( QMessageBox::question( this, tr( "Remove files" ), tr( "Are you sure you want to remove all the selected files ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::No )
 		{
-			continue;
+			return;
 		}
 		
-		const QString variable = mProjectFilesItems.key( item->parent() );
-		const QString fn = item->data( 0, Qt::UserRole ).toString();
+		foreach ( QTreeWidgetItem* item, selectedItems )
+		{
+			if ( item->type() == QTreeWidgetItem::UserType +1 )
+			{
+				continue;
+			}
+			
+			const QString variable = mProjectFilesItems.key( item->parent() );
+			const QString fn = item->data( 0, Qt::UserRole ).toString();
+			
+			mValues[ variable ].remove( fn );
+			delete item;
+		}
 		
-		mValues[ variable ].remove( fn );
-		delete item;
-	}
-	
-	if ( !selectedItems.isEmpty() )
-	{
-		updateProjectFiles();
+		if ( !selectedItems.isEmpty() )
+		{
+			updateProjectFiles();
+		}
 	}
 }
 
@@ -461,6 +516,25 @@ void UISimpleQMakeEditor::accept()
 	mValues[ "TARGET" ] = target.join( " " );
 	mValues[ "DESTDIR" ] = destdir;
 	mValues[ "DLLDESTDIR" ] = dlldestdir;
+	
+	foreach ( const QString& variable, mValues.keys() )
+	{
+		XUPItem* variableItem = getUniqueVariableItem( variable, mValues[ variable ].trimmed().isEmpty() );
+		if ( !variableItem )
+		{
+			continue;
+		}
+		
+		if ( mFileVariables.contains( variable ) )
+		{
+		}
+		else if ( variable == "CONFIG" )
+		{
+		}
+		else
+		{
+		}
+	}
 	
 	qWarning() << mValues;
 }
