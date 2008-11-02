@@ -35,6 +35,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	mDebugMenu->addAction( "topLevelProject" );
 	mDebugMenu->addAction( "rootIncludeProject" );
 	mDebugMenu->addAction( "editAttribute" );
+	mDebugMenu->addAction( "removeItem" );
 }
 
 XUPProjectManager::~XUPProjectManager()
@@ -57,10 +58,10 @@ void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 
 void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 {
-	const QModelIndex index = tvNative->currentIndex();
+	const QModelIndex index = tvFiltered->currentIndex();
 	if ( !index.isValid() )
 		return;
-	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
+	XUPItem* item = mFilteredModel->mapToSource( index );
 	
 	pteLog->appendPlainText( "------------------" );
 	
@@ -140,6 +141,14 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 		if ( ok && !value.isEmpty() )
 		{
 			item->setAttribute( attribute, value );
+		}
+	}
+	else if ( action->text() == "removeItem" )
+	{
+		XUPItem* parentItem = item->parent();
+		if ( parentItem )
+		{
+			parentItem->removeChild( item );
 		}
 	}
 }
