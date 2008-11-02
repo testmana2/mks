@@ -14,6 +14,8 @@ SOURCES	+= test1.cpp source2.cpp \
 	"source 4.cpp" \
 	source5.cpp
 
+SOURCES += toto.cpp
+
 RESOURCES	+= resources.qrc
 
 RC_FILE	+= windows.rc
