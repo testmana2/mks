@@ -23,15 +23,6 @@ QModelIndex XUPProjectModel::indexFromItem( XUPItem* item ) const
 	return createIndex( row, column, item );
 }
 
-void XUPProjectModel::itemChanged( XUPItem* item )
-{
-	item->setTemporaryValue( "hasDisplayText", false );
-	item->setTemporaryValue( "hasDisplayIcon", false );
-	
-	QModelIndex index = item->index();
-	emit dataChanged( index, index );
-}
-
 QModelIndex XUPProjectModel::index( int row, int column, const QModelIndex& parent ) const
 {
 	if ( !hasIndex( row, column, parent ) )
