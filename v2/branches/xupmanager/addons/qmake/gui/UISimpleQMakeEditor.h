@@ -6,6 +6,7 @@
 #include <QMap>
 
 class XUPProjectItem;
+class XUPItem;
 
 class UISimpleQMakeEditor : public QDialog, public Ui::UISimpleQMakeEditor
 {
@@ -23,11 +24,13 @@ protected:
 	
 	void updateProjectFiles();
 	void init( XUPProjectItem* project );
+	XUPItem* getUniqueVariableItem( const QString& variableName, bool create );
 
 protected slots:
 	void projectTypeChanged();
 	void on_tbProjectTarget_clicked();
 	void on_tbAddFile_clicked();
+	void on_tbEditFile_clicked();
 	void on_tbRemoveFile_clicked();
 	void accept();
 };
