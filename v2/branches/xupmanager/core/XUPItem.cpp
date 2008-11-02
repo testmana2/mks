@@ -156,9 +156,6 @@ void XUPItem::removeChild( XUPItem* item )
 			// remove
 			bool isDirectChild = item->mDomElement.parentNode() == mDomElement;
 			
-			qWarning() << "remove" << index().data().toString() << id << isDirectChild;
-			qWarning() << mChildItems.keys();
-			
 			if ( isDirectChild )
 			{
 				foreach ( const int& key, mChildItems.keys() )
@@ -182,11 +179,8 @@ void XUPItem::removeChild( XUPItem* item )
 				delete mChildItems.take( id );
 			}
 			
-			qWarning() << "gg1";
-			qWarning() << mChildItems.keys();
 			// end remove
 			m->endRemoveRows();
-			qWarning() << "gg2";
 		}
 		else
 		{
