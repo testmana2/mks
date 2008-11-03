@@ -131,35 +131,12 @@ QVariant XUPFilteredProjectModel::data( const QModelIndex& proxyIndex, int role 
 	{
 		return QVariant();
 	}
-
-	switch ( role )
-	{
-		case Qt::DecorationRole:
-		case Qt::DisplayRole:
-		case Qt::ToolTipRole:
-		{
-			XUPItem* item = mapToSource( proxyIndex );
-			
-			Q_ASSERT( item );
-			
-			if ( role == Qt::DecorationRole )
-			{
-				return item->displayIcon();
-			}
-			else if ( role == Qt::DisplayRole )
-			{
-				return item->displayText();
-			}
-			else if ( role == Qt::ToolTipRole )
-			{
-				return "Tooltip";
-			}
-		}
-		default:
-			break;
-	}
 	
-	return QVariant();
+	XUPItem* item = mapToSource( proxyIndex );
+	
+	Q_ASSERT( item );
+	
+	return item->index().data( role );
 }
 
 Qt::ItemFlags XUPFilteredProjectModel::flags( const QModelIndex& proxyIndex ) const
