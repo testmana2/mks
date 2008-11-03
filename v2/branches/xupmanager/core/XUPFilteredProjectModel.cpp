@@ -307,7 +307,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 		switch ( child->type() )
 		{
 			case XUPItem::Project:
-				//populateProject( child->project() );
+				populateProject( child->project() );
 				break;
 			case XUPItem::Comment:
 				break;
@@ -413,7 +413,7 @@ void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, 
 	{
 		QModelIndex childIndex = mSourceModel->index( i, 0, parent );
 		XUPItem* item = static_cast<XUPItem*>( childIndex.internalPointer() );
-		qWarning() << item->type();
+		
 		switch ( item->type() )
 		{
 			case XUPItem::Project:
