@@ -36,6 +36,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	mDebugMenu->addAction( "rootIncludeProject" );
 	mDebugMenu->addAction( "editAttribute" );
 	mDebugMenu->addAction( "removeItem" );
+	mDebugMenu->addAction( "addItem" );
 }
 
 XUPProjectManager::~XUPProjectManager()
@@ -58,10 +59,10 @@ void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 
 void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 {
-	const QModelIndex index = tvFiltered->currentIndex();
+	const QModelIndex index = tvNative->currentIndex(); // tvFiltered->currentIndex();
 	if ( !index.isValid() )
 		return;
-	XUPItem* item = mFilteredModel->mapToSource( index );
+	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() ); // mFilteredModel->mapToSource( index );
 	
 	pteLog->appendPlainText( "------------------" );
 	
@@ -149,6 +150,15 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 		if ( parentItem )
 		{
 			parentItem->removeChild( item );
+		}
+	}
+	else if ( action->text() == "addItem" )
+	{
+		int row = qrand() % item->childCount();
+		XUPItem* child = item->addChild( XUPItem::File, row );
+		if ( child )
+		{
+			child->setAttribute( "content", QString( "my new item %1" ).arg( qrand() % 256 ) );
 		}
 	}
 }
