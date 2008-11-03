@@ -189,6 +189,100 @@ void XUPItem::removeChild( XUPItem* item )
 	}
 }
 
+XUPItem* XUPItem::addChild( XUPItem::Type type, int row )
+{
+	// calculate row if needed
+	if ( row == -1 )
+	{
+		row = childCount();
+	}
+	
+	QString stringType;
+	switch ( type )
+	{
+		case XUPItem::Project:
+			stringType = "project";
+			break;
+		case XUPItem::Comment:
+			stringType = "comment";
+			break;
+		case XUPItem::EmptyLine:
+			stringType = "emptyline";
+			break;
+		case XUPItem::Variable:
+			stringType = "variable";
+			break;
+		case XUPItem::Value:
+			stringType = "value";
+			break;
+		case XUPItem::Function:
+			stringType = "function";
+			break;
+		case XUPItem::Scope:
+			stringType = "scope";
+			break;
+		case XUPItem::DynamicFolder:
+			stringType = "dynamicfolder";
+			break;
+		case XUPItem::Folder:
+			stringType = "folder";
+			break;
+		case XUPItem::File:
+			stringType = "file";
+			break;
+		case XUPItem::Path:
+			stringType = "path";
+			break;
+		case XUPItem::Unknow:
+			break;
+	}
+	
+	// inform model of add
+	XUPProjectModel* m = model();
+	if ( !stringType.isEmpty() && row <= childCount() && m )
+	{
+		// begin insert
+		m->beginInsertRows( index(), row, row );
+		
+		// re inde existing items
+		QList<int> rows = mChildItems.keys();
+		qSort( rows.begin(), rows.end(), qGreater<int>() );
+		foreach ( const int& key, rows )
+		{
+			if ( key >= row )
+			{
+				mChildItems[ key +1 ] = mChildItems[ key ];
+			}
+		}
+		
+		// add new one
+		mChildItems.remove( row );
+		QDomElement element = mDomElement.ownerDocument().createElement( stringType );
+		if ( childCount() == 0 )
+		{
+			mDomElement.appendChild( element );
+		}
+		else
+		{
+			if ( row == 0 )
+			{
+				mDomElement.insertBefore( element, child( 1 )->node() );
+			}
+			else
+			{
+				mDomElement.insertAfter( element, child( row -1 )->node() );
+			}
+		}
+		
+		// end insert
+		m->endInsertRows();
+		
+		return child( row );
+	}
+	
+	return 0;
+}
+
 XUPProjectModel* XUPItem::model() const
 {
 	if ( mParentItem )
