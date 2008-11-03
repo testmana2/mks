@@ -194,7 +194,7 @@ XUPItem* XUPItem::addChild( XUPItem::Type type, int row )
 	// calculate row if needed
 	if ( row == -1 )
 	{
-		row = childCount();
+		row = mDomElement.childNodes().count();
 	}
 	
 	QString stringType;
