@@ -262,25 +262,30 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 {
 	if ( mSourceModel )
 	{
+		disconnect( mSourceModel, SIGNAL( rowsInserted( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsInserted( const QModelIndex&, int, int ) ) );
 		disconnect( mSourceModel, SIGNAL( rowsAboutToBeRemoved( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsAboutToBeRemoved( const QModelIndex&, int, int ) ) );
 	}
 	
-	mSourceModel = model;
+	mSourceModel = 0;
 	
-	if ( mSourceModel )
+	clearMapping();
+	reset();
+	
+	if ( model )
 	{
-		clearMapping();
+		mSourceModel = model;
 		
+		connect( mSourceModel, SIGNAL( rowsInserted( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsInserted( const QModelIndex&, int, int ) ) );
 		connect( mSourceModel, SIGNAL( rowsAboutToBeRemoved( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsAboutToBeRemoved( const QModelIndex&, int, int ) ) );
-		
-		reset();
 		
 		// header
 		beginInsertColumns( QModelIndex(), 0, 0 );
 		endInsertColumns();
 		
 		// tree items
-		populateProject( mSourceModel->mRootProject, true );
+		emit layoutAboutToBeChanged();
+		populateProject( mSourceModel->mRootProject );
+		emit layoutChanged();
 	}
 }
 
@@ -302,7 +307,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 		switch ( child->type() )
 		{
 			case XUPItem::Project:
-				populateProject( child->project(), false );
+				//populateProject( child->project() );
 				break;
 			case XUPItem::Comment:
 				break;
@@ -353,50 +358,88 @@ XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root )
 	return values;
 }
 
-void XUPFilteredProjectModel::populateProject( XUPProjectItem* project, bool updateView )
+void XUPFilteredProjectModel::populateVariable( XUPItem* variable )
+{
+	XUPProjectItem* project = variable->project();
+	XUPItemMappingIterator projectIterator = mItemsMapping.constFind( project );
+	
+	if ( projectIterator == mItemsMapping.constEnd() )
+	{
+		return;
+	}
+	
+	XUPItemList tmpValuesItem = getValues( variable );
+	XUPItem* tmp = projectIterator.value()->findVariable( variable->attribute( "name" ) );
+	
+	if ( tmp )
+	{
+		variable = tmp;
+	}
+	
+	XUPItemMappingIterator variableIterator = createMapping( variable, project );
+
+	foreach ( XUPItem* value, tmpValuesItem )
+	{
+		if ( !variableIterator.value()->findValue( value->attribute( "content" ) ) )
+		{
+			createMapping( value, variable );
+		}
+	}
+	
+	XUPItemList& variableValues = variableIterator.value()->mMappedChildren;
+	qSortItems( variableValues );
+}
+
+void XUPFilteredProjectModel::populateProject( XUPProjectItem* project )
 {
 	XUPItemMappingIterator projectIterator = createMapping( project, project->parentProject() );
 	
 	XUPItemList variables = getFilteredVariables( project );
+	
 	foreach ( XUPItem* variable, variables )
 	{
-		XUPItemList tmpValuesItem = getValues( variable );
-		XUPItem* tmp = projectIterator.value()->findVariable( variable->attribute( "name" ) );
-		if ( tmp )
-		{
-			variable = tmp;
-		}
-		
-		XUPItemMappingIterator variableIterator = createMapping( variable, project );
-		foreach ( XUPItem* value, tmpValuesItem )
-		{
-			if ( !variableIterator.value()->findValue( value->attribute( "content" ) ) )
-			{
-				createMapping( value, variable );
-			}
-		}
-		
-		XUPItemList& variableValues = variableIterator.value()->mMappedChildren;
-		qSortItems( variableValues );
+		populateVariable( variable );
 	}
 	
 	XUPItemList& projectVariables = projectIterator.value()->mMappedChildren;
 	qSortItems( projectVariables );
+}
+
+void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, int start, int end )
+{
+	emit layoutAboutToBeChanged();
 	
-	if ( updateView )
+	for ( int i = start; i < end +1; i++ )
 	{
-		int count = projectVariables.count();
-		if ( count > 0 )
+		QModelIndex childIndex = mSourceModel->index( i, 0, parent );
+		XUPItem* item = static_cast<XUPItem*>( childIndex.internalPointer() );
+		qWarning() << item->type();
+		switch ( item->type() )
 		{
-			QModelIndex proxyIndex = mapFromSource( project );
-			beginInsertRows( proxyIndex, 0, count -1 );
-			endInsertRows();
+			case XUPItem::Project:
+				populateProject( item->project() );
+				break;
+			case XUPItem::Variable:
+				populateVariable( item );
+				break;
+			case XUPItem::Value:
+			case XUPItem::File:
+			case XUPItem::Path:
+				populateVariable( item->parent() );
+				break;
+			case XUPItem::Scope:
+			case XUPItem::Function:
+				break;
+			default:
+				break;
 		}
 	}
+	
+	emit layoutChanged();
 }
 
 void XUPFilteredProjectModel::internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end )
-{
+{	
 	XUPItem* firstItem = static_cast<XUPItem*>( mSourceModel->index( start, 0, parent ).internalPointer() );
 	XUPItemMappingIterator firstIt = mItemsMapping.constFind( firstItem );
 	
