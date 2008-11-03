@@ -58,6 +58,8 @@ public:
 	int childCount() const;
 	// remove a child and inform the model if possible
 	void removeChild( XUPItem* item );
+	// create a new child of type at given row, if row is -1 the item is append to the end
+	XUPItem* addChild( XUPItem::Type type, int row = -1 );
 	// return the model associated with the item or null if item is not yet in a model
 	XUPProjectModel* model() const;
 	// return the QModelIndex of the item if it's in a model, else an invalid qmodelindex
