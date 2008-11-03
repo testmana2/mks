@@ -82,7 +82,8 @@ public:
 	XUPItemList getFilteredVariables( const XUPItem* root );
 	XUPItemList getValues( const XUPItem* root );
 	
-	void populateProject( XUPProjectItem* item, bool updateView );
+	void populateVariable( XUPItem* variable );
+	void populateProject( XUPProjectItem* item );
 
 protected:
 	XUPProjectModel* mSourceModel;
@@ -93,6 +94,7 @@ protected:
 	void clearMapping();
 
 protected slots:
+	void internal_rowsInserted( const QModelIndex& parent, int start, int end );
 	void internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end );
 };
 
