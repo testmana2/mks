@@ -99,6 +99,7 @@ void UISimpleQMakeEditor::updateProjectFiles()
 void UISimpleQMakeEditor::init( XUPProjectItem* project )
 {
 	mFileVariables = project->projectInfos()->fileVariables( project->projectType() );
+	mPathVariables = project->projectInfos()->pathVariables( project->projectType() );
 	QString value;
 	QStringList values;
 	mProject = project;
@@ -285,6 +286,9 @@ XUPItem* UISimpleQMakeEditor::getUniqueVariableItem( const QString& variableName
 	{
 		if ( create )
 		{
+			XUPItem* variableItem = mProject->addChild( XUPItem::Variable );
+			variableItem->setAttribute( "name", variableName );
+			return variableItem;
 		}
 		
 		return 0;
@@ -407,8 +411,6 @@ void UISimpleQMakeEditor::accept()
 	QString destdir;
 	QString dlldestdir;
 	
-	mValues.clear();
-	
 	// project
 	if ( rbApplication->isChecked() )
 	{
@@ -519,20 +521,91 @@ void UISimpleQMakeEditor::accept()
 	
 	foreach ( const QString& variable, mValues.keys() )
 	{
-		XUPItem* variableItem = getUniqueVariableItem( variable, mValues[ variable ].trimmed().isEmpty() );
+		bool isEmpty = mValues[ variable ].trimmed().isEmpty();
+		XUPItem* variableItem = getUniqueVariableItem( variable, !isEmpty );
 		if ( !variableItem )
 		{
 			continue;
 		}
 		
-		if ( mFileVariables.contains( variable ) )
+		if ( !isEmpty )
 		{
+			if ( mFileVariables.contains( variable ) || mPathVariables.contains( variable ) )
+			{
+				// get values
+				QStringList values = mProject->splitMultiLineValue( mValues[ variable ] );
+				
+				// update variable
+				variableItem->setAttribute( "operator", "=" );
+				variableItem->setAttribute( "multiline", "true" );
+				
+				// remove all child
+				for ( int i = variableItem->childCount() -1; i > -1; i-- )
+				{
+					QString value = variableItem->child( i )->attribute( "content" );
+					if ( values.contains( value ) )
+					{
+						values.removeAll( value );
+					}
+					else if ( !values.contains( value ) )
+					{
+						variableItem->removeChild( variableItem->child( i ) );
+					}
+				}
+				
+				// add new ones
+				foreach ( const QString& v, values )
+				{
+					XUPItem* value = variableItem->addChild( XUPItem::Value );
+					value->setAttribute( "content", v );
+				}
+			}
+			else if ( variable == "CONFIG" )
+			{
+				// update variable
+				variableItem->setAttribute( "operator", "+=" );
+				variableItem->setAttribute( "multiline", "false" );
+				
+				// remove all child
+				while ( variableItem->childCount() )
+				{
+					variableItem->removeChild( variableItem->child( 0 ) );
+				}
+				
+				// add new one
+				XUPItem* value = variableItem->addChild( XUPItem::Value );
+				value->setAttribute( "content", mValues[ variable ] );
+			}
+			else
+			{
+				// update variable
+				variableItem->setAttribute( "operator", "=" );
+				variableItem->setAttribute( "multiline", "false" );
+				
+				// remove all child
+				while ( variableItem->childCount() )
+				{
+					variableItem->removeChild( variableItem->child( 0 ) );
+				}
+				
+				// add new one
+				XUPItem* value = variableItem->addChild( XUPItem::Value );
+				value->setAttribute( "content", mValues[ variable ] );
+			}
 		}
-		else if ( variable == "CONFIG" )
+		else if ( isEmpty && variableItem && variableItem->childCount() > 0 )
 		{
+			// remove all child
+			while ( variableItem->childCount() )
+			{
+				variableItem->removeChild( variableItem->child( 0 ) );
+			}
 		}
-		else
+		
+		// remove empty variable
+		if ( variableItem->childCount() == 0 )
 		{
+			variableItem->parent()->removeChild( variableItem );
 		}
 	}
 	
