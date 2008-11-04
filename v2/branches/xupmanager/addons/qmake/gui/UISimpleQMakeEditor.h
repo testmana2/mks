@@ -19,6 +19,7 @@ public:
 protected:
 	XUPProjectItem* mProject;
 	QStringList mFileVariables;
+	QStringList mPathVariables;
 	QMap<QString, QString> mValues;
 	QMap<QString, QTreeWidgetItem*> mProjectFilesItems;
 	
