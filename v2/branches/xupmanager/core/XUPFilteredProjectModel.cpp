@@ -208,6 +208,8 @@ XUPItemMappingIterator XUPFilteredProjectModel::createMapping( XUPItem* item, XU
 
 void XUPFilteredProjectModel::removeMapping( XUPItem* item )
 {
+	qWarning() << "removing" << item->displayText();
+	
 	if ( Mapping* m = mItemsMapping.take( item ) )
 	{
 		for ( int i = 0; i < m->mMappedChildren.size(); ++i )
@@ -415,37 +417,40 @@ void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, 
 	emit layoutChanged();
 }
 
-void XUPFilteredProjectModel::internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end )
-{	
-	XUPItem* firstItem = static_cast<XUPItem*>( mSourceModel->index( start, 0, parent ).internalPointer() );
-	XUPItemMappingIterator firstIt = mItemsMapping.constFind( firstItem );
+void XUPFilteredProjectModel::recursiveRemoveItems( XUPItem* item )
+{
+	XUPItemMappingIterator itemIt = mItemsMapping.constFind( item );
 	
-	if ( firstIt == mItemsMapping.constEnd() )
+	if ( itemIt == mItemsMapping.constEnd() )
 	{
-		return;
-	}
-	
-	XUPItem* parentItem = firstIt.value()->mParent;
-	XUPItemMappingIterator parentIt = mItemsMapping.constFind( parentItem );
-	
-	if ( parentIt != mItemsMapping.constEnd() )
-	{
-		QModelIndex parentProxy = mapFromSource( parentItem );
-		
-		for ( int i = start; i < end +1; i++ )
+		for ( int i = item->childCount() -1; i > -1; i-- )
 		{
-			XUPItem* childItem = static_cast<XUPItem*>( mSourceModel->index( i, 0, parent ).internalPointer() );
-			XUPItemMappingIterator childIt = mItemsMapping.constFind( childItem );
-			
-			if ( childIt != mItemsMapping.constEnd() )
-			{
-				QModelIndex childProxy = mapFromSource( childItem );
-				int row = childProxy.row();
-				
-				beginRemoveRows( parentProxy, row, row );
-				removeMapping( childItem );
-				endRemoveRows();
-			}
+			recursiveRemoveItems( item->child( i ) );
 		}
+	}
+	else
+	{
+		XUPItem* parentItem = itemIt.value()->mParent;
+		XUPItemMappingIterator parentIt = mItemsMapping.constFind( parentItem );
+	
+		if ( parentIt != mItemsMapping.constEnd() )
+		{
+			QModelIndex parentProxy = mapFromSource( parentItem );
+			QModelIndex indexProxy = mapFromSource( item );
+			int indexRow = indexProxy.row();
+			
+			beginRemoveRows( parentProxy, indexRow, indexRow );
+			removeMapping( item );
+			endRemoveRows();
+		}
+	}
+}
+
+void XUPFilteredProjectModel::internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end )
+{
+	for ( int i = start; i < end +1; i++ )
+	{
+		XUPItem* item = static_cast<XUPItem*>( mSourceModel->index( start, 0, parent ).internalPointer() );
+		recursiveRemoveItems( item );
 	}
 }

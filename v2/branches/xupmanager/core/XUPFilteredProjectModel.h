@@ -92,6 +92,7 @@ protected:
 	XUPItemMappingIterator createMapping( XUPItem* item, XUPItem* parent = 0 ) const;
 	void removeMapping( XUPItem* item );
 	void clearMapping();
+	void recursiveRemoveItems( XUPItem* item );
 
 protected slots:
 	void internal_rowsInserted( const QModelIndex& parent, int start, int end );
