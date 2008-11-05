@@ -388,6 +388,9 @@ void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, 
 {
 	emit layoutAboutToBeChanged();
 	
+	XUPProjectItem* project = mSourceModel->mRootProject;
+	const QStringList filteredVariables = project->projectInfos()->filteredVariables( project->projectType() );
+	
 	for ( int i = start; i < end +1; i++ )
 	{
 		QModelIndex childIndex = mSourceModel->index( i, 0, parent );
@@ -399,12 +402,18 @@ void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, 
 				populateProject( item->project() );
 				break;
 			case XUPItem::Variable:
-				populateVariable( item );
+				if ( item->type() == XUPItem::Variable && filteredVariables.contains( item->attribute( "name" ) ) )
+				{
+					populateVariable( item );
+				}
 				break;
 			case XUPItem::Value:
 			case XUPItem::File:
 			case XUPItem::Path:
-				populateVariable( item->parent() );
+				if ( item->parent()->type() == XUPItem::Variable && filteredVariables.contains( item->parent()->attribute( "name" ) ) )
+				{
+					populateVariable( item->parent() );
+				}
 				break;
 			case XUPItem::Scope:
 			case XUPItem::Function:
