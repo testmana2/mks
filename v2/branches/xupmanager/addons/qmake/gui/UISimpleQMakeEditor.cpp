@@ -362,10 +362,18 @@ void UISimpleQMakeEditor::on_tbEditFile_clicked()
 	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
 	{
 		bool ok;
-		QString value = QInputDialog::getText( this, tr( "Edit filen ame" ), tr( "Type a new name for this file" ), QLineEdit::Normal, item->data( 0, Qt::UserRole ).toString(), &ok );
-		if ( ok && !value.isEmpty() )
+		QString oldValue = item->data( 0, Qt::UserRole ).toString();
+		QString fn = QInputDialog::getText( this, tr( "Edit filen ame" ), tr( "Type a new name for this file" ), QLineEdit::Normal, oldValue, &ok );
+		if ( ok && !fn.isEmpty() )
 		{
-			item->setData( 0, Qt::UserRole, value );
+			QString variable = mProject->projectInfos()->variableNameForFileName( mProject->projectType(), fn );
+			
+			item->setText( 0, fn );
+			item->setData( 0, Qt::UserRole, fn );
+			
+			mValues[ variable ].remove( oldValue ).append( " " +fn );
+			
+			updateProjectFiles();
 		}
 	}
 }
