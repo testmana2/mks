@@ -9,10 +9,12 @@ QT	= core gui
 
 HEADERS	+= test.h
 
-SOURCES	+= test1.cpp source2.cpp \
-	source3.cpp \
-	"source 4.cpp" \
-	source5.cpp
+SOURCES	+= test6.cpp \
+	test2.cpp \
+	test5.cpp \
+	test1.cpp \
+	test4.cpp \
+	test3.cpp
 
 SOURCES += toto.cpp
 
