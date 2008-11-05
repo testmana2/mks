@@ -554,9 +554,10 @@ void UISimpleQMakeEditor::accept()
 				}
 				
 				// add new ones
+				XUPItem::Type type = mFileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
 				foreach ( const QString& v, values )
 				{
-					XUPItem* value = variableItem->addChild( XUPItem::Value );
+					XUPItem* value = variableItem->addChild( type );
 					value->setAttribute( "content", v );
 				}
 			}
