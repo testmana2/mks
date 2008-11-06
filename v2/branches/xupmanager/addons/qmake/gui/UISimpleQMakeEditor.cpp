@@ -8,8 +8,11 @@
 
 UISimpleQMakeEditor::UISimpleQMakeEditor( XUPProjectItem* project, QWidget* parent )
 	: QDialog( parent )
-{
+{	
 	setupUi( this );
+	
+	setWindowIcon( project->displayIcon() );
+	setWindowTitle( windowTitle().append( " - " ).append( project->displayText() ) );
 	
 	foreach ( QRadioButton* rb, gbProjectType->findChildren<QRadioButton*>() )
 	{
@@ -540,6 +543,8 @@ void UISimpleQMakeEditor::accept()
 		{
 			if ( mFileVariables.contains( variable ) || mPathVariables.contains( variable ) )
 			{
+				// get child type
+				XUPItem::Type type = mFileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
 				// get values
 				QStringList values = mProject->splitMultiLineValue( mValues[ variable ] );
 				
@@ -548,21 +553,23 @@ void UISimpleQMakeEditor::accept()
 				variableItem->setAttribute( "multiline", "true" );
 				
 				// remove all child
-				for ( int i = variableItem->childCount() -1; i > -1; i-- )
+				foreach ( XUPItem* child, variableItem->children() )
 				{
-					QString value = variableItem->child( i )->attribute( "content" );
-					if ( values.contains( value ) )
+					if ( child->type() == type )
 					{
-						values.removeAll( value );
-					}
-					else if ( !values.contains( value ) )
-					{
-						variableItem->removeChild( variableItem->child( i ) );
+						QString value = child->attribute( "content" );
+						if ( values.contains( value ) )
+						{
+							values.removeAll( value );
+						}
+						else if ( !values.contains( value ) )
+						{
+							variableItem->removeChild( child );
+						}
 					}
 				}
 				
 				// add new ones
-				XUPItem::Type type = mFileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
 				foreach ( const QString& v, values )
 				{
 					XUPItem* value = variableItem->addChild( type );
@@ -575,10 +582,13 @@ void UISimpleQMakeEditor::accept()
 				variableItem->setAttribute( "operator", "+=" );
 				variableItem->setAttribute( "multiline", "false" );
 				
-				// remove all child
-				while ( variableItem->childCount() )
+				// remove all child values
+				foreach ( XUPItem* child, variableItem->children() )
 				{
-					variableItem->removeChild( variableItem->child( 0 ) );
+					if ( child->type() == XUPItem::Value )
+					{
+						variableItem->removeChild( child );
+					}
 				}
 				
 				// add new one
@@ -591,10 +601,13 @@ void UISimpleQMakeEditor::accept()
 				variableItem->setAttribute( "operator", "=" );
 				variableItem->setAttribute( "multiline", "false" );
 				
-				// remove all child
-				while ( variableItem->childCount() )
+				// remove all child values
+				foreach ( XUPItem* child, variableItem->children() )
 				{
-					variableItem->removeChild( variableItem->child( 0 ) );
+					if ( child->type() == XUPItem::Value )
+					{
+						variableItem->removeChild( child );
+					}
 				}
 				
 				// add new one
@@ -604,10 +617,13 @@ void UISimpleQMakeEditor::accept()
 		}
 		else if ( isEmpty && variableItem && variableItem->childCount() > 0 )
 		{
-			// remove all child
-			while ( variableItem->childCount() )
+			// remove all child values
+			foreach ( XUPItem* child, variableItem->children() )
 			{
-				variableItem->removeChild( variableItem->child( 0 ) );
+				if ( child->type() == XUPItem::Value || child->type() == XUPItem::File || child->type() == XUPItem::Path )
+				{
+					variableItem->removeChild( child );
+				}
 			}
 		}
 		
