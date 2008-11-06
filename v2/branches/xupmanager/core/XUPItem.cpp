@@ -106,6 +106,24 @@ XUPItem* XUPItem::child( int i ) const
 	return 0;
 }
 
+XUPItemList XUPItem::children() const
+{
+	// create all child if needed before returning list
+	for ( int i = 0; i < childCount(); i++ )
+	{
+		child( i );
+	}
+	
+	// create fake child if needed
+	XUPItem* item = const_cast<XUPItem*>( this );
+	XUPProjectItem* pItem = project();
+	pItem->handleIncludeItem( item );
+	pItem->customRowCount( item );
+	
+	// return children
+	return mChildItems.values();
+}
+
 int XUPItem::childIndex( XUPItem* child ) const
 {
 	return mChildItems.key( child, -1 );
