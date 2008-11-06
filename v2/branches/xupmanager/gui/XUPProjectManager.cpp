@@ -18,16 +18,17 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	: QWidget( parent )
 {
 	setupUi( this );
-	tbOpen->setDefaultAction( action( atOpen ) );
-	tbClose->setDefaultAction( action( atClose ) );
-	tbEdit->setDefaultAction( action( atEdit ) );
+	
+	tbActions->addAction( action( atOpen ) );
+	tbActions->addAction( action( atClose ) );
+	tbActions->addAction( action( atEdit ) );
+	tbActions->addAction( aDebug );
 	
 	mFilteredModel = new XUPFilteredProjectModel( tvFiltered );
 	tvFiltered->setModel( mFilteredModel );
 	
-	mDebugMenu = new QMenu( tbDebug );
-	tbDebug->setMenu( mDebugMenu );
-	tbDebug->setPopupMode( QToolButton::InstantPopup );
+	mDebugMenu = new QMenu( this );
+	aDebug->setMenu( mDebugMenu );
 	
 	mDebugMenu->addAction( "interpretValue" );
 	mDebugMenu->addAction( "interpretVariable" );
@@ -37,6 +38,9 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	mDebugMenu->addAction( "editAttribute" );
 	mDebugMenu->addAction( "removeItem" );
 	mDebugMenu->addAction( "addItem" );
+	mDebugMenu->addAction( "debugFilteredModel" );
+	
+	connect( mDebugMenu, SIGNAL( triggered( QAction* ) ), this, SLOT( debugMenu_triggered( QAction* ) ) );
 }
 
 XUPProjectManager::~XUPProjectManager()
@@ -57,7 +61,7 @@ void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 	setCurrentProject( project );
 }
 
-void XUPProjectManager::on_tbDebug_triggered( QAction* action )
+void XUPProjectManager::debugMenu_triggered( QAction* action )
 {
 	const QModelIndex index = tvNative->currentIndex(); // tvFiltered->currentIndex();
 	if ( !index.isValid() )
@@ -160,6 +164,11 @@ void XUPProjectManager::on_tbDebug_triggered( QAction* action )
 		{
 			child->setAttribute( "content", QString( "my new item %1" ).arg( qrand() % 256 ) );
 		}
+	}
+	else if ( action->text() == "debugFilteredModel" )
+	{
+	qWarning() << "test";
+		mFilteredModel->debug( item->project() );
 	}
 }
 
@@ -379,6 +388,7 @@ XUPProjectItem* XUPProjectManager::currentProjectItem() const
 	
 	XUPProjectItem* project = 0;
 	XUPItem* item = mFilteredModel->mapToSource( tvFiltered->currentIndex() );
+	qWarning() << item;
 	if ( item )
 	{
 		project = item->project();
