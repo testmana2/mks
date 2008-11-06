@@ -46,6 +46,8 @@ public:
 	XUPProjectItem* project() const;
 	// return the i child item
 	XUPItem* child( int i ) const;
+	// return children list
+	XUPItemList children() const;
 	// index of a child
 	int childIndex( XUPItem* child ) const;
 	// set a child item for row i
