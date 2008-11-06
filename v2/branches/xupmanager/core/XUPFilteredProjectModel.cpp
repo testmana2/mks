@@ -3,29 +3,29 @@
 
 #include <QDebug>
 
-void debug( XUPItem* root, const XUPItemMapping& mItems, int mode = 0 )
+void XUPFilteredProjectModel::debug( XUPItem* root, int mode )
 {
 	if ( mode == 0 )
 	{
 		static int prof = 0;
 		QString prep = QString().fill( ' ', prof );
 		qWarning( root->displayText().prepend( prep ).toLocal8Bit().constData() );
-		XUPItemMappingIterator it = mItems.constFind( root );
-		Q_ASSERT( it != mItems.constEnd() );
+		XUPItemMappingIterator it = mItemsMapping.constFind( root );
+		Q_ASSERT( it != mItemsMapping.constEnd() );
 		Q_ASSERT( it.value() );
 		foreach ( XUPItem* item, it.value()->mMappedChildren )
 		{
 			prof += 4;
-			debug( item, mItems );
+			debug( item );
 			prof -= 4;
 		}
 	}
 	else
 	{
-		foreach ( XUPItem* item, mItems.keys() )
+		foreach ( XUPItem* item, mItemsMapping.keys() )
 		{
 			qWarning() << "Mapped" << item->displayText();
-			foreach ( XUPItem* it, mItems.constFind( item ).value()->mMappedChildren )
+			foreach ( XUPItem* it, mItemsMapping.constFind( item ).value()->mMappedChildren )
 			{
 				qWarning() << "\tChild" << it->displayText();
 			}
@@ -207,9 +207,7 @@ XUPItemMappingIterator XUPFilteredProjectModel::createMapping( XUPItem* item, XU
 }
 
 void XUPFilteredProjectModel::removeMapping( XUPItem* item )
-{
-	qWarning() << "removing" << item->displayText();
-	
+{	
 	if ( Mapping* m = mItemsMapping.take( item ) )
 	{
 		for ( int i = 0; i < m->mMappedChildren.size(); ++i )
@@ -243,6 +241,7 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 	{
 		disconnect( mSourceModel, SIGNAL( rowsInserted( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsInserted( const QModelIndex&, int, int ) ) );
 		disconnect( mSourceModel, SIGNAL( rowsAboutToBeRemoved( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsAboutToBeRemoved( const QModelIndex&, int, int ) ) );
+		disconnect( mSourceModel, SIGNAL( dataChanged( const QModelIndex&, const QModelIndex& ) ), this, SLOT( internal_dataChanged( const QModelIndex&, const QModelIndex& ) ) );
 	}
 	
 	mSourceModel = 0;
@@ -256,6 +255,7 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 		
 		connect( mSourceModel, SIGNAL( rowsInserted( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsInserted( const QModelIndex&, int, int ) ) );
 		connect( mSourceModel, SIGNAL( rowsAboutToBeRemoved( const QModelIndex&, int, int ) ), this, SLOT( internal_rowsAboutToBeRemoved( const QModelIndex&, int, int ) ) );
+		connect( mSourceModel, SIGNAL( dataChanged( const QModelIndex&, const QModelIndex& ) ), this, SLOT( internal_dataChanged( const QModelIndex&, const QModelIndex& ) ) );
 		
 		// header
 		beginInsertColumns( QModelIndex(), 0, 0 );
@@ -462,4 +462,12 @@ void XUPFilteredProjectModel::internal_rowsAboutToBeRemoved( const QModelIndex& 
 		XUPItem* item = static_cast<XUPItem*>( mSourceModel->index( start, 0, parent ).internalPointer() );
 		recursiveRemoveItems( item );
 	}
+}
+
+void XUPFilteredProjectModel::internal_dataChanged( const QModelIndex& topLeft, const QModelIndex& bottomRight )
+{
+	Q_UNUSED( bottomRight );
+	
+	XUPProjectItem* project = static_cast<XUPItem*>( topLeft.internalPointer() )->project();
+	populateProject( project );
 }
