@@ -84,6 +84,8 @@ public:
 	
 	void populateVariable( XUPItem* variable );
 	void populateProject( XUPProjectItem* item );
+	
+	void debug( XUPItem* root, int mode = 0 );
 
 protected:
 	XUPProjectModel* mSourceModel;
@@ -97,6 +99,7 @@ protected:
 protected slots:
 	void internal_rowsInserted( const QModelIndex& parent, int start, int end );
 	void internal_rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end );
+	void internal_dataChanged( const QModelIndex& topLeft, const QModelIndex& bottomRight );
 };
 
 #endif // XUPFILTEREDPROJECTMODEL_H
