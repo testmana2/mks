@@ -72,6 +72,21 @@ public:
 	// return the result of interpreting the caller attribute
 	virtual QString interpretValue( XUPItem* callerItem, const QString& attribute ) const;
 	
+	// return the project settings scope, creating it if needed
+	XUPItem* projectSettingsScope( bool create ) const;
+	// return a project settings value
+	virtual QStringList projectSettingsValues( const QString& variable, const QStringList& defaultValues = QStringList() ) const;
+	virtual QString projectSettingsValue( const QString& variable, const QString& defaultValue = QString() ) const 
+	{ return projectSettingsValues( variable, defaultValue.isEmpty() ? QStringList() : QStringList( defaultValue ) ).join( " " ); }
+	// set a project setting value
+	virtual void setProjectSettingsValues( const QString& variable, const QStringList& values );
+	virtual void setProjectSettingsValue( const QString& variable, const QString& value ) 
+	{ setProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) ); }
+	// add project setting value
+	virtual void addProjectSettingsValues( const QString& variable, const QStringList& values );
+	virtual void addProjectSettingsValue( const QString& variable, const QString& value ) 
+	{ addProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) ); }
+	
 	// return the project type id
 	inline virtual int projectType() const { return XUPProjectItem::XUPProject; }
 	// register the project type
