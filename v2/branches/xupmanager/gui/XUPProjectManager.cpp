@@ -39,6 +39,7 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	mDebugMenu->addAction( "removeItem" );
 	mDebugMenu->addAction( "addItem" );
 	mDebugMenu->addAction( "debugFilteredModel" );
+	mDebugMenu->addAction( "projectSettingsDebug" );
 	
 	connect( mDebugMenu, SIGNAL( triggered( QAction* ) ), this, SLOT( debugMenu_triggered( QAction* ) ) );
 }
@@ -167,8 +168,28 @@ void XUPProjectManager::debugMenu_triggered( QAction* action )
 	}
 	else if ( action->text() == "debugFilteredModel" )
 	{
-	qWarning() << "test";
 		mFilteredModel->debug( item->project() );
+	}
+	else if ( action->text() == "projectSettingsDebug" )
+	{
+		XUPProjectItem* project = item->project();
+		
+		project->setProjectSettingsValue( "EDITOR", "SimpleQMakeEditor" );
+		project->setProjectSettingsValue( "DEBUG_BINARY", "myappd" );
+		project->setProjectSettingsValue( "RELEASE_BINARY", "myapp" );
+		project->setProjectSettingsValue( "TEST", "merde" );
+		
+		project->addProjectSettingsValue( "TEST", "youpi" );
+		
+		QStringList values;
+		values << project->projectSettingsValue( "EDITOR" );
+		values << project->projectSettingsValue( "DEBUG_BINARY" );
+		values << project->projectSettingsValue( "RELEASE_BINARY" );
+		values << project->projectSettingsValue( "TEST" );
+		pteLog->appendPlainText( values.join( " " ) );
+		
+		project->setProjectSettingsValue( "TEST", "okimichel" );
+		pteLog->appendPlainText( project->projectSettingsValue( "TEST" ) );
 	}
 }
 
