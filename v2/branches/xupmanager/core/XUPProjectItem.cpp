@@ -480,6 +480,181 @@ QString XUPProjectItem::interpretValue( XUPItem* callerItem, const QString& attr
 	return value;
 }
 
+XUPItem* XUPProjectItem::projectSettingsScope( bool create ) const
+{
+	XUPProjectItem* project = topLevelProject();
+	
+	if ( project )
+	{
+		const QString mScopeName = "XUPProjectSettings";
+		XUPItemList items = children();
+		
+		foreach ( XUPItem* child, items )
+		{
+			if ( child->type() == XUPItem::Scope && child->attribute( "name" ) == mScopeName )
+			{
+				child->setAttribute( "nested", "false" );
+				return child;
+			}
+		}
+		
+		if ( create )
+		{
+			XUPItem* scope = project->addChild( XUPItem::Scope, 0 );
+			scope->setAttribute( "name", mScopeName );
+			scope->setAttribute( "nested", "false" );
+			
+			return scope;
+		}
+	}
+	
+	return 0;
+}
+
+QStringList XUPProjectItem::projectSettingsValues( const QString& variableName, const QStringList& defaultValues ) const
+{
+	XUPProjectItem* project = topLevelProject();
+	
+	if ( project )
+	{
+		XUPItem* scope = projectSettingsScope( false );
+		
+		if ( scope )
+		{
+			XUPItemList variables = getVariables( scope, variableName, 0, false );
+			QStringList values;
+			
+			foreach ( const XUPItem* variable, variables )
+			{
+				foreach ( const XUPItem* child, variable->children() )
+				{
+					if ( child->type() == XUPItem::Value )
+					{
+						values << child->attribute( "content" );
+					}
+				}
+			}
+			
+			return values;
+		}
+	}
+	
+	return defaultValues;
+}
+
+void XUPProjectItem::setProjectSettingsValues( const QString& variableName, const QStringList& values )
+{	
+	XUPProjectItem* project = topLevelProject();
+	
+	if ( project )
+	{
+		XUPItem* scope = projectSettingsScope( !values.isEmpty() );
+		
+		if ( !scope )
+		{
+			return;
+		}
+		
+		XUPItemList variables = getVariables( scope, variableName, 0, false );
+		XUPItem* variable = variables.value( 0 );
+		bool haveVariable = variable;
+		
+		if ( !haveVariable && values.isEmpty() )
+		{
+			return;
+		}
+		
+		if ( haveVariable && values.isEmpty() )
+		{
+			scope->removeChild( variable );
+			return;
+		}
+		
+		if ( !haveVariable )
+		{
+			variable = scope->addChild( XUPItem::Variable );
+			variable->setAttribute( "name", variableName );
+		}
+		
+		QStringList cleanValues = values;
+		foreach ( XUPItem* child, variable->children() )
+		{
+			if ( child->type() == XUPItem::Value )
+			{
+				QString value = child->attribute( "content" );
+				if ( cleanValues.contains( value ) )
+				{
+					cleanValues.removeAll( value );
+				}
+				else if ( !cleanValues.contains( value ) )
+				{
+					variable->removeChild( child );
+				}
+			}
+		}
+		
+		foreach ( const QString& value, cleanValues )
+		{
+			XUPItem* valueItem = variable->addChild( XUPItem::Value );
+			valueItem->setAttribute( "content", value );
+		}
+	}
+}
+
+void XUPProjectItem::addProjectSettingsValues( const QString& variableName, const QStringList& values )
+{
+	XUPProjectItem* project = topLevelProject();
+	
+	if ( project )
+	{
+		XUPItem* scope = projectSettingsScope( !values.isEmpty() );
+		
+		if ( !scope )
+		{
+			return;
+		}
+		
+		XUPItemList variables = getVariables( scope, variableName, 0, false );
+		XUPItem* variable = variables.value( 0 );
+		bool haveVariable = variable;
+		
+		if ( !haveVariable && values.isEmpty() )
+		{
+			return;
+		}
+		
+		if ( haveVariable && values.isEmpty() )
+		{
+			return;
+		}
+		
+		if ( !haveVariable )
+		{
+			variable = scope->addChild( XUPItem::Variable );
+			variable->setAttribute( "name", variableName );
+		}
+		
+		QStringList cleanValues = values;
+		foreach ( XUPItem* child, variable->children() )
+		{
+			if ( child->type() == XUPItem::Value )
+			{
+				QString value = child->attribute( "content" );
+				if ( cleanValues.contains( value ) )
+				{
+					cleanValues.removeAll( value );
+				}
+			}
+		}
+		
+		foreach ( const QString& value, cleanValues )
+		{
+			XUPItem* valueItem = variable->addChild( XUPItem::Value );
+			valueItem->setAttribute( "content", value );
+		}
+	}
+}
+
 void XUPProjectItem::registerProjectType() const
 {
 	// get proejct type
