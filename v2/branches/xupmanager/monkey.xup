@@ -252,6 +252,8 @@
 	</variable>
 	<emptyline count="1" />
 	<variable expanded="true" operator="=" name="FILES" multiline="true" >
-		<value content="../../../clean.bat" />
+		<file content="main.cpp" />
+		<file content="dynfolder.xup" />
+		<file content="xupmanager.pro" />
 	</variable>
 </project>
