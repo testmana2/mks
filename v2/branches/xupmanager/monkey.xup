@@ -1,33 +1,7 @@
 <!DOCTYPE XUPProject>
-<project compiler="MSVC" version="1.1.0" expanded="true" plugin="XUPProjectEditor" builder="MSVCMake" name="Monkey Studio.xup" >
-	<variable name="TEMPLATE" >
-		<value content="app" />
-	</variable>
-	<variable name="LANGUAGE" >
-		<value content="Qt4/C++" />
-	</variable>
-	<variable name="TARGET" >
-		<value content="monkeystudio" />
-	</variable>
-	<variable name="DESTDIR" >
-		<value content="../bin" />
-	</variable>
-	<variable operator="*=" name="CONFIG" >
-		<value content="qt" />
-		<value content="warn_on" />
-		<value content="thread" />
-		<value content="x11" />
-		<value content="windows" />
-		<value content="debug_and_release" />
-	</variable>
-	<variable operator="*=" name="QT" multiline="true" >
-		<value content="gui" />
-		<value content="core" />
-	</variable>
-	<emptyline count="1" />
-	<variable expanded="true" operator="=" name="FILES" multiline="true" >
-		<file content="main.cpp" />
-		<file content="dynfolder.xup" />
-		<file content="xupmanager.pro" />
-	</variable>
+<project version="1.1.0" name="Monkey Studio" >
+    <variable operator="=" name="FILES" multiline="true" >
+        <file content="main.cpp" />
+        <file content="dynfolder.xup" />
+    </variable>
 </project>
