@@ -3,5 +3,7 @@
     <variable operator="=" name="FILES" multiline="true" >
         <file content="main.cpp" />
         <file content="dynfolder.xup" />
+        <file content="xupmanager.pro" />
+        <file content="../../../../../../Desktop/moisir.txt" />
     </variable>
 </project>
