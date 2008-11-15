@@ -1,9 +1,9 @@
 <!DOCTYPE XUPProject>
 <project version="1.1.0" name="Monkey Studio" >
-    <variable operator="=" name="FILES" multiline="true" >
-        <file content="main.cpp" />
-        <file content="dynfolder.xup" />
-        <file content="xupmanager.pro" />
-        <file content="../../../../../../Desktop/moisir.txt" />
-    </variable>
+	<variable operator="=" name="FILES" multiline="true" >
+		<file content="main.cpp" />
+		<file content="dynfolder.xup" />
+		<file content="xupmanager.pro" />
+		<file content="../../../../../../Desktop/moisir.txt" />
+	</variable>
 </project>
