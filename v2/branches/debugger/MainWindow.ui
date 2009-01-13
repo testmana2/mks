@@ -1,0 +1,65 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>664</width>
+    <height>526</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <widget class="QMenuBar" name="menuBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>664</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuRun" >
+    <property name="title" >
+     <string>Run</string>
+    </property>
+    <addaction name="actionRun" />
+    <addaction name="actionContinue" />
+    <addaction name="actionStep_into" />
+    <addaction name="actionStep_over" />
+    <addaction name="actionPause" />
+   </widget>
+   <addaction name="menuRun" />
+  </widget>
+  <widget class="QStatusBar" name="statusBar" />
+  <action name="actionRun" >
+   <property name="text" >
+    <string>Run</string>
+   </property>
+  </action>
+  <action name="actionContinue" >
+   <property name="text" >
+    <string>Continue</string>
+   </property>
+  </action>
+  <action name="actionStep_into" >
+   <property name="text" >
+    <string>Step into</string>
+   </property>
+  </action>
+  <action name="actionStep_over" >
+   <property name="text" >
+    <string>Step over</string>
+   </property>
+  </action>
+  <action name="actionPause" >
+   <property name="text" >
+    <string>Pause</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
