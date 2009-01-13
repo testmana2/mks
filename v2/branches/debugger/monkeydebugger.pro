@@ -16,13 +16,13 @@
 
 XUPProjectSettings {
 	EDITOR	= QMake
-	EXECUTE_DEBUG	= Monkey Debugger_debug
+	EXECUTE_DEBUG	= monkeydebugger_debug
 	QT_VERSION	= Qt System (4.4.3)
 }
 
 TEMPLATE	= app
 LANGUAGE	= C++/Qt4
-TARGET	= $$quote(Monkey Debugger)
+TARGET	= monkeydebugger
 CONFIG	+= debug_and_release
 BUILD_PATH	= ./build
 
@@ -48,13 +48,15 @@ CONFIG(debug, debug|release) {
 }
 
 SOURCES	= src/main.cpp \
-	MainWindow.cpp \
-	GnuDebugger.cpp
+	src/MainWindow.cpp \
+	src/GnuDebugger.cpp \
+	src/FileManager.cpp
 
-FORMS	= MainWindow.ui
-HEADERS	= MainWindow.h \
-	GnuDebugger.h
+FORMS	= src/MainWindow.ui
+HEADERS	= src/MainWindow.h \
+	src/GnuDebugger.h \
+	src/FileManager.h
 
 INCLUDEPATH	= libmigdb/src
 
-LIBS += -Llibmigdb/src -lmigdb
+LIBS	= -Llibmigdb/src -lmigdb -lqscintilla2
