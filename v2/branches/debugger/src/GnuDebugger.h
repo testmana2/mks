@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QList>
 
 #include "mi_gdb.h"
 
@@ -10,6 +11,24 @@ class GnuDebugger : public QObject
 {
 	Q_OBJECT
 public:
+	struct FunctionArgument
+	{
+		QString name;
+		QString value;
+	};
+	typedef QList<FunctionArgument> ArgumentsList;
+	
+	struct Frame
+	{
+		int level;
+		QString function;
+		QString file;
+		int line;
+		int thread_id;
+		ArgumentsList arguments;
+	};
+	typedef QList<Frame> CallStack;
+	
 	GnuDebugger();
 	virtual ~GnuDebugger();
 	
@@ -38,6 +57,8 @@ protected:
 
 signals:
 	void positionChanged (const QString& fileName, int line);
+	
+	void callStackUpdate (const GnuDebugger::CallStack&);
 };
 
 #endif // GNUDEBUGGER_H
