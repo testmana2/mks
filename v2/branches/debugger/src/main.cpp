@@ -39,8 +39,10 @@ int main( int argc, char** argv )
 			          stackWidget, SLOT (update (const GnuDebugger::CallStack&)));
 	
 	
-	
-	debugger.prepare_loadTarget();
+	// test scenario
+	debugger.exec_setCommandAndArgs("./target_frames","");
+	debugger.break_setBreaktoint ("target_frames.cc",7);
+	debugger.exec_run();
 	window.show();
 	return app.exec();
 }

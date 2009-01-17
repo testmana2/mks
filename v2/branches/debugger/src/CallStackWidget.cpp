@@ -8,9 +8,10 @@ CallStackWidget::CallStackWidget( QWidget* parent )
 CallStackWidget::~CallStackWidget()
 {
 }
-#include <QDebug>
+
 void CallStackWidget::update (const GnuDebugger::CallStack& stack)
 {
+	clear();
 	foreach (GnuDebugger::Frame frame, stack)
 	{
 		QString item = "#" + QString::number (frame.level);
