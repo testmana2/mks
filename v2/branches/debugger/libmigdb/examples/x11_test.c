@@ -178,7 +178,9 @@ int main(int argc, char *argv[])
     mi_disconnect(h);
     return 1;
    }
-
+	
+ printf ("frame %p\n", gmi_stack_info_frame (h));
+ printf ("list frames %p\n", gmi_stack_list_frames(h));
  /* Exit from gdb. */
  gmi_gdb_exit(h);
  /* Close the connection. */

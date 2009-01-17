@@ -1,4 +1,7 @@
+#include <QMetaType>
+
 #include "GnuDebugger.h"
+#include <QDebug>
 
 // Callbacks of debugger
 static void callbackConsole (const char *, void *)
@@ -46,6 +49,7 @@ GnuDebugger::GnuDebugger()
 	mi_set_to_gdb_cb (mHandle, callbackToGDB, this);
 	mi_set_from_gdb_cb (mHandle, callbackFromGDB, this);
 	
+	qRegisterMetaType<GnuDebugger::CallStack> ("GnuDebugger::CallStack");
 }
 
 GnuDebugger::~GnuDebugger()
@@ -56,7 +60,7 @@ void GnuDebugger::prepare_loadTarget ()
 {
 	exec_setCommandAndArgs ("./target_frames","");
 	
-	prepare_startXterm();
+	//prepare_startXterm();
 	
 	break_setBreaktoint ("target_frames.cc",7);
 	exec_run();
@@ -78,8 +82,8 @@ void GnuDebugger::prepare_loadTarget ()
 	}
 	
 	sleep (1);
-	printf ("%s\n", gmi_gdb_show(mHandle, "v"));
-	printf ("%s\n", gmi_gdb_show(mHandle, "str"));
+//	printf ("%s\n", gmi_gdb_show(mHandle, "v"));
+//	printf ("%s\n", gmi_gdb_show(mHandle, "str"));
 	stack_Info ();
 }
 
@@ -142,9 +146,41 @@ void GnuDebugger::break_setBreaktoint (const QString& file, int line)
 
 void GnuDebugger::stack_Info ()
 {
-	mi_frames * frames = NULL;
-	frames = gmi_stack_info_frame (mHandle);
-	Q_ASSERT (frames);
-	emit positionChanged (frames[0].file, frames[0].line);
+	mi_frames * frames = gmi_stack_list_frames (mHandle);;
+	mi_frames * arguments = gmi_stack_list_arguments (mHandle, 1);
+	
+	CallStack stack;
+	
+	while (NULL != frames && NULL != arguments)
+	{
+		Frame frame;
+		frame.function = frames->func;
+		frame.file = frames->file;
+		frame.line = frames->line;
+		frame.level = frames->level;
+		
+		mi_results* arg = arguments->args;
+		
+		while (NULL != arg)
+		{
+			FunctionArgument argument;
+			argument.name = arg->v.rs->v.cstr;
+			argument.value = arg->v.rs->next->v.cstr;
+			frame.arguments << argument;
+			
+			arg = arg->next;
+		}
+		
+		stack << frame;
+		
+		frames = frames->next;
+		arguments = arguments->next;
+	}
+	if (stack.size())
+		emit positionChanged (stack[0].file, stack[0].line);
+	
+	emit callStackUpdate (stack);
+	
 	mi_free_frames(frames);
+	mi_free_frames(arguments);
 }

@@ -50,12 +50,14 @@ CONFIG(debug, debug|release) {
 SOURCES	= src/main.cpp \
 	src/MainWindow.cpp \
 	src/GnuDebugger.cpp \
-	src/FileManager.cpp
+	src/FileManager.cpp \
+	src/CallStackWidget.cpp
 
 FORMS	= src/MainWindow.ui
 HEADERS	= src/MainWindow.h \
 	src/GnuDebugger.h \
-	src/FileManager.h
+	src/FileManager.h \
+	src/CallStackWidget.h
 
 INCLUDEPATH	= libmigdb/src
 
