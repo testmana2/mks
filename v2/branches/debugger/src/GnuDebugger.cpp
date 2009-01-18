@@ -1,4 +1,5 @@
 #include <QMetaType>
+#include <QMessageBox>
 
 #include "GnuDebugger.h"
 #include <QDebug>
@@ -36,8 +37,12 @@ void GnuDebugger::callbackAsync (mi_output * o, void * debuggerInstance)
 	Q_ASSERT (o);
 	if (MI_CL_STOPPED == o->tclass)
 	{
-		//static_cast<GnuDebugger*>(debuggerInstance)->emitStoppedSignal();
-		static_cast<GnuDebugger*>(debuggerInstance)->mTargetBeenStopped = true;
+		if (QString ("exited") == o->c->v.cstr)
+			static_cast<GnuDebugger*>(debuggerInstance)->mTargetBeenExited = true;
+		else if ((QString ("breakpoint-hit") == o->c->v.cstr) ||
+				 (QString ("end-stepping-range") == o->c->v.cstr) ||
+				 (QString ("function-finished") == o->c->v.cstr))
+			static_cast<GnuDebugger*>(debuggerInstance)->mTargetBeenStopped = true;
 	}
 	printf("callback exit\n");
 }
@@ -45,7 +50,10 @@ void GnuDebugger::callbackAsync (mi_output * o, void * debuggerInstance)
 
 GnuDebugger::GnuDebugger()
   : QObject(),
-  mTargetBeenStopped (false)
+	mState (NOT_LOADED),
+	mHandle (0),
+    mTargetBeenStopped (false),
+    mTargetLoaded (false)
 {
 	mHandle	= mi_connect_local ();
 	Q_ASSERT (mHandle); // FIXME replace with some error message
@@ -61,6 +69,7 @@ GnuDebugger::GnuDebugger()
 	connect (&mGdbPingTimer, SIGNAL (timeout()), this, SLOT(onGdbTouchTimerTick ()));
 	
 	qRegisterMetaType<GnuDebugger::CallStack> ("GnuDebugger::CallStack");
+	qRegisterMetaType<GnuDebugger::CallStack> ("GnuDebugger::State");
 	
 	mGdbPingTimer.setInterval (50);
 	mGdbPingTimer.start();
@@ -81,38 +90,84 @@ void GnuDebugger::prepare_startXterm ()
 	Q_ASSERT (res != 0);
 }
 
-void GnuDebugger::exec_setCommandAndArgs (const QString& command, const QString& args)
+void GnuDebugger::exec_setCommand (const QString& command)
 {
 	int res = 0;
-	res = gmi_set_exec(mHandle, command.toLocal8Bit(), args.toLocal8Bit());
-	Q_ASSERT (res != 0);
+	res = gmi_set_exec(mHandle, command.toLocal8Bit(), "");
+	if (0 != res)
+	{
+		setState (LOADED);
+		emit stateChanged (mState);
+	}
+	else
+	{
+		QMessageBox::critical (NULL, tr ("Failed to load target"), tr ("GDB error: ") + mi_get_error_str());
+		mTargetLoaded = false;
+	}
 }
+
+#if 0
+	void GnuDebugger::exec_setArgs (const QString& args)
+	{
+		int res = 0;
+		res = gmi_set_exec(mHandle, command.toLocal8Bit(), args.toLocal8Bit());
+		Q_ASSERT (res != 0);
+	}
+#endif
 
 void GnuDebugger::exec_run()
 {
 	int res = 0;
 	res = gmi_exec_run(mHandle);
 	Q_ASSERT (res);
+	setState (RUNNING);
 }
 
 void GnuDebugger::exec_continue()
 {
-
+	int res = 0;
+	res = gmi_exec_continue (mHandle);
+	Q_ASSERT (res);
+	setState (RUNNING);
 }
 
 void GnuDebugger::exec_stepInto()
 {
-
+	int res = 0;
+	res = gmi_exec_step (mHandle);
+	Q_ASSERT (res);
+	setState (RUNNING);
 }
 
 void GnuDebugger::exec_stepOver()
 {
+	int res = 0;
+	res = gmi_exec_next (mHandle);
+	Q_ASSERT (res);
+	setState (RUNNING);
+}
 
+void GnuDebugger::exec_stepOut()
+{
+	int res = 0;
+	res = gmi_exec_finish (mHandle);
+	Q_ASSERT (res);
+	setState (RUNNING);
 }
 
 void GnuDebugger::exec_pause()
 {
+	int res = 0;
+	res = gmi_exec_interrupt (mHandle);
+	Q_ASSERT (res);
+}
 
+void GnuDebugger::exec_kill()
+{
+	int res = 0;
+	res = gmi_exec_kill (mHandle);
+	Q_ASSERT (res);
+	setState (EXITED_NORMAL);
 }
 
 void GnuDebugger::break_setBreaktoint (const QString& file, int line)
@@ -179,8 +234,19 @@ void GnuDebugger::internalUpdate()
 	if (mTargetBeenStopped)
 	{
 		mTargetBeenStopped = false;
+		setState (PAUSED);
 		onStopped();
 	}
+	else if (mTargetBeenExited)
+	{
+		setState (EXITED_NORMAL);
+	}
+}
+
+void GnuDebugger::setState (State state)
+{
+	mState = state;
+	emit stateChanged (mState);
 }
 
 void GnuDebugger::onStopped()

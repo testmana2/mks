@@ -46,6 +46,9 @@ void FileManager::gotoFileLine (const QString& fileName, int line)
 
 QsciScintilla* FileManager::openFile (const QString& fileName)
 {
+	if (fileName.isEmpty())
+		return NULL;
+	
 	QsciScintilla* sci = new QsciScintilla();
 	QApplication::setOverrideCursor( Qt::WaitCursor );
 	

@@ -12,6 +12,15 @@ class GnuDebugger : public QObject
 {
 	Q_OBJECT
 public:
+	enum State
+	{
+		NOT_LOADED,
+		LOADED,
+		RUNNING,
+		PAUSED,
+		EXITED_NORMAL
+	};
+	
 	struct FunctionArgument
 	{
 		QString name;
@@ -32,18 +41,24 @@ public:
 	
 	GnuDebugger();
 	virtual ~GnuDebugger();
-	
+
+public slots:
 	// preparing to execution
 	void prepare_startXterm ();
 	
 	// target execution
 	
-	void exec_setCommandAndArgs (const QString& command, const QString& args);
+	void exec_setCommand (const QString& command);
+#if 0
+	void exec_setArgs (const QString& args);
+#endif
 	void exec_run();
 	void exec_continue();
 	void exec_stepInto();
 	void exec_stepOver();
+	void exec_stepOut();
 	void exec_pause();
+	void exec_kill();
 	
 	// breakpoints
 	void break_setBreaktoint (const QString& file, int line);
@@ -52,13 +67,16 @@ public:
 	void stack_Info ();
 	
 protected:
+	State mState;
 	mi_h* mHandle;
 	mi_aux_term* mXterm;
 	
 	bool mTargetBeenStopped;
+	bool mTargetBeenExited;
 	
 	QTimer mGdbPingTimer;
 	
+	bool mTargetLoaded;
 	
 	// migdb callbacks
 	static void callbackConsole (const char *, void *);
@@ -70,7 +88,7 @@ protected:
 	
 	void internalUpdate ();
 	
-	
+	void setState (State);
 protected slots:
 	// touches gdb for make it alive
 	// Without it we haven't callbacks
@@ -83,6 +101,8 @@ signals:
 	void positionChanged (const QString& fileName, int line);
 	
 	void callStackUpdate (const GnuDebugger::CallStack&);
+	
+	void stateChanged (GnuDebugger::State);
 };
 
 #endif // GNUDEBUGGER_H
