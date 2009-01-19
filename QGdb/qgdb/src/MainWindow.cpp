@@ -34,11 +34,11 @@ void MainWindow::loadTargetTriggered()
 		emit loadTargetRequested (fileName);
 }
 
-void MainWindow::onDebuggerStateChanged (GnuDebugger::State state)
+void MainWindow::onDebuggerStateChanged (QGdbDriver::State state)
 {
 	switch (state)
 	{
-		case GnuDebugger::NOT_LOADED:
+		case QGdbDriver::NOT_LOADED:
 			actionRun->setEnabled (false);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -48,7 +48,7 @@ void MainWindow::onDebuggerStateChanged (GnuDebugger::State state)
 			actionKill->setEnabled (false);
 			mStatusLabel->setText (tr("Target not loaded"));
 		break;
-		case GnuDebugger::LOADED:
+		case QGdbDriver::LOADED:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -58,7 +58,7 @@ void MainWindow::onDebuggerStateChanged (GnuDebugger::State state)
 			actionKill->setEnabled (false);
 			mStatusLabel->setText (tr("Target loaded"));
 		break;
-		case GnuDebugger::RUNNING:
+		case QGdbDriver::RUNNING:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -68,7 +68,7 @@ void MainWindow::onDebuggerStateChanged (GnuDebugger::State state)
 			actionKill->setEnabled (true);
 			mStatusLabel->setText (tr("Target is running"));
 		break;
-		case GnuDebugger::PAUSED:
+		case QGdbDriver::PAUSED:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (true);
 			actionStep_into->setEnabled (true);
@@ -78,7 +78,7 @@ void MainWindow::onDebuggerStateChanged (GnuDebugger::State state)
 			actionKill->setEnabled (true);
 			mStatusLabel->setText (tr("Target stopped"));
 		break;
-		case GnuDebugger::EXITED_NORMAL:
+		case QGdbDriver::EXITED_NORMAL:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);

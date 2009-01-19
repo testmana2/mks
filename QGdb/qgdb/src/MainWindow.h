@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "GnuDebugger.h"
+#include "QGdbDriver.h"
 
 #include "ui_MainWindow.h"
 
@@ -22,7 +22,7 @@ protected slots:
 	void loadTargetTriggered();
 
 public slots:
-	void onDebuggerStateChanged (GnuDebugger::State);
+	void onDebuggerStateChanged (QGdbDriver::State);
 signals:
 	
 	// api

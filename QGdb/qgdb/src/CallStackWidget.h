@@ -1,7 +1,7 @@
 #ifndef CALLSTACKWIDGET_H
 #define CALLSTACKWIDGET_H
 
-#include "GnuDebugger.h"
+#include "QGdbDriver.h"
 
 #include <QListWidget>
 
@@ -13,7 +13,7 @@ public:
 	CallStackWidget( QWidget* parent = 0 );
 	virtual ~CallStackWidget();
 public slots:
-	void update (const GnuDebugger::CallStack& stack);
+	void update (const QGdbDriver::CallStack& stack);
 };
 
 #endif // CALLSTACKWIDGET_H

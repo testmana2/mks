@@ -1,5 +1,5 @@
 ###########################################################################################
-##		Created using Monkey Studio v1.8.3.0svn_release
+##		Created using Monkey Studio v1.8.3.0
 ##
 ##	Author    : Andrei Kopats <hlamer at tut by>
 ##	Project   : Monkey Debugger
@@ -16,15 +16,16 @@
 
 XUPProjectSettings {
 	EDITOR	= QMake
-	EXECUTE_DEBUG	= monkeydebugger_debug
-	QT_VERSION	= Qt System (4.4.3)
 }
 
 TEMPLATE	= app
 LANGUAGE	= C++/Qt4
-TARGET	= monkeydebugger
+TARGET	= QGdb
 CONFIG	+= debug_and_release
-BUILD_PATH	= ./build
+LIBS	+= -lqscintilla2 -L../build
+DESTDIR	= ../bin
+BUILD_PATH	= ../build/qgdb
+QMIGDB_LIB	= qmigdb
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -37,6 +38,8 @@ CONFIG(debug, debug|release) {
 	UI_DIR	= $${BUILD_PATH}/debug/.ui
 	MOC_DIR	= $${BUILD_PATH}/debug/.moc
 	RCC_DIR	= $${BUILD_PATH}/debug/.rcc
+	unix:LIBS	+= -l$$join(QMIGDB_LIB,,,_debug)
+	else:LIBS	+= -l$$join(QMIGDB_LIB,,,d)
 } else {
 	#Release
 	unix:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/unix
@@ -45,20 +48,19 @@ CONFIG(debug, debug|release) {
 	UI_DIR	= $${BUILD_PATH}/release/.ui
 	MOC_DIR	= $${BUILD_PATH}/release/.moc
 	RCC_DIR	= $${BUILD_PATH}/release/.rcc
+	LIBS	+= -l$$QMIGDB_LIB
 }
 
-SOURCES	= src/main.cpp \
-	src/MainWindow.cpp \
-	src/GnuDebugger.cpp \
-	src/FileManager.cpp \
-	src/CallStackWidget.cpp
+INCLUDEPATH	= ../qmigdb/libmigdb/src \
+	../qmigdb/src
 
 FORMS	= src/MainWindow.ui
-HEADERS	= src/MainWindow.h \
-	src/GnuDebugger.h \
-	src/FileManager.h \
-	src/CallStackWidget.h
 
-INCLUDEPATH	= libmigdb/src
+HEADERS	= src/FileManager.h \
+	src/CallStackWidget.h \
+	src/MainWindow.h
 
-LIBS	= -Llibmigdb/src -lmigdb -lqscintilla2
+SOURCES	= src/MainWindow.cpp \
+	src/FileManager.cpp \
+	src/CallStackWidget.cpp \
+	src/main.cpp

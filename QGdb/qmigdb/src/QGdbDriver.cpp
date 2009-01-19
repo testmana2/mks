@@ -1,59 +1,59 @@
 #include <QMetaType>
 #include <QMessageBox>
 
-#include "GnuDebugger.h"
+#include "QGdbDriver.h"
 #include <QDebug>
 
 // Callbacks of debugger
-void GnuDebugger::callbackConsole (const char * str, void *)
+void QGdbDriver::callbackConsole (const char * str, void *)
 {
 	printf("CONSOLE> %s\n",str);
 }
 
 /* Note that unlike what's documented in gdb docs it isn't usable. */
-void GnuDebugger::callbackTarget(const char *str, void *)
+void QGdbDriver::callbackTarget(const char *str, void *)
 {
 	printf("TARGET> %s\n",str);
 }
 
-void GnuDebugger::callbackLog (const char *str, void *)
+void QGdbDriver::callbackLog (const char *str, void *)
 {
- printf("LOG> %s\n",str);
+	printf("LOG> %s\n",str);
 }
 
-void GnuDebugger::callbackToGDB (const char *str, void *)
+void QGdbDriver::callbackToGDB (const char *str, void *)
 {
-	printf(">> %s",str);
+		printf(">> %s",str);
 }
 
-void GnuDebugger::callbackFromGDB (const char *str, void *)
+void QGdbDriver::callbackFromGDB (const char *str, void *)
 {
 	printf("<< %s\n",str);
 }
 
-void GnuDebugger::callbackAsync (mi_output * o, void * debuggerInstance)
+void QGdbDriver::callbackAsync (mi_output * o, void * debuggerInstance)
 {
 	printf("ASYNC callback\n");
 	Q_ASSERT (o);
 	if (MI_CL_STOPPED == o->tclass)
 	{
 		if (QString ("exited") == o->c->v.cstr)
-			static_cast<GnuDebugger*>(debuggerInstance)->mTargetBeenExited = true;
+			static_cast<QGdbDriver*>(debuggerInstance)->mTargetBeenExited = true;
 		else if ((QString ("breakpoint-hit") == o->c->v.cstr) ||
-				 (QString ("end-stepping-range") == o->c->v.cstr) ||
-				 (QString ("function-finished") == o->c->v.cstr))
-			static_cast<GnuDebugger*>(debuggerInstance)->mTargetBeenStopped = true;
+					(QString ("end-stepping-range") == o->c->v.cstr) ||
+					(QString ("function-finished") == o->c->v.cstr))
+				static_cast<QGdbDriver*>(debuggerInstance)->mTargetBeenStopped = true;
 	}
 	printf("callback exit\n");
 }
 
 
-GnuDebugger::GnuDebugger()
-  : QObject(),
-	mState (NOT_LOADED),
-	mHandle (0),
-    mTargetBeenStopped (false),
-    mTargetLoaded (false)
+QGdbDriver::QGdbDriver()
+	: QObject(),
+		mState (NOT_LOADED),
+		mHandle (0),
+		mTargetBeenStopped (false),
+		mTargetLoaded (false)
 {
 	mHandle	= mi_connect_local ();
 	Q_ASSERT (mHandle); // FIXME replace with some error message
@@ -68,20 +68,20 @@ GnuDebugger::GnuDebugger()
 	connect (this, SIGNAL (stopped()), this, SLOT (onStopped()));
 	connect (&mGdbPingTimer, SIGNAL (timeout()), this, SLOT(onGdbTouchTimerTick ()));
 	
-	qRegisterMetaType<GnuDebugger::CallStack> ("GnuDebugger::CallStack");
-	qRegisterMetaType<GnuDebugger::CallStack> ("GnuDebugger::State");
+	qRegisterMetaType<QGdbDriver::CallStack> ("QGdbDriver::CallStack");
+	qRegisterMetaType<QGdbDriver::CallStack> ("QGdbDriver::State");
 	
 	mGdbPingTimer.setInterval (50);
 	mGdbPingTimer.start();
 }
 
-GnuDebugger::~GnuDebugger()
+QGdbDriver::~QGdbDriver()
 {
 	gmi_gdb_exit(mHandle);
 	mi_disconnect(mHandle);
 }
 
-void GnuDebugger::prepare_startXterm ()
+void QGdbDriver::prepare_startXterm ()
 {
 	int res = 0;
 	mXterm = gmi_start_xterm();
@@ -90,7 +90,7 @@ void GnuDebugger::prepare_startXterm ()
 	Q_ASSERT (res != 0);
 }
 
-void GnuDebugger::exec_setCommand (const QString& command)
+void QGdbDriver::exec_setCommand (const QString& command)
 {
 	int res = 0;
 	res = gmi_set_exec(mHandle, command.toLocal8Bit(), "");
@@ -107,7 +107,7 @@ void GnuDebugger::exec_setCommand (const QString& command)
 }
 
 #if 0
-	void GnuDebugger::exec_setArgs (const QString& args)
+	void QGdbDriver::exec_setArgs (const QString& args)
 	{
 		int res = 0;
 		res = gmi_set_exec(mHandle, command.toLocal8Bit(), args.toLocal8Bit());
@@ -115,7 +115,7 @@ void GnuDebugger::exec_setCommand (const QString& command)
 	}
 #endif
 
-void GnuDebugger::exec_run()
+void QGdbDriver::exec_run()
 {
 	int res = 0;
 	res = gmi_exec_run(mHandle);
@@ -123,7 +123,7 @@ void GnuDebugger::exec_run()
 	setState (RUNNING);
 }
 
-void GnuDebugger::exec_continue()
+void QGdbDriver::exec_continue()
 {
 	int res = 0;
 	res = gmi_exec_continue (mHandle);
@@ -131,7 +131,7 @@ void GnuDebugger::exec_continue()
 	setState (RUNNING);
 }
 
-void GnuDebugger::exec_stepInto()
+void QGdbDriver::exec_stepInto()
 {
 	int res = 0;
 	res = gmi_exec_step (mHandle);
@@ -139,7 +139,7 @@ void GnuDebugger::exec_stepInto()
 	setState (RUNNING);
 }
 
-void GnuDebugger::exec_stepOver()
+void QGdbDriver::exec_stepOver()
 {
 	int res = 0;
 	res = gmi_exec_next (mHandle);
@@ -147,7 +147,7 @@ void GnuDebugger::exec_stepOver()
 	setState (RUNNING);
 }
 
-void GnuDebugger::exec_stepOut()
+void QGdbDriver::exec_stepOut()
 {
 	int res = 0;
 	res = gmi_exec_finish (mHandle);
@@ -155,14 +155,14 @@ void GnuDebugger::exec_stepOut()
 	setState (RUNNING);
 }
 
-void GnuDebugger::exec_pause()
+void QGdbDriver::exec_pause()
 {
 	int res = 0;
 	res = gmi_exec_interrupt (mHandle);
 	Q_ASSERT (res);
 }
 
-void GnuDebugger::exec_kill()
+void QGdbDriver::exec_kill()
 {
 	int res = 0;
 	res = gmi_exec_kill (mHandle);
@@ -170,7 +170,7 @@ void GnuDebugger::exec_kill()
 	setState (EXITED_NORMAL);
 }
 
-void GnuDebugger::break_setBreaktoint (const QString& file, int line)
+void QGdbDriver::break_setBreaktoint (const QString& file, int line)
 {
 	mi_bkpt *bk = NULL;
 	bk = gmi_break_insert(mHandle, file.toLocal8Bit(), line);
@@ -178,7 +178,7 @@ void GnuDebugger::break_setBreaktoint (const QString& file, int line)
 	mi_free_bkpt(bk);
 }
 
-void GnuDebugger::stack_Info ()
+void QGdbDriver::stack_Info ()
 {
 	mi_frames * frames = gmi_stack_list_frames (mHandle);;
 	Q_ASSERT (frames);	
@@ -221,7 +221,7 @@ void GnuDebugger::stack_Info ()
 	mi_free_frames(arguments);
 }
 
-void GnuDebugger::onGdbTouchTimerTick ()
+void QGdbDriver::onGdbTouchTimerTick ()
 {
 	if (mi_get_response(mHandle))
 	{
@@ -229,7 +229,7 @@ void GnuDebugger::onGdbTouchTimerTick ()
 	}
 }
 
-void GnuDebugger::internalUpdate()
+void QGdbDriver::internalUpdate()
 {
 	if (mTargetBeenStopped)
 	{
@@ -243,13 +243,13 @@ void GnuDebugger::internalUpdate()
 	}
 }
 
-void GnuDebugger::setState (State state)
+void QGdbDriver::setState (State state)
 {
 	mState = state;
 	emit stateChanged (mState);
 }
 
-void GnuDebugger::onStopped()
+void QGdbDriver::onStopped()
 {
 	stack_Info ();
 }
