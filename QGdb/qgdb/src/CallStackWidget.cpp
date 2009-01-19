@@ -9,17 +9,17 @@ CallStackWidget::~CallStackWidget()
 {
 }
 
-void CallStackWidget::update (const GnuDebugger::CallStack& stack)
+void CallStackWidget::update (const QGdbDriver::CallStack& stack)
 {
 	clear();
-	foreach (GnuDebugger::Frame frame, stack)
+	foreach (QGdbDriver::Frame frame, stack)
 	{
 		QString item = "#" + QString::number (frame.level);
 		item += " ";
 		item += frame.function;
 		item += " (";
 		bool first = true;
-		foreach (GnuDebugger::FunctionArgument argument, frame.arguments)
+		foreach (QGdbDriver::FunctionArgument argument, frame.arguments)
 		{
 			if (!first)
 				item += ", ";

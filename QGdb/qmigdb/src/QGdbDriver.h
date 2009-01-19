@@ -1,5 +1,5 @@
-#ifndef GNUDEBUGGER_H
-#define GNUDEBUGGER_H
+#ifndef QGDBDRIVER_H
+#define QGDBDRIVER_H
 
 #include <QObject>
 #include <QString>
@@ -8,7 +8,7 @@
 
 #include "mi_gdb.h"
 
-class GnuDebugger : public QObject
+class QGdbDriver : public QObject
 {
 	Q_OBJECT
 public:
@@ -39,8 +39,8 @@ public:
 	};
 	typedef QList<Frame> CallStack;
 	
-	GnuDebugger();
-	virtual ~GnuDebugger();
+	QGdbDriver();
+	virtual ~QGdbDriver();
 
 public slots:
 	// preparing to execution
@@ -100,9 +100,9 @@ signals:
 	void stopped ();
 	void positionChanged (const QString& fileName, int line);
 	
-	void callStackUpdate (const GnuDebugger::CallStack&);
+	void callStackUpdate (const QGdbDriver::CallStack&);
 	
-	void stateChanged (GnuDebugger::State);
+	void stateChanged (QGdbDriver::State);
 };
 
-#endif // GNUDEBUGGER_H
+#endif // QGDBDRIVER_H
