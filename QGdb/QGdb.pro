@@ -17,6 +17,7 @@
 XUPProjectSettings {
 	EDITOR	= QMake
 	QT_VERSION	= Qt System (4.4.3)
+	EXECUTE_DEBUG	= bin/QGdb_debug
 }
 
 TEMPLATE	= subdirs

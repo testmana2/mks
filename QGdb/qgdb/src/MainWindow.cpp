@@ -34,11 +34,41 @@ void MainWindow::loadTargetTriggered()
 		emit loadTargetRequested (fileName);
 }
 
-void MainWindow::onDebuggerStateChanged (QGdbDriver::State state)
+void MainWindow::appendLog( const QString& log )
+{
+	pteLog->appendPlainText( log );
+}
+
+void MainWindow::onDebuggerCallbackMessage( const QString& message, QGdbDriver::CBType type )
+{
+	switch ( type )
+	{
+		case QGdbDriver::CONSOLE:
+			appendLog( QString( "CONSOLE> %1" ).arg( message ) );
+			break;
+		case QGdbDriver::TARGET:
+			appendLog( QString( "TARGET> %1" ).arg( message ) );
+			break;
+		case QGdbDriver::LOG:
+			appendLog( QString( "LOG> %1" ).arg( message ) );
+			break;
+		case QGdbDriver::TO_GDB:
+			appendLog( QString( ">> %1" ).arg( message ) );
+			break;
+		case QGdbDriver::FROM_GDB:
+			appendLog( QString( "<< %1" ).arg( message ) );
+			break;
+		case QGdbDriver::ASYNC:
+			appendLog( QString( "ASYNC> %1" ).arg( message ) );
+			break;
+	}
+}
+
+void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 {
 	switch (state)
 	{
-		case QGdbDriver::NOT_LOADED:
+		case QGdbDriver::CONNECTED:
 			actionRun->setEnabled (false);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -46,9 +76,19 @@ void MainWindow::onDebuggerStateChanged (QGdbDriver::State state)
 			actionStep_out->setEnabled (false);
 			actionPause->setEnabled (false);
 			actionKill->setEnabled (false);
-			mStatusLabel->setText (tr("Target not loaded"));
+			mStatusLabel->setText (tr("Connected to GDB"));
 		break;
-		case QGdbDriver::LOADED:
+		case QGdbDriver::DISCONNECTED:
+			actionRun->setEnabled (false);
+			actionContinue->setEnabled (false);
+			actionStep_into->setEnabled (false);
+			actionStep_over->setEnabled (false);
+			actionStep_out->setEnabled (false);
+			actionPause->setEnabled (false);
+			actionKill->setEnabled (false);
+			mStatusLabel->setText (tr("Disconnected from GDB"));
+		break;
+		case QGdbDriver::TARGET_SETTED:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -68,7 +108,7 @@ void MainWindow::onDebuggerStateChanged (QGdbDriver::State state)
 			actionKill->setEnabled (true);
 			mStatusLabel->setText (tr("Target is running"));
 		break;
-		case QGdbDriver::PAUSED:
+		case QGdbDriver::STOPPED:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (true);
 			actionStep_into->setEnabled (true);
@@ -77,16 +117,6 @@ void MainWindow::onDebuggerStateChanged (QGdbDriver::State state)
 			actionPause->setEnabled (false);
 			actionKill->setEnabled (true);
 			mStatusLabel->setText (tr("Target stopped"));
-		break;
-		case QGdbDriver::EXITED_NORMAL:
-			actionRun->setEnabled (true);
-			actionContinue->setEnabled (false);
-			actionStep_into->setEnabled (false);
-			actionStep_over->setEnabled (false);
-			actionStep_out->setEnabled (false);
-			actionPause->setEnabled (false);
-			actionKill->setEnabled (false);
-			mStatusLabel->setText (tr("Target exited"));
 		break;
 	}
 }

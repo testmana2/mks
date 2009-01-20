@@ -22,7 +22,11 @@ protected slots:
 	void loadTargetTriggered();
 
 public slots:
+	void appendLog( const QString& log );
+	void onDebuggerCallbackMessage( const QString& message, QGdbDriver::CBType type );
 	void onDebuggerStateChanged (QGdbDriver::State);
+	
+	
 signals:
 	
 	// api
