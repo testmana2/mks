@@ -13,8 +13,7 @@
 #include "FileManager.h"
 
 FileManager::FileManager(QObject* parent, QMdiArea* mdiArea)
-  : QObject( parent ),
-	mMdiArea (mdiArea)
+	: QObject( parent ), mMdiArea (mdiArea)
 {
 }
 

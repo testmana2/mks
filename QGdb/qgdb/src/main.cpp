@@ -35,6 +35,8 @@ int main( int argc, char** argv )
 	QGdbDriver debugger;
 	// start application
 	
+	QObject::connect (&debugger, SIGNAL (callbackMessage(const QString&, QGdbDriver::CBType)),
+						&window, SLOT (onDebuggerCallbackMessage (const QString&, QGdbDriver::CBType)));
 	QObject::connect (&debugger, SIGNAL (stateChanged (QGdbDriver::State)),
 						&window, SLOT (onDebuggerStateChanged (QGdbDriver::State)));
 		QObject::connect (&window, SIGNAL (loadTargetRequested (const QString&)),
@@ -70,9 +72,9 @@ int main( int argc, char** argv )
 		}
 		
 		// test scenario
-		debugger.exec_setCommand("target_frames");
-		debugger.break_setBreaktoint ("target_frames.cc", 20);
-		debugger.exec_run();
+		//debugger.exec_setCommand("/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug");
+		//debugger.break_setBreaktoint ("main.cpp", 14);
+		//debugger.exec_run();
 		
 		
 		window.show();

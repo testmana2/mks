@@ -5,20 +5,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>664</width>
-    <height>526</height>
+    <width>670</width>
+    <height>380</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>MainWindow</string>
   </property>
+  <widget class="QWidget" name="centralwidget" />
   <widget class="QMenuBar" name="menuBar" >
    <property name="geometry" >
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>664</width>
-     <height>30</height>
+     <width>670</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuRun" >
@@ -36,15 +37,34 @@
    </widget>
    <addaction name="menuRun" />
   </widget>
-  <widget class="QStatusBar" name="statusBar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>503</y>
-     <width>664</width>
-     <height>23</height>
-    </rect>
+  <widget class="QStatusBar" name="statusBar" />
+  <widget class="QDockWidget" name="dwLog" >
+   <property name="windowTitle" >
+    <string>Log</string>
    </property>
+   <attribute name="dockWidgetArea" >
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents" >
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QPlainTextEdit" name="pteLog" >
+       <property name="tabChangesFocus" >
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+       <property name="tabStopWidth" >
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionRun" >
    <property name="enabled" >

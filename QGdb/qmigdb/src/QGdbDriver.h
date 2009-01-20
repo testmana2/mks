@@ -11,14 +11,25 @@
 class QGdbDriver : public QObject
 {
 	Q_OBJECT
+	
 public:
+	enum CBType
+	{
+		CONSOLE = 0,
+		TARGET,
+		LOG,
+		TO_GDB,
+		FROM_GDB,
+		ASYNC
+	};
+	
 	enum State
 	{
-		NOT_LOADED,
-		LOADED,
+		CONNECTED = 0,
+		DISCONNECTED,
+		TARGET_SETTED,
 		RUNNING,
-		PAUSED,
-		EXITED_NORMAL
+		STOPPED
 	};
 	
 	struct FunctionArgument
@@ -41,8 +52,11 @@ public:
 	
 	QGdbDriver();
 	virtual ~QGdbDriver();
+	
+	QString filePath( const QString& fileName ) const;
 
 public slots:
+	void log( const QString& msg );
 	// preparing to execution
 	void prepare_startXterm ();
 	
@@ -70,13 +84,8 @@ protected:
 	State mState;
 	mi_h* mHandle;
 	mi_aux_term* mXterm;
-	
-	bool mTargetBeenStopped;
-	bool mTargetBeenExited;
-	
 	QTimer mGdbPingTimer;
-	
-	bool mTargetLoaded;
+	QString mTargetFileName;
 	
 	// migdb callbacks
 	static void callbackConsole (const char *, void *);
@@ -97,12 +106,15 @@ protected slots:
 	void onStopped();
 	
 signals:
+	void callbackMessage( const QString& message, QGdbDriver::CBType type );
+	void stateChanged( QGdbDriver::State state );
+	
+	
+	
 	void stopped ();
 	void positionChanged (const QString& fileName, int line);
 	
 	void callStackUpdate (const QGdbDriver::CallStack&);
-	
-	void stateChanged (QGdbDriver::State);
 };
 
 #endif // QGDBDRIVER_H
