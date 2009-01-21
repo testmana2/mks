@@ -24,9 +24,14 @@ TARGET	= monkeydebugger
 CONFIG	+= debug_and_release
 LIBS	+= -lqscintilla2 -L../build
 DESTDIR	= ../bin
-BUILD_PATH	= ../build/monkeydbg
+BUILD_PATH	= ../build/monkeydebugger
+
+MIGDB_PATH = ../libmigdb
+MIGDB_SRC_PATH = $${MIGDB_PATH}/src
+
 QMIGDB_LIB	= qmigdb
-MIGDB_LIB	= migdb
+QMIGDB_PATH = ../qmigdb
+QMIGDB_SRC_PATH = $${QMIGDB_PATH}/src
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -41,9 +46,6 @@ CONFIG(debug, debug|release) {
 	RCC_DIR	= $${BUILD_PATH}/debug/.rcc
 	unix:LIBS	+= -l$$join(QMIGDB_LIB,,,_debug)
 	else:LIBS	+= -l$$join(QMIGDB_LIB,,,d)
-	unix:LIBS	+= -l$$join(MIGDB_LIB,,,_debug)
-	else:LIBS	+= -l$$join(MIGDB_LIB,,,d)
-
 } else {
 	#Release
 	unix:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/unix
@@ -53,14 +55,13 @@ CONFIG(debug, debug|release) {
 	MOC_DIR	= $${BUILD_PATH}/release/.moc
 	RCC_DIR	= $${BUILD_PATH}/release/.rcc
 	LIBS	+= -l$$QMIGDB_LIB
-	LIBS	+= -l$$MIGDB_LIB
 }
 
-PRE_TARGETDEPS	+= ../qmigdb
+PRE_TARGETDEPS	+= $${QMIGDB_PATH}
 
-INCLUDEPATH	= ../qmigdb/src/driver \
-		  ../qmigdb/src/widgets \
-		  ../libmigdb/src
+INCLUDEPATH	= $${MIGDB_SRC_PATH} \
+	$${QMIGDB_SRC_PATH}/driver \
+	$${QMIGDB_SRC_PATH}/widgets
 
 FORMS	= src/MainWindow.ui
 

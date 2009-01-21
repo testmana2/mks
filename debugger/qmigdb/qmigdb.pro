@@ -25,7 +25,9 @@ CONFIG	+= staticlib debug_and_release
 DESTDIR	= ../build
 BUILD_PATH	= ../build/qmigdb
 
-LIBMIGDB_SRC_PATH = ../libmigdb/src
+MIGDB_LIB	= migdb
+MIGDB_PATH = ../libmigdb
+MIGDB_SRC_PATH = $${MIGDB_PATH}/src
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -38,6 +40,8 @@ CONFIG(debug, debug|release) {
 	UI_DIR	= $${BUILD_PATH}/debug/.ui
 	MOC_DIR	= $${BUILD_PATH}/debug/.moc
 	RCC_DIR	= $${BUILD_PATH}/debug/.rcc
+	unix:LIBS	+= -l$$join(MIGDB_LIB,,,_debug)
+	else:LIBS	+= -l$$join(MIGDB_LIB,,,d)
 } else {
 	#Release
 	unix:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/unix
@@ -46,16 +50,17 @@ CONFIG(debug, debug|release) {
 	UI_DIR	= $${BUILD_PATH}/release/.ui
 	MOC_DIR	= $${BUILD_PATH}/release/.moc
 	RCC_DIR	= $${BUILD_PATH}/release/.rcc
+	LIBS	+= -l$${MIGDB_LIB}
 }
 
-INCLUDEPATH	= src/driver \
-		  src/widgets \
-		  $${LIBMIGDB_SRC_PATH}
+PRE_TARGETDEPS	+= $${MIGDB_PATH}
+
+INCLUDEPATH	= $${MIGDB_SRC_PATH} \
+	src/driver \
+	src/widgets
 
 HEADERS	=  src/driver/QGdbDriver.h \
-	\
 	src/widgets/CallStackWidget.h
 
 SOURCES	= src/driver/QGdbDriver.cpp \
-	\
 	src/widgets/CallStackWidget.cpp
