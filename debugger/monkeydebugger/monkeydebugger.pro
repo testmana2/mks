@@ -20,12 +20,13 @@ XUPProjectSettings {
 
 TEMPLATE	= app
 LANGUAGE	= C++/Qt4
-TARGET	= QGdb
+TARGET	= monkeydebugger
 CONFIG	+= debug_and_release
 LIBS	+= -lqscintilla2 -L../build
 DESTDIR	= ../bin
-BUILD_PATH	= ../build/qgdb
+BUILD_PATH	= ../build/monkeydbg
 QMIGDB_LIB	= qmigdb
+MIGDB_LIB	= migdb
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -40,6 +41,9 @@ CONFIG(debug, debug|release) {
 	RCC_DIR	= $${BUILD_PATH}/debug/.rcc
 	unix:LIBS	+= -l$$join(QMIGDB_LIB,,,_debug)
 	else:LIBS	+= -l$$join(QMIGDB_LIB,,,d)
+	unix:LIBS	+= -l$$join(MIGDB_LIB,,,_debug)
+	else:LIBS	+= -l$$join(MIGDB_LIB,,,d)
+
 } else {
 	#Release
 	unix:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/unix
@@ -49,20 +53,20 @@ CONFIG(debug, debug|release) {
 	MOC_DIR	= $${BUILD_PATH}/release/.moc
 	RCC_DIR	= $${BUILD_PATH}/release/.rcc
 	LIBS	+= -l$$QMIGDB_LIB
+	LIBS	+= -l$$MIGDB_LIB
 }
 
 PRE_TARGETDEPS	+= ../qmigdb
 
-INCLUDEPATH	= ../qmigdb/libmigdb/src \
-	../qmigdb/src
+INCLUDEPATH	= ../qmigdb/src/driver \
+		  ../qmigdb/src/widgets \
+		  ../libmigdb/src
 
 FORMS	= src/MainWindow.ui
 
 HEADERS	= src/FileManager.h \
-	src/CallStackWidget.h \
 	src/MainWindow.h
 
-SOURCES	= src/MainWindow.cpp \
-	src/FileManager.cpp \
-	src/CallStackWidget.cpp \
-	src/main.cpp
+SOURCES	= src/main.cpp \
+	src/MainWindow.cpp \
+	src/FileManager.cpp
