@@ -1,9 +1,11 @@
 #include "CallStackWidget.h"
 
+#include <QDebug>
+
 CallStackWidget::CallStackWidget( QGdbDriver* debugger, QWidget* parent )
 	: QListWidget( parent )
 {
-	connect( debugger, SIGNAL( callStackUpdate( const QGdbDriver::CallStack& ) ), this, SLOT( update( const QGdbDriver::CallStack& ) ) );
+	connect( debugger, SIGNAL( callStackUpdated( const QGdbDriver::CallStack& ) ), this, SLOT( update( const QGdbDriver::CallStack& ) ) );
 }
 
 CallStackWidget::~CallStackWidget()
@@ -16,7 +18,7 @@ void CallStackWidget::update( const QGdbDriver::CallStack& stack )
 	
 	foreach ( const QGdbDriver::Frame& frame, stack )
 	{
-		QString text( "#%1 %2 (%3) at %4:%5" );
+		QStringList lines;
 		QStringList arguments;
 		
 		foreach ( const QGdbDriver::FunctionArgument& argument, frame.arguments )
@@ -24,14 +26,29 @@ void CallStackWidget::update( const QGdbDriver::CallStack& stack )
 			arguments << QString( "%1 = %2" ).arg( argument.name ).arg( argument.value );
 		}
 		
-		text = text
-			.arg( frame.level )
-			.arg( frame.function )
-			.arg( arguments.join( ", " ) )
-			.arg( frame.file )
-			.arg( frame.line );
+		lines << QString( "#%1" ).arg( frame.level );
+		lines << frame.function;
 		
-		QListWidgetItem* item = new QListWidgetItem( text, this );
+		if ( !arguments.isEmpty() )
+		{
+			lines << arguments.join( ", " ).prepend( "(" ).append( ")" );
+		}
+		
+		if ( frame.from.isEmpty() )
+		{
+			lines << QString( "in %1" ).arg( frame.file );
+		}
+		else
+		{
+			lines << QString( "from %1" ).arg( frame.from );
+		}
+		
+		if ( frame.from.isEmpty() )
+		{
+			lines << QString( ":%1" ).arg( frame.line );
+		}
+		
+		QListWidgetItem* item = new QListWidgetItem( lines.join( " " ), this );
 		item->setData( Qt::UserRole, QVariant::fromValue( frame ) );
 	}
 }
