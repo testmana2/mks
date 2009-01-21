@@ -22,4 +22,4 @@ XUPProjectSettings {
 TEMPLATE	= subdirs
 CONFIG	+= debug_and_release
 
-SUBDIRS	= libmigdb qmigdb monkeydebugger
+SUBDIRS	= libmigdb qmigdb monkeydbg
