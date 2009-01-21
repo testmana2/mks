@@ -29,11 +29,13 @@ public slots:
 	void onDebuggerStateChanged (QGdbDriver::State);
 	void onMarginClicked( int margin, int line, Qt::KeyboardModifiers state );
 	
-	
 signals:
 	
 	// api
 	void loadTargetRequested (const QString& fileName);
+	
+	void openFileTriggered ();
+	void closeFileTriggered ();
 	
 	void exec_runTriggered();
 	void exec_continueTriggered();

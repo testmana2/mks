@@ -4,8 +4,10 @@
 #include <QVariant>
 #include <QApplication>
 #include <QFile>
+#include <QDir>
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QFileDialog>
 
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexercpp.h>
@@ -20,6 +22,18 @@ FileManager::FileManager( QObject* parent, QMdiArea* mdiArea )
 
 FileManager::~FileManager()
 {	
+}
+
+void FileManager::openFileTriggered ()
+{
+	QString fileName = QFileDialog::getOpenFileName (NULL, tr("Open source"), QDir::current().path());
+	if (! fileName.isEmpty())
+		openFile (fileName);
+}
+
+void FileManager::closeFileTriggered ()
+{
+	mMdiArea->closeActiveSubWindow ();
 }
 
 void FileManager::gotoFileLine( const QString& fileName, int line )

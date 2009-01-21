@@ -14,7 +14,10 @@ public:
 	FileManager( QObject* parent, QMdiArea* mdiArea );
 	virtual ~FileManager();
 
-public slots:	
+public slots:
+	void openFileTriggered ();
+	void closeFileTriggered ();
+	
 	void gotoFileLine( const QString& file, int line );
 
 protected:
