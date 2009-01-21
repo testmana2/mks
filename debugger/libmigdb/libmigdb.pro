@@ -22,6 +22,7 @@ TEMPLATE	= lib
 LANGUAGE	= C++/Qt4
 TARGET	= $$quote(migdb)
 CONFIG	+= staticlib debug_and_release
+QT	-= gui core
 DESTDIR	= ../build/
 BUILD_PATH	= ../build/libmigdb
 
