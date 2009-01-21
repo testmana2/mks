@@ -59,19 +59,15 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 			
 			switch ( stop->reason )
 			{
-				case sr_signal_received:
-					qWarning( "ok" );
-					break;
 				case sr_exited_signalled:
 				case sr_exited:
 				case sr_exited_normally:
 					driver->setState( QGdbDriver::TARGET_SETTED );
 					break;
+				case sr_signal_received:
 				case sr_bkpt_hit:
 				case sr_end_stepping_range:
 				case sr_function_finished:
-					driver->setState( QGdbDriver::STOPPED );
-					break;
 				default:
 					driver->setState( QGdbDriver::STOPPED );
 					break;
@@ -314,22 +310,7 @@ void QGdbDriver::onGdbTouchTimerTick ()
 {
 	if ( mi_get_response( mHandle ) )
 	{
-		//internalUpdate();
-	}
-}
-
-void QGdbDriver::internalUpdate()
-{
-	switch ( mState )
-	{
-		case QGdbDriver::STOPPED:
-			onStopped();
-			break;
-		case QGdbDriver::TARGET_SETTED:
-			break;
-		default:
-			emit callbackMessage( tr( "Unknow state in update: %1" ).arg( mState ), QGdbDriver::LOG );
-			break;
+		log( "Async response in queue" );
 	}
 }
 
