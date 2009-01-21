@@ -9,19 +9,19 @@ LDLIBS=
 
 ticepic: ticepic.c ../src/libmigdb.a
 
-x11_test: x11_test.c ../src/libmigdb.a
+x11_test: x11_test.c ../../build/libmigdb.a
 
-x11_cpp_test: x11_cpp_test.cc ../src/libmigdb.a
+x11_cpp_test: x11_cpp_test.cc ../../build/libmigdb.a
 
-x11_fr_test: x11_fr_test.c ../src/libmigdb.a
+x11_fr_test: x11_fr_test.c ../../build/libmigdb.a
 
-x11_wp_test: x11_wp_test.c ../src/libmigdb.a
+x11_wp_test: x11_wp_test.c ../../build/libmigdb.a
 
-remote_test: remote_test.c ../src/libmigdb.a
+remote_test: remote_test.c ../../build/libmigdb.a
 
-linux_test: linux_test.c ../src/libmigdb.a
+linux_test: linux_test.c ../../build/libmigdb.a
 
-pty_test: pty_test.c ../src/libmigdb.a
+pty_test: pty_test.c ../../build/libmigdb.a
 
 clean:
 	-@rm *.o *.a test_target x11_test remote_test linux_test 2> /dev/null

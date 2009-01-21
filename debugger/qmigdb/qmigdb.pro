@@ -25,6 +25,8 @@ CONFIG	+= staticlib debug_and_release
 DESTDIR	= ../build
 BUILD_PATH	= ../build/qmigdb
 
+LIBMIGDB_SRC_PATH = ../libmigdb/src
+
 CONFIG(debug, debug|release) {
 	#Debug
 	CONFIG	+= console
@@ -46,25 +48,14 @@ CONFIG(debug, debug|release) {
 	RCC_DIR	= $${BUILD_PATH}/release/.rcc
 }
 
-INCLUDEPATH	= libmigdb/src
+INCLUDEPATH	= src/driver \
+		  src/widgets \
+		  $${LIBMIGDB_SRC_PATH}
 
-HEADERS	= libmigdb/src/mi_gdb.h \
-	src/QGdbDriver.h
+HEADERS	=  src/driver/QGdbDriver.h \
+	\
+	src/widgets/CallStackWidget.h
 
-SOURCES	= libmigdb/src/get_free_pty.c \
-	libmigdb/src/error.c \
-	libmigdb/src/data_man.c \
-	libmigdb/src/target_man.c \
-	libmigdb/src/thread.c \
-	libmigdb/src/symbol_query.c \
-	libmigdb/src/var_obj.c \
-	libmigdb/src/alloc.c \
-	libmigdb/src/breakpoint.c \
-	libmigdb/src/connect.c \
-	libmigdb/src/get_free_vt.c \
-	libmigdb/src/prg_control.c \
-	libmigdb/src/misc.c \
-	libmigdb/src/stack_man.c \
-	libmigdb/src/parse.c \
-	libmigdb/src/cpp_int.cc \
-	src/QGdbDriver.cpp
+SOURCES	= src/driver/QGdbDriver.cpp \
+	\
+	src/widgets/CallStackWidget.cpp

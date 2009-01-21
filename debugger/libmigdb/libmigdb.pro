@@ -20,10 +20,11 @@ XUPProjectSettings {
 
 TEMPLATE	= lib
 LANGUAGE	= C++/Qt4
-TARGET	= $$quote(qmigdb)
+TARGET	= $$quote(migdb)
 CONFIG	+= staticlib debug_and_release
-DESTDIR	= ../build
-BUILD_PATH	= ../build/qmigdb
+DESTDIR	= ../build/
+BUILD_PATH	= ../build/libmigdb
+Qt = 
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -46,25 +47,23 @@ CONFIG(debug, debug|release) {
 	RCC_DIR	= $${BUILD_PATH}/release/.rcc
 }
 
-INCLUDEPATH	= libmigdb/src
+INCLUDEPATH	= src
 
-HEADERS	= libmigdb/src/mi_gdb.h \
-	src/QGdbDriver.h
+HEADERS	= src/mi_gdb.h
 
-SOURCES	= libmigdb/src/get_free_pty.c \
-	libmigdb/src/error.c \
-	libmigdb/src/data_man.c \
-	libmigdb/src/target_man.c \
-	libmigdb/src/thread.c \
-	libmigdb/src/symbol_query.c \
-	libmigdb/src/var_obj.c \
-	libmigdb/src/alloc.c \
-	libmigdb/src/breakpoint.c \
-	libmigdb/src/connect.c \
-	libmigdb/src/get_free_vt.c \
-	libmigdb/src/prg_control.c \
-	libmigdb/src/misc.c \
-	libmigdb/src/stack_man.c \
-	libmigdb/src/parse.c \
-	libmigdb/src/cpp_int.cc \
-	src/QGdbDriver.cpp
+SOURCES	= src/get_free_pty.c \
+	src/error.c \
+	src/data_man.c \
+	src/target_man.c \
+	src/thread.c \
+	src/symbol_query.c \
+	src/var_obj.c \
+	src/alloc.c \
+	src/breakpoint.c \
+	src/connect.c \
+	src/get_free_vt.c \
+	src/prg_control.c \
+	src/misc.c \
+	src/stack_man.c \
+	src/parse.c \
+	src/cpp_int.cc
