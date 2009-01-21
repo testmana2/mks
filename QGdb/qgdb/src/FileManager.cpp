@@ -8,12 +8,13 @@
 #include <QFileInfo>
 
 #include <Qsci/qsciscintilla.h>
+#include <Qsci/qscilexercpp.h>
 
 #include <QDebug>
 #include "FileManager.h"
 
-FileManager::FileManager(QObject* parent, QMdiArea* mdiArea)
-	: QObject( parent ), mMdiArea (mdiArea)
+FileManager::FileManager( QObject* parent, QMdiArea* mdiArea )
+	: QObject( parent ), mMdiArea( mdiArea )
 {
 }
 
@@ -21,61 +22,64 @@ FileManager::~FileManager()
 {	
 }
 
-void FileManager::gotoFileLine (const QString& fileName, int line)
+void FileManager::gotoFileLine( const QString& fileName, int line )
 {
-	QsciScintilla* editor = NULL;
-	foreach (QMdiSubWindow* window, mMdiArea->subWindowList())
+	QsciScintilla* editor = 0;
+	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )
 	{
-		QsciScintilla* sci = dynamic_cast<QsciScintilla*>(window->widget());
-		if (sci->property ("fileName").toString() == fileName)
+		if ( window->windowFilePath() == fileName )
 		{
-			editor = sci;
+			editor = qobject_cast<QsciScintilla*>( window->widget() );
 			break;
 		}
 	}
-	if (NULL == editor)
+	
+	if ( !editor )
 	{
-		editor = openFile (fileName);
+		editor = openFile( fileName );
 	}
-	if (NULL != editor)
+	
+	if ( editor )
 	{
-		editor->setCursorPosition (line-1, 0);
+		editor->setCursorPosition( line -1, 0 );
 	}
 }
 
-QsciScintilla* FileManager::openFile (const QString& fileName)
+QsciScintilla* FileManager::openFile( const QString& fileName )
 {
-	if (fileName.isEmpty())
-		return NULL;
+	if (fileName.isEmpty() )
+	{
+		return 0;
+	}
 	
-	QsciScintilla* sci = new QsciScintilla();
+	QsciScintilla* sci = new QsciScintilla( mMdiArea );
 	QApplication::setOverrideCursor( Qt::WaitCursor );
 	
 	// open file
 	QFile f( fileName );
 	if ( !f.open( QFile::ReadOnly ) )
 	{
-		QMessageBox::critical (NULL, tr("Open file"), tr( "Cannot read file %1:\n%2." ).arg( fileName ).arg( f.errorString()));
-		return NULL;
+		QApplication::restoreOverrideCursor();
+		QMessageBox::critical( mMdiArea, tr( "Open file" ), tr( "Cannot read file %1:\n%2." ).arg( fileName ).arg( f.errorString() ) );
+		return 0;
 	}
-	
-	// remember filename
-	sci->setProperty("fileName", fileName);
-	sci->setWindowTitle (QFileInfo (fileName).fileName());
 
 	// configure
-	sci->setMarginLineNumbers (1, true);
-	sci->setMarginWidth (1, 50);
-	sci->setIndentationWidth (4);
-	sci->setCaretLineVisible (true);
-	// set lexer and apis
-	//setLexer( pMonkeyStudio::lexerForFileName( fileName ) );
+	sci->setLexer( new QsciLexerCPP( sci ) );
+	sci->setMarginLineNumbers( 1, true );
+	sci->setMarginWidth( 1, 50 );
+	sci->setMarginSensitivity( 1, true );
+	sci->setFolding( QsciScintilla::BoxedFoldStyle );
+	sci->setIndentationWidth( 4 );
+	sci->setCaretLineVisible( true );
+	
+	connect( sci, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ), this, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ) );
 
 	// load file
-	QString datas = f.readAll();
+	QString datas = QString::fromUtf8( f.readAll() );
 	sci->setText( datas );
 	
-	mMdiArea->addSubWindow (sci);
+	mMdiArea->addSubWindow( sci )->setWindowFilePath( fileName );
 	sci->showMaximized();
 
 	QApplication::restoreOverrideCursor();
