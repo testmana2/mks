@@ -26,6 +26,7 @@ LIBS	+= -lqscintilla2 -L../build
 DESTDIR	= ../bin
 BUILD_PATH	= ../build/monkeydebugger
 
+MIGDB_LIB	= migdb
 MIGDB_PATH = ../libmigdb
 MIGDB_SRC_PATH = $${MIGDB_PATH}/src
 
@@ -46,6 +47,8 @@ CONFIG(debug, debug|release) {
 	RCC_DIR	= $${BUILD_PATH}/debug/.rcc
 	unix:LIBS	+= -l$$join(QMIGDB_LIB,,,_debug)
 	else:LIBS	+= -l$$join(QMIGDB_LIB,,,d)
+	unix:LIBS	+= -l$$join(MIGDB_LIB,,,_debug)
+	else:LIBS	+= -l$$join(MIGDB_LIB,,,d)
 } else {
 	#Release
 	unix:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/unix
@@ -55,8 +58,10 @@ CONFIG(debug, debug|release) {
 	MOC_DIR	= $${BUILD_PATH}/release/.moc
 	RCC_DIR	= $${BUILD_PATH}/release/.rcc
 	LIBS	+= -l$$QMIGDB_LIB
+	LIBS	+= -l$$MIGDB_LIB
 }
 
+PRE_TARGETDEPS	+= $${MIGDB_PATH}
 PRE_TARGETDEPS	+= $${QMIGDB_PATH}
 
 INCLUDEPATH	= $${MIGDB_SRC_PATH} \
