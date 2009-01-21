@@ -2,8 +2,8 @@
 ##		Created using Monkey Studio v1.8.3.0
 ##
 ##	Author    : MkS Team <contact@monkeystudio.org>
-##	Project   : qmigdb
-##	FileName  : qmigdb.pro
+##	Project   : migdb
+##	FileName  : migdb.pro
 ##	Date      : 2009-01-19T20:40:25
 ##	License   : GPL
 ##	Comment   : Creating using Monkey Studio IDE
@@ -24,7 +24,6 @@ TARGET	= $$quote(migdb)
 CONFIG	+= staticlib debug_and_release
 DESTDIR	= ../build/
 BUILD_PATH	= ../build/libmigdb
-Qt = 
 
 CONFIG(debug, debug|release) {
 	#Debug
