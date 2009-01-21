@@ -1,8 +1,11 @@
 #include "CallStackWidget.h"
 
-CallStackWidget::CallStackWidget( QWidget* parent )
+CallStackWidget::CallStackWidget( QGdbDriver* debugger, QWidget* parent )
 	: QListWidget( parent )
 {
+	connect (debugger, SIGNAL (callStackUpdate (const QGdbDriver::CallStack&)),
+			 this, SLOT (update (const QGdbDriver::CallStack&)));
+
 }
 
 CallStackWidget::~CallStackWidget()

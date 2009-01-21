@@ -9,6 +9,8 @@ MainWindow::MainWindow( QWidget* parent )
 {
 	setupUi( this );
 	connect (actionLoad_target, SIGNAL (triggered()), this, SLOT (loadTargetTriggered()));
+	connect (actionOpen_file, SIGNAL (triggered()), this, SIGNAL (openFileTriggered()));
+	connect (actionClose_file, SIGNAL (triggered()), this, SIGNAL (closeFileTriggered()));
 	
 	connect (actionRun, SIGNAL (triggered()), this, SIGNAL (exec_runTriggered()));
 	connect (actionContinue, SIGNAL (triggered()), this, SIGNAL (exec_continueTriggered()));
