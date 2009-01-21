@@ -5,6 +5,7 @@
 #include <QString>
 #include <QList>
 #include <QTimer>
+#include <QMetaType>
 
 #include "mi_gdb.h"
 
@@ -44,6 +45,8 @@ public:
 		int level;
 		QString function;
 		QString file;
+		QString from; // ?
+		QString full;
 		int line;
 		int thread_id;
 		ArgumentsList arguments;
@@ -77,9 +80,6 @@ public slots:
 	// breakpoints
 	void break_setBreaktoint( const QString& file, int line );
 	
-	// stack
-	void stack_Info();
-	
 protected:
 	State mState;
 	mi_h* mHandle;
@@ -99,20 +99,16 @@ protected:
 protected slots:
 	// touches gdb for make it alive
 	// Without it we haven't callbacks
-	void onGdbTouchTimerTick ();
-	
-	void onStopped();
+	void onGdbTouchTimerTick();
+	void getCallStack( mi_stop* stop );
 	
 signals:
 	void callbackMessage( const QString& message, QGdbDriver::CBType type );
 	void stateChanged( QGdbDriver::State state );
-	
-	
-	
-	void stopped ();
-	void positionChanged (const QString& fileName, int line);
-	
-	void callStackUpdate (const QGdbDriver::CallStack&);
+	void callStackUpdated( const QGdbDriver::CallStack& stack );
+	void positionChanged (const QString& fileName, int line); // should be renamed ?
 };
+
+Q_DECLARE_METATYPE( QGdbDriver::Frame )
 
 #endif // QGDBDRIVER_H

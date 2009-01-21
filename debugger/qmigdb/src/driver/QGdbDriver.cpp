@@ -73,6 +73,18 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 					break;
 			}
 			
+			// thread callstack
+			if ( stop->have_thread_id && stop->reason != sr_exited )
+			{
+				driver->getCallStack( stop );
+			}
+			/*
+			char have_thread_id;
+			char have_bkptno;
+			char have_exit_code;
+			char have_wpno;
+			*/
+			
 			mi_free_stop( stop );
 		}
 		else
@@ -106,7 +118,6 @@ QGdbDriver::QGdbDriver()
 	mi_set_to_gdb_cb( mHandle, callbackToGDB, this );
 	mi_set_from_gdb_cb( mHandle, callbackFromGDB, this );
 	
-	connect( this, SIGNAL( stopped() ), this, SLOT( onStopped() ) );
 	connect( &mGdbPingTimer, SIGNAL( timeout() ), this, SLOT( onGdbTouchTimerTick() ) );
 	
 	qRegisterMetaType<QGdbDriver::CallStack>( "QGdbDriver::CallStack" );
@@ -242,35 +253,36 @@ void QGdbDriver::break_setBreaktoint (const QString& file, int line)
 	mi_free_bkpt(bk);
 }
 
-void QGdbDriver::stack_Info()
+void QGdbDriver::onGdbTouchTimerTick ()
 {
-	mi_frames* frames = gmi_stack_list_frames( mHandle );
-	
-	if ( !frames )
+	if ( mi_get_response( mHandle ) )
 	{
-		return;
+		log( "Async response in queue" );
 	}
-	
-	mi_frames* arguments = gmi_stack_list_arguments( mHandle, 1 );
-	
-	if ( !arguments )
-	{
-		return;
-	}
-	
+}
+
+void QGdbDriver::getCallStack( mi_stop* stop )
+{
 	CallStack stack;
+	mi_frames* mframe = stop->frame;
 	
-	while ( frames || arguments )
+	if ( !mframe )
+	{
+		emit callStackUpdated( stack );
+		return;
+	}
+	
+	while ( mframe )
 	{
 		Frame frame;
-		frame.function = frames->func;
-		frame.file = filePath( frames->file );
-		frame.line = frames->line;
-		frame.level = frames->level;
+		frame.function = mframe->func;
+		frame.file = mframe->file;
+		frame.from = mframe->from;
+		frame.full = filePath( mframe->file );
+		frame.line = mframe->line;
+		frame.level = mframe->level;
 		
-		qWarning( "from: %s", frames->from );
-		
-		mi_results* arg = arguments->args;
+		mi_results* arg = mframe->args;
 		
 		while ( arg )
 		{
@@ -284,43 +296,19 @@ void QGdbDriver::stack_Info()
 		
 		stack << frame;
 		
-		if ( frames )
-		{
-			frames = frames->next;
-		}
-		
-		if ( arguments )
-		{
-			arguments = arguments->next;
-		}
+		mframe = mframe->next;
 	}
 	
 	if ( !stack.isEmpty() )
 	{
-		emit positionChanged( stack.first().file, stack.first().line );
+		emit positionChanged( stack.first().full, stack.first().line );
 	}
 	
-	emit callStackUpdate( stack );
-	
-	mi_free_frames( frames );
-	mi_free_frames( arguments );
-}
-
-void QGdbDriver::onGdbTouchTimerTick ()
-{
-	if ( mi_get_response( mHandle ) )
-	{
-		log( "Async response in queue" );
-	}
+	emit callStackUpdated( stack );
 }
 
 void QGdbDriver::setState( QGdbDriver::State state )
 {
 	mState = state;
 	emit stateChanged( mState );
-}
-
-void QGdbDriver::onStopped()
-{
-	stack_Info();
 }
