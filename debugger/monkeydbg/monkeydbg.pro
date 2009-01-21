@@ -3,7 +3,7 @@
 ##
 ##	Author    : Andrei Kopats <hlamer at tut by>
 ##	Project   : Monkey Debugger
-##	FileName  : Monkey Debugger.pro
+##	FileName  : monkeydbg.pro
 ##	Date      : 2009-01-13T12:46:18
 ##	License   : GPL
 ##	Comment   : Creating using Monkey Studio RAD
@@ -20,11 +20,11 @@ XUPProjectSettings {
 
 TEMPLATE	= app
 LANGUAGE	= C++/Qt4
-TARGET	= monkeydebugger
+TARGET	= monkeydbg
 CONFIG	+= debug_and_release
 LIBS	+= -lqscintilla2 -L../build
 DESTDIR	= ../bin
-BUILD_PATH	= ../build/monkeydebugger
+BUILD_PATH	= ../build/monkeydbg
 
 MIGDB_LIB	= migdb
 MIGDB_PATH = ../libmigdb
