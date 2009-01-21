@@ -51,6 +51,8 @@ CONFIG(debug, debug|release) {
 	LIBS	+= -l$$QMIGDB_LIB
 }
 
+PRE_TARGETDEPS	+= ../qmigdb
+
 INCLUDEPATH	= ../qmigdb/libmigdb/src \
 	../qmigdb/src
 

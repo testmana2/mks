@@ -181,8 +181,8 @@ void QGdbDriver::exec_setCommand( const QString& command )
 void QGdbDriver::exec_run()
 {
 	int res = 0;
-	res = gmi_exec_run(mHandle);
-	Q_ASSERT (res);
+	res = gmi_exec_run( mHandle );
+	Q_ASSERT( res );
 	setState( QGdbDriver::RUNNING );
 }
 
@@ -241,27 +241,37 @@ void QGdbDriver::break_setBreaktoint (const QString& file, int line)
 	mi_free_bkpt(bk);
 }
 
-void QGdbDriver::stack_Info ()
+void QGdbDriver::stack_Info()
 {
-	mi_frames * frames = gmi_stack_list_frames (mHandle);
-	Q_ASSERT (frames);	
-	mi_frames * arguments = gmi_stack_list_arguments (mHandle, 1);
-	Q_ASSERT (arguments);
+	mi_frames* frames = gmi_stack_list_frames( mHandle );
+	
+	if ( !frames )
+	{
+		return;
+	}
+	
+	mi_frames* arguments = gmi_stack_list_arguments( mHandle, 1 );
+	
+	if ( !arguments )
+	{
+		return;
+	}
 	
 	CallStack stack;
 	
-	while (NULL != frames && NULL != arguments)
+	while ( frames || arguments )
 	{
 		Frame frame;
 		frame.function = frames->func;
-		frame.file = frames->file;
+		frame.file = filePath( frames->file );
 		frame.line = frames->line;
 		frame.level = frames->level;
-		qWarning( frames->from );
+		
+		qWarning( "from: %s", frames->from );
 		
 		mi_results* arg = arguments->args;
 		
-		while (NULL != arg)
+		while ( arg )
 		{
 			FunctionArgument argument;
 			argument.name = arg->v.rs->v.cstr;
@@ -273,16 +283,26 @@ void QGdbDriver::stack_Info ()
 		
 		stack << frame;
 		
-		frames = frames->next;
-		arguments = arguments->next;
+		if ( frames )
+		{
+			frames = frames->next;
+		}
+		
+		if ( arguments )
+		{
+			arguments = arguments->next;
+		}
 	}
-	if (stack.size())
-		emit positionChanged( filePath( stack[0].file ), stack[0].line);
 	
-	emit callStackUpdate (stack);
+	if ( !stack.isEmpty() )
+	{
+		emit positionChanged( stack.first().file, stack.first().line );
+	}
 	
-	mi_free_frames(frames);
-	mi_free_frames(arguments);
+	emit callStackUpdate( stack );
+	
+	mi_free_frames( frames );
+	mi_free_frames( arguments );
 }
 
 void QGdbDriver::onGdbTouchTimerTick ()

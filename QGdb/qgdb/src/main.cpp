@@ -21,7 +21,7 @@ int main( int argc, char** argv )
 	window.setWindowTitle( "Monkey Debugger" );
 
 	QMdiArea* mdi = new QMdiArea();
-	mdi->setViewMode (QMdiArea::TabbedView);
+	mdi->setViewMode( QMdiArea::QMdiArea::SubWindowView );
 	window.setCentralWidget (mdi);
 	
 	QDockWidget* stackDock = new QDockWidget ("Call stack");
@@ -61,6 +61,8 @@ int main( int argc, char** argv )
 						&fileManager, SLOT (gotoFileLine (const QString&, int)));
 		QObject::connect (&debugger, SIGNAL (callStackUpdate (const QGdbDriver::CallStack&)),
 						stackWidget, SLOT (update (const QGdbDriver::CallStack&)));
+		
+		QObject::connect( &fileManager, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ), &window, SLOT( onMarginClicked( int, int, Qt::KeyboardModifiers ) ) );
 		
 		if (argc == 2)
 		{

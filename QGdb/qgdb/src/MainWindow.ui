@@ -5,12 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>670</width>
-    <height>380</height>
+    <width>1035</width>
+    <height>414</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>MainWindow</string>
+  </property>
+  <property name="dockOptions" >
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::ForceTabbedDocks|QMainWindow::VerticalTabs</set>
   </property>
   <widget class="QWidget" name="centralwidget" />
   <widget class="QMenuBar" name="menuBar" >
@@ -18,7 +21,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>670</width>
+     <width>1035</width>
      <height>24</height>
     </rect>
    </property>
@@ -49,6 +52,62 @@
     <layout class="QVBoxLayout" name="verticalLayout" >
      <item>
       <widget class="QPlainTextEdit" name="pteLog" >
+       <property name="tabChangesFocus" >
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+       <property name="tabStopWidth" >
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dwConsole" >
+   <property name="windowTitle" >
+    <string>Console</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2" >
+    <layout class="QVBoxLayout" name="verticalLayout_2" >
+     <item>
+      <widget class="QPlainTextEdit" name="pteConsole" >
+       <property name="tabChangesFocus" >
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+       <property name="tabStopWidth" >
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dwPipe" >
+   <property name="windowTitle" >
+    <string>Pipe</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3" >
+    <layout class="QVBoxLayout" name="verticalLayout_3" >
+     <item>
+      <widget class="QPlainTextEdit" name="ptePipe" >
        <property name="tabChangesFocus" >
         <bool>true</bool>
        </property>

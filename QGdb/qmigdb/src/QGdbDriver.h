@@ -75,10 +75,10 @@ public slots:
 	void exec_kill();
 	
 	// breakpoints
-	void break_setBreaktoint (const QString& file, int line);
+	void break_setBreaktoint( const QString& file, int line );
 	
 	// stack
-	void stack_Info ();
+	void stack_Info();
 	
 protected:
 	State mState;

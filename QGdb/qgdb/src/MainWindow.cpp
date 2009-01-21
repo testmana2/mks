@@ -39,12 +39,22 @@ void MainWindow::appendLog( const QString& log )
 	pteLog->appendPlainText( log );
 }
 
+void MainWindow::appendConsole( const QString& msg )
+{
+	pteConsole->appendPlainText( msg );
+}
+
+void MainWindow::appendPipe( const QString& msg )
+{
+	ptePipe->appendPlainText( msg );
+}
+
 void MainWindow::onDebuggerCallbackMessage( const QString& message, QGdbDriver::CBType type )
 {
 	switch ( type )
 	{
 		case QGdbDriver::CONSOLE:
-			appendLog( QString( "CONSOLE> %1" ).arg( message ) );
+			appendConsole( message );
 			break;
 		case QGdbDriver::TARGET:
 			appendLog( QString( "TARGET> %1" ).arg( message ) );
@@ -53,10 +63,10 @@ void MainWindow::onDebuggerCallbackMessage( const QString& message, QGdbDriver::
 			appendLog( QString( "LOG> %1" ).arg( message ) );
 			break;
 		case QGdbDriver::TO_GDB:
-			appendLog( QString( ">> %1" ).arg( message ) );
+			appendPipe( QString( ">> %1" ).arg( message ) );
 			break;
 		case QGdbDriver::FROM_GDB:
-			appendLog( QString( "<< %1" ).arg( message ) );
+			appendPipe( QString( "<< %1" ).arg( message ) );
 			break;
 		case QGdbDriver::ASYNC:
 			appendLog( QString( "ASYNC> %1" ).arg( message ) );
@@ -119,4 +129,9 @@ void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 			mStatusLabel->setText (tr("Target stopped"));
 		break;
 	}
+}
+
+void MainWindow::onMarginClicked( int margin, int line, Qt::KeyboardModifiers state )
+{
+	appendLog( QString( "Margin %1 clicked on line %2, keyboard is %3" ).arg( margin ).arg( line +1 ).arg( state ) );
 }
