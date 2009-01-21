@@ -301,7 +301,12 @@ void QGdbDriver::getCallStack( mi_stop* stop )
 	
 	if ( !stack.isEmpty() )
 	{
-		emit positionChanged( stack.first().full, stack.first().line );
+		Frame& frame = stack.first();
+		
+		if ( !frame.file.isEmpty() )
+		{
+			emit positionChanged( frame.full, frame.line );
+		}
 	}
 	
 	emit callStackUpdated( stack );
