@@ -47,18 +47,21 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 	
 	if ( output->tclass == MI_CL_STOPPED )
 	{
-		mi_stop* res = mi_res_stop( driver->mHandle );
+		mi_stop* stop = mi_get_stopped( output->c );
 		
-		if ( res )
+		if ( stop )
 		{
-			if ( res->reason == sr_unknown /*&& waitingTempBkpt*/ )
+			if ( stop->reason == sr_unknown /*&& waitingTempBkpt*/ )
 			{
 				//waitingTempBkpt = 0;
-				res->reason = sr_bkpt_hit;
+				stop->reason = sr_bkpt_hit;
 			}
 			
-			switch ( res->reason )
+			switch ( stop->reason )
 			{
+				case sr_signal_received:
+					qWarning( "ok" );
+					break;
 				case sr_exited_signalled:
 				case sr_exited:
 				case sr_exited_normally:
@@ -73,6 +76,8 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 					driver->setState( QGdbDriver::STOPPED );
 					break;
 			}
+			
+			mi_free_stop( stop );
 		}
 		else
 		{
@@ -309,7 +314,7 @@ void QGdbDriver::onGdbTouchTimerTick ()
 {
 	if ( mi_get_response( mHandle ) )
 	{
-		internalUpdate();
+		//internalUpdate();
 	}
 }
 
