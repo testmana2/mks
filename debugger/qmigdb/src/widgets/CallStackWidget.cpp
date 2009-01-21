@@ -3,39 +3,35 @@
 CallStackWidget::CallStackWidget( QGdbDriver* debugger, QWidget* parent )
 	: QListWidget( parent )
 {
-	connect (debugger, SIGNAL (callStackUpdate (const QGdbDriver::CallStack&)),
-			 this, SLOT (update (const QGdbDriver::CallStack&)));
-
+	connect( debugger, SIGNAL( callStackUpdate( const QGdbDriver::CallStack& ) ), this, SLOT( update( const QGdbDriver::CallStack& ) ) );
 }
 
 CallStackWidget::~CallStackWidget()
 {
 }
 
-void CallStackWidget::update (const QGdbDriver::CallStack& stack)
+void CallStackWidget::update( const QGdbDriver::CallStack& stack )
 {
 	clear();
-	foreach (QGdbDriver::Frame frame, stack)
+	
+	foreach ( const QGdbDriver::Frame& frame, stack )
 	{
-		QString item = "#" + QString::number (frame.level);
-		item += " ";
-		item += frame.function;
-		item += " (";
-		bool first = true;
-		foreach (QGdbDriver::FunctionArgument argument, frame.arguments)
+		QString text( "#%1 %2 (%3) at %4:%5" );
+		QStringList arguments;
+		
+		foreach ( const QGdbDriver::FunctionArgument& argument, frame.arguments )
 		{
-			if (!first)
-				item += ", ";
-			item += argument.name;
-			item += " = ";
-			item += argument.value;
-			first = false;
+			arguments << QString( "%1 = %2" ).arg( argument.name ).arg( argument.value );
 		}
-		item += ") ";
-		item += "at ";
-		item += frame.file;
-		item += ":";
-		item += QString::number(frame.line);
-		addItem (item);
+		
+		text = text
+			.arg( frame.level )
+			.arg( frame.function )
+			.arg( arguments.join( ", " ) )
+			.arg( frame.file )
+			.arg( frame.line );
+		
+		QListWidgetItem* item = new QListWidgetItem( text, this );
+		item->setData( Qt::UserRole, QVariant::fromValue( frame ) );
 	}
 }

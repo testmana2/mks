@@ -12,8 +12,9 @@ class CallStackWidget : public QListWidget
 public:
 	CallStackWidget( QGdbDriver* debugger, QWidget* parent = 0 );
 	virtual ~CallStackWidget();
+	
 public slots:
-	void update (const QGdbDriver::CallStack& stack);
+	void update( const QGdbDriver::CallStack& stack );
 };
 
 #endif // CALLSTACKWIDGET_H
