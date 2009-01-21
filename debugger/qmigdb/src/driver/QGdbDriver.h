@@ -95,8 +95,6 @@ protected:
 	static void callbackFromGDB (const char *str, void *);
 	static void callbackAsync (mi_output * o, void * debuggerInstance);
 	
-	void internalUpdate ();
-	
 	void setState (State);
 protected slots:
 	// touches gdb for make it alive
