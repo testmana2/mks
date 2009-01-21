@@ -16,7 +16,7 @@
 
 XUPProjectSettings {
 	EDITOR	= QMake
-	EXECUTE_DEBUG	= bin/QGdb_debug
+	EXECUTE_DEBUG	= bin/monkeydbg_debug
 }
 
 TEMPLATE	= subdirs
