@@ -11,7 +11,7 @@
 class QGdbDriver : public QObject
 {
 	Q_OBJECT
-	
+
 public:
 	enum CBType
 	{
