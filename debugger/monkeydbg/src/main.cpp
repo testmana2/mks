@@ -25,23 +25,23 @@ int main( int argc, char** argv )
 	window.setWindowTitle( "Monkey Debugger" );
 	
 	//    Mdi area
-	QMdiArea* mdi = new QMdiArea();
+	QMdiArea* mdi = new QMdiArea( &window );
 	mdi->setViewMode( QMdiArea::SubWindowView );
-	window.setCentralWidget (mdi);
+	window.setCentralWidget( mdi );
 	
 	//    File manager
-	FileManager fileManager (&app, mdi);
+	FileManager fileManager( &app, mdi );
 	
 	//    Callstack widget
 	QDockWidget* stackDock = new QDockWidget ("Call stack");
-	CallStackWidget* stackWidget = new CallStackWidget (&debugger);
-	stackDock->setWidget (stackWidget);
-	window.addDockWidget (Qt::BottomDockWidgetArea, stackDock);
+	CallStackWidget* stackWidget = new CallStackWidget( &debugger, stackDock );
+	stackDock->setWidget( stackWidget );
+	window.addDockWidget( Qt::BottomDockWidgetArea, stackDock );
 	
 	// driver -> window
 	QObject::connect (&debugger, SIGNAL (callbackMessage(const QString&, QGdbDriver::CBType)),
-					  &window, SLOT (onDebuggerCallbackMessage (const QString&, QGdbDriver::CBType)));
-	QObject::connect (&debugger, SIGNAL (stateChanged (QGdbDriver::State)),
+						&window, SLOT (onDebuggerCallbackMessage (const QString&, QGdbDriver::CBType)));
+		QObject::connect (&debugger, SIGNAL (stateChanged (QGdbDriver::State)),
 						&window, SLOT (onDebuggerStateChanged (QGdbDriver::State)));
 	QObject::connect (&window, SIGNAL (loadTargetRequested (const QString&)),
 					&debugger, SLOT (exec_setCommand (const QString&)));					  
@@ -67,29 +67,23 @@ int main( int argc, char** argv )
 	
 	// filemanager -> window
 	QObject::connect( &fileManager, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ), 
-					  &window, SLOT( onMarginClicked( int, int, Qt::KeyboardModifiers ) ) );
+						&window, SLOT( onMarginClicked( int, int, Qt::KeyboardModifiers ) ) );
 	
 	// window -> filemanager
 	QObject::connect( &window, SIGNAL( openFileTriggered() ), 
-					  &fileManager, SLOT( openFileTriggered() ) );
+					&fileManager, SLOT( openFileTriggered() ) );
 	QObject::connect( &window, SIGNAL( closeFileTriggered() ), 
-					  &fileManager, SLOT( closeFileTriggered() ) );
-	
-	if (argc == 2)
+					&fileManager, SLOT( closeFileTriggered() ) );
+		
+	if ( argc == 2 )
 	{
-	if (QFileInfo (argv[1]).isExecutable())
-		debugger.exec_setCommand(argv[1]);
-	else 
-		QMessageBox::critical (NULL, QObject::tr ("Invalid parameter"), 
-										QObject::tr ("%1 is not a executable file").arg(argv[1]));
+		if ( QFileInfo( argv[1] ) .isExecutable() )
+			debugger.exec_setCommand( argv[1] );
+		else 
+			QMessageBox::critical( 0, QObject::tr( "Invalid parameter" ), QObject::tr( "%1 is not a executable file" ).arg( argv[1] ) );
 	}
 	
-	// test scenario
-	//debugger.exec_setCommand("/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug");
-	//debugger.break_setBreaktoint ("main.cpp", 14);
-	//debugger.exec_run();
-	
-	
 	window.show();
+	
 	return app.exec();
 }
