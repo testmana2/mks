@@ -8,7 +8,7 @@
 class CallStackWidget : public QListWidget
 {
 	Q_OBJECT
-
+	
 public:
 	CallStackWidget( QGdbDriver* debugger, QWidget* parent = 0 );
 	virtual ~CallStackWidget();
