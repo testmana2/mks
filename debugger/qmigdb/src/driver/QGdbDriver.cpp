@@ -57,19 +57,44 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 				stop->reason = sr_bkpt_hit;
 			}
 			
+			if ( stop->reason == sr_exited_signalled || stop->reason == sr_exited || stop->reason == sr_exited_normally )
+			{
+				driver->setState( QGdbDriver::TARGET_SETTED );
+			}
+			else
+			{
+				driver->setState( QGdbDriver::STOPPED );
+			}
+			
 			switch ( stop->reason )
 			{
+				case sr_bkpt_hit:
+					break;
+				case sr_wp_trigger:
+					break;
+				case sr_read_wp_trigger:
+					break;
+				case sr_access_wp_trigger:
+					break;
+				case sr_wp_scope:
+					break;
+				case sr_function_finished:
+					break;
+				case sr_location_reached:
+					break;
+				case sr_end_stepping_range:
+					break;
 				case sr_exited_signalled:
+					break;
 				case sr_exited:
+					emit driver->exited( stop->exit_code );
+					break;
 				case sr_exited_normally:
-					driver->setState( QGdbDriver::TARGET_SETTED );
 					break;
 				case sr_signal_received:
-				case sr_bkpt_hit:
-				case sr_end_stepping_range:
-				case sr_function_finished:
+					break;
+				case sr_unknown:
 				default:
-					driver->setState( QGdbDriver::STOPPED );
 					break;
 			}
 			

@@ -12,7 +12,7 @@
 class QGdbDriver : public QObject
 {
 	Q_OBJECT
-
+	
 public:
 	enum CBType
 	{
@@ -107,6 +107,7 @@ signals:
 	void stateChanged( QGdbDriver::State state );
 	void callStackUpdated( const QGdbDriver::CallStack& stack );
 	void positionChanged (const QString& fileName, int line); // should be renamed ?
+	void exited( int code );
 };
 
 Q_DECLARE_METATYPE( QGdbDriver::Frame )
