@@ -9,11 +9,10 @@
 #include <QFileInfo>
 #include <QFileDialog>
 
-#include <Qsci/qsciscintilla.h>
-#include <Qsci/qscilexercpp.h>
-
 #include <QDebug>
 #include "FileManager.h"
+
+#include "pEditor.h"
 
 FileManager::FileManager( QObject* parent, QMdiArea* mdiArea )
 	: QObject( parent ), mMdiArea( mdiArea )
@@ -43,7 +42,7 @@ void FileManager::gotoFileLine( const QString& fileName, int line )
 	{
 		if ( window->windowFilePath() == fileName )
 		{
-			editor = qobject_cast<QsciScintilla*>( window->widget() );
+			editor = qobject_cast<pEditor*>( window->widget() );
 			break;
 		}
 	}
@@ -59,6 +58,21 @@ void FileManager::gotoFileLine( const QString& fileName, int line )
 	}
 }
 
+void FileManager::marginClicked( int margin, int line, Qt::KeyboardModifiers state )
+{
+	Q_UNUSED( state );
+	
+	if ( margin == 1 )
+	{
+		QMdiSubWindow* window = mMdiArea->activeSubWindow();
+		QsciScintilla* editor = qobject_cast<QsciScintilla*>( window->widget() );
+		
+		editor->markerAdd( line, pEditor::mdEnabledBreak );
+		
+		emit breakpointToggled( window->windowFilePath(), line +1 );
+	}
+}
+
 QsciScintilla* FileManager::openFile( const QString& fileName )
 {
 	if (fileName.isEmpty() )
@@ -66,7 +80,7 @@ QsciScintilla* FileManager::openFile( const QString& fileName )
 		return 0;
 	}
 	
-	QsciScintilla* sci = new QsciScintilla( mMdiArea );
+	pEditor* sci = new pEditor( mMdiArea );
 	QApplication::setOverrideCursor( Qt::WaitCursor );
 	
 	// open file
@@ -79,7 +93,6 @@ QsciScintilla* FileManager::openFile( const QString& fileName )
 	}
 
 	// configure
-	sci->setLexer( new QsciLexerCPP( sci ) );
 	sci->setMarginLineNumbers( 1, true );
 	sci->setMarginWidth( 1, 50 );
 	sci->setMarginSensitivity( 1, true );
@@ -87,7 +100,7 @@ QsciScintilla* FileManager::openFile( const QString& fileName )
 	sci->setIndentationWidth( 4 );
 	sci->setCaretLineVisible( true );
 	
-	connect( sci, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ), this, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ) );
+	connect( sci, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ), this, SLOT( marginClicked( int, int, Qt::KeyboardModifiers ) ) );
 
 	// load file
 	QString datas = QString::fromUtf8( f.readAll() );

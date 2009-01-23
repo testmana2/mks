@@ -27,9 +27,9 @@ public slots:
 	void appendPipe( const QString& msg );
 	void onDebuggerCallbackMessage( const QString& message, QGdbDriver::CBType type );
 	void onDebuggerStateChanged (QGdbDriver::State);
-	void onMarginClicked( int margin, int line, Qt::KeyboardModifiers state );
 	
 signals:
+	void breakpointToggled( const QString& fileName, int line );
 	
 	// api
 	void loadTargetRequested (const QString& fileName);

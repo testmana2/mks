@@ -22,17 +22,17 @@ TEMPLATE	= app
 LANGUAGE	= C++/Qt4
 TARGET	= monkeydbg
 CONFIG	+= debug_and_release
-LIBS	+= -lqscintilla2 -L../build
+LIBS	= -lqscintilla2 -L../build
 DESTDIR	= ../bin
 BUILD_PATH	= ../build/monkeydbg
 
 MIGDB_LIB	= migdb
-MIGDB_PATH = ../libmigdb
-MIGDB_SRC_PATH = $${MIGDB_PATH}/src
+MIGDB_PATH	= ../libmigdb
+MIGDB_SRC_PATH	= $${MIGDB_PATH}/src
 
 QMIGDB_LIB	= qmigdb
-QMIGDB_PATH = ../qmigdb
-QMIGDB_SRC_PATH = $${QMIGDB_PATH}/src
+QMIGDB_PATH	= ../qmigdb
+QMIGDB_SRC_PATH	= $${QMIGDB_PATH}/src
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -61,8 +61,7 @@ CONFIG(debug, debug|release) {
 	LIBS	+= -l$$MIGDB_LIB
 }
 
-PRE_TARGETDEPS	+= $${MIGDB_PATH}
-PRE_TARGETDEPS	+= $${QMIGDB_PATH}
+PRE_TARGETDEPS	= $${MIGDB_PATH} $${QMIGDB_PATH}
 
 INCLUDEPATH	= $${MIGDB_SRC_PATH} \
 	$${QMIGDB_SRC_PATH}/driver \
@@ -71,8 +70,12 @@ INCLUDEPATH	= $${MIGDB_SRC_PATH} \
 FORMS	= src/MainWindow.ui
 
 HEADERS	= src/FileManager.h \
-	src/MainWindow.h
+	src/MainWindow.h \
+	src/pEditor.h
 
 SOURCES	= src/main.cpp \
 	src/MainWindow.cpp \
-	src/FileManager.cpp
+	src/FileManager.cpp \
+	src/pEditor.cpp
+
+RESOURCES	= src/resources/monkeydbg.qrc
