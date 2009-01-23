@@ -6,6 +6,7 @@
 
 #include "MainWindow.h"
 #include "CallStackWidget.h"
+#include "BreakpointWidget.h"
 #include "FileManager.h"
 #include "QGdbDriver.h"
 
@@ -38,6 +39,11 @@ int main( int argc, char** argv )
 	stackDock->setWidget( stackWidget );
 	window.addDockWidget( Qt::BottomDockWidgetArea, stackDock );
 	
+	QDockWidget* breakpointDock = new QDockWidget( "Breakpoints" );
+	BreakpointWidget* breakpointWidget = new BreakpointWidget( &debugger, breakpointDock );
+	breakpointDock->setWidget( breakpointWidget );
+	window.addDockWidget( Qt::TopDockWidgetArea, breakpointDock );
+	
 	// driver -> window
 	QObject::connect (&debugger, SIGNAL (callbackMessage(const QString&, QGdbDriver::CBType)),
 						&window, SLOT (onDebuggerCallbackMessage (const QString&, QGdbDriver::CBType)));
@@ -60,14 +66,16 @@ int main( int argc, char** argv )
 					&debugger, SLOT (exec_pause ())); 
 	QObject::connect (&window, SIGNAL (exec_killTriggered ()),
 					&debugger, SLOT (exec_kill ())); 
+	QObject::connect( &window, SIGNAL( breakpointToggled( const QString&, int ) ), 
+					&debugger, SLOT( break_breakpointToggled( const QString&, int ) ) );
 	
 	// driver -> filemanager
 	QObject::connect (&debugger, SIGNAL (positionChanged (const QString&, int)),
 					&fileManager, SLOT (gotoFileLine (const QString&, int)));
 	
 	// filemanager -> window
-	QObject::connect( &fileManager, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ), 
-						&window, SLOT( onMarginClicked( int, int, Qt::KeyboardModifiers ) ) );
+	QObject::connect( &fileManager, SIGNAL( breakpointToggled( const QString&, int ) ), 
+						&window, SIGNAL( breakpointToggled( const QString&, int ) ) );
 	
 	// window -> filemanager
 	QObject::connect( &window, SIGNAL( openFileTriggered() ), 

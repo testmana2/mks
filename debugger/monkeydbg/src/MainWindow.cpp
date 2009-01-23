@@ -132,8 +132,3 @@ void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 		break;
 	}
 }
-
-void MainWindow::onMarginClicked( int margin, int line, Qt::KeyboardModifiers state )
-{
-	appendLog( QString( "Margin %1 clicked on line %2, keyboard is %3" ).arg( margin ).arg( line +1 ).arg( state ) );
-}

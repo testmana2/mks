@@ -26,8 +26,8 @@ DESTDIR	= ../build
 BUILD_PATH	= ../build/qmigdb
 
 MIGDB_LIB	= migdb
-MIGDB_PATH = ../libmigdb
-MIGDB_SRC_PATH = $${MIGDB_PATH}/src
+MIGDB_PATH	= ../libmigdb
+MIGDB_SRC_PATH	= $${MIGDB_PATH}/src
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -59,8 +59,10 @@ INCLUDEPATH	= $${MIGDB_SRC_PATH} \
 	src/driver \
 	src/widgets
 
-HEADERS	=  src/driver/QGdbDriver.h \
-	src/widgets/CallStackWidget.h
+HEADERS	= src/driver/QGdbDriver.h \
+	src/widgets/CallStackWidget.h \
+	src/widgets/BreakpointWidget.h
 
 SOURCES	= src/driver/QGdbDriver.cpp \
-	src/widgets/CallStackWidget.cpp
+	src/widgets/CallStackWidget.cpp \
+	src/widgets/BreakpointWidget.cpp

@@ -13,7 +13,7 @@ public:
 	CallStackWidget( QGdbDriver* debugger, QWidget* parent = 0 );
 	virtual ~CallStackWidget();
 	
-public slots:
+protected slots:
 	void update( const QGdbDriver::CallStack& stack );
 };
 

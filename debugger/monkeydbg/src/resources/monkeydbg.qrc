@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="icons" >
+    <file alias="break.png" >icons/break.png</file>
+    <file alias="cond_break.png" >icons/cond_break.png</file>
+    <file alias="disabled_break.png" >icons/disabled_break.png</file>
+    <file alias="disabled_cond_break.png" >icons/disabled_cond_break.png</file>
+    <file alias="play.png" >icons/play.png</file>
+  </qresource>
+</RCC>

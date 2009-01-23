@@ -270,12 +270,22 @@ void QGdbDriver::exec_kill()
 	setState( QGdbDriver::TARGET_SETTED );
 }
 
-void QGdbDriver::break_setBreaktoint (const QString& file, int line)
+void QGdbDriver::break_setBreakpoint( const QString& file, int line )
 {
-	mi_bkpt *bk = NULL;
-	bk = gmi_break_insert(mHandle, file.toLocal8Bit(), line);
-	Q_ASSERT (bk);
-	mi_free_bkpt(bk);
+	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::TARGET_SETTED )
+	{
+		return;
+	}
+	
+	mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
+	Breakpoint bp( mbp );
+	mi_free_bkpt( mbp );
+	emit breakpointAdded( bp );
+}
+
+void QGdbDriver::break_breakpointToggled( const QString& file, int line )
+{
+	break_setBreakpoint( file, line );
 }
 
 void QGdbDriver::onGdbTouchTimerTick ()
