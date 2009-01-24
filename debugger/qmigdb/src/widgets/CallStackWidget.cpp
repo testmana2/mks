@@ -5,14 +5,14 @@
 CallStackWidget::CallStackWidget( QGdbDriver* debugger, QWidget* parent )
 	: QListWidget( parent )
 {
-	connect( debugger, SIGNAL( callStackUpdated( const QGdbDriver::CallStack& ) ), this, SLOT( update( const QGdbDriver::CallStack& ) ) );
+	connect( debugger, SIGNAL( callStackUpdated( const QGdbDriver::CallStack&, int ) ), this, SLOT( update( const QGdbDriver::CallStack&, int ) ) );
 }
 
 CallStackWidget::~CallStackWidget()
 {
 }
 
-void CallStackWidget::update( const QGdbDriver::CallStack& stack )
+void CallStackWidget::update( const QGdbDriver::CallStack& stack, int selectedLevel )
 {
 	clear();
 	
@@ -50,5 +50,10 @@ void CallStackWidget::update( const QGdbDriver::CallStack& stack )
 		
 		QListWidgetItem* item = new QListWidgetItem( lines.join( " " ), this );
 		item->setData( Qt::UserRole, QVariant::fromValue( frame ) );
+		
+		if ( selectedLevel == frame.level )
+		{
+			setCurrentItem( item );
+		}
 	}
 }
