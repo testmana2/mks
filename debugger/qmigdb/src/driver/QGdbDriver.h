@@ -32,6 +32,21 @@ public:
 		RUNNING,
 		STOPPED
 	};
+	
+	struct Signal
+	{
+		Signal( mi_stop* stop = 0 )
+		{
+			if ( stop )
+			{
+				name = stop->signal_name;
+				meaning = stop->signal_meaning;
+			}
+		}
+		
+		QString name;
+		QString meaning;
+	};
  
 	struct Breakpoint
 	{
@@ -227,22 +242,23 @@ protected slots:
 	// touches gdb for make it alive
 	// Without it we haven't callbacks
 	void onGdbTouchTimerTick();
-	QGdbDriver::CallStack getCallStack( mi_frames* mframe );
+	void generateCallStack( mi_frames* mframe );
 	void updateCallStack( mi_stop* stop );
 	void updateFullCallStack();
 	
 signals:
 	void callbackMessage( const QString& message, QGdbDriver::CBType type );
 	void stateChanged( QGdbDriver::State state );
+	void signalReceived( const QGdbDriver::Signal& signal );
 	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointUpdated( const QGdbDriver::Breakpoint& breakpoint );
-	
-	void callStackUpdated( const QGdbDriver::CallStack& stack );
+	void callStackUpdated( const QGdbDriver::CallStack& stack, int selectedLevel );
 	void positionChanged (const QString& fileName, int line); // should be renamed ?
 	void exited( int code );
 };
 
+Q_DECLARE_METATYPE( QGdbDriver::Signal )
 Q_DECLARE_METATYPE( QGdbDriver::Breakpoint )
 Q_DECLARE_METATYPE( QGdbDriver::Frame )
 

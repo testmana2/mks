@@ -102,6 +102,7 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 				case sr_exited_normally:
 					break;
 				case sr_signal_received:
+					emit driver->signalReceived( Signal( stop ) );
 					driver->delayedCall( SLOT( updateFullCallStack() ) );
 					break;
 				case sr_unknown:
@@ -328,9 +329,10 @@ void QGdbDriver::onGdbTouchTimerTick ()
 	}
 }
 
-QGdbDriver::CallStack QGdbDriver::getCallStack( mi_frames* mframe )
+void QGdbDriver::generateCallStack( mi_frames* mframe )
 {
 	CallStack stack;
+	int level = -1;
 	
 	while ( mframe )
 	{
@@ -354,30 +356,22 @@ QGdbDriver::CallStack QGdbDriver::getCallStack( mi_frames* mframe )
 			arg = arg->next;
 		}
 		
-		stack << frame;
+		if ( level == -1 && !frame.file.isEmpty() )
+		{
+			level = frame.level;
+			emit positionChanged( frame.full, frame.line );
+		}
 		
+		stack << frame;
 		mframe = mframe->next;
 	}
 	
-	return stack;
+	emit callStackUpdated( stack, level );
 }
 
 void QGdbDriver::updateCallStack( mi_stop* stop )
 {
-	mi_frames* mframe = stop->frame;
-	CallStack stack = getCallStack( mframe );
-	
-	emit callStackUpdated( stack );
-	
-	if ( !stack.isEmpty() )
-	{
-		Frame& frame = stack.first();
-		
-		if ( !frame.file.isEmpty() )
-		{
-			emit positionChanged( frame.full, frame.line );
-		}
-	}
+	generateCallStack( stop->frame );
 }
 
 void QGdbDriver::updateFullCallStack()
@@ -387,15 +381,15 @@ void QGdbDriver::updateFullCallStack()
 		return;
 	}
 	
-	mi_frames* mframe = gmi_stack_list_frames( mHandle );
+	mi_frames* frame = gmi_stack_list_frames( mHandle );
 	
-	if ( mframe )
+	if ( frame )
 	{
 		mi_frames* args = gmi_stack_list_arguments( mHandle, 1  );
 		
 		if ( args )
 		{
-			mi_frames* p = mframe;
+			mi_frames* p = frame;
 			mi_frames* p2 = args;
 			
 			while ( p2 && p )
@@ -410,21 +404,8 @@ void QGdbDriver::updateFullCallStack()
 		}
 	}
 	
-	CallStack stack = getCallStack( mframe );
-	
-	mi_free_frames( mframe );
-	
-	emit callStackUpdated( stack );
-	
-	if ( !stack.isEmpty() )
-	{
-		Frame& frame = stack.first();
-		
-		if ( !frame.file.isEmpty() )
-		{
-			emit positionChanged( frame.full, frame.line );
-		}
-	}
+	generateCallStack( frame );
+	mi_free_frames( frame );
 }
 
 void QGdbDriver::setState( QGdbDriver::State state )

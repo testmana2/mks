@@ -14,7 +14,7 @@ public:
 	virtual ~CallStackWidget();
 	
 protected slots:
-	void update( const QGdbDriver::CallStack& stack );
+	void update( const QGdbDriver::CallStack& stack, int selectedLevel );
 };
 
 #endif // CALLSTACKWIDGET_H

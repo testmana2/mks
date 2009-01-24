@@ -1,8 +1,9 @@
+#include "MainWindow.h"
+
 #include <QLabel>
 #include <QFileDialog>
 #include <QDir>
-
-#include "MainWindow.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow( QWidget* parent )
 	: QMainWindow( parent )
@@ -84,6 +85,11 @@ void MainWindow::onDebuggerCallbackMessage( const QString& message, QGdbDriver::
 			appendLog( QString( "ASYNC> %1" ).arg( message ) );
 			break;
 	}
+}
+
+void MainWindow::onDebuggerSignalReceived( const QGdbDriver::Signal& signal )
+{
+	QMessageBox::critical( window(), tr( "Signal received" ), tr( "Program received signal %1, %2" ).arg( signal.name ).arg( signal.meaning ) );
 }
 
 void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
