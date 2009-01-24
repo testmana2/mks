@@ -271,7 +271,7 @@ void QGdbDriver::exec_kill()
 	setState( QGdbDriver::TARGET_SETTED );
 }
 
-void QGdbDriver::break_setBreakpoint( const QString& file, int line )
+bool QGdbDriver::break_setBreakpoint( const QString& file, int line )
 {
 	Breakpoint bp;
 	
@@ -282,6 +282,12 @@ void QGdbDriver::break_setBreakpoint( const QString& file, int line )
 	else
 	{
 		mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
+		
+		if ( !mbp )
+		{
+			return false;
+		}
+		
 		bp = Breakpoint( mbp );
 		mi_free_bkpt( mbp );
 	}
@@ -300,6 +306,8 @@ void QGdbDriver::break_setBreakpoint( const QString& file, int line )
 	
 	mBreakpoints << bp;
 	emit breakpointAdded( bp );
+	
+	return true;
 }
 
 void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& remove )
@@ -308,15 +316,10 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& r
 	{
 		Breakpoint& bp = mBreakpoints[ i ];
 		
-		qWarning() << "bp" << bp.absolute_file << bp.line;
-		qWarning() << "check" << file << line;
-		
-		
 		if ( bp.absolute_file == file && bp.line == line )
 		{
 			if ( mState == QGdbDriver::TARGET_SETTED || mState == QGdbDriver::RUNNING )
 			{
-			qWarning( "remove" );
 				int res = gmi_break_delete( mHandle, bp.number );
 				
 				if ( res != 0 )
@@ -335,8 +338,7 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& r
 		}
 	}
 	
-	remove = false;
-	break_setBreakpoint( file, line );
+	remove = !break_setBreakpoint( file, line );
 }
 
 void QGdbDriver::onGdbTouchTimerTick ()

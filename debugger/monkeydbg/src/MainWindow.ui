@@ -133,9 +133,37 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="toolBar" >
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen_file" />
+   <addaction name="actionClose_file" />
+   <addaction name="separator" />
+   <addaction name="actionLoad_target" />
+   <addaction name="separator" />
+   <addaction name="actionRun" />
+   <addaction name="actionContinue" />
+   <addaction name="actionStep_into" />
+   <addaction name="actionStep_over" />
+   <addaction name="actionStep_out" />
+   <addaction name="separator" />
+   <addaction name="actionPause" />
+   <addaction name="actionKill" />
+  </widget>
   <action name="actionRun" >
    <property name="enabled" >
     <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/run.png</normaloff>:/icons/run.png</iconset>
    </property>
    <property name="text" >
     <string>Run</string>
@@ -148,6 +176,10 @@
    <property name="enabled" >
     <bool>false</bool>
    </property>
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
+   </property>
    <property name="text" >
     <string>Continue</string>
    </property>
@@ -158,6 +190,10 @@
   <action name="actionStep_into" >
    <property name="enabled" >
     <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/step-into.png</normaloff>:/icons/step-into.png</iconset>
    </property>
    <property name="text" >
     <string>Step into</string>
@@ -170,6 +206,10 @@
    <property name="enabled" >
     <bool>false</bool>
    </property>
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/step-next.png</normaloff>:/icons/step-next.png</iconset>
+   </property>
    <property name="text" >
     <string>Step over</string>
    </property>
@@ -181,6 +221,10 @@
    <property name="enabled" >
     <bool>false</bool>
    </property>
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/stop.png</normaloff>:/icons/stop.png</iconset>
+   </property>
    <property name="text" >
     <string>Pause</string>
    </property>
@@ -189,6 +233,10 @@
    </property>
   </action>
   <action name="actionLoad_target" >
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/exec-open.png</normaloff>:/icons/exec-open.png</iconset>
+   </property>
    <property name="text" >
     <string>Load target</string>
    </property>
@@ -199,6 +247,10 @@
   <action name="actionStep_out" >
    <property name="enabled" >
     <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/step-out.png</normaloff>:/icons/step-out.png</iconset>
    </property>
    <property name="text" >
     <string>Step out</string>
@@ -211,6 +263,10 @@
    <property name="enabled" >
     <bool>false</bool>
    </property>
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/kill.png</normaloff>:/icons/kill.png</iconset>
+   </property>
    <property name="text" >
     <string>Kill</string>
    </property>
@@ -219,6 +275,10 @@
    </property>
   </action>
   <action name="actionOpen_file" >
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/file-open.png</normaloff>:/icons/file-open.png</iconset>
+   </property>
    <property name="text" >
     <string>Open</string>
    </property>
@@ -227,6 +287,10 @@
    </property>
   </action>
   <action name="actionClose_file" >
+   <property name="icon" >
+    <iconset resource="resources/monkeydbg.qrc" >
+     <normaloff>:/icons/file-close.png</normaloff>:/icons/file-close.png</iconset>
+   </property>
    <property name="text" >
     <string>Close</string>
    </property>
@@ -235,6 +299,8 @@
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources/monkeydbg.qrc" />
+ </resources>
  <connections/>
 </ui>

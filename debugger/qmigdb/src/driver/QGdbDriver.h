@@ -224,7 +224,7 @@ public slots:
 	void exec_kill();
 	
 	// breakpoints
-	void break_setBreakpoint( const QString& file, int line );
+	bool break_setBreakpoint( const QString& file, int line );
 	void break_breakpointToggled( const QString& file, int line, bool& remove );
 	
 protected:
