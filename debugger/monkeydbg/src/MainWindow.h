@@ -15,6 +15,8 @@ public:
 	MainWindow( QWidget* parent = 0 );
 	virtual ~MainWindow();
 	
+	void loadTarget( const QString& fileName );
+	
 protected:
 	QLabel* mStatusLabel;
 	
@@ -29,7 +31,7 @@ public slots:
 	void onDebuggerStateChanged (QGdbDriver::State);
 	
 signals:
-	void breakpointToggled( const QString& fileName, int line );
+	void breakpointToggled( const QString& fileName, int line, bool& remove );
 	
 	// api
 	void loadTargetRequested (const QString& fileName);

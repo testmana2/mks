@@ -5,8 +5,6 @@
 #include "QGdbDriver.h"
 #include <QDebug>
 
-volatile int asyncCount = 0;
-
 // Callbacks of debugger
 void QGdbDriver::callbackConsole( const char* str, void* data )
 {
@@ -43,7 +41,7 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 {
 	QGdbDriver* driver = static_cast<QGdbDriver*>( data );
 	
-	emit driver->callbackMessage( QString::number( asyncCount ), QGdbDriver::ASYNC );
+	emit driver->callbackMessage( output->c->v.cstr, QGdbDriver::ASYNC );
 	
 	if ( output->tclass == MI_CL_STOPPED )
 	{
@@ -65,6 +63,18 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 			{
 				driver->setState( QGdbDriver::STOPPED );
 			}
+			
+			// thread callstack
+			if ( stop->have_thread_id && stop->reason != sr_exited )
+			{
+				driver->updateCallStack( stop );
+			}
+			/*
+			char have_thread_id;
+			char have_bkptno;
+			char have_exit_code;
+			char have_wpno;
+			*/
 			
 			switch ( stop->reason )
 			{
@@ -92,23 +102,12 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 				case sr_exited_normally:
 					break;
 				case sr_signal_received:
+					driver->delayedCall( SLOT( updateFullCallStack() ) );
 					break;
 				case sr_unknown:
 				default:
 					break;
 			}
-			
-			// thread callstack
-			if ( stop->have_thread_id && stop->reason != sr_exited )
-			{
-				driver->getCallStack( stop );
-			}
-			/*
-			char have_thread_id;
-			char have_bkptno;
-			char have_exit_code;
-			char have_wpno;
-			*/
 			
 			mi_free_stop( stop );
 		}
@@ -120,8 +119,6 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 			}
 		}
 	}
-	
-	asyncCount++;
 }
 
 QGdbDriver::QGdbDriver()
@@ -280,11 +277,46 @@ void QGdbDriver::break_setBreakpoint( const QString& file, int line )
 	mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
 	Breakpoint bp( mbp );
 	mi_free_bkpt( mbp );
+	
+	// the breakpoint structure have null file_asb :/
+	if ( bp.absolute_file.isEmpty() )
+	{
+		bp.absolute_file = filePath( bp.file );
+	}
+	
+	mBreakpoints << bp;
 	emit breakpointAdded( bp );
 }
 
-void QGdbDriver::break_breakpointToggled( const QString& file, int line )
+void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& remove )
 {
+	for ( int i = 0; i < mBreakpoints.count(); i++ )
+	{
+		Breakpoint& bp = mBreakpoints[ i ];
+		
+		if ( bp.absolute_file == file && bp.line == line )
+		{
+			if ( mState == QGdbDriver::TARGET_SETTED || mState == QGdbDriver::RUNNING )
+			{
+				int res = gmi_break_delete( mHandle, bp.number );
+				
+				if ( res != 0 )
+				{
+					emit breakpointRemoved( bp );
+					mBreakpoints.removeAt( i );
+					remove = true;
+				}
+			}
+			else
+			{
+				remove = false;
+			}
+			
+			return;
+		}
+	}
+	
+	remove = false;
 	break_setBreakpoint( file, line );
 }
 
@@ -296,16 +328,9 @@ void QGdbDriver::onGdbTouchTimerTick ()
 	}
 }
 
-void QGdbDriver::getCallStack( mi_stop* stop )
+QGdbDriver::CallStack QGdbDriver::getCallStack( mi_frames* mframe )
 {
 	CallStack stack;
-	mi_frames* mframe = stop->frame;
-	
-	if ( !mframe )
-	{
-		emit callStackUpdated( stack );
-		return;
-	}
 	
 	while ( mframe )
 	{
@@ -334,6 +359,16 @@ void QGdbDriver::getCallStack( mi_stop* stop )
 		mframe = mframe->next;
 	}
 	
+	return stack;
+}
+
+void QGdbDriver::updateCallStack( mi_stop* stop )
+{
+	mi_frames* mframe = stop->frame;
+	CallStack stack = getCallStack( mframe );
+	
+	emit callStackUpdated( stack );
+	
 	if ( !stack.isEmpty() )
 	{
 		Frame& frame = stack.first();
@@ -343,12 +378,62 @@ void QGdbDriver::getCallStack( mi_stop* stop )
 			emit positionChanged( frame.full, frame.line );
 		}
 	}
+}
+
+void QGdbDriver::updateFullCallStack()
+{
+	if ( mState != QGdbDriver::STOPPED )
+	{
+		return;
+	}
+	
+	mi_frames* mframe = gmi_stack_list_frames( mHandle );
+	
+	if ( mframe )
+	{
+		mi_frames* args = gmi_stack_list_arguments( mHandle, 1  );
+		
+		if ( args )
+		{
+			mi_frames* p = mframe;
+			mi_frames* p2 = args;
+			
+			while ( p2 && p )
+			{
+				p->args = p2->args;
+				p2->args = NULL;
+				p2 = p2->next;
+				p = p->next;
+			}
+			
+			mi_free_frames( args );
+		}
+	}
+	
+	CallStack stack = getCallStack( mframe );
+	
+	mi_free_frames( mframe );
 	
 	emit callStackUpdated( stack );
+	
+	if ( !stack.isEmpty() )
+	{
+		Frame& frame = stack.first();
+		
+		if ( !frame.file.isEmpty() )
+		{
+			emit positionChanged( frame.full, frame.line );
+		}
+	}
 }
 
 void QGdbDriver::setState( QGdbDriver::State state )
 {
 	mState = state;
 	emit stateChanged( mState );
+}
+
+void QGdbDriver::delayedCall( const char* member )
+{
+	QTimer::singleShot( 50, this, member );
 }

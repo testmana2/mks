@@ -23,10 +23,20 @@ MainWindow::MainWindow( QWidget* parent )
 	mStatusLabel = new QLabel();
 	
 	QMainWindow::statusBar()->addWidget (mStatusLabel);
+	
+	setDockOptions( AnimatedDocks | AllowNestedDocks | AllowTabbedDocks );
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::loadTarget( const QString& fileName )
+{
+	if ( QFile::exists( fileName ) )
+	{
+		emit loadTargetRequested( fileName );
+	}
 }
 
 void MainWindow::loadTargetTriggered()
