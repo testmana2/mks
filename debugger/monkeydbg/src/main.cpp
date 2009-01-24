@@ -47,6 +47,8 @@ int main( int argc, char** argv )
 	// driver -> window
 	QObject::connect (&debugger, SIGNAL (callbackMessage(const QString&, QGdbDriver::CBType)),
 						&window, SLOT (onDebuggerCallbackMessage (const QString&, QGdbDriver::CBType)));
+	QObject::connect (&debugger, SIGNAL (exitSignalReceived( const QGdbDriver::Signal& )),
+						&window, SLOT (onDebuggerExitSignalReceived( const QGdbDriver::Signal& )));
 	QObject::connect (&debugger, SIGNAL (signalReceived( const QGdbDriver::Signal& )),
 						&window, SLOT (onDebuggerSignalReceived( const QGdbDriver::Signal& )));
 	QObject::connect (&debugger, SIGNAL (stateChanged (QGdbDriver::State)),

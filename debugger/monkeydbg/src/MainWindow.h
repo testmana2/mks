@@ -28,6 +28,7 @@ public slots:
 	void appendConsole( const QString& msg );
 	void appendPipe( const QString& msg );
 	void onDebuggerCallbackMessage( const QString& message, QGdbDriver::CBType type );
+	void onDebuggerExitSignalReceived( const QGdbDriver::Signal& signal );
 	void onDebuggerSignalReceived( const QGdbDriver::Signal& signal );
 	void onDebuggerStateChanged (QGdbDriver::State);
 	
