@@ -66,16 +66,16 @@ int main( int argc, char** argv )
 					&debugger, SLOT (exec_pause ())); 
 	QObject::connect (&window, SIGNAL (exec_killTriggered ()),
 					&debugger, SLOT (exec_kill ())); 
-	QObject::connect( &window, SIGNAL( breakpointToggled( const QString&, int ) ), 
-					&debugger, SLOT( break_breakpointToggled( const QString&, int ) ) );
+	QObject::connect( &window, SIGNAL( breakpointToggled( const QString&, int, bool& ) ), 
+					&debugger, SLOT( break_breakpointToggled( const QString&, int, bool& ) ) );
 	
 	// driver -> filemanager
 	QObject::connect (&debugger, SIGNAL (positionChanged (const QString&, int)),
 					&fileManager, SLOT (gotoFileLine (const QString&, int)));
 	
 	// filemanager -> window
-	QObject::connect( &fileManager, SIGNAL( breakpointToggled( const QString&, int ) ), 
-						&window, SIGNAL( breakpointToggled( const QString&, int ) ) );
+	QObject::connect( &fileManager, SIGNAL( breakpointToggled( const QString&, int, bool& ) ), 
+						&window, SIGNAL( breakpointToggled( const QString&, int, bool& ) ) );
 	
 	// window -> filemanager
 	QObject::connect( &window, SIGNAL( openFileTriggered() ), 
@@ -91,7 +91,11 @@ int main( int argc, char** argv )
 			QMessageBox::critical( 0, QObject::tr( "Invalid parameter" ), QObject::tr( "%1 is not a executable file" ).arg( argv[1] ) );
 	}
 	
-	window.show();
+	// speed hack
+	window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
+	fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
+	
+	window.showMaximized();
 	
 	return app.exec();
 }

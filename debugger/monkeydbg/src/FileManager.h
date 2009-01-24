@@ -19,17 +19,17 @@ public slots:
 	void closeFileTriggered ();
 	
 	void gotoFileLine( const QString& file, int line );
+	
+	QsciScintilla* openFile( const QString& fileName ); // was protected, moved for hack
 
 protected slots:
 	void marginClicked( int margin, int line, Qt::KeyboardModifiers state );
 
 protected:
 	QMdiArea* mMdiArea;
-	
-	QsciScintilla* openFile( const QString& fileName );
 
 signals:
-	void breakpointToggled( const QString& fileName, int line );
+	void breakpointToggled( const QString& fileName, int line, bool& remove );
 };
 
 #endif // FILEMANAGER_H

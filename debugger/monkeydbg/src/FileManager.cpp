@@ -67,9 +67,17 @@ void FileManager::marginClicked( int margin, int line, Qt::KeyboardModifiers sta
 		QMdiSubWindow* window = mMdiArea->activeSubWindow();
 		QsciScintilla* editor = qobject_cast<QsciScintilla*>( window->widget() );
 		
-		editor->markerAdd( line, pEditor::mdEnabledBreak );
+		bool remove;
+		emit breakpointToggled( window->windowFilePath(), line +1, remove );
 		
-		emit breakpointToggled( window->windowFilePath(), line +1 );
+		if ( remove )
+		{
+			editor->markerDelete( line, pEditor::mdEnabledBreak );
+		}
+		else
+		{
+			editor->markerAdd( line, pEditor::mdEnabledBreak );
+		}
 	}
 }
 

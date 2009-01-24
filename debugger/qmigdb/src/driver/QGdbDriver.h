@@ -202,7 +202,7 @@ public slots:
 	
 	// breakpoints
 	void break_setBreakpoint( const QString& file, int line );
-	void break_breakpointToggled( const QString& file, int line );
+	void break_breakpointToggled( const QString& file, int line, bool& remove );
 	
 protected:
 	State mState;
@@ -210,6 +210,7 @@ protected:
 	mi_aux_term* mXterm;
 	QTimer mGdbPingTimer;
 	QString mTargetFileName;
+	BreakpointsList mBreakpoints;
 	
 	// migdb callbacks
 	static void callbackConsole (const char *, void *);
@@ -219,17 +220,23 @@ protected:
 	static void callbackFromGDB (const char *str, void *);
 	static void callbackAsync (mi_output * o, void * debuggerInstance);
 	
-	void setState (State);
+	void setState( State );
+	void delayedCall( const char* member );
+	
 protected slots:
 	// touches gdb for make it alive
 	// Without it we haven't callbacks
 	void onGdbTouchTimerTick();
-	void getCallStack( mi_stop* stop );
+	QGdbDriver::CallStack getCallStack( mi_frames* mframe );
+	void updateCallStack( mi_stop* stop );
+	void updateFullCallStack();
 	
 signals:
 	void callbackMessage( const QString& message, QGdbDriver::CBType type );
 	void stateChanged( QGdbDriver::State state );
 	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
+	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
+	void breakpointUpdated( const QGdbDriver::Breakpoint& breakpoint );
 	
 	void callStackUpdated( const QGdbDriver::CallStack& stack );
 	void positionChanged (const QString& fileName, int line); // should be renamed ?
