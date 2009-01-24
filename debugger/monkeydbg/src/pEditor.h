@@ -102,6 +102,8 @@ public slots:
 	void invokeGoToLine();
 	void convertTabs();
 	void makeBackup();
+	void clearDebuggerPosition();
+	void setDebuggerPosition( int line );
 
 signals:
 	void cursorPositionChanged( const QPoint& );

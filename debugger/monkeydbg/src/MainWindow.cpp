@@ -130,6 +130,8 @@ void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 			actionPause->setEnabled (false);
 			actionKill->setEnabled (false);
 			mStatusLabel->setText (tr("Target loaded"));
+			
+			emit clearDebuggerPositionRequested();
 		break;
 		case QGdbDriver::RUNNING:
 			actionRun->setEnabled (true);

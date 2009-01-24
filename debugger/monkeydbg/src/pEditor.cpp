@@ -518,3 +518,14 @@ void pEditor::makeBackup()
 
 	QFile::copy( f.absoluteFilePath(), s );
 }
+
+void pEditor::clearDebuggerPosition()
+{
+	markerDeleteAll( pEditor::mdPlay );
+}
+
+void pEditor::setDebuggerPosition( int line )
+{
+	setCursorPosition( line, 0 );
+	markerAdd( line, pEditor::mdPlay );
+}

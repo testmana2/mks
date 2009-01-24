@@ -34,6 +34,7 @@ public slots:
 	
 signals:
 	void breakpointToggled( const QString& fileName, int line, bool& remove );
+	void clearDebuggerPositionRequested();
 	
 	// api
 	void loadTargetRequested (const QString& fileName);
