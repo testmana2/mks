@@ -75,7 +75,7 @@ int main( int argc, char** argv )
 	
 	// driver -> filemanager
 	QObject::connect (&debugger, SIGNAL (positionChanged (const QString&, int)),
-					&fileManager, SLOT (gotoFileLine (const QString&, int)));
+					&fileManager, SLOT (setDebuggerPosition (const QString&, int)));
 	
 	// filemanager -> window
 	QObject::connect( &fileManager, SIGNAL( breakpointToggled( const QString&, int, bool& ) ), 
@@ -86,6 +86,8 @@ int main( int argc, char** argv )
 					&fileManager, SLOT( openFileTriggered() ) );
 	QObject::connect( &window, SIGNAL( closeFileTriggered() ), 
 					&fileManager, SLOT( closeFileTriggered() ) );
+	QObject::connect( &window, SIGNAL( clearDebuggerPositionRequested() ), 
+					&fileManager, SLOT( clearDebuggerPosition() ) );
 		
 	if ( argc == 2 )
 	{

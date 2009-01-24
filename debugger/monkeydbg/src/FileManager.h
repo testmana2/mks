@@ -4,7 +4,7 @@
 #include <QObject>
 
 class QMdiArea;
-class QsciScintilla;
+class pEditor;
 
 class FileManager : public QObject
 {
@@ -18,9 +18,10 @@ public slots:
 	void openFileTriggered ();
 	void closeFileTriggered ();
 	
-	void gotoFileLine( const QString& file, int line );
+	void clearDebuggerPosition();
+	void setDebuggerPosition( const QString& file, int line );
 	
-	QsciScintilla* openFile( const QString& fileName ); // was protected, moved for hack
+	pEditor* openFile( const QString& fileName ); // was protected, moved for hack
 
 protected slots:
 	void marginClicked( int margin, int line, Qt::KeyboardModifiers state );
