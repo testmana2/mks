@@ -5,6 +5,8 @@
 #include "QGdbDriver.h"
 #include <QDebug>
 
+int QGdbDriver::Breakpoint::fakeAutoNumber = 0;
+
 // Callbacks of debugger
 void QGdbDriver::callbackConsole( const char* str, void* data )
 {
@@ -95,6 +97,7 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 				case sr_end_stepping_range:
 					break;
 				case sr_exited_signalled:
+					emit driver->exitSignalReceived( Signal( stop ) );
 					break;
 				case sr_exited:
 					emit driver->exited( stop->exit_code );
@@ -270,19 +273,29 @@ void QGdbDriver::exec_kill()
 
 void QGdbDriver::break_setBreakpoint( const QString& file, int line )
 {
+	Breakpoint bp;
+	
 	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::TARGET_SETTED )
 	{
-		return;
+		bp.absolute_file = file;
 	}
-	
-	mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
-	Breakpoint bp( mbp );
-	mi_free_bkpt( mbp );
+	else
+	{
+		mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
+		bp = Breakpoint( mbp );
+		mi_free_bkpt( mbp );
+	}
 	
 	// the breakpoint structure have null file_asb :/
 	if ( bp.absolute_file.isEmpty() )
 	{
-		bp.absolute_file = filePath( bp.file );
+		bp.absolute_file = file;
+	}
+	
+	// on multiple location, line is incorrect ( = 0 )
+	if ( bp.line != line )
+	{
+		bp.line = line;
 	}
 	
 	mBreakpoints << bp;
@@ -295,10 +308,15 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& r
 	{
 		Breakpoint& bp = mBreakpoints[ i ];
 		
+		qWarning() << "bp" << bp.absolute_file << bp.line;
+		qWarning() << "check" << file << line;
+		
+		
 		if ( bp.absolute_file == file && bp.line == line )
 		{
 			if ( mState == QGdbDriver::TARGET_SETTED || mState == QGdbDriver::RUNNING )
 			{
+			qWarning( "remove" );
 				int res = gmi_break_delete( mHandle, bp.number );
 				
 				if ( res != 0 )

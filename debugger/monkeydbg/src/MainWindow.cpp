@@ -87,6 +87,11 @@ void MainWindow::onDebuggerCallbackMessage( const QString& message, QGdbDriver::
 	}
 }
 
+void MainWindow::onDebuggerExitSignalReceived( const QGdbDriver::Signal& signal )
+{
+	QMessageBox::critical( window(), tr( "Signal received" ), tr( "Program exited signal %1, %2" ).arg( signal.name ).arg( signal.meaning ) );
+}
+
 void MainWindow::onDebuggerSignalReceived( const QGdbDriver::Signal& signal )
 {
 	QMessageBox::critical( window(), tr( "Signal received" ), tr( "Program received signal %1, %2" ).arg( signal.name ).arg( signal.meaning ) );

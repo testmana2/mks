@@ -52,25 +52,30 @@ public:
 	{
 		Breakpoint( mi_bkpt* bp = 0 )
 		{
-			if ( !bp )
+			if ( bp )
 			{
-				return;
+				number = bp->number;
+				type = bp->type;
+				disp = bp->disp;
+				enabled = bp->enabled;
+				addr = bp->addr;
+				function = bp->func;
+				file = bp->file;
+				line = bp->line;
+				ignore = bp->ignore;
+				times = bp->times;
+				condition = bp->cond;
+				absolute_file = bp->file_abs;
+				thread = bp->thread;
+				mode = bp->mode;
+			}
+			else
+			{
+				number = -1; // mean target not yet specified, will be created at target setted
+				addr = 0;
 			}
 			
-			number = bp->number;
-			type = bp->type;
-			disp = bp->disp;
-			enabled = bp->enabled;
-			addr = bp->addr;
-			function = bp->func;
-			file = bp->file;
-			line = bp->line;
-			ignore = bp->ignore;
-			times = bp->times;
-			condition = bp->cond;
-			absolute_file = bp->file_abs;
-			thread = bp->thread;
-			mode = bp->mode;
+			fakeNumber = fakeAutoNumber++;
 		}
 		
 		QString stringType() const
@@ -155,6 +160,7 @@ public:
 		}
 
 		int number;
+		int fakeNumber;
 		mi_bkp_type type;
 		mi_bkp_disp disp;
 		bool enabled;
@@ -168,6 +174,8 @@ public:
 		QString absolute_file;
 		int thread;
 		mi_bkp_mode mode;
+		
+		static int fakeAutoNumber;
 	};
 	typedef QList<Breakpoint> BreakpointsList;
 	
@@ -249,6 +257,7 @@ protected slots:
 signals:
 	void callbackMessage( const QString& message, QGdbDriver::CBType type );
 	void stateChanged( QGdbDriver::State state );
+	void exitSignalReceived( const QGdbDriver::Signal& signal );
 	void signalReceived( const QGdbDriver::Signal& signal );
 	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
