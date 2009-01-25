@@ -215,13 +215,14 @@ public slots:
 #if 0
 	void exec_setArgs (const QString& args);
 #endif
-	void exec_run();
-	void exec_continue();
-	void exec_stepInto();
-	void exec_stepOver();
-	void exec_stepOut();
-	void exec_pause();
-	void exec_kill();
+	int runToMain();
+	int exec_run();
+	int exec_continue();
+	int exec_stepInto( bool instruction = false );
+	int exec_stepOver( bool instruction = false );
+	int exec_stepOut();
+	int exec_pause();
+	int exec_kill();
 	
 	// breakpoints
 	bool break_setBreakpoint( const QString& file, int line );
@@ -233,6 +234,7 @@ protected:
 	mi_aux_term* mXterm;
 	QTimer mGdbPingTimer;
 	QString mTargetFileName;
+	bool mWaitingTempBreakpoint;
 	BreakpointsList mBreakpoints;
 	
 	// migdb callbacks

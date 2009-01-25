@@ -51,9 +51,9 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 		
 		if ( stop )
 		{
-			if ( stop->reason == sr_unknown /*&& waitingTempBkpt*/ )
+			if ( stop->reason == sr_unknown && driver->mWaitingTempBreakpoint )
 			{
-				//waitingTempBkpt = 0;
+				driver->mWaitingTempBreakpoint = false;
 				stop->reason = sr_bkpt_hit;
 			}
 			
@@ -130,6 +130,7 @@ QGdbDriver::QGdbDriver()
 {
 	mState = QGdbDriver::DISCONNECTED;
 	mHandle = 0;
+	mWaitingTempBreakpoint = false;
 	
 	mHandle	= mi_connect_local();
 	
@@ -216,59 +217,192 @@ void QGdbDriver::exec_setCommand( const QString& command )
 	}
 #endif
 
-void QGdbDriver::exec_run()
+int QGdbDriver::runToMain() // ok, need maybe rewrite ( breakpoint )
 {
-	int res = 0;
-	res = gmi_exec_run( mHandle );
-	Q_ASSERT( res );
-	setState( QGdbDriver::RUNNING );
+	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::TARGET_SETTED )
+	{
+		return 0;
+	}
+	
+	mi_bkpt* bp = gmi_break_insert_full( mHandle, true, false, 0, -1, -1, mi_get_main_func() );
+	
+	if ( !bp )
+	{
+		return 0;
+	}
+	
+	mi_free_bkpt( bp );
+	
+	mWaitingTempBreakpoint = true;
+	
+	return exec_run();
 }
 
-void QGdbDriver::exec_continue()
+int QGdbDriver::exec_run() // ok
 {
-	int res = 0;
-	res = gmi_exec_continue (mHandle);
-	Q_ASSERT (res);
-	setState( QGdbDriver::RUNNING );
+	if ( mState != QGdbDriver::TARGET_SETTED )
+	{
+		return 0;
+	}
+	
+	int res = gmi_exec_run( mHandle );
+	
+	if ( res != 0 )
+	{
+		setState( QGdbDriver::RUNNING );
+	}
+	
+	return res;
 }
 
-void QGdbDriver::exec_stepInto()
+int QGdbDriver::exec_continue() // ok
 {
-	int res = 0;
-	res = gmi_exec_step (mHandle);
-	Q_ASSERT (res);
-	setState( QGdbDriver::RUNNING );
+	if ( mState != QGdbDriver::STOPPED )
+	{
+		return 0;
+	}
+	
+	int res = gmi_exec_continue( mHandle );
+	
+	if ( res != 0 )
+	{
+		setState( QGdbDriver::RUNNING );
+	}
+	
+	return res;
 }
 
-void QGdbDriver::exec_stepOver()
+int QGdbDriver::exec_stepInto( bool instruction ) // ok
 {
 	int res = 0;
-	res = gmi_exec_next (mHandle);
-	Q_ASSERT (res);
-	setState( QGdbDriver::RUNNING );
+	
+	if ( mState == QGdbDriver::TARGET_SETTED )
+	{
+		return runToMain();
+	}
+	
+	if ( mState == QGdbDriver::STOPPED )
+	{
+		if ( instruction )
+		{
+			res = gmi_exec_step_instruction( mHandle );
+		}
+		else
+		{
+			res = gmi_exec_step( mHandle );
+		}
+		
+		if ( res != 0 )
+		{
+			setState( QGdbDriver::RUNNING );
+		}
+	}
+	
+	return res;
 }
 
-void QGdbDriver::exec_stepOut()
+int QGdbDriver::exec_stepOver( bool instruction ) // ok
 {
 	int res = 0;
-	res = gmi_exec_finish (mHandle);
-	Q_ASSERT (res);
-	setState( QGdbDriver::RUNNING );
+
+	if ( mState == QGdbDriver::TARGET_SETTED )
+	{
+		return runToMain();
+	}
+	
+	if ( mState == QGdbDriver::STOPPED )
+	{
+		if ( instruction )
+		{
+			res = gmi_exec_next_instruction( mHandle );
+		}
+		else
+		{
+			res = gmi_exec_next( mHandle );
+		}
+		
+		if ( res != 0 )
+		{
+			setState( QGdbDriver::RUNNING );
+		}
+	}
+	
+	return res;
 }
 
-void QGdbDriver::exec_pause()
+int QGdbDriver::exec_stepOut() // ok
 {
-	int res = 0;
-	res = gmi_exec_interrupt (mHandle);
-	Q_ASSERT (res);
+	if ( mState != QGdbDriver::STOPPED )
+	{
+		return 0;
+	}
+	
+	int res = gmi_exec_finish( mHandle );
+	
+	if ( res != 0 )
+	{
+		setState( QGdbDriver::RUNNING );
+	}
+	
+	return res;
 }
 
-void QGdbDriver::exec_kill()
+int QGdbDriver::exec_pause() // ok
 {
-	int res = 0;
-	res = gmi_exec_kill (mHandle);
-	Q_ASSERT (res);
-	setState( QGdbDriver::TARGET_SETTED );
+	if ( mState != QGdbDriver::RUNNING )
+	{
+		return 0;
+	}
+	
+	return gmi_exec_interrupt( mHandle );
+}
+
+int QGdbDriver::exec_kill() // ok
+{
+	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::RUNNING )
+	{
+		return 0;
+	}
+	
+	// GDB/MI doesn't implement it (yet), so we use the regular kill.
+	// Ensure confirm is off.
+	char* prev = gmi_gdb_show( mHandle, "confirm" );
+	
+	if ( !prev )
+	{
+		return 0;
+	}
+	
+	if ( strcmp( prev, "off" ) )
+	{
+		if ( !gmi_gdb_set( mHandle, "confirm", "off" ) )
+		{
+			free( prev );
+			return 0;
+		}
+	}
+	else
+	{
+		free( prev );
+		prev = 0;
+	}
+	
+	// do real kill
+	int res = gmi_exec_kill( mHandle );
+	
+	// Revert confirm option if needed.
+	if ( prev )
+	{
+		gmi_gdb_set( mHandle, "confirm", prev );
+		free( prev );
+	}
+	
+	if ( res != 0 )
+	{
+		setState( QGdbDriver::TARGET_SETTED );
+	}
+	
+	return res;
 }
 
 bool QGdbDriver::break_setBreakpoint( const QString& file, int line )
