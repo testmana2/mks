@@ -65,6 +65,8 @@ void FileManager::setDebuggerPosition( const QString& fileName, int line )
 	
 	if ( editor )
 	{
+		QMdiSubWindow* window = qobject_cast<QMdiSubWindow*>( editor->parentWidget() );
+		mMdiArea->setActiveSubWindow( window );
 		editor->setDebuggerPosition( line -1 );
 	}
 }
