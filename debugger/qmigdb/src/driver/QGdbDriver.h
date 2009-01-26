@@ -72,10 +72,25 @@ public:
 			else
 			{
 				number = -1; // mean target not yet specified, will be created at target setted
+				enabled = true;
 				addr = 0;
 			}
-			
-			fakeNumber = fakeAutoNumber++;
+		}
+		
+		bool operator==( const Breakpoint& other ) const
+		{
+			return number == other.number && type == other.type &&
+				disp == other.disp && enabled == other.enabled &&
+				addr == other.addr && function == other.function &&
+				file == other.file && line == other.line &&
+				ignore == other.ignore && times == other.times &&
+				condition == other.condition && absolute_file == other.absolute_file &&
+				thread == other.thread && mode == other.mode;
+		}
+		
+		bool operator!=( const Breakpoint& other ) const
+		{
+			return !operator==( other );
 		}
 		
 		QString stringType() const
@@ -137,13 +152,14 @@ public:
 		
 		QString textMode() const
 		{
+			const QString tFile = file.isEmpty() ? absolute_file : file;
 			bool functionEmpty = function.isEmpty();
-			bool fileEmpty = file.isEmpty();
+			bool fileEmpty = tFile.isEmpty();
 			QString text;
 			
 			if ( !functionEmpty && !fileEmpty )
 			{
-				text = tr( "%1 in %2" ).arg( function ).arg( file );
+				text = tr( "%1 in %2" ).arg( function ).arg( tFile );
 			}
 			else if ( !functionEmpty )
 			{
@@ -151,16 +167,15 @@ public:
 			}
 			else if ( !fileEmpty )
 			{
-				text = file;
+				text = tFile;
 			}
 			
-			text += QString( " (%1)" ).arg( (quintptr)addr );
+			text += QString( " (%1)" ).arg( (quintptr)addr, 16 );
 			
 			return text.trimmed();
 		}
 
 		int number;
-		int fakeNumber;
 		mi_bkp_type type;
 		mi_bkp_disp disp;
 		bool enabled;
@@ -174,8 +189,6 @@ public:
 		QString absolute_file;
 		int thread;
 		mi_bkp_mode mode;
-		
-		static int fakeAutoNumber;
 	};
 	typedef QList<Breakpoint> BreakpointsList;
 	
@@ -203,6 +216,8 @@ public:
 	virtual ~QGdbDriver();
 	
 	QString filePath( const QString& fileName ) const;
+	
+	QStringList sourcesPath() const;
 
 public slots:
 	void log( const QString& msg );
@@ -212,9 +227,8 @@ public slots:
 	// target execution
 	
 	void exec_setCommand (const QString& command);
-#if 0
-	void exec_setArgs (const QString& args);
-#endif
+	//void exec_setArgs (const QString& args);
+	
 	int runToMain();
 	int exec_run();
 	int exec_continue();
@@ -227,6 +241,7 @@ public slots:
 	// breakpoints
 	bool break_setBreakpoint( const QString& file, int line );
 	void break_breakpointToggled( const QString& file, int line, bool& remove );
+	void clearBreakpoints();
 	
 protected:
 	State mState;
@@ -252,6 +267,7 @@ protected slots:
 	// touches gdb for make it alive
 	// Without it we haven't callbacks
 	void onGdbTouchTimerTick();
+	void sendFakeBreakpoints();
 	void generateCallStack( mi_frames* mframe );
 	void updateCallStack( mi_stop* stop );
 	void updateFullCallStack();
@@ -264,6 +280,7 @@ signals:
 	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointUpdated( const QGdbDriver::Breakpoint& breakpoint );
+	void breakpointsCleared();
 	void callStackUpdated( const QGdbDriver::CallStack& stack, int selectedLevel );
 	void positionChanged (const QString& fileName, int line); // should be renamed ?
 	void exited( int code );

@@ -18,6 +18,7 @@ public slots:
 	void openFileTriggered ();
 	void closeFileTriggered ();
 	
+	void clearBreakpoints();
 	void clearDebuggerPosition();
 	void setDebuggerPosition( const QString& file, int line );
 	

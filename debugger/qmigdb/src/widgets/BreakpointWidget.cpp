@@ -11,6 +11,7 @@ BreakpointWidget::BreakpointWidget( QGdbDriver* driver, QWidget* parent )
 	connect( driver, SIGNAL( breakpointAdded( const QGdbDriver::Breakpoint& ) ), this, SLOT( breakpointAdded( const QGdbDriver::Breakpoint& ) ) );
 	connect( driver, SIGNAL( breakpointRemoved( const QGdbDriver::Breakpoint& ) ), this, SLOT( breakpointRemoved( const QGdbDriver::Breakpoint& ) ) );
 	connect( driver, SIGNAL( breakpointUpdated( const QGdbDriver::Breakpoint& ) ), this, SLOT( breakpointUpdated( const QGdbDriver::Breakpoint& ) ) );
+	connect( driver, SIGNAL( breakpointsCleared() ), this, SLOT( breakpointsCleared() ) );
 }
 
 BreakpointWidget::~BreakpointWidget()
@@ -51,6 +52,11 @@ void BreakpointWidget::breakpointUpdated( const QGdbDriver::Breakpoint& breakpoi
 			return;
 		}
 	}
+}
+
+void BreakpointWidget::breakpointsCleared()
+{
+	clear();
 }
 
 void BreakpointWidget::updateItem( QTreeWidgetItem* item, const QGdbDriver::Breakpoint& breakpoint )
