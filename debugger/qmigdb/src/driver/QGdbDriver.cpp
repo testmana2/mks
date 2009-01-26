@@ -415,7 +415,7 @@ bool QGdbDriver::break_setBreakpoint( const QString& file, int line )
 	}
 	else
 	{
-		mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
+		mi_bkpt* mbp = gmi_break_insert( mHandle, targetDirRelativeFileName.toLocal8Bit(), line );
 		
 		if ( !mbp )
 		{
