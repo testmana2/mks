@@ -408,15 +408,14 @@ int QGdbDriver::exec_kill() // ok
 bool QGdbDriver::break_setBreakpoint( const QString& file, int line )
 {
 	Breakpoint bp;
-	QDir targetDir = QDir (QFileInfo (mTargetFileName).canonicalPath());
-	QString targetDirRelativeFileName = targetDir.relativeFilePath (QFileInfo (file).absoluteFilePath());
+	
 	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::TARGET_SETTED )
 	{
 		bp.absolute_file = file;
 	}
 	else
 	{
-		mi_bkpt* mbp = gmi_break_insert( mHandle, targetDirRelativeFileName.toLocal8Bit(), line );
+		mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
 		
 		if ( !mbp )
 		{
