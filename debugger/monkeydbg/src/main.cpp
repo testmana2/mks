@@ -76,6 +76,8 @@ int main( int argc, char** argv )
 	// driver -> filemanager
 	QObject::connect (&debugger, SIGNAL (positionChanged (const QString&, int)),
 					&fileManager, SLOT (setDebuggerPosition (const QString&, int)));
+	QObject::connect (&debugger, SIGNAL (breakpointsCleared ()),
+					&fileManager, SLOT (clearBreakpoints ()));
 	
 	// filemanager -> window
 	QObject::connect( &fileManager, SIGNAL( breakpointToggled( const QString&, int, bool& ) ), 
@@ -98,7 +100,7 @@ int main( int argc, char** argv )
 	}
 	
 	// speed hack
-	window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
+	//window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
 	fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
 	
 	window.showMaximized();

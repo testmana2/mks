@@ -35,6 +35,15 @@ void FileManager::closeFileTriggered ()
 	mMdiArea->closeActiveSubWindow ();
 }
 
+void FileManager::clearBreakpoints()
+{
+	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )
+	{
+		pEditor* editor = qobject_cast<pEditor*>( window->widget() );
+		editor->clearBreakpoints();
+	}
+}
+
 void FileManager::clearDebuggerPosition()
 {
 	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )

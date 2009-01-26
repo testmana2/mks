@@ -5,8 +5,6 @@
 #include "QGdbDriver.h"
 #include <QDebug>
 
-int QGdbDriver::Breakpoint::fakeAutoNumber = 0;
-
 // Callbacks of debugger
 void QGdbDriver::callbackConsole( const char* str, void* data )
 {
@@ -156,8 +154,8 @@ QGdbDriver::QGdbDriver()
 
 QGdbDriver::~QGdbDriver()
 {
-	gmi_gdb_exit(mHandle);
-	mi_disconnect(mHandle);
+	gmi_gdb_exit( mHandle );
+	mi_disconnect( mHandle );
 }
 
 QString QGdbDriver::filePath( const QString& fileName ) const
@@ -178,6 +176,21 @@ QString QGdbDriver::filePath( const QString& fileName ) const
 	return QDir::toNativeSeparators( fileName );
 }
 
+QStringList QGdbDriver::sourcesPath() const // need fix, it allow to found sources path gdb look for when searching a file.
+{
+	char* tmp = gmi_gdb_show( mHandle, "directories" );
+	QStringList directories = QString::fromLocal8Bit( tmp ).remove( "\\n" ).split( ":" );
+	
+	qWarning() << "test" << tmp;
+	
+	if ( tmp )
+	{
+		free( tmp );
+	}
+	
+	return directories;
+}
+
 void QGdbDriver::log( const QString& msg )
 {
 	emit callbackMessage( msg, QGdbDriver::LOG );
@@ -192,30 +205,42 @@ void QGdbDriver::prepare_startXterm ()
 	Q_ASSERT (res != 0);
 }
 
-void QGdbDriver::exec_setCommand( const QString& command )
+void QGdbDriver::exec_setCommand( const QString& command ) // ok
 {
+	if ( !mTargetFileName.isEmpty() )
+	{
+		clearBreakpoints();
+	}
+	
 	int res = 0;
 	res = gmi_set_exec( mHandle, command.toLocal8Bit().constData(), 0 );
 	
 	if ( res != 0 )
 	{
 		mTargetFileName = command;
+		
 		setState( QGdbDriver::TARGET_SETTED );
+		sendFakeBreakpoints();
+		
+		qWarning() << "paths" << sourcesPath();
 	}
 	else
 	{
-		QMessageBox::critical( NULL, tr( "Failed to load target" ), tr( "GDB error: " ) +mi_get_error_str() );
+		QMessageBox::critical( 0, tr( "Failed to load target" ), tr( "GDB error: " ) +mi_get_error_str() );
 	}
 }
-
-#if 0
-	void QGdbDriver::exec_setArgs (const QString& args)
+/*
+void QGdbDriver::exec_setArgs( const QString& args )
+{
+	if ( mState != QGdbDriver::TARGET_SETTED )
 	{
-		int res = 0;
-		res = gmi_set_exec(mHandle, command.toLocal8Bit(), args.toLocal8Bit());
-		Q_ASSERT (res != 0);
+		return 0;
 	}
-#endif
+	
+	int res = gmi_set_exec( mHandle, mTargetFileName.toLocal8Bit(), args.toLocal8Bit() );
+	Q_ASSERT (res != 0);
+}
+*/
 
 int QGdbDriver::runToMain() // ok, need maybe rewrite ( breakpoint )
 {
@@ -452,9 +477,9 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& r
 		
 		if ( bp.absolute_file == file && bp.line == line )
 		{
-			if ( mState == QGdbDriver::TARGET_SETTED || mState == QGdbDriver::RUNNING )
+			if ( ( bp.number == -1 ) || ( mState == QGdbDriver::TARGET_SETTED || mState == QGdbDriver::RUNNING ) )
 			{
-				int res = gmi_break_delete( mHandle, bp.number );
+				int res = bp.number == -1 ? 1 : gmi_break_delete( mHandle, bp.number );
 				
 				if ( res != 0 )
 				{
@@ -475,11 +500,45 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& r
 	remove = !break_setBreakpoint( file, line );
 }
 
+void QGdbDriver::clearBreakpoints()
+{
+	foreach ( const Breakpoint& bp, mBreakpoints )
+	{
+		if ( bp.number != -1 )
+		{
+			int res = gmi_break_delete( mHandle, bp.number );
+			
+			Q_ASSERT( res );
+			
+			emit breakpointRemoved( bp );
+			mBreakpoints.removeAll( bp );
+		}
+	}
+	
+	mBreakpoints.clear();
+	emit breakpointsCleared();
+}
+
 void QGdbDriver::onGdbTouchTimerTick ()
 {
 	if ( mi_get_response( mHandle ) )
 	{
 		log( "Async response in queue" );
+	}
+}
+
+void QGdbDriver::sendFakeBreakpoints()
+{
+	BreakpointsList bps = mBreakpoints;
+	
+	clearBreakpoints();
+	
+	foreach ( const Breakpoint& bp, bps )
+	{
+		if ( !break_setBreakpoint( bp.absolute_file, bp.line ) )
+		{
+			QMessageBox::critical( 0, tr( "Setting breakpoint error..." ), QString::fromLocal8Bit( mi_get_error_str() ) );
+		}
 	}
 }
 

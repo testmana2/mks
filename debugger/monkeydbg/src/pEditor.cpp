@@ -519,6 +519,14 @@ void pEditor::makeBackup()
 	QFile::copy( f.absoluteFilePath(), s );
 }
 
+void pEditor::clearBreakpoints()
+{
+	markerDeleteAll( pEditor::mdEnabledBreak );
+	markerDeleteAll( pEditor::mdDisabledBreak );
+	markerDeleteAll( pEditor::mdEnabledConditionalBreak );
+	markerDeleteAll( pEditor::mdDisabledConditionalBreak );
+}
+
 void pEditor::clearDebuggerPosition()
 {
 	markerDeleteAll( pEditor::mdPlay );
