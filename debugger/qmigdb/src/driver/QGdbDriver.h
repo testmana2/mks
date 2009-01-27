@@ -239,9 +239,9 @@ public slots:
 	int exec_kill();
 	
 	// breakpoints
-	bool break_setBreakpoint( const QString& file, int line );
-	void break_breakpointToggled( const QString& file, int line, bool& remove );
-	void clearBreakpoints();
+	int break_setBreakpoint( const QString& file, int line );
+	void break_breakpointToggled( const QString& file, int line );
+	void clearBreakpoints( int line = -1 );
 	
 protected:
 	State mState;
@@ -280,7 +280,7 @@ signals:
 	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointUpdated( const QGdbDriver::Breakpoint& breakpoint );
-	void breakpointsCleared();
+	void breakpointsCleared( const QString& fileName = QString::null, int line = -1 );
 	void callStackUpdated( const QGdbDriver::CallStack& stack, int selectedLevel );
 	void positionChanged (const QString& fileName, int line); // should be renamed ?
 	void exited( int code );

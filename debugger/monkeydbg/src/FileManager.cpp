@@ -35,12 +35,27 @@ void FileManager::closeFileTriggered ()
 	mMdiArea->closeActiveSubWindow ();
 }
 
-void FileManager::clearBreakpoints()
+void FileManager::clearBreakpoints( const QString& file, int line )
 {
 	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )
 	{
-		pEditor* editor = qobject_cast<pEditor*>( window->widget() );
-		editor->clearBreakpoints();
+		if ( window->windowFilePath() == file || file.isEmpty() )
+		{
+			pEditor* editor = qobject_cast<pEditor*>( window->widget() );
+			editor->clearBreakpoints( line );
+		}
+	}
+}
+
+void FileManager::setBreakpoint( const QString& file, int line, int type )
+{
+	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )
+	{
+		if ( window->windowFilePath() == file || file.isEmpty() )
+		{
+			pEditor* editor = qobject_cast<pEditor*>( window->widget() );
+			editor->setBreakpoint( line, type );
+		}
 	}
 }
 
@@ -80,6 +95,16 @@ void FileManager::setDebuggerPosition( const QString& fileName, int line )
 	}
 }
 
+void FileManager::breakpointAdded( const QGdbDriver::Breakpoint& breakpoint )
+{
+	setBreakpoint( breakpoint.absolute_file, breakpoint.line -1, 0 );
+}
+
+void FileManager::breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint )
+{
+	clearBreakpoints( breakpoint.absolute_file, breakpoint.line -1 );
+}
+
 void FileManager::marginClicked( int margin, int line, Qt::KeyboardModifiers state )
 {
 	Q_UNUSED( state );
@@ -87,19 +112,7 @@ void FileManager::marginClicked( int margin, int line, Qt::KeyboardModifiers sta
 	if ( margin == 1 )
 	{
 		QMdiSubWindow* window = mMdiArea->activeSubWindow();
-		QsciScintilla* editor = qobject_cast<QsciScintilla*>( window->widget() );
-		
-		bool remove;
-		emit breakpointToggled( window->windowFilePath(), line +1, remove );
-		
-		if ( remove )
-		{
-			editor->markerDelete( line, pEditor::mdEnabledBreak );
-		}
-		else
-		{
-			editor->markerAdd( line, pEditor::mdEnabledBreak );
-		}
+		emit breakpointToggled( window->windowFilePath(), line +1 );
 	}
 }
 

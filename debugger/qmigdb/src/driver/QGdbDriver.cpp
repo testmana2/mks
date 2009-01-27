@@ -430,8 +430,9 @@ int QGdbDriver::exec_kill() // ok
 	return res;
 }
 
-bool QGdbDriver::break_setBreakpoint( const QString& file, int line )
+int QGdbDriver::break_setBreakpoint( const QString& file, int line )
 {
+	int res = 0;
 	Breakpoint bp;
 	
 	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::TARGET_SETTED )
@@ -444,7 +445,7 @@ bool QGdbDriver::break_setBreakpoint( const QString& file, int line )
 		
 		if ( !mbp )
 		{
-			return false;
+			return res;
 		}
 		
 		bp = Breakpoint( mbp );
@@ -466,10 +467,10 @@ bool QGdbDriver::break_setBreakpoint( const QString& file, int line )
 	mBreakpoints << bp;
 	emit breakpointAdded( bp );
 	
-	return true;
+	return 1;
 }
 
-void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& remove )
+void QGdbDriver::break_breakpointToggled( const QString& file, int line )
 {
 	for ( int i = 0; i < mBreakpoints.count(); i++ )
 	{
@@ -485,38 +486,48 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line, bool& r
 				{
 					emit breakpointRemoved( bp );
 					mBreakpoints.removeAt( i );
-					remove = true;
 				}
-			}
-			else
-			{
-				remove = false;
 			}
 			
 			return;
 		}
 	}
 	
-	remove = !break_setBreakpoint( file, line );
+	break_setBreakpoint( file, line );
 }
 
-void QGdbDriver::clearBreakpoints()
+void QGdbDriver::clearBreakpoints( int line )
 {
 	foreach ( const Breakpoint& bp, mBreakpoints )
 	{
-		if ( bp.number != -1 )
+		if ( bp.number != -1 && ( bp.line == line || line == -1 ) )
 		{
 			int res = gmi_break_delete( mHandle, bp.number );
 			
 			Q_ASSERT( res );
 			
-			emit breakpointRemoved( bp );
+			if ( line != -1 )
+			{
+				emit breakpointRemoved( bp );
+			}
+			
+			mBreakpoints.removeAll( bp );
+		}
+		else if ( bp.line == line || line == -1 )
+		{
+			if ( line != -1 )
+			{
+				emit breakpointRemoved( bp );
+			}
+			
 			mBreakpoints.removeAll( bp );
 		}
 	}
 	
-	mBreakpoints.clear();
-	emit breakpointsCleared();
+	if ( mBreakpoints.isEmpty() )
+	{
+		emit breakpointsCleared();
+	}
 }
 
 void QGdbDriver::onGdbTouchTimerTick ()
@@ -535,11 +546,13 @@ void QGdbDriver::sendFakeBreakpoints()
 	
 	foreach ( const Breakpoint& bp, bps )
 	{
-		if ( !break_setBreakpoint( bp.absolute_file, bp.line ) )
+		if ( break_setBreakpoint( bp.absolute_file, bp.line ) == 0 )
 		{
 			QMessageBox::critical( 0, tr( "Setting breakpoint error..." ), QString::fromLocal8Bit( mi_get_error_str() ) );
 		}
 	}
+	
+#warning	ajouter pastille ici, possibilité de revoir methode add breakpoints
 }
 
 void QGdbDriver::generateCallStack( mi_frames* mframe )

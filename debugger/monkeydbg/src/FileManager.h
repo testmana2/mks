@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "QGdbDriver.h"
+
 class QMdiArea;
 class pEditor;
 
@@ -18,9 +20,13 @@ public slots:
 	void openFileTriggered ();
 	void closeFileTriggered ();
 	
-	void clearBreakpoints();
+	void clearBreakpoints( const QString& file = QString::null, int line = -1 );
+	void setBreakpoint( const QString& file, int line, int type );
 	void clearDebuggerPosition();
 	void setDebuggerPosition( const QString& file, int line );
+	
+	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
+	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
 	
 	pEditor* openFile( const QString& fileName ); // was protected, moved for hack
 
@@ -31,7 +37,7 @@ protected:
 	QMdiArea* mMdiArea;
 
 signals:
-	void breakpointToggled( const QString& fileName, int line, bool& remove );
+	void breakpointToggled( const QString& fileName, int line );
 };
 
 #endif // FILEMANAGER_H
