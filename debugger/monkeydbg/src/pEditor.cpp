@@ -519,12 +519,48 @@ void pEditor::makeBackup()
 	QFile::copy( f.absoluteFilePath(), s );
 }
 
-void pEditor::clearBreakpoints()
+void pEditor::clearBreakpoints( int line )
 {
-	markerDeleteAll( pEditor::mdEnabledBreak );
-	markerDeleteAll( pEditor::mdDisabledBreak );
-	markerDeleteAll( pEditor::mdEnabledConditionalBreak );
-	markerDeleteAll( pEditor::mdDisabledConditionalBreak );
+	if ( line == -1 )
+	{
+		markerDeleteAll( pEditor::mdEnabledBreak );
+		markerDeleteAll( pEditor::mdDisabledBreak );
+		markerDeleteAll( pEditor::mdEnabledConditionalBreak );
+		markerDeleteAll( pEditor::mdDisabledConditionalBreak );
+	}
+	else
+	{
+		markerDelete( line, pEditor::mdEnabledBreak );
+		markerDelete( line, pEditor::mdDisabledBreak );
+		markerDelete( line, pEditor::mdEnabledConditionalBreak );
+		markerDelete( line, pEditor::mdDisabledConditionalBreak );
+	}
+}
+
+void pEditor::setBreakpoint( int line, int type )
+{
+	if ( type == -1 )
+	{
+		clearBreakpoints( line );
+	}
+	else
+	{
+		switch ( type )
+		{
+			case 0:
+				markerAdd( line, pEditor::mdEnabledBreak );
+				break;
+			case 1:
+				markerAdd( line, pEditor::mdDisabledBreak );
+				break;
+			case 2:
+				markerAdd( line, pEditor::mdEnabledConditionalBreak );
+				break;
+			case 3:
+				markerAdd( line, pEditor::mdDisabledConditionalBreak );
+				break;
+		}
+	}
 }
 
 void pEditor::clearDebuggerPosition()

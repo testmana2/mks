@@ -33,7 +33,7 @@ public slots:
 	void onDebuggerStateChanged (QGdbDriver::State);
 	
 signals:
-	void breakpointToggled( const QString& fileName, int line, bool& remove );
+	void breakpointToggled( const QString& fileName, int line );
 	void clearDebuggerPositionRequested();
 	
 	// api

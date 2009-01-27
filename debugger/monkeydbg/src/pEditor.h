@@ -102,7 +102,8 @@ public slots:
 	void invokeGoToLine();
 	void convertTabs();
 	void makeBackup();
-	void clearBreakpoints();
+	void clearBreakpoints( int line = -1 );
+	void setBreakpoint( int line, int type );
 	void clearDebuggerPosition();
 	void setDebuggerPosition( int line );
 
