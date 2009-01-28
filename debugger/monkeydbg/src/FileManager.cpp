@@ -91,6 +91,33 @@ void FileManager::setDebuggerPosition( const QString& fileName, int line )
 	{
 		QMdiSubWindow* window = qobject_cast<QMdiSubWindow*>( editor->parentWidget() );
 		mMdiArea->setActiveSubWindow( window );
+		editor->setCursorPosition( line, 0 );
+	}
+}
+
+void FileManager::gotoFileLine( const QString& fileName, int line )
+{
+	pEditor* editor = 0;
+	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )
+	{
+		pEditor* tmpEditor = qobject_cast<pEditor*>( window->widget() );
+		tmpEditor->clearDebuggerPosition();
+		
+		if ( window->windowFilePath() == fileName )
+		{
+			editor = tmpEditor;
+		}
+	}
+	
+	if ( !editor )
+	{
+		editor = openFile( fileName );
+	}
+	
+	if ( editor )
+	{
+		QMdiSubWindow* window = qobject_cast<QMdiSubWindow*>( editor->parentWidget() );
+		mMdiArea->setActiveSubWindow( window );
 		editor->setDebuggerPosition( line -1 );
 	}
 }
