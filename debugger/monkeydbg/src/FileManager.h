@@ -25,10 +25,10 @@ public slots:
 	void clearDebuggerPosition();
 	void setDebuggerPosition( const QString& file, int line );
 	
-	void gotoFileLine( const QString& file, int line );
-	
 	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
+	
+	void frameSelected( const QGdbDriver::Frame& frame );
 	
 	pEditor* openFile( const QString& fileName ); // was protected, moved for hack
 

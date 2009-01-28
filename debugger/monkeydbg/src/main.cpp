@@ -97,8 +97,8 @@ int main( int argc, char** argv )
 					&fileManager, SLOT( clearDebuggerPosition() ) );
     
     // call stack -> filemanager
-    QObject::connect (stackWidget, SIGNAL (frameSelected(const QString&, int)),
-                      &fileManager, SLOT (gotoFileLine (const QString&, int)));
+    QObject::connect (stackWidget, SIGNAL (frameSelected(const QGdbDriver::Frame&)),
+                      &fileManager, SLOT (frameSelected (const QGdbDriver::Frame&)));
     
     
 	if ( argc == 2 )
@@ -110,8 +110,11 @@ int main( int argc, char** argv )
 	}
 	
 	// speed hack
-	//window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
-	//fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
+	window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
+	fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
+	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 35 );
+	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 37 );
+	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 39 );
 	
 	//window.loadTarget( "/home/a/code/mks/debugger/libmigdb/examples/test_target" );
 	//debugger.break_setBreakpoint( "/home/a/code/mks/debugger/libmigdb/examples/test_target.cc", 10 );

@@ -15,9 +15,10 @@ public:
 	
 protected slots:
 	void update( const QGdbDriver::CallStack& stack, int selectedLevel );
-	void onItemActivated (QTreeWidgetItem*);
+	void onItemActivated( QTreeWidgetItem* item );
+
 signals:
-	void frameSelected (const QString& file, int line);
+	void frameSelected( const QGdbDriver::Frame& frame );
 };
 
 #endif // CALLSTACKWIDGET_H
