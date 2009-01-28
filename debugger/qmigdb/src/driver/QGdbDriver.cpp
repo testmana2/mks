@@ -9,39 +9,39 @@
 void QGdbDriver::callbackConsole( const char* str, void* data )
 {
 	QGdbDriver* driver = static_cast<QGdbDriver*>( data );
-	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdbDriver::CONSOLE );
+	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::CONSOLE );
 }
 
 /* Note that unlike what's documented in gdb docs it isn't usable. */
 void QGdbDriver::callbackTarget( const char* str, void* data )
 {
 	QGdbDriver* driver = static_cast<QGdbDriver*>( data );
-	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdbDriver::TARGET );
+	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::TARGET );
 }
 
 void QGdbDriver::callbackLog( const char* str, void* data )
 {
 	QGdbDriver* driver = static_cast<QGdbDriver*>( data );
-	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdbDriver::LOG );
+	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::LOG );
 }
 
 void QGdbDriver::callbackToGDB( const char* str, void* data )
 {
 	QGdbDriver* driver = static_cast<QGdbDriver*>( data );
-	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdbDriver::TO_GDB );
+	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::TO_GDB );
 }
 
 void QGdbDriver::callbackFromGDB( const char* str, void* data )
 {
 	QGdbDriver* driver = static_cast<QGdbDriver*>( data );
-	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdbDriver::FROM_GDB );
+	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::FROM_GDB );
 }
 
 void QGdbDriver::callbackAsync( mi_output* output, void* data )
 {
 	QGdbDriver* driver = static_cast<QGdbDriver*>( data );
 	
-	emit driver->callbackMessage( output->c->v.cstr, QGdbDriver::ASYNC );
+	emit driver->callbackMessage( output->c->v.cstr, QGdb::ASYNC );
 	
 	if ( output->tclass == MI_CL_STOPPED )
 	{
@@ -57,11 +57,11 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 			
 			if ( stop->reason == sr_exited_signalled || stop->reason == sr_exited || stop->reason == sr_exited_normally )
 			{
-				driver->setState( QGdbDriver::TARGET_SETTED );
+				driver->setState( QGdb::TARGET_SETTED );
 			}
 			else
 			{
-				driver->setState( QGdbDriver::STOPPED );
+				driver->setState( QGdb::STOPPED );
 			}
 			
 			// thread callstack
@@ -95,7 +95,7 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 				case sr_end_stepping_range:
 					break;
 				case sr_exited_signalled:
-					emit driver->exitSignalReceived( Signal( stop ) );
+					emit driver->exitSignalReceived( QGdb::Signal( stop ) );
 					break;
 				case sr_exited:
 					emit driver->exited( stop->exit_code );
@@ -103,7 +103,7 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 				case sr_exited_normally:
 					break;
 				case sr_signal_received:
-					emit driver->signalReceived( Signal( stop ) );
+					emit driver->signalReceived( QGdb::Signal( stop ) );
 					driver->delayedCall( SLOT( updateFullCallStack() ) );
 					break;
 				case sr_unknown:
@@ -115,9 +115,9 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 		}
 		else
 		{
-			if ( driver->mState == QGdbDriver::RUNNING )
+			if ( driver->mState == QGdb::RUNNING )
 			{
-				driver->setState( QGdbDriver::STOPPED );
+				driver->setState( QGdb::STOPPED );
 			}
 		}
 	}
@@ -126,7 +126,9 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 QGdbDriver::QGdbDriver()
 	: QObject()
 {
-	mState = QGdbDriver::DISCONNECTED;
+	QGdb::registerStructures();
+	
+	mState = QGdb::DISCONNECTED;
 	mHandle = 0;
 	mWaitingTempBreakpoint = false;
 	
@@ -134,7 +136,7 @@ QGdbDriver::QGdbDriver()
 	
 	Q_ASSERT( mHandle ); // FIXME replace with some error message
 	
-	setState( QGdbDriver::CONNECTED );
+	setState( QGdb::CONNECTED );
 	
 	mi_set_console_cb( mHandle, callbackConsole, this );
 	mi_set_target_cb( mHandle, callbackTarget, this );
@@ -144,9 +146,6 @@ QGdbDriver::QGdbDriver()
 	mi_set_from_gdb_cb( mHandle, callbackFromGDB, this );
 	
 	connect( &mGdbPingTimer, SIGNAL( timeout() ), this, SLOT( onGdbTouchTimerTick() ) );
-	
-	qRegisterMetaType<QGdbDriver::CallStack>( "QGdbDriver::CallStack" );
-	qRegisterMetaType<QGdbDriver::CallStack>( "QGdbDriver::State" );
 	
 	mGdbPingTimer.setInterval( 50 );
 	mGdbPingTimer.start();
@@ -193,7 +192,7 @@ QStringList QGdbDriver::sourcesPath() const // need fix, it allow to found sourc
 
 void QGdbDriver::log( const QString& msg )
 {
-	emit callbackMessage( msg, QGdbDriver::LOG );
+	emit callbackMessage( msg, QGdb::LOG );
 }
 
 void QGdbDriver::prepare_startXterm ()
@@ -219,7 +218,7 @@ void QGdbDriver::exec_setCommand( const QString& command ) // ok
 	{
 		mTargetFileName = command;
 		
-		setState( QGdbDriver::TARGET_SETTED );
+		setState( QGdb::TARGET_SETTED );
 		sendFakeBreakpoints();
 		
 		qWarning() << "paths" << sourcesPath();
@@ -244,7 +243,7 @@ void QGdbDriver::exec_setArgs( const QString& args )
 
 int QGdbDriver::runToMain() // ok, need maybe rewrite ( breakpoint )
 {
-	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::TARGET_SETTED )
+	if ( mState != QGdb::STOPPED && mState != QGdb::TARGET_SETTED )
 	{
 		return 0;
 	}
@@ -265,7 +264,7 @@ int QGdbDriver::runToMain() // ok, need maybe rewrite ( breakpoint )
 
 int QGdbDriver::exec_run() // ok
 {
-	if ( mState != QGdbDriver::TARGET_SETTED )
+	if ( mState != QGdb::TARGET_SETTED )
 	{
 		return 0;
 	}
@@ -274,7 +273,7 @@ int QGdbDriver::exec_run() // ok
 	
 	if ( res != 0 )
 	{
-		setState( QGdbDriver::RUNNING );
+		setState( QGdb::RUNNING );
 	}
 	
 	return res;
@@ -282,7 +281,7 @@ int QGdbDriver::exec_run() // ok
 
 int QGdbDriver::exec_continue() // ok
 {
-	if ( mState != QGdbDriver::STOPPED )
+	if ( mState != QGdb::STOPPED )
 	{
 		return 0;
 	}
@@ -291,7 +290,7 @@ int QGdbDriver::exec_continue() // ok
 	
 	if ( res != 0 )
 	{
-		setState( QGdbDriver::RUNNING );
+		setState( QGdb::RUNNING );
 	}
 	
 	return res;
@@ -301,12 +300,12 @@ int QGdbDriver::exec_stepInto( bool instruction ) // ok
 {
 	int res = 0;
 	
-	if ( mState == QGdbDriver::TARGET_SETTED )
+	if ( mState == QGdb::TARGET_SETTED )
 	{
 		return runToMain();
 	}
 	
-	if ( mState == QGdbDriver::STOPPED )
+	if ( mState == QGdb::STOPPED )
 	{
 		if ( instruction )
 		{
@@ -319,7 +318,7 @@ int QGdbDriver::exec_stepInto( bool instruction ) // ok
 		
 		if ( res != 0 )
 		{
-			setState( QGdbDriver::RUNNING );
+			setState( QGdb::RUNNING );
 		}
 	}
 	
@@ -330,12 +329,12 @@ int QGdbDriver::exec_stepOver( bool instruction ) // ok
 {
 	int res = 0;
 
-	if ( mState == QGdbDriver::TARGET_SETTED )
+	if ( mState == QGdb::TARGET_SETTED )
 	{
 		return runToMain();
 	}
 	
-	if ( mState == QGdbDriver::STOPPED )
+	if ( mState == QGdb::STOPPED )
 	{
 		if ( instruction )
 		{
@@ -348,7 +347,7 @@ int QGdbDriver::exec_stepOver( bool instruction ) // ok
 		
 		if ( res != 0 )
 		{
-			setState( QGdbDriver::RUNNING );
+			setState( QGdb::RUNNING );
 		}
 	}
 	
@@ -357,7 +356,7 @@ int QGdbDriver::exec_stepOver( bool instruction ) // ok
 
 int QGdbDriver::exec_stepOut() // ok
 {
-	if ( mState != QGdbDriver::STOPPED )
+	if ( mState != QGdb::STOPPED )
 	{
 		return 0;
 	}
@@ -366,7 +365,7 @@ int QGdbDriver::exec_stepOut() // ok
 	
 	if ( res != 0 )
 	{
-		setState( QGdbDriver::RUNNING );
+		setState( QGdb::RUNNING );
 	}
 	
 	return res;
@@ -374,7 +373,7 @@ int QGdbDriver::exec_stepOut() // ok
 
 int QGdbDriver::exec_pause() // ok
 {
-	if ( mState != QGdbDriver::RUNNING )
+	if ( mState != QGdb::RUNNING )
 	{
 		return 0;
 	}
@@ -384,7 +383,7 @@ int QGdbDriver::exec_pause() // ok
 
 int QGdbDriver::exec_kill() // ok
 {
-	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::RUNNING )
+	if ( mState != QGdb::STOPPED && mState != QGdb::RUNNING )
 	{
 		return 0;
 	}
@@ -424,7 +423,7 @@ int QGdbDriver::exec_kill() // ok
 	
 	if ( res != 0 )
 	{
-		setState( QGdbDriver::TARGET_SETTED );
+		setState( QGdb::TARGET_SETTED );
 	}
 	
 	return res;
@@ -433,9 +432,9 @@ int QGdbDriver::exec_kill() // ok
 int QGdbDriver::break_setBreakpoint( const QString& file, int line )
 {
 	int res = 0;
-	Breakpoint bp;
+	QGdb::Breakpoint bp;
 	
-	if ( mState != QGdbDriver::STOPPED && mState != QGdbDriver::TARGET_SETTED )
+	if ( mState != QGdb::STOPPED && mState != QGdb::TARGET_SETTED )
 	{
 		bp.absolute_file = file;
 	}
@@ -448,7 +447,7 @@ int QGdbDriver::break_setBreakpoint( const QString& file, int line )
 			return res;
 		}
 		
-		bp = Breakpoint( mbp );
+		bp = QGdb::Breakpoint( mbp );
 		mi_free_bkpt( mbp );
 	}
 	
@@ -474,11 +473,11 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line )
 {
 	for ( int i = 0; i < mBreakpoints.count(); i++ )
 	{
-		Breakpoint& bp = mBreakpoints[ i ];
+		QGdb::Breakpoint& bp = mBreakpoints[ i ];
 		
 		if ( bp.absolute_file == file && bp.line == line )
 		{
-			if ( ( bp.number == -1 ) || ( mState == QGdbDriver::TARGET_SETTED || mState == QGdbDriver::RUNNING ) )
+			if ( ( bp.number == -1 ) || ( mState == QGdb::TARGET_SETTED || mState == QGdb::RUNNING ) )
 			{
 				int res = bp.number == -1 ? 1 : gmi_break_delete( mHandle, bp.number );
 				
@@ -498,7 +497,7 @@ void QGdbDriver::break_breakpointToggled( const QString& file, int line )
 
 void QGdbDriver::clearBreakpoints( int line )
 {
-	foreach ( const Breakpoint& bp, mBreakpoints )
+	foreach ( const QGdb::Breakpoint& bp, mBreakpoints )
 	{
 		if ( bp.number != -1 && ( bp.line == line || line == -1 ) )
 		{
@@ -540,11 +539,11 @@ void QGdbDriver::onGdbTouchTimerTick ()
 
 void QGdbDriver::sendFakeBreakpoints()
 {
-	BreakpointsList bps = mBreakpoints;
+	QGdb::BreakpointList bps = mBreakpoints;
 	
 	clearBreakpoints();
 	
-	foreach ( const Breakpoint& bp, bps )
+	foreach ( const QGdb::Breakpoint& bp, bps )
 	{
 		if ( break_setBreakpoint( bp.absolute_file, bp.line ) == 0 )
 		{
@@ -557,12 +556,12 @@ void QGdbDriver::sendFakeBreakpoints()
 
 void QGdbDriver::generateCallStack( mi_frames* mframe )
 {
-	CallStack stack;
+	QGdb::CallStackFrameList stack;
 	int level = -1;
 	
 	while ( mframe )
 	{
-		Frame frame;
+		QGdb::CallStackFrame frame;
 		frame.function = mframe->func;
 		frame.file = mframe->file;
 		frame.from = mframe->from;
@@ -574,7 +573,7 @@ void QGdbDriver::generateCallStack( mi_frames* mframe )
 		
 		while ( arg )
 		{
-			FunctionArgument argument;
+			QGdb::CallStackFrameArgument argument;
 			argument.name = arg->v.rs->v.cstr;
 			argument.value = arg->v.rs->next->v.cstr;
 			frame.arguments << argument;
@@ -602,7 +601,7 @@ void QGdbDriver::updateCallStack( mi_stop* stop )
 
 void QGdbDriver::updateFullCallStack()
 {
-	if ( mState != QGdbDriver::STOPPED )
+	if ( mState != QGdb::STOPPED )
 	{
 		return;
 	}
@@ -634,7 +633,7 @@ void QGdbDriver::updateFullCallStack()
 	mi_free_frames( frame );
 }
 
-void QGdbDriver::setState( QGdbDriver::State state )
+void QGdbDriver::setState( QGdb::State state )
 {
 	mState = state;
 	emit stateChanged( mState );

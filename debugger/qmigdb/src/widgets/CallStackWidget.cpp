@@ -9,17 +9,17 @@ CallStackWidget::CallStackWidget( QGdbDriver* debugger, QWidget* parent )
 	connect(this, SIGNAL(itemActivated(QTreeWidgetItem*, int)), this, SLOT(onItemActivated (QTreeWidgetItem*)));
 	
 	// interface with debugger
-	connect( debugger, SIGNAL( callStackUpdated( const QGdbDriver::CallStack&, int ) ), this, SLOT( update( const QGdbDriver::CallStack&, int ) ) );
+	connect( debugger, SIGNAL( callStackUpdated( const QGdb::CallStackFrameList&, int ) ), this, SLOT( update( const QGdb::CallStackFrameList&, int ) ) );
 }
 
 CallStackWidget::~CallStackWidget()
 {
 }
-void CallStackWidget::update( const QGdbDriver::CallStack& stack, int selectedLevel )
+void CallStackWidget::update( const QGdb::CallStackFrameList& stack, int selectedLevel )
 {
 	clear();
 	
-	foreach ( const QGdbDriver::Frame& frame, stack )
+	foreach ( const QGdb::CallStackFrame& frame, stack )
 	{
 		QTreeWidgetItem* item = new QTreeWidgetItem( this );
 		
@@ -28,7 +28,7 @@ void CallStackWidget::update( const QGdbDriver::CallStack& stack, int selectedLe
 		
 		// function name and arguments
 		QStringList arguments;
-		foreach ( const QGdbDriver::FunctionArgument& argument, frame.arguments )
+		foreach ( const QGdb::CallStackFrameArgument& argument, frame.arguments )
 		{
 			arguments << QString( "%1 = %2" ).arg( argument.name ).arg( argument.value );
 		}
@@ -58,6 +58,6 @@ void CallStackWidget::update( const QGdbDriver::CallStack& stack, int selectedLe
 
 void CallStackWidget::onItemActivated( QTreeWidgetItem* item )
 {
-	QGdbDriver::Frame frame = item->data( 0, Qt::UserRole ).value<QGdbDriver::Frame>();
+	QGdb::CallStackFrame frame = item->data( 0, Qt::UserRole ).value<QGdb::CallStackFrame>();
 	emit frameSelected( frame );
 }

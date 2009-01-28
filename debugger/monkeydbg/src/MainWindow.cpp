@@ -62,46 +62,46 @@ void MainWindow::appendPipe( const QString& msg )
 	ptePipe->appendPlainText( msg );
 }
 
-void MainWindow::onDebuggerCallbackMessage( const QString& message, QGdbDriver::CBType type )
+void MainWindow::onDebuggerCallbackMessage( const QString& message, QGdb::CBType type )
 {
 	switch ( type )
 	{
-		case QGdbDriver::CONSOLE:
+		case QGdb::CONSOLE:
 			appendConsole( message );
 			break;
-		case QGdbDriver::TARGET:
+		case QGdb::TARGET:
 			appendLog( QString( "TARGET> %1" ).arg( message ) );
 			break;
-		case QGdbDriver::LOG:
+		case QGdb::LOG:
 			appendLog( QString( "LOG> %1" ).arg( message ) );
 			break;
-		case QGdbDriver::TO_GDB:
+		case QGdb::TO_GDB:
 			appendPipe( QString( ">> %1" ).arg( message ) );
 			break;
-		case QGdbDriver::FROM_GDB:
+		case QGdb::FROM_GDB:
 			appendPipe( QString( "<< %1" ).arg( message ) );
 			break;
-		case QGdbDriver::ASYNC:
+		case QGdb::ASYNC:
 			appendLog( QString( "ASYNC> %1" ).arg( message ) );
 			break;
 	}
 }
 
-void MainWindow::onDebuggerExitSignalReceived( const QGdbDriver::Signal& signal )
+void MainWindow::onDebuggerExitSignalReceived( const QGdb::Signal& signal )
 {
 	QMessageBox::critical( window(), tr( "Signal received" ), tr( "Program exited signal %1, %2" ).arg( signal.name ).arg( signal.meaning ) );
 }
 
-void MainWindow::onDebuggerSignalReceived( const QGdbDriver::Signal& signal )
+void MainWindow::onDebuggerSignalReceived( const QGdb::Signal& signal )
 {
 	QMessageBox::critical( window(), tr( "Signal received" ), tr( "Program received signal %1, %2" ).arg( signal.name ).arg( signal.meaning ) );
 }
 
-void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
+void MainWindow::onDebuggerStateChanged( QGdb::State state )
 {
 	switch (state)
 	{
-		case QGdbDriver::CONNECTED:
+		case QGdb::CONNECTED:
 			actionRun->setEnabled (false);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -111,7 +111,7 @@ void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 			actionKill->setEnabled (false);
 			mStatusLabel->setText (tr("Connected to GDB"));
 		break;
-		case QGdbDriver::DISCONNECTED:
+		case QGdb::DISCONNECTED:
 			actionRun->setEnabled (false);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -121,7 +121,7 @@ void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 			actionKill->setEnabled (false);
 			mStatusLabel->setText (tr("Disconnected from GDB"));
 		break;
-		case QGdbDriver::TARGET_SETTED:
+		case QGdb::TARGET_SETTED:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -133,7 +133,7 @@ void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 			
 			emit clearDebuggerPositionRequested();
 		break;
-		case QGdbDriver::RUNNING:
+		case QGdb::RUNNING:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (false);
 			actionStep_into->setEnabled (false);
@@ -143,7 +143,7 @@ void MainWindow::onDebuggerStateChanged( QGdbDriver::State state )
 			actionKill->setEnabled (true);
 			mStatusLabel->setText (tr("Target is running"));
 		break;
-		case QGdbDriver::STOPPED:
+		case QGdb::STOPPED:
 			actionRun->setEnabled (true);
 			actionContinue->setEnabled (true);
 			actionStep_into->setEnabled (true);

@@ -27,10 +27,10 @@ public slots:
 	void appendLog( const QString& log );
 	void appendConsole( const QString& msg );
 	void appendPipe( const QString& msg );
-	void onDebuggerCallbackMessage( const QString& message, QGdbDriver::CBType type );
-	void onDebuggerExitSignalReceived( const QGdbDriver::Signal& signal );
-	void onDebuggerSignalReceived( const QGdbDriver::Signal& signal );
-	void onDebuggerStateChanged (QGdbDriver::State);
+	void onDebuggerCallbackMessage( const QString& message, QGdb::CBType type );
+	void onDebuggerExitSignalReceived( const QGdb::Signal& signal );
+	void onDebuggerSignalReceived( const QGdb::Signal& signal );
+	void onDebuggerStateChanged( QGdb::State state );
 	
 signals:
 	void breakpointToggled( const QString& fileName, int line );

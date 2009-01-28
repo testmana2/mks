@@ -46,14 +46,14 @@ int main( int argc, char** argv )
 	window.addDockWidget( Qt::TopDockWidgetArea, stackDock );
 	
 	// driver -> window
-	QObject::connect (&debugger, SIGNAL (callbackMessage(const QString&, QGdbDriver::CBType)),
-						&window, SLOT (onDebuggerCallbackMessage (const QString&, QGdbDriver::CBType)));
-	QObject::connect (&debugger, SIGNAL (exitSignalReceived( const QGdbDriver::Signal& )),
-						&window, SLOT (onDebuggerExitSignalReceived( const QGdbDriver::Signal& )));
-	QObject::connect (&debugger, SIGNAL (signalReceived( const QGdbDriver::Signal& )),
-						&window, SLOT (onDebuggerSignalReceived( const QGdbDriver::Signal& )));
-	QObject::connect (&debugger, SIGNAL (stateChanged (QGdbDriver::State)),
-						&window, SLOT (onDebuggerStateChanged (QGdbDriver::State)));
+	QObject::connect (&debugger, SIGNAL (callbackMessage(const QString&, QGdb::CBType)),
+						&window, SLOT (onDebuggerCallbackMessage (const QString&, QGdb::CBType)));
+	QObject::connect (&debugger, SIGNAL (exitSignalReceived( const QGdb::Signal& )),
+						&window, SLOT (onDebuggerExitSignalReceived( const QGdb::Signal& )));
+	QObject::connect (&debugger, SIGNAL (signalReceived( const QGdb::Signal& )),
+						&window, SLOT (onDebuggerSignalReceived( const QGdb::Signal& )));
+	QObject::connect (&debugger, SIGNAL (stateChanged (QGdb::State)),
+						&window, SLOT (onDebuggerStateChanged (QGdb::State)));
 	QObject::connect (&window, SIGNAL (loadTargetRequested (const QString&)),
 					&debugger, SLOT (exec_setCommand (const QString&)));					  
 	// window -> driver
@@ -79,10 +79,10 @@ int main( int argc, char** argv )
 					&fileManager, SLOT (setDebuggerPosition (const QString&, int)));
 	QObject::connect (&debugger, SIGNAL (breakpointsCleared ( const QString&, int )),
 					&fileManager, SLOT (clearBreakpoints ( const QString&, int )));
-	QObject::connect (&debugger, SIGNAL (breakpointAdded( const QGdbDriver::Breakpoint& )),
-					&fileManager, SLOT (breakpointAdded( const QGdbDriver::Breakpoint& )));
-	QObject::connect (&debugger, SIGNAL (breakpointRemoved( const QGdbDriver::Breakpoint& )),
-					&fileManager, SLOT (breakpointRemoved( const QGdbDriver::Breakpoint& )));
+	QObject::connect (&debugger, SIGNAL (breakpointAdded( const QGdb::Breakpoint& )),
+					&fileManager, SLOT (breakpointAdded( const QGdb::Breakpoint& )));
+	QObject::connect (&debugger, SIGNAL (breakpointRemoved( const QGdb::Breakpoint& )),
+					&fileManager, SLOT (breakpointRemoved( const QGdb::Breakpoint& )));
 	
 	// filemanager -> window
 	QObject::connect( &fileManager, SIGNAL( breakpointToggled( const QString&, int ) ), 
@@ -95,14 +95,14 @@ int main( int argc, char** argv )
 					&fileManager, SLOT( closeFileTriggered() ) );
 	QObject::connect( &window, SIGNAL( clearDebuggerPositionRequested() ), 
 					&fileManager, SLOT( clearDebuggerPosition() ) );
-    
-    // call stack -> filemanager
-    QObject::connect (stackWidget, SIGNAL (frameSelected(const QGdbDriver::Frame&)),
-                      &fileManager, SLOT (frameSelected (const QGdbDriver::Frame&)));
-    
-    
-	if ( argc == 2 )
-	{
+	
+	// call stack -> filemanager
+	QObject::connect (stackWidget, SIGNAL (frameSelected(const QGdb::CallStackFrame&)),
+						&fileManager, SLOT (frameSelected (const QGdb::CallStackFrame&)));
+		
+		
+		if ( argc == 2 )
+		{
 		if ( QFileInfo( argv[1] ) .isExecutable() )
 			debugger.exec_setCommand( argv[1] );
 		else 
