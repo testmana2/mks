@@ -14,11 +14,11 @@ public:
 	virtual ~CallStackWidget();
 	
 protected slots:
-	void update( const QGdbDriver::CallStack& stack, int selectedLevel );
+	void update( const QGdb::CallStackFrameList& stack, int selectedLevel );
 	void onItemActivated( QTreeWidgetItem* item );
 
 signals:
-	void frameSelected( const QGdbDriver::Frame& frame );
+	void frameSelected( const QGdb::CallStackFrame& frame );
 };
 
 #endif // CALLSTACKWIDGET_H

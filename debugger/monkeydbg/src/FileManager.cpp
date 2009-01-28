@@ -95,17 +95,17 @@ void FileManager::setDebuggerPosition( const QString& fileName, int line )
 	}
 }
 
-void FileManager::breakpointAdded( const QGdbDriver::Breakpoint& breakpoint )
+void FileManager::breakpointAdded( const QGdb::Breakpoint& breakpoint )
 {
 	setBreakpoint( breakpoint.absolute_file, breakpoint.line -1, 0 );
 }
 
-void FileManager::breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint )
+void FileManager::breakpointRemoved( const QGdb::Breakpoint& breakpoint )
 {
 	clearBreakpoints( breakpoint.absolute_file, breakpoint.line -1 );
 }
 
-void FileManager::frameSelected( const QGdbDriver::Frame& frame )
+void FileManager::frameSelected( const QGdb::CallStackFrame& frame )
 {
 	if ( frame.from.isEmpty() )
 	{

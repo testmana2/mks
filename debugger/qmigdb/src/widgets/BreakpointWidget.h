@@ -14,13 +14,13 @@ public:
 	virtual ~BreakpointWidget();
 
 protected slots:
-	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
-	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
-	void breakpointUpdated( const QGdbDriver::Breakpoint& breakpoint );
+	void breakpointAdded( const QGdb::Breakpoint& breakpoint );
+	void breakpointRemoved( const QGdb::Breakpoint& breakpoint );
+	void breakpointUpdated( const QGdb::Breakpoint& breakpoint );
 	void breakpointsCleared();
 
 protected:
-	void updateItem( QTreeWidgetItem* item, const QGdbDriver::Breakpoint& breakpoint );
+	void updateItem( QTreeWidgetItem* item, const QGdb::Breakpoint& breakpoint );
 };
 
 #endif // BREAKPOINTWIDGET_H

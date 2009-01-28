@@ -65,7 +65,8 @@ PRE_TARGETDEPS	= $${MIGDB_PATH} $${QMIGDB_PATH}
 
 INCLUDEPATH	= $${MIGDB_SRC_PATH} \
 	$${QMIGDB_SRC_PATH}/driver \
-	$${QMIGDB_SRC_PATH}/widgets
+	$${QMIGDB_SRC_PATH}/widgets \
+	$${QMIGDB_SRC_PATH}/structures
 
 FORMS	= src/MainWindow.ui
 

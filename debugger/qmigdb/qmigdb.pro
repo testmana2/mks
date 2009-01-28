@@ -53,16 +53,25 @@ CONFIG(debug, debug|release) {
 	LIBS	+= -l$${MIGDB_LIB}
 }
 
-PRE_TARGETDEPS	+= $${MIGDB_PATH}
+PRE_TARGETDEPS	= $${MIGDB_PATH}
 
 INCLUDEPATH	= $${MIGDB_SRC_PATH} \
 	src/driver \
-	src/widgets
+	src/widgets \
+	src/structures
 
 HEADERS	= src/driver/QGdbDriver.h \
 	src/widgets/CallStackWidget.h \
-	src/widgets/BreakpointWidget.h
+	src/widgets/BreakpointWidget.h \
+	src/structures/QGdbBreakpoint.h \
+	src/structures/QGdb.h \
+	src/structures/QGdbSignal.h \
+	src/structures/QGdbCallStack.h
 
 SOURCES	= src/driver/QGdbDriver.cpp \
 	src/widgets/CallStackWidget.cpp \
-	src/widgets/BreakpointWidget.cpp
+	src/widgets/BreakpointWidget.cpp \
+	src/structures/QGdbBreakpoint.cpp \
+	src/structures/QGdb.cpp \
+	src/structures/QGdbSignal.cpp \
+	src/structures/QGdbCallStack.cpp
