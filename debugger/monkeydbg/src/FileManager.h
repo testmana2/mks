@@ -25,6 +25,8 @@ public slots:
 	void clearDebuggerPosition();
 	void setDebuggerPosition( const QString& file, int line );
 	
+	void gotoFileLine( const QString& file, int line );
+	
 	void breakpointAdded( const QGdbDriver::Breakpoint& breakpoint );
 	void breakpointRemoved( const QGdbDriver::Breakpoint& breakpoint );
 	

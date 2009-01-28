@@ -3,9 +3,9 @@
 
 #include "QGdbDriver.h"
 
-#include <QListWidget>
+#include <QTreeWidget>
 
-class CallStackWidget : public QListWidget
+class CallStackWidget : public QTreeWidget
 {
 	Q_OBJECT
 	
@@ -15,6 +15,9 @@ public:
 	
 protected slots:
 	void update( const QGdbDriver::CallStack& stack, int selectedLevel );
+	void onItemActivated (QTreeWidgetItem*);
+signals:
+	void frameSelected (const QString& file, int line);
 };
 
 #endif // CALLSTACKWIDGET_H

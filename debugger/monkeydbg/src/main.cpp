@@ -95,7 +95,12 @@ int main( int argc, char** argv )
 					&fileManager, SLOT( closeFileTriggered() ) );
 	QObject::connect( &window, SIGNAL( clearDebuggerPositionRequested() ), 
 					&fileManager, SLOT( clearDebuggerPosition() ) );
-		
+    
+    // call stack -> filemanager
+    QObject::connect (stackWidget, SIGNAL (frameSelected(const QString&, int)),
+                      &fileManager, SLOT (gotoFileLine (const QString&, int)));
+    
+    
 	if ( argc == 2 )
 	{
 		if ( QFileInfo( argv[1] ) .isExecutable() )
@@ -106,8 +111,10 @@ int main( int argc, char** argv )
 	
 	// speed hack
 	//window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
-	fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
+	//fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
 	
+	//window.loadTarget( "/home/a/code/mks/debugger/libmigdb/examples/test_target" );
+	//debugger.break_setBreakpoint( "/home/a/code/mks/debugger/libmigdb/examples/test_target.cc", 10 );
 	window.showMaximized();
 	
 	return app.exec();
