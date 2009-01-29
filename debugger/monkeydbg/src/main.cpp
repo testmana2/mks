@@ -4,6 +4,8 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
+#include "maininterface/UIMonkeyDbg.h"
+
 #include "MainWindow.h"
 #include "CallStackWidget.h"
 #include "BreakpointWidget.h"
@@ -17,6 +19,9 @@ int main( int argc, char** argv )
 
 	// init application
 	app.setApplicationName( "Monkey Debugger" );
+	
+	UIMonkeyDbg dbg;
+	dbg.show();
 	
 	//    Driver
 	QGdbDriver debugger;

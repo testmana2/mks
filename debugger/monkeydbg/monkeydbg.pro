@@ -68,15 +68,18 @@ INCLUDEPATH	= $${MIGDB_SRC_PATH} \
 	$${QMIGDB_SRC_PATH}/widgets \
 	$${QMIGDB_SRC_PATH}/structures
 
-FORMS	= src/MainWindow.ui
+FORMS	= src/MainWindow.ui \
+	src/maininterface/UIMonkeyDbg.ui
 
 HEADERS	= src/FileManager.h \
 	src/MainWindow.h \
-	src/pEditor.h
+	src/pEditor.h \
+	src/maininterface/UIMonkeyDbg.h
 
 SOURCES	= src/main.cpp \
 	src/MainWindow.cpp \
 	src/FileManager.cpp \
-	src/pEditor.cpp
+	src/pEditor.cpp \
+	src/maininterface/UIMonkeyDbg.cpp
 
 RESOURCES	= src/resources/monkeydbg.qrc
