@@ -276,6 +276,7 @@ bool pEditor::openFile( const QString& fileName, const QString& codec )
 	QFile f( fileName );
 	if ( !f.open( QFile::ReadOnly ) )
 	{
+		QApplication::restoreOverrideCursor();
 		return false;
 	}
 
@@ -363,7 +364,10 @@ bool pEditor::saveBackup( const QString& s )
 	// create bak folder
 	if ( !d.exists( fp ) )
 		if ( !d.mkpath( fp ) )
+		{
+			QApplication::restoreOverrideCursor();
 			return false;
+		}
 
 	// set correct path
 	d.setPath( fp );
@@ -371,6 +375,7 @@ bool pEditor::saveBackup( const QString& s )
 	// try open file to write in
 	if ( !f.open( QFile::WriteOnly ) )
 	{
+		QApplication::restoreOverrideCursor();
 		return false;
 	}
 
