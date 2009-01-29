@@ -1,0 +1,336 @@
+<ui version="4.0" >
+ <class>UIMonkeyDbg</class>
+ <widget class="QMainWindow" name="UIMonkeyDbg" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>766</width>
+    <height>436</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Monkey Debugger</string>
+  </property>
+  <property name="dockNestingEnabled" >
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="mCentralWidget" >
+   <layout class="QVBoxLayout" name="verticalLayout_5" >
+    <item>
+     <widget class="QMdiArea" name="maWorkspace" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="mbMenu" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>766</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <addaction name="aOpenFile" />
+    <addaction name="aCloseFile" />
+   </widget>
+   <widget class="QMenu" name="menuRun" >
+    <property name="title" >
+     <string>Run</string>
+    </property>
+    <addaction name="aLoadTarget" />
+    <addaction name="separator" />
+    <addaction name="aRun" />
+    <addaction name="aContinue" />
+    <addaction name="aStepInto" />
+    <addaction name="aStepOver" />
+    <addaction name="aStepOut" />
+    <addaction name="separator" />
+    <addaction name="aStop" />
+    <addaction name="aKill" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuRun" />
+  </widget>
+  <widget class="QStatusBar" name="sbStatus" />
+  <widget class="QToolBar" name="tbActions" >
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="aOpenFile" />
+   <addaction name="aCloseFile" />
+   <addaction name="separator" />
+   <addaction name="aLoadTarget" />
+   <addaction name="separator" />
+   <addaction name="aRun" />
+   <addaction name="aContinue" />
+   <addaction name="aStepInto" />
+   <addaction name="aStepOver" />
+   <addaction name="aStepOut" />
+   <addaction name="separator" />
+   <addaction name="aStop" />
+   <addaction name="aKill" />
+  </widget>
+  <widget class="QDockWidget" name="dwFiles" >
+   <property name="windowTitle" >
+    <string>Files</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dwFilesContent" >
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <widget class="QListWidget" name="lwFiles" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Maximum" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dwPipe" >
+   <property name="windowTitle" >
+    <string>Pipe</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3" >
+    <layout class="QVBoxLayout" name="verticalLayout_3" >
+     <item>
+      <widget class="QPlainTextEdit" name="ptePipe" >
+       <property name="tabChangesFocus" >
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+       <property name="tabStopWidth" >
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dwConsole" >
+   <property name="windowTitle" >
+    <string>Console</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2" >
+    <layout class="QVBoxLayout" name="verticalLayout_2" >
+     <item>
+      <widget class="QPlainTextEdit" name="pteConsole" >
+       <property name="tabChangesFocus" >
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+       <property name="tabStopWidth" >
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dwLog" >
+   <property name="windowTitle" >
+    <string>Log</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents" >
+    <layout class="QVBoxLayout" name="verticalLayout_4" >
+     <item>
+      <widget class="QPlainTextEdit" name="pteLog" >
+       <property name="tabChangesFocus" >
+        <bool>true</bool>
+       </property>
+       <property name="undoRedoEnabled" >
+        <bool>false</bool>
+       </property>
+       <property name="readOnly" >
+        <bool>true</bool>
+       </property>
+       <property name="tabStopWidth" >
+        <number>30</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="aRun" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/run.png</normaloff>:/icons/run.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Run</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="aKill" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/kill.png</normaloff>:/icons/kill.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Kill</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+K</string>
+   </property>
+  </action>
+  <action name="aContinue" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Continue</string>
+   </property>
+   <property name="shortcut" >
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="aOpenFile" >
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/file-open.png</normaloff>:/icons/file-open.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Open</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="aStepInto" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/step-into.png</normaloff>:/icons/step-into.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Step into</string>
+   </property>
+   <property name="shortcut" >
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="aCloseFile" >
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/file-close.png</normaloff>:/icons/file-close.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Close</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="aStepOver" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/step-next.png</normaloff>:/icons/step-next.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Step over</string>
+   </property>
+   <property name="shortcut" >
+    <string>F6</string>
+   </property>
+  </action>
+  <action name="aStop" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/stop.png</normaloff>:/icons/stop.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Stop</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="aLoadTarget" >
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/exec-open.png</normaloff>:/icons/exec-open.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Load target</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="aStepOut" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="../resources/monkeydbg.qrc" >
+     <normaloff>:/icons/step-out.png</normaloff>:/icons/step-out.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Step out</string>
+   </property>
+   <property name="shortcut" >
+    <string>F7</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources/monkeydbg.qrc" />
+ </resources>
+ <connections/>
+</ui>
