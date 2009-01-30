@@ -572,10 +572,8 @@ void pEditor::clearDebuggerPosition()
 {
 	markerDeleteAll( pEditor::mdPlay );
 }
-#include <QDebug>
 void pEditor::setDebuggerPosition( int line )
 {
-	qDebug () << "cursor" << line;
 	setCursorPosition( line, 0 );
 	markerAdd( line, pEditor::mdPlay );
 }

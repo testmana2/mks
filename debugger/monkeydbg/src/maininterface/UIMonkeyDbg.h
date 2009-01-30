@@ -19,7 +19,7 @@ public slots:
 	bool openFile( const QString& fileName );
 	void closeCurrentFile();
 	void closeAllFiles();
-	dd
+	
 	bool loadTarget( const QString& fileName );
 	void debuggerRun();
 	void debuggerContinue();
