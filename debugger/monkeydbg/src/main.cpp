@@ -103,27 +103,30 @@ int main( int argc, char** argv )
 	
 	// call stack -> debugger
 	QObject::connect (stackWidget, SIGNAL (frameSelected(int)),
-					 &debugger, SLOT (stack_selectFrame (int)));
-		
-		
-		if ( argc == 2 )
-		{
-		if ( QFileInfo( argv[1] ) .isExecutable() )
+						&debugger, SLOT (stack_selectFrame (int)));
+			
+			
+			if ( argc == 2 )
+			{
+			if ( QFileInfo( argv[1] ) .isExecutable() )
 			debugger.exec_setCommand( argv[1] );
 		else 
 			QMessageBox::critical( 0, QObject::tr( "Invalid parameter" ), QObject::tr( "%1 is not a executable file" ).arg( argv[1] ) );
 	}
 	
 	// speed hack
-	//window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
-	//fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
-	//debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 35 );
-	//debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 37 );
-	//debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 39 );
+	window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
+	fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
+	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 35 );
+	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 37 );
+	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 39 );
 	
+	/*
 	window.loadTarget( "/home/a/code/mks/debugger/libmigdb/examples/test_target" );
 	debugger.break_setBreakpoint( "/home/a/code/mks/debugger/libmigdb/examples/test_target.cc", 10 );
-	window.showMaximized();
+	*/
+	
+	//window.showMaximized();
 	
 	return app.exec();
 }

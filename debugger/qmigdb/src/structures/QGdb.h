@@ -19,8 +19,8 @@ namespace QGdb
 	
 	enum State // driver state
 	{
-		CONNECTED = 0,
-		DISCONNECTED,
+		DISCONNECTED = -1,
+		CONNECTED,
 		TARGET_SETTED,
 		RUNNING,
 		STOPPED

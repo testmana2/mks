@@ -2,7 +2,13 @@
 #define UIMONKEYDBG_H
 
 #include "ui_UIMonkeyDbg.h"
-#include "QGdbDriver.h"
+#include "QGdb-Driver.h"
+
+#include <QMap>
+
+class QMdiSubWindow;
+
+typedef QPair<QListWidgetItem*, QMdiSubWindow*> ItemSubWindow;
 
 class UIMonkeyDbg : public QMainWindow, public Ui::UIMonkeyDbg
 {
@@ -13,9 +19,18 @@ public:
 	virtual ~UIMonkeyDbg();
 
 protected:
-	QGdbDriver* mDebugger;
+	QGdb::Driver* mDebugger;
+	bool mDebuggerInitialized;
+	QMap<QString, ItemSubWindow> mOpenedFiles;
+	
+	void showEvent( QShowEvent* event );
+	void initConnections();
 
 public slots:
+	void appendLog( const QString& log );
+	void appendConsole( const QString& msg );
+	void appendPipe( const QString& msg );
+	
 	bool openFile( const QString& fileName );
 	void closeCurrentFile();
 	void closeAllFiles();
@@ -30,6 +45,14 @@ public slots:
 	void debuggerKill();
 
 protected slots:
+	// debugger
+	void debuggerCallbackMessage( const QString& message, QGdb::CBType type );
+	void debuggerStateChanged( QGdb::State state );
+	
+	// gui
+	void subWindow_destroyed( QObject* object );
+	void on_lwFiles_itemActivated( QListWidgetItem* item );
+	void on_maWorkspace_subWindowActivated( QMdiSubWindow* subWindow );
 	void on_aOpenFile_triggered();
 	void on_aLoadTarget_triggered();
 };
