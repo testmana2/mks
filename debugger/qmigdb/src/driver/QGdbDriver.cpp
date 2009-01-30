@@ -67,7 +67,7 @@ void QGdbDriver::callbackAsync( mi_output* output, void* data )
 			// thread callstack
 			if ( stop->have_thread_id && stop->reason != sr_exited )
 			{
-				driver->updateFullCallStack();
+				driver->delayedCall( SLOT( updateFullCallStack() ) );
 			}
 			/*
 			char have_thread_id;
@@ -440,10 +440,21 @@ void QGdbDriver::stack_selectFrame (int frame_num)
 	
 	// NOTE hlamer: It's better to use mi_frames* frame = gmi_stack_info_frame (mHandle);, but function doesn't work
 	mi_frames* frame = gmi_stack_list_frames (mHandle);
+	mi_frames* first_frame = frame;
 	Q_ASSERT (frame);
-	emit positionChanged( filePath(frame->file), frame->line );
-	qDebug () << filePath(frame->file) <<  frame->line;
-	mi_free_frames (frame);
+	for (int i = 0; i < frame_num; i++)
+	{
+		Q_ASSERT (frame);
+		if (!frame)
+			break;
+		frame = frame->next;
+	}
+	
+	Q_ASSERT (frame);
+	if (frame)
+		emit positionChanged(filePath(frame->file), frame->line );
+	
+	mi_free_frames (first_frame);
 }
 
 int QGdbDriver::break_setBreakpoint( const QString& file, int line )
@@ -624,12 +635,11 @@ void QGdbDriver::updateFullCallStack()
 	}
 	
 	mi_frames* frame = gmi_stack_list_frames( mHandle );
-	qDebug () << (void*)frame;
-	//Q_ASSERT (frame);
+	Q_ASSERT (frame);
 	if ( frame )
 	{
 		mi_frames* args = gmi_stack_list_arguments( mHandle, 1  );
-		//Q_ASSERT (args);
+		Q_ASSERT (args);
 		if ( args )
 		{
 			mi_frames* p = frame;
