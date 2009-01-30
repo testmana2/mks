@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int v=3;
 
@@ -16,7 +17,8 @@ int main(int argc, char *argv[])
      printf("%d: %s\n",i,argv[i]);
  printf("*stopped,reason=\"You fool! that isn't gdb ;-)\"\n"); v=5;
  printf("Press ENTER\n");
- getchar();
+ //getchar();
  PrintHi(argc);
+ free (0);
  return 0;
 }

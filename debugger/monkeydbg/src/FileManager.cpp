@@ -70,6 +70,7 @@ void FileManager::clearDebuggerPosition()
 
 void FileManager::setDebuggerPosition( const QString& fileName, int line )
 {
+	qDebug () << "set pos " << fileName << line;
 	pEditor* editor = 0;
 	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )
 	{
