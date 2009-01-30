@@ -18,7 +18,7 @@ protected slots:
 	void onItemActivated( QTreeWidgetItem* item );
 
 signals:
-	void frameSelected( const QGdb::CallStackFrame& frame );
+	void frameSelected(int frame);
 };
 
 #endif // CALLSTACKWIDGET_H

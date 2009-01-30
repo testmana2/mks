@@ -58,6 +58,5 @@ void CallStackWidget::update( const QGdb::CallStackFrameList& stack, int selecte
 
 void CallStackWidget::onItemActivated( QTreeWidgetItem* item )
 {
-	QGdb::CallStackFrame frame = item->data( 0, Qt::UserRole ).value<QGdb::CallStackFrame>();
-	emit frameSelected( frame );
+	emit frameSelected(indexOfTopLevelItem (item));
 }

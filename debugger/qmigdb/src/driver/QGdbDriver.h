@@ -41,6 +41,7 @@ public slots:
 	int exec_pause();
 	int exec_kill();
 	
+	void stack_selectFrame (int frame);
 	// breakpoints
 	int break_setBreakpoint( const QString& file, int line );
 	void break_breakpointToggled( const QString& file, int line );
