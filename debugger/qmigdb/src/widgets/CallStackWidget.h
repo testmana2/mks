@@ -1,16 +1,16 @@
 #ifndef CALLSTACKWIDGET_H
 #define CALLSTACKWIDGET_H
 
-#include "QGdbDriver.h"
+#include "QGdb-Driver.h"
 
 #include <QTreeWidget>
 
 class CallStackWidget : public QTreeWidget
 {
 	Q_OBJECT
-	
+
 public:
-	CallStackWidget( QGdbDriver* debugger, QWidget* parent = 0 );
+	CallStackWidget( QGdb::Driver* debugger, QWidget* parent = 0 );
 	virtual ~CallStackWidget();
 	
 protected slots:
@@ -18,7 +18,7 @@ protected slots:
 	void onItemActivated( QTreeWidgetItem* item );
 
 signals:
-	void frameSelected(int frame);
+	void frameSelected( int frame );
 };
 
 #endif // CALLSTACKWIDGET_H
