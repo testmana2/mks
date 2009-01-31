@@ -7,7 +7,7 @@
 #include "maininterface/UIMonkeyDbg.h"
 
 #include "MainWindow.h"
-#include "CallStackWidget.h"
+//#include "CallStackWidget.h"
 #include "BreakpointWidget.h"
 #include "FileManager.h"
 #include "QGdbDriver.h"
@@ -45,10 +45,12 @@ int main( int argc, char** argv )
 	window.addDockWidget( Qt::TopDockWidgetArea, breakpointDock );
 	
 	//    Callstack widget
+	/*
 	QDockWidget* stackDock = new QDockWidget ("Call stack");
 	CallStackWidget* stackWidget = new CallStackWidget( &debugger, stackDock );
 	stackDock->setWidget( stackWidget );
 	window.addDockWidget( Qt::TopDockWidgetArea, stackDock );
+	*/
 	
 	// driver -> window
 	QObject::connect (&debugger, SIGNAL (callbackMessage(const QString&, QGdb::CBType)),
@@ -102,8 +104,10 @@ int main( int argc, char** argv )
 					&fileManager, SLOT( clearDebuggerPosition() ) );
 	
 	// call stack -> debugger
+	/*
 	QObject::connect (stackWidget, SIGNAL (frameSelected(int)),
 						&debugger, SLOT (stack_selectFrame (int)));
+	*/
 			
 			
 			if ( argc == 2 )
@@ -115,11 +119,13 @@ int main( int argc, char** argv )
 	}
 	
 	// speed hack
-	window.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
-	fileManager.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
+	dbg.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
+	dbg.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
+	/*
 	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 35 );
 	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 37 );
 	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 39 );
+	*/
 	
 	/*
 	window.loadTarget( "/home/a/code/mks/debugger/libmigdb/examples/test_target" );

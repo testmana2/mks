@@ -48,6 +48,9 @@ protected slots:
 	// debugger
 	void debuggerCallbackMessage( const QString& message, QGdb::CBType type );
 	void debuggerStateChanged( QGdb::State state );
+	void debuggerSignalReceived( const QGdb::Signal& signal );
+	void debuggerExitSignalReceived( const QGdb::Signal& signal );
+	void debuggerExited( int code );
 	
 	// gui
 	void subWindow_destroyed( QObject* object );
@@ -55,6 +58,8 @@ protected slots:
 	void on_maWorkspace_subWindowActivated( QMdiSubWindow* subWindow );
 	void on_aOpenFile_triggered();
 	void on_aLoadTarget_triggered();
+	void on_aStepInto_triggered();
+	void on_aStepOver_triggered();
 };
 
 #endif // UIMONKEYDBG_H

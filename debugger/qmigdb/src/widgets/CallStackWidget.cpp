@@ -1,12 +1,12 @@
 #include "CallStackWidget.h"
 
-CallStackWidget::CallStackWidget( QGdbDriver* debugger, QWidget* parent )
+CallStackWidget::CallStackWidget( QGdb::Driver* debugger, QWidget* parent )
 	: QTreeWidget( parent )
 {
 	setColumnCount( 4 );
 	setHeaderLabels( QStringList( tr( "Level" ) ) << tr( "Function" ) << tr( "Location" ) << tr( "Line" ) );
 	
-	connect(this, SIGNAL(itemActivated(QTreeWidgetItem*, int)), this, SLOT(onItemActivated (QTreeWidgetItem*)));
+	connect( this, SIGNAL( itemActivated( QTreeWidgetItem*, int ) ), this, SLOT( onItemActivated( QTreeWidgetItem* ) ) );
 	
 	// interface with debugger
 	connect( debugger, SIGNAL( callStackUpdated( const QGdb::CallStackFrameList&, int ) ), this, SLOT( update( const QGdb::CallStackFrameList&, int ) ) );
@@ -58,5 +58,5 @@ void CallStackWidget::update( const QGdb::CallStackFrameList& stack, int selecte
 
 void CallStackWidget::onItemActivated( QTreeWidgetItem* item )
 {
-	emit frameSelected(indexOfTopLevelItem (item));
+	emit frameSelected( indexOfTopLevelItem( item ) );
 }

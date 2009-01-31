@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>436</height>
+    <width>1045</width>
+    <height>467</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -27,7 +27,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>766</width>
+     <width>1045</width>
      <height>24</height>
     </rect>
    </property>
@@ -37,7 +37,7 @@
     </property>
     <addaction name="aOpenFile" />
     <addaction name="aCloseFile" />
-    <addaction name="aCloseAll" />
+    <addaction name="aCloseAllFiles" />
    </widget>
    <widget class="QMenu" name="menuRun" >
     <property name="title" >
@@ -70,7 +70,7 @@
    </attribute>
    <addaction name="aOpenFile" />
    <addaction name="aCloseFile" />
-   <addaction name="aCloseAll" />
+   <addaction name="aCloseAllFiles" />
    <addaction name="separator" />
    <addaction name="aLoadTarget" />
    <addaction name="separator" />
@@ -188,6 +188,15 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QDockWidget" name="dwCallStack" >
+   <property name="windowTitle" >
+    <string>Call Stack</string>
+   </property>
+   <attribute name="dockWidgetArea" >
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5" />
   </widget>
   <action name="aRun" >
    <property name="icon" >
@@ -309,7 +318,7 @@
     <string>F7</string>
    </property>
   </action>
-  <action name="aCloseAll" >
+  <action name="aCloseAllFiles" >
    <property name="icon" >
     <iconset resource="../resources/monkeydbg.qrc" >
      <normaloff>:/icons/file-close-all.png</normaloff>:/icons/file-close-all.png</iconset>

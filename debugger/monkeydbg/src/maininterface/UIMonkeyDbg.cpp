@@ -1,5 +1,6 @@
 #include "UIMonkeyDbg.h"
 #include "../pEditor.h"
+#include "CallStackWidget.h"
 
 #include <QMdiSubWindow>
 #include <QFileDialog>
@@ -10,10 +11,16 @@ UIMonkeyDbg::UIMonkeyDbg( QWidget* parent )
 {
 	setupUi( this );
 	
+	aCloseFile->setEnabled( false );
+	aCloseAllFiles->setEnabled( false );
+	
 	mDebuggerInitialized = false;
 	mDebugger = new QGdb::Driver( this );
 	
 	initConnections();
+	
+	CallStackWidget* cs = new CallStackWidget( mDebugger, dwCallStack );
+	dwCallStack->setWidget( cs );
 }
 
 UIMonkeyDbg::~UIMonkeyDbg()
@@ -40,10 +47,18 @@ void UIMonkeyDbg::initConnections()
 	// debuggerContinue
 	connect( mDebugger, SIGNAL( callbackMessage( const QString&, QGdb::CBType ) ), this, SLOT( debuggerCallbackMessage( const QString&, QGdb::CBType ) ) );
 	connect( mDebugger, SIGNAL( stateChanged( QGdb::State ) ), this, SLOT( debuggerStateChanged( QGdb::State ) ) );
+	connect( mDebugger, SIGNAL( signalReceived( const QGdb::Signal& ) ), this, SLOT( debuggerSignalReceived( const QGdb::Signal& ) ) );
+	connect( mDebugger, SIGNAL( exitSignalReceived( const QGdb::Signal& ) ), this, SLOT( debuggerExitSignalReceived( const QGdb::Signal& ) ) );
+	connect( mDebugger, SIGNAL( exited( int ) ), this, SLOT( debuggerExited( int ) ) );
 	
 	// gui
 	connect( aCloseFile, SIGNAL( triggered() ), this, SLOT( closeCurrentFile() ) );
-	connect( aCloseAll, SIGNAL( triggered() ), this, SLOT( closeAllFiles() ) );
+	connect( aCloseAllFiles, SIGNAL( triggered() ), this, SLOT( closeAllFiles() ) );
+	connect( aRun, SIGNAL( triggered() ), this, SLOT( debuggerRun() ) );
+	connect( aContinue, SIGNAL( triggered() ), this, SLOT( debuggerContinue() ) );
+	connect( aStepOut, SIGNAL( triggered() ), this, SLOT( debuggerStepOut() ) );
+	connect( aStop, SIGNAL( triggered() ), this, SLOT( debuggerStop() ) );
+	connect( aKill, SIGNAL( triggered() ), this, SLOT( debuggerKill() ) );
 }
 
 void UIMonkeyDbg::appendLog( const QString& log )
@@ -106,14 +121,23 @@ void UIMonkeyDbg::closeAllFiles()
 
 bool UIMonkeyDbg::loadTarget( const QString& fileName )
 {
+	return mDebugger->exec_setExecutable( fileName );
 }
 
 void UIMonkeyDbg::debuggerRun()
 {
+	if ( !mDebugger->exec_run() )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "Can't run: %1" ).arg( mDebugger->lastError() ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerContinue()
 {
+	if ( !mDebugger->exec_continue() )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "Can't continue: %1" ).arg( mDebugger->lastError() ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerStepInto( bool instruction )
@@ -220,6 +244,30 @@ void UIMonkeyDbg::debuggerStateChanged( QGdb::State state )
 	}
 }
 
+void UIMonkeyDbg::debuggerSignalReceived( const QGdb::Signal& signal )
+{
+qWarning( "ok" );
+	QMessageBox::StandardButton result = QMessageBox::critical( window(), tr( "Signal received..." ), tr( "Program received signal %1, %2\nDo you want to show a back trace ?" ).arg( signal.name ).arg( signal.meaning ), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
+	
+	if ( result == QMessageBox::Yes )
+	{
+		if ( !mDebugger->stack_listFrames() )
+		{
+			QMessageBox::information( window(), tr( "Getting call stack..." ), tr( "Can't get the call stack, or empty traces." ) );
+		}
+	}
+}
+
+void UIMonkeyDbg::debuggerExitSignalReceived( const QGdb::Signal& signal )
+{
+	QMessageBox::critical( window(), tr( "Signal received..." ), tr( "Program exited signal %1, %2" ).arg( signal.name ).arg( signal.meaning ) );
+}
+
+void UIMonkeyDbg::debuggerExited( int code )
+{
+	QMessageBox::information( window(), tr( "Program exited..." ), tr( "Program exited with code: %1" ).arg( code ) );
+}
+
 void UIMonkeyDbg::subWindow_destroyed( QObject* object )
 {
 	QWidget* widget = qobject_cast<QWidget*>( object );
@@ -241,6 +289,9 @@ void UIMonkeyDbg::on_lwFiles_itemActivated( QListWidgetItem* item )
 
 void UIMonkeyDbg::on_maWorkspace_subWindowActivated( QMdiSubWindow* subWindow )
 {
+	aCloseFile->setEnabled( subWindow );
+	aCloseAllFiles->setEnabled( subWindow );
+	
 	if ( !subWindow )
 	{
 		return;
@@ -269,4 +320,20 @@ void UIMonkeyDbg::on_aOpenFile_triggered()
 
 void UIMonkeyDbg::on_aLoadTarget_triggered()
 {
+	const QString file = QFileDialog::getOpenFileName( this, tr( "Open executable to debug" ), ".", QString::null );
+	
+	if ( !loadTarget( file ) )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "An error occur while loading target: %1" ).arg( mDebugger->lastError() ) );
+	}
+}
+
+void UIMonkeyDbg::on_aStepInto_triggered()
+{
+	debuggerStepInto( false );
+}
+
+void UIMonkeyDbg::on_aStepOver_triggered()
+{
+	debuggerStepOver( false );
 }
