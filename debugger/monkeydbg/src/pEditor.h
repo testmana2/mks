@@ -87,6 +87,7 @@ protected slots:
 	void cursorPositionChanged( int, int );
 	void textChanged();
 	void clipboardDataChanged();
+	void onMarginClicked( int margin, int line, Qt::KeyboardModifiers state );
 
 public slots:
 	void setLineNumbersMarginEnabled( bool );
@@ -112,6 +113,7 @@ signals:
 	void undoAvailable( bool );
 	void redoAvailable( bool );
 	void pasteAvailable( bool );
+	void breakpointToggled( int line );
 };
 
 #endif // PEDITOR_H

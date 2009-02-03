@@ -31,6 +31,11 @@ namespace QGdb
 		bool exec_setExecutable( const QString& executable );
 		bool exec_run();
 		bool exec_continue();
+		bool exec_stepInto( bool instruction = false );
+		bool exec_stepOver( bool instruction = false );
+		bool exec_stepOut();
+		bool exec_stop();
+		bool exec_kill();
 		
 		bool stack_listFrames();
 	

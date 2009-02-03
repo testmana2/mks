@@ -82,6 +82,7 @@ pEditor::pEditor( QWidget* p )
 	connect( this, SIGNAL( copyAvailable( bool ) ), this, SLOT( setCopyAvailable( bool ) ) );
 	connect( this, SIGNAL( cursorPositionChanged( int, int ) ), this, SLOT( cursorPositionChanged( int, int ) ) );
 	connect( this, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
+	connect( this, SIGNAL( marginClicked( int, int, Qt::KeyboardModifiers ) ), this, SLOT( onMarginClicked( int, int, Qt::KeyboardModifiers ) ) );
 	connect( QApplication::clipboard(), SIGNAL( dataChanged() ), this, SLOT( clipboardDataChanged() ) );
 
 	// init pasteAvailable
@@ -522,6 +523,16 @@ void pEditor::makeBackup()
 			return;
 
 	QFile::copy( f.absoluteFilePath(), s );
+}
+
+void pEditor::onMarginClicked( int margin, int line, Qt::KeyboardModifiers state )
+{
+	Q_UNUSED( state );
+	
+	if ( margin == 1 )
+	{
+		emit breakpointToggled( line );
+	}
 }
 
 void pEditor::clearBreakpoints( int line )

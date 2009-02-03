@@ -38,6 +38,7 @@ void UIMonkeyDbg::showEvent( QShowEvent* event )
 		if ( !mDebugger->connectToGdb() )
 		{
 			debuggerStateChanged( QGdb::DISCONNECTED );
+			QMessageBox::critical( this, tr( "Critical..." ), tr( "Can't connect to gdb" ) );
 		}
 	}
 }
@@ -85,6 +86,13 @@ bool UIMonkeyDbg::openFile( const QString& fileName )
 	}
 	
 	pEditor* editor = new pEditor( maWorkspace );
+	editor->setReadOnly( true );
+	editor->setMarginLineNumbers( 1, true );
+	editor->setMarginWidth( 1, 50 );
+	editor->setMarginSensitivity( 1, true );
+	editor->setFolding( QsciScintilla::BoxedTreeFoldStyle );
+	editor->setIndentationWidth( 4 );
+	editor->setCaretLineVisible( true );
 	
 	if ( !editor->openFile( fileName, "UTF-8" ) )
 	{
@@ -142,22 +150,42 @@ void UIMonkeyDbg::debuggerContinue()
 
 void UIMonkeyDbg::debuggerStepInto( bool instruction )
 {
+	if ( !mDebugger->exec_stepInto( instruction ) )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "Can't step into: %1" ).arg( mDebugger->lastError() ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerStepOver( bool instruction )
 {
+	if ( !mDebugger->exec_stepOver( instruction ) )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "Can't step over: %1" ).arg( mDebugger->lastError() ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerStepOut()
 {
+	if ( !mDebugger->exec_stepOut() )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "Can't step out: %1" ).arg( mDebugger->lastError() ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerStop()
 {
+	if ( !mDebugger->exec_stop() )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "Can't stop: %1" ).arg( mDebugger->lastError() ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerKill()
 {
+	if ( !mDebugger->exec_kill() )
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "Can't kill: %1" ).arg( mDebugger->lastError() ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerCallbackMessage( const QString& message, QGdb::CBType type )
@@ -246,15 +274,11 @@ void UIMonkeyDbg::debuggerStateChanged( QGdb::State state )
 
 void UIMonkeyDbg::debuggerSignalReceived( const QGdb::Signal& signal )
 {
-qWarning( "ok" );
-	QMessageBox::StandardButton result = QMessageBox::critical( window(), tr( "Signal received..." ), tr( "Program received signal %1, %2\nDo you want to show a back trace ?" ).arg( signal.name ).arg( signal.meaning ), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes );
-	
-	if ( result == QMessageBox::Yes )
+	QMessageBox::critical( window(), tr( "Signal received..." ), tr( "Program received signal %1, %2" ).arg( signal.name ).arg( signal.meaning ) );
+
+	if ( !mDebugger->stack_listFrames() )
 	{
-		if ( !mDebugger->stack_listFrames() )
-		{
-			QMessageBox::information( window(), tr( "Getting call stack..." ), tr( "Can't get the call stack, or empty traces." ) );
-		}
+		QMessageBox::information( window(), tr( "Getting call stack..." ), tr( "Can't get the call stack, or corrupted traces." ) );
 	}
 }
 

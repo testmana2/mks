@@ -21,7 +21,7 @@ int main( int argc, char** argv )
 	app.setApplicationName( "Monkey Debugger" );
 	
 	UIMonkeyDbg dbg;
-	dbg.show();
+	dbg.showMaximized();
 	
 	//    Driver
 	QGdbDriver debugger;
