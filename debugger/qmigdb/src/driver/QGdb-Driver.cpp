@@ -88,7 +88,7 @@ void QGdb::Driver::handleStop( mi_stop* stop )
 		// thread callstack
 		if ( stop->have_thread_id && stop->reason != sr_exited )
 		{
-			//delayedCall( SLOT( updateFullCallStack() ) );
+			stack_listFrames();
 		}
 		/*
 		char have_thread_id;
