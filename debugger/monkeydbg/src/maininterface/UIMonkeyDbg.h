@@ -7,6 +7,7 @@
 #include <QMap>
 
 class QMdiSubWindow;
+class pEditor;
 
 typedef QPair<QListWidgetItem*, QMdiSubWindow*> ItemSubWindow;
 
@@ -31,7 +32,7 @@ public slots:
 	void appendConsole( const QString& msg );
 	void appendPipe( const QString& msg );
 	
-	bool openFile( const QString& fileName );
+	pEditor* openFile( const QString& fileName );
 	void closeCurrentFile();
 	void closeAllFiles();
 	
@@ -51,6 +52,8 @@ protected slots:
 	void debuggerSignalReceived( const QGdb::Signal& signal );
 	void debuggerExitSignalReceived( const QGdb::Signal& signal );
 	void debuggerExited( int code );
+	void debuggerCallStackUpdated( const QGdb::CallStackFrameList& stack, int selectedLevel );
+	void debuggerPositionChanged( const QString& fileName, int line );
 	
 	// gui
 	void subWindow_destroyed( QObject* object );

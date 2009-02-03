@@ -51,6 +51,8 @@ void UIMonkeyDbg::initConnections()
 	connect( mDebugger, SIGNAL( signalReceived( const QGdb::Signal& ) ), this, SLOT( debuggerSignalReceived( const QGdb::Signal& ) ) );
 	connect( mDebugger, SIGNAL( exitSignalReceived( const QGdb::Signal& ) ), this, SLOT( debuggerExitSignalReceived( const QGdb::Signal& ) ) );
 	connect( mDebugger, SIGNAL( exited( int ) ), this, SLOT( debuggerExited( int ) ) );
+	connect( mDebugger, SIGNAL( callStackUpdated( const QGdb::CallStackFrameList&, int ) ), this, SLOT( debuggerCallStackUpdated( const QGdb::CallStackFrameList&, int ) ) );
+	connect( mDebugger, SIGNAL( positionChanged( const QString&, int ) ), this, SLOT( debuggerPositionChanged( const QString&, int ) ) );
 	
 	// gui
 	connect( aCloseFile, SIGNAL( triggered() ), this, SLOT( closeCurrentFile() ) );
@@ -77,12 +79,12 @@ void UIMonkeyDbg::appendPipe( const QString& msg )
 	ptePipe->appendPlainText( msg );
 }
 
-bool UIMonkeyDbg::openFile( const QString& fileName )
+pEditor* UIMonkeyDbg::openFile( const QString& fileName )
 {
 	if ( mOpenedFiles.contains( fileName ) )
 	{
 		maWorkspace->setActiveSubWindow( mOpenedFiles[ fileName ].second );
-		return true;
+		return qobject_cast<pEditor*>( mOpenedFiles[ fileName ].second->widget() );
 	}
 	
 	pEditor* editor = new pEditor( maWorkspace );
@@ -97,7 +99,7 @@ bool UIMonkeyDbg::openFile( const QString& fileName )
 	if ( !editor->openFile( fileName, "UTF-8" ) )
 	{
 		delete editor;
-		return false;
+		return 0;
 	}
 	
 	QListWidgetItem* item = new QListWidgetItem( lwFiles );
@@ -114,7 +116,7 @@ bool UIMonkeyDbg::openFile( const QString& fileName )
 	
 	subWindow->showMaximized();
 	
-	return true;
+	return editor;
 }
 
 void UIMonkeyDbg::closeCurrentFile()
@@ -290,6 +292,38 @@ void UIMonkeyDbg::debuggerExitSignalReceived( const QGdb::Signal& signal )
 void UIMonkeyDbg::debuggerExited( int code )
 {
 	QMessageBox::information( window(), tr( "Program exited..." ), tr( "Program exited with code: %1" ).arg( code ) );
+}
+
+void UIMonkeyDbg::debuggerCallStackUpdated( const QGdb::CallStackFrameList& stack, int selectedLevel )
+{
+	appendLog( "callstack updated" );
+}
+
+void UIMonkeyDbg::debuggerPositionChanged( const QString& fileName, int line )
+{
+	pEditor* editor = 0;
+	foreach ( QMdiSubWindow* window, maWorkspace->subWindowList() )
+	{
+		pEditor* tmpEditor = qobject_cast<pEditor*>( window->widget() );
+		tmpEditor->clearDebuggerPosition();
+		
+		if ( window->windowFilePath() == fileName )
+		{
+			editor = tmpEditor;
+		}
+	}
+	
+	if ( !editor )
+	{
+		editor = openFile( fileName );
+	}
+	
+	if ( editor )
+	{
+		QMdiSubWindow* window = qobject_cast<QMdiSubWindow*>( editor->parentWidget() );
+		maWorkspace->setActiveSubWindow( window );
+		editor->setDebuggerPosition( line -1 );
+	}
 }
 
 void UIMonkeyDbg::subWindow_destroyed( QObject* object )
