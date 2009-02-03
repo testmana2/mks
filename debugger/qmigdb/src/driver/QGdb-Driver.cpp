@@ -364,6 +364,143 @@ bool QGdb::Driver::exec_continue()
 	return false;
 }
 
+bool QGdb::Driver::exec_stepInto( bool instruction )
+{
+	int res = 0;
+	
+	if ( mState == QGdb::TARGET_SETTED )
+	{
+		return runToMain();
+	}
+	
+	if ( mState == QGdb::STOPPED )
+	{
+		if ( instruction )
+		{
+			res = gmi_exec_step_instruction( mHandle );
+		}
+		else
+		{
+			res = gmi_exec_step( mHandle );
+		}
+		
+		if ( res != 0 )
+		{
+			setState( QGdb::RUNNING );
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+bool QGdb::Driver::exec_stepOver( bool instruction )
+{
+	int res = 0;
+
+	if ( mState == QGdb::TARGET_SETTED )
+	{
+		return runToMain();
+	}
+	
+	if ( mState == QGdb::STOPPED )
+	{
+		if ( instruction )
+		{
+			res = gmi_exec_next_instruction( mHandle );
+		}
+		else
+		{
+			res = gmi_exec_next( mHandle );
+		}
+		
+		if ( res != 0 )
+		{
+			setState( QGdb::RUNNING );
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+bool QGdb::Driver::exec_stepOut()
+{
+	if ( mState != QGdb::STOPPED )
+	{
+		return false;
+	}
+	
+	int res = gmi_exec_finish( mHandle );
+	
+	if ( res != 0 )
+	{
+		setState( QGdb::RUNNING );
+		return true;
+	}
+	
+	return false;
+}
+
+bool QGdb::Driver::exec_stop()
+{
+	if ( mState != QGdb::RUNNING )
+	{
+		return false;
+	}
+	
+	return gmi_exec_interrupt( mHandle ) != 0;
+}
+
+bool QGdb::Driver::exec_kill()
+{
+	if ( mState != QGdb::STOPPED && mState != QGdb::RUNNING )
+	{
+		return false;
+	}
+	
+	// GDB/MI doesn't implement it (yet), so we use the regular kill.
+	// Ensure confirm is off.
+	char* prev = gmi_gdb_show( mHandle, "confirm" );
+	
+	if ( !prev )
+	{
+		return false;
+	}
+	
+	if ( strcmp( prev, "off" ) )
+	{
+		if ( !gmi_gdb_set( mHandle, "confirm", "off" ) )
+		{
+			free( prev );
+			return false;
+		}
+	}
+	else
+	{
+		free( prev );
+		prev = false;
+	}
+	
+	// do real kill
+	int res = gmi_exec_kill( mHandle );
+	
+	// Revert confirm option if needed.
+	if ( prev )
+	{
+		gmi_gdb_set( mHandle, "confirm", prev );
+		free( prev );
+	}
+	
+	if ( res != 0 )
+	{
+		setState( QGdb::TARGET_SETTED );
+		return true;
+	}
+	
+	return false;
+}
+
 bool QGdb::Driver::stack_listFrames()
 {
 	if ( mState != QGdb::STOPPED )
