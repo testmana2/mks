@@ -536,6 +536,75 @@ bool QGdb::Driver::stack_listFrames()
 	return true;
 }
 
+bool QGdb::Driver::break_setBreakpoint( const QString& file, int line )
+{
+	int res = 0;
+	QGdb::Breakpoint bp;
+	
+	if ( mState != QGdb::STOPPED && mState != QGdb::TARGET_SETTED )
+	{
+		bp.absolute_file = file;
+	}
+	else
+	{
+		mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit().constData(), line );
+		
+		if ( !mbp )
+		{
+			return false;
+		}
+		
+		bp = QGdb::Breakpoint( mbp );
+		mi_free_bkpt( mbp );
+	}
+	
+	// the breakpoint structure have null file_asb :/
+	if ( bp.absolute_file.isEmpty() )
+	{
+		bp.absolute_file = file;
+	}
+	
+	// on multiple location, line is incorrect ( = 0 )
+	if ( bp.line != line )
+	{
+		bp.line = line;
+	}
+	
+	mBreakpoints << bp;
+	emit breakpointAdded( bp );
+	
+	return true;
+}
+
+void QGdb::Driver::break_breakpointToggled( const QString& file, int line )
+{
+	for ( int i = 0; i < mBreakpoints.count(); i++ )
+	{
+		QGdb::Breakpoint& bp = mBreakpoints[ i ];
+		
+		if ( bp.absolute_file == file && bp.line == line )
+		{
+			if ( ( bp.number == -1 ) || ( mState == QGdb::TARGET_SETTED || mState == QGdb::STOPPED ) )
+			{
+				int res = bp.number == -1 ? 1 : gmi_break_delete( mHandle, bp.number );
+				
+				if ( res != 0 )
+				{
+					emit breakpointRemoved( bp );
+					mBreakpoints.removeAt( i );
+				}
+			}
+			
+			return;
+		}
+	}
+	
+	if ( !break_setBreakpoint( file, line ) )
+	{
+		callbackMessage( tr( "Can't set breakpoint" ), QGdb::LOG );
+	}
+}
+
 
 
 
@@ -582,7 +651,7 @@ void QGdb::Driver::exec_setArgs( const QString& args )
 		return 0;
 	}
 	
-	int res = gmi_set_exec( mHandle, mTargetFileName.toLocal8Bit(), args.toLocal8Bit() );
+	int res = gmi_set_exec( mHandle, mTargetFileName.toLocal8Bit().constData(), args.toLocal8Bit().constData() );
 	Q_ASSERT (res != 0);
 }
 
@@ -753,71 +822,9 @@ void QGdb::Driver::stack_selectFrame (int frame_num)
 	mi_free_frames (first_frame);
 }
 
-int QGdb::Driver::break_setBreakpoint( const QString& file, int line )
-{
-	int res = 0;
-	QGdb::Breakpoint bp;
-	
-	if ( mState != QGdb::STOPPED && mState != QGdb::TARGET_SETTED )
-	{
-		bp.absolute_file = file;
-	}
-	else
-	{
-		mi_bkpt* mbp = gmi_break_insert( mHandle, file.toLocal8Bit(), line );
-		
-		if ( !mbp )
-		{
-			return res;
-		}
-		
-		bp = QGdb::Breakpoint( mbp );
-		mi_free_bkpt( mbp );
-	}
-	
-	// the breakpoint structure have null file_asb :/
-	if ( bp.absolute_file.isEmpty() )
-	{
-		bp.absolute_file = file;
-	}
-	
-	// on multiple location, line is incorrect ( = 0 )
-	if ( bp.line != line )
-	{
-		bp.line = line;
-	}
-	
-	mBreakpoints << bp;
-	emit breakpointAdded( bp );
-	
-	return 1;
-}
 
-void QGdb::Driver::break_breakpointToggled( const QString& file, int line )
-{
-	for ( int i = 0; i < mBreakpoints.count(); i++ )
-	{
-		QGdb::Breakpoint& bp = mBreakpoints[ i ];
-		
-		if ( bp.absolute_file == file && bp.line == line )
-		{
-			if ( ( bp.number == -1 ) || ( mState == QGdb::TARGET_SETTED || mState == QGdb::RUNNING ) )
-			{
-				int res = bp.number == -1 ? 1 : gmi_break_delete( mHandle, bp.number );
-				
-				if ( res != 0 )
-				{
-					emit breakpointRemoved( bp );
-					mBreakpoints.removeAt( i );
-				}
-			}
-			
-			return;
-		}
-	}
-	
-	break_setBreakpoint( file, line );
-}
+
+
 
 void QGdb::Driver::clearBreakpoints( int line )
 {
