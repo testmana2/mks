@@ -54,6 +54,11 @@ protected slots:
 	void debuggerExited( int code );
 	void debuggerCallStackUpdated( const QGdb::CallStackFrameList& stack, int selectedLevel );
 	void debuggerPositionChanged( const QString& fileName, int line );
+	void debuggerBreakpointAdded( const QGdb::Breakpoint& breakpoint );
+	void debuggerBreakpointRemoved( const QGdb::Breakpoint& breakpoint );
+	
+	// editor
+	void editorBreakpointToggled( int line );
 	
 	// gui
 	void subWindow_destroyed( QObject* object );

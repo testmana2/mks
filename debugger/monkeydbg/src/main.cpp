@@ -39,10 +39,12 @@ int main( int argc, char** argv )
 	FileManager fileManager( &app, mdi );
 	
 	// breakpoints widget
+	/*
 	QDockWidget* breakpointDock = new QDockWidget( "Breakpoints" );
 	BreakpointWidget* breakpointWidget = new BreakpointWidget( &debugger, breakpointDock );
 	breakpointDock->setWidget( breakpointWidget );
 	window.addDockWidget( Qt::TopDockWidgetArea, breakpointDock );
+	*/
 	
 	//    Callstack widget
 	/*
