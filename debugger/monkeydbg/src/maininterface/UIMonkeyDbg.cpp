@@ -1,6 +1,7 @@
 #include "UIMonkeyDbg.h"
 #include "../pEditor.h"
 #include "CallStackWidget.h"
+#include "BreakpointWidget.h"
 
 #include <QMdiSubWindow>
 #include <QFileDialog>
@@ -19,8 +20,11 @@ UIMonkeyDbg::UIMonkeyDbg( QWidget* parent )
 	
 	initConnections();
 	
-	CallStackWidget* cs = new CallStackWidget( mDebugger, dwCallStack );
-	dwCallStack->setWidget( cs );
+	CallStackWidget* csw = new CallStackWidget( mDebugger, dwCallStack );
+	dwCallStack->setWidget( csw );
+	
+	BreakpointWidget* bpw = new BreakpointWidget( mDebugger, dwBreakpoint );
+	dwBreakpoint->setWidget( bpw );
 }
 
 UIMonkeyDbg::~UIMonkeyDbg()
@@ -45,7 +49,7 @@ void UIMonkeyDbg::showEvent( QShowEvent* event )
 
 void UIMonkeyDbg::initConnections()
 {
-	// debuggerContinue
+	// debugger
 	connect( mDebugger, SIGNAL( callbackMessage( const QString&, QGdb::CBType ) ), this, SLOT( debuggerCallbackMessage( const QString&, QGdb::CBType ) ) );
 	connect( mDebugger, SIGNAL( stateChanged( QGdb::State ) ), this, SLOT( debuggerStateChanged( QGdb::State ) ) );
 	connect( mDebugger, SIGNAL( signalReceived( const QGdb::Signal& ) ), this, SLOT( debuggerSignalReceived( const QGdb::Signal& ) ) );
@@ -53,6 +57,8 @@ void UIMonkeyDbg::initConnections()
 	connect( mDebugger, SIGNAL( exited( int ) ), this, SLOT( debuggerExited( int ) ) );
 	connect( mDebugger, SIGNAL( callStackUpdated( const QGdb::CallStackFrameList&, int ) ), this, SLOT( debuggerCallStackUpdated( const QGdb::CallStackFrameList&, int ) ) );
 	connect( mDebugger, SIGNAL( positionChanged( const QString&, int ) ), this, SLOT( debuggerPositionChanged( const QString&, int ) ) );
+	connect( mDebugger, SIGNAL( breakpointAdded( const QGdb::Breakpoint& ) ), this, SLOT( debuggerBreakpointAdded( const QGdb::Breakpoint& ) ) );
+	connect( mDebugger, SIGNAL( breakpointRemoved( const QGdb::Breakpoint& ) ), this, SLOT( debuggerBreakpointRemoved( const QGdb::Breakpoint& ) ) );
 	
 	// gui
 	connect( aCloseFile, SIGNAL( triggered() ), this, SLOT( closeCurrentFile() ) );
@@ -112,6 +118,7 @@ pEditor* UIMonkeyDbg::openFile( const QString& fileName )
 	mOpenedFiles[ fileName ].first = item;
 	mOpenedFiles[ fileName ].second = subWindow;
 	
+	connect( editor, SIGNAL( breakpointToggled( int ) ), this, SLOT( editorBreakpointToggled( int ) ) );
 	connect( subWindow, SIGNAL( destroyed( QObject* ) ), this, SLOT( subWindow_destroyed( QObject* ) ) );
 	
 	subWindow->showMaximized();
@@ -296,6 +303,8 @@ void UIMonkeyDbg::debuggerExited( int code )
 
 void UIMonkeyDbg::debuggerCallStackUpdated( const QGdb::CallStackFrameList& stack, int selectedLevel )
 {
+	Q_UNUSED( stack );
+	Q_UNUSED( selectedLevel );
 	appendLog( "callstack updated" );
 }
 
@@ -324,6 +333,48 @@ void UIMonkeyDbg::debuggerPositionChanged( const QString& fileName, int line )
 		maWorkspace->setActiveSubWindow( window );
 		editor->setDebuggerPosition( line -1 );
 	}
+}
+
+void UIMonkeyDbg::debuggerBreakpointAdded( const QGdb::Breakpoint& breakpoint )
+{
+	pEditor* editor = 0;
+	
+	if ( mOpenedFiles.keys().contains( breakpoint.absolute_file ) )
+	{
+		QMdiSubWindow* subWindow = mOpenedFiles[ breakpoint.absolute_file ].second;
+		editor = qobject_cast<pEditor*>( subWindow->widget() );
+	}
+	else
+	{
+		editor = openFile( breakpoint.absolute_file );
+	}
+	
+	editor->setBreakpoint( breakpoint.line -1, pEditor::mdEnabledBreak ); // breakpoint.type
+}
+
+void UIMonkeyDbg::debuggerBreakpointRemoved( const QGdb::Breakpoint& breakpoint )
+{
+	pEditor* editor = 0;
+	
+	if ( mOpenedFiles.keys().contains( breakpoint.absolute_file ) )
+	{
+		QMdiSubWindow* subWindow = mOpenedFiles[ breakpoint.absolute_file ].second;
+		editor = qobject_cast<pEditor*>( subWindow->widget() );
+	}
+	
+	if ( editor )
+	{
+		editor->setBreakpoint( breakpoint.line -1, -1 );
+	}
+}
+
+void UIMonkeyDbg::editorBreakpointToggled( int line )
+{
+	pEditor* editor = qobject_cast<pEditor*>( sender() );
+	QMdiSubWindow* subWindow = qobject_cast<QMdiSubWindow*>( editor->parentWidget() );
+	const QString fileName = subWindow->windowFilePath();
+	
+	mDebugger->break_breakpointToggled( fileName, line +1 );
 }
 
 void UIMonkeyDbg::subWindow_destroyed( QObject* object )

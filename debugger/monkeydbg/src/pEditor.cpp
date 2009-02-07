@@ -561,6 +561,8 @@ void pEditor::setBreakpoint( int line, int type )
 	}
 	else
 	{
+		markerAdd( line, (pEditor::MarkerDefineType)type );
+		/*
 		switch ( type )
 		{
 			case 0:
@@ -576,6 +578,7 @@ void pEditor::setBreakpoint( int line, int type )
 				markerAdd( line, pEditor::mdDisabledConditionalBreak );
 				break;
 		}
+		*/
 	}
 }
 
