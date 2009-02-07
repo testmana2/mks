@@ -3,14 +3,14 @@
 
 #include <QTreeWidget>
 
-#include "QGdbDriver.h"
+#include "QGdb-Driver.h"
 
 class BreakpointWidget : public QTreeWidget
 {
 	Q_OBJECT
 	
 public:
-	BreakpointWidget( QGdbDriver* driver, QWidget* parent = 0 );
+	BreakpointWidget( QGdb::Driver* driver, QWidget* parent = 0 );
 	virtual ~BreakpointWidget();
 
 protected slots:

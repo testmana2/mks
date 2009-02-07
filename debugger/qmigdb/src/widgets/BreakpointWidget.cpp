@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-BreakpointWidget::BreakpointWidget( QGdbDriver* driver, QWidget* parent )
+BreakpointWidget::BreakpointWidget( QGdb::Driver* driver, QWidget* parent )
 	: QTreeWidget( parent )
 {
 	setColumnCount( 4 );

@@ -38,6 +38,9 @@ namespace QGdb
 		bool exec_kill();
 		
 		bool stack_listFrames();
+		
+		bool break_setBreakpoint( const QString& file, int line );
+		void break_breakpointToggled( const QString& file, int line );
 	
 	protected:
 		QTimer* mAsyncPollTimer;
@@ -45,6 +48,7 @@ namespace QGdb
 		QGdb::State mState;
 		QString mTargetFileName;
 		bool mWaitingTempBreakpoint;
+		QGdb::BreakpointList mBreakpoints;
 		
 		// migdb callbacks
 		static void callbackConsole( const char* str, void* instance );
@@ -64,45 +68,20 @@ namespace QGdb
 	protected slots:
 		void asyncPollTimer_timeout();
 		
-	/*	
-		
-		
+	/*
 		QStringList sourcesPath() const;
 
 	public slots:
 		// preparing to execution
 		void prepare_startXterm ();
-		
 		// target execution
-		
 		void exec_setArgs (const QString& args);
-
-		
-		int exec_stepInto( bool instruction = false );
-		int exec_stepOver( bool instruction = false );
-		int exec_stepOut();
-		int exec_pause();
-		int exec_kill();
-		
 		void stack_selectFrame (int frame);
 		// breakpoints
-		int break_setBreakpoint( const QString& file, int line );
-		void break_breakpointToggled( const QString& file, int line );
 		void clearBreakpoints( int line = -1 );
 		
 	protected:
-		QGdb::State mState;
-		mi_h* mHandle;
 		mi_aux_term* mXterm;
-		QTimer mGdbPingTimer;
-		QString mTargetFileName;
-		
-		QGdb::BreakpointList mBreakpoints;
-		
-		
-		
-		
-		void delayedCall( const char* member );
 		
 	protected slots:
 		// touches gdb for make it alive
@@ -119,14 +98,12 @@ namespace QGdb
 		void exited( int code );
 		void callStackUpdated( const QGdb::CallStackFrameList& stack, int selectedLevel );
 		void positionChanged( const QString& fileName, int line );
-		
-	/*
 		void breakpointAdded( const QGdb::Breakpoint& breakpoint );
 		void breakpointRemoved( const QGdb::Breakpoint& breakpoint );
+		
+	/*
 		void breakpointUpdated( const QGdb::Breakpoint& breakpoint );
 		void breakpointsCleared( const QString& fileName = QString::null, int line = -1 );
-		
-		
 	*/
 	};
 };
