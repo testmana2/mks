@@ -125,7 +125,6 @@ void QGdb::Driver::handleStop( mi_stop* stop )
 				break;
 			case sr_signal_received:
 				emit signalReceived( QGdb::Signal( stop ) );
-				//delayedCall( SLOT( updateFullCallStack() ) );
 				break;
 			case sr_unknown:
 			default:
@@ -558,7 +557,7 @@ bool QGdb::Driver::break_setBreakpoint( const QString& file, int line )
 		mi_free_bkpt( mbp );
 	}
 	
-	// the breakpoint structure have null file_asb :/
+	// the breakpoint structure have null file_abs :/
 	if ( bp.absolute_file.isEmpty() )
 	{
 		bp.absolute_file = file;
@@ -605,6 +604,70 @@ void QGdb::Driver::break_breakpointToggled( const QString& file, int line )
 	}
 }
 
+void QGdb::Driver::break_breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after )
+{
+	for ( int i = 0; i < mBreakpoints.count(); i++ )
+	{
+		QGdb::Breakpoint bp = mBreakpoints[ i ];
+		
+		if ( bp == before )
+		{
+			if ( before.number != -1 && ( mState == QGdb::TARGET_SETTED || mState == QGdb::STOPPED ) )
+			{
+				// condition
+				if ( before.condition != after.condition )
+				{
+					int res = gmi_break_set_condition( mHandle, after.number, after.condition.toLocal8Bit().constData() );
+					
+					if ( res == 0 )
+					{
+						emit callbackMessage( tr( "Can't change condition for breakpoint #%1\n%2" ).arg( after.number ).arg( lastError() ), QGdb::ERROR );
+						return;
+					}
+				}
+				
+				// update already updated part, in case of error for one of the next part
+				bp.condition = after.condition;
+				
+				// ignore
+				if ( before.ignore != after.ignore || before.times != after.times )
+				{
+					int res = gmi_break_set_times( mHandle, after.number, after.times );
+					
+					if ( res == 0 )
+					{
+						emit callbackMessage( tr( "Can't change ignore times for breakpoint #%1" ).arg( after.number ), QGdb::ERROR );
+						mBreakpoints.replace( i, bp );
+						emit breakpointEdited( before, bp );
+						return;
+					}
+				}
+				
+				// update already updated part, in case of error for one of the next part
+				bp.ignore = after.ignore;
+				bp.times = after.times;
+				
+				// state
+				if ( before.enabled != after.enabled )
+				{
+					int res = gmi_break_state( mHandle, after.number, after.enabled ? 1 : 0 );
+					
+					if ( res == 0 )
+					{
+						emit callbackMessage( tr( "Can't change state for breakpoint #%1" ).arg( after.number ), QGdb::ERROR );
+						mBreakpoints.replace( i, bp );
+						emit breakpointEdited( before, bp );
+						return;
+					}
+				}
+			}
+			
+			mBreakpoints.replace( i, after );
+			emit breakpointEdited( before, after );
+		}
+	}
+}
+
 
 
 
@@ -616,9 +679,6 @@ void QGdb::Driver::break_breakpointToggled( const QString& file, int line )
 
 
 /*
-
-
-
 
 QStringList QGdb::Driver::sourcesPath() const // need fix, it allow to found sources path gdb look for when searching a file.
 {
@@ -633,165 +693,6 @@ QStringList QGdb::Driver::sourcesPath() const // need fix, it allow to found sou
 	}
 	
 	return directories;
-}
-
-void QGdb::Driver::prepare_startXterm ()
-{
-	int res = 0;
-	mXterm = gmi_start_xterm();
-	Q_ASSERT (mXterm);
-	res = gmi_target_terminal(mHandle, mXterm->tty);
-	Q_ASSERT (res != 0);
-}
-
-void QGdb::Driver::exec_setArgs( const QString& args )
-{
-	if ( mState != QGdb::Driver::TARGET_SETTED )
-	{
-		return 0;
-	}
-	
-	int res = gmi_set_exec( mHandle, mTargetFileName.toLocal8Bit().constData(), args.toLocal8Bit().constData() );
-	Q_ASSERT (res != 0);
-}
-
-
-
-
-
-
-
-int QGdb::Driver::exec_stepInto( bool instruction ) // ok
-{
-	int res = 0;
-	
-	if ( mState == QGdb::TARGET_SETTED )
-	{
-		return runToMain();
-	}
-	
-	if ( mState == QGdb::STOPPED )
-	{
-		if ( instruction )
-		{
-			res = gmi_exec_step_instruction( mHandle );
-		}
-		else
-		{
-			res = gmi_exec_step( mHandle );
-		}
-		
-		if ( res != 0 )
-		{
-			setState( QGdb::RUNNING );
-		}
-	}
-	
-	return res;
-}
-
-int QGdb::Driver::exec_stepOver( bool instruction ) // ok
-{
-	int res = 0;
-
-	if ( mState == QGdb::TARGET_SETTED )
-	{
-		return runToMain();
-	}
-	
-	if ( mState == QGdb::STOPPED )
-	{
-		if ( instruction )
-		{
-			res = gmi_exec_next_instruction( mHandle );
-		}
-		else
-		{
-			res = gmi_exec_next( mHandle );
-		}
-		
-		if ( res != 0 )
-		{
-			setState( QGdb::RUNNING );
-		}
-	}
-	
-	return res;
-}
-
-int QGdb::Driver::exec_stepOut() // ok
-{
-	if ( mState != QGdb::STOPPED )
-	{
-		return 0;
-	}
-	
-	int res = gmi_exec_finish( mHandle );
-	
-	if ( res != 0 )
-	{
-		setState( QGdb::RUNNING );
-	}
-	
-	return res;
-}
-
-int QGdb::Driver::exec_pause() // ok
-{
-	if ( mState != QGdb::RUNNING )
-	{
-		return 0;
-	}
-	
-	return gmi_exec_interrupt( mHandle );
-}
-
-int QGdb::Driver::exec_kill() // ok
-{
-	if ( mState != QGdb::STOPPED && mState != QGdb::RUNNING )
-	{
-		return 0;
-	}
-	
-	// GDB/MI doesn't implement it (yet), so we use the regular kill.
-	// Ensure confirm is off.
-	char* prev = gmi_gdb_show( mHandle, "confirm" );
-	
-	if ( !prev )
-	{
-		return 0;
-	}
-	
-	if ( strcmp( prev, "off" ) )
-	{
-		if ( !gmi_gdb_set( mHandle, "confirm", "off" ) )
-		{
-			free( prev );
-			return 0;
-		}
-	}
-	else
-	{
-		free( prev );
-		prev = 0;
-	}
-	
-	// do real kill
-	int res = gmi_exec_kill( mHandle );
-	
-	// Revert confirm option if needed.
-	if ( prev )
-	{
-		gmi_gdb_set( mHandle, "confirm", prev );
-		free( prev );
-	}
-	
-	if ( res != 0 )
-	{
-		setState( QGdb::TARGET_SETTED );
-	}
-	
-	return res;
 }
 
 void QGdb::Driver::stack_selectFrame (int frame_num)
@@ -860,14 +761,6 @@ void QGdb::Driver::clearBreakpoints( int line )
 	}
 }
 
-void QGdb::Driver::onGdbTouchTimerTick ()
-{
-	if ( mi_get_response( mHandle ) )
-	{
-		log( "Async response in queue" );
-	}
-}
-
 void QGdb::Driver::sendFakeBreakpoints()
 {
 	QGdb::BreakpointList bps = mBreakpoints;
@@ -883,14 +776,5 @@ void QGdb::Driver::sendFakeBreakpoints()
 	}
 	
 #warning	ajouter pastille ici, possibilité de revoir methode add breakpoints
-}
-
-
-
-
-
-void QGdb::Driver::delayedCall( const char* member )
-{
-	QTimer::singleShot( 50, this, member );
 }
 */

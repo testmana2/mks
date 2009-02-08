@@ -40,7 +40,10 @@ namespace QGdb
 		bool stack_listFrames();
 		
 		bool break_setBreakpoint( const QString& file, int line );
+	
+	public slots:
 		void break_breakpointToggled( const QString& file, int line );
+		void break_breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
 	
 	protected:
 		QTimer* mAsyncPollTimer;
@@ -100,9 +103,9 @@ namespace QGdb
 		void positionChanged( const QString& fileName, int line );
 		void breakpointAdded( const QGdb::Breakpoint& breakpoint );
 		void breakpointRemoved( const QGdb::Breakpoint& breakpoint );
+		void breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
 		
 	/*
-		void breakpointUpdated( const QGdb::Breakpoint& breakpoint );
 		void breakpointsCleared( const QString& fileName = QString::null, int line = -1 );
 	*/
 	};

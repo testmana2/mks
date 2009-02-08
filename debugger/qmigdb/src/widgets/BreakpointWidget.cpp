@@ -1,4 +1,5 @@
 #include "BreakpointWidget.h"
+#include "BreakpointEditorWidget.h"
 
 #include <QDebug>
 
@@ -10,8 +11,12 @@ BreakpointWidget::BreakpointWidget( QGdb::Driver* driver, QWidget* parent )
 	
 	connect( driver, SIGNAL( breakpointAdded( const QGdb::Breakpoint& ) ), this, SLOT( breakpointAdded( const QGdb::Breakpoint& ) ) );
 	connect( driver, SIGNAL( breakpointRemoved( const QGdb::Breakpoint& ) ), this, SLOT( breakpointRemoved( const QGdb::Breakpoint& ) ) );
-	connect( driver, SIGNAL( breakpointUpdated( const QGdb::Breakpoint& ) ), this, SLOT( breakpointUpdated( const QGdb::Breakpoint& ) ) );
+	connect( driver, SIGNAL( breakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ), this, SLOT( breakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ) );
 	connect( driver, SIGNAL( breakpointsCleared() ), this, SLOT( breakpointsCleared() ) );
+	
+	connect( this, SIGNAL( break_breakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ), driver, SLOT( break_breakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ) );
+	
+	connect( this, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( self_itemDoubleClicked( QTreeWidgetItem*, int ) ) );
 }
 
 BreakpointWidget::~BreakpointWidget()
@@ -39,16 +44,16 @@ void BreakpointWidget::breakpointRemoved( const QGdb::Breakpoint& breakpoint )
 	}
 }
 
-void BreakpointWidget::breakpointUpdated( const QGdb::Breakpoint& breakpoint )
+void BreakpointWidget::breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after )
 {
 	for ( int i = 0; i < topLevelItemCount(); i++ )
 	{
 		QTreeWidgetItem* item = topLevelItem( i );
 		QGdb::Breakpoint bp = item->data( 0, Qt::UserRole ).value<QGdb::Breakpoint>();
 		
-		if ( breakpoint.number == bp.number )
+		if ( bp == before )
 		{
-			updateItem( item, breakpoint );
+			updateItem( item, after );
 			return;
 		}
 	}
@@ -57,6 +62,18 @@ void BreakpointWidget::breakpointUpdated( const QGdb::Breakpoint& breakpoint )
 void BreakpointWidget::breakpointsCleared()
 {
 	clear();
+}
+
+void BreakpointWidget::self_itemDoubleClicked( QTreeWidgetItem* item, int column )
+{
+	Q_UNUSED( column );
+	QGdb::Breakpoint bp = item->data( 0, Qt::UserRole ).value<QGdb::Breakpoint>();
+	BreakpointEditorWidget bew( bp, this );
+	
+	if ( bew.exec() == QDialog::Accepted )
+	{
+		emit break_breakpointEdited( bp, bew.editedBreakpoint() );
+	}
 }
 
 void BreakpointWidget::updateItem( QTreeWidgetItem* item, const QGdb::Breakpoint& breakpoint )
