@@ -219,6 +219,9 @@ void UIMonkeyDbg::debuggerCallbackMessage( const QString& message, QGdb::CBType 
 		case QGdb::ASYNC:
 			appendLog( QString( "ASYNC> %1" ).arg( message ) );
 			break;
+		case QGdb::ERROR:
+			QMessageBox::critical( this, tr( "Critical..." ), message );
+			break;
 	}
 }
 
