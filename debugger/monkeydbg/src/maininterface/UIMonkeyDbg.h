@@ -56,6 +56,7 @@ protected slots:
 	void debuggerPositionChanged( const QString& fileName, int line );
 	void debuggerBreakpointAdded( const QGdb::Breakpoint& breakpoint );
 	void debuggerBreakpointRemoved( const QGdb::Breakpoint& breakpoint );
+	void debuggerBreakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
 	
 	// editor
 	void editorBreakpointToggled( int line );

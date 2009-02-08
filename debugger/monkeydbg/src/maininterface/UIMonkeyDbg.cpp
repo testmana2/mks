@@ -59,6 +59,7 @@ void UIMonkeyDbg::initConnections()
 	connect( mDebugger, SIGNAL( positionChanged( const QString&, int ) ), this, SLOT( debuggerPositionChanged( const QString&, int ) ) );
 	connect( mDebugger, SIGNAL( breakpointAdded( const QGdb::Breakpoint& ) ), this, SLOT( debuggerBreakpointAdded( const QGdb::Breakpoint& ) ) );
 	connect( mDebugger, SIGNAL( breakpointRemoved( const QGdb::Breakpoint& ) ), this, SLOT( debuggerBreakpointRemoved( const QGdb::Breakpoint& ) ) );
+	connect( mDebugger, SIGNAL( breakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ), this, SLOT( debuggerBreakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ) );
 	
 	// gui
 	connect( aCloseFile, SIGNAL( triggered() ), this, SLOT( closeCurrentFile() ) );
@@ -368,6 +369,44 @@ void UIMonkeyDbg::debuggerBreakpointRemoved( const QGdb::Breakpoint& breakpoint 
 	if ( editor )
 	{
 		editor->setBreakpoint( breakpoint.line -1, -1 );
+	}
+}
+
+void UIMonkeyDbg::debuggerBreakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after )
+{
+	Q_UNUSED( before )
+	pEditor* editor = 0;
+	
+	if ( mOpenedFiles.keys().contains( after.absolute_file ) )
+	{
+		QMdiSubWindow* subWindow = mOpenedFiles[ after.absolute_file ].second;
+		editor = qobject_cast<pEditor*>( subWindow->widget() );
+	}
+	
+	if ( editor )
+	{
+		if ( !after.condition.isEmpty() || after.times > 0 )
+		{
+			if ( after.enabled )
+			{
+				editor->setBreakpoint( after.line -1, pEditor::mdEnabledConditionalBreak );
+			}
+			else
+			{
+				editor->setBreakpoint( after.line -1, pEditor::mdDisabledConditionalBreak );
+			}
+		}
+		else
+		{
+			if ( after.enabled )
+			{
+				editor->setBreakpoint( after.line -1, pEditor::mdEnabledBreak );
+			}
+			else
+			{
+				editor->setBreakpoint( after.line -1, pEditor::mdDisabledBreak );
+			}
+		}
 	}
 }
 

@@ -561,6 +561,7 @@ void pEditor::setBreakpoint( int line, int type )
 	}
 	else
 	{
+		clearBreakpoints( line );
 		markerAdd( line, (pEditor::MarkerDefineType)type );
 	}
 }
