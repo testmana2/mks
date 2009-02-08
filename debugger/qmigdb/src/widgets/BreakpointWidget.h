@@ -19,7 +19,7 @@ protected slots:
 	void breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
 	void breakpointsCleared();
 	
-	void self_itemDoubleClicked( QTreeWidgetItem* item, int column );
+	void self_itemActivated( QTreeWidgetItem* item, int column );
 
 protected:
 	void updateItem( QTreeWidgetItem* item, const QGdb::Breakpoint& breakpoint );
