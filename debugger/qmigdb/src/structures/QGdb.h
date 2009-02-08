@@ -14,7 +14,8 @@ namespace QGdb
 		LOG,
 		TO_GDB,
 		FROM_GDB,
-		ASYNC
+		ASYNC,
+		ERROR
 	};
 	
 	enum State // driver state

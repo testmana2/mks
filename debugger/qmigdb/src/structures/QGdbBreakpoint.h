@@ -33,7 +33,7 @@ namespace QGdb
 		QString file; // breakpoint file
 		int line; // breakpoint line
 		bool ignore; // hits ignored
-		int times; // ?
+		int times; // how many time to ignore
 		QString condition; // breakpoint condition
 		QString absolute_file; // breakpoint absolute file
 		int thread; // breakpoint thread id

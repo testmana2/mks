@@ -22,8 +22,19 @@ QGdb::Breakpoint::Breakpoint( mi_bkpt* bp )
 	else
 	{
 		number = -1; // mean target not yet specified, will be created at target setted
+		type = t_breakpoint;
+		disp = d_keep;
 		enabled = true;
 		addr = 0;
+		function.clear();
+		file.clear();
+		line = -1;
+		ignore = false;
+		times = 0;
+		condition.clear();
+		absolute_file.clear();
+		thread = -1;
+		mode = m_file_line;
 	}
 }
 
