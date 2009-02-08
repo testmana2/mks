@@ -16,7 +16,7 @@ BreakpointWidget::BreakpointWidget( QGdb::Driver* driver, QWidget* parent )
 	
 	connect( this, SIGNAL( break_breakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ), driver, SLOT( break_breakpointEdited( const QGdb::Breakpoint&, const QGdb::Breakpoint& ) ) );
 	
-	connect( this, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( self_itemDoubleClicked( QTreeWidgetItem*, int ) ) );
+	connect( this, SIGNAL( itemActivated( QTreeWidgetItem*, int ) ), this, SLOT( self_itemActivated( QTreeWidgetItem*, int ) ) );
 }
 
 BreakpointWidget::~BreakpointWidget()
@@ -64,7 +64,7 @@ void BreakpointWidget::breakpointsCleared()
 	clear();
 }
 
-void BreakpointWidget::self_itemDoubleClicked( QTreeWidgetItem* item, int column )
+void BreakpointWidget::self_itemActivated( QTreeWidgetItem* item, int column )
 {
 	Q_UNUSED( column );
 	QGdb::Breakpoint bp = item->data( 0, Qt::UserRole ).value<QGdb::Breakpoint>();
