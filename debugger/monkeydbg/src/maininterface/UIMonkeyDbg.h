@@ -2,7 +2,7 @@
 #define UIMONKEYDBG_H
 
 #include "ui_UIMonkeyDbg.h"
-#include "QGdb-Driver.h"
+#include "QGdbDriver.h"
 
 #include <QMap>
 
