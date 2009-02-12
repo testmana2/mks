@@ -1,6 +1,6 @@
 #include "CallStackWidget.h"
 
-CallStackWidget::CallStackWidget( QGdb::Driver* debugger, QWidget* parent )
+CallStackWidget::CallStackWidget( QGdb::Driver* driver, QWidget* parent )
 	: QTreeWidget( parent )
 {
 	setColumnCount( 4 );
@@ -9,12 +9,15 @@ CallStackWidget::CallStackWidget( QGdb::Driver* debugger, QWidget* parent )
 	connect( this, SIGNAL( itemActivated( QTreeWidgetItem*, int ) ), this, SLOT( onItemActivated( QTreeWidgetItem* ) ) );
 	
 	// interface with debugger
-	connect( debugger, SIGNAL( callStackUpdated( const QGdb::CallStackFrameList&, int ) ), this, SLOT( update( const QGdb::CallStackFrameList&, int ) ) );
+	connect( driver, SIGNAL( callStackUpdated( const QGdb::CallStackFrameList&, int ) ), this, SLOT( update( const QGdb::CallStackFrameList&, int ) ) );
+	
+	connect( this, SIGNAL( frameActivated( const QGdb::CallStackFrame& ) ), driver, SLOT( stack_frameSelected( const QGdb::CallStackFrame& ) ) );
 }
 
 CallStackWidget::~CallStackWidget()
 {
 }
+
 void CallStackWidget::update( const QGdb::CallStackFrameList& stack, int selectedLevel )
 {
 	clear();
@@ -58,5 +61,6 @@ void CallStackWidget::update( const QGdb::CallStackFrameList& stack, int selecte
 
 void CallStackWidget::onItemActivated( QTreeWidgetItem* item )
 {
-	emit frameSelected( indexOfTopLevelItem( item ) );
+	const QGdb::CallStackFrame frame = item->data( 0, Qt::UserRole ).value<QGdb::CallStackFrame>();
+	emit frameActivated( frame );
 }

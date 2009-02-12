@@ -535,9 +535,18 @@ bool QGdb::Driver::stack_listFrames()
 	return true;
 }
 
+bool QGdb::Driver::stack_selectFrame( int level )
+{
+	if ( mState != QGdb::STOPPED )
+	{
+		return false;
+	}
+	
+	return gmi_stack_select_frame( mHandle, level ) != 0;
+}
+
 bool QGdb::Driver::break_setBreakpoint( const QString& file, int line )
 {
-	int res = 0;
 	QGdb::Breakpoint bp;
 	
 	if ( mState != QGdb::STOPPED && mState != QGdb::TARGET_SETTED )
@@ -600,7 +609,7 @@ void QGdb::Driver::break_breakpointToggled( const QString& file, int line )
 	
 	if ( !break_setBreakpoint( file, line ) )
 	{
-		callbackMessage( tr( "Can't set breakpoint" ), QGdb::LOG );
+		emit callbackMessage( tr( "Can't set breakpoint" ), QGdb::ERROR );
 	}
 }
 
@@ -668,6 +677,18 @@ void QGdb::Driver::break_breakpointEdited( const QGdb::Breakpoint& before, const
 	}
 }
 
+void QGdb::Driver::stack_frameSelected( const QGdb::CallStackFrame& frame )
+{
+	if ( stack_selectFrame( frame.level ) )
+	{
+		emit positionChanged( frame.full, frame.line );
+	}
+	else
+	{
+		emit callbackMessage( tr( "Can't select frame %1" ).arg( frame.level ), QGdb::ERROR );
+	}
+}
+
 
 
 
@@ -695,33 +716,6 @@ QStringList QGdb::Driver::sourcesPath() const // need fix, it allow to found sou
 	return directories;
 }
 
-void QGdb::Driver::stack_selectFrame (int frame_num)
-{
-	if (mState != QGdb::STOPPED)
-		return;
-	
-	int res = 0;
-	res = gmi_stack_select_frame(mHandle, frame_num);
-	Q_ASSERT (res);
-	
-	// NOTE hlamer: It's better to use mi_frames* frame = gmi_stack_info_frame (mHandle);, but function doesn't work
-	mi_frames* frame = gmi_stack_list_frames (mHandle);
-	mi_frames* first_frame = frame;
-	Q_ASSERT (frame);
-	for (int i = 0; i < frame_num; i++)
-	{
-		Q_ASSERT (frame);
-		if (!frame)
-			break;
-		frame = frame->next;
-	}
-	
-	Q_ASSERT (frame);
-	if (frame)
-		emit positionChanged(filePath(frame->file), frame->line );
-	
-	mi_free_frames (first_frame);
-}
 
 
 
