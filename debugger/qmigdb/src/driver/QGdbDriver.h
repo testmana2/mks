@@ -38,12 +38,15 @@ namespace QGdb
 		bool exec_kill();
 		
 		bool stack_listFrames();
+		bool stack_selectFrame( int level );
 		
 		bool break_setBreakpoint( const QString& file, int line );
 	
 	public slots:
 		void break_breakpointToggled( const QString& file, int line );
 		void break_breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
+		
+		void stack_frameSelected( const QGdb::CallStackFrame& frame );
 	
 	protected:
 		QTimer* mAsyncPollTimer;
@@ -79,7 +82,6 @@ namespace QGdb
 		void prepare_startXterm ();
 		// target execution
 		void exec_setArgs (const QString& args);
-		void stack_selectFrame (int frame);
 		// breakpoints
 		void clearBreakpoints( int line = -1 );
 		
@@ -91,6 +93,7 @@ namespace QGdb
 		// Without it we haven't callbacks
 		void onGdbTouchTimerTick();
 		void sendFakeBreakpoints();
+		
 	*/
 		
 	signals:

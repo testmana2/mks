@@ -337,6 +337,10 @@ void UIMonkeyDbg::debuggerPositionChanged( const QString& fileName, int line )
 		maWorkspace->setActiveSubWindow( window );
 		editor->setDebuggerPosition( line -1 );
 	}
+	else
+	{
+		QMessageBox::warning( this, tr( "Warning..." ), tr( "An error occur while opening file: %1" ).arg( fileName ) );
+	}
 }
 
 void UIMonkeyDbg::debuggerBreakpointAdded( const QGdb::Breakpoint& breakpoint )

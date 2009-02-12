@@ -10,7 +10,7 @@ class CallStackWidget : public QTreeWidget
 	Q_OBJECT
 
 public:
-	CallStackWidget( QGdb::Driver* debugger, QWidget* parent = 0 );
+	CallStackWidget( QGdb::Driver* driver, QWidget* parent = 0 );
 	virtual ~CallStackWidget();
 	
 protected slots:
@@ -18,7 +18,7 @@ protected slots:
 	void onItemActivated( QTreeWidgetItem* item );
 
 signals:
-	void frameSelected( int frame );
+	void frameActivated( const QGdb::CallStackFrame& frame );
 };
 
 #endif // CALLSTACKWIDGET_H
