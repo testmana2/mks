@@ -3,7 +3,7 @@
 
 #include <QTreeWidget>
 
-#include "QGdb-Driver.h"
+#include "QGdbDriver.h"
 
 class BreakpointWidget : public QTreeWidget
 {

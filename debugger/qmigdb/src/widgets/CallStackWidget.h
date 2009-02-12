@@ -1,7 +1,7 @@
 #ifndef CALLSTACKWIDGET_H
 #define CALLSTACKWIDGET_H
 
-#include "QGdb-Driver.h"
+#include "QGdbDriver.h"
 
 #include <QTreeWidget>
 
