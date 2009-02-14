@@ -4,11 +4,16 @@
 #include <QObject>
 #include <QString>
 #include <QList>
+#include <QStandardItem>
 
 #include "QGdb.h"
 #include "QGdbBreakpoint.h"
 #include "QGdbCallStack.h"
 #include "QGdbSignal.h"
+
+//FIXME remove when developmet will be finished
+#include <QDebug>
+
 
 class QTimer;
 
@@ -18,6 +23,8 @@ namespace QGdb
 	{
 		Q_OBJECT
 		
+	friend class LocalsModel;
+	
 	public:
 		Driver( QObject* parent = 0 );
 		virtual ~Driver();
@@ -41,7 +48,9 @@ namespace QGdb
 		bool stack_selectFrame( int level );
 		
 		bool break_setBreakpoint( const QString& file, int line );
-	
+		
+		QStandardItemModel* getLocalsModel();
+		
 	public slots:
 		void break_breakpointToggled( const QString& file, int line );
 		void break_breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
@@ -49,6 +58,7 @@ namespace QGdb
 		void stack_frameSelected( const QGdb::CallStackFrame& frame );
 	
 	protected:
+		QStandardItemModel mLocalsModel;
 		QTimer* mAsyncPollTimer;
 		mi_h* mHandle;
 		QGdb::State mState;
@@ -70,6 +80,7 @@ namespace QGdb
 		QString filePath( const QString& fileName ) const;
 		void generateCallStack( mi_frames* mframe );
 		void generateCallStack( mi_stop* stop );
+		void updateLocals();
 	
 	protected slots:
 		void asyncPollTimer_timeout();
@@ -107,6 +118,7 @@ namespace QGdb
 		void breakpointAdded( const QGdb::Breakpoint& breakpoint );
 		void breakpointRemoved( const QGdb::Breakpoint& breakpoint );
 		void breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
+		void localsUpdated();
 		
 	/*
 		void breakpointsCleared( const QString& fileName = QString::null, int line = -1 );

@@ -11,6 +11,8 @@ int FuncLev2(char *str)
 
 int FuncLev1(char *s, int i)
 {
+ int v1 = 7;
+ int v2 = 8;
  i+=FuncLev2(s);
  return i;
 }

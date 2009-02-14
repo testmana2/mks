@@ -1,11 +1,12 @@
-#include "QGdbDriver.h"
-
 #include <QTimer>
 #include <QDir>
 #include <QFileInfo>
+#include <QStandardItemModel>
+
+#include "QGdbDriver.h"
 
 QGdb::Driver::Driver( QObject* parent )
-	: QObject( parent )
+  : QObject( parent )
 {
 	mHandle = 0;
 	mState = QGdb::DISCONNECTED;
@@ -138,6 +139,7 @@ void QGdb::Driver::handleStop( mi_stop* stop )
 			setState( QGdb::STOPPED );
 		}
 	}
+	updateLocals();
 }
 
 void QGdb::Driver::asyncPollTimer_timeout()
@@ -271,6 +273,46 @@ void QGdb::Driver::generateCallStack( mi_frames* mframe )
 void QGdb::Driver::generateCallStack( mi_stop* stop )
 {
 	generateCallStack( stop->frame );
+}
+
+void QGdb::Driver::updateLocals()
+{
+	// clear, free memory
+	mLocalsModel.clear();
+	
+	mi_results* locals = gmi_stack_list_locals(mHandle, 1);
+	Q_ASSERT ( locals );
+	if ( !locals )
+		return;
+	
+	Q_ASSERT ( 0 == strcmp( locals->var, "locals" ));
+	Q_ASSERT ( locals->type == t_list );
+	
+	mi_results* variable = locals->v.rs;
+	while ( variable )
+	{
+		QList <QStandardItem*> row;
+		Q_ASSERT( variable->type == t_tuple );
+		
+		mi_results* res_name = variable->v.rs;
+		Q_ASSERT( res_name );
+		Q_ASSERT( 0 == strcmp( res_name->var, "name" ));
+		Q_ASSERT( res_name->type == t_const );
+		row << new QStandardItem( res_name->v.cstr );
+		
+		mi_results* res_value = res_name->next;
+		Q_ASSERT ( res_value );
+		Q_ASSERT( 0 == strcmp( res_value->var, "value" ));
+		Q_ASSERT( res_value->type == t_const );
+		row << new QStandardItem( res_value->v.cstr );
+		
+		mLocalsModel.appendRow( row );
+		variable = variable->next;
+	}
+	
+	mi_free_results( locals );
+	
+	emit localsUpdated();
 }
 
 bool QGdb::Driver::connectToGdb()
@@ -508,7 +550,6 @@ bool QGdb::Driver::stack_listFrames()
 	}
 	
 	mi_frames* frame = gmi_stack_list_frames( mHandle );
-	
 	if ( frame )
 	{
 		mi_frames* args = gmi_stack_list_arguments( mHandle, 1 );
@@ -532,6 +573,7 @@ bool QGdb::Driver::stack_listFrames()
 	
 	generateCallStack( frame );
 	mi_free_frames( frame );
+	
 	return true;
 }
 
@@ -582,6 +624,11 @@ bool QGdb::Driver::break_setBreakpoint( const QString& file, int line )
 	emit breakpointAdded( bp );
 	
 	return true;
+}
+
+QStandardItemModel* QGdb::Driver::getLocalsModel()
+{
+	return &mLocalsModel;
 }
 
 void QGdb::Driver::break_breakpointToggled( const QString& file, int line )
