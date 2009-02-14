@@ -3,8 +3,8 @@
 all: test_target x11_test remote_test linux_test target_frames x11_fr_test \
 	x11_wp_test x11_cpp_test pty_test
 
-CFLAGS=-O0 -Wall -gstabs+3 -I../src
-CXXFLAGS=-O0 -Wall -gstabs+3 -I../src
+CFLAGS= -Wall -ggdb -I../src
+CXXFLAGS= -Wall -ggdb -I../src
 LDLIBS=
 
 ticepic: ticepic.c ../src/libmigdb.a

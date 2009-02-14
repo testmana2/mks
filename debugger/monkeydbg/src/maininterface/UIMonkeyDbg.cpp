@@ -2,6 +2,7 @@
 #include "../pEditor.h"
 #include "CallStackWidget.h"
 #include "BreakpointWidget.h"
+#include "LocalsViewWidget.h"
 
 #include <QMdiSubWindow>
 #include <QFileDialog>
@@ -25,6 +26,9 @@ UIMonkeyDbg::UIMonkeyDbg( QWidget* parent )
 	
 	BreakpointWidget* bpw = new BreakpointWidget( mDebugger, dwBreakpoint );
 	dwBreakpoint->setWidget( bpw );
+	
+	LocalsViewWidget* localsw = new LocalsViewWidget( mDebugger, dwLocals );
+	dwLocals->setWidget( localsw );
 }
 
 UIMonkeyDbg::~UIMonkeyDbg()

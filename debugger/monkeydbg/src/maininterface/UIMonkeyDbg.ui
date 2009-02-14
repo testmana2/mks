@@ -18,6 +18,17 @@
   <widget class="QWidget" name="mCentralWidget" >
    <layout class="QVBoxLayout" name="verticalLayout_5" >
     <item>
+     <widget class="QDockWidget" name="dwLocals" >
+      <property name="allowedAreas" >
+       <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+      </property>
+      <property name="windowTitle" >
+       <string>Locals</string>
+      </property>
+      <widget class="QWidget" name="dockWidgetContents_6" />
+     </widget>
+    </item>
+    <item>
      <widget class="QMdiArea" name="maWorkspace" />
     </item>
    </layout>
@@ -28,7 +39,7 @@
      <x>0</x>
      <y>0</y>
      <width>1045</width>
-     <height>24</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
