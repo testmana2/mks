@@ -6,7 +6,7 @@
 #include "QGdbDriver.h"
 
 QGdb::Driver::Driver( QObject* parent )
-  : QObject( parent )
+	: QObject( parent )
 {
 	mHandle = 0;
 	mState = QGdb::DISCONNECTED;

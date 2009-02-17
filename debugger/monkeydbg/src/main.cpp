@@ -31,18 +31,17 @@ int main( int argc, char** argv )
 	}
 	
 	// speed hack
-	/*
 	dbg.loadTarget( "/home/pasnox/Development/Qt4/mks/crashapp/crashapp_debug" );
 	dbg.openFile( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp" );
-	*/
 	/*
 	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 35 );
 	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 37 );
 	debugger.break_setBreakpoint( "/home/pasnox/Development/Qt4/mks/crashapp/src/main.cpp", 39 );
 	*/
-	
+	/*
 	dbg.loadTarget( "/home/a/code/mks/debugger/libmigdb/examples/target_frames" );
 	dbg.openFile( "/home/a/code/mks/debugger/libmigdb/examples/target_frames.cc" );
+	*/
 	
 	return app.exec();
 }

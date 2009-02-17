@@ -1,11 +1,11 @@
 /**[txh]********************************************************************
 
-  Copyright (c) 2004-2007 by Salvador E. Tropea.
-  Covered by the GPL license.
+	Copyright (c) 2004-2007 by Salvador E. Tropea.
+	Covered by the GPL license.
 
-  Comments:
-  Main header for libmigdb.
-  
+	Comments:
+	Main header for libmigdb.
+	
 ***************************************************************************/
 
 #ifdef __cplusplus
@@ -73,7 +73,7 @@ enum mi_val_type { t_const, t_tuple, t_list };
 
 /* Implemented workaround for gdb bugs that we can dis/enable. */
 /* At least gdb<=6.1.1 fails to find a source file with absolute path if the
-   name is for a psym instead of a sym. psym==partially loaded symbol table. */
+	name is for a psym instead of a sym. psym==partially loaded symbol table. */
 #define MI_PSYM_SEARCH    0
 
 #define MI_VERSION_STR "0.8.11"
@@ -83,28 +83,28 @@ enum mi_val_type { t_const, t_tuple, t_list };
 
 struct mi_results_struct
 {
- char *var; /* Result name or NULL if just a value. */
- enum mi_val_type type;
- union
- {
-  char *cstr;
-  struct mi_results_struct *rs;
- } v;
- struct mi_results_struct *next;
+	char *var; /* Result name or NULL if just a value. */
+	enum mi_val_type type;
+	union
+	{
+	char *cstr;
+	struct mi_results_struct *rs;
+	} v;
+	struct mi_results_struct *next;
 };
 typedef struct mi_results_struct mi_results;
 
 struct mi_output_struct
 {
- /* Type of output. */
- char type;
- char stype;
- char sstype;
- char tclass;
- /* Content. */
- mi_results *c;
- /* Always modeled as a list. */
- struct mi_output_struct *next;
+	/* Type of output. */
+	char type;
+	char stype;
+	char sstype;
+	char tclass;
+	/* Content. */
+	mi_results *c;
+	/* Always modeled as a list. */
+	struct mi_output_struct *next;
 };
 typedef struct mi_output_struct mi_output;
 
@@ -115,45 +115,45 @@ typedef int  (*tm_cb)(void *);
 /* Values of this structure shouldn't be manipulated by the user. */
 struct mi_h_struct
 {
- /* Pipes connected to gdb. */
- int to_gdb[2];
- int from_gdb[2];
- /* Streams for the pipes. */
- FILE *to, *from;
- /* PID of child gdb. */
- pid_t pid;
- char died;
- /* Which rensponse we are waiting for. */
- /*int response;*/
- /* The line we are reading. */
- char *line;
- int   llen, lread;
- /* Parsed output. */
- mi_output *po, *last;
- /* Tunneled streams callbacks. */
- stream_cb console;
- void *console_data;
- stream_cb target;
- void *target_data;
- stream_cb log;
- void *log_data;
- /* Async responses callback. */
- async_cb async;
- void *async_data;
- /* Callbacks to get echo of gdb dialog. */
- stream_cb to_gdb_echo;
- void *to_gdb_echo_data;
- stream_cb from_gdb_echo;
- void *from_gdb_echo_data;
- /* Time out */
- tm_cb time_out_cb;
- void *time_out_cb_data;
- int time_out;
- /* Ugly workaround for some of the show responses :-( */
- int catch_console;
- char *catched_console;
- /* MI version, currently unknown but the user can force v2 */
- unsigned version;
+	/* Pipes connected to gdb. */
+	int to_gdb[2];
+	int from_gdb[2];
+	/* Streams for the pipes. */
+	FILE *to, *from;
+	/* PID of child gdb. */
+	pid_t pid;
+	char died;
+	/* Which rensponse we are waiting for. */
+	/*int response;*/
+	/* The line we are reading. */
+	char *line;
+	int   llen, lread;
+	/* Parsed output. */
+	mi_output *po, *last;
+	/* Tunneled streams callbacks. */
+	stream_cb console;
+	void *console_data;
+	stream_cb target;
+	void *target_data;
+	stream_cb log;
+	void *log_data;
+	/* Async responses callback. */
+	async_cb async;
+	void *async_data;
+	/* Callbacks to get echo of gdb dialog. */
+	stream_cb to_gdb_echo;
+	void *to_gdb_echo_data;
+	stream_cb from_gdb_echo;
+	void *from_gdb_echo_data;
+	/* Time out */
+	tm_cb time_out_cb;
+	void *time_out_cb_data;
+	int time_out;
+	/* Ugly workaround for some of the show responses :-( */
+	int catch_console;
+	char *catched_console;
+	/* MI version, currently unknown but the user can force v2 */
+	unsigned version;
 };
 typedef struct mi_h_struct mi_h;
 
@@ -165,23 +165,23 @@ enum mi_bkp_mode { m_file_line=0, m_function=1, m_file_function=2, m_address=3 }
 
 struct mi_bkpt_struct
 {
- int number;
- enum mi_bkp_type type;
- enum mi_bkp_disp disp; /* keep or del if temporal */
- char enabled;
- void *addr;
- char *func;
- char *file;
- int line;
- int ignore;
- int times;
+	int number;
+	enum mi_bkp_type type;
+	enum mi_bkp_disp disp; /* keep or del if temporal */
+	char enabled;
+	void *addr;
+	char *func;
+	char *file;
+	int line;
+	int ignore;
+	int times;
 
- /* For the user: */
- char *cond;
- char *file_abs;
- int thread;
- enum mi_bkp_mode mode;
- struct mi_bkpt_struct *next;
+	/* For the user: */
+	char *cond;
+	char *file_abs;
+	int thread;
+	enum mi_bkp_mode mode;
+	struct mi_bkpt_struct *next;
 };
 typedef struct mi_bkpt_struct mi_bkpt;
 
@@ -189,51 +189,51 @@ enum mi_wp_mode { wm_unknown=0, wm_write=1, wm_read=2, wm_rw=3 };
 
 struct mi_wp_struct
 {
- int number;
- char *exp;
- enum mi_wp_mode mode;
+	int number;
+	char *exp;
+	enum mi_wp_mode mode;
 
- /* For the user: */
- struct mi_wp_struct *next;
- char enabled;
+	/* For the user: */
+	struct mi_wp_struct *next;
+	char enabled;
 };
 typedef struct mi_wp_struct mi_wp;
 
 struct mi_frames_struct
 {
- int level;  /* The frame number, 0 being the topmost frame, i.e. the innermost
-                function. */
- void *addr; /* The `$pc' value for that frame. */
- char *func; /* Function name. */
- char *file; /* File name of the source file where the function lives. */
- char *from;
- int line;   /* Line number corresponding to the `$pc'. */
- /* When arguments are available: */
- mi_results *args;
- int thread_id;
- /* When more than one is provided: */
- struct mi_frames_struct *next;
+	int level;  /* The frame number, 0 being the topmost frame, i.e. the innermost
+					function. */
+	void *addr; /* The `$pc' value for that frame. */
+	char *func; /* Function name. */
+	char *file; /* File name of the source file where the function lives. */
+	char *from;
+	int line;   /* Line number corresponding to the `$pc'. */
+	/* When arguments are available: */
+	mi_results *args;
+	int thread_id;
+	/* When more than one is provided: */
+	struct mi_frames_struct *next;
 };
 typedef struct mi_frames_struct mi_frames;
 
 struct mi_aux_term_struct
 {
- pid_t pid;
- char *tty;
+	pid_t pid;
+	char *tty;
 };
 typedef struct mi_aux_term_struct mi_aux_term;
 
 struct mi_pty_struct
 {
- char *slave;
- int master;
+	char *slave;
+	int master;
 };
 typedef struct mi_pty_struct mi_pty;
 
 enum mi_gvar_fmt { fm_natural=0, fm_binary=1, fm_decimal=2, fm_hexadecimal=3,
-                   fm_octal=4,
-                   /* Only for registers format: */
-                   fm_raw=5 };
+					fm_octal=4,
+					/* Only for registers format: */
+					fm_raw=5 };
 enum mi_gvar_lang { lg_unknown=0, lg_c, lg_cpp, lg_java };
 
 #define MI_ATTR_DONT_KNOW   0
@@ -242,44 +242,44 @@ enum mi_gvar_lang { lg_unknown=0, lg_c, lg_cpp, lg_java };
 
 struct mi_gvar_struct
 {
- char *name;
- int   numchild;
- char *type;
- enum mi_gvar_fmt format;
- enum mi_gvar_lang lang;
- char *exp;
- int   attr;
+	char *name;
+	int   numchild;
+	char *type;
+	enum mi_gvar_fmt format;
+	enum mi_gvar_lang lang;
+	char *exp;
+	int   attr;
 
- /* MI v2 fills it, not yet implemented here. */
- /* Use gmi_var_evaluate_expression. */
- char *value;
+	/* MI v2 fills it, not yet implemented here. */
+	/* Use gmi_var_evaluate_expression. */
+	char *value;
 
- /* Pointer to the parent. NULL if none. */
- struct mi_gvar_struct *parent;
- /* List containing the children.
-    Filled by gmi_var_list_children.
-    NULL if numchild==0 or not yet filled. */
- struct mi_gvar_struct *child;
- /* Next var in the list. */
- struct mi_gvar_struct *next;
+	/* Pointer to the parent. NULL if none. */
+	struct mi_gvar_struct *parent;
+	/* List containing the children.
+		Filled by gmi_var_list_children.
+		NULL if numchild==0 or not yet filled. */
+	struct mi_gvar_struct *child;
+	/* Next var in the list. */
+	struct mi_gvar_struct *next;
 
- /* For the user: */
- char opened;  /* We will show its children. 1 when we fill "child" */
- char changed; /* Needs to be updated. 0 when created. */
- int vischild; /* How many items visible. numchild when we fill "child" */
- int depth;    /* How deep is this var. */
- char ispointer;
+	/* For the user: */
+	char opened;  /* We will show its children. 1 when we fill "child" */
+	char changed; /* Needs to be updated. 0 when created. */
+	int vischild; /* How many items visible. numchild when we fill "child" */
+	int depth;    /* How deep is this var. */
+	char ispointer;
 };
 typedef struct mi_gvar_struct mi_gvar;
 
 struct mi_gvar_chg_struct
 {
- char *name;
- int   in_scope;  /* if true the other fields apply. */
- char *new_type;  /* NULL if type_changed==false */
- int   new_num_children; /* only when new_type!=NULL */
+	char *name;
+	int   in_scope;  /* if true the other fields apply. */
+	char *new_type;  /* NULL if type_changed==false */
+	int   new_num_children; /* only when new_type!=NULL */
 
- struct mi_gvar_chg_struct *next;
+	struct mi_gvar_chg_struct *next;
 };
 typedef struct mi_gvar_chg_struct mi_gvar_chg;
 
@@ -287,40 +287,40 @@ typedef struct mi_gvar_chg_struct mi_gvar_chg;
 /* A list of assembler instructions. */
 struct mi_asm_insn_struct
 {
- void *addr;
- char *func;
- unsigned offset;
- char *inst;
+	void *addr;
+	char *func;
+	unsigned offset;
+	char *inst;
 
- struct mi_asm_insn_struct *next;
+	struct mi_asm_insn_struct *next;
 };
 typedef struct mi_asm_insn_struct mi_asm_insn;
 
 /* A list of source lines containing assembler instructions. */
 struct mi_asm_insns_struct
 {
- char *file;
- int line;
- mi_asm_insn *ins;
+	char *file;
+	int line;
+	mi_asm_insn *ins;
 
- struct mi_asm_insns_struct *next;
+	struct mi_asm_insns_struct *next;
 };
 typedef struct mi_asm_insns_struct mi_asm_insns;
 
 /* Changed register. */
 struct mi_chg_reg_struct
 {
- int reg;
- char *val;
- char *name;
- char updated;
+	int reg;
+	char *val;
+	char *name;
+	char updated;
 
- struct mi_chg_reg_struct *next;
+	struct mi_chg_reg_struct *next;
 };
 typedef struct mi_chg_reg_struct mi_chg_reg;
 
 /*
- Examining gdb sources and looking at docs I can see the following "stop"
+	Examining gdb sources and looking at docs I can see the following "stop"
 reasons:
 
 Breakpoints:
@@ -350,41 +350,41 @@ Plus: thread-id
 */
 enum mi_stop_reason
 {
- sr_unknown=0,
- sr_bkpt_hit,
- sr_wp_trigger, sr_read_wp_trigger, sr_access_wp_trigger, sr_wp_scope,
- sr_function_finished, sr_location_reached, sr_end_stepping_range,
- sr_exited_signalled, sr_exited, sr_exited_normally,
- sr_signal_received
+	sr_unknown=0,
+	sr_bkpt_hit,
+	sr_wp_trigger, sr_read_wp_trigger, sr_access_wp_trigger, sr_wp_scope,
+	sr_function_finished, sr_location_reached, sr_end_stepping_range,
+	sr_exited_signalled, sr_exited, sr_exited_normally,
+	sr_signal_received
 };
 
 struct mi_stop_struct
 {
- enum mi_stop_reason reason; /* If more than one reason just the last. */
- /* Flags indicating if non-pointer fields are filled. */
- char have_thread_id;
- char have_bkptno;
- char have_exit_code;
- char have_wpno;
- /* Where stopped. Doesn't exist for sr_exited*. */
- int thread_id;
- mi_frames *frame;
- /* sr_bkpt_hit */
- int bkptno;
- /* sr_*wp_* no scope */
- mi_wp *wp;
- char *wp_old;
- char *wp_val;
- /* sr_wp_scope */
- int wpno;
- /* sr_function_finished. Not for void func. */
- char *gdb_result_var;
- char *return_value;
- /* sr_exited_signalled, sr_signal_received */
- char *signal_name;
- char *signal_meaning;
- /* sr_exited */
- int exit_code;
+	enum mi_stop_reason reason; /* If more than one reason just the last. */
+	/* Flags indicating if non-pointer fields are filled. */
+	char have_thread_id;
+	char have_bkptno;
+	char have_exit_code;
+	char have_wpno;
+	/* Where stopped. Doesn't exist for sr_exited*. */
+	int thread_id;
+	mi_frames *frame;
+	/* sr_bkpt_hit */
+	int bkptno;
+	/* sr_*wp_* no scope */
+	mi_wp *wp;
+	char *wp_old;
+	char *wp_val;
+	/* sr_wp_scope */
+	int wpno;
+	/* sr_function_finished. Not for void func. */
+	char *gdb_result_var;
+	char *return_value;
+	/* sr_exited_signalled, sr_signal_received */
+	char *signal_name;
+	char *signal_meaning;
+	/* sr_exited */
+	int exit_code;
 };
 typedef struct mi_stop_struct mi_stop;
 
@@ -403,7 +403,7 @@ void  mi_disconnect(mi_h *h);
 /* Force MI version. */
 #define MI_VERSION2U(maj,mid,min) (maj*0x1000000+mid*0x10000+min)
 void  mi_force_version(mi_h *h, unsigned vMajor, unsigned vMiddle,
-                       unsigned vMinor);
+						unsigned vMinor);
 void  mi_set_workaround(unsigned wa, int enable);
 int   mi_get_workaround(unsigned wa);
 /* Parse gdb output. */
@@ -439,13 +439,13 @@ mi_output *mi_retire_response(mi_h *h);
 /* Look for a result record in gdb output. */
 mi_output *mi_get_rrecord(mi_output *r);
 /* Look if the output contains an async stop.
-   If that's the case return the reason for the stop.
-   If the output contains an error the description is returned in reason. */
+	If that's the case return the reason for the stop.
+	If the output contains an error the description is returned in reason. */
 int mi_get_async_stop_reason(mi_output *r, char **reason);
 mi_stop *mi_get_stopped(mi_results *r);
 mi_frames *mi_get_async_frame(mi_output *r);
 /* Wait until gdb sends a response.
-   Then check if the response is of the desired type. */
+	Then check if the response is of the desired type. */
 int mi_res_simple_exit(mi_h *h);
 int mi_res_simple_done(mi_h *h);
 int mi_res_simple_running(mi_h *h);
@@ -491,7 +491,7 @@ mi_stop *mi_res_stop(mi_h *h);
 enum mi_stop_reason mi_reason_str_to_enum(const char *s);
 const char *mi_reason_enum_to_str(enum mi_stop_reason r);
 int mi_get_read_memory(mi_h *h, unsigned char *dest, unsigned ws, int *na,
-                       unsigned long *addr);
+						unsigned long *addr);
 mi_asm_insns *mi_get_asm_insns(mi_h *h);
 /* Starting point of the program. */
 void mi_set_main_func(const char *name);
@@ -545,7 +545,7 @@ int gmi_target_terminal(mi_h *h, const char *tty_name);
 /* Specify what's the local copy that have debug info. For remote sessions. */
 int gmi_file_symbol_file(mi_h *h, const char *file);
 /* Continue until function return, the return value is included in the async
-   response. */
+	response. */
 int gmi_exec_finish(mi_h *h);
 /* Stop the program using SIGINT. */
 int gmi_exec_interrupt(mi_h *h);
@@ -592,11 +592,11 @@ char *gmi_gdb_show(mi_h *h, const char *var);
 mi_bkpt *gmi_break_insert(mi_h *h, const char *file, int line);
 /* Insert a breakpoint, all available options. */
 mi_bkpt *gmi_break_insert_full(mi_h *h, int temporary, int hard_assist,
-                               const char *cond, int count, int thread,
-                               const char *where);
+								const char *cond, int count, int thread,
+								const char *where);
 mi_bkpt *gmi_break_insert_full_fl(mi_h *h, const char *file, int line,
-                                  int temporary, int hard_assist,
-                                  const char *cond, int count, int thread);
+									int temporary, int hard_assist,
+									const char *cond, int count, int thread);
 /* Remove a breakpoint. */
 int gmi_break_delete(mi_h *h, int number);
 /* Free the memory used for a breakpoint description. */
@@ -617,12 +617,12 @@ char *gmi_data_evaluate_expression(mi_h *h, const char *expression);
 int gmi_dir(mi_h *h, const char *path);
 /* A very limited "data read memory" implementation. */
 int gmi_read_memory(mi_h *h, const char *exp, unsigned size,
-                    unsigned char *dest, int *na, int convAddr,
-                    unsigned long *addr);
+						unsigned char *dest, int *na, int convAddr,
+						unsigned long *addr);
 mi_asm_insns *gmi_data_disassemble_se(mi_h *h, const char *start,
-                                      const char *end, int mode);
+										const char *end, int mode);
 mi_asm_insns *gmi_data_disassemble_fl(mi_h *h, const char *file, int line,
-                                      int lines, int mode);
+										int lines, int mode);
 mi_chg_reg *gmi_data_list_register_names(mi_h *h, int *how_many);
 int gmi_data_list_register_names_l(mi_h *h, mi_chg_reg *l);
 mi_chg_reg *gmi_data_list_changed_registers(mi_h *h);
@@ -674,13 +674,13 @@ int gmi_var_info_num_children(mi_h *h, mi_gvar *var);
 /* Fill the type field with info from gdb. */
 int gmi_var_info_type(mi_h *h, mi_gvar *var);
 /* Fill the expression and lang fields with info from gdb.
-   Note that lang isn't filled during creation. */
+	Note that lang isn't filled during creation. */
 int gmi_var_info_expression(mi_h *h, mi_gvar *var);
 /* Fill the attr field with info from gdb.
-   Note that attr isn't filled during creation. */
+	Note that attr isn't filled during creation. */
 int gmi_var_show_attributes(mi_h *h, mi_gvar *var);
 /* Update variable. Use NULL for all.
-   Note that *changed can be NULL if none updated. */
+	Note that *changed can be NULL if none updated. */
 int gmi_var_update(mi_h *h, mi_gvar *var, mi_gvar_chg **changed);
 /* Change variable. Fills the value field. */
 int gmi_var_assign(mi_h *h, mi_gvar *var, const char *expression);
@@ -695,266 +695,266 @@ int gmi_var_list_children(mi_h *h, mi_gvar *var);
 /* C++ interface */
 
 /*
- State                Can:
- disconnected         Connect
-  connected           SelectTarget, Disconnect
-   target_specified    TargetUnselect, Run, Set breakpoints/watchpoints, etc.
-    running            Stop
-    stopped            Kill, Restart?, Step, Trace, Continue, etc.
-    [auto exit]
+	State                Can:
+	disconnected         Connect
+	connected           SelectTarget, Disconnect
+	target_specified    TargetUnselect, Run, Set breakpoints/watchpoints, etc.
+		running            Stop
+		stopped            Kill, Restart?, Step, Trace, Continue, etc.
+		[auto exit]
 
-  Modes:
-  dmX11                 Local debug for X11.
-  dmLinux               Local debug for Linux console.
-  dmRemote              Remote debug.
+	Modes:
+	dmX11                 Local debug for X11.
+	dmLinux               Local debug for Linux console.
+	dmRemote              Remote debug.
 */
 class MIDebugger
 {
 public:
- MIDebugger();
- ~MIDebugger();
+	MIDebugger();
+	~MIDebugger();
 
- enum eState { disconnected, connected, target_specified, running, stopped };
- enum dMode  { dmX11, dmLinux, dmRemote, dmPID };
- enum endianType { enUnknown, enLittle, enBig };
- // Currently tested architectures
- enum archType { arUnknown, arIA32, arSPARC, arPIC14, arAVR, arUnsupported };
+	enum eState { disconnected, connected, target_specified, running, stopped };
+	enum dMode  { dmX11, dmLinux, dmRemote, dmPID };
+	enum endianType { enUnknown, enLittle, enBig };
+	// Currently tested architectures
+	enum archType { arUnknown, arIA32, arSPARC, arPIC14, arAVR, arUnsupported };
 
- int Connect(bool remote=false); /* remote is currently ignored. */
- int Disconnect();
- /* SelectTarget* */
- int SelectTargetX11(const char *exec, const char *args=NULL,
-                     const char *auxtty=NULL);
- int SelectTargetLinux(const char *exec, const char *args,
-                       const char *auxtty=NULL);
- int SelectTargetRemote(const char *exec, const char *rparams,
-                        const char *rtype=NULL, bool download=false);
- // TODO: Linux PIDs can be represented as intergers. What should I use?
- // ato_pid_t doesn't exist ;-)
- mi_frames *SelectTargetPID(const char *exec, int pid);
- int TargetUnselect();
- int Run();
- int Stop();
- int Poll(mi_stop *&rs);
- int Continue();
- int RunOrContinue();
- int Kill();
- mi_bkpt *Breakpoint(const char *file, int line);
- mi_bkpt *Breakpoint(const char *where, bool temporary=false, const char *cond=NULL,
-                     int count=-1, int thread=-1, bool hard_assist=false);
- mi_bkpt *BreakpointFull(const char *file, int line, bool temporary=false,
-                         const char *cond=NULL, int count=-1, int thread=-1,
-                         bool hard_assist=false);
- mi_bkpt *Breakpoint(mi_bkpt *b);
- int BreakDelete(mi_bkpt *b);
- int BreakAfter(mi_bkpt *b)
- {
-  if (state!=target_specified && state!=stopped)
-     return 0;
-  return gmi_break_set_times(h,b->number,b->ignore);
- }
- mi_wp *Watchpoint(enum mi_wp_mode mode, const char *exp);
- int WatchDelete(mi_wp *w);
- int RunToMain();
- int StepOver(bool inst=false);
- int TraceInto(bool inst=false);
- int GoTo(const char *file, int line);
- int GoTo(void *addr);
- int FinishFun();
- mi_frames *ReturnNow();
- mi_frames *CallStack(bool args);
- char *EvalExpression(const char *exp);
- char *ModifyExpression(char *exp, char *newVal);
- mi_gvar *AddgVar(const char *exp, int frame=-1)
- {
-  if (state!=stopped)
-     return NULL;
-  return gmi_full_var_create(h,frame,exp);
- }
- int DelgVar(mi_gvar *var)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_var_delete(h,var);
- }
- int EvalgVar(mi_gvar *var)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_var_evaluate_expression(h,var);
- }
- int GetChildgVar(mi_gvar *var)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_var_list_children(h,var);
- }
- int FillTypeVal(mi_gvar *var);
- int FillOneTypeVal(mi_gvar *var);
- int FillAttr(mi_gvar *var)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_var_show_attributes(h,var);
- }
- int FillFormat(mi_gvar *var)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_var_show_format(h,var);
- }
- int SetFormatgVar(mi_gvar *var, enum mi_gvar_fmt format)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_var_set_format(h,var,format);
- }
- int ListChangedgVar(mi_gvar_chg *&changed)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_var_update(h,NULL,&changed);
- }
- int AssigngVar(mi_gvar *var, const char *exp);
- int Send(const char *command);
- int Version()
- {
-  if (state==running || state==disconnected)
-     return 0;
-  return gmi_gdb_version(h);
- }
- int PathSources(const char *path)
- {
-  if (state==running || state==disconnected)
-     return 0;
-  return gmi_dir(h,path);
- }
- int ReadMemory(const char *exp, unsigned size, unsigned char *dest,
-                int &na, int convAddr, unsigned long *addr)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_read_memory(h,exp,size,dest,&na,convAddr,addr);
- }
- char *Show(const char *var);
- int ThreadListIDs(int *&list)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_thread_list_ids(h,&list);
- }
- mi_frames *ThreadList()
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_thread_list_all_threads(h);
- }
- mi_frames *ThreadSelect(int id)
- {
-  if (state!=stopped)
-     return NULL;
-  return gmi_thread_select(h,id);
- }
- mi_asm_insns *Disassemble(const char *start, const char *end, int mode)
- {
-  if (state!=stopped)
-     return NULL;
-  return gmi_data_disassemble_se(h,start,end,mode);
- }
- mi_asm_insns *Disassemble(const char *file, int line, int lines, int mode)
- {
-  if (state!=stopped)
-     return NULL;
-  return gmi_data_disassemble_fl(h,file,line,lines,mode);
- }
- mi_chg_reg *GetRegisterNames(int *how_many)
- {
-  if (state!=target_specified && state!=stopped)
-     return NULL;
-  return gmi_data_list_register_names(h,how_many);
- }
- int GetRegisterNames(mi_chg_reg *chg)
- {
-  if (state!=target_specified && state!=stopped)
-     return 0;
-  return gmi_data_list_register_names_l(h,chg);
- }
- int GetRegisterValues(mi_chg_reg *chg)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_data_list_register_values(h,fm_natural,chg);
- }
- mi_chg_reg *GetRegisterValues(int *how_many)
- {
-  if (state!=stopped)
-     return 0;
-  return gmi_data_list_all_register_values(h,fm_natural,how_many);
- }
- mi_chg_reg *GetChangedRegisters()
- {
-  if (state!=stopped)
-     return NULL;
-  mi_chg_reg *chg=gmi_data_list_changed_registers(h);
-  if (chg && !gmi_data_list_register_values(h,fm_natural,chg))
-    {
-     mi_free_chg_reg(chg);
-     chg=NULL;
-    }
-  return chg;
- }
- int UpdateRegisters(mi_chg_reg *regs);
+	int Connect(bool remote=false); /* remote is currently ignored. */
+	int Disconnect();
+	/* SelectTarget* */
+	int SelectTargetX11(const char *exec, const char *args=NULL,
+						const char *auxtty=NULL);
+	int SelectTargetLinux(const char *exec, const char *args,
+						const char *auxtty=NULL);
+	int SelectTargetRemote(const char *exec, const char *rparams,
+							const char *rtype=NULL, bool download=false);
+	// TODO: Linux PIDs can be represented as intergers. What should I use?
+	// ato_pid_t doesn't exist ;-)
+	mi_frames *SelectTargetPID(const char *exec, int pid);
+	int TargetUnselect();
+	int Run();
+	int Stop();
+	int Poll(mi_stop *&rs);
+	int Continue();
+	int RunOrContinue();
+	int Kill();
+	mi_bkpt *Breakpoint(const char *file, int line);
+	mi_bkpt *Breakpoint(const char *where, bool temporary=false, const char *cond=NULL,
+						int count=-1, int thread=-1, bool hard_assist=false);
+	mi_bkpt *BreakpointFull(const char *file, int line, bool temporary=false,
+							const char *cond=NULL, int count=-1, int thread=-1,
+							bool hard_assist=false);
+	mi_bkpt *Breakpoint(mi_bkpt *b);
+	int BreakDelete(mi_bkpt *b);
+	int BreakAfter(mi_bkpt *b)
+	{
+	if (state!=target_specified && state!=stopped)
+		return 0;
+	return gmi_break_set_times(h,b->number,b->ignore);
+	}
+	mi_wp *Watchpoint(enum mi_wp_mode mode, const char *exp);
+	int WatchDelete(mi_wp *w);
+	int RunToMain();
+	int StepOver(bool inst=false);
+	int TraceInto(bool inst=false);
+	int GoTo(const char *file, int line);
+	int GoTo(void *addr);
+	int FinishFun();
+	mi_frames *ReturnNow();
+	mi_frames *CallStack(bool args);
+	char *EvalExpression(const char *exp);
+	char *ModifyExpression(char *exp, char *newVal);
+	mi_gvar *AddgVar(const char *exp, int frame=-1)
+	{
+	if (state!=stopped)
+		return NULL;
+	return gmi_full_var_create(h,frame,exp);
+	}
+	int DelgVar(mi_gvar *var)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_var_delete(h,var);
+	}
+	int EvalgVar(mi_gvar *var)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_var_evaluate_expression(h,var);
+	}
+	int GetChildgVar(mi_gvar *var)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_var_list_children(h,var);
+	}
+	int FillTypeVal(mi_gvar *var);
+	int FillOneTypeVal(mi_gvar *var);
+	int FillAttr(mi_gvar *var)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_var_show_attributes(h,var);
+	}
+	int FillFormat(mi_gvar *var)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_var_show_format(h,var);
+	}
+	int SetFormatgVar(mi_gvar *var, enum mi_gvar_fmt format)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_var_set_format(h,var,format);
+	}
+	int ListChangedgVar(mi_gvar_chg *&changed)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_var_update(h,NULL,&changed);
+	}
+	int AssigngVar(mi_gvar *var, const char *exp);
+	int Send(const char *command);
+	int Version()
+	{
+	if (state==running || state==disconnected)
+		return 0;
+	return gmi_gdb_version(h);
+	}
+	int PathSources(const char *path)
+	{
+	if (state==running || state==disconnected)
+		return 0;
+	return gmi_dir(h,path);
+	}
+	int ReadMemory(const char *exp, unsigned size, unsigned char *dest,
+					int &na, int convAddr, unsigned long *addr)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_read_memory(h,exp,size,dest,&na,convAddr,addr);
+	}
+	char *Show(const char *var);
+	int ThreadListIDs(int *&list)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_thread_list_ids(h,&list);
+	}
+	mi_frames *ThreadList()
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_thread_list_all_threads(h);
+	}
+	mi_frames *ThreadSelect(int id)
+	{
+	if (state!=stopped)
+		return NULL;
+	return gmi_thread_select(h,id);
+	}
+	mi_asm_insns *Disassemble(const char *start, const char *end, int mode)
+	{
+	if (state!=stopped)
+		return NULL;
+	return gmi_data_disassemble_se(h,start,end,mode);
+	}
+	mi_asm_insns *Disassemble(const char *file, int line, int lines, int mode)
+	{
+	if (state!=stopped)
+		return NULL;
+	return gmi_data_disassemble_fl(h,file,line,lines,mode);
+	}
+	mi_chg_reg *GetRegisterNames(int *how_many)
+	{
+	if (state!=target_specified && state!=stopped)
+		return NULL;
+	return gmi_data_list_register_names(h,how_many);
+	}
+	int GetRegisterNames(mi_chg_reg *chg)
+	{
+	if (state!=target_specified && state!=stopped)
+		return 0;
+	return gmi_data_list_register_names_l(h,chg);
+	}
+	int GetRegisterValues(mi_chg_reg *chg)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_data_list_register_values(h,fm_natural,chg);
+	}
+	mi_chg_reg *GetRegisterValues(int *how_many)
+	{
+	if (state!=stopped)
+		return 0;
+	return gmi_data_list_all_register_values(h,fm_natural,how_many);
+	}
+	mi_chg_reg *GetChangedRegisters()
+	{
+	if (state!=stopped)
+		return NULL;
+	mi_chg_reg *chg=gmi_data_list_changed_registers(h);
+	if (chg && !gmi_data_list_register_values(h,fm_natural,chg))
+		{
+		mi_free_chg_reg(chg);
+		chg=NULL;
+		}
+	return chg;
+	}
+	int UpdateRegisters(mi_chg_reg *regs);
 
- endianType GetTargetEndian();
- archType   GetTargetArchitecture();
- eState GetState() { return state; }
+	endianType GetTargetEndian();
+	archType   GetTargetArchitecture();
+	eState GetState() { return state; }
 
- /* Some wrappers */
- static void SetGDBExe(const char *name) { mi_set_gdb_exe(name); }
- static const char *GetGDBExe() { return mi_get_gdb_exe(); }
- static void SetXTermExe(const char *name) { mi_set_xterm_exe(name); }
- static const char *GetXTermExe() { return mi_get_xterm_exe(); }
- static void SetMainFunc(const char *name) { mi_set_main_func(name); }
- static const char *GetMainFunc() { return mi_get_main_func(); }
+	/* Some wrappers */
+	static void SetGDBExe(const char *name) { mi_set_gdb_exe(name); }
+	static const char *GetGDBExe() { return mi_get_gdb_exe(); }
+	static void SetXTermExe(const char *name) { mi_set_xterm_exe(name); }
+	static const char *GetXTermExe() { return mi_get_xterm_exe(); }
+	static void SetMainFunc(const char *name) { mi_set_main_func(name); }
+	static const char *GetMainFunc() { return mi_get_main_func(); }
 
- static const char *GetErrorStr() { return mi_get_error_str(); }
- static const char *GetGDBError() { return mi_error_from_gdb; }
- static int GetErrorNumber() { return mi_error; }
- int GetErrorNumberSt();
- void SetConsoleCB(stream_cb cb, void *data=NULL)
-   { mi_set_console_cb(h,cb,data); }
- void SetTargetCB(stream_cb cb, void *data=NULL)
-   { mi_set_target_cb(h,cb,data); }
- void SetLogCB(stream_cb cb, void *data=NULL)
-   { mi_set_log_cb(h,cb,data); }
- void SetAsyncCB(async_cb cb, void *data=NULL)
-   { mi_set_async_cb(h,cb,data); }
- void SetToGDBCB(stream_cb cb, void *data=NULL)
-   { mi_set_to_gdb_cb(h,cb,data); }
- void SetFromGDBCB(stream_cb cb, void *data=NULL)
-   { mi_set_from_gdb_cb(h,cb,data); }
- void SetTimeOutCB(tm_cb cb, void *data)
-   { mi_set_time_out_cb(h,cb,data); }
- void SetTimeOut(int to)
-   { mi_set_time_out(h,to); }
- void ForceMIVersion(unsigned vMajor, unsigned vMiddle, unsigned vMinor)
-   { mi_force_version(h,vMajor,vMiddle,vMinor); }
+	static const char *GetErrorStr() { return mi_get_error_str(); }
+	static const char *GetGDBError() { return mi_error_from_gdb; }
+	static int GetErrorNumber() { return mi_error; }
+	int GetErrorNumberSt();
+	void SetConsoleCB(stream_cb cb, void *data=NULL)
+	{ mi_set_console_cb(h,cb,data); }
+	void SetTargetCB(stream_cb cb, void *data=NULL)
+	{ mi_set_target_cb(h,cb,data); }
+	void SetLogCB(stream_cb cb, void *data=NULL)
+	{ mi_set_log_cb(h,cb,data); }
+	void SetAsyncCB(async_cb cb, void *data=NULL)
+	{ mi_set_async_cb(h,cb,data); }
+	void SetToGDBCB(stream_cb cb, void *data=NULL)
+	{ mi_set_to_gdb_cb(h,cb,data); }
+	void SetFromGDBCB(stream_cb cb, void *data=NULL)
+	{ mi_set_from_gdb_cb(h,cb,data); }
+	void SetTimeOutCB(tm_cb cb, void *data)
+	{ mi_set_time_out_cb(h,cb,data); }
+	void SetTimeOut(int to)
+	{ mi_set_time_out(h,to); }
+	void ForceMIVersion(unsigned vMajor, unsigned vMiddle, unsigned vMinor)
+	{ mi_force_version(h,vMajor,vMiddle,vMinor); }
 
- const char *GetAuxTTY()
-   { return aux_tty ? aux_tty->tty : NULL; }
+	const char *GetAuxTTY()
+	{ return aux_tty ? aux_tty->tty : NULL; }
 
 protected:
- eState state;
- dMode mode;
- endianType targetEndian;
- archType targetArch;
- bool  preRun;  // Remote targets starts running but outside main.
- mi_h *h;
- mi_aux_term *aux_tty;
- int waitingTempBkpt;
+	eState state;
+	dMode mode;
+	endianType targetEndian;
+	archType targetArch;
+	bool  preRun;  // Remote targets starts running but outside main.
+	mi_h *h;
+	mi_aux_term *aux_tty;
+	int waitingTempBkpt;
 
- int SelectTargetTTY(const char *exec, const char *args, const char *auxtty,
-                     dMode m);
+	int SelectTargetTTY(const char *exec, const char *args, const char *auxtty,
+						dMode m);
 };
 
 #endif

@@ -6,7 +6,8 @@ LocalsViewWidget::LocalsViewWidget( QGdb::Driver* driver, QWidget* parent )
 	setHeaderHidden( true );
 	
 	setModel( driver->getLocalsModel() );
-	connect ( driver, SIGNAL( localsUpdated() ), this, SLOT( reset() ));
+	
+	connect( driver, SIGNAL( localsUpdated() ), this, SLOT( reset() ) );
 }
 
 LocalsViewWidget::~LocalsViewWidget()
