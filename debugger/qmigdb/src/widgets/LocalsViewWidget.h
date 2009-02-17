@@ -1,9 +1,9 @@
 #ifndef LOCALSVIEWWIDGET_H
 #define LOCALSVIEWWIDGET_H
 
-#include "QGdbDriver.h"
-
 #include <QTreeView>
+
+#include "QGdbDriver.h"
 
 class LocalsViewWidget : public QTreeView
 {
