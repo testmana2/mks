@@ -7,7 +7,7 @@
 
 class CallStackWidget : public QTreeWidget
 {
-	Q_OBJECT
+		Q_OBJECT
 
 public:
 	CallStackWidget( QGdb::Driver* driver, QWidget* parent = 0 );
