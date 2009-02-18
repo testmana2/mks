@@ -29,6 +29,8 @@ namespace QGdb
 		Driver( QObject* parent = 0 );
 		virtual ~Driver();
 		
+		void enableDebugOutput (bool enable);
+		
 		bool connectToGdb();
 		void disconnectFromGdb();
 		
@@ -58,6 +60,7 @@ namespace QGdb
 		void stack_frameSelected( const QGdb::CallStackFrame& frame );
 	
 	protected:
+		static bool mEnableDebugOutput;
 		QStandardItemModel mLocalsModel;
 		QTimer* mAsyncPollTimer;
 		mi_h* mHandle;

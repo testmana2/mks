@@ -8,8 +8,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-UIMonkeyDbg::UIMonkeyDbg( QWidget* parent )
-	: QMainWindow( parent )
+UIMonkeyDbg::UIMonkeyDbg( QWidget* parent, QGdb::Driver* debugger )
+  : QMainWindow( parent ),
+  mDebugger (debugger)
 {
 	setupUi( this );
 	
@@ -17,7 +18,6 @@ UIMonkeyDbg::UIMonkeyDbg( QWidget* parent )
 	aCloseAllFiles->setEnabled( false );
 	
 	mDebuggerInitialized = false;
-	mDebugger = new QGdb::Driver( this );
 	
 	initConnections();
 	
