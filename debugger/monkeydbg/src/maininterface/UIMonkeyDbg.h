@@ -16,7 +16,7 @@ class UIMonkeyDbg : public QMainWindow, public Ui::UIMonkeyDbg
 	Q_OBJECT
 
 public:
-	UIMonkeyDbg( QWidget* parent = 0 );
+	UIMonkeyDbg( QWidget* parent, QGdb::Driver* driver );
 	virtual ~UIMonkeyDbg();
 
 protected:

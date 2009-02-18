@@ -5,8 +5,10 @@
 
 #include "QGdbDriver.h"
 
+bool QGdb::Driver::mEnableDebugOutput = false;
+
 QGdb::Driver::Driver( QObject* parent )
-	: QObject( parent )
+  : QObject( parent )
 {
 	mHandle = 0;
 	mState = QGdb::DISCONNECTED;
@@ -29,10 +31,17 @@ QGdb::Driver::~Driver()
 	}
 }
 
+void QGdb::Driver::enableDebugOutput (bool enable)
+{
+	mEnableDebugOutput = enable;
+}
+
 // Callbacks of debugger
 void QGdb::Driver::callbackConsole( const char* str, void* instance )
 {
 	QGdb::Driver* driver = static_cast<QGdb::Driver*>( instance );
+	if (mEnableDebugOutput)
+		qWarning() << "qmigdb" << "   console: " << QString(str).trimmed();
 	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::CONSOLE );
 }
 
@@ -40,30 +49,40 @@ void QGdb::Driver::callbackConsole( const char* str, void* instance )
 void QGdb::Driver::callbackTarget( const char* str, void* instance )
 {
 	QGdb::Driver* driver = static_cast<QGdb::Driver*>( instance );
+	if (mEnableDebugOutput)
+		qWarning() << "qmigdb" << "    target: " << str;
 	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::TARGET );
 }
 
 void QGdb::Driver::callbackLog( const char* str, void* instance )
 {
 	QGdb::Driver* driver = static_cast<QGdb::Driver*>( instance );
+	if (mEnableDebugOutput)
+		qWarning() << "qmigdb" << "       log: " << QString( str ).trimmed();
 	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::LOG );
 }
 
 void QGdb::Driver::callbackToGDB( const char* str, void* instance )
 {
 	QGdb::Driver* driver = static_cast<QGdb::Driver*>( instance );
+	if (mEnableDebugOutput)
+		qWarning() << "qmigdb" << "debugger<<: " << QString( str ).trimmed();
 	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::TO_GDB );
 }
 
 void QGdb::Driver::callbackFromGDB( const char* str, void* instance )
 {
 	QGdb::Driver* driver = static_cast<QGdb::Driver*>( instance );
+	if (mEnableDebugOutput)
+		qWarning() << "qmigdb" << "debugger>>: " << str;
 	emit driver->callbackMessage( QString::fromLocal8Bit( str ), QGdb::FROM_GDB );
 }
 
 void QGdb::Driver::callbackAsync( mi_output* output, void* instance )
 {
 	QGdb::Driver* driver = static_cast<QGdb::Driver*>( instance );
+	if (mEnableDebugOutput)
+		qWarning() << "qmigdb" << "   async>>: " << output->c->v.cstr;
 	emit driver->callbackMessage( output->c->v.cstr, QGdb::ASYNC );
 }
 
