@@ -9,24 +9,24 @@
 #include <QMessageBox>
 
 UIMonkeyDbg::UIMonkeyDbg( QWidget* parent, QGdb::Driver* debugger )
-  : QMainWindow( parent ),
-  mDebugger (debugger)
+	: QMainWindow( parent ),
+	mDebugger( debugger )
 {
 	setupUi( this );
-	
+
 	aCloseFile->setEnabled( false );
 	aCloseAllFiles->setEnabled( false );
-	
+
 	mDebuggerInitialized = false;
-	
+
 	initConnections();
-	
+
 	CallStackWidget* csw = new CallStackWidget( mDebugger, dwCallStack );
 	dwCallStack->setWidget( csw );
-	
+
 	BreakpointWidget* bpw = new BreakpointWidget( mDebugger, dwBreakpoint );
 	dwBreakpoint->setWidget( bpw );
-	
+
 	LocalsViewWidget* localsw = new LocalsViewWidget( mDebugger, dwLocals );
 	dwLocals->setWidget( localsw );
 }

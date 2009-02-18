@@ -9,18 +9,18 @@
 bool QGdb::Driver::mEnableDebugOutput = false;
 
 QGdb::Driver::Driver( QObject* parent )
-  : QObject( parent )
+	: QObject( parent )
 {
 	mHandle = 0;
 	mState = QGdb::DISCONNECTED;
 	mWaitingTempBreakpoint = false;
-	
+
 	QGdb::registerStructures();
-	
+
 	mAsyncPollTimer = new QTimer( this );
-	
+
 	connect( mAsyncPollTimer, SIGNAL( timeout() ), this, SLOT( asyncPollTimer_timeout() ) );
-	
+
 	mAsyncPollTimer->start( 50 );
 }
 
