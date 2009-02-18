@@ -299,37 +299,40 @@ void QGdb::Driver::updateLocals()
 	// clear, free memory
 	mLocalsModel.clear();
 	
-	mi_results* locals = gmi_stack_list_locals(mHandle, 1);
-	Q_ASSERT ( locals );
-	if ( !locals )
-		return;
-	
-	Q_ASSERT ( 0 == strcmp( locals->var, "locals" ));
-	Q_ASSERT ( locals->type == t_list );
-	
-	mi_results* variable = locals->v.rs;
-	while ( variable )
+	if (mState == QGdb::STOPPED)
 	{
-		QList <QStandardItem*> row;
-		Q_ASSERT( variable->type == t_tuple );
+		mi_results* locals = gmi_stack_list_locals(mHandle, 1);
+		Q_ASSERT ( locals );
+		if ( !locals )
+			return;
 		
-		mi_results* res_name = variable->v.rs;
-		Q_ASSERT( res_name );
-		Q_ASSERT( 0 == strcmp( res_name->var, "name" ));
-		Q_ASSERT( res_name->type == t_const );
-		row << new QStandardItem( res_name->v.cstr );
+		Q_ASSERT ( 0 == strcmp( locals->var, "locals" ));
+		Q_ASSERT ( locals->type == t_list );
 		
-		mi_results* res_value = res_name->next;
-		Q_ASSERT ( res_value );
-		Q_ASSERT( 0 == strcmp( res_value->var, "value" ));
-		Q_ASSERT( res_value->type == t_const );
-		row << new QStandardItem( res_value->v.cstr );
+		mi_results* variable = locals->v.rs;
+		while ( variable )
+		{
+			QList <QStandardItem*> row;
+			Q_ASSERT( variable->type == t_tuple );
+			
+			mi_results* res_name = variable->v.rs;
+			Q_ASSERT( res_name );
+			Q_ASSERT( 0 == strcmp( res_name->var, "name" ));
+			Q_ASSERT( res_name->type == t_const );
+			row << new QStandardItem( res_name->v.cstr );
+			
+			mi_results* res_value = res_name->next;
+			Q_ASSERT ( res_value );
+			Q_ASSERT( 0 == strcmp( res_value->var, "value" ));
+			Q_ASSERT( res_value->type == t_const );
+			row << new QStandardItem( res_value->v.cstr );
+			
+			mLocalsModel.appendRow( row );
+			variable = variable->next;
+		}
 		
-		mLocalsModel.appendRow( row );
-		variable = variable->next;
+		mi_free_results( locals );
 	}
-	
-	mi_free_results( locals );
 	
 	emit localsUpdated();
 }
