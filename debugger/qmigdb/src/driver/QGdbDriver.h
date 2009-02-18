@@ -83,6 +83,11 @@ namespace QGdb
 		QString filePath( const QString& fileName ) const;
 		void generateCallStack( mi_frames* mframe );
 		void generateCallStack( mi_stop* stop );
+		
+		// convert variable presented as mi_results to row of QStandardItem's
+		bool varIsStructure( const QString& value );
+		QList<QStandardItem*> getStructureFields( const QString& value );
+		QList<QStandardItem*>  getVariableItem(mi_results* variable);
 		void updateLocals();
 	
 	protected slots:

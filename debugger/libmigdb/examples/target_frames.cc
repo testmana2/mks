@@ -9,8 +9,25 @@ int FuncLev2(char *str)
  return strlen(str);
 }
 
+struct nested
+{
+    int nested_x;
+    int nested_y;
+};
+
+struct test
+{
+    int field_xxx;
+    int field_yyy;
+    nested n;
+};
+
 int FuncLev1(char *s, int i)
 {
+ char string[] = {'f', 'u', 'c', 'k', 't', 'h', 'e', 's', 'y', 's', 't', 'e', 'm', '\0'};
+ test tt;
+ tt.field_xxx = 10;
+ tt.field_yyy = 50;
  int v1 = 7;
  int v2 = 8;
  i+=FuncLev2(s);
