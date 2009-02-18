@@ -51,7 +51,7 @@ int main( int argc, char** argv )
 	
 	dbg.loadTarget( "/home/a/code/mks/debugger/libmigdb/examples/target_frames" );
 	dbg.openFile( "/home/a/code/mks/debugger/libmigdb/examples/target_frames.cc" );
-	debugger.break_setBreakpoint( "/home/a/code/mks/debugger/libmigdb/examples/target_frames.cc", 16 );
+	debugger.break_setBreakpoint( "/home/a/code/mks/debugger/libmigdb/examples/target_frames.cc", 33 );
 	
 	
 	return app.exec();

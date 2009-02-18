@@ -2,6 +2,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QStandardItemModel>
+#include <QRegExp>
 
 #include "QGdbDriver.h"
 
@@ -294,6 +295,52 @@ void QGdb::Driver::generateCallStack( mi_stop* stop )
 	generateCallStack( stop->frame );
 }
 
+bool QGdb::Driver::varIsStructure( const QString& value )
+{
+	// test expression: "{field_xxx = 10, field_yyy = 50, n = {nested_x = -1208681448, nested_y = -1208682176}}"
+	QString pattern = "\\{((\\w+ = ((\\w+)|(\\{.*\\})))(, )*)+\\}";
+	return QRegExp( pattern, Qt::CaseSensitive, QRegExp::RegExp2 ).exactMatch( value );
+}
+
+QList<QStandardItem*> QGdb::Driver::getStructureFields( const QString& value )
+{
+	QList<QStandardItem*> result;
+	result << new QStandardItem( value );
+	return result;
+}
+
+QList<QStandardItem*> QGdb::Driver::getVariableItem( mi_results* variable )
+{
+	QList <QStandardItem*> row;
+	Q_ASSERT( variable->type == t_tuple );
+	
+	mi_results* res_name = variable->v.rs;
+	Q_ASSERT( res_name );
+	Q_ASSERT( 0 == strcmp( res_name->var, "name" ));
+	Q_ASSERT( res_name->type == t_const );
+	
+	QStandardItem *nameItem = new QStandardItem( res_name->v.cstr );
+	nameItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
+	row << nameItem;
+	
+	mi_results* res_value = res_name->next;
+	Q_ASSERT ( res_value );
+	Q_ASSERT( 0 == strcmp( res_value->var, "value" ));
+	Q_ASSERT( res_value->type == t_const );
+	
+	QString varValue = res_value->v.cstr;
+	QStandardItem * valItem = new QStandardItem( varValue );
+	valItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
+	row << valItem;
+	
+	if ( varIsStructure( QString( varValue ) ) )
+	{
+		qDebug () << QString( res_value->v.cstr ) << "structure";
+		nameItem->appendRows( getStructureFields( varValue ));
+	}
+	return row;
+}
+
 void QGdb::Driver::updateLocals()
 {
 	// clear, free memory
@@ -312,23 +359,9 @@ void QGdb::Driver::updateLocals()
 		mi_results* variable = locals->v.rs;
 		while ( variable )
 		{
-			QList <QStandardItem*> row;
-			Q_ASSERT( variable->type == t_tuple );
-			
-			mi_results* res_name = variable->v.rs;
-			Q_ASSERT( res_name );
-			Q_ASSERT( 0 == strcmp( res_name->var, "name" ));
-			Q_ASSERT( res_name->type == t_const );
-			row << new QStandardItem( res_name->v.cstr );
-			
-			mi_results* res_value = res_name->next;
-			Q_ASSERT ( res_value );
-			Q_ASSERT( 0 == strcmp( res_value->var, "value" ));
-			Q_ASSERT( res_value->type == t_const );
-			row << new QStandardItem( res_value->v.cstr );
-			
+			QList<QStandardItem*> row = getVariableItem( variable );
 			mLocalsModel.appendRow( row );
-			variable = variable->next;
+			variable = variable->next;	
 		}
 		
 		mi_free_results( locals );
