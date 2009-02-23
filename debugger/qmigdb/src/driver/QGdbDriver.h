@@ -51,7 +51,7 @@ namespace QGdb
 		
 		bool break_setBreakpoint( const QString& file, int line );
 		
-		QStandardItemModel* getLocalsModel();
+		void readLocals (QStandardItem* storage);
 		
 	public slots:
 		void break_breakpointToggled( const QString& file, int line );
@@ -61,7 +61,6 @@ namespace QGdb
 	
 	protected:
 		static bool mEnableDebugOutput;
-		QStandardItemModel mLocalsModel;
 		QTimer* mAsyncPollTimer;
 		mi_h* mHandle;
 		QGdb::State mState;
@@ -88,7 +87,6 @@ namespace QGdb
 		bool varIsStructure( const QString& value );
 		QList< QList<QStandardItem*> > getStructureFields( const QString& value );
 		QList<QStandardItem*>  getVariableItem(mi_results* variable);
-		void updateLocals();
 	
 	protected slots:
 		void asyncPollTimer_timeout();
