@@ -159,7 +159,8 @@ void QGdb::Driver::handleStop( mi_stop* stop )
 			setState( QGdb::STOPPED );
 		}
 	}
-	updateLocals();
+	
+	emit localsUpdated();
 }
 
 void QGdb::Driver::asyncPollTimer_timeout()
@@ -233,7 +234,7 @@ bool QGdb::Driver::runToMain()
 
 QString QGdb::Driver::filePath( const QString& fileName ) const
 {
-#warning seem not correct the binary path is not always in root sources dir, need fix that
+//#warning seem not correct the binary path is not always in root sources dir, need fix that
 	if ( mTargetFileName.isEmpty() )
 	{
 		return fileName;
@@ -360,35 +361,6 @@ QList<QStandardItem*> QGdb::Driver::getVariableItem( mi_results* variable )
 			nameItem->appendRow(row);
 	}
 	return row;
-}
-
-void QGdb::Driver::updateLocals()
-{
-	// clear, free memory
-	mLocalsModel.clear();
-	
-	if (mState == QGdb::STOPPED)
-	{
-		mi_results* locals = gmi_stack_list_locals(mHandle, 1);
-		Q_ASSERT ( locals );
-		if ( !locals )
-			return;
-		
-		Q_ASSERT ( 0 == strcmp( locals->var, "locals" ));
-		Q_ASSERT ( locals->type == t_list );
-		
-		mi_results* variable = locals->v.rs;
-		while ( variable )
-		{
-			QList<QStandardItem*> row = getVariableItem( variable );
-			mLocalsModel.appendRow( row );
-			variable = variable->next;	
-		}
-		
-		mi_free_results( locals );
-	}
-	
-	emit localsUpdated();
 }
 
 bool QGdb::Driver::connectToGdb()
@@ -702,9 +674,31 @@ bool QGdb::Driver::break_setBreakpoint( const QString& file, int line )
 	return true;
 }
 
-QStandardItemModel* QGdb::Driver::getLocalsModel()
+void QGdb::Driver::readLocals (QStandardItem* storage)
 {
-	return &mLocalsModel;
+	// clear, free memory
+	storage->removeRows (0, storage->rowCount());
+	
+	if (mState == QGdb::STOPPED)
+	{
+		mi_results* locals = gmi_stack_list_locals(mHandle, 1);
+		Q_ASSERT ( locals );
+		if ( !locals )
+			return;
+		
+		Q_ASSERT ( 0 == strcmp( locals->var, "locals" ));
+		Q_ASSERT ( locals->type == t_list );
+		
+		mi_results* variable = locals->v.rs;
+		while ( variable )
+		{
+			QList<QStandardItem*> row = getVariableItem( variable );
+			storage->appendRow( row );
+			variable = variable->next;	
+		}
+		
+		mi_free_results( locals );
+	}
 }
 
 void QGdb::Driver::break_breakpointToggled( const QString& file, int line )
