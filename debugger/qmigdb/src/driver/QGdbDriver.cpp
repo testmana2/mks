@@ -298,14 +298,34 @@ void QGdb::Driver::generateCallStack( mi_stop* stop )
 bool QGdb::Driver::varIsStructure( const QString& value )
 {
 	// test expression: "{field_xxx = 10, field_yyy = 50, n = {nested_x = -1208681448, nested_y = -1208682176}}"
-	QString pattern = "\\{((\\w+ = ((\\w+)|(\\{.*\\})))(, )*)+\\}";
-	return QRegExp( pattern, Qt::CaseSensitive, QRegExp::RegExp2 ).exactMatch( value );
+	QString pattern = "\\{((\\w+ = ((\\-?\\w+)|(\\{.*\\})))(, )?)+\\}";
+	return QRegExp( pattern, Qt::CaseSensitive, QRegExp::RegExp2 ).indexIn( value ) != -1;
 }
 
-QList<QStandardItem*> QGdb::Driver::getStructureFields( const QString& value )
+QList< QList<QStandardItem*> > QGdb::Driver::getStructureFields( const QString& value )
 {
-	QList<QStandardItem*> result;
-	result << new QStandardItem( value );
+	// input is like a "{field_xxx = 10, field_yyy = 50, n = {nested_x = -1208681448, nested_y = -1208682176}}"
+	QList < QList<QStandardItem*> > result;
+	QString pattern = "(\\w+) = ((\\-?\\w+)|(\\{.*\\}))";
+	QRegExp rx (pattern, Qt::CaseSensitive, QRegExp::RegExp2);
+	int pos = 0;
+	while ((pos = rx.indexIn(value, pos)) != -1) 
+	{
+		QList <QStandardItem*> row;
+		QStandardItem* nameItem = new QStandardItem (rx.cap(1));
+		QStandardItem* valueItem = new QStandardItem (rx.cap(2));
+		if (varIsStructure (rx.cap(2)))
+		{
+			QList < QList<QStandardItem*> > fields = getStructureFields( rx.cap(2) );
+			foreach (QList<QStandardItem*> field, fields)
+				nameItem->appendRow(field);
+		}
+		row << nameItem;
+		row << valueItem;
+		result << row;
+		pos += rx.matchedLength();
+	}
+	
 	return result;
 }
 
@@ -335,8 +355,9 @@ QList<QStandardItem*> QGdb::Driver::getVariableItem( mi_results* variable )
 	
 	if ( varIsStructure( QString( varValue ) ) )
 	{
-		qDebug () << QString( res_value->v.cstr ) << "structure";
-		nameItem->appendRows( getStructureFields( varValue ));
+		QList < QList<QStandardItem*> > rows = getStructureFields( varValue );
+		foreach (QList<QStandardItem*> row, rows)
+			nameItem->appendRow(row);
 	}
 	return row;
 }

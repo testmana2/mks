@@ -86,7 +86,7 @@ namespace QGdb
 		
 		// convert variable presented as mi_results to row of QStandardItem's
 		bool varIsStructure( const QString& value );
-		QList<QStandardItem*> getStructureFields( const QString& value );
+		QList< QList<QStandardItem*> > getStructureFields( const QString& value );
 		QList<QStandardItem*>  getVariableItem(mi_results* variable);
 		void updateLocals();
 	
