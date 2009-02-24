@@ -8,6 +8,7 @@
 
 class VariablesModel : public QAbstractItemModel
 {
+	Q_OBJECT
 public:
 	VariablesModel (QGdb::Driver* driver);
 	virtual ~VariablesModel ();
@@ -29,6 +30,9 @@ protected:
 protected slots:
 	void localsUpdated ();
 	void argumentsUpdated ();
+	
+signals:
+	void expand (QModelIndex index); // signal for QTreeView
 };
 
 #endif // VARIABLESMODEL_H

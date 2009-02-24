@@ -6,8 +6,10 @@ LocalsViewWidget::LocalsViewWidget( QGdb::Driver* driver, QWidget* parent )
 	: QTreeView( parent )
 {
 	setHeaderHidden( true );
-	
-	setModel (new VariablesModel (driver));
+	VariablesModel* model = new VariablesModel (driver);
+	connect (model, SIGNAL (expand (QModelIndex)), 
+			 this, SLOT (expand (QModelIndex)));
+	setModel (model);
 }
 
 LocalsViewWidget::~LocalsViewWidget()
