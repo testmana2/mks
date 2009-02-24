@@ -19,13 +19,11 @@ VariablesModel::~VariablesModel()
 
 QModelIndex VariablesModel::index ( int row, int column, const QModelIndex & parent ) const
 {
-	if (! parent.isValid())
+	if (column < 0 || column > 1) // invalid column
 		return QModelIndex();
 	
 	if (parent.internalPointer()) // nested item
 	{
-		qDebug() << "pointer " << ((QStandardItem*)parent.internalPointer())->child (row, column);
-		qDebug() << "pointer " << ((QStandardItem*)parent.internalPointer())->text();
 		return createIndex (row, column, ((QStandardItem*)parent.internalPointer())->child (row, column));
 	}
 	else // top level item
@@ -37,7 +35,6 @@ QModelIndex VariablesModel::index ( int row, int column, const QModelIndex & par
 		else if (row == 2)
 			return createIndex (row, column, (void*)&mWatchesRoot);
 	}
-	
 	return QModelIndex(); // for avoid warning
 }
 
@@ -46,7 +43,6 @@ QModelIndex VariablesModel::parent ( const QModelIndex & index ) const
 	if (! index.isValid())
 		return QModelIndex();
 	
-	qDebug () << "item" << (QStandardItem*)index.internalPointer() << index;
 	QStandardItem* item = (QStandardItem*)index.internalPointer();
 	QStandardItem* parent = item->parent();
 	
@@ -83,7 +79,7 @@ QModelIndex VariablesModel::parent ( const QModelIndex & index ) const
 		{
 			for (int c = 0; c < 2; c++)
 			{
-				if (parent->child (r, c) == item)
+				if (grandParent->child (r, c) == parent)
 				{
 					row = r;
 					column = c;
@@ -94,7 +90,6 @@ QModelIndex VariablesModel::parent ( const QModelIndex & index ) const
 				break; // break top level for
 		}
 	}
-	
 	return createIndex (row, column, parent);
 }
 
@@ -132,10 +127,10 @@ QVariant VariablesModel::data ( const QModelIndex & index, int role ) const
 
 void VariablesModel::localsUpdated ()
 {
-	qDebug () << "localsUpdate";
 	emit layoutAboutToBeChanged();
 	mDriver->readLocals (&mLocalsRoot);
 	emit layoutChanged();
+	emit expand (index(1, 0));
 }
 
 void VariablesModel::argumentsUpdated ()
