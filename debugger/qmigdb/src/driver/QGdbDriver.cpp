@@ -161,6 +161,7 @@ void QGdb::Driver::handleStop( mi_stop* stop )
 	}
 	
 	emit localsUpdated();
+	emit argumentsUpdated();
 }
 
 void QGdb::Driver::asyncPollTimer_timeout()
@@ -698,6 +699,28 @@ void QGdb::Driver::readLocals (QStandardItem* storage)
 		}
 		
 		mi_free_results( locals );
+	}
+}
+
+void QGdb::Driver::readArguments (QStandardItem* storage)
+{
+	// clear, free memory
+	storage->removeRows (0, storage->rowCount());
+	
+	if (mState == QGdb::STOPPED)
+	{
+		mi_frames* frames = gmi_stack_list_arguments_r(mHandle, 1, 0, 1);
+		Q_ASSERT (frames);
+		mi_results* variable = frames->args;
+		
+		while ( variable )
+		{
+			QList<QStandardItem*> row = getVariableItem( variable );
+			storage->appendRow( row );
+			variable = variable->next;	
+		}
+		
+		mi_free_frames( frames );
 	}
 }
 

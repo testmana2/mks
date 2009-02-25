@@ -10,6 +10,7 @@ VariablesModel::VariablesModel (QGdb::Driver* driver)
 	mWatchesRoot.setText ("watches");
 	
 	connect( driver, SIGNAL( localsUpdated() ), this, SLOT( localsUpdated() ) );
+	connect( driver, SIGNAL( argumentsUpdated() ), this, SLOT( argumentsUpdated() ) );
 	new ModelTest (this);
 }
 
@@ -28,6 +29,9 @@ QModelIndex VariablesModel::index ( int row, int column, const QModelIndex & par
 	}
 	else // top level item
 	{
+		if (0 != column)
+			return QModelIndex();
+		
 		if (row == 0)
 			return createIndex (row, column, (void*)&mArgumentsRoot);
 		else if (row == 1)
@@ -109,6 +113,7 @@ int VariablesModel::columnCount ( const QModelIndex & parent ) const
 {
 	if (parent.internalPointer()) // nested item
 	{
+		qDebug () << "column count " << ((QStandardItem*)parent.internalPointer())->columnCount();
 		return ((QStandardItem*)parent.internalPointer())->columnCount();
 	}
 	else // top level item
@@ -135,5 +140,8 @@ void VariablesModel::localsUpdated ()
 
 void VariablesModel::argumentsUpdated ()
 {
-	
+	emit layoutAboutToBeChanged();
+	mDriver->readArguments (&mArgumentsRoot);
+	emit layoutChanged();
+	emit expand (index(0, 0));	
 }
