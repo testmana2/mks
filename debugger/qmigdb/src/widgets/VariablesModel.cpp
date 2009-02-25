@@ -23,9 +23,14 @@ QModelIndex VariablesModel::index ( int row, int column, const QModelIndex & par
 	if (column < 0 || column > 1) // invalid column
 		return QModelIndex();
 	
-	if (parent.internalPointer()) // nested item
+	QStandardItem* parentItem = (QStandardItem*)parent.internalPointer();
+	if (parentItem) // nested item
 	{
-		return createIndex (row, column, ((QStandardItem*)parent.internalPointer())->child (row, column));
+		if (row >= parentItem->rowCount() || column >= parentItem->columnCount())
+			return QModelIndex();
+		qDebug () << "parent " << parentItem->text() << row << column;
+		qDebug () << "created index " << createIndex (row, column, parentItem->child (row, column)) << parentItem->child (row, column)->text();
+		return createIndex (row, column, parentItem->child (row, column));
 	}
 	else // top level item
 	{
@@ -113,7 +118,7 @@ int VariablesModel::columnCount ( const QModelIndex & parent ) const
 {
 	if (parent.internalPointer()) // nested item
 	{
-		qDebug () << "column count " << ((QStandardItem*)parent.internalPointer())->columnCount();
+		qDebug () << "for " << ((QStandardItem*)parent.internalPointer())->text() << "column count " << ((QStandardItem*)parent.internalPointer())->columnCount();
 		return ((QStandardItem*)parent.internalPointer())->columnCount();
 	}
 	else // top level item
@@ -125,7 +130,10 @@ int VariablesModel::columnCount ( const QModelIndex & parent ) const
 QVariant VariablesModel::data ( const QModelIndex & index, int role ) const
 {
 	if (index.internalPointer())
+	{
+		qDebug () << "data for " << index << ((QStandardItem*)index.internalPointer())->text();
 		return ((QStandardItem*)index.internalPointer())->data (role);
+	}
 	
 	return QVariant();
 }
