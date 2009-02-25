@@ -23,8 +23,6 @@ namespace QGdb
 	{
 		Q_OBJECT
 		
-	friend class LocalsModel;
-	
 	public:
 		Driver( QObject* parent = 0 );
 		virtual ~Driver();
@@ -52,6 +50,7 @@ namespace QGdb
 		bool break_setBreakpoint( const QString& file, int line );
 		
 		void readLocals (QStandardItem* storage);
+		void readArguments (QStandardItem* storage);
 		
 	public slots:
 		void break_breakpointToggled( const QString& file, int line );
@@ -125,6 +124,7 @@ namespace QGdb
 		void breakpointRemoved( const QGdb::Breakpoint& breakpoint );
 		void breakpointEdited( const QGdb::Breakpoint& before, const QGdb::Breakpoint& after );
 		void localsUpdated();
+		void argumentsUpdated();
 		
 	/*
 		void breakpointsCleared( const QString& fileName = QString::null, int line = -1 );
