@@ -1,10 +1,10 @@
 #include <QTimer>
 #include <QDir>
 #include <QFileInfo>
-#include <QStandardItemModel>
 #include <QRegExp>
 
 #include "QGdbDriver.h"
+#include "VariablesModelItem.h"
 
 bool QGdb::Driver::mEnableDebugOutput = false;
 
@@ -304,36 +304,31 @@ bool QGdb::Driver::varIsStructure( const QString& value )
 	return QRegExp( pattern, Qt::CaseSensitive, QRegExp::RegExp2 ).indexIn( value ) != -1;
 }
 
-QList< QList<QStandardItem*> > QGdb::Driver::getStructureFields( const QString& value )
+QList<QGdb::VariablesModelItem*> QGdb::Driver::getStructureFields( const QString& value )
 {
 	// input is like a "{field_xxx = 10, field_yyy = 50, n = {nested_x = -1208681448, nested_y = -1208682176}}"
-	QList < QList<QStandardItem*> > result;
+	QList<VariablesModelItem*> result;
 	QString pattern = "(\\w+) = ((\\-?\\w+)|(\\{.*\\}))";
 	QRegExp rx (pattern, Qt::CaseSensitive, QRegExp::RegExp2);
 	int pos = 0;
 	while ((pos = rx.indexIn(value, pos)) != -1) 
 	{
-		QList <QStandardItem*> row;
-		QStandardItem* nameItem = new QStandardItem (rx.cap(1));
-		QStandardItem* valueItem = new QStandardItem (rx.cap(2));
-		if (varIsStructure (rx.cap(2)))
+		VariablesModelItem*  variable = new VariablesModelItem (rx.cap(1), rx.cap(2));
+		if (varIsStructure (variable->value()))
 		{
-			QList < QList<QStandardItem*> > fields = getStructureFields( rx.cap(2) );
-			foreach (QList<QStandardItem*> field, fields)
-				nameItem->appendRow(field);
+			QList<VariablesModelItem*> fields = getStructureFields(variable->value());
+			foreach (VariablesModelItem* field, fields)
+				variable->addChild (field);
 		}
-		row << nameItem;
-		row << valueItem;
-		result << row;
+		result << variable;
 		pos += rx.matchedLength();
 	}
 	
 	return result;
 }
 
-QList<QStandardItem*> QGdb::Driver::getVariableItem( mi_results* variable )
+QGdb::VariablesModelItem* QGdb::Driver::getVariableItem( mi_results* variable )
 {
-	QList <QStandardItem*> row;
 	Q_ASSERT( variable->type == t_tuple );
 	
 	mi_results* res_name = variable->v.rs;
@@ -341,27 +336,20 @@ QList<QStandardItem*> QGdb::Driver::getVariableItem( mi_results* variable )
 	Q_ASSERT( 0 == strcmp( res_name->var, "name" ));
 	Q_ASSERT( res_name->type == t_const );
 	
-	QStandardItem *nameItem = new QStandardItem( res_name->v.cstr );
-	nameItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
-	row << nameItem;
-	
 	mi_results* res_value = res_name->next;
 	Q_ASSERT ( res_value );
 	Q_ASSERT( 0 == strcmp( res_value->var, "value" ));
 	Q_ASSERT( res_value->type == t_const );
 	
-	QString varValue = res_value->v.cstr;
-	QStandardItem * valItem = new QStandardItem( varValue );
-	valItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
-	row << valItem;
+	VariablesModelItem* varItem = new VariablesModelItem (res_name->v.cstr, res_value->v.cstr);
 	
-	if ( varIsStructure( QString( varValue ) ) )
+	if ( varIsStructure (varItem->value()))
 	{
-		QList < QList<QStandardItem*> > rows = getStructureFields( varValue );
-		foreach (QList<QStandardItem*> row, rows)
-			nameItem->appendRow(row);
+		QList<VariablesModelItem*> fields = getStructureFields(varItem->value());
+		foreach (VariablesModelItem* field, fields)
+			varItem->addChild (field);
 	}
-	return row;
+	return varItem;
 }
 
 bool QGdb::Driver::connectToGdb()
@@ -675,10 +663,10 @@ bool QGdb::Driver::break_setBreakpoint( const QString& file, int line )
 	return true;
 }
 
-void QGdb::Driver::readLocals (QStandardItem* storage)
+void QGdb::Driver::readLocals (VariablesModelItem* storage)
 {
 	// clear, free memory
-	storage->removeRows (0, storage->rowCount());
+	storage->deleteAllChildren();
 	
 	if (mState == QGdb::STOPPED)
 	{
@@ -693,8 +681,8 @@ void QGdb::Driver::readLocals (QStandardItem* storage)
 		mi_results* variable = locals->v.rs;
 		while ( variable )
 		{
-			QList<QStandardItem*> row = getVariableItem( variable );
-			storage->appendRow( row );
+			VariablesModelItem* varItem = getVariableItem( variable );
+			storage->addChild (varItem);
 			variable = variable->next;	
 		}
 		
@@ -702,10 +690,10 @@ void QGdb::Driver::readLocals (QStandardItem* storage)
 	}
 }
 
-void QGdb::Driver::readArguments (QStandardItem* storage)
+void QGdb::Driver::readArguments (VariablesModelItem* storage)
 {
 	// clear, free memory
-	storage->removeRows (0, storage->rowCount());
+	storage->deleteAllChildren();
 	
 	if (mState == QGdb::STOPPED)
 	{
@@ -715,8 +703,8 @@ void QGdb::Driver::readArguments (QStandardItem* storage)
 		
 		while ( variable )
 		{
-			QList<QStandardItem*> row = getVariableItem( variable );
-			storage->appendRow( row );
+			VariablesModelItem* varItem = getVariableItem( variable );
+			storage->addChild (varItem);
 			variable = variable->next;	
 		}
 		

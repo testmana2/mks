@@ -3,14 +3,18 @@
 
 VariablesModel::VariablesModel (QGdb::Driver* driver)
   : QAbstractItemModel(),
-  mDriver (driver)
+	mArgumentsRoot ("arguments", ""),
+	mLocalsRoot ("locals", ""),
+	mWatchesRoot ("watches", ""),
+    mDriver (driver)
 {
-	mArgumentsRoot.setText ("arguments");
-	mLocalsRoot.setText ("locals");
-	mWatchesRoot.setText ("watches");
+	mArgumentsRoot.setName ("arguments");
+	mLocalsRoot.setName ("locals");
+	mWatchesRoot.setName ("watches");
 	
 	connect( driver, SIGNAL( localsUpdated() ), this, SLOT( localsUpdated() ) );
 	connect( driver, SIGNAL( argumentsUpdated() ), this, SLOT( argumentsUpdated() ) );
+	
 	new ModelTest (this);
 }
 
@@ -23,20 +27,15 @@ QModelIndex VariablesModel::index ( int row, int column, const QModelIndex & par
 	if (column < 0 || column > 1) // invalid column
 		return QModelIndex();
 	
-	QStandardItem* parentItem = (QStandardItem*)parent.internalPointer();
+	QGdb::VariablesModelItem* parentItem = (QGdb::VariablesModelItem*)parent.internalPointer();
 	if (parentItem) // nested item
 	{
-		if (row >= parentItem->rowCount() || column >= parentItem->columnCount())
+		if (row >= parentItem->childCount())
 			return QModelIndex();
-		qDebug () << "parent " << parentItem->text() << row << column;
-		qDebug () << "created index " << createIndex (row, column, parentItem->child (row, column)) << parentItem->child (row, column)->text();
-		return createIndex (row, column, parentItem->child (row, column));
+		return createIndex (row, column, parentItem->child (row));
 	}
 	else // top level item
 	{
-		if (0 != column)
-			return QModelIndex();
-		
 		if (row == 0)
 			return createIndex (row, column, (void*)&mArgumentsRoot);
 		else if (row == 1)
@@ -52,61 +51,56 @@ QModelIndex VariablesModel::parent ( const QModelIndex & index ) const
 	if (! index.isValid())
 		return QModelIndex();
 	
-	QStandardItem* item = (QStandardItem*)index.internalPointer();
-	QStandardItem* parent = item->parent();
+	QGdb::VariablesModelItem* item = (QGdb::VariablesModelItem*)index.internalPointer();
+	QGdb::VariablesModelItem* parent = item->parent();
 	
 	if (NULL == parent) // top level item
 		return QModelIndex();
 	
 	
 	int row = -1;
-	int column = -1;
 	
-	QStandardItem* grandParent = parent->parent();
+	QGdb::VariablesModelItem* grandParent = parent->parent();
 	if (NULL == grandParent) // parent is 'arguments', 'locals' or 'watches'
 	{
 		if (parent == &mArgumentsRoot)
 		{
 			row = 0;
-			column = 0;
 		}
 		else if (parent == &mLocalsRoot)
 		{
 			row = 1;
-			column = 0;
 		}
 		else if (parent == &mWatchesRoot)
 		{
 			row = 2;
-			column = 0;
 		}
 	}
 	else // parent is another regular item
 	{
 		// search parent item for get it's index
-		for (int r = 0; r < grandParent->rowCount(); r++)
+		for (int r = 0; r < grandParent->childCount(); r++)
 		{
-			for (int c = 0; c < 2; c++)
+			if (grandParent->child (r) == parent)
 			{
-				if (grandParent->child (r, c) == parent)
-				{
-					row = r;
-					column = c;
-					break; // break nested for
-				}
+				row = r;
+				break; // break nested for
 			}
 			if (row != -1)
 				break; // break top level for
 		}
 	}
-	return createIndex (row, column, parent);
+	return createIndex (row, 0, parent);
 }
 
 int VariablesModel::rowCount ( const QModelIndex & parent ) const
 {
-	if (parent.internalPointer()) // nested item
+	if (parent.isValid() && parent.column() != 0)
+		return 0;
+	
+	if (parent.isValid() && parent.internalPointer()) // nested item
 	{
-		return ((QStandardItem*)parent.internalPointer())->rowCount();
+		return ((QGdb::VariablesModelItem*)parent.internalPointer())->childCount();
 	}
 	else // top level item
 	{
@@ -114,25 +108,29 @@ int VariablesModel::rowCount ( const QModelIndex & parent ) const
 	}
 }
 
-int VariablesModel::columnCount ( const QModelIndex & parent ) const
+int VariablesModel::columnCount ( const QModelIndex & ) const
 {
-	if (parent.internalPointer()) // nested item
-	{
-		qDebug () << "for " << ((QStandardItem*)parent.internalPointer())->text() << "column count " << ((QStandardItem*)parent.internalPointer())->columnCount();
-		return ((QStandardItem*)parent.internalPointer())->columnCount();
-	}
-	else // top level item
-	{
-		return 1;
-	}
+	return 2;
 }
 
 QVariant VariablesModel::data ( const QModelIndex & index, int role ) const
 {
 	if (index.internalPointer())
 	{
-		qDebug () << "data for " << index << ((QStandardItem*)index.internalPointer())->text();
-		return ((QStandardItem*)index.internalPointer())->data (role);
+		switch (role)
+		{
+			case Qt::DisplayRole:			
+				if (index.column() == 0)
+					return ((QGdb::VariablesModelItem*)index.internalPointer())->name();
+				else if (index.column() == 1)
+					return ((QGdb::VariablesModelItem*)index.internalPointer())->value();
+				else
+					return QVariant();
+			break;
+			default:
+				return QVariant();
+			break;
+		}
 	}
 	
 	return QVariant();
