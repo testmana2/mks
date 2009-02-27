@@ -1,9 +1,9 @@
 #ifndef VARIABLESMODEL_H
 #define VARIABLESMODEL_H
 
-#include <QStandardItem>
 #include <QAbstractItemModel>
 
+#include "VariablesModelItem.h"
 #include "QGdbDriver.h"
 
 class VariablesModel : public QAbstractItemModel
@@ -21,9 +21,9 @@ public:
 	QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 	
 protected:
-	QStandardItem mArgumentsRoot;
-	QStandardItem mLocalsRoot;
-	QStandardItem mWatchesRoot;
+	QGdb::VariablesModelItem mArgumentsRoot;
+	QGdb::VariablesModelItem mLocalsRoot;
+	QGdb::VariablesModelItem mWatchesRoot;
 	
 	QGdb::Driver* mDriver;
 	

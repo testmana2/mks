@@ -4,15 +4,16 @@
 #include <QObject>
 #include <QString>
 #include <QList>
-#include <QStandardItem>
 
 #include "QGdb.h"
 #include "QGdbBreakpoint.h"
 #include "QGdbCallStack.h"
 #include "QGdbSignal.h"
+#include "VariablesModelItem.h"
 
 //FIXME remove when developmet will be finished
 #include <QDebug>
+
 
 
 class QTimer;
@@ -49,8 +50,8 @@ namespace QGdb
 		
 		bool break_setBreakpoint( const QString& file, int line );
 		
-		void readLocals (QStandardItem* storage);
-		void readArguments (QStandardItem* storage);
+		void readLocals (VariablesModelItem* storage);
+		void readArguments (VariablesModelItem* storage);
 		
 	public slots:
 		void break_breakpointToggled( const QString& file, int line );
@@ -82,10 +83,10 @@ namespace QGdb
 		void generateCallStack( mi_frames* mframe );
 		void generateCallStack( mi_stop* stop );
 		
-		// convert variable presented as mi_results to row of QStandardItem's
+		// convert variable presented as mi_results to row of VariablesModelItem's
 		bool varIsStructure( const QString& value );
-		QList< QList<QStandardItem*> > getStructureFields( const QString& value );
-		QList<QStandardItem*>  getVariableItem(mi_results* variable);
+		QList<QGdb::VariablesModelItem*> getStructureFields( const QString& value );
+		QGdb::VariablesModelItem* getVariableItem(mi_results* variable);
 	
 	protected slots:
 		void asyncPollTimer_timeout();
