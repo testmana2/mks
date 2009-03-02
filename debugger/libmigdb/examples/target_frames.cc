@@ -31,6 +31,12 @@ int FuncLev1(char *s, int i)
  int v1 = 7;
  int v2 = 8;
  i+=FuncLev2(s);
+ tt.field_xxx += 19;
+ for (int k = 5; k < 10; k++)
+ {
+    int e = k;
+    v2 += e;
+ }
  return i;
 }
 
