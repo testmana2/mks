@@ -115,17 +115,28 @@ int VariablesModel::columnCount ( const QModelIndex & ) const
 
 QVariant VariablesModel::data ( const QModelIndex & index, int role ) const
 {
-	if (index.internalPointer())
+	QGdb::VariablesModelItem* item = (QGdb::VariablesModelItem*)index.internalPointer();
+	
+	if (item)
 	{
 		switch (role)
 		{
 			case Qt::DisplayRole:			
 				if (index.column() == 0)
-					return ((QGdb::VariablesModelItem*)index.internalPointer())->name();
+					return item->name();
 				else if (index.column() == 1)
-					return ((QGdb::VariablesModelItem*)index.internalPointer())->value();
+					return item->value();
 				else
 					return QVariant();
+			break;
+			case Qt::ToolTipRole:
+				if (! item->prevValues().isEmpty())
+					return tr("Previous values: ") + item->prevValues();
+			break;
+			case Qt::TextColorRole:
+				if (item->isJustChanged())
+					return Qt::red;
+				// else - default
 			break;
 			default:
 				return QVariant();
@@ -176,6 +187,8 @@ void VariablesModel::localsUpdated ()
 {
 	emit layoutAboutToBeChanged();
 	
+	mLocalsRoot.clearJustChangedRecursive();
+	
 	QGdb::VariablesModelItem newLocals ("locals", "");
 	mDriver->readLocals (&newLocals);
 	
@@ -190,12 +203,13 @@ void VariablesModel::argumentsUpdated ()
 {
 	emit layoutAboutToBeChanged();
 	
+	mArgumentsRoot.clearJustChangedRecursive();
+	
 	QGdb::VariablesModelItem newArguments ("arguments", "");
-	mDriver->readLocals (&newArguments);
+	mDriver->readArguments (&newArguments);
 	
 	mergeItems (&mArgumentsRoot, &newArguments);
 	
-	mDriver->readArguments (&mArgumentsRoot);
 	emit layoutChanged();
 	emit expand (index(0, 0));	
 }

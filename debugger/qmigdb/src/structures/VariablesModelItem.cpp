@@ -1,7 +1,8 @@
 #include "VariablesModelItem.h"
 
 QGdb::VariablesModelItem::VariablesModelItem (const QString& name, const QString& value)
-  : mName (name),
+  : mJustChanged (false),
+	mName (name),
 	mValue (value),
 	mParent (NULL)
 {
@@ -28,7 +29,12 @@ QString QGdb::VariablesModelItem::name() const
 
 void QGdb::VariablesModelItem::setValue(const QString& value)
 {
-	mValue = value;
+	if (value != mValue)
+	{
+		mPrevValues << mValue;
+		mValue = value;
+		mJustChanged = true;
+	}
 }
 
 QString QGdb::VariablesModelItem::value() const
@@ -95,4 +101,21 @@ void QGdb::VariablesModelItem::deleteChild (int index)
 QGdb::VariablesModelItem* QGdb::VariablesModelItem::parent () const
 {
 	return mParent;
+}
+
+QString QGdb::VariablesModelItem::prevValues() const
+{
+	return mPrevValues.join (" ,");
+}
+
+void QGdb::VariablesModelItem::clearJustChangedRecursive()
+{
+	mJustChanged = false;
+	foreach (VariablesModelItem* child, mChildren)
+		child->clearJustChangedRecursive();
+}
+
+bool QGdb::VariablesModelItem::isJustChanged() const
+{
+	return mJustChanged;
 }
