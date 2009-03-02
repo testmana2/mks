@@ -68,9 +68,10 @@ HEADERS	= src/driver/QGdbDriver.h \
 	src/structures/QGdbSignal.h \
 	src/structures/QGdbCallStack.h \
 	src/structures/VariablesModelItem.h \
-	src/widgets/BreakpointEditorWidget.h\
+	src/widgets/BreakpointEditorWidget.h \
 	src/widgets/LocalsViewWidget.h \
-	src/widgets/VariablesModel.h
+	src/widgets/VariablesModel.h \
+	src/structures/QGdbVariable.h
 
 SOURCES	= src/driver/QGdbDriver.cpp \
 	src/widgets/CallStackWidget.cpp \
@@ -80,9 +81,10 @@ SOURCES	= src/driver/QGdbDriver.cpp \
 	src/structures/QGdbSignal.cpp \
 	src/structures/QGdbCallStack.cpp \
 	src/structures/VariablesModelItem.cpp \
-	src/widgets/BreakpointEditorWidget.cpp\
+	src/widgets/BreakpointEditorWidget.cpp \
 	src/widgets/LocalsViewWidget.cpp \
-	src/widgets/VariablesModel.cpp
+	src/widgets/VariablesModel.cpp \
+	src/structures/QGdbVariable.cpp
 
 
-include (modeltest.pri)
+include( modeltest.pri )

@@ -110,6 +110,7 @@ void QGdb::Driver::handleStop( mi_stop* stop )
 		if ( stop->have_thread_id && stop->reason != sr_exited )
 		{
 			stack_listFrames();
+			stack_listLocals();
 		}
 		/*
 		char have_thread_id;
@@ -295,6 +296,81 @@ void QGdb::Driver::generateCallStack( mi_frames* mframe )
 void QGdb::Driver::generateCallStack( mi_stop* stop )
 {
 	generateCallStack( stop->frame );
+}
+
+void QGdb::Driver::generateListLocals( mi_results* results, QGdb::Variable* variable )
+{
+	if ( results->type == t_list )
+	{
+		mVariables.clear();
+	}
+	
+	switch ( results->type )
+	{
+		case t_const:
+		{
+			if ( results->var == QString( "name" ) )
+			{
+				/*
+				if ( variable )
+				{
+					variable->variables << QGdb::Variable();
+					variable = &variable->variables.last();
+				}
+				else
+				*/
+				{
+					mVariables << QGdb::Variable();
+					variable = &mVariables.last();
+				}
+			}
+			
+			QString* string = 0;
+			if ( results->var == QString( "name" ) )
+			{
+				string = &variable->name;
+			}
+			else if ( results->var == QString( "type" ) )
+			{
+				string = &variable->type;
+			}
+			else if ( results->var == QString( "value" ) )
+			{
+				string = &variable->value;
+			}
+			
+			if ( string )
+			{
+				*string = QString::fromLocal8Bit( results->v.cstr );
+			}
+			
+			if ( variable->name == "uni" && results->var == QString( "value" ) )
+			{
+				mi_gvar* v = gmi_var_create_nm( mHandle, variable->name.toLocal8Bit().constData(), 0, results->v.cstr );
+				qWarning() << v << variable->name.toLocal8Bit().constData() << results->v.cstr;
+			}
+			
+			break;
+		}
+		case t_tuple:
+			break;
+		case t_list:
+			break;
+		default:
+			//qWarning() << "unknow type" << results->type;
+			return;
+			break;
+	}
+	
+	if ( results->v.rs )
+	{
+		generateListLocals( results->v.rs, variable );
+	}
+	
+	if ( results->next )
+	{
+		generateListLocals( results->next, variable );
+	}
 }
 
 bool QGdb::Driver::varIsStructure( const QString& value )
@@ -622,6 +698,40 @@ bool QGdb::Driver::stack_selectFrame( int level )
 	}
 	
 	return gmi_stack_select_frame( mHandle, level ) != 0;
+}
+
+void QGdb::Driver::printVariable( const QGdb::Variable& variable )
+{
+	static int depth = 0;
+	
+	QString tab = QString().fill( '\t', depth );
+	qWarning() << tab << variable.name << variable.type << variable.value;
+	
+	depth++;
+	foreach ( const QGdb::Variable& v, variable.variables )
+	{
+		printVariable( v );
+	}
+	depth--;
+}
+
+bool QGdb::Driver::stack_listLocals()
+{
+	if ( mState != QGdb::STOPPED )
+	{
+		return false;
+	}
+	
+	mi_results* locals = gmi_stack_list_locals( mHandle, 1 ); // 0 = name; 1 = name & value; 2 = name & value & type
+	generateListLocals( locals );
+	mi_free_results( locals );
+	
+	foreach ( const QGdb::Variable& var, mVariables )
+	{
+		printVariable( var );
+	}
+	
+	return true;
 }
 
 bool QGdb::Driver::break_setBreakpoint( const QString& file, int line )
