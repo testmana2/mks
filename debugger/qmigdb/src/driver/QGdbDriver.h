@@ -9,6 +9,7 @@
 #include "QGdbBreakpoint.h"
 #include "QGdbCallStack.h"
 #include "QGdbSignal.h"
+#include "QGdbVariable.h"
 #include "VariablesModelItem.h"
 
 //FIXME remove when developmet will be finished
@@ -48,6 +49,9 @@ namespace QGdb
 		bool stack_listFrames();
 		bool stack_selectFrame( int level );
 		
+		void printVariable( const QGdb::Variable& variable );
+		bool stack_listLocals();
+		
 		bool break_setBreakpoint( const QString& file, int line );
 		
 		void readLocals (VariablesModelItem* storage);
@@ -68,6 +72,8 @@ namespace QGdb
 		bool mWaitingTempBreakpoint;
 		QGdb::BreakpointList mBreakpoints;
 		
+		QGdb::VariableList mVariables;
+		
 		// migdb callbacks
 		static void callbackConsole( const char* str, void* instance );
 		static void callbackTarget( const char* str, void* instance );
@@ -82,6 +88,7 @@ namespace QGdb
 		QString filePath( const QString& fileName ) const;
 		void generateCallStack( mi_frames* mframe );
 		void generateCallStack( mi_stop* stop );
+		void generateListLocals( mi_results* results, QGdb::Variable* variable = 0 );
 		
 		// convert variable presented as mi_results to row of VariablesModelItem's
 		bool varIsStructure( const QString& value );
