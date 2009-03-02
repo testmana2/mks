@@ -27,6 +27,14 @@ protected:
 	
 	QGdb::Driver* mDriver;
 	
+	/* Read information from src item and update dst item according with it.
+	   Usage: dst contains current variables. Debuger made step and variables updated.
+	   New variables should be readed to src, than we should update dst.
+	   After update changed variables will be highlighted.
+	   Method is recursive
+	 */
+	void mergeItems (QGdb::VariablesModelItem* dst, QGdb::VariablesModelItem* src);
+	
 protected slots:
 	void localsUpdated ();
 	void argumentsUpdated ();

@@ -136,17 +136,65 @@ QVariant VariablesModel::data ( const QModelIndex & index, int role ) const
 	return QVariant();
 }
 
+void VariablesModel::mergeItems (QGdb::VariablesModelItem* dst, QGdb::VariablesModelItem* src)
+{
+	// Step 1:merge own item values
+	Q_ASSERT (src->name() == dst->name());
+	if (dst->value() != src->value())
+	{
+		dst->setValue (src->value());
+		// TODO mark item as changed
+	}
+	
+	// Step 2: remove from dst children, which disappeared (not present in src)
+	for (int dstI = 0; dstI < dst->childCount(); dstI++)
+	{
+		if (! src->hasChild (dst->child(dstI)->name())) // child disappeared
+		{
+			dst->deleteChild (dstI);
+			dstI--;
+		}
+	}
+	
+	// Step 2: update existing children of dst, or add new
+	for (int srcI = 0; srcI < src->childCount(); srcI++)
+	{
+		QGdb::VariablesModelItem* srcChild = src->child (srcI); // update from this child
+		QGdb::VariablesModelItem* dstChild = dst->child (srcChild->name()); // from to this child
+		if (NULL != dstChild) // child exists, need update it
+		{
+			mergeItems (dstChild, srcChild); // recursive call
+		}
+		else // child not exists, need add it to dst item
+		{
+			dst->addChild (srcChild->clone());
+		}
+	}
+}
+
 void VariablesModel::localsUpdated ()
 {
 	emit layoutAboutToBeChanged();
-	mDriver->readLocals (&mLocalsRoot);
+	
+	QGdb::VariablesModelItem newLocals ("locals", "");
+	mDriver->readLocals (&newLocals);
+	
+	mergeItems (&mLocalsRoot, &newLocals);
+	
 	emit layoutChanged();
+	
 	emit expand (index(1, 0));
 }
 
 void VariablesModel::argumentsUpdated ()
 {
 	emit layoutAboutToBeChanged();
+	
+	QGdb::VariablesModelItem newArguments ("arguments", "");
+	mDriver->readLocals (&newArguments);
+	
+	mergeItems (&mArgumentsRoot, &newArguments);
+	
 	mDriver->readArguments (&mArgumentsRoot);
 	emit layoutChanged();
 	emit expand (index(0, 0));	
