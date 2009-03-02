@@ -2,6 +2,7 @@
 #define VARIABLES_MODEL_ITEM_H
 
 #include <QList>
+#include <QStringList>
 
 #include "QGdb.h"
 
@@ -36,11 +37,18 @@ namespace QGdb
 		
 		VariablesModelItem* parent () const;
 		
+		QString prevValues() const;
+		
+		void clearJustChangedRecursive();
+		bool isJustChanged() const;
 	protected:
+		bool mJustChanged;
 		QString mName;
 		QString mValue;
 		QList<VariablesModelItem*> mChildren;
 		VariablesModelItem* mParent;
+		
+		QStringList mPrevValues;
 	};
 };
 
