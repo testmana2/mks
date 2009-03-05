@@ -172,8 +172,8 @@ void DebuggerManager::init()
     m_statusTimer = new QTimer(this);
 
     m_mainWindow = new QMainWindow;
-    //m_mainWindow->setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
-    //m_mainWindow->setDocumentMode(true);
+    m_mainWindow->setTabPosition(Qt::AllDockWidgetAreas, QTabWidget::North);
+    m_mainWindow->setDocumentMode(true);
 
     // Stack
     m_stackHandler = new StackHandler;

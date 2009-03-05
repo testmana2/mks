@@ -2,11 +2,16 @@ TEMPLATE = lib
 TARGET = Debugger
 
 # CONFIG += single
+include(../../qworkbenchplugin.pri)
+include(../../plugins/projectexplorer/projectexplorer.pri)
+include(../../plugins/find/find.pri)
+include(../../plugins/coreplugin/coreplugin.pri)
+include(../../plugins/texteditor/texteditor.pri)
+include(../../plugins/cpptools/cpptools.pri)
+include(../../libs/cplusplus/cplusplus.pri)
 
 # DEFINES += QT_NO_CAST_FROM_ASCII
 DEFINES += QT_NO_CAST_TO_ASCII
-DEFINES += GDBDEBUGGERLEAN
-DEFINES += Q_SLOT=
 
 QT += gui network script
 
@@ -17,12 +22,14 @@ HEADERS += attachexternaldialog.h \
     debuggerconstants.h \
     debuggermanager.h \
     debuggeroutputwindow.h \
+    debuggerplugin.h \
     debuggerrunner.h \
     disassemblerhandler.h \
     disassemblerwindow.h \
     gdbengine.h \
     gdbmi.h \
     idebuggerengine.h \
+    imports.h \
     moduleshandler.h \
     moduleswindow.h \
     outputcollector.h \
@@ -45,6 +52,7 @@ SOURCES += attachexternaldialog.cpp \
     breakwindow.h \
     debuggermanager.cpp \
     debuggeroutputwindow.cpp \
+    debuggerplugin.cpp \
     debuggerrunner.cpp \
     disassemblerhandler.cpp \
     disassemblerwindow.cpp \
