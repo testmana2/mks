@@ -1,14 +1,39 @@
 TEMPLATE = lib
 TARGET = Debugger
 
-# CONFIG += single
-
 # DEFINES += QT_NO_CAST_FROM_ASCII
 DEFINES += QT_NO_CAST_TO_ASCII
 DEFINES += GDBDEBUGGERLEAN
 DEFINES += Q_SLOT=
 
 QT += gui network script
+
+CONFIG	+= staticlib debug_and_release
+DESTDIR	= ../build
+BUILD_PATH	= ../build/creator
+
+CONFIG(debug, debug|release) {
+	#Debug
+	CONFIG	+= console
+	unix:TARGET	= $$join(TARGET,,,_debug)
+	else:TARGET	= $$join(TARGET,,,d)
+	unix:OBJECTS_DIR	= $${BUILD_PATH}/debug/.obj/unix
+	win32:OBJECTS_DIR	= $${BUILD_PATH}/debug/.obj/win32
+	mac:OBJECTS_DIR	= $${BUILD_PATH}/debug/.obj/mac
+	UI_DIR	= $${BUILD_PATH}/debug/.ui
+	MOC_DIR	= $${BUILD_PATH}/debug/.moc
+	RCC_DIR	= $${BUILD_PATH}/debug/.rcc
+	unix:LIBS	+= -l$$join(MIGDB_LIB,,,_debug)
+	else:LIBS	+= -l$$join(MIGDB_LIB,,,d)
+} else {
+	#Release
+	unix:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/unix
+	win32:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/win32
+	mac:OBJECTS_DIR	= $${BUILD_PATH}/release/.obj/mac
+	UI_DIR	= $${BUILD_PATH}/release/.ui
+	MOC_DIR	= $${BUILD_PATH}/release/.moc
+	RCC_DIR	= $${BUILD_PATH}/release/.rcc
+}
 
 HEADERS += attachexternaldialog.h \
     attachremotedialog.h \
