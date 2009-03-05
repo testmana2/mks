@@ -575,11 +575,15 @@ void ScriptEngine::updateSubItem(const WatchData &data0)
         if (ob.isArray()) {
             data.setType("Array");
             data.setValue(" ");
-        } else if (ob.isBool()) {
+        } 
+#if 0
+        else if (ob.isBool()) {
             data.setType("Bool");
             data.setValue(ob.toBool() ? "true" : "false");
             data.setChildCount(0);
-        } else if (ob.isDate()) {
+        }
+#endif
+        else if (ob.isDate()) {
             data.setType("Date");
             data.setValue(ob.toDateTime().toString().toUtf8());
             data.setChildCount(0);

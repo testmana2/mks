@@ -30,8 +30,6 @@
 #ifndef DEBUGGERRUNNER_H
 #define DEBUGGERRUNNER_H
 
-#include <projectexplorer/runconfiguration.h>
-
 namespace ProjectExplorer {
 class ApplicationRunConfiguration;
 }
@@ -41,7 +39,7 @@ namespace Internal {
 
 class DebuggerManager;
 class StartData;
-
+#if 0
 typedef QSharedPointer<ProjectExplorer::RunConfiguration>
     RunConfigurationPtr;
 
@@ -89,8 +87,10 @@ private:
     DebuggerManager *m_manager;
     bool m_running;
 };
+#endif
 
 } // namespace Internal
 } // namespace Debugger
+
 
 #endif // DEBUGGERRUNNER_H

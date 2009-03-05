@@ -29,8 +29,6 @@
 
 #include "breakhandler.h"
 
-#include "imports.h" // TextEditor::BaseTextMark
-
 #include <utils/qtcassert.h>
 
 #include <QtCore/QDebug>
@@ -46,10 +44,12 @@ using namespace Debugger::Internal;
 //
 //////////////////////////////////////////////////////////////////
 
+#include <QIcon>
+
 namespace Debugger {
 namespace Internal {
 
-
+#if 0
 // The red blob on the left side in the cpp editor.
 class BreakpointMarker : public TextEditor::BaseTextMark
 {
@@ -123,7 +123,7 @@ private:
     BreakpointData *m_data;
     bool m_pending;
 };
-
+#endif
 } // namespace Internal
 } // namespace Debugger
 
@@ -153,13 +153,16 @@ BreakpointData::~BreakpointData()
 
 void BreakpointData::removeMarker()
 {
+#if 0
     BreakpointMarker *m = marker;
     marker = 0;
     delete m;
+#endif
 }
 
 void BreakpointData::updateMarker()
 {
+#if 0
     if (marker && (markerFileName != marker->fileName()
             || markerLineNumber != marker->lineNumber()))
         removeMarker();
@@ -169,6 +172,7 @@ void BreakpointData::updateMarker()
 
     if (marker)
         marker->setPending(pending);
+#endif
 }
 
 QString BreakpointData::toToolTip() const
