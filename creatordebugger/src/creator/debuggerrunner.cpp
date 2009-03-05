@@ -31,11 +31,6 @@
 
 #include "debuggermanager.h"
 
-#include <projectexplorer/applicationrunconfiguration.h>
-#include <projectexplorer/environment.h>
-#include <projectexplorer/project.h>
-#include <projectexplorer/projectexplorerconstants.h>
-
 #include <utils/qtcassert.h>
 
 #include <QtCore/QDebug>
@@ -45,7 +40,7 @@
 #include <QtGui/QTextDocument>
 
 using namespace Debugger::Internal;
-
+#if 0
 using ProjectExplorer::RunConfiguration;
 using ProjectExplorer::RunControl;
 using ProjectExplorer::ApplicationRunConfiguration;
@@ -164,3 +159,4 @@ bool DebuggerRunControl::isRunning() const
     //qDebug() << "DebuggerRunControl::isRunning" << m_running;
     return m_running;
 }
+#endif
