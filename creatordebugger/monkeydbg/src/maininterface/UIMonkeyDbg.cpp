@@ -12,6 +12,8 @@ UIMonkeyDbg::UIMonkeyDbg( QWidget* parent)
 
 	aCloseFile->setEnabled( false );
 	aCloseAllFiles->setEnabled( false );
+	
+	initConnections();
 }
 
 UIMonkeyDbg::~UIMonkeyDbg()
@@ -20,6 +22,8 @@ UIMonkeyDbg::~UIMonkeyDbg()
 
 void UIMonkeyDbg::initConnections()
 {
+	connect( aCloseFile, SIGNAL( triggered() ), this, SLOT( closeCurrentFile() ) );
+	connect( aCloseAllFiles, SIGNAL( triggered() ), this, SLOT( closeAllFiles() ) );
 }
 
 pEditor* UIMonkeyDbg::openFile( const QString& fileName )
@@ -112,8 +116,13 @@ void UIMonkeyDbg::on_maWorkspace_subWindowActivated( QMdiSubWindow* subWindow )
 
 void UIMonkeyDbg::on_aOpenFile_triggered()
 {
-}
-
-void UIMonkeyDbg::on_aLoadTarget_triggered()
-{
+	const QStringList files = QFileDialog::getOpenFileNames( this, tr( "Open sources files" ), ".", QString::null );
+	
+	foreach ( const QString& file, files )
+	{
+		if ( !openFile( file ) )
+		{
+			QMessageBox::warning( this, tr( "Warning..." ), tr( "An error occur while opening file: %1" ).arg( file ) );
+		}
+	}
 }

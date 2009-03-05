@@ -39,23 +39,7 @@
     <addaction name="aCloseFile" />
     <addaction name="aCloseAllFiles" />
    </widget>
-   <widget class="QMenu" name="menuRun" >
-    <property name="title" >
-     <string>Run</string>
-    </property>
-    <addaction name="aLoadTarget" />
-    <addaction name="separator" />
-    <addaction name="aRun" />
-    <addaction name="aContinue" />
-    <addaction name="aStepInto" />
-    <addaction name="aStepOver" />
-    <addaction name="aStepOut" />
-    <addaction name="separator" />
-    <addaction name="aStop" />
-    <addaction name="aKill" />
-   </widget>
    <addaction name="menuFile" />
-   <addaction name="menuRun" />
   </widget>
   <widget class="QStatusBar" name="sbStatus" />
   <widget class="QToolBar" name="tbActions" >
@@ -72,16 +56,6 @@
    <addaction name="aCloseFile" />
    <addaction name="aCloseAllFiles" />
    <addaction name="separator" />
-   <addaction name="aLoadTarget" />
-   <addaction name="separator" />
-   <addaction name="aRun" />
-   <addaction name="aContinue" />
-   <addaction name="aStepInto" />
-   <addaction name="aStepOver" />
-   <addaction name="aStepOut" />
-   <addaction name="separator" />
-   <addaction name="aStop" />
-   <addaction name="aKill" />
   </widget>
   <widget class="QDockWidget" name="dwFiles" >
    <property name="windowTitle" >

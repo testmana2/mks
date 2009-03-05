@@ -34,7 +34,6 @@ protected slots:
 	void on_lwFiles_itemActivated( QListWidgetItem* item );
 	void on_maWorkspace_subWindowActivated( QMdiSubWindow* subWindow );
 	void on_aOpenFile_triggered();
-	void on_aLoadTarget_triggered();
 };
 
 #endif // UIMONKEYDBG_H

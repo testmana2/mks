@@ -16,6 +16,7 @@
 
 XUPProjectSettings {
 	EDITOR	= QMake
+	EXECUTE_DEBUG	= ../bin/monkeydbg_debug
 }
 
 TEMPLATE	= app
@@ -27,7 +28,7 @@ DESTDIR	= ../bin
 BUILD_PATH	= ../build/monkeydbg
 
 CREATOR_LIB	= Debugger
-CREATOR_PATH	= ../debugger
+CREATOR_PATH	= ../creator
 
 CONFIG(debug, debug|release) {
 	#Debug
@@ -53,7 +54,7 @@ CONFIG(debug, debug|release) {
 	LIBS	+= -l$$CREATOR_LIB
 }
 
-PRE_TARGETDEPS	= $${CREATOR_PATH}
+PRE_TARGETDEPS	= $${QMIGDB_PATH}
 
 INCLUDEPATH	= $${CREATOR_SRC_PATH}
 
