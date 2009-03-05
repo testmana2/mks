@@ -37,11 +37,9 @@ using namespace Debugger::Internal;
 StartExternalDialog::StartExternalDialog(QWidget *parent)
   : QDialog(parent)
 {
-#if 0
     setupUi(this);
     execFile->setExpectedKind(Core::Utils::PathChooser::File);
     execFile->setPromptDialogTitle(tr("Select Executable"));
-#endif
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
 
     //execLabel->setHidden(false);
@@ -57,9 +55,7 @@ StartExternalDialog::StartExternalDialog(QWidget *parent)
 
 void StartExternalDialog::setExecutableFile(const QString &str)
 {
-#if 0
     execFile->setPath(str);
-#endif
 }
 
 void StartExternalDialog::setExecutableArguments(const QString &str)
@@ -69,9 +65,7 @@ void StartExternalDialog::setExecutableArguments(const QString &str)
 
 QString StartExternalDialog::executableFile() const
 {
-#if 0
     return execFile->path();
-#endif
 }
 
 QString StartExternalDialog::executableArguments() const
