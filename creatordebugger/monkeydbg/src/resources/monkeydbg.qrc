@@ -3,18 +3,5 @@
     <file alias="file-close-all.png" >icons/file-close-all.png</file>
     <file alias="file-close.png" >icons/file-close.png</file>
     <file alias="file-open.png" >icons/file-open.png</file>
-    <file alias="exec-open.png" >icons/exec-open.png</file>
-    <file alias="stop.png" >icons/stop.png</file>
-    <file alias="run.png" >icons/run.png</file>
-    <file alias="step-into-instruction.png" >icons/step-into-instruction.png</file>
-    <file alias="step-into.png" >icons/step-into.png</file>
-    <file alias="step-next-instruction.png" >icons/step-next-instruction.png</file>
-    <file alias="step-next.png" >icons/step-next.png</file>
-    <file alias="step-out.png" >icons/step-out.png</file>
-    <file alias="break.png" >icons/break.png</file>
-    <file alias="cond_break.png" >icons/cond_break.png</file>
-    <file alias="disabled_break.png" >icons/disabled_break.png</file>
-    <file alias="disabled_cond_break.png" >icons/disabled_cond_break.png</file>
-    <file alias="play.png" >icons/play.png</file>
   </qresource>
 </RCC>
