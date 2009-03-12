@@ -1,7 +1,0 @@
-<RCC>
-  <qresource prefix="icons" >
-    <file alias="file-close-all.png" >icons/file-close-all.png</file>
-    <file alias="file-close.png" >icons/file-close.png</file>
-    <file alias="file-open.png" >icons/file-open.png</file>
-  </qresource>
-</RCC>
