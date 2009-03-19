@@ -32,8 +32,20 @@
 
 namespace Core {
 
-class BaseMode
+class BaseMode : public QObject
 {
+	Q_OBJECT
+public:
+    BaseMode(QObject *parent = 0);
+    ~BaseMode();
+	
+    void setName(const QString &name);
+    void setIcon(const QIcon &icon);
+    void setPriority(int priority);
+    void setWidget(QWidget *widget);
+    void setUniqueModeName(const char *uniqueModeName);
+    void setContext(const QList<int> &context);
+
 };
 
 } // namespace Core

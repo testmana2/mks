@@ -30,6 +30,8 @@
 #ifndef RUNCONFIGURATION_H
 #define RUNCONFIGURATION_H
 
+#include <QSharedPointer>
+
 namespace ProjectExplorer {
 
 class Project;
@@ -41,6 +43,17 @@ class RunControl;
 class RunConfiguration
 {
 };
+
+class IRunConfigurationRunner
+{
+};
+
+/* Each instance of this class represents one item that is run.
+ */
+class RunControl
+{
+};
+
 
 } // namespace ProjectExplorer
 

@@ -32,8 +32,13 @@
 
 namespace ProjectExplorer {
 
+class SessionManager;
+
 class ProjectExplorerPlugin
 {
+public:
+	static ProjectExplorerPlugin *instance();
+    SessionManager *session() const;
 };
 
 } // namespace ProjectExplorer

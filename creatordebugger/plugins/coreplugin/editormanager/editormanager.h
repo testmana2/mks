@@ -30,4 +30,18 @@
 #ifndef EDITORMANAGER_H
 #define EDITORMANAGER_H
 
+#include <QtGui/QWidget>
+
+namespace Core {
+
+class EditorManager : public QWidget
+{
+    Q_OBJECT
+
+public:
+    static EditorManager *instance();
+};
+
+} // namespace Core
+
 #endif // EDITORMANAGER_H
