@@ -30,10 +30,16 @@
 #ifndef ACTIONMANAGER_H
 #define ACTIONMANAGER_H
 
+#include "actioncontainter.h"
+
 namespace Core {
 
-class ActionManager
+class ActionManager : public QObject
 {
+    Q_OBJECT
+public:
+    ActionManager(QObject *parent = 0) : QObject(parent) {}
+    virtual ~ActionManager() {}
 };
 
 } // namespace Core

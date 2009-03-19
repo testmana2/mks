@@ -30,9 +30,11 @@
 #ifndef IOPTIONSPAGE_H
 #define IOPTIONSPAGE_H
 
+#include <QtCore/QObject>
+
 namespace Core {
 
-class IOptionsPage
+class IOptionsPage : public QObject
 {
 };
 

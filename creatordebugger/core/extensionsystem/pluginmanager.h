@@ -30,6 +30,8 @@
 #ifndef EXTENSIONSYSTEM_PLUGINMANAGER_H
 #define EXTENSIONSYSTEM_PLUGINMANAGER_H
 
+namespace ExtensionSystem {
+
 class PluginManager
 {
 };

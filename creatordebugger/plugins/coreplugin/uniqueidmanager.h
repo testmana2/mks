@@ -34,6 +34,13 @@ namespace Core {
 
 class UniqueIDManager
 {
+public:
+    UniqueIDManager();
+    ~UniqueIDManager();
+
+    static UniqueIDManager *instance();
+	
+	int uniqueIdentifier(const QString &id);
 };
 
 } // namespace Core

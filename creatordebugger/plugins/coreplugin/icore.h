@@ -30,4 +30,29 @@
 #ifndef ICORE_H
 #define ICORE_H
 
+class QSettings;
+
+namespace Core {
+
+class ActionManager;
+class UniqueIDManager;
+
+class ICore : public QObject
+{
+    Q_OBJECT
+
+public:
+    ICore() {}
+    virtual ~ICore() {}
+
+    static ICore *instance();
+	
+	virtual QSettings *settings() const = 0;
+	
+	virtual ActionManager *actionManager() const = 0;
+	virtual UniqueIDManager *uniqueIDManager() const = 0;
+};
+
+} // namespace Core
+
 #endif // ICORE_H

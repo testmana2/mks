@@ -27,16 +27,24 @@
 **
 **************************************************************************/
 
-#ifndef SESSION_H
-#define SESSION_H
+#ifndef ACTIONCONTAINER_H
+#define ACTIONCONTAINER_H
 
-namespace ProjectExplorer {
+#include <QtCore/QObject>
+#include <QtGui/QMenu>
+#include <QtGui/QToolBar>
+#include <QtGui/QMenuBar>
+#include <QtGui/QAction>
 
-// This could be improved.
-class SessionManager
+namespace Core {
+
+class Command;
+
+class ActionContainer : public QObject
 {
+public:
 };
 
-} // namespace ProjectExplorer
+} // namespace Core
 
-#endif // SESSION_H
+#endif // ACTIONCONTAINER_H
