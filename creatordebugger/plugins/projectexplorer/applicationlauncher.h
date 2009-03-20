@@ -27,49 +27,23 @@
 **
 **************************************************************************/
 
-#ifndef RUNCONFIGURATION_H
-#define RUNCONFIGURATION_H
-
-#include <QSharedPointer>
-#include <QObject>
+#ifndef APPLICATIONLAUNCHER_H
+#define APPLICATIONLAUNCHER_H
 
 namespace ProjectExplorer {
+namespace Internal {
 
-class Project;
-class PersistentSettingsReader;
-class PersistentSettingsWriter;
+class ConsoleProcess;
+class WinGuiProcess;
 
-class RunControl;
-
-class RunConfiguration : public QObject
+class ApplicationLauncher : public QObject
 {
     Q_OBJECT
+
 public:
-    RunConfiguration(Project *project);
-    virtual ~RunConfiguration();
-    Project *project() const;
 };
 
-class IRunConfigurationRunner : public QObject
-{
-};
-
-/* Each instance of this class represents one item that is run.
- */
-class RunControl : public QObject {
-    Q_OBJECT
-public:
-    RunControl(QSharedPointer<RunConfiguration> runConfiguration);
-    
-    QSharedPointer<RunConfiguration> runConfiguration();
-    
-
-signals:
-    void addToOutputWindowInline(RunControl *, const QString &line);
-    void started();
-    void finished();
-};
-
+} // namespace Internal
 } // namespace ProjectExplorer
 
-#endif // RUNCONFIGURATION_H
+#endif // APPLICATIONLAUNCHER_H

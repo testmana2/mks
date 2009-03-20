@@ -27,49 +27,26 @@
 **
 **************************************************************************/
 
-#ifndef RUNCONFIGURATION_H
-#define RUNCONFIGURATION_H
+#ifndef PROJECT_H
+#define PROJECT_H
 
-#include <QSharedPointer>
-#include <QObject>
+
+namespace Core {
+class IFile;
+}
 
 namespace ProjectExplorer {
 
-class Project;
-class PersistentSettingsReader;
-class PersistentSettingsWriter;
-
-class RunControl;
-
-class RunConfiguration : public QObject
+class Project
+    : public QObject
 {
     Q_OBJECT
 public:
-    RunConfiguration(Project *project);
-    virtual ~RunConfiguration();
-    Project *project() const;
-};
 
-class IRunConfigurationRunner : public QObject
-{
-};
-
-/* Each instance of this class represents one item that is run.
- */
-class RunControl : public QObject {
-    Q_OBJECT
-public:
-    RunControl(QSharedPointer<RunConfiguration> runConfiguration);
-    
-    QSharedPointer<RunConfiguration> runConfiguration();
-    
-
-signals:
-    void addToOutputWindowInline(RunControl *, const QString &line);
-    void started();
-    void finished();
+    virtual QString buildDirectory(const QString &buildConfiguration) const = 0;
+    QString activeBuildConfiguration() const;
 };
 
 } // namespace ProjectExplorer
 
-#endif // RUNCONFIGURATION_H
+#endif // PROJECT_H
