@@ -27,20 +27,24 @@
 **
 **************************************************************************/
 
-#ifndef FINDPLACEHOLDER_H
-#define FINDPLACEHOLDER_H
+#ifndef IEDITOR_H
+#define IEDITOR_H
 
-#include <QWidget>
+#include <coreplugin/ifile.h>
+#include <coreplugin/icontext.h>
 
 namespace Core {
 
-class FindToolBarPlaceHolder : public QWidget
+class IEditor : public IContext
 {
     Q_OBJECT
 public:
-    FindToolBarPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+    virtual IFile *file() = 0;
+    
+    virtual int currentLine() const { return 0; };
+    virtual int currentColumn() const { return 0; };
 };
 
 } // namespace Core
 
-#endif // FINDPLACEHOLDER_H
+#endif // IEDITOR_H

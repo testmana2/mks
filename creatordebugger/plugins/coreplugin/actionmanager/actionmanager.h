@@ -30,7 +30,8 @@
 #ifndef ACTIONMANAGER_H
 #define ACTIONMANAGER_H
 
-#include "actioncontainter.h"
+#include <coreplugin/actionmanager/actioncontainer.h>
+#include <coreplugin/actionmanager/command.h>
 
 namespace Core {
 
@@ -40,6 +41,14 @@ class ActionManager : public QObject
 public:
     ActionManager(QObject *parent = 0) : QObject(parent) {}
     virtual ~ActionManager() {}
+
+    virtual ActionContainer *createMenu(const QString &id) = 0;
+    
+    virtual Command *registerAction(QAction *action, const QString &id, const QList<int> &context) = 0;
+    
+    virtual ActionContainer *actionContainer(const QString &id) const = 0;
+    
+    virtual Command *command(const QString &id) const = 0;
 };
 
 } // namespace Core

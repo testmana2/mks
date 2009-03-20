@@ -30,4 +30,17 @@
 #ifndef NAVIGATIONWIDGET_H
 #define NAVIGATIONWIDGET_H
 
+#include <QtGui/QComboBox>
+
+namespace Core {
+
+class NavigationWidgetPlaceHolder : public QWidget
+{
+    Q_OBJECT
+public:
+    NavigationWidgetPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+};
+
+} // namespace Core
+
 #endif // NAVIGATIONWIDGET_H

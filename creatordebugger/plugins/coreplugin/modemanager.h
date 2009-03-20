@@ -32,8 +32,17 @@
 
 namespace Core {
 
-class ModeManager
+class ModeManager : public QObject
 {
+    Q_OBJECT
+public:
+	IMode* currentMode() const;
+	IMode* mode(const QString &id) const;
+	
+    static ModeManager *instance();
+	
+public slots:
+	void activateMode(const QString &id);
 };
 
 } // namespace Core

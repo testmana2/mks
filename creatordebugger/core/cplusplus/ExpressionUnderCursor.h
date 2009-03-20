@@ -30,10 +30,15 @@
 #ifndef EXPRESSIONUNDERCURSOR_H
 #define EXPRESSIONUNDERCURSOR_H
 
+class QTextCursor;
+
 namespace CPlusPlus {
 
 class ExpressionUnderCursor
 {
+public:
+
+	QString operator()(const QTextCursor &cursor);
 };
 
 } // namespace CPlusPlus
