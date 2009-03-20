@@ -30,11 +30,14 @@
 #ifndef MINISPLITTER_H
 #define MINISPLITTER_H
 
+#include <QSplitter>
+
 namespace Core {
 
 /*! This is a simple helper-class to obtain mac-style 1-pixel wide splitters */
-class MiniSplitter
+class MiniSplitter : public QSplitter
 {
+public:
 };
 
 } // namespace Core

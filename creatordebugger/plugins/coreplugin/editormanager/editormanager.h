@@ -40,6 +40,16 @@ class EditorManager : public QWidget
 
 public:
     static EditorManager *instance();
+    
+    IEditor *currentEditor() const;
+};
+
+class EditorManagerPlaceHolder : public QWidget
+{
+    Q_OBJECT
+public:
+    EditorManagerPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+    
 };
 
 } // namespace Core

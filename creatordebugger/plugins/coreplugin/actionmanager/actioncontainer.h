@@ -43,6 +43,9 @@ class Command;
 class ActionContainer : public QObject
 {
 public:
+	virtual QMenu *menu() const = 0;
+	virtual void addAction(Core::Command *action, const QString &group = QString()) = 0;
+	virtual void addMenu(Core::ActionContainer *menu, const QString &group = QString()) = 0;
 };
 
 } // namespace Core

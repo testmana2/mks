@@ -30,5 +30,18 @@
 #ifndef ITEXTEDITOR_H
 #define ITEXTEDITOR_H
 
+#include <coreplugin/editormanager/ieditor.h>
+
+namespace TextEditor {
+
+
+class ITextEditor : public Core::IEditor
+{
+    Q_OBJECT
+public:
+	virtual QChar characterAt(int pos) const = 0;
+};
+
+} // namespace TextEditor
 
 #endif // ITEXTEDITOR_H

@@ -30,5 +30,15 @@
 #ifndef RIGHTPANE_H
 #define RIGHTPANE_H
 
+#include <QWidget>
+
+class RightPanePlaceHolder : public QWidget
+{
+    Q_OBJECT
+public:
+    RightPanePlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+
+};
+
 
 #endif // RIGHTPANE_H

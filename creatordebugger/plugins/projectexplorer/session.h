@@ -33,8 +33,13 @@
 namespace ProjectExplorer {
 
 // This could be improved.
-class SessionManager
+class SessionManager : public QObject
 {
+    Q_OBJECT
+public:
+	// Let other plugins store persistent values within the session file
+	void setValue(const QString &name, const QVariant &value);
+	QVariant value(const QString &name);
 };
 
 } // namespace ProjectExplorer

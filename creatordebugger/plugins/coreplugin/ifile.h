@@ -27,20 +27,22 @@
 **
 **************************************************************************/
 
-#ifndef FINDPLACEHOLDER_H
-#define FINDPLACEHOLDER_H
+#ifndef IFILE_H
+#define IFILE_H
 
-#include <QWidget>
+#include <QtCore/QObject>
 
 namespace Core {
 
-class FindToolBarPlaceHolder : public QWidget
+class MimeType;
+
+class IFile : public QObject
 {
     Q_OBJECT
 public:
-    FindToolBarPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+    virtual QString fileName() const = 0;
 };
 
 } // namespace Core
 
-#endif // FINDPLACEHOLDER_H
+#endif // IFILE_H

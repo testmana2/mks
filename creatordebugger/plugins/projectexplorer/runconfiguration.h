@@ -31,6 +31,7 @@
 #define RUNCONFIGURATION_H
 
 #include <QSharedPointer>
+#include <QObject>
 
 namespace ProjectExplorer {
 
@@ -44,7 +45,7 @@ class RunConfiguration
 {
 };
 
-class IRunConfigurationRunner
+class IRunConfigurationRunner : public QObject
 {
 };
 

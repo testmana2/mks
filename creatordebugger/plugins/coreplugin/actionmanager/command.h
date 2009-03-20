@@ -27,20 +27,30 @@
 **
 **************************************************************************/
 
-#ifndef FINDPLACEHOLDER_H
-#define FINDPLACEHOLDER_H
-
-#include <QWidget>
+#ifndef COMMAND_H
+#define COMMAND_H
 
 namespace Core {
 
-class FindToolBarPlaceHolder : public QWidget
+class Command : public QObject
 {
     Q_OBJECT
 public:
-    FindToolBarPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+    enum CommandAttribute {
+        CA_Hide             = 0x0100,
+        CA_UpdateText       = 0x0200,
+        CA_UpdateIcon       = 0x0400,
+        CA_NonConfigureable = 0x8000,
+        CA_Mask             = 0xFF00
+    };
+    
+    virtual void setDefaultKeySequence(const QKeySequence &key) = 0;
+    virtual void setDefaultText(const QString &text) = 0;
+    virtual void setAttribute(CommandAttribute attr) = 0;
+    
+    virtual QAction *action() const = 0;
 };
 
 } // namespace Core
 
-#endif // FINDPLACEHOLDER_H
+#endif // COMMAND_H

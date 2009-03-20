@@ -30,14 +30,19 @@
 #ifndef BASEMODE_H
 #define BASEMODE_H
 
+#include "imode.h"
+
 namespace Core {
 
-class BaseMode : public QObject
+class BaseMode
+  : public IMode
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
     BaseMode(QObject *parent = 0);
     ~BaseMode();
+
+	QWidget *widget();
 	
     void setName(const QString &name);
     void setIcon(const QIcon &icon);
@@ -46,6 +51,7 @@ public:
     void setUniqueModeName(const char *uniqueModeName);
     void setContext(const QList<int> &context);
 
+	const char *uniqueModeName() const;
 };
 
 } // namespace Core

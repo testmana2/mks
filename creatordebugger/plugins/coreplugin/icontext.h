@@ -27,20 +27,20 @@
 **
 **************************************************************************/
 
-#ifndef FINDPLACEHOLDER_H
-#define FINDPLACEHOLDER_H
+#ifndef ICONTEXT_H
+#define ICONTEXT_H
 
-#include <QWidget>
+#include <QtCore/QObject>
 
 namespace Core {
 
-class FindToolBarPlaceHolder : public QWidget
+class IContext : public QObject
 {
     Q_OBJECT
 public:
-    FindToolBarPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+    virtual QWidget *widget() = 0;
 };
 
 } // namespace Core
 
-#endif // FINDPLACEHOLDER_H
+#endif //ICONTEXT_H

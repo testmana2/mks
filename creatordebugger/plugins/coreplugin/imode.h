@@ -27,20 +27,20 @@
 **
 **************************************************************************/
 
-#ifndef FINDPLACEHOLDER_H
-#define FINDPLACEHOLDER_H
+#ifndef IMODE_H
+#define IMODE_H
 
-#include <QWidget>
+#include <QObject>
 
 namespace Core {
 
-class FindToolBarPlaceHolder : public QWidget
+class IMode : public QObject
 {
     Q_OBJECT
 public:
-    FindToolBarPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
+    virtual const char *uniqueModeName() const = 0;
 };
 
 } // namespace Core
 
-#endif // FINDPLACEHOLDER_H
+#endif // IMODE_H

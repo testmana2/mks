@@ -31,7 +31,19 @@
 #ifndef BASETEXTEDITOR_H
 #define BASETEXTEDITOR_H
 
+#include <QtGui/QPlainTextEdit>
+
 namespace TextEditor {
+
+class BaseTextEditor
+  : public QPlainTextEdit
+{
+    Q_OBJECT
+public:	
+    static ITextEditor *openEditorAt(const QString &fileName, int line, int column = 0,
+                                     const QString &editorKind = QString());
+
+};
 
 } // namespace TextEditor
 

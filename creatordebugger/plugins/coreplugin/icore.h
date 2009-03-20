@@ -34,8 +34,12 @@ class QSettings;
 
 namespace Core {
 
+class IContext;
+
 class ActionManager;
 class UniqueIDManager;
+class EditorManager;
+class ModeManager;
 
 class ICore : public QObject
 {
@@ -51,6 +55,13 @@ public:
 	
 	virtual ActionManager *actionManager() const = 0;
 	virtual UniqueIDManager *uniqueIDManager() const = 0;
+	virtual EditorManager *editorManager() const = 0;
+    virtual ModeManager *modeManager() const = 0;
+	
+	virtual void addAdditionalContext(int context) = 0;
+	virtual void removeAdditionalContext(int context) = 0;
+	
+	virtual void updateContext() = 0;
 };
 
 } // namespace Core

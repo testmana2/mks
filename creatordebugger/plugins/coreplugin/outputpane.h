@@ -30,10 +30,15 @@
 #ifndef OUTPUTPANE_H
 #define OUTPUTPANE_H
 
+#include <QWidget>
+
 namespace Core {
 
-class OutputPanePlaceHolder
+class OutputPanePlaceHolder : public QWidget
 {
+    Q_OBJECT
+public:
+    OutputPanePlaceHolder(Core::IMode *mode, QWidget *parent = 0);
 };
 
 } // namespace Core

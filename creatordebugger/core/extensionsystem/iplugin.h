@@ -30,21 +30,11 @@
 #ifndef IPLUGIN_H
 #define IPLUGIN_H
 
-#include "extensionsystem_global.h"
-
 #include <QtCore/QObject>
 
 namespace ExtensionSystem {
 
-namespace Internal {
-    class IPluginPrivate;
-    class PluginSpecPrivate;
-}
-
-class PluginManager;
-class PluginSpec;
-
-class EXTENSIONSYSTEM_EXPORT IPlugin : public QObject
+class IPlugin : public QObject
 {
     Q_OBJECT
 
@@ -52,20 +42,9 @@ public:
     IPlugin();
     virtual ~IPlugin();
 
-    virtual bool initialize(const QStringList &arguments, QString *errorString) = 0;
-    virtual void extensionsInitialized() = 0;
-    virtual void shutdown() { }
-
-    PluginSpec *pluginSpec() const;
-
-    void addObject(QObject *obj);
     void addAutoReleasedObject(QObject *obj);
     void removeObject(QObject *obj);
-
-private:
-    Internal::IPluginPrivate *d;
-
-    friend class Internal::PluginSpecPrivate;
+    void addObject(QObject *obj);
 };
 
 } // namespace ExtensionSystem
