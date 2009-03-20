@@ -27,49 +27,17 @@
 **
 **************************************************************************/
 
-#ifndef RUNCONFIGURATION_H
-#define RUNCONFIGURATION_H
-
-#include <QSharedPointer>
-#include <QObject>
+#ifndef ENVIRONMENT_H
+#define ENVIRONMENT_H
 
 namespace ProjectExplorer {
 
-class Project;
-class PersistentSettingsReader;
-class PersistentSettingsWriter;
-
-class RunControl;
-
-class RunConfiguration : public QObject
-{
-    Q_OBJECT
+class Environment {
 public:
-    RunConfiguration(Project *project);
-    virtual ~RunConfiguration();
-    Project *project() const;
-};
 
-class IRunConfigurationRunner : public QObject
-{
-};
-
-/* Each instance of this class represents one item that is run.
- */
-class RunControl : public QObject {
-    Q_OBJECT
-public:
-    RunControl(QSharedPointer<RunConfiguration> runConfiguration);
-    
-    QSharedPointer<RunConfiguration> runConfiguration();
-    
-
-signals:
-    void addToOutputWindowInline(RunControl *, const QString &line);
-    void started();
-    void finished();
+    QStringList toStringList() const;
 };
 
 } // namespace ProjectExplorer
 
-#endif // RUNCONFIGURATION_H
+#endif // ENVIRONMENT_H
