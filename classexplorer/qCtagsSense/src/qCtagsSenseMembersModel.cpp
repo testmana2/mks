@@ -14,19 +14,25 @@ public:
 		: QThread( parent )
 	{
 		mSQL = parent;
+		mStop = false;
 	}
 	
 	virtual ~qCtagsSenseMembersThread()
 	{
+		QMutexLocker locker( &mMutex );
+		mStop = true;
+		locker.unlock();
+		wait();
 	}
 
 public slots:
-	void executeQuery( const QString& sql, const QString& fileName )
+	void executeQuery( const QString& sql, const QString& fileName, qCtagsSenseEntry* rootEntry )
 	{
 		{
 			QMutexLocker locker( &mMutex );
-			mStop = true;
+			mRestart = isRunning();
 			mQuery = sql;
+			mRootEntry = rootEntry;
 			mFileName = fileName;
 		}
 		
@@ -34,18 +40,16 @@ public slots:
 		{
 			start();
 		}
-		else
-		{
-			qWarning() << "Can't execute query, thread is running";
-		}
 	}
 
 protected:
 	QMutex mMutex;
 	qCtagsSenseSQL* mSQL;
+	bool mStop;
 	QString mQuery;
 	QString mFileName;
-	bool mStop;
+	qCtagsSenseEntry* mRootEntry;
+	bool mRestart;
 	
 	qCtagsSenseEntry* entryForRecord( const QSqlRecord& rec )
 	{
@@ -74,96 +78,128 @@ protected:
 	
 	virtual void run()
 	{
-		qWarning() << "Starting query...";
 		{
 			QMutexLocker locker( &mMutex );
-			mStop = false;
+			mRestart = false;
 		}
 		
-		QSqlQuery q = mSQL->query();
-		q.setForwardOnly( true );
-		
-		if ( !q.exec( mQuery ) )
+		forever
 		{
-			qWarning() << "Can't get entries for population";
-			return;
-		}
-		
-		qCtagsSenseEntry* mRootEntry = new qCtagsSenseEntry;
-		QMap<QString, qCtagsSenseEntry*> scopeItems;
-		scopeItems[ QString::null ] = mRootEntry;
-		QList<qCtagsSenseEntry*> entries;
-		
-		mRootEntry->name = mFileName;
-		
-		while ( q.next() )
-		{
-			qCtagsSenseEntry* entry = entryForRecord( q.record() );
-			entries << entry;
+			delete mRootEntry;
+			mRootEntry = 0;
 			
-			switch ( entry->kind )
+			QSqlQuery q = mSQL->query();
+			q.setForwardOnly( true );
+			
+			if ( !q.exec( mQuery ) )
 			{
-				case qCtagsSense::Class:
-				case qCtagsSense::Enum:
-				case qCtagsSense::Structure:
+				qWarning() << "Can't get entries for population";
+				return;
+			}
+			
+			mRootEntry = new qCtagsSenseEntry;
+			QMap<QString, qCtagsSenseEntry*> scopeItems;
+			scopeItems[ QString::null ] = mRootEntry;
+			QList<qCtagsSenseEntry*> entries;
+			
+			mRootEntry->name = mFileName;
+			
+			while ( q.next() )
+			{
+				qCtagsSenseEntry* entry = entryForRecord( q.record() );
+				entries << entry;
+				
+				switch ( entry->kind )
 				{
-					QString scope = entry->scope.second;
-					
-					if ( !scope.isEmpty() )
+					case qCtagsSense::Class:
+					case qCtagsSense::Enum:
+					case qCtagsSense::Structure:
 					{
-						scope += "::";
+						QString scope = entry->scope.second;
+						
+						if ( !scope.isEmpty() )
+						{
+							scope += "::";
+						}
+						
+						scope += entry->name;
+						scopeItems[ scope ] = entry;
+						
+						break;
 					}
-					
-					scope += entry->name;
-					scopeItems[ scope ] = entry;
-					
-					break;
+					default:
+						break;
 				}
-				default:
-					break;
+				
+				{
+					QMutexLocker locker( &mMutex );
+					
+					if ( mStop )
+					{
+						return;
+					}
+					else if ( mRestart )
+					{
+						break;
+					}
+				}
 			}
 			
 			{
 				QMutexLocker locker( &mMutex );
 				
-				if ( mStop )
+				if ( mRestart )
 				{
+					mRestart = false;
 					locker.unlock();
-					delete mRootEntry;
 					qDeleteAll( entries );
-					return;
+					continue;
 				}
 			}
-		}
-		
-		foreach ( qCtagsSenseEntry* entry, entries )
-		{
-			qCtagsSenseEntry* parentEntry = scopeItems.value( entry->scope.second );
 			
-			if ( !parentEntry )
+			foreach ( qCtagsSenseEntry* entry, entries )
 			{
-				parentEntry = scopeItems.value( QString::null );
+				entries.removeAll( entry );
+				
+				qCtagsSenseEntry* parentEntry = scopeItems.value( entry->scope.second );
+				
+				if ( !parentEntry )
+				{
+					parentEntry = scopeItems.value( QString::null );
+				}
+				
+				entry->parent = parentEntry;
+				parentEntry->children << entry;
+				
+				{
+					QMutexLocker locker( &mMutex );
+					
+					if ( mStop )
+					{
+						return;
+					}
+					else if ( mRestart )
+					{
+						break;
+					}
+				}
 			}
-			
-			entry->parent = parentEntry;
-			parentEntry->children << entry;
 			
 			{
 				QMutexLocker locker( &mMutex );
 				
-				if ( mStop )
+				if ( mRestart )
 				{
+					mRestart = false;
 					locker.unlock();
-					delete mRootEntry;
 					qDeleteAll( entries );
-					return;
+					continue;
 				}
 			}
+			
+			emit queryFinished( mRootEntry );
+			break;
 		}
-		
-		qWarning() << "Starting end...";
-		emit queryFinished( mRootEntry );
-		qWarning() << "Starting refreshed...";
 	}
 
 signals:
@@ -340,7 +376,11 @@ void qCtagsSenseMembersModel::populateFromFile( const QString& fileName )
 		"AND files.filename = '%1'"
 	).arg( fileName );
 	
-	mThread->executeQuery( sql, fileName );
+	qCtagsSenseEntry* root = mRootEntry;
+	mRootEntry = 0;
+	
+	reset();
+	mThread->executeQuery( sql, fileName, mRootEntry );
 }
 
 QPixmap qCtagsSenseMembersModel::entryPixmap( qCtagsSenseEntry* entry )
@@ -424,15 +464,10 @@ QPixmap qCtagsSenseMembersModel::entryPixmap( qCtagsSenseEntry* entry )
 
 void qCtagsSenseMembersModel::queryFinished( qCtagsSenseEntry* rootEntry )
 {
-	QTime t;
-	t.start();
-	//qWarning() << "start";
-	
-	delete mRootEntry;
 	mRootEntry = rootEntry;
-	reset();
 	
-	//qWarning() << "elapsed" << t.elapsed() /1000.0;
+	reset();
+	emit populationFinished();
 }
 
 #include "qCtagsSenseMembersModel.moc"
