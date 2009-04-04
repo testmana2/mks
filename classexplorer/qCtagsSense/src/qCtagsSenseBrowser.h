@@ -30,6 +30,7 @@ protected slots:
 	void on_cbMembers_currentIndexChanged( int id );
 	void on_tvMembers_activated( const QModelIndex& index );
 	void indexChanged();
+	void populationFinished();
 
 signals:
 	void memberActivated( const QString& fileName, const QModelIndex& index );

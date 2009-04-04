@@ -6,8 +6,7 @@
 
 #include "FileManager.h"
 
-#include <QDebug>
-#include <QTime>
+#include "QTimeTracker.h"
 
 qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	: QFrame( parent )
@@ -36,6 +35,7 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	connect( mSense, SIGNAL( indexChanged() ), this, SLOT( indexChanged() ) );
 	connect( mFileManager, SIGNAL( buffersModified( const QMap<QString, QString>& ) ), mSense, SLOT( tagEntries( const QMap<QString, QString>& ) ) );
 	connect( this, SIGNAL( memberActivated( const QString&, const QModelIndex& ) ), mFileManager, SLOT( memberActivated( const QString&, const QModelIndex& ) ) );
+	connect( mMembersModel, SIGNAL( populationFinished() ), this, SLOT( populationFinished() ) );
 	
 	// *********************
 	
@@ -80,31 +80,48 @@ void qCtagsSenseBrowser::on_tvMembers_activated( const QModelIndex& index )
 
 void qCtagsSenseBrowser::indexChanged()
 {
+	QTimeTracker tracker( "indexChanged" );
+	
 	const QString language = mLanguagesModel->language( cbLanguages->currentIndex() );
 	const QString fileName = mFilesModel->fileName( cbFileNames->currentIndex() );
 	
 	bool languageLocked = cbLanguages->blockSignals( true );
 	bool fileLocked = cbFileNames->blockSignals( true );
 	bool memberLocked = cbMembers->blockSignals( true );
+	bool tvMemberLocked = tvMembers->blockSignals( true );
 	
 	mLanguagesModel->refresh();
+	
+	tracker.query();
 	
 	if ( !language.isEmpty() )
 	{
 		cbLanguages->setCurrentIndex( mLanguagesModel->indexOf( language ) );
 		mFilesModel->refresh( language );
 		
+		tracker.query();
+		
 		if ( !fileName.isEmpty() )
 		{
 			cbFileNames->setCurrentIndex( mFilesModel->indexOf( fileName ) );
 			mMembersModel->populateFromFile( fileName );
+			
+			tracker.query();
 		}
 	}
 	
-	qobject_cast<QTreeView*>( cbMembers->view() )->expandAll();
-	tvMembers->expandAll();
+	tracker.query();
 	
 	cbLanguages->blockSignals( languageLocked );
 	cbFileNames->blockSignals( fileLocked );
 	cbMembers->blockSignals( memberLocked );
+	tvMembers->blockSignals( tvMemberLocked );
+	
+	tracker.query();
+}
+
+void qCtagsSenseBrowser::populationFinished()
+{
+	qobject_cast<QTreeView*>( cbMembers->view() )->expandAll();
+	tvMembers->expandAll();
 }
