@@ -39,6 +39,9 @@ protected:
 
 protected slots:
 	void queryFinished( qCtagsSenseEntry* rootEntry );
+
+signals:
+	void populationFinished();
 };
 
 #endif // QCTAGSSENSEMEMBERSMODEL_H
