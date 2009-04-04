@@ -92,7 +92,7 @@ void qCtagsSenseIndexer::indexFile( const QString& fileName )
 {
 	QMutexLocker locker( &mMutex );
 	
-	if ( !mWaitingIndexation.keys().contains( fileName ) )
+	if ( !mWaitingIndexation.contains( fileName ) )
 	{
 		mWaitingIndexation[ fileName ] = QString::null;
 	}
@@ -111,7 +111,7 @@ void qCtagsSenseIndexer::indexBuffers( const QMap<QString, QString>& buffers )
 	
 	foreach ( const QString& fileName, buffers.keys() )
 	{
-		if ( !mWaitingIndexation.keys().contains( fileName ) )
+		if ( !mWaitingIndexation.contains( fileName ) )
 		{
 			mWaitingIndexation[ fileName ] = buffers[ fileName ];
 			
