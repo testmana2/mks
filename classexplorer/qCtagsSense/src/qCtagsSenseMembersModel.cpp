@@ -45,7 +45,7 @@ protected:
 	qCtagsSenseSQL* mSQL;
 	QString mQuery;
 	QString mFileName;
-	bool mStop;finir refresh threadé
+	bool mStop;
 	
 	qCtagsSenseEntry* entryForRecord( const QSqlRecord& rec )
 	{
