@@ -26,48 +26,18 @@
 ** contact the sales department at qt-sales@nokia.com.
 **
 **************************************************************************/
+using namespace ProjectExplorer;
 
-#ifndef IPLUGIN_H
-#define IPLUGIN_H
+#include <QtDebug>
 
-#include "extensionsystem_global.h"
-
-#include <QtCore/QObject>
-
-namespace ExtensionSystem {
-
-namespace Internal {
-    class IPluginPrivate;
-    class PluginSpecPrivate;
+ProjectExplorerPlugin *ProjectExplorerPlugin::instance()
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+	return NULL;
 }
 
-class PluginManager;
-class PluginSpec;
-
-class EXTENSIONSYSTEM_EXPORT IPlugin : public QObject
+SessionManager *ProjectExplorerPlugin::session() const
 {
-    Q_OBJECT
-
-public:
-    IPlugin();
-    virtual ~IPlugin();
-
-    virtual bool initialize(const QStringList &arguments, QString *errorString) = 0;
-    virtual void extensionsInitialized() = 0;
-    virtual void shutdown() { }
-
-    PluginSpec *pluginSpec() const;
-
-    void addObject(QObject *obj);
-    void addAutoReleasedObject(QObject *obj);
-    void removeObject(QObject *obj);
-
-private:
-    Internal::IPluginPrivate *d;
-
-    friend class Internal::PluginSpecPrivate;
-};
-
-} // namespace ExtensionSystem
-
-#endif // IPLUGIN_H
+	qDebug () << __FILE__ << __FUNCTION__;
+	return NULL;
+}

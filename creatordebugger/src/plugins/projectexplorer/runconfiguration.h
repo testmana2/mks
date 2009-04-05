@@ -63,7 +63,6 @@ public:
     
     QSharedPointer<RunConfiguration> runConfiguration();
     
-
 signals:
     void addToOutputWindowInline(RunControl *, const QString &line);
     void started();

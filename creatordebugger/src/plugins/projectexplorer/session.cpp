@@ -27,47 +27,17 @@
 **
 **************************************************************************/
 
-#ifndef IPLUGIN_H
-#define IPLUGIN_H
+#include "session.h"
 
-#include "extensionsystem_global.h"
+#include <QDebug>
 
-#include <QtCore/QObject>
-
-namespace ExtensionSystem {
-
-namespace Internal {
-    class IPluginPrivate;
-    class PluginSpecPrivate;
+void SessionManager::setValue(const QString &name, const QVariant &value)
+{
+    qDebug () << __FILE__ << __FUNCTION__;
 }
 
-class PluginManager;
-class PluginSpec;
-
-class EXTENSIONSYSTEM_EXPORT IPlugin : public QObject
+QVariant SessionManager::value(const QString &name)
 {
-    Q_OBJECT
-
-public:
-    IPlugin();
-    virtual ~IPlugin();
-
-    virtual bool initialize(const QStringList &arguments, QString *errorString) = 0;
-    virtual void extensionsInitialized() = 0;
-    virtual void shutdown() { }
-
-    PluginSpec *pluginSpec() const;
-
-    void addObject(QObject *obj);
-    void addAutoReleasedObject(QObject *obj);
-    void removeObject(QObject *obj);
-
-private:
-    Internal::IPluginPrivate *d;
-
-    friend class Internal::PluginSpecPrivate;
-};
-
-} // namespace ExtensionSystem
-
-#endif // IPLUGIN_H
+    qDebug () << __FILE__ << __FUNCTION__;
+	return QVariant();
+}
