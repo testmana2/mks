@@ -13,5 +13,5 @@ void QTimeTracker::query() const
 {
 	const QString text = QString( "*** %1 (%2): %3 seconds." ).arg( mName ).arg( mAutoIncrement++ ).arg( elapsed() /1000.0 );
 	
-	qWarning( text.toLocal8Bit().constData() );
+	qWarning( "%s", text.toLocal8Bit().constData() );
 }
