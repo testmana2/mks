@@ -30,10 +30,11 @@
 #ifndef BASETEXTFIND_H
 #define BASETEXTFIND_H
 
+#include <QtCore/QObject>
 
 namespace Find {
 
-class BaseTextFind
+class BaseTextFind: public QObject
 {
 public:
     BaseTextFind (void*) {};
