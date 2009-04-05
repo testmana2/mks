@@ -27,26 +27,17 @@
 **
 **************************************************************************/
 
+#include "basetexteditor.h"
 
-#ifndef BASETEXTEDITOR_H
-#define BASETEXTEDITOR_H
+using namespace TextEditor;
 
-#include <QtGui/QPlainTextEdit>
+#include <QDebug>
 
-#include "itexteditor.h"
-
-namespace TextEditor {
-
-class BaseTextEditor
-  : public QPlainTextEdit
+ITextEditor *BaseTextEditor::openEditorAt(const QString &fileName,
+                                             int line,
+                                             int column,
+                                             const QString &editorKind)
 {
-    Q_OBJECT
-public:	
-    static ITextEditor *openEditorAt(const QString &fileName, int line, int column = 0,
-                                     const QString &editorKind = QString());
-
-};
-
-} // namespace TextEditor
-
-#endif // BASETEXTEDITOR_H
+	qDebug () << __FILE__ << __FUNCTION__ << fileName << line << column;
+    return 0;
+}
