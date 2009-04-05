@@ -7,6 +7,7 @@
 #include "FileManager.h"
 
 #include "QTimeTracker.h"
+#include <QDebug>
 
 qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	: QFrame( parent )
@@ -32,10 +33,11 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	
 	mFileManager = new FileManager( this );
 	
-	connect( mSense, SIGNAL( indexChanged() ), this, SLOT( indexChanged() ) );
+	connect( mSense, SIGNAL( indexChanged() ), this, SLOT( mSense_indexChanged() ) );
 	connect( mFileManager, SIGNAL( buffersModified( const QMap<QString, QString>& ) ), mSense, SLOT( tagEntries( const QMap<QString, QString>& ) ) );
 	connect( this, SIGNAL( memberActivated( const QString&, const QModelIndex& ) ), mFileManager, SLOT( memberActivated( const QString&, const QModelIndex& ) ) );
-	connect( mMembersModel, SIGNAL( populationFinished() ), this, SLOT( populationFinished() ) );
+	connect( mFilesModel, SIGNAL( ready() ), this, SLOT( mFilesModel_ready() ) );
+	connect( mMembersModel, SIGNAL( ready() ), this, SLOT( mMembersModel_ready() ) );
 	
 	// *********************
 	
@@ -52,76 +54,77 @@ qCtagsSenseBrowser::~qCtagsSenseBrowser()
 
 void qCtagsSenseBrowser::on_cbLanguages_currentIndexChanged( int id )
 {
-	const QString language = mLanguagesModel->language( id );
-	mFilesModel->refresh( language );
-	cbFileNames->setCurrentIndex( 0 );
+	mLanguage = mLanguagesModel->language( id );
+	mFileName.clear();
+	mFilesModel->refresh( mLanguage );
 }
 
 void qCtagsSenseBrowser::on_cbFileNames_currentIndexChanged( int id )
 {
-	const QString fileName = mFilesModel->fileName( id );
-	mMembersModel->populateFromFile( fileName );
-	qobject_cast<QTreeView*>( cbMembers->view() )->expandAll();
-	tvMembers->expandAll();
+	mFileName = mFilesModel->fileName( id );
+	mMembersModel->populateFromFile( mFileName );
 }
 
 void qCtagsSenseBrowser::on_cbMembers_currentIndexChanged( int id )
 {
 	Q_UNUSED( id );
-	const QString fileName = mFilesModel->fileName( cbFileNames->currentIndex() );
-	emit memberActivated( fileName, cbMembers->view()->currentIndex() );
+	emit memberActivated( mFileName, cbMembers->view()->currentIndex() );
 }
 
 void qCtagsSenseBrowser::on_tvMembers_activated( const QModelIndex& index )
 {
-	const QString fileName = mFilesModel->fileName( cbFileNames->currentIndex() );
-	emit memberActivated( fileName, index );
+	emit memberActivated( mFileName, index );
 }
 
-void qCtagsSenseBrowser::indexChanged()
+void qCtagsSenseBrowser::mSense_indexChanged()
 {
-	QTimeTracker tracker( "indexChanged" );
-	
-	const QString language = mLanguagesModel->language( cbLanguages->currentIndex() );
-	const QString fileName = mFilesModel->fileName( cbFileNames->currentIndex() );
-	
-	bool languageLocked = cbLanguages->blockSignals( true );
-	bool fileLocked = cbFileNames->blockSignals( true );
-	bool memberLocked = cbMembers->blockSignals( true );
-	bool tvMemberLocked = tvMembers->blockSignals( true );
+	mLanguage = mLanguagesModel->language( cbLanguages->currentIndex() );
+	mFileName = mFilesModel->fileName( cbFileNames->currentIndex() );
 	
 	mLanguagesModel->refresh();
-	
-	tracker.query();
-	
-	if ( !language.isEmpty() )
-	{
-		cbLanguages->setCurrentIndex( mLanguagesModel->indexOf( language ) );
-		mFilesModel->refresh( language );
-		
-		tracker.query();
-		
-		if ( !fileName.isEmpty() )
-		{
-			cbFileNames->setCurrentIndex( mFilesModel->indexOf( fileName ) );
-			mMembersModel->populateFromFile( fileName );
-			
-			tracker.query();
-		}
-	}
-	
-	tracker.query();
-	
-	cbLanguages->blockSignals( languageLocked );
-	cbFileNames->blockSignals( fileLocked );
-	cbMembers->blockSignals( memberLocked );
-	tvMembers->blockSignals( tvMemberLocked );
-	
-	tracker.query();
+	mLanguagesModel_ready();
 }
 
-void qCtagsSenseBrowser::populationFinished()
+void qCtagsSenseBrowser::mLanguagesModel_ready()
 {
+qWarning() << "mLanguagesModel_ready";
+
+	bool languageLocked = cbLanguages->blockSignals( true );
+	int id = mLanguagesModel->indexOf( mLanguage );
+	
+	if ( id == -1 && !cbLanguages->count() == 0 )
+	{
+		id = 0;
+	}
+	
+	mLanguage = mLanguagesModel->language( id );
+	cbLanguages->setCurrentIndex( id );
+	mFilesModel->refresh( mLanguage );
+	cbLanguages->blockSignals( languageLocked );
+}
+
+void qCtagsSenseBrowser::mFilesModel_ready()
+{
+qWarning() << "mFilesModel_ready";
+	
+	bool fileLocked = cbFileNames->blockSignals( true );
+	int id = mFilesModel->indexOf( mFileName );
+	
+	if ( id == -1 && !cbFileNames->count() == 0 )
+	{
+		id = 0;
+	}
+	
+	mFileName = mFilesModel->fileName( id );
+	cbFileNames->setCurrentIndex( id );
+	mMembersModel->populateFromFile( mFileName );
+	cbFileNames->blockSignals( fileLocked );
+}
+
+void qCtagsSenseBrowser::mMembersModel_ready()
+{
+qWarning() << "mMembersModel_ready";
+
 	qobject_cast<QTreeView*>( cbMembers->view() )->expandAll();
 	tvMembers->expandAll();
 }

@@ -18,6 +18,7 @@ public:
 
 protected:
 	qCtagsSense* mSense;
+	QString mLanguage, mFileName;
 	qCtagsSenseLanguagesModel* mLanguagesModel;
 	qCtagsSenseFilesModel* mFilesModel;
 	qCtagsSenseMembersModel* mMembersModel;
@@ -29,8 +30,10 @@ protected slots:
 	void on_cbFileNames_currentIndexChanged( int id );
 	void on_cbMembers_currentIndexChanged( int id );
 	void on_tvMembers_activated( const QModelIndex& index );
-	void indexChanged();
-	void populationFinished();
+	void mSense_indexChanged();
+	void mLanguagesModel_ready();
+	void mFilesModel_ready();
+	void mMembersModel_ready();
 
 signals:
 	void memberActivated( const QString& fileName, const QModelIndex& index );
