@@ -6,9 +6,6 @@
 
 #include "FileManager.h"
 
-#include "QTimeTracker.h"
-#include <QDebug>
-
 qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	: QFrame( parent )
 {
@@ -36,6 +33,7 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	connect( mSense, SIGNAL( indexChanged() ), this, SLOT( mSense_indexChanged() ) );
 	connect( mFileManager, SIGNAL( buffersModified( const QMap<QString, QString>& ) ), mSense, SLOT( tagEntries( const QMap<QString, QString>& ) ) );
 	connect( this, SIGNAL( memberActivated( const QString&, const QModelIndex& ) ), mFileManager, SLOT( memberActivated( const QString&, const QModelIndex& ) ) );
+	connect( mLanguagesModel, SIGNAL( ready() ), this, SLOT( mLanguagesModel_ready() ) );
 	connect( mFilesModel, SIGNAL( ready() ), this, SLOT( mFilesModel_ready() ) );
 	connect( mMembersModel, SIGNAL( ready() ), this, SLOT( mMembersModel_ready() ) );
 	
@@ -80,15 +78,11 @@ void qCtagsSenseBrowser::mSense_indexChanged()
 {
 	mLanguage = mLanguagesModel->language( cbLanguages->currentIndex() );
 	mFileName = mFilesModel->fileName( cbFileNames->currentIndex() );
-	
 	mLanguagesModel->refresh();
-	mLanguagesModel_ready();
 }
 
 void qCtagsSenseBrowser::mLanguagesModel_ready()
 {
-qWarning() << "mLanguagesModel_ready";
-
 	bool languageLocked = cbLanguages->blockSignals( true );
 	int id = mLanguagesModel->indexOf( mLanguage );
 	
@@ -104,9 +98,7 @@ qWarning() << "mLanguagesModel_ready";
 }
 
 void qCtagsSenseBrowser::mFilesModel_ready()
-{
-qWarning() << "mFilesModel_ready";
-	
+{	
 	bool fileLocked = cbFileNames->blockSignals( true );
 	int id = mFilesModel->indexOf( mFileName );
 	
@@ -123,8 +115,6 @@ qWarning() << "mFilesModel_ready";
 
 void qCtagsSenseBrowser::mMembersModel_ready()
 {
-qWarning() << "mMembersModel_ready";
-
 	qobject_cast<QTreeView*>( cbMembers->view() )->expandAll();
 	tvMembers->expandAll();
 }
