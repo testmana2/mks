@@ -21,6 +21,7 @@ public:
 		mSQL = parent;
 		mStop = false;
 		mRestart = false;
+		mFiles = 0;
 	}
 	
 	virtual ~qCtagsSenseFilesThread()
