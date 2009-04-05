@@ -27,47 +27,37 @@
 **
 **************************************************************************/
 
-#ifndef IPLUGIN_H
-#define IPLUGIN_H
+#include "runconfiguration.h"
+#include "project.h"
 
-#include "extensionsystem_global.h"
+#include <QtDebug>
 
-#include <QtCore/QObject>
+using namespace ProjectExplorer;
 
-namespace ExtensionSystem {
-
-namespace Internal {
-    class IPluginPrivate;
-    class PluginSpecPrivate;
+// RunConfiguration
+RunConfiguration::RunConfiguration(Project *project)
+{
+	qDebug () << __FILE__ << __FUNCTION__;
 }
 
-class PluginManager;
-class PluginSpec;
-
-class EXTENSIONSYSTEM_EXPORT IPlugin : public QObject
+RunConfiguration::~RunConfiguration()
 {
-    Q_OBJECT
+	qDebug () << __FILE__ << __FUNCTION__;
+}
 
-public:
-    IPlugin();
-    virtual ~IPlugin();
+Project *RunConfiguration::project() const
+{
+    qDebug () << __FILE__ << __FUNCTION__;
+	return NULL;
+}
 
-    virtual bool initialize(const QStringList &arguments, QString *errorString) = 0;
-    virtual void extensionsInitialized() = 0;
-    virtual void shutdown() { }
+RunControl::RunControl(QSharedPointer<RunConfiguration> runConfiguration)
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+}
 
-    PluginSpec *pluginSpec() const;
-
-    void addObject(QObject *obj);
-    void addAutoReleasedObject(QObject *obj);
-    void removeObject(QObject *obj);
-
-private:
-    Internal::IPluginPrivate *d;
-
-    friend class Internal::PluginSpecPrivate;
-};
-
-} // namespace ExtensionSystem
-
-#endif // IPLUGIN_H
+QSharedPointer<RunConfiguration> RunControl::runConfiguration()
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+    return 0;
+}
