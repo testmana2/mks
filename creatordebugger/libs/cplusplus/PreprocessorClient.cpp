@@ -27,39 +27,12 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#include "PreprocessorClient.h"
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
+using namespace CPlusPlus;
 
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+Client::Client()
+{ }
 
-namespace CPlusPlus {
-
-class SimpleToken;
-
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
-{
-public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
-
-    QString operator()(const QTextCursor &cursor);
-
-private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
-
-    bool _jumpedComma;
-};
-
-} // namespace CPlusPlus
-
-#endif // EXPRESSIONUNDERCURSOR_H
+Client::~Client()
+{ }

@@ -27,39 +27,51 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef CPLUSPLUS_PP_CLIENT_H
+#define CPLUSPLUS_PP_CLIENT_H
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
+#include <CPlusPlusForwardDeclarations.h>
+#include <QtGlobal>
 
 QT_BEGIN_NAMESPACE
+class QByteArray;
 class QString;
-class QTextCursor;
-class QTextBlock;
 QT_END_NAMESPACE
 
 namespace CPlusPlus {
 
-class SimpleToken;
+class Macro;
 
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class CPLUSPLUS_EXPORT Client
 {
+  Client(const Client &other);
+  void operator=(const Client &other);
+
 public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+  enum IncludeType {
+    IncludeLocal,
+    IncludeGlobal
+  };
 
-    QString operator()(const QTextCursor &cursor);
+public:
+  Client();
+  virtual ~Client();
 
-private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
+  virtual void macroAdded(const Macro &macro) = 0;
+  virtual void sourceNeeded(QString &fileName, IncludeType mode,
+                            unsigned line) = 0; // ### FIX the signature.
 
-    bool _jumpedComma;
+  virtual void startExpandingMacro(unsigned offset,
+                                   const Macro &macro,
+                                   const QByteArray &originalTextt) = 0;
+
+  virtual void stopExpandingMacro(unsigned offset,
+                                  const Macro &macro) = 0;
+
+  virtual void startSkippingBlocks(unsigned offset) = 0;
+  virtual void stopSkippingBlocks(unsigned offset) = 0;
 };
 
 } // namespace CPlusPlus
 
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // CPLUSPLUS_PP_CLIENT_H

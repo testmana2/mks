@@ -27,39 +27,15 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef AGGREGATION_GLOBAL_H
+#define AGGREGATION_GLOBAL_H
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
+#include <QtCore/qglobal.h>
 
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+#if defined(AGGREGATION_LIBRARY)
+#  define AGGREGATION_EXPORT Q_DECL_EXPORT
+#else
+#  define AGGREGATION_EXPORT Q_DECL_IMPORT
+#endif
 
-namespace CPlusPlus {
-
-class SimpleToken;
-
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
-{
-public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
-
-    QString operator()(const QTextCursor &cursor);
-
-private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
-
-    bool _jumpedComma;
-};
-
-} // namespace CPlusPlus
-
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // AGGREGATION_GLOBAL_H

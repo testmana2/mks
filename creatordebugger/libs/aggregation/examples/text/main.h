@@ -27,39 +27,33 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef MAIN_H
+#define MAIN_H
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
+#include "myinterfaces.h"
+#include "ui_main.h"
 
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+#include <aggregate.h>
 
-namespace CPlusPlus {
+#include <QtGui/QWidget>
 
-class SimpleToken;
-
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class MyMain : public QWidget
 {
-public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    Q_OBJECT
 
-    QString operator()(const QTextCursor &cursor);
+public:
+    MyMain(QWidget *parent = 0, Qt::WFlags flags = 0);
+    ~MyMain();
+
+    void add(IComboEntry *obj);
+
+private slots:
+    void select(int index);
 
 private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
+    Ui::mainClass ui;
 
-    bool _jumpedComma;
+    QList<IComboEntry *> m_entries;
 };
 
-} // namespace CPlusPlus
-
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // MAIN_H

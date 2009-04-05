@@ -27,39 +27,45 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#include "TokenUnderCursor.h"
+#include <Token.h>
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
+#include <QTextCursor>
+#include <QTextBlock>
+#include <climits>
 
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+using namespace CPlusPlus;
 
-namespace CPlusPlus {
+TokenUnderCursor::TokenUnderCursor()
+{ }
 
-class SimpleToken;
+TokenUnderCursor::~TokenUnderCursor()
+{ }
 
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+SimpleToken TokenUnderCursor::operator()(const QTextCursor &cursor) const
 {
-public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    SimpleLexer tokenize;
+    QTextBlock block = cursor.block();
+    int column = cursor.columnNumber();
 
-    QString operator()(const QTextCursor &cursor);
+    QList<SimpleToken> tokens = tokenize(block.text(), previousBlockState(block));
+    for (int index = tokens.size() - 1; index != -1; --index) {
+        const SimpleToken &tk = tokens.at(index);
+        if (tk.position() < column)
+            return tk;
+    }
 
-private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
+    return SimpleToken();
+}
 
-    bool _jumpedComma;
-};
+int TokenUnderCursor::previousBlockState(const QTextBlock &block) const
+{
+    const QTextBlock prevBlock = block.previous();
+    if (prevBlock.isValid()) {
+        int state = prevBlock.userState();
 
-} // namespace CPlusPlus
-
-#endif // EXPRESSIONUNDERCURSOR_H
+        if (state != -1)
+            return state;
+    }
+    return 0;
+}
