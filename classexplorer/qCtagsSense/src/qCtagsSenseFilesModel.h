@@ -5,6 +5,7 @@
 #include <QStringList>
 
 class qCtagsSenseSQL;
+class qCtagsSenseFilesThread;
 
 class qCtagsSenseFilesModel : public QAbstractItemModel
 {
@@ -21,7 +22,6 @@ public:
 	virtual int rowCount( const QModelIndex& parent = QModelIndex() ) const;
 	virtual bool hasChildren( const QModelIndex& parent = QModelIndex() ) const;
 	
-	QString language() const;
 	QString fileName( int id ) const;
 	int indexOf( const QString& fileName ) const;
 	
@@ -31,9 +31,15 @@ public slots:
 	void refresh( const QString& language );
 
 protected:
+	qCtagsSenseFilesThread* mThread;
 	qCtagsSenseSQL* mSQL;
-	QStringList mFiles;
-	QString mLanguage;
+	QStringList* mFiles;
+
+protected slots:
+	void queryFinished( const QStringList& files );
+
+signals:
+	void ready();
 };
 
 #endif // QCTAGSSENSEFILESMODEL_H

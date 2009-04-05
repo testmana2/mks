@@ -5,14 +5,134 @@
 #include <QFileInfo>
 #include <QDebug>
 
+bool qCtagsSenseFilesModel::caseInsensitiveFilePathLessThan( const QString& s1, const QString& s2 )
+{
+	return QFileInfo( s1 ).fileName().toLower() < QFileInfo( s2 ).fileName().toLower();
+}
+
+class qCtagsSenseFilesThread : public QThread
+{
+	Q_OBJECT
+	
+public:
+	qCtagsSenseFilesThread( qCtagsSenseSQL* parent )
+		: QThread( parent )
+	{
+		mSQL = parent;
+		mStop = false;
+		mRestart = false;
+	}
+	
+	virtual ~qCtagsSenseFilesThread()
+	{
+		QMutexLocker locker( &mMutex );
+		mStop = true;
+		locker.unlock();
+		wait();
+	}
+
+public slots:
+	void executeQuery( const QString& sql, QStringList* files )
+	{
+		{
+			QMutexLocker locker( &mMutex );
+			mStop = false;
+			mRestart = isRunning();
+			mQuery = sql;
+			mFiles = files;
+		}
+		
+		if ( !isRunning() )
+		{
+			start();
+		}
+	}
+
+protected:
+	QMutex mMutex;
+	qCtagsSenseSQL* mSQL;
+	bool mStop;
+	bool mRestart;
+	QString mQuery;
+	QStringList* mFiles;
+	
+	virtual void run()
+	{
+		{
+			QMutexLocker locker( &mMutex );
+			mRestart = false;
+			mStop = false;
+		}
+		
+		forever
+		{
+			delete mFiles;
+			mFiles = 0;
+			
+			QSqlQuery q = mSQL->query();
+			q.setForwardOnly( true );
+			
+			if ( !q.exec( mQuery ) )
+			{
+				qWarning() << "Can't get filenames";
+				return;
+			}
+			
+			QStringList files;
+			
+			while ( q.next() )
+			{
+				const QString fileName = q.record().value( 0 ).toString();
+				files << fileName;
+				
+				{
+					QMutexLocker locker( &mMutex );
+					
+					if ( mStop )
+					{
+						return;
+					}
+					else if ( mRestart )
+					{
+						break;
+					}
+				}
+			}
+			
+			{
+				QMutexLocker locker( &mMutex );
+				
+				if ( mRestart )
+				{
+					mRestart = false;
+					continue;
+				}
+			}
+			
+			qSort( files.begin(), files.end(), qCtagsSenseFilesModel::caseInsensitiveFilePathLessThan );
+			
+			emit queryFinished( files );
+			break;
+		}
+	}
+
+signals:
+	void queryFinished( const QStringList& files );
+};
+
 qCtagsSenseFilesModel::qCtagsSenseFilesModel( qCtagsSenseSQL* parent )
 	: QAbstractItemModel( parent )
 {
 	mSQL = parent;
+	mFiles = 0;
+	mThread = new qCtagsSenseFilesThread( mSQL );
+	
+	connect( mThread, SIGNAL( queryFinished( const QStringList& ) ), this, SLOT( queryFinished( const QStringList& ) ) );
 }
 
 qCtagsSenseFilesModel::~qCtagsSenseFilesModel()
 {
+	delete mFiles;
 }
 
 int qCtagsSenseFilesModel::columnCount( const QModelIndex& parent ) const
@@ -27,11 +147,11 @@ QVariant qCtagsSenseFilesModel::data( const QModelIndex& index, int role ) const
 	{
 		if ( role == Qt::DisplayRole )
 		{
-			return QFileInfo( mFiles.at( index.internalId() ) ).fileName();
+			return QFileInfo( mFiles->at( index.internalId() ) ).fileName();
 		}
 		else if ( role == Qt::ToolTipRole )
 		{
-			return mFiles.at( index.internalId() );
+			return mFiles->at( index.internalId() );
 		}
 	}
 	
@@ -59,60 +179,43 @@ QModelIndex qCtagsSenseFilesModel::parent( const QModelIndex& index ) const
 
 int qCtagsSenseFilesModel::rowCount( const QModelIndex& parent ) const
 {
-	return parent.isValid() ? 0 : mFiles.count();
+	return parent.isValid() || !mFiles ? 0 : mFiles->count();
 }
 
 bool qCtagsSenseFilesModel::hasChildren( const QModelIndex& parent ) const
 {
-	return parent.isValid() ? false : !mFiles.isEmpty();
-}
-
-QString qCtagsSenseFilesModel::language() const
-{
-	return mLanguage;
+	return parent.isValid() || !mFiles ? false : !mFiles->isEmpty();
 }
 	
 QString qCtagsSenseFilesModel::fileName( int id ) const
 {
-	return mFiles.value( id );
+	return mFiles ? mFiles->value( id ) : QString::null;
 }
 
 int qCtagsSenseFilesModel::indexOf( const QString& fileName ) const
 {
-	return mFiles.indexOf( fileName );
+	return mFiles ? mFiles->indexOf( fileName ) : -1;
 }
 
 void qCtagsSenseFilesModel::refresh( const QString& language  )
 {
-	mFiles.clear();
-	
 	const QString sql = QString(
 		"SELECT filename FROM files WHERE LOWER( language ) = LOWER( '%1' )"
 	).arg( language );
 	
-	QSqlQuery q = mSQL->query();
-	
-	if ( q.exec( sql ) )
-	{
-		mLanguage = language;
-		
-		while ( q.next() )
-		{
-			const QString fileName = q.record().value( 0 ).toString();
-			mFiles << fileName;
-		}
-		
-		qSort( mFiles.begin(), mFiles.end(), caseInsensitiveFilePathLessThan );
-	}
-	else
-	{
-		qWarning() << "Can't get files";
-	}
+	QStringList* files = mFiles;
+	mFiles = 0;
 	
 	reset();
+	mThread->executeQuery( sql, files );
 }
 
-bool qCtagsSenseFilesModel::caseInsensitiveFilePathLessThan( const QString& s1, const QString& s2 )
+void qCtagsSenseFilesModel::queryFinished( const QStringList& files )
 {
-	return QFileInfo( s1 ).fileName().toLower() < QFileInfo( s2 ).fileName().toLower();
+	mFiles = new QStringList( files );
+	
+	reset();
+	emit ready();
 }
+
+#include "qCtagsSenseFilesModel.moc"
