@@ -27,19 +27,13 @@
 **
 **************************************************************************/
 
-#ifndef BASETEXTFIND_H
-#define BASETEXTFIND_H
+#include "basetextfind.h"
 
-#include <QtCore/QObject>
+#include <QDebug>
 
-namespace Find {
+using namespace Find;
 
-class BaseTextFind: public QObject
+BaseTextFind::BaseTextFind (void*)
 {
-public:
-    BaseTextFind (void*);
-};
-
-} // namespace Find
-
-#endif // BASETEXTFIND_H
+	qDebug () << __FILE__ << __FUNCTION__;
+}
