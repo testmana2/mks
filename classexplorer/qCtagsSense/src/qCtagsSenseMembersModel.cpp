@@ -382,7 +382,7 @@ void qCtagsSenseMembersModel::populateFromFile( const QString& fileName )
 	mRootEntry = 0;
 	
 	reset();
-	mThread->executeQuery( sql, fileName, mRootEntry );
+	mThread->executeQuery( sql, fileName, root );
 }
 
 QPixmap qCtagsSenseMembersModel::entryPixmap( qCtagsSenseEntry* entry )
