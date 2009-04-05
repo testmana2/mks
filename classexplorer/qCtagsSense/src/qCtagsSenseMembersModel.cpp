@@ -15,6 +15,7 @@ public:
 	{
 		mSQL = parent;
 		mStop = false;
+		mRestart = false;
 	}
 	
 	virtual ~qCtagsSenseMembersThread()
@@ -31,6 +32,7 @@ public slots:
 		{
 			QMutexLocker locker( &mMutex );
 			mRestart = isRunning();
+			mStop = false;
 			mQuery = sql;
 			mRootEntry = rootEntry;
 			mFileName = fileName;
@@ -467,7 +469,7 @@ void qCtagsSenseMembersModel::queryFinished( qCtagsSenseEntry* rootEntry )
 	mRootEntry = rootEntry;
 	
 	reset();
-	emit populationFinished();
+	emit ready();
 }
 
 #include "qCtagsSenseMembersModel.moc"
