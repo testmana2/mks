@@ -27,39 +27,55 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef CPLUSPLUS_OVERVIEWMODEL_H
+#define CPLUSPLUS_OVERVIEWMODEL_H
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
+#include "CppDocument.h"
+#include "Overview.h"
+#include "Icons.h"
 
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+#include <QAbstractItemModel>
+#include <QIcon>
 
 namespace CPlusPlus {
 
-class SimpleToken;
-
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class CPLUSPLUS_EXPORT OverviewModel : public QAbstractItemModel
 {
-public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    Q_OBJECT
 
-    QString operator()(const QTextCursor &cursor);
+public:
+    enum Role {
+        FileNameRole = Qt::UserRole + 1,
+        LineNumberRole
+    };
+
+public:
+    OverviewModel(QObject *parent = 0);
+    virtual ~OverviewModel();
+
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+    virtual QModelIndex parent(const QModelIndex &child) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+    Document::Ptr document() const;
+    Symbol *symbolFromIndex(const QModelIndex &index) const;
+
+public Q_SLOTS:
+    void rebuild(CPlusPlus::Document::Ptr doc);
 
 private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
+    bool hasDocument() const;
+    unsigned globalSymbolCount() const;
+    Symbol *globalSymbolAt(unsigned index) const;
 
-    bool _jumpedComma;
+private:
+    Document::Ptr _cppDocument;
+    Overview _overview;
+    Icons _icons;
 };
 
-} // namespace CPlusPlus
+} // end of namespace CPlusPlus
 
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // CPLUSPLUS_OVERVIEWMODEL_H

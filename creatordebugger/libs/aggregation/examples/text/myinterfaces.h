@@ -27,39 +27,62 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef MYINTERFACES_H
+#define MYINTERFACES_H
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
+#include <aggregate.h>
 
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+#include <QtCore/QString>
 
-namespace CPlusPlus {
-
-class SimpleToken;
-
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class IComboEntry : public QObject
 {
-public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    Q_OBJECT
 
-    QString operator()(const QTextCursor &cursor);
+public:
+    IComboEntry(QString title) : m_title(title) {}
+    virtual ~IComboEntry() {}
+    QString title() const { return m_title; }
 
 private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
-
-    bool _jumpedComma;
+    QString m_title;
 };
 
-} // namespace CPlusPlus
+class IText1 : public QObject
+{
+    Q_OBJECT
 
-#endif // EXPRESSIONUNDERCURSOR_H
+public:
+    IText1(QString text) : m_text(text) {}
+    virtual ~IText1() {}
+    QString text() const { return m_text; }
+
+private:
+    QString m_text;
+};
+
+class IText2 : public QObject
+{
+    Q_OBJECT
+
+public:
+    IText2(QString text) : m_text(text) {}
+    QString text() const { return m_text; }
+
+private:
+    QString m_text;
+};
+
+class IText3 : public QObject
+{
+    Q_OBJECT
+
+public:
+    IText3(QString text) : m_text(text) {}
+    virtual ~IText3() {}
+    QString text() const { return m_text; }
+
+private:
+    QString m_text;
+};
+
+#endif // MYINTERFACES_H

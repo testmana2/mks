@@ -26,11 +26,10 @@
 ** contact the sales department at qt-sales@nokia.com.
 **
 **************************************************************************/
+#ifndef TOKENUNDERCURSOR_H
+#define TOKENUNDERCURSOR_H
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
-
-#include "CPlusPlusForwardDeclarations.h"
+#include "SimpleLexer.h"
 #include <QList>
 
 QT_BEGIN_NAMESPACE
@@ -43,23 +42,18 @@ namespace CPlusPlus {
 
 class SimpleToken;
 
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class CPLUSPLUS_EXPORT TokenUnderCursor
 {
 public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    TokenUnderCursor();
+    ~TokenUnderCursor();
 
-    QString operator()(const QTextCursor &cursor);
+    SimpleToken operator()(const QTextCursor &cursor) const;
 
 private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
-
-    bool _jumpedComma;
+    int previousBlockState(const QTextBlock &block) const;
 };
 
-} // namespace CPlusPlus
+} // end of namespace CPlusPlus
 
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // TOKENUNDERCURSOR_H

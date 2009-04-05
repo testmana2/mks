@@ -27,39 +27,40 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef CPLUSPLUS_NAMEPRETTYPRINTER_H
+#define CPLUSPLUS_NAMEPRETTYPRINTER_H
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
-
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+#include <NameVisitor.h>
+#include <QString>
 
 namespace CPlusPlus {
 
-class SimpleToken;
+class Overview;
 
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class CPLUSPLUS_EXPORT NamePrettyPrinter: protected NameVisitor
 {
 public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    NamePrettyPrinter(const Overview *overview);
+    virtual ~NamePrettyPrinter();
 
-    QString operator()(const QTextCursor &cursor);
+    const Overview *overview() const;
+    QString operator()(Name *name);
+
+protected:
+    QString switchName(const QString &name = QString());
+
+    virtual void visit(NameId *name);
+    virtual void visit(TemplateNameId *name);
+    virtual void visit(DestructorNameId *name);
+    virtual void visit(OperatorNameId *name);
+    virtual void visit(ConversionNameId *name);
+    virtual void visit(QualifiedNameId *name);
 
 private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
-
-    bool _jumpedComma;
+    const Overview *_overview;
+    QString _name;
 };
 
-} // namespace CPlusPlus
+} // end of namespace CPlusPlus
 
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // CPLUSPLUS_NAMEPRETTYPRINTER_H

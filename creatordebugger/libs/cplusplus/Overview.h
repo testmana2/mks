@@ -27,39 +27,54 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef OVERVIEW_H
+#define OVERVIEW_H
 
-#include "CPlusPlusForwardDeclarations.h"
-#include <QList>
-
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+#include <CPlusPlusForwardDeclarations.h>
+#include <QString>
 
 namespace CPlusPlus {
 
-class SimpleToken;
-
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class CPLUSPLUS_EXPORT Overview
 {
-public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    Overview(const Overview &other);
+    void operator =(const Overview &other);
 
-    QString operator()(const QTextCursor &cursor);
+public:
+    Overview();
+    ~Overview();
+
+    bool showArgumentNames() const;
+    void setShowArgumentNames(bool showArgumentNames);
+
+    bool showReturnTypes() const;
+    void setShowReturnTypes(bool showReturnTypes);
+
+    bool showFunctionSignatures() const;
+    void setShowFunctionSignatures(bool showFunctionSignatures);
+
+    // 1-based
+    // ### rename
+    unsigned markArgument() const;
+    void setMarkArgument(unsigned position);
+
+    QString operator()(Name *name) const
+    { return prettyName(name); }
+
+    QString operator()(const FullySpecifiedType &type, Name *name = 0) const
+    { return prettyType(type, name); }
+
+    QString prettyName(Name *name) const;
+    QString prettyType(const FullySpecifiedType &type, Name *name = 0) const;
+    QString prettyType(const FullySpecifiedType &type, const QString &name) const;
 
 private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
-
-    bool _jumpedComma;
+    unsigned _markArgument;
+    bool _showArgumentNames: 1;
+    bool _showReturnTypes: 1;
+    bool _showFunctionSignatures: 1;
 };
 
-} // namespace CPlusPlus
+} // end of namespace CPlusPlus
 
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // OVERVIEW_H

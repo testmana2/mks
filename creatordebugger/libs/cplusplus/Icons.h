@@ -27,39 +27,46 @@
 **
 **************************************************************************/
 
-#ifndef EXPRESSIONUNDERCURSOR_H
-#define EXPRESSIONUNDERCURSOR_H
+#ifndef CPLUSPLUS_ICONS_H
+#define CPLUSPLUS_ICONS_H
 
 #include "CPlusPlusForwardDeclarations.h"
-#include <QList>
 
-QT_BEGIN_NAMESPACE
-class QString;
-class QTextCursor;
-class QTextBlock;
-QT_END_NAMESPACE
+#include <QIcon>
 
 namespace CPlusPlus {
 
-class SimpleToken;
+class Symbol;
 
-class CPLUSPLUS_EXPORT ExpressionUnderCursor
+class CPLUSPLUS_EXPORT Icons
 {
 public:
-    ExpressionUnderCursor();
-    ~ExpressionUnderCursor();
+    Icons();
 
-    QString operator()(const QTextCursor &cursor);
+    QIcon iconForSymbol(const Symbol *symbol) const;
+
+    QIcon keywordIcon() const;
+    QIcon macroIcon() const;
 
 private:
-    int startOfMatchingBrace(const QList<SimpleToken> &tk, int index);
-    int startOfExpression(const QList<SimpleToken> &tk, int index);
-    int previousBlockState(const QTextBlock &block);
-    bool isAccessToken(const SimpleToken &tk);
-
-    bool _jumpedComma;
+    QIcon _classIcon;
+    QIcon _enumIcon;
+    QIcon _enumeratorIcon;
+    QIcon _funcPublicIcon;
+    QIcon _funcProtectedIcon;
+    QIcon _funcPrivateIcon;
+    QIcon _namespaceIcon;
+    QIcon _varPublicIcon;
+    QIcon _varProtectedIcon;
+    QIcon _varPrivateIcon;
+    QIcon _signalIcon;
+    QIcon _slotPublicIcon;
+    QIcon _slotProtectedIcon;
+    QIcon _slotPrivateIcon;
+    QIcon _keywordIcon;
+    QIcon _macroIcon;
 };
 
 } // namespace CPlusPlus
 
-#endif // EXPRESSIONUNDERCURSOR_H
+#endif // CPLUSPLUS_ICONS_H
