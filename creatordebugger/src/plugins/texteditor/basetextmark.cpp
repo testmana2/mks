@@ -27,26 +27,26 @@
 **
 **************************************************************************/
 
+#include "basetextmark.h"
 
-#ifndef BASETEXTEDITOR_H
-#define BASETEXTEDITOR_H
+using namespace TextEditor;
 
-#include <QtGui/QPlainTextEdit>
+#include <QDebug>
 
-#include "itexteditor.h"
-
-namespace TextEditor {
-
-class BaseTextEditor
-  : public QPlainTextEdit
+void BaseTextMark::updateMarker()
 {
-    Q_OBJECT
-public:	
-    static ITextEditor *openEditorAt(const QString &fileName, int line, int column = 0,
-                                     const QString &editorKind = QString());
+    qDebug()<< __FILE__ << __FUNCTION__;
+}
 
-};
+QString BaseTextMark::fileName()
+{
+    qDebug()<< __FILE__ << __FUNCTION__;
+	return QString::null;
+}
 
-} // namespace TextEditor
+int BaseTextMark::lineNumber()
+{
+    qDebug()<< __FILE__ << __FUNCTION__;
+	return 0;
+}
 
-#endif // BASETEXTEDITOR_H

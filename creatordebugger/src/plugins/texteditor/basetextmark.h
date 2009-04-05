@@ -8,16 +8,10 @@ class BaseTextMark: public QObject {
 	public:
 		BaseTextMark (const QString&, int);
 protected:
-	void updateMarker() {};
+	void updateMarker();
 public:
-	QString fileName()
-	{
-		return QString::null;
-	};
-	int lineNumber()
-	{
-		return 0;
-	};
+	QString fileName();
+	int lineNumber();
 };
 
 } // namespace TextEditor
