@@ -5,6 +5,7 @@
 #include <QStringList>
 
 class qCtagsSenseSQL;
+class qCtagsSenseLanguagesThread;
 
 class qCtagsSenseLanguagesModel : public QAbstractItemModel
 {
@@ -28,8 +29,15 @@ public slots:
 	void refresh();
 	
 protected:
+	qCtagsSenseLanguagesThread* mThread;
 	qCtagsSenseSQL* mSQL;
-	QStringList mLanguages;
+	QStringList* mLanguages;
+
+protected slots:
+	void queryFinished( const QStringList& languages );
+
+signals:
+	void ready();
 };
 
 #endif // QCTAGSSENSELANGUAGESMODEL_H
