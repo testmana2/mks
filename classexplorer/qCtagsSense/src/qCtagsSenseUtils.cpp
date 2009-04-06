@@ -316,10 +316,11 @@ bool qCtagsSenseUtils::caseInsensitiveFilePathLessThan( const QString& s1, const
 	return QFileInfo( s1 ).fileName().toLower() < QFileInfo( s2 ).fileName().toLower();
 }
 
-qCtagsSenseEntry* qCtagsSenseUtils::entryForRecord( const QSqlRecord& rec )
+qCtagsSenseEntry* qCtagsSenseUtils::entryForRecord( const QSqlRecord& rec, const QString& fileName )
 {
 	qCtagsSenseEntry* entry = new qCtagsSenseEntry;
 	
+	entry->fileName = fileName;
 	entry->lineNumberEntry = rec.value( "line_number_entry" ).toBool();
 	entry->lineNumber = rec.value( "line_number" ).value<ulong>();
 	entry->isFileScope = rec.value( "is_file_scope" ).toBool();
@@ -331,7 +332,7 @@ qCtagsSenseEntry* qCtagsSenseUtils::entryForRecord( const QSqlRecord& rec )
 	entry->access = rec.value( "access" ).toString();
 	entry->fileScope = rec.value( "file_scope" ).toString();
 	entry->implementation = rec.value( "implementation" ).toString();
-	entry->inheritance = rec.value( "inerithance" ).toString();
+	entry->inheritance = rec.value( "inheritance" ).toString();
 	entry->scope.first = rec.value( "scope_value" ).toString();
 	entry->scope.second = rec.value( "scope_key" ).toString();
 	entry->signature = rec.value( "signature" ).toString();
@@ -341,7 +342,7 @@ qCtagsSenseEntry* qCtagsSenseUtils::entryForRecord( const QSqlRecord& rec )
 	return entry;
 }
 
-QPixmap qCtagsSenseUtils::entryDecoration( qCtagsSenseEntry* entry )
+QString qCtagsSenseUtils::entryDecorationFilePath( qCtagsSenseEntry* entry )
 {
 	qCtagsSense::Kind kind = entry->kind;
 	QString access = entry->access;
@@ -417,7 +418,12 @@ QPixmap qCtagsSenseUtils::entryDecoration( qCtagsSenseEntry* entry )
 		mPixmaps[ fn ] = QPixmap( fn );
 	}
 	
-	return mPixmaps.value( fn );
+	return fn;
+}
+
+QPixmap qCtagsSenseUtils::entryDecoration( qCtagsSenseEntry* entry )
+{
+	return mPixmaps.value( entryDecorationFilePath( entry ) );
 }
 
 QString qCtagsSenseUtils::entryDisplay( qCtagsSenseEntry* entry )
@@ -436,12 +442,6 @@ QString qCtagsSenseUtils::entryDisplay( qCtagsSenseEntry* entry )
 	
 	switch ( entry->kind )
 	{
-		case qCtagsSense::Class:
-		case qCtagsSense::Structure:
-		case qCtagsSense::Union:
-			break;
-		case qCtagsSense::Macro:
-			break;
 		case qCtagsSense::Function:
 		case qCtagsSense::Prototype:
 			display.append( entry->signature );
@@ -455,6 +455,10 @@ QString qCtagsSenseUtils::entryDisplay( qCtagsSenseEntry* entry )
 				display.append( QString( ": %1" ).arg( entry->typeRef.first ) );
 			}
 			break;
+		case qCtagsSense::Class:
+		case qCtagsSense::Structure:
+		case qCtagsSense::Union:
+		case qCtagsSense::Macro:
 		case qCtagsSense::Enumerator:
 		case qCtagsSense::Enum:
 		case qCtagsSense::Namespace:
@@ -468,7 +472,51 @@ QString qCtagsSenseUtils::entryDisplay( qCtagsSenseEntry* entry )
 
 QString qCtagsSenseUtils::entryToolTip( qCtagsSenseEntry* entry )
 {
-	return entryDisplay( entry );
+	QString tooltip;
+	
+	tooltip += QString( "<b>*** %1 %2</b><br />(<u>%3:%4</u>)<br />" )
+		.arg( QString( "<img src=\"%1\" /> " ).arg( entryDecorationFilePath( entry ) ) )
+		.arg( kindText( entry->kind ) )
+		.arg( QFileInfo( entry->fileName ).fileName() )
+		.arg( entry->lineNumber );
+	
+	if ( !entry->inheritance.isEmpty() )
+	{
+		tooltip += QString( "<i>Inherits:</i> %1<br />" ).arg( entry->inheritance );
+	}
+	
+	if ( !entry->access.isEmpty() )
+	{
+		tooltip += QString( "<i>[%1]</i> " ).arg( entry->access );
+	}
+	
+	if ( !entry->implementation.isEmpty() )
+	{
+		tooltip += QString( "<i>[%1]</i> " ).arg( entry->implementation );
+	}
+	
+	if ( !entry->typeRef.first.isEmpty() )
+	{
+		tooltip += QString( "<u><i>%1</i></u> " ).arg( entry->typeRef.first );
+	}
+	
+	if ( !entry->typeRef.second.isEmpty() )
+	{
+		tooltip += QString( "%1 " ).arg( entry->typeRef.second );
+	}
+	
+	if ( entry->scope.second.isEmpty() )
+	{
+		tooltip += entry->name;
+	}
+	else
+	{
+		tooltip += QString( "%1::%2" ).arg( entry->scope.second ).arg( entry->name );
+	}
+	
+	tooltip += entry->signature;
+	
+	return tooltip;
 }
 
 #warning remove me and use pMonkeyStudio::getFiles
