@@ -84,7 +84,7 @@ protected:
 			
 			while ( q.next() )
 			{
-				qCtagsSenseEntry* entry = qCtagsSenseUtils::entryForRecord( q.record() );
+				qCtagsSenseEntry* entry = qCtagsSenseUtils::entryForRecord( q.record(), mFileName );
 				entries << entry;
 				
 				switch ( entry->kind )
