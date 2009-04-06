@@ -1,14 +1,10 @@
 #include "qCtagsSenseFilesModel.h"
 #include "qCtagsSenseSQL.h"
+#include "qCtagsSenseUtils.h"
 
 #include <QSqlRecord>
 #include <QFileInfo>
 #include <QDebug>
-
-bool qCtagsSenseFilesModel::caseInsensitiveFilePathLessThan( const QString& s1, const QString& s2 )
-{
-	return QFileInfo( s1 ).fileName().toLower() < QFileInfo( s2 ).fileName().toLower();
-}
 
 class qCtagsSenseFilesThread : public QThread
 {
@@ -110,7 +106,7 @@ protected:
 				}
 			}
 			
-			qSort( files.begin(), files.end(), qCtagsSenseFilesModel::caseInsensitiveFilePathLessThan );
+			qSort( files.begin(), files.end(), qCtagsSenseUtils::caseInsensitiveFilePathLessThan );
 			
 			emit queryFinished( files );
 			break;

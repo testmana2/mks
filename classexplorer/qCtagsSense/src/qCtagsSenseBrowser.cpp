@@ -65,7 +65,7 @@ void qCtagsSenseBrowser::on_cbLanguages_currentIndexChanged( int id )
 void qCtagsSenseBrowser::on_cbFileNames_currentIndexChanged( int id )
 {
 	mFileName = mFilesModel->fileName( id );
-	mMembersModel->populateFromFile( mFileName );
+	mMembersModel->refresh( mFileName );
 }
 
 void qCtagsSenseBrowser::on_cbMembers_currentIndexChanged( int id )
@@ -114,7 +114,7 @@ void qCtagsSenseBrowser::mFilesModel_ready()
 	
 	mFileName = mFilesModel->fileName( id );
 	cbFileNames->setCurrentIndex( id );
-	mMembersModel->populateFromFile( mFileName );
+	mMembersModel->refresh( mFileName );
 	cbFileNames->blockSignals( fileLocked );
 }
 

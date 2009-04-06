@@ -24,8 +24,6 @@ public:
 	
 	QString fileName( int id ) const;
 	int indexOf( const QString& fileName ) const;
-	
-	static bool caseInsensitiveFilePathLessThan( const QString& s1, const QString& s2 );
 
 public slots:
 	void refresh( const QString& language );

@@ -1,29 +1,10 @@
 #include "qCtagsSenseIndexer.h"
 #include "qCtagsSense.h"
+#include "qCtagsSenseUtils.h"
 #include "qCtagsSenseSQL.h"
 
 #include <QMutexLocker>
 #include <QDebug>
-
-#warning remove me and use pMonkeyStudio::getFiles
-
-QFileInfoList getFiles( QDir fromDir, const QStringList& filters, bool recursive = true )
-{
-	QFileInfoList files;
-	foreach ( QFileInfo file, fromDir.entryInfoList( QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst | QDir::Name ) )
-	{
-		if ( file.isFile() && ( filters.isEmpty() || QDir::match( filters, file.fileName() ) ) )
-			files << file;
-		else if ( file.isDir() && recursive )
-		{
-			fromDir.cd( file.filePath() );
-			files << getFiles( fromDir, filters, recursive );
-			fromDir.cdUp();
-		}
-	}
-	return files;
-}
-
 
 qCtagsSenseIndexer::qCtagsSenseIndexer( qCtagsSenseSQL* parent )
 	: QThread( parent )
@@ -242,7 +223,7 @@ bool qCtagsSenseIndexer::createEntries( int fileId, TagEntryListItem* item )
 		q.addBindValue( entry->isFileEntry );
 		q.addBindValue( entry->truncateLine );
 		q.addBindValue( entry->name );
-		q.addBindValue( qCtagsSense::kindType( QChar( entry->kind ) ) );
+		q.addBindValue( qCtagsSenseUtils::kindType( QChar( entry->kind ) ) );
 		q.addBindValue( entry->extensionFields.access );
 		q.addBindValue( entry->extensionFields.fileScope );
 		q.addBindValue( entry->extensionFields.implementation );
@@ -343,7 +324,7 @@ QMap<QString, TagEntryListItem*> qCtagsSenseIndexer::tagPathEntries( const QStri
 	
 	QDir dir( pathName );
 
-	foreach ( const QFileInfo& file, getFiles( dir, QStringList( "*" ), true ) )
+	foreach ( const QFileInfo& file, qCtagsSenseUtils::getFiles( dir, QStringList( "*" ), true ) )
 	{
 		TagEntryListItem* item = tagFileEntry( file.absoluteFilePath(), ok );
 		
