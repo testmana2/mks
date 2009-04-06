@@ -25,17 +25,14 @@ public:
 	virtual QModelIndex parent( const QModelIndex& index ) const;
 	virtual int rowCount( const QModelIndex& parent = QModelIndex() ) const;
 	virtual bool hasChildren( const QModelIndex& parent = QModelIndex() ) const;
-	
-	static QPixmap entryPixmap( qCtagsSenseEntry* entry );
 
 public slots:
-	void populateFromFile( const QString& fileName );
+	void refresh( const QString& fileName );
 
 protected:
 	qCtagsSenseMembersThread* mThread;
 	qCtagsSenseSQL* mSQL;
 	qCtagsSenseEntry* mRootEntry;
-	static QMap<QString, QPixmap> mPixmaps;
 
 protected slots:
 	void queryFinished( qCtagsSenseEntry* rootEntry );

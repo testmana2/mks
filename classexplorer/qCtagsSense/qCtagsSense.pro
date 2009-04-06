@@ -68,7 +68,8 @@ HEADERS	= src/qCtagsSense.h \
 	src/qCtagsSenseSQL.h \
 	src/qCtagsSenseLanguagesModel.h \
 	src/FileManager.h \
-	src/QTimeTracker.h
+	src/QTimeTracker.h \
+	src/qCtagsSenseUtils.h
 
 SOURCES	= src/main.cpp \
 	src/qCtagsSense.cpp \
@@ -79,4 +80,5 @@ SOURCES	= src/main.cpp \
 	src/qCtagsSenseSQL.cpp \
 	src/qCtagsSenseLanguagesModel.cpp \
 	src/FileManager.cpp \
-	src/QTimeTracker.cpp
+	src/QTimeTracker.cpp \
+	src/qCtagsSenseUtils.cpp

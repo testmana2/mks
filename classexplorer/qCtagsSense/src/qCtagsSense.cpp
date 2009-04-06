@@ -1,4 +1,5 @@
 #include "qCtagsSense.h"
+#include "qCtagsSenseUtils.h"
 #include "qCtagsSenseSQL.h"
 #include "qCtagsSenseIndexer.h"
 
@@ -6,63 +7,11 @@
 
 #include <QDebug>
 
-QMap<qCtagsSense::Kind, QChar> qCtagsSense::mKindChar;
-QMap<QChar, qCtagsSense::Kind> qCtagsSense::mCharKind;
-QMap<qCtagsSense::Kind, QString> qCtagsSense::mKindText;
-
 qCtagsSense::qCtagsSense( QObject* parent )
 	: QObject( parent )
 {
-	if ( mKindChar.isEmpty() )
-	{
-		mKindChar[ qCtagsSense::Class ] = 'c';
-		mKindChar[ qCtagsSense::Macro ] = 'd';
-		mKindChar[ qCtagsSense::Enumerator ] = 'e';
-		mKindChar[ qCtagsSense::Function ] = 'f';
-		mKindChar[ qCtagsSense::Enum ] = 'g';
-		mKindChar[ qCtagsSense::LocalVariable ] = 'l';
-		mKindChar[ qCtagsSense::Member ] = 'm';
-		mKindChar[ qCtagsSense::Namespace ] = 'n';
-		mKindChar[ qCtagsSense::Prototype ] = 'p';
-		mKindChar[ qCtagsSense::Structure ] = 's';
-		mKindChar[ qCtagsSense::Typedef ] = 't';
-		mKindChar[ qCtagsSense::Union ] = 'u';
-		mKindChar[ qCtagsSense::Variable ] = 'v';
-		mKindChar[ qCtagsSense::ExternVariable ] = 'x';
-		
-		mCharKind[ 'c' ] = qCtagsSense::Class;
-		mCharKind[ 'd' ] = qCtagsSense::Macro;
-		mCharKind[ 'e' ] = qCtagsSense::Enumerator;
-		mCharKind[ 'f' ] = qCtagsSense::Function;
-		mCharKind[ 'g' ] = qCtagsSense::Enum;
-		mCharKind[ 'l' ] = qCtagsSense::LocalVariable;
-		mCharKind[ 'm' ] = qCtagsSense::Member;
-		mCharKind[ 'n' ] = qCtagsSense::Namespace;
-		mCharKind[ 'p' ] = qCtagsSense::Prototype;
-		mCharKind[ 's' ] = qCtagsSense::Structure;
-		mCharKind[ 't' ] = qCtagsSense::Typedef;
-		mCharKind[ 'u' ] = qCtagsSense::Union;
-		mCharKind[ 'v' ] = qCtagsSense::Variable;
-		mCharKind[ 'x' ] = qCtagsSense::ExternVariable;
-		
-		mKindText[ qCtagsSense::Class ] = tr( "Class" );
-		mKindText[ qCtagsSense::Macro ] = tr( "Macro" );
-		mKindText[ qCtagsSense::Enumerator ] = tr( "Enumerator" );
-		mKindText[ qCtagsSense::Function ] = tr( "Function" );
-		mKindText[ qCtagsSense::Enum ] = tr( "Enum" );
-		mKindText[ qCtagsSense::LocalVariable ] = tr( "Local Variable" );
-		mKindText[ qCtagsSense::Member ] = tr( "Member" );
-		mKindText[ qCtagsSense::Namespace ] = tr( "Namespace" );
-		mKindText[ qCtagsSense::Prototype ] = tr( "Prototype" );
-		mKindText[ qCtagsSense::Structure ] = tr( "Structure" );
-		mKindText[ qCtagsSense::Typedef ] = tr( "Typedef" );
-		mKindText[ qCtagsSense::Union ] = tr( "Union" );
-		mKindText[ qCtagsSense::Variable ] = tr( "Variable" );
-		mKindText[ qCtagsSense::ExternVariable ] = tr( "Extern Variable" );
-		mKindText[ qCtagsSense::Unknow ] = tr( "Unknow" );
-	}
-	
 	initCtags();
+	qCtagsSenseUtils::initMaps();
 	
 	Option.include.fileNames = 1;
 	Option.include.qualifiedTags = 0;
@@ -112,31 +61,6 @@ qCtagsSenseSQL* qCtagsSense::sql() const
 qCtagsSenseIndexer* qCtagsSense::indexer() const
 {
 	return mIndexer;
-}
-
-qCtagsSense::Kind qCtagsSense::kindType( const QChar& c )
-{
-	if ( mCharKind.contains( c ) )
-	{
-		return mCharKind[ c ];
-	}
-	
-	return qCtagsSense::Unknow;
-}
-
-QChar qCtagsSense::kindChar( qCtagsSense::Kind kind )
-{
-	return mKindChar.value( kind );
-}
-
-QString qCtagsSense::kindText( qCtagsSense::Kind kind )
-{
-	return mKindText.value( kind );
-}
-
-QString qCtagsSense::kindText( const QChar& c )
-{
-	return kindText( kindType( c ) );
 }
 
 void qCtagsSense::tagEntry( const QString& fileName )

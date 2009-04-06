@@ -1,6 +1,7 @@
 #include "qCtagsSenseMembersModel.h"
 #include "qCtagsSenseSQL.h"
 #include "qCtagsSense.h"
+#include "qCtagsSenseUtils.h"
 
 #include <QSqlRecord>
 #include <QDebug>
@@ -53,31 +54,6 @@ protected:
 	qCtagsSenseEntry* mRootEntry;
 	bool mRestart;
 	
-	qCtagsSenseEntry* entryForRecord( const QSqlRecord& rec )
-	{
-		qCtagsSenseEntry* entry = new qCtagsSenseEntry;
-		
-		entry->lineNumberEntry = rec.value( "line_number_entry" ).toBool();
-		entry->lineNumber = rec.value( "line_number" ).value<ulong>();
-		entry->isFileScope = rec.value( "is_file_scope" ).toBool();
-		entry->isFileEntry = rec.value( "is_file_entry" ).toBool();
-		entry->truncateLine = rec.value( "truncate_line" ).toBool();
-		entry->name = rec.value( "name" ).toString();
-		entry->kind = (qCtagsSense::Kind)rec.value( "kind" ).toInt();
-		// extended fields
-		entry->access = rec.value( "access" ).toString();
-		entry->fileScope = rec.value( "file_scope" ).toString();
-		entry->implementation = rec.value( "implementation" ).toString();
-		entry->inheritance = rec.value( "inerithance" ).toString();
-		entry->scope.first = rec.value( "scope_value" ).toString();
-		entry->scope.second = rec.value( "scope_key" ).toString();
-		entry->signature = rec.value( "signature" ).toString();
-		entry->typeRef.first = rec.value( "type" ).toString();
-		entry->typeRef.second = rec.value( "type_name" ).toString();
-		
-		return entry;
-	}
-	
 	virtual void run()
 	{
 		{
@@ -108,14 +84,16 @@ protected:
 			
 			while ( q.next() )
 			{
-				qCtagsSenseEntry* entry = entryForRecord( q.record() );
+				qCtagsSenseEntry* entry = qCtagsSenseUtils::entryForRecord( q.record() );
 				entries << entry;
 				
 				switch ( entry->kind )
 				{
 					case qCtagsSense::Class:
 					case qCtagsSense::Enum:
+					case qCtagsSense::Namespace:
 					case qCtagsSense::Structure:
+					case qCtagsSense::Union:
 					{
 						QString scope = entry->scope.second;
 						
@@ -208,8 +186,6 @@ signals:
 	void queryFinished( qCtagsSenseEntry* rootEntry );
 };
 
-QMap<QString, QPixmap> qCtagsSenseMembersModel::mPixmaps;
-
 qCtagsSenseMembersModel::qCtagsSenseMembersModel( qCtagsSenseSQL* parent )
 	: QAbstractItemModel( parent )
 {
@@ -222,6 +198,7 @@ qCtagsSenseMembersModel::qCtagsSenseMembersModel( qCtagsSenseSQL* parent )
 
 qCtagsSenseMembersModel::~qCtagsSenseMembersModel()
 {
+	delete mRootEntry;
 }
 
 int qCtagsSenseMembersModel::columnCount( const QModelIndex& parent ) const
@@ -258,50 +235,19 @@ QVariant qCtagsSenseMembersModel::data( const QModelIndex& index, int role ) con
 	
 	qCtagsSenseEntry* entry = static_cast<qCtagsSenseEntry*>( index.internalPointer() );
 	
-	if ( role == Qt::DisplayRole )
+	switch ( role )
 	{
-		QString display = entry->name;
-		
-		if ( entry->parent == mRootEntry )
-		{
-			if ( !entry->scope.second.isEmpty() )
-			{
-				display.prepend( QString( "%1::" ).arg( entry->scope.second ) );
-			}
-		}
-		
-		switch ( entry->kind )
-		{
-			case qCtagsSense::Class:
-			case qCtagsSense::Structure:
-			case qCtagsSense::Union:
-				break;
-			case qCtagsSense::Macro:
-				break;
-			case qCtagsSense::Function:
-			case qCtagsSense::Prototype:
-				display.append( entry->signature );
-				break;
-			case qCtagsSense::LocalVariable:
-			case qCtagsSense::Member:
-			case qCtagsSense::Variable:
-			case qCtagsSense::ExternVariable:
-				if ( !entry->typeRef.first.isEmpty() )
-				{
-					display.append( QString( ": %1" ).arg( entry->typeRef.first ) );
-				}
-				break;
-		}
-		
-		return display;
-	}
-	else if ( role == Qt::ToolTipRole )
-	{
-		return data( index, Qt::DisplayRole );
-	}
-	else if ( role == Qt::DecorationRole )
-	{
-		return entryPixmap( entry );
+		case Qt::DecorationRole:
+			return qCtagsSenseUtils::entryDecoration( entry );
+			break;
+		case Qt::DisplayRole:
+			return qCtagsSenseUtils::entryDisplay( entry );
+			break;
+		case Qt::ToolTipRole:
+			return qCtagsSenseUtils::entryToolTip( entry );
+			break;
+		default:
+			break;
 	}
 	
 	return QVariant();
@@ -370,7 +316,7 @@ bool qCtagsSenseMembersModel::hasChildren( const QModelIndex& parent ) const
 	return mRootEntry ? !mRootEntry->children.isEmpty() : false;
 }
 
-void qCtagsSenseMembersModel::populateFromFile( const QString& fileName )
+void qCtagsSenseMembersModel::refresh( const QString& fileName )
 {
 	const QString sql = QString(
 		"SELECT entries.*, language FROM entries "
@@ -383,85 +329,6 @@ void qCtagsSenseMembersModel::populateFromFile( const QString& fileName )
 	
 	reset();
 	mThread->executeQuery( sql, fileName, root );
-}
-
-QPixmap qCtagsSenseMembersModel::entryPixmap( qCtagsSenseEntry* entry )
-{
-	qCtagsSense::Kind kind = entry->kind;
-	QString access = entry->access;
-	QString name;
-	
-	if ( access == "public" )
-	{
-		access.clear();
-	}
-	
-	switch ( kind )
-	{
-		case qCtagsSense::Class:
-			name = "class";
-			access.clear();
-			break;
-		case qCtagsSense::Macro:
-			name = "macro";
-			access.clear();
-			break;
-		case qCtagsSense::Enumerator:
-			name = "enumerator";
-			access.clear();
-			break;
-		case qCtagsSense::Function:
-		case qCtagsSense::Prototype:
-			name = "function";
-			break;
-		case qCtagsSense::Enum:
-			name = "enum";
-			access.clear();
-			break;
-		case qCtagsSense::LocalVariable:
-		case qCtagsSense::Member:
-		case qCtagsSense::Variable:
-		case qCtagsSense::ExternVariable:
-			name = "variable";
-			break;
-		case qCtagsSense::Namespace:
-			name = "namespace";
-			access.clear();
-			break;
-		case qCtagsSense::Structure:
-			name = "structure";
-			access.clear();
-			break;
-		case qCtagsSense::Typedef:
-			name = "typedef";
-			access.clear();
-			break;
-		case qCtagsSense::Union:
-			name = "union";
-			break;
-		case qCtagsSense::Unknow:
-			name = "unknow";
-			break;
-	}
-	
-	QString fn = name;
-	
-	if ( !access.isEmpty() )
-	{
-		fn += "_" +access;
-	}
-	
-	fn += ".png";
-	fn = QString( ":/icons/%1" ).arg( fn );
-	
-	//qWarning() << fn;
-	
-	if ( !mPixmaps.contains( fn ) )
-	{
-		mPixmaps[ fn ] = QPixmap( fn );
-	}
-	
-	return mPixmaps.value( fn );
 }
 
 void qCtagsSenseMembersModel::queryFinished( qCtagsSenseEntry* rootEntry )
