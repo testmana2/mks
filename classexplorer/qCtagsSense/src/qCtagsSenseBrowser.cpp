@@ -38,11 +38,16 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	connect( mMembersModel, SIGNAL( ready() ), this, SLOT( mMembersModel_ready() ) );
 	
 	// *********************
-	
+#if defined Q_OS_MAC
+	mSense->tagEntry( "/Developer/SDKs/MacOSX10.4u.sdk/usr/include" );
+	mSense->tagEntry( "/Users/filipeazevedo/Documents/Development/Qt4/mks/classexplorer/qCtagsSense/src" );
+#elif defined Q_OS_WIN
+#else
 	//mSense->tagEntry( "/usr/include" );
 	//mSense->tagEntry( "/home/pasnox/Development/Qt4/mks/v2/branches/dev" );
 	mSense->tagEntry( "/usr/include/qt4/Qt" );
 	mSense->tagEntry( "/home/pasnox/Development/Qt4/mks/classexplorer/qCtagsSense/src" );
+#endif
 }
 
 qCtagsSenseBrowser::~qCtagsSenseBrowser()
