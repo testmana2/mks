@@ -75,6 +75,7 @@ struct qCtagsSenseEntry
 	
 	qCtagsSenseEntry* parent;
 	
+	QString fileName;
 	bool lineNumberEntry;
 	ulong lineNumber;
 	bool isFileScope; // is header file
