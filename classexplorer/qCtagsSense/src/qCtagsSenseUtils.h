@@ -18,7 +18,8 @@ namespace qCtagsSenseUtils
 	
 	bool caseInsensitiveFilePathLessThan( const QString& s1, const QString& s2 );
 	
-	qCtagsSenseEntry* entryForRecord( const QSqlRecord& rec );
+	qCtagsSenseEntry* entryForRecord( const QSqlRecord& rec, const QString& fileName );
+	QString entryDecorationFilePath( qCtagsSenseEntry* entry );
 	QPixmap entryDecoration( qCtagsSenseEntry* entry );
 	QString entryDisplay( qCtagsSenseEntry* entry );
 	QString entryToolTip( qCtagsSenseEntry* entry );
