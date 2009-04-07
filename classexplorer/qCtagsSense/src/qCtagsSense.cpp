@@ -40,7 +40,10 @@ qCtagsSense::qCtagsSense( QObject* parent )
 	
 	mInitialized = mSQL->initializeDatabase();
 	
-	connect( mIndexer, SIGNAL( indexChanged() ), this, SIGNAL( indexChanged() ) );
+	connect( mIndexer, SIGNAL( indexingStarted() ), this, SIGNAL( indexingStarted() ) );
+	connect( mIndexer, SIGNAL( indexingProgress( int, int ) ), this, SIGNAL( indexingProgress( int, int ) ) );
+	connect( mIndexer, SIGNAL( indexingFinished() ), this, SIGNAL( indexingFinished() ) );
+	connect( mIndexer, SIGNAL( indexingChanged() ), this, SIGNAL( indexingChanged() ) );
 }
 
 qCtagsSense::~qCtagsSense()

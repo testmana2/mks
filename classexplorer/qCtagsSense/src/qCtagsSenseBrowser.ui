@@ -62,16 +62,20 @@
        <widget class="QComboBox" name="cbLanguages" />
       </item>
      </layout>
-     <zorder>lMembers</zorder>
-     <zorder>cbMembers</zorder>
-     <zorder>cbFileNames</zorder>
-     <zorder>lFileNames</zorder>
-     <zorder>lLanguages</zorder>
-     <zorder>cbLanguages</zorder>
     </widget>
    </item>
    <item>
     <widget class="QTreeView" name="tvMembers" />
+   </item>
+   <item>
+    <widget class="QProgressBar" name="pbIndexing" >
+     <property name="alignment" >
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="format" >
+      <string>Indexing at %p%</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

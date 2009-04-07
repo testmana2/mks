@@ -393,8 +393,12 @@ QMap<QString, TagEntryListItem*> qCtagsSenseIndexer::tagBuffersEntries( const QM
 
 void qCtagsSenseIndexer::run()
 {
+	emit indexingStarted();
+	
 	bool changed = false;
 	bool error = false;
+	int value = 0;
+	int total = 0;
 	
 	// start transaction
 	mSQL->database().transaction();
@@ -413,6 +417,28 @@ void qCtagsSenseIndexer::run()
 		
 		locker.unlock();
 		
+		// compute files
+		foreach ( const QString& fileName, fileNamesToIndex.keys() )
+		{
+			if ( QFileInfo( fileName ).isDir() )
+			{
+				fileNamesToIndex.remove( fileName );
+				
+				QDir dir( fileName );
+				
+				foreach ( const QFileInfo& file, qCtagsSenseUtils::getFiles( dir, QStringList( "*" ), true ) )
+				{
+					fileNamesToIndex[ file.absoluteFilePath() ] = QString::null;
+				}
+			}
+		}
+		
+		// do count
+		total += fileNamesToRemove.count();
+		total += fileNamesToIndex.count();
+		
+		emit indexingProgress( value, total );
+		
 		// deletion
 		while ( !fileNamesToRemove.isEmpty() )
 		{
@@ -425,6 +451,9 @@ void qCtagsSenseIndexer::run()
 				qWarning() << "Error while removing file";
 				error = true;
 			}
+			
+			value++;
+			emit indexingProgress( value, total );
 		}
 		
 		// indexation
@@ -445,6 +474,9 @@ void qCtagsSenseIndexer::run()
 					}
 					
 					fileNamesToIndex.remove( fileName );
+					
+					value++;
+					emit indexingProgress( value, total );
 				}
 			}
 			
@@ -461,6 +493,9 @@ void qCtagsSenseIndexer::run()
 				}
 				
 				fileNamesToIndex.clear();
+				
+				value++;
+				emit indexingProgress( value, total );
 			}
 		}
 		
@@ -488,6 +523,8 @@ void qCtagsSenseIndexer::run()
 	if ( changed && !error )
 	{
 		// inform that db has changed
-		emit indexChanged();
+		emit indexingChanged();
 	}
+	
+	emit indexingFinished();
 }

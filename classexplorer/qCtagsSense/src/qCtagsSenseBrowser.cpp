@@ -10,6 +10,7 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	: QFrame( parent )
 {
 	setupUi( this );
+	pbIndexing->setVisible( false );
 	setAttribute( Qt::WA_DeleteOnClose );
 	
 	mSense = new qCtagsSense( this );
@@ -30,7 +31,11 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	
 	mFileManager = new FileManager( this );
 	
-	connect( mSense, SIGNAL( indexChanged() ), this, SLOT( mSense_indexChanged() ) );
+	connect( mSense, SIGNAL( indexingStarted() ), pbIndexing, SLOT( show() ) );
+	connect( mSense, SIGNAL( indexingProgress( int, int ) ), this, SLOT( mSense_indexingProgress( int, int ) ) );
+	connect( mSense, SIGNAL( indexingFinished() ), pbIndexing, SLOT( hide() ) );
+	connect( mSense, SIGNAL( indexingChanged() ), this, SLOT( mSense_indexingChanged() ) );
+	
 	connect( mFileManager, SIGNAL( buffersModified( const QMap<QString, QString>& ) ), mSense, SLOT( tagEntries( const QMap<QString, QString>& ) ) );
 	connect( this, SIGNAL( memberActivated( const QString&, const QModelIndex& ) ), mFileManager, SLOT( memberActivated( const QString&, const QModelIndex& ) ) );
 	connect( mLanguagesModel, SIGNAL( ready() ), this, SLOT( mLanguagesModel_ready() ) );
@@ -45,7 +50,7 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 #else
 	//mSense->tagEntry( "/usr/include" );
 	//mSense->tagEntry( "/home/pasnox/Development/Qt4/mks/v2/branches/dev" );
-	mSense->tagEntry( "/usr/include/qt4/Qt" );
+	mSense->tagEntry( "/usr/include/qt4" );
 	mSense->tagEntry( "/home/pasnox/Development/Qt4/mks/classexplorer/qCtagsSense/src" );
 #endif
 }
@@ -79,7 +84,13 @@ void qCtagsSenseBrowser::on_tvMembers_activated( const QModelIndex& index )
 	emit memberActivated( mFileName, index );
 }
 
-void qCtagsSenseBrowser::mSense_indexChanged()
+void qCtagsSenseBrowser::mSense_indexingProgress( int value, int total )
+{
+	pbIndexing->setMaximum( total );
+	pbIndexing->setValue( value );
+}
+
+void qCtagsSenseBrowser::mSense_indexingChanged()
 {
 	mLanguage = mLanguagesModel->language( cbLanguages->currentIndex() );
 	mFileName = mFilesModel->fileName( cbFileNames->currentIndex() );

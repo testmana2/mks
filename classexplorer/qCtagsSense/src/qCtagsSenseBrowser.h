@@ -30,7 +30,8 @@ protected slots:
 	void on_cbFileNames_currentIndexChanged( int id );
 	void on_cbMembers_currentIndexChanged( int id );
 	void on_tvMembers_activated( const QModelIndex& index );
-	void mSense_indexChanged();
+	void mSense_indexingProgress( int value, int total );
+	void mSense_indexingChanged();
 	void mLanguagesModel_ready();
 	void mFilesModel_ready();
 	void mMembersModel_ready();
