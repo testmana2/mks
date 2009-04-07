@@ -50,7 +50,10 @@ protected:
 	virtual void run();
 
 signals:
-	void indexChanged();
+	void indexingStarted();
+	void indexingProgress( int value, int max );
+	void indexingFinished();
+	void indexingChanged();
 };
 
 #endif // QCTAGSSENSEINDEXER_H

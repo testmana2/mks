@@ -49,7 +49,10 @@ protected:
 	qCtagsSenseIndexer* mIndexer;
 
 signals:
-	void indexChanged();
+	void indexingStarted();
+	void indexingProgress( int value, int max );
+	void indexingFinished();
+	void indexingChanged();
 };
 
 struct qCtagsSenseEntry;
