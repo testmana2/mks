@@ -27,21 +27,14 @@
 **
 **************************************************************************/
 
-#include "session.h"
+#include "environment.h"
 
-#include <QDebug>
-
-#include <QtCore/QVariant>
+#include <QtCore/QDebug>
 
 using namespace ProjectExplorer;
 
-void SessionManager::setValue(const QString &/*name*/, const QVariant &/*value*/)
+QStringList Environment::toStringList() const
 {
-    qDebug () << __FILE__ << __FUNCTION__;
-}
-
-QVariant SessionManager::value(const QString &name)
-{
-    qDebug () << __FILE__ << __FUNCTION__;
-	return QVariant();
+	qDebug () << __FILE__ << __FUNCTION__;
+    return QStringList();
 }

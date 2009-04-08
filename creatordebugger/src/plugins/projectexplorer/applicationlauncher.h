@@ -30,6 +30,8 @@
 #ifndef APPLICATIONLAUNCHER_H
 #define APPLICATIONLAUNCHER_H
 
+#include <QtCore/QObject>
+
 namespace ProjectExplorer {
 namespace Internal {
 

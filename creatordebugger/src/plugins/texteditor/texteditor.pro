@@ -8,5 +8,6 @@ SOURCES += \
     basetextmark.cpp
 HEADERS += \
     basetexteditor.h \
+    basetextmark.h \
     itexteditor.h \
     texteditorconstants.h

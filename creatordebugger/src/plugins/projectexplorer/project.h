@@ -30,6 +30,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include <QtCore/QObject>
 
 namespace Core {
 class IFile;

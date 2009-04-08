@@ -30,6 +30,8 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
 
+#include <QtCore/QStringList>
+
 namespace ProjectExplorer {
 
 class Environment {
