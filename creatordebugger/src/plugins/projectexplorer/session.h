@@ -30,6 +30,8 @@
 #ifndef SESSION_H
 #define SESSION_H
 
+#include <QtCore/QObject>
+
 namespace ProjectExplorer {
 
 // This could be improved.

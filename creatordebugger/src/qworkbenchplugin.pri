@@ -4,3 +4,5 @@ include(qworkbench.pri)
 INCLUDEPATH	*= ${PWD}/..
 # include 'core' dirrectory
 INCLUDEPATH	*= ${PWD}/../../core
+
+QMAKE_LFLAGS-= -Wl,--no-undefined

@@ -26,6 +26,8 @@
 ** contact the sales department at qt-sales@nokia.com.
 **
 **************************************************************************/
+#include "projectexplorer.h"
+
 using namespace ProjectExplorer;
 
 #include <QtDebug>

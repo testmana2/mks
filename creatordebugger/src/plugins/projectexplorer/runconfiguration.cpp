@@ -35,7 +35,7 @@
 using namespace ProjectExplorer;
 
 // RunConfiguration
-RunConfiguration::RunConfiguration(Project *project)
+RunConfiguration::RunConfiguration(Project */*project*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
@@ -51,7 +51,7 @@ Project *RunConfiguration::project() const
 	return NULL;
 }
 
-RunControl::RunControl(QSharedPointer<RunConfiguration> runConfiguration)
+RunControl::RunControl(QSharedPointer<RunConfiguration> /*runConfiguration*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
@@ -59,5 +59,5 @@ RunControl::RunControl(QSharedPointer<RunConfiguration> runConfiguration)
 QSharedPointer<RunConfiguration> RunControl::runConfiguration()
 {
 	qDebug () << __FILE__ << __FUNCTION__;
-    return 0;
+    return QSharedPointer<RunConfiguration>();
 }
