@@ -31,10 +31,11 @@
 #include "modemanager.h"
 
 #include <QtCore/QDebug>
+#include <QtGui/QWidget>
 
 using namespace Core;
 
-FindToolBarPlaceHolder::FindToolBarPlaceHolder(Core::IMode *mode, QWidget *parent)
+FindToolBarPlaceHolder::FindToolBarPlaceHolder(Core::IMode */*mode*/, QWidget *parent)
     : QWidget(parent)
 {
 	qDebug () << __FILE__ << __FUNCTION__;    

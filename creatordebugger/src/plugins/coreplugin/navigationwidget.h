@@ -32,7 +32,11 @@
 
 #include <QtGui/QComboBox>
 
+#include "imode.h"
+
 namespace Core {
+
+class IMode;
 
 class NavigationWidgetPlaceHolder : public QWidget
 {

@@ -30,6 +30,10 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <QtCore/QObject>
+#include <QtGui/QKeySequence>
+#include <QtGui/QAction>
+
 namespace Core {
 
 class Command : public QObject

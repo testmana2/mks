@@ -27,35 +27,45 @@
 **
 **************************************************************************/
 
-#ifndef BASEMODE_H
-#define BASEMODE_H
+#ifndef PLUGINDIALOG_H
+#define PLUGINDIALOG_H
 
-#include <QtGui/QIcon>
+#include <QtGui/QDialog>
 
-#include "imode.h"
+QT_BEGIN_NAMESPACE
+class QPushButton;
+QT_END_NAMESPACE
+
+namespace ExtensionSystem {
+class PluginSpec;
+class PluginView;
+}
 
 namespace Core {
+namespace Internal {
 
-class BaseMode
-  : public IMode
+class PluginDialog : public QDialog
 {
     Q_OBJECT
+
 public:
-    BaseMode(QObject *parent = 0);
-    ~BaseMode();
+    explicit PluginDialog(QWidget *parent);
 
-	QWidget *widget();
-	
-    void setName(const QString &name);
-    void setIcon(const QIcon &icon);
-    void setPriority(int priority);
-    void setWidget(QWidget *widget);
-    void setUniqueModeName(const char *uniqueModeName);
-    void setContext(const QList<int> &context);
+private slots:
+    void updateButtons();
+    void openDetails();
+    void openDetails(ExtensionSystem::PluginSpec *spec);
+    void openErrorDetails();
 
-	const char *uniqueModeName() const;
+private:
+    ExtensionSystem::PluginView *m_view;
+
+    QPushButton *m_detailsButton;
+    QPushButton *m_errorDetailsButton;
+    QPushButton *m_closeButton;
 };
 
+} // namespace Internal
 } // namespace Core
 
-#endif // BASEMODE_H
+#endif // PLUGINDIALOG_H

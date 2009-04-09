@@ -30,7 +30,11 @@
 #ifndef MODEMANAGER_H
 #define MODEMANAGER_H
 
+#include <QtCore/QObject>
+
 namespace Core {
+
+class IMode;
 
 class ModeManager : public QObject
 {

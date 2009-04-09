@@ -30,6 +30,8 @@
 #ifndef UNIQUEIDMANAGER_H
 #define UNIQUEIDMANAGER_H
 
+#include <QtCore/QString>
+
 namespace Core {
 
 class UniqueIDManager

@@ -32,6 +32,9 @@
 
 #include <QWidget>
 
+namespace Core {
+class IMode;
+
 class RightPanePlaceHolder : public QWidget
 {
     Q_OBJECT
@@ -40,5 +43,6 @@ public:
 
 };
 
+} // namespace Core
 
 #endif // RIGHTPANE_H

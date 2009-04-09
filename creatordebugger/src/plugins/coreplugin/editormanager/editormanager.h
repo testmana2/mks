@@ -34,6 +34,9 @@
 
 namespace Core {
 
+class IEditor;
+class IMode;
+
 class EditorManager : public QWidget
 {
     Q_OBJECT
