@@ -27,35 +27,31 @@
 **
 **************************************************************************/
 
-#ifndef BASEMODE_H
-#define BASEMODE_H
+#include "modemanager.h"
 
-#include <QtGui/QIcon>
+#include <QtCore/QDebug>
 
-#include "imode.h"
+using namespace Core;
 
-namespace Core {
-
-class BaseMode
-  : public IMode
+ModeManager* ModeManager::instance()
 {
-    Q_OBJECT
-public:
-    BaseMode(QObject *parent = 0);
-    ~BaseMode();
+	qDebug () << __FILE__ << __FUNCTION__;
+    return NULL;
+}
 
-	QWidget *widget();
-	
-    void setName(const QString &name);
-    void setIcon(const QIcon &icon);
-    void setPriority(int priority);
-    void setWidget(QWidget *widget);
-    void setUniqueModeName(const char *uniqueModeName);
-    void setContext(const QList<int> &context);
+IMode *ModeManager::currentMode() const
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+    return NULL;
+}
 
-	const char *uniqueModeName() const;
-};
+IMode *ModeManager::mode(const QString &/*id*/) const
+{
+    qDebug () << __FILE__ << __FUNCTION__;
+    return NULL;
+}
 
-} // namespace Core
-
-#endif // BASEMODE_H
+void ModeManager::activateMode(const QString &/*id*/)
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+}

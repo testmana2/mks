@@ -27,35 +27,24 @@
 **
 **************************************************************************/
 
-#ifndef BASEMODE_H
-#define BASEMODE_H
+#include "uniqueidmanager.h"
 
-#include <QtGui/QIcon>
+#include <QtCore/QDebug>
 
-#include "imode.h"
+using namespace Core;
 
-namespace Core {
-
-class BaseMode
-  : public IMode
+UniqueIDManager* UniqueIDManager::instance()
 {
-    Q_OBJECT
-public:
-    BaseMode(QObject *parent = 0);
-    ~BaseMode();
+	qDebug () << __FILE__ << __FUNCTION__;
+    return NULL;
+}
 
-	QWidget *widget();
-	
-    void setName(const QString &name);
-    void setIcon(const QIcon &icon);
-    void setPriority(int priority);
-    void setWidget(QWidget *widget);
-    void setUniqueModeName(const char *uniqueModeName);
-    void setContext(const QList<int> &context);
+UniqueIDManager::UniqueIDManager()
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+}
 
-	const char *uniqueModeName() const;
-};
-
-} // namespace Core
-
-#endif // BASEMODE_H
+UniqueIDManager::~UniqueIDManager()
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+}

@@ -34,6 +34,11 @@
 
 namespace Core {
 
+class IMode;
+}
+
+namespace Core {
+
 class OutputPanePlaceHolder : public QWidget
 {
     Q_OBJECT

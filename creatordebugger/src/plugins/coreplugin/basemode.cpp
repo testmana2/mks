@@ -33,32 +33,32 @@
 
 using namespace Core;
 
-void BaseMode::setName(const QString &name)
+void BaseMode::setName(const QString &/*name*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
 
-void BaseMode::setIcon(const QIcon &icon)
+void BaseMode::setIcon(const QIcon &/*icon*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
 
-void BaseMode::setPriority(int priority)
+void BaseMode::setPriority(int /*priority*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
 
-void BaseMode::setWidget(QWidget *widget)
+void BaseMode::setWidget(QWidget */*widget*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
 
-void BaseMode::setUniqueModeName(const char *uniqueModeName)
+void BaseMode::setUniqueModeName(const char */*uniqueModeName*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
 
-void BaseMode::setContext(const QList<int> &context)
+void BaseMode::setContext(const QList<int> &/*context*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }

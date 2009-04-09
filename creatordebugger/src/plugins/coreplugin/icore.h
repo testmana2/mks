@@ -30,6 +30,8 @@
 #ifndef ICORE_H
 #define ICORE_H
 
+#include <QtCore/QObject>
+
 class QSettings;
 
 namespace Core {
