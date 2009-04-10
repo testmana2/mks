@@ -5,4 +5,5 @@ INCLUDEPATH	*= ${PWD}/..
 # include 'core' dirrectory
 INCLUDEPATH	*= ${PWD}/../../core
 
-QMAKE_LFLAGS-= -Wl,--no-undefined
+include(qworkbench.pri)
+DESTDIR = $$IDE_LIBRARY_PATH
