@@ -15,12 +15,12 @@ isEmpty(IDE_BUILD_TREE) {
     error("qworkbench.pri: including file must define IDE_BUILD_TREE (probably a relative path)")
 }
 macx {
-    IDE_APP_TARGET   = QtCreator
+    IDE_APP_TARGET   = CreatorDebugger
     IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/bin/$${IDE_APP_TARGET}.app/Contents/PlugIns
     IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH 
     contains(QT_CONFIG, ppc):CONFIG += ppc x86
 } else {
-    IDE_APP_TARGET   = qtcreator
+    IDE_APP_TARGET   = creatordebugger
     IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/lib/qtcreator
     IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH/plugins/
 }

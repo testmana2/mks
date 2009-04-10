@@ -1,0 +1,1 @@
+LIBS *= -lCore -lDebugger -lFind -lProjectExplorer -lTextEditor
