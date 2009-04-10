@@ -1,4 +1,6 @@
 TEMPLATE = lib
+CONFIG *= staticlib
+
 TARGET = Find
 include(../../qworkbenchplugin.pri)
 include(find_dependencies.pri)

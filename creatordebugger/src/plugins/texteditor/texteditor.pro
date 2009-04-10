@@ -1,4 +1,6 @@
 TEMPLATE = lib
+CONFIG *= staticlib
+
 TARGET = TextEditor
 DEFINES += TEXTEDITOR_LIBRARY
 include(../../qworkbenchplugin.pri)

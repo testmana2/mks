@@ -1,4 +1,6 @@
 TEMPLATE = lib
+CONFIG *= staticlib
+
 TARGET = ProjectExplorer
 QT += xml \
     script
