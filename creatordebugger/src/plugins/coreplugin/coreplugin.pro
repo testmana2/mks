@@ -1,4 +1,6 @@
 TEMPLATE = lib
+CONFIG *= staticlib
+
 TARGET = Core
 DEFINES += CORE_LIBRARY
 QT += xml \
