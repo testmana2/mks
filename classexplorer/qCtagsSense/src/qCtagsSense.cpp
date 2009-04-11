@@ -7,6 +7,22 @@
 
 #include <QDebug>
 
+qCtagsSenseFile::qCtagsSenseFile()
+{
+}
+
+class koiu
+{
+	koiu();
+	~koiu()
+	{
+	}
+};
+
+koiu::koiu()
+{
+}
+
 qCtagsSense::qCtagsSense( QObject* parent )
 	: QObject( parent )
 {

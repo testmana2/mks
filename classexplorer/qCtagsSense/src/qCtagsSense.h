@@ -79,6 +79,7 @@ struct qCtagsSenseEntry
 	qCtagsSenseEntry* parent;
 	
 	QString fileName;
+	QString language;
 	bool lineNumberEntry;
 	ulong lineNumber;
 	bool isFileScope; // is header file
@@ -100,6 +101,8 @@ struct qCtagsSenseEntry
 
 struct qCtagsSenseFile
 {
+	qCtagsSenseFile();
+	
 	~qCtagsSenseFile()
 	{
 		qDeleteAll( entries );

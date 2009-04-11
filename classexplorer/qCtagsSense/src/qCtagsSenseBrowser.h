@@ -7,6 +7,7 @@ class qCtagsSense;
 class qCtagsSenseLanguagesModel;
 class qCtagsSenseFilesModel;
 class qCtagsSenseMembersModel;
+class qCtagsSenseEntry;
 
 class qCtagsSenseBrowser : public QFrame, public Ui::qCtagsSenseBrowser
 {
@@ -35,9 +36,10 @@ protected slots:
 	void mLanguagesModel_ready();
 	void mFilesModel_ready();
 	void mMembersModel_ready();
+	void on_tvMembers_customContextMenuRequested( const QPoint& pos );
 
 signals:
-	void memberActivated( const QString& fileName, const QModelIndex& index );
+	void memberActivated( qCtagsSenseEntry* entry );
 };
 
 #endif // QCTAGSSENSEBROWSER_H

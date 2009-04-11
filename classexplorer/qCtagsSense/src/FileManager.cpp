@@ -70,16 +70,9 @@ void FileManager::goTo( const QString& fileName, const QPoint& pos )
 	}
 }
 
-void FileManager::memberActivated( const QString& fileName, const QModelIndex& index )
-{
-	if ( !index.isValid() )
-	{
-		return;
-	}
-	
-	qCtagsSenseEntry* entry = static_cast<qCtagsSenseEntry*>( index.internalPointer() );
-	
-	goTo( fileName, QPoint( 0, entry->lineNumber -1 ) );
+void FileManager::memberActivated( qCtagsSenseEntry* entry )
+{	
+	goTo( entry->fileName, QPoint( 0, entry->lineNumber -1 ) );
 }
 
 void FileManager::bufferModified()
