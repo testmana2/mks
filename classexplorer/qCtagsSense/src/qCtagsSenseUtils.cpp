@@ -321,6 +321,7 @@ qCtagsSenseEntry* qCtagsSenseUtils::entryForRecord( const QSqlRecord& rec, const
 	qCtagsSenseEntry* entry = new qCtagsSenseEntry;
 	
 	entry->fileName = fileName;
+	entry->language = rec.value( "language" ).toString();
 	entry->lineNumberEntry = rec.value( "line_number_entry" ).toBool();
 	entry->lineNumber = rec.value( "line_number" ).value<ulong>();
 	entry->isFileScope = rec.value( "is_file_scope" ).toBool();

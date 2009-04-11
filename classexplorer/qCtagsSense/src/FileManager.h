@@ -2,12 +2,13 @@
 #define FILEMANAGER_H
 
 #include <QObject>
-#include <QModelIndex>
 #include <QMap>
+#include <QPoint>
 #include <QPointer>
 
 class QPlainTextEdit;
 class QTimer;
+class qCtagsSenseEntry;
 
 class FileManager : public QObject
 {
@@ -20,7 +21,7 @@ public:
 public slots:
 	QPlainTextEdit* openFile( const QString& fileName );
 	void goTo( const QString& fileName, const QPoint& pos );
-	void memberActivated( const QString& fileName, const QModelIndex& index );
+	void memberActivated( qCtagsSenseEntry* entry );
 
 protected:
 	QMap<QString, QPointer<QPlainTextEdit> > mEditors;

@@ -3,8 +3,13 @@
 #include "qCtagsSenseLanguagesModel.h"
 #include "qCtagsSenseFilesModel.h"
 #include "qCtagsSenseMembersModel.h"
+#include "qCtagsSenseKindFinder.h"
 
 #include "FileManager.h"
+
+#include <QMenu>
+#include <QFileInfo>
+#include <QDebug>
 
 qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	: QFrame( parent )
@@ -12,6 +17,7 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	setupUi( this );
 	pbIndexing->setVisible( false );
 	setAttribute( Qt::WA_DeleteOnClose );
+	tvMembers->setContextMenuPolicy( Qt::CustomContextMenu );
 	
 	mSense = new qCtagsSense( this );
 	mLanguagesModel = new qCtagsSenseLanguagesModel( mSense->sql() );
@@ -37,7 +43,7 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	connect( mSense, SIGNAL( indexingChanged() ), this, SLOT( mSense_indexingChanged() ) );
 	
 	connect( mFileManager, SIGNAL( buffersModified( const QMap<QString, QString>& ) ), mSense, SLOT( tagEntries( const QMap<QString, QString>& ) ) );
-	connect( this, SIGNAL( memberActivated( const QString&, const QModelIndex& ) ), mFileManager, SLOT( memberActivated( const QString&, const QModelIndex& ) ) );
+	connect( this, SIGNAL( memberActivated( qCtagsSenseEntry* ) ), mFileManager, SLOT( memberActivated( qCtagsSenseEntry* ) ) );
 	connect( mLanguagesModel, SIGNAL( ready() ), this, SLOT( mLanguagesModel_ready() ) );
 	connect( mFilesModel, SIGNAL( ready() ), this, SLOT( mFilesModel_ready() ) );
 	connect( mMembersModel, SIGNAL( ready() ), this, SLOT( mMembersModel_ready() ) );
@@ -50,7 +56,7 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 #else
 	//mSense->tagEntry( "/usr/include" );
 	//mSense->tagEntry( "/home/pasnox/Development/Qt4/mks/v2/branches/dev" );
-	mSense->tagEntry( "/usr/include/qt4" );
+	//mSense->tagEntry( "/usr/include/qt4" );
 	mSense->tagEntry( "/home/pasnox/Development/Qt4/mks/classexplorer/qCtagsSense/src" );
 #endif
 }
@@ -76,18 +82,21 @@ void qCtagsSenseBrowser::on_cbFileNames_currentIndexChanged( int id )
 void qCtagsSenseBrowser::on_cbMembers_currentIndexChanged( int id )
 {
 	Q_UNUSED( id );
-	emit memberActivated( mFileName, cbMembers->view()->currentIndex() );
+	QModelIndex index = cbMembers->view()->currentIndex();
+	qCtagsSenseEntry* entry = static_cast<qCtagsSenseEntry*>( index.internalPointer() );
+	emit memberActivated( entry );
 }
 
 void qCtagsSenseBrowser::on_tvMembers_activated( const QModelIndex& index )
 {
-	emit memberActivated( mFileName, index );
+	qCtagsSenseEntry* entry = static_cast<qCtagsSenseEntry*>( index.internalPointer() );
+	emit memberActivated( entry );
 }
 
 void qCtagsSenseBrowser::mSense_indexingProgress( int value, int total )
 {
-	pbIndexing->setMaximum( total );
 	pbIndexing->setValue( value );
+	pbIndexing->setMaximum( total );
 }
 
 void qCtagsSenseBrowser::mSense_indexingChanged()
@@ -133,4 +142,49 @@ void qCtagsSenseBrowser::mMembersModel_ready()
 {
 	qobject_cast<QTreeView*>( cbMembers->view() )->expandAll();
 	tvMembers->expandAll();
+}
+
+void qCtagsSenseBrowser::on_tvMembers_customContextMenuRequested( const QPoint& pos )
+{
+	QModelIndex index = tvMembers->currentIndex();
+	qCtagsSenseEntry* entry = static_cast<qCtagsSenseEntry*>( index.internalPointer() );
+	//bool isCorCpp = entry->language == "C++" || entry->language == "C";
+	QMenu menu( this );
+	
+	switch ( entry->kind )
+	{
+		case qCtagsSense::Prototype:
+		case qCtagsSense::Function:
+		{
+			QAction* aDeclaration = menu.addAction( "Go to declaration" );
+			aDeclaration->setData( qCtagsSense::Prototype );
+			QAction* aImplementation = menu.addAction( "Go to implementation" );
+			aImplementation->setData( qCtagsSense::Function );
+			break;
+		}
+		default:
+		{
+			QAction* aDeclaration = menu.addAction( "Go to declaration" );
+			aDeclaration->setData( entry->kind );
+			break;
+		}
+	}
+	
+	QAction* aTriggered = menu.exec( tvMembers->mapToGlobal( pos ) );
+	
+	if ( aTriggered )
+	{
+		qCtagsSense::Kind kind = (qCtagsSense::Kind)aTriggered->data().toInt();
+		
+		if ( entry->kind == kind )
+		{
+			emit memberActivated( entry );
+		}
+		else
+		{
+			qCtagsSenseKindFinder* cpp = new qCtagsSenseKindFinder( mSense->sql() );
+			connect( cpp, SIGNAL( memberActivated( qCtagsSenseEntry* ) ), this, SIGNAL( memberActivated( qCtagsSenseEntry* ) ) );
+			cpp->goTo( kind, entry );
+		}
+	}
 }
