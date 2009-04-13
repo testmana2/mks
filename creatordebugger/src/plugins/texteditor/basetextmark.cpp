@@ -33,6 +33,11 @@ using namespace TextEditor;
 
 #include <QDebug>
 
+BaseTextMark::BaseTextMark (const QString&, int)
+{
+    qDebug()<< __FILE__ << __FUNCTION__;
+}
+
 void BaseTextMark::updateMarker()
 {
     qDebug()<< __FILE__ << __FUNCTION__;

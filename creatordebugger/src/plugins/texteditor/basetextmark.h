@@ -5,8 +5,8 @@
 namespace TextEditor {
 class BaseTextMark: public QObject {
 	
-	public:
-		BaseTextMark (const QString&, int);
+public:
+	BaseTextMark (const QString&, int);
 protected:
 	void updateMarker();
 public:
