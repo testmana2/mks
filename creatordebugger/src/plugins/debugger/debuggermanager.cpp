@@ -133,6 +133,7 @@ extern IDebuggerEngine *createScriptEngine(DebuggerManager *parent);
 
 DebuggerManager::DebuggerManager()
 {
+	qDebug () << "init resource!!!";
 	Q_INIT_RESOURCE (degugger);
     init();
 }
