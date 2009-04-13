@@ -33,6 +33,16 @@
 
 using namespace Core;
 
+BaseMode::BaseMode(QObject *parent)
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+}
+
+BaseMode::~BaseMode()
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+}
+
 void BaseMode::setName(const QString &/*name*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
@@ -59,6 +69,11 @@ void BaseMode::setUniqueModeName(const char */*uniqueModeName*/)
 }
 
 void BaseMode::setContext(const QList<int> &/*context*/)
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+}
+
+const char *BaseMode::uniqueModeName() const
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
