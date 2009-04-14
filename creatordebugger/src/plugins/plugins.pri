@@ -1,3 +1,3 @@
-LIBS *= -Wl,--whole-archive  -lCore -lDebugger -lFind -lProjectExplorer -lTextEditor -Wl,--no-whole-archive
+LIBS *= -lCore -lDebugger -lFind -lProjectExplorer -lTextEditor 
 
 INCLUDEPATH *=  $$PWD/debugger
