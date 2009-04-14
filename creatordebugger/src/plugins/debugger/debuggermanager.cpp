@@ -134,7 +134,7 @@ extern IDebuggerEngine *createScriptEngine(DebuggerManager *parent);
 DebuggerManager::DebuggerManager()
 {
 	qDebug () << "init resource!!!";
-	Q_INIT_RESOURCE (degugger);
+	Q_INIT_RESOURCE (debugger);
     init();
 }
 
@@ -235,7 +235,7 @@ void DebuggerManager::init()
     connect(sourceFilesView, SIGNAL(reloadSourceFilesRequested()),
         this, SLOT(reloadSourceFiles()));
 
-    // Registers 
+    // Registers
     QAbstractItemView *registerView =
         qobject_cast<QAbstractItemView *>(m_registerWindow);
     m_registerHandler = new RegisterHandler;
@@ -256,7 +256,7 @@ void DebuggerManager::init()
     connect(localsView, SIGNAL(requestWatchExpression(QString)),
         this, SLOT(watchExpression(QString)));
 
-    // Watchers 
+    // Watchers
     QTreeView *watchersView = qobject_cast<QTreeView *>(m_watchersWindow);
     watchersView->setModel(m_watchHandler->model());
     connect(watchersView, SIGNAL(requestAssignValue(QString,QString)),
@@ -583,8 +583,8 @@ void DebuggerManager::notifyInferiorExited()
 
 void DebuggerManager::notifyInferiorPidChanged(int pid)
 {
-    //QMessageBox::warning(0, "PID", "PID: " + QString::number(pid)); 
-    //qDebug() << "PID: " << pid; 
+    //QMessageBox::warning(0, "PID", "PID: " + QString::number(pid));
+    //qDebug() << "PID: " << pid;
     emit inferiorPidChanged(pid);
 }
 
@@ -665,7 +665,7 @@ void DebuggerManager::toggleBreakpoint(const QString &fileName, int lineNumber)
     QTC_ASSERT(m_engine, return);
     QTC_ASSERT(m_breakHandler, return);
     if (status() != DebuggerInferiorRunning
-         && status() != DebuggerInferiorStopped 
+         && status() != DebuggerInferiorStopped
          && status() != DebuggerProcessNotReady) {
         showStatusMessage(tr("Changing breakpoint state requires either a "
             "fully running or fully stopped application."));
@@ -826,7 +826,7 @@ bool DebuggerManager::startNewDebugger(StartMode mode)
 
     if (m_executable.endsWith(".js"))
         setDebuggerType(ScriptDebugger);
-    else 
+    else
         setDebuggerType(GdbDebugger);
 
     setStatus(DebuggerProcessStartingUp);
@@ -896,7 +896,7 @@ void DebuggerManager::stepExec()
     QTC_ASSERT(m_engine, return);
     resetLocation();
     m_engine->stepExec();
-} 
+}
 
 void DebuggerManager::stepOutExec()
 {
@@ -970,7 +970,7 @@ void DebuggerManager::dumpLog()
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly))
         return;
-    QTextStream ts(&file);      
+    QTextStream ts(&file);
     ts << m_outputWindow->inputContents();
     ts << "\n\n=======================================\n\n";
     ts << m_outputWindow->combinedContents();
@@ -1013,7 +1013,7 @@ void DebuggerManager::breakByFunction(const QString &functionName)
 void DebuggerManager::breakByFunction()
 {
     BreakByFunctionDialog dlg(m_mainWindow);
-    if (dlg.exec()) 
+    if (dlg.exec())
         breakByFunction(dlg.functionName());
 }
 
