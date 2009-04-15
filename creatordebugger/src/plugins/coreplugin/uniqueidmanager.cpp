@@ -48,3 +48,10 @@ UniqueIDManager::~UniqueIDManager()
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
+
+int UniqueIDManager::uniqueIdentifier(const QString &id)
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+	return 0;
+}
+
