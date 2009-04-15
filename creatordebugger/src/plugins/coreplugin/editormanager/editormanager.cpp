@@ -43,3 +43,7 @@ IEditor *EditorManager::currentEditor() const
 	qDebug () << __FILE__ << __FUNCTION__;
     return NULL;    
 }
+
+EditorManagerPlaceHolder::EditorManagerPlaceHolder(Core::IMode *mode, QWidget *parent)
+{
+}

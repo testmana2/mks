@@ -4,6 +4,7 @@ include(../plugins/plugins.pri)
 include(../qworkbench.pri)
 include(../libs/aggregation/aggregation.pri)
 include(../libs/extensionsystem/extensionsystem.pri)
+include(../libs/cplusplus/cplusplus.pri)
 include(../libs/utils/utils.pri)
 
 QT *= core gui script
