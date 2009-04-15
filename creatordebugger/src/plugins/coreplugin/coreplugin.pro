@@ -23,7 +23,8 @@ SOURCES += \
     uniqueidmanager.cpp \
     modemanager.cpp \
     findplaceholder.cpp \
-    icore.cpp
+    icore.cpp \
+    editormanager/editormanager.cpp
 HEADERS += \
     uniqueidmanager.h \
     outputpane.h \
