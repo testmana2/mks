@@ -30,6 +30,8 @@
 #ifndef IEDITOR_H
 #define IEDITOR_H
 
+#include <QObject>
+
 #include <coreplugin/ifile.h>
 #include <coreplugin/icontext.h>
 

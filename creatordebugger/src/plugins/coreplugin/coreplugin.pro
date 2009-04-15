@@ -24,11 +24,12 @@ SOURCES += \
     modemanager.cpp \
     findplaceholder.cpp \
     icore.cpp \
+    rightpane.cpp \
+    outputpane.cpp \
     editormanager/editormanager.cpp
 HEADERS += \
     uniqueidmanager.h \
     outputpane.h \
-    editormanager/ieditor.h \
     actionmanager/actioncontainer.h \
     actionmanager/actionmanager.h \
     actionmanager/command.h \
@@ -44,4 +45,5 @@ HEADERS += \
     navigationwidget.h \
     findplaceholder.h \
     rightpane.h \
-    editormanager.h
+    editormanager/editormanager.h \
+    editormanager/ieditor.h

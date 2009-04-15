@@ -27,58 +27,15 @@
 **
 **************************************************************************/
 
-#include "basemode.h"
+#include "outputpane.h"
 
 #include <QtCore/QDebug>
 
 using namespace Core;
 
-BaseMode::BaseMode(QObject *parent)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
 
-BaseMode::~BaseMode()
+OutputPanePlaceHolder::OutputPanePlaceHolder(Core::IMode */*mode*/, QWidget *parent)
+   : QWidget(parent)
 {
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-QWidget *BaseMode::widget()
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setName(const QString &/*name*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setIcon(const QIcon &/*icon*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setPriority(int /*priority*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setWidget(QWidget */*widget*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setUniqueModeName(const char */*uniqueModeName*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setContext(const QList<int> &/*context*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-const char *BaseMode::uniqueModeName() const
-{
-	qDebug () << __FILE__ << __FUNCTION__;
+    qDebug () << __FILE__ << __FUNCTION__;
 }

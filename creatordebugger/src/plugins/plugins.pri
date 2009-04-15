@@ -1,3 +1,3 @@
-LIBS *=  -lDebugger -lCore -lFind -lProjectExplorer -lTextEditor 
+LIBS *=  -lDebugger -lTextEditor -lFind -lProjectExplorer -lCore 
 
 INCLUDEPATH *=  $$PWD/debugger
