@@ -26,6 +26,7 @@ SOURCES += \
     icore.cpp \
     rightpane.cpp \
     outputpane.cpp \
+    navigationwidget.cpp \
     editormanager/editormanager.cpp
 HEADERS += \
     uniqueidmanager.h \

@@ -7,6 +7,8 @@ include(../libs/extensionsystem/extensionsystem.pri)
 include(../libs/cplusplus/cplusplus.pri)
 include(../libs/utils/utils.pri)
 
+INCLUDEPATH *= ../libs/extensionsystem
+
 QT *= core gui script
 
 TEMPLATE = app

@@ -40,6 +40,8 @@ class EXTENSIONSYSTEM_EXPORT IPlugin : public QObject
 {
     Q_OBJECT
 public:
+    virtual bool initialize(const QStringList &arguments, QString *errorString) = 0;
+    
     void addObject(QObject *obj);
     void addAutoReleasedObject(QObject *obj);
     void removeObject(QObject *obj);
