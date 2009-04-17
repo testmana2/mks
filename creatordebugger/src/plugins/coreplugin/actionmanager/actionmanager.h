@@ -30,12 +30,23 @@
 #ifndef ACTIONMANAGER_H
 #define ACTIONMANAGER_H
 
+#include "coreplugin/core_global.h"
+
 #include <coreplugin/actionmanager/actioncontainer.h>
 #include <coreplugin/actionmanager/command.h>
 
+#include <QtCore/QObject>
+#include <QtCore/QList>
+
+QT_BEGIN_NAMESPACE
+class QAction;
+class QShortcut;
+class QString;
+QT_END_NAMESPACE
+
 namespace Core {
 
-class ActionManager : public QObject
+class CORE_EXPORT ActionManager : public QObject
 {
     Q_OBJECT
 public:
@@ -43,12 +54,13 @@ public:
     virtual ~ActionManager() {}
 
     virtual ActionContainer *createMenu(const QString &id) = 0;
-    
+    virtual ActionContainer *createMenuBar(const QString &id) = 0;
+
     virtual Command *registerAction(QAction *action, const QString &id, const QList<int> &context) = 0;
-    
-    virtual ActionContainer *actionContainer(const QString &id) const = 0;
-    
+    virtual Command *registerShortcut(QShortcut *shortcut, const QString &id, const QList<int> &context) = 0;
+
     virtual Command *command(const QString &id) const = 0;
+    virtual ActionContainer *actionContainer(const QString &id) const = 0;
 };
 
 } // namespace Core

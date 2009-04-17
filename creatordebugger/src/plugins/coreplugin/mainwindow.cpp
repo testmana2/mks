@@ -27,40 +27,73 @@
 **
 **************************************************************************/
 
+#include <QtCore/QSettings>
+
+#include "mainwindow.h"
+#include "actioncontainer.h"
+#include "actionmanager_p.h"
+#include "basemode.h"
+#include "editormanager.h"
+#include "modemanager.h"
 #include "uniqueidmanager.h"
-#include "coreconstants.h"
+#include "coreimpl.h"
+
+#include <QtCore/QDebug>
 
 using namespace Core;
+using namespace Core::Internal;
 
-UniqueIDManager* UniqueIDManager::m_instance = 0;
-
-UniqueIDManager::UniqueIDManager()
+MainWindow::MainWindow() :
+    QMainWindow(),
+    m_coreImpl(new CoreImpl(this)),
+    m_uniqueIDManager(new UniqueIDManager()),
+    m_actionManager(new ActionManagerPrivate(this)),
+    m_editorManager(0),
+    m_modeManager(0)
 {
-    m_instance = this;
-    m_uniqueIdentifiers.insert(Constants::C_GLOBAL, Constants::C_GLOBAL_ID);
 }
 
-UniqueIDManager::~UniqueIDManager()
+MainWindow::~MainWindow()
 {
-    m_instance = 0;
+    hide();
+    delete m_settings;
+    delete m_uniqueIDManager;
+    delete m_editorManager;
+    delete m_modeManager;
+    delete m_coreImpl;
 }
 
-bool UniqueIDManager::hasUniqueIdentifier(const QString &id) const
+ActionManager *MainWindow::actionManager() const
 {
-    return m_uniqueIdentifiers.contains(id);
+    return m_actionManager;
 }
 
-int UniqueIDManager::uniqueIdentifier(const QString &id)
+UniqueIDManager *MainWindow::uniqueIDManager() const
 {
-    if (hasUniqueIdentifier(id))
-        return m_uniqueIdentifiers.value(id);
-
-    int uid = m_uniqueIdentifiers.count() + 1;
-    m_uniqueIdentifiers.insert(id, uid);
-    return uid;
+    return m_uniqueIDManager;
 }
 
-QString UniqueIDManager::stringForUniqueIdentifier(int uid)
+EditorManager *MainWindow::editorManager() const
 {
-    return m_uniqueIdentifiers.key(uid);
+    return m_editorManager;
+}
+
+ModeManager *MainWindow::modeManager() const
+{
+    return m_modeManager;
+}
+
+void MainWindow::addAdditionalContext(int context)
+{
+    qDebug () << __FILE__ << __FUNCTION__;
+}
+
+void MainWindow::removeAdditionalContext(int context)
+{
+    qDebug () << __FILE__ << __FUNCTION__;
+}
+
+void MainWindow::updateContext()
+{
+    qDebug () << __FILE__ << __FUNCTION__;
 }

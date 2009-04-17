@@ -43,9 +43,27 @@ class Command;
 class ActionContainer : public QObject
 {
 public:
-	virtual QMenu *menu() const = 0;
-	virtual void addAction(Core::Command *action, const QString &group = QString()) = 0;
-	virtual void addMenu(Core::ActionContainer *menu, const QString &group = QString()) = 0;
+    enum EmptyAction {
+        EA_Mask             = 0xFF00,
+        EA_None             = 0x0100,
+        EA_Hide             = 0x0200,
+        EA_Disable          = 0x0300
+    };
+
+    virtual void setEmptyAction(EmptyAction ea) = 0;
+
+    virtual int id() const = 0;
+
+    virtual QMenu *menu() const = 0;
+    virtual QMenuBar *menuBar() const = 0;
+
+    virtual QAction *insertLocation(const QString &group) const = 0;
+    virtual void appendGroup(const QString &group) = 0;
+    virtual void addAction(Core::Command *action, const QString &group = QString()) = 0;
+    virtual void addMenu(Core::ActionContainer *menu, const QString &group = QString()) = 0;
+
+    virtual bool update() = 0;
+    virtual ~ActionContainer() {}
 };
 
 } // namespace Core

@@ -27,13 +27,35 @@
 **
 **************************************************************************/
 
-#include <QtCore/QDebug>
+#ifndef COMMANDSFILE_H
+#define COMMANDSFILE_H
 
-#include "icore.h"
-using namespace Core;
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QMap>
+#include <QtCore/QList>
+#include <QtGui/QKeySequence>
 
-ICore* ICore::instance()
+namespace Core {
+namespace Internal {
+
+struct ShortcutItem;
+    
+class CommandsFile : public QObject
 {
-	qDebug () << __FILE__ << __FUNCTION__;
-    return NULL;
-}
+    Q_OBJECT
+
+public:
+    CommandsFile(const QString &filename);
+
+    QMap<QString, QKeySequence> importCommands() const;
+    bool exportCommands(const QList<ShortcutItem *> &items);
+
+private:
+    QString m_filename;
+};
+
+} // namespace Internal
+} // namespace Core
+
+#endif //COMMANDSFILE_H

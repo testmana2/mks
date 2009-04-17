@@ -8,6 +8,8 @@
 #include <debuggermanager.h>
 #include <debuggerplugin.h>
 
+#include "mainwindow.h"
+
 int main(int argc, char **argv)
 {
 	QApplication app (argc, argv);
@@ -18,6 +20,8 @@ int main(int argc, char **argv)
 	
 	mw->show();
 #endif
+	Core::Internal::MainWindow mw;
+	
 	Debugger::Internal::DebuggerPlugin plugin;
 	QString error;
 	ExtensionSystem::IPlugin* iplugin = static_cast<ExtensionSystem::IPlugin*>(&plugin);

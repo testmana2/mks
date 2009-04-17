@@ -27,33 +27,42 @@
 **
 **************************************************************************/
 
-#ifndef UNIQUEIDMANAGER_H
-#define UNIQUEIDMANAGER_H
+#ifndef COREIMPL_H
+#define COREIMPL_H
 
-#include "core_global.h"
-
-#include <QtCore/QString>
-#include <QtCore/QHash>
+#include "icore.h"
+#include "mainwindow.h"
 
 namespace Core {
+namespace Internal {
 
-class CORE_EXPORT UniqueIDManager
+class CoreImpl : public ICore
 {
+    Q_OBJECT
+
 public:
-    UniqueIDManager();
-    ~UniqueIDManager();
+    CoreImpl(MainWindow *mainwindow);
+    ~CoreImpl() {}
 
-    static UniqueIDManager *instance() { return m_instance; }
+    ActionManager *actionManager() const;
+    UniqueIDManager *uniqueIDManager() const;
+    EditorManager *editorManager() const;
+    ModeManager *modeManager() const;
 
-    bool hasUniqueIdentifier(const QString &id) const;
-    int uniqueIdentifier(const QString &id);
-    QString stringForUniqueIdentifier(int uid);
-
+    QSettings *settings() const;
+    
+    QString resourcePath() const;
+    
+    void addAdditionalContext(int context);
+    void removeAdditionalContext(int context);
+    void updateContext();
+    
 private:
-    QHash<QString, int> m_uniqueIdentifiers;
-    static UniqueIDManager *m_instance;
+    MainWindow *m_mainwindow;
+    friend class MainWindow;
 };
 
+} // namespace Internal
 } // namespace Core
 
-#endif // UNIQUEIDMANAGER_H
+#endif // COREIMPL_H

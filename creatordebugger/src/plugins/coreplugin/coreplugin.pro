@@ -19,21 +19,35 @@ DEPENDPATH += dialogs \
     actionmanager \
     editormanager
 SOURCES += \
+    mainwindow.cpp \
+    coreimpl.cpp \
     basemode.cpp \
     uniqueidmanager.cpp \
     modemanager.cpp \
     findplaceholder.cpp \
-    icore.cpp \
     rightpane.cpp \
     outputpane.cpp \
     navigationwidget.cpp \
-    editormanager/editormanager.cpp
+    editormanager/editormanager.cpp \
+    dialogs/shortcutsettings.cpp \
+    actionmanager/actionmanager.cpp \
+    actionmanager/command.cpp \
+    actionmanager/actioncontainer.cpp \
+    actionmanager/commandsfile.cpp
+
 HEADERS += \
+    core_global.h \
+    mainwindow.h \
+    coreimpl.h \
     uniqueidmanager.h \
     outputpane.h \
     actionmanager/actioncontainer.h \
     actionmanager/actionmanager.h \
     actionmanager/command.h \
+    actionmanager/actionmanager_p.h \
+    actionmanager/command_p.h \
+    actionmanager/actioncontainer_p.h \
+    actionmanager/commandsfile.h \
     dialogs/ioptionspage.h \
     icontext.h \
     icore.h \
@@ -47,4 +61,8 @@ HEADERS += \
     findplaceholder.h \
     rightpane.h \
     editormanager/editormanager.h \
-    editormanager/ieditor.h
+    editormanager/ieditor.h \
+    dialogs/shortcutsettings.h
+
+FORMS += dialogs/shortcutsettings.ui
+
