@@ -27,33 +27,63 @@
 **
 **************************************************************************/
 
-#ifndef UNIQUEIDMANAGER_H
-#define UNIQUEIDMANAGER_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
 #include "core_global.h"
 
-#include <QtCore/QString>
-#include <QtCore/QHash>
+#include <QtGui/QMainWindow>
+
+QT_BEGIN_NAMESPACE
+class QSettings;
+class QShortcut;
+QT_END_NAMESPACE
+
 
 namespace Core {
 
-class CORE_EXPORT UniqueIDManager
+class ActionManager;
+class EditorManager;
+class ModeManager;
+class UniqueIDManager;
+
+namespace Internal {
+
+class CoreImpl;
+class ActionManagerPrivate;
+
+class CORE_EXPORT MainWindow : public QMainWindow
 {
+    Q_OBJECT
+
 public:
-    UniqueIDManager();
-    ~UniqueIDManager();
+    MainWindow();
+    ~MainWindow();
+    
+    
+    Core::ActionManager *actionManager() const;
+    Core::UniqueIDManager *uniqueIDManager() const;
+    Core::EditorManager *editorManager() const;
+    Core::ModeManager *modeManager() const;
 
-    static UniqueIDManager *instance() { return m_instance; }
+    inline QSettings *settings() const { return m_settings; }
+    
+    void addAdditionalContext(int context);
+    void removeAdditionalContext(int context);
 
-    bool hasUniqueIdentifier(const QString &id) const;
-    int uniqueIdentifier(const QString &id);
-    QString stringForUniqueIdentifier(int uid);
+    void updateContext();
 
 private:
-    QHash<QString, int> m_uniqueIdentifiers;
-    static UniqueIDManager *m_instance;
+    CoreImpl *m_coreImpl;
+    UniqueIDManager *m_uniqueIDManager;
+    ActionManagerPrivate *m_actionManager;
+    EditorManager *m_editorManager;
+    ModeManager *m_modeManager;
+    
+    QSettings *m_settings;
 };
 
+} // namespace Internal
 } // namespace Core
 
-#endif // UNIQUEIDMANAGER_H
+#endif // MAINWINDOW_H

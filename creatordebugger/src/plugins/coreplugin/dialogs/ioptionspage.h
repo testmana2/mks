@@ -30,12 +30,28 @@
 #ifndef IOPTIONSPAGE_H
 #define IOPTIONSPAGE_H
 
+#include <coreplugin/core_global.h>
+
 #include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtGui/QWidget>
 
 namespace Core {
 
-class IOptionsPage : public QObject
+class CORE_EXPORT IOptionsPage : public QObject
 {
+    Q_OBJECT
+public:
+    IOptionsPage(QObject *parent = 0) : QObject(parent) {}
+    virtual ~IOptionsPage() {}
+
+    virtual QString name() const = 0;
+    virtual QString category() const = 0;
+    virtual QString trCategory() const = 0;
+
+    virtual QWidget *createPage(QWidget *parent) = 0;
+    virtual void apply() = 0;
+    virtual void finish() = 0;
 };
 
 } // namespace Core

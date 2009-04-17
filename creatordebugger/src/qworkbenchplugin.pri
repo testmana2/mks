@@ -7,3 +7,6 @@ INCLUDEPATH	*= ${PWD}/../../core
 
 include(qworkbench.pri)
 DESTDIR = $$IDE_LIBRARY_PATH
+
+CONFIG -= release
+CONFIG *= debug

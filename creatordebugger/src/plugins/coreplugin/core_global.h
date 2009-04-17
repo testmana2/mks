@@ -27,33 +27,15 @@
 **
 **************************************************************************/
 
-#ifndef UNIQUEIDMANAGER_H
-#define UNIQUEIDMANAGER_H
+#ifndef CORE_GLOBAL_H
+#define CORE_GLOBAL_H
 
-#include "core_global.h"
+#include <QtCore/qglobal.h>
 
-#include <QtCore/QString>
-#include <QtCore/QHash>
+#if defined(CORE_LIBRARY)
+#  define CORE_EXPORT Q_DECL_EXPORT
+#else
+#  define CORE_EXPORT Q_DECL_IMPORT
+#endif
 
-namespace Core {
-
-class CORE_EXPORT UniqueIDManager
-{
-public:
-    UniqueIDManager();
-    ~UniqueIDManager();
-
-    static UniqueIDManager *instance() { return m_instance; }
-
-    bool hasUniqueIdentifier(const QString &id) const;
-    int uniqueIdentifier(const QString &id);
-    QString stringForUniqueIdentifier(int uid);
-
-private:
-    QHash<QString, int> m_uniqueIdentifiers;
-    static UniqueIDManager *m_instance;
-};
-
-} // namespace Core
-
-#endif // UNIQUEIDMANAGER_H
+#endif // CORE_GLOBAL_H

@@ -60,6 +60,8 @@ public:
 	virtual EditorManager *editorManager() const = 0;
     virtual ModeManager *modeManager() const = 0;
 	
+	virtual QString resourcePath() const = 0;
+	
 	virtual void addAdditionalContext(int context) = 0;
 	virtual void removeAdditionalContext(int context) = 0;
 	
