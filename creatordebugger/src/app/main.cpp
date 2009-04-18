@@ -27,5 +27,6 @@ int main(int argc, char **argv)
 	ExtensionSystem::IPlugin* iplugin = static_cast<ExtensionSystem::IPlugin*>(&plugin);
 	iplugin->initialize (QStringList(), &error);
 	
+	mw.show();
 	return app.exec();
 }

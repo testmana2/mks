@@ -30,15 +30,25 @@
 #ifndef ICONTEXT_H
 #define ICONTEXT_H
 
+#include <coreplugin/core_global.h>
 #include <QtCore/QObject>
+
+QT_BEGIN_NAMESPACE
+class QWidget;
+QT_END_NAMESPACE
 
 namespace Core {
 
-class IContext : public QObject
+class CORE_EXPORT IContext : public QObject
 {
     Q_OBJECT
 public:
+    IContext(QObject *parent = 0) : QObject(parent) {}
+    virtual ~IContext() {}
+
+    virtual QList<int> context() const = 0;
     virtual QWidget *widget() = 0;
+    virtual QString contextHelpId() const { return QString(); }
 };
 
 } // namespace Core

@@ -29,56 +29,59 @@
 
 #include "basemode.h"
 
-#include <QtCore/QDebug>
+#include <extensionsystem/pluginmanager.h>
+
+#include <QtGui/QWidget>
 
 using namespace Core;
 
-BaseMode::BaseMode(QObject *parent)
+/*!
+    \class BaseMode
+    \mainclass
+    \ingroup qwb
+    \inheaderfile basemode.h
+    \brief A base implementation of the mode interface IMode.
+
+    The BaseMode class can be used directly for most IMode implementations. It has setter functions
+    for the mode properties and a convenience constructor.
+
+    The ownership of the widget is given to the BaseMode, so when the BaseMode is destroyed it
+    deletes its widget.
+
+    A typical use case is to do the following in the init method of a plugin:
+    \code
+    bool MyPlugin::init(QString *error_message)
+    {
+        [...]
+        addObject(new Core::BaseMode("mymode",
+            "MyPlugin.UniqueModeName",
+            icon,
+            50, // priority
+            new MyWidget));
+        [...]
+    }
+    \endcode
+*/
+
+/*!
+    \fn BaseMode::BaseMode(QObject *parent)
+
+    Creates a mode with empty name, no icon, lowest priority and no widget. You should use the
+    setter functions to give the mode a meaning.
+
+    \a parent
+*/
+BaseMode::BaseMode(QObject *parent):
+    IMode(parent),
+    m_priority(0),
+    m_widget(0)
 {
-	qDebug () << __FILE__ << __FUNCTION__;
 }
 
+/*!
+    \fn BaseMode::~BaseMode()
+*/
 BaseMode::~BaseMode()
 {
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-QWidget *BaseMode::widget()
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setName(const QString &/*name*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setIcon(const QIcon &/*icon*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setPriority(int /*priority*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setWidget(QWidget */*widget*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setUniqueModeName(const char */*uniqueModeName*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-void BaseMode::setContext(const QList<int> &/*context*/)
-{
-	qDebug () << __FILE__ << __FUNCTION__;
-}
-
-const char *BaseMode::uniqueModeName() const
-{
-	qDebug () << __FILE__ << __FUNCTION__;
+    delete m_widget;
 }
