@@ -30,30 +30,45 @@
 #ifndef BASEMODE_H
 #define BASEMODE_H
 
-#include <QtGui/QIcon>
-
+#include "core_global.h"
 #include "imode.h"
+
+#include <QtCore/QObject>
+#include <QtGui/QWidget>
 
 namespace Core {
 
-class BaseMode
+class CORE_EXPORT BaseMode
   : public IMode
 {
     Q_OBJECT
+
 public:
     BaseMode(QObject *parent = 0);
     ~BaseMode();
 
-	QWidget *widget();
-	
-    void setName(const QString &name);
-    void setIcon(const QIcon &icon);
-    void setPriority(int priority);
-    void setWidget(QWidget *widget);
-    void setUniqueModeName(const char *uniqueModeName);
-    void setContext(const QList<int> &context);
+    // IMode
+    QString name() const { return m_name; }
+    QIcon icon() const { return m_icon; }
+    int priority() const { return m_priority; }
+    QWidget *widget() { return m_widget; }
+    const char *uniqueModeName() const { return m_uniqueModeName; }
+    QList<int> context() const { return m_context; }
 
-	const char *uniqueModeName() const;
+    void setName(const QString &name) { m_name = name; }
+    void setIcon(const QIcon &icon) { m_icon = icon; }
+    void setPriority(int priority) { m_priority = priority; }
+    void setWidget(QWidget *widget) { m_widget = widget; }
+    void setUniqueModeName(const char *uniqueModeName) { m_uniqueModeName = uniqueModeName; }
+    void setContext(const QList<int> &context) { m_context = context; }
+
+private:
+    QString m_name;
+    QIcon m_icon;
+    int m_priority;
+    QWidget *m_widget;
+    const char * m_uniqueModeName;
+    QList<int> m_context;
 };
 
 } // namespace Core

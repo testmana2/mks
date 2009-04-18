@@ -47,10 +47,12 @@ MainWindow::MainWindow() :
     QMainWindow(),
     m_coreImpl(new CoreImpl(this)),
     m_uniqueIDManager(new UniqueIDManager()),
+	m_settings(new QSettings(QSettings::IniFormat, QSettings::UserScope, QLatin1String("Nokia"), QLatin1String("QtCreator"), this)),
     m_actionManager(new ActionManagerPrivate(this)),
     m_editorManager(0),
     m_modeManager(0)
 {
+	actionManager()->createMenu ("ProjectExplorer.Menu.Debug");
 }
 
 MainWindow::~MainWindow()

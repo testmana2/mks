@@ -30,14 +30,27 @@
 #ifndef IMODE_H
 #define IMODE_H
 
-#include <QObject>
+#include "icontext.h"
+
+#include <coreplugin/core_global.h>
+
+#include <QtCore/QObject>
+#include <QtGui/QIcon>
+#include <QtGui/QKeySequence>
+#include <QtGui/QLayout>
 
 namespace Core {
 
-class IMode : public QObject
+class CORE_EXPORT IMode : public IContext
 {
     Q_OBJECT
 public:
+    IMode(QObject *parent = 0) : IContext(parent) {}
+    virtual ~IMode() {}
+
+    virtual QString name() const = 0;
+    virtual QIcon icon() const = 0;
+    virtual int priority() const = 0;
     virtual const char *uniqueModeName() const = 0;
 };
 
