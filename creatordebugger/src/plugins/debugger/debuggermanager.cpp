@@ -1027,7 +1027,7 @@ void DebuggerManager::breakAtMain()
 
 void DebuggerManager::setStatus(int status)
 {
-    //qDebug() << "STATUS CHANGE: from" << m_status << "to" << status;
+    qDebug() << "STATUS CHANGE: from" << m_status << "to" << status;
 
     if (status == m_status)
         return;
@@ -1042,8 +1042,8 @@ void DebuggerManager::setStatus(int status)
     const bool starting = status == DebuggerProcessStartingUp;
     const bool running = status == DebuggerInferiorRunning;
     const bool ready = status == DebuggerInferiorStopped;
-
-    m_startExternalAction->setEnabled(!started && !starting);
+	qDebug () << started << starting;
+    m_startExternalAction->setEnabled(true);
     m_attachExternalAction->setEnabled(!started && !starting);
     m_watchAction->setEnabled(ready);
     m_breakAction->setEnabled(true);

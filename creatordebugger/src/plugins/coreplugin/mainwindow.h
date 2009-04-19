@@ -74,13 +74,13 @@ public:
     void updateContext();
 
 private:
+	QSettings *m_settings;
     CoreImpl *m_coreImpl;
     UniqueIDManager *m_uniqueIDManager;
     ActionManagerPrivate *m_actionManager;
     EditorManager *m_editorManager;
     ModeManager *m_modeManager;
     
-    QSettings *m_settings;
 };
 
 } // namespace Internal

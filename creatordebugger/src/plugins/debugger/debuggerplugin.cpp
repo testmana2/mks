@@ -552,7 +552,7 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     m->setEnabled(true);
     m->setTitle(tr("&Views"));
     mdebug->addMenu(viewsMenu, Core::Constants::G_DEFAULT_THREE);
-
+	
     m_toggleLockedAction = new QAction(tr("Locked"), this);
     m_toggleLockedAction->setCheckable(true);
     m_toggleLockedAction->setChecked(true);
