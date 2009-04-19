@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 	QString error;
 	ExtensionSystem::IPlugin* iplugin = static_cast<ExtensionSystem::IPlugin*>(&plugin);
 	iplugin->initialize (QStringList(), &error);
-	
+	mw.updateContext();
 	mw.show();
 	return app.exec();
 }

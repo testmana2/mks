@@ -101,17 +101,17 @@ ModeManager *MainWindow::modeManager() const
     return m_modeManager;
 }
 
-void MainWindow::addAdditionalContext(int context)
+void MainWindow::addAdditionalContext(int /*context*/)
 {
     qDebug () << __FILE__ << __FUNCTION__;
 }
 
-void MainWindow::removeAdditionalContext(int context)
+void MainWindow::removeAdditionalContext(int /*context*/)
 {
     qDebug () << __FILE__ << __FUNCTION__;
 }
 
 void MainWindow::updateContext()
 {
-    qDebug () << __FILE__ << __FUNCTION__;
+	m_actionManager->setContext(QList<int> ()<< 0); // FIXME do update context for activate the debugger actions
 }
