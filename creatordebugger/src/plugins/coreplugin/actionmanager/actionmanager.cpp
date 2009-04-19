@@ -328,6 +328,7 @@ Command *ActionManagerPrivate::registerOverridableAction(QAction *action, const 
     if (!a) {
         a = new OverrideableAction(uid);
         m_idCmdMap.insert(uid, a);
+		qDebug () << "new action for " << action->text();
     }
 
     if (!a->action()) {
