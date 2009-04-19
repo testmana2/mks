@@ -29,6 +29,9 @@
 
 #include <QtCore/QSettings>
 
+#include <coreplugin/coreconstants.h>
+#include <projectexplorer/projectexplorerconstants.h>
+
 #include "mainwindow.h"
 #include "actioncontainer.h"
 #include "actionmanager_p.h"
@@ -45,14 +48,27 @@ using namespace Core::Internal;
 
 MainWindow::MainWindow() :
     QMainWindow(),
+	m_settings(new QSettings(QSettings::IniFormat, QSettings::UserScope, QLatin1String("Nokia"), QLatin1String("QtCreator"), this)),
     m_coreImpl(new CoreImpl(this)),
     m_uniqueIDManager(new UniqueIDManager()),
-	m_settings(new QSettings(QSettings::IniFormat, QSettings::UserScope, QLatin1String("Nokia"), QLatin1String("QtCreator"), this)),
+
     m_actionManager(new ActionManagerPrivate(this)),
     m_editorManager(0),
     m_modeManager(0)
 {
 	actionManager()->createMenu ("ProjectExplorer.Menu.Debug");
+	
+	// from projectexplorer.cpp
+    // debug menu
+	Core::ICore *core = Core::ICore::instance();
+	Core::ActionManager *am = core->actionManager();
+    Core::ActionContainer *menubar = am->createMenuBar(Constants::MENU_BAR);
+	setMenuBar (menubar->menuBar());
+    Core::ActionContainer *mdebug =
+        am->createMenu(ProjectExplorer::Constants::M_DEBUG);
+    mdebug->menu()->setTitle("&Debug");
+    menubar->addMenu(mdebug, Core::Constants::G_VIEW);
+
 }
 
 MainWindow::~MainWindow()

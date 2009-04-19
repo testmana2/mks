@@ -7,6 +7,8 @@ include(../libs/extensionsystem/extensionsystem.pri)
 include(../libs/cplusplus/cplusplus.pri)
 include(../libs/utils/utils.pri)
 
+PRE_TARGETDEPS *= ../plugins/projectexplorer ../libs
+
 INCLUDEPATH *= ../libs/extensionsystem ../plugins/coreplugin
 
 QT *= core gui script

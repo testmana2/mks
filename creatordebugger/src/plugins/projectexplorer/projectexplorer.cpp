@@ -33,7 +33,7 @@ using namespace ProjectExplorer;
 #include <QtDebug>
 
 ProjectExplorerPlugin *ProjectExplorerPlugin::instance()
-{
+ {
 	qDebug () << __FILE__ << __FUNCTION__;
 	return NULL;
 }
