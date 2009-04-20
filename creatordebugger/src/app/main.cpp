@@ -4,7 +4,9 @@
 #include <QLabel>
 #include <QDebug>
 
+#include <extensionsystem/pluginmanager.h>
 #include <iplugin.h>
+
 #include <debuggermanager.h>
 #include <debuggerplugin.h>
 
@@ -21,6 +23,8 @@ int main(int argc, char **argv)
 	mw->show();
 #endif
 	Core::Internal::MainWindow mw;
+
+	ExtensionSystem::PluginManager pluginManager;	
 	
 	Debugger::Internal::DebuggerPlugin plugin;
 	QString error;

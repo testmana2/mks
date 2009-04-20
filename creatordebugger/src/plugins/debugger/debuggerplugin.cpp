@@ -347,7 +347,8 @@ void GdbOptionPage::apply()
 //
 ///////////////////////////////////////////////////////////////////////
 
-DebuggerPlugin::DebuggerPlugin()
+DebuggerPlugin::DebuggerPlugin():
+	IPlugin ()
 {
     m_generalOptionPage = 0;
     m_locationMark = 0;

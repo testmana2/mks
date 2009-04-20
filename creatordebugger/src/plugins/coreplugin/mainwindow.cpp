@@ -67,7 +67,7 @@ MainWindow::MainWindow() :
     Core::ActionContainer *mdebug =
         am->createMenu(ProjectExplorer::Constants::M_DEBUG);
     mdebug->menu()->setTitle("&Debug");
-    menubar->addMenu(mdebug, Core::Constants::G_VIEW);
+    menubar->addMenu(mdebug);
 
 }
 
