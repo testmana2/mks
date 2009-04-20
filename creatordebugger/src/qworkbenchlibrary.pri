@@ -1,6 +1,9 @@
 IDE_BUILD_TREE = $$OUT_PWD/../../../
 include(qworkbench.pri)
 
+CONFIG -= release
+CONFIG *= debug
+
 win32 {
 	DLLDESTDIR = $$IDE_APP_PATH
 }
