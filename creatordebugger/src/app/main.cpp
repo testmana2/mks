@@ -11,6 +11,7 @@
 #include <debuggerplugin.h>
 
 #include "mainwindow.h"
+#include "modemanager.h"
 
 int main(int argc, char **argv)
 {
@@ -22,15 +23,18 @@ int main(int argc, char **argv)
 	
 	mw->show();
 #endif
+	ExtensionSystem::PluginManager pluginManager;
+	
 	Core::Internal::MainWindow mw;
-
-	ExtensionSystem::PluginManager pluginManager;	
 	
 	Debugger::Internal::DebuggerPlugin plugin;
 	QString error;
 	ExtensionSystem::IPlugin* iplugin = static_cast<ExtensionSystem::IPlugin*>(&plugin);
 	iplugin->initialize (QStringList(), &error);
 	mw.updateContext();
+	
+	mw.setCentralWidget (mw.modeManager()->m_debugmode->widget());
+	
 	mw.show();
 	return app.exec();
 }

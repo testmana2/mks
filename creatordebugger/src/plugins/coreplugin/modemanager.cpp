@@ -28,15 +28,28 @@
 **************************************************************************/
 
 #include "modemanager.h"
+#include "mainwindow.h"
+#include <extensionsystem/pluginmanager.h>
 
 #include <QtCore/QDebug>
 
 using namespace Core;
+using namespace Core::Internal;
+
+ModeManager *ModeManager::m_instance = 0;
+
+ModeManager::ModeManager(Internal::MainWindow *mainWindow):
+	m_debugmode (0)
+{
+    m_instance = this;
+	QObject::connect(ExtensionSystem::PluginManager::instance(), SIGNAL(objectAdded(QObject*)),
+                     this, SLOT(objectAdded(QObject*)));
+}
+
 
 ModeManager* ModeManager::instance()
 {
-	qDebug () << __FILE__ << __FUNCTION__;
-    return NULL;
+	return m_instance;
 }
 
 IMode *ModeManager::currentMode() const
@@ -54,4 +67,15 @@ IMode *ModeManager::mode(const QString &/*id*/) const
 void ModeManager::activateMode(const QString &/*id*/)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
+}
+
+void ModeManager::objectAdded(QObject *obj)
+{
+    IMode *mode = Aggregation::query<IMode>(obj);
+    if (!mode)
+        return;
+	
+	m_debugmode = mode;
+	qDebug () << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ registered mode";
+    //m_mainWindow->addContextObject(mode);
 }

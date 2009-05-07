@@ -30,9 +30,16 @@
 #ifndef MODEMANAGER_H
 #define MODEMANAGER_H
 
+#include <coreplugin/imode.h>
+
 #include <QtCore/QObject>
 
 namespace Core {
+
+namespace Internal {
+class MainWindow;
+} // namespace Internal
+
 
 class IMode;
 
@@ -40,13 +47,25 @@ class ModeManager : public QObject
 {
     Q_OBJECT
 public:
+
+    ModeManager(Internal::MainWindow *mainWindow);
+	
 	IMode* currentMode() const;
 	IMode* mode(const QString &id) const;
 	
     static ModeManager *instance();
 	
+	IMode *m_debugmode; // :D
+protected:
+    static ModeManager *m_instance;
+
+signals:
+    void currentModeChanged(Core::IMode *mode);
+	
 public slots:
 	void activateMode(const QString &id);
+private slots:
+    void objectAdded(QObject *obj);
 };
 
 } // namespace Core
