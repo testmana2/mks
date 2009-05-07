@@ -39,7 +39,6 @@ class QSettings;
 class QShortcut;
 QT_END_NAMESPACE
 
-
 namespace Core {
 
 class ActionManager;
@@ -80,7 +79,6 @@ private:
     ActionManagerPrivate *m_actionManager;
     EditorManager *m_editorManager;
     ModeManager *m_modeManager;
-    
 };
 
 } // namespace Internal

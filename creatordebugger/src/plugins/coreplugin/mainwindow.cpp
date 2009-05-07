@@ -54,7 +54,7 @@ MainWindow::MainWindow() :
 
     m_actionManager(new ActionManagerPrivate(this)),
     m_editorManager(0),
-    m_modeManager(0)
+    m_modeManager(new ModeManager(this))
 {
 	actionManager()->createMenu ("ProjectExplorer.Menu.Debug");
 	
@@ -68,7 +68,10 @@ MainWindow::MainWindow() :
         am->createMenu(ProjectExplorer::Constants::M_DEBUG);
     mdebug->menu()->setTitle("&Debug");
     menubar->addMenu(mdebug);
-
+    Core::ActionContainer *mview =
+        am->createMenu(ProjectExplorer::Constants::M_VIEW);
+    mview->menu()->setTitle("&View");
+    menubar->addMenu(mview);
 }
 
 MainWindow::~MainWindow()
