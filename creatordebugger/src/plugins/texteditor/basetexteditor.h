@@ -44,7 +44,8 @@ class BaseTextEditor
 public:	
     static ITextEditor *openEditorAt(const QString &fileName, int line, int column = 0,
                                      const QString &editorKind = QString());
-
+	
+	virtual void gotoLine(int line, int column = 0) = 0;
 };
 
 } // namespace TextEditor

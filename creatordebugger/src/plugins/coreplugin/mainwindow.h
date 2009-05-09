@@ -44,6 +44,7 @@ namespace Core {
 class ActionManager;
 class EditorManager;
 class ModeManager;
+class MimeDatabase;
 class UniqueIDManager;
 
 namespace Internal {
@@ -64,7 +65,8 @@ public:
     Core::UniqueIDManager *uniqueIDManager() const;
     Core::EditorManager *editorManager() const;
     Core::ModeManager *modeManager() const;
-
+	Core::MimeDatabase *mimeDatabase() const;
+	
     inline QSettings *settings() const { return m_settings; }
     
     void addAdditionalContext(int context);
@@ -79,6 +81,7 @@ private:
     ActionManagerPrivate *m_actionManager;
     EditorManager *m_editorManager;
     ModeManager *m_modeManager;
+	MimeDatabase *m_mimeDatabase;
 };
 
 } // namespace Internal

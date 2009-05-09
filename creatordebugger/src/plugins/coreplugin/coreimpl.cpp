@@ -77,6 +77,11 @@ ModeManager *CoreImpl::modeManager() const
     return m_mainwindow->modeManager();
 }
 
+MimeDatabase *CoreImpl::mimeDatabase() const
+{
+    return m_mainwindow->mimeDatabase();
+}
+
 QSettings *CoreImpl::settings() const
 {
     return m_mainwindow->settings();
@@ -89,6 +94,11 @@ QString CoreImpl::resourcePath() const
 #else
     return QDir::cleanPath(QCoreApplication::applicationDirPath())+"/../share/qtcreator";
 #endif
+}
+
+QMainWindow *CoreImpl::mainWindow() const
+{
+    return m_mainwindow;
 }
 
 void CoreImpl::addAdditionalContext(int context)

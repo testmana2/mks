@@ -40,6 +40,7 @@ class ITextEditor : public Core::IEditor
     Q_OBJECT
 public:
 	virtual QChar characterAt(int pos) const = 0;
+	virtual void gotoLine(int line, int column = 0) = 0;
 };
 
 } // namespace TextEditor

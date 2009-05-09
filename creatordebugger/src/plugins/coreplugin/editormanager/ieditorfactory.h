@@ -27,52 +27,30 @@
 **
 **************************************************************************/
 
-#ifndef ICORE_H
-#define ICORE_H
+#ifndef IEDITORFACTORY_H
+#define IEDITORFACTORY_H
+
+#include <coreplugin/ifilefactory.h>
+#include <coreplugin/editormanager/ieditor.h>
 
 #include <QtCore/QObject>
 
-class QSettings;
-class QMainWindow;
+QT_BEGIN_NAMESPACE
+class QWidget;
+QT_END_NAMESPACE
 
 namespace Core {
 
-class IContext;
-
-class ActionManager;
-class UniqueIDManager;
-class EditorManager;
-class ModeManager;
-class MimeDatabase;
-
-class ICore : public QObject
+class CORE_EXPORT IEditorFactory : public Core::IFileFactory
 {
     Q_OBJECT
-
 public:
-    ICore() {}
-    virtual ~ICore() {}
+    IEditorFactory(QObject *parent = 0) : IFileFactory(parent) {}
+    virtual ~IEditorFactory() {}
 
-    static ICore *instance();
-	
-	virtual QSettings *settings() const = 0;
-	
-	virtual ActionManager *actionManager() const = 0;
-	virtual UniqueIDManager *uniqueIDManager() const = 0;
-	virtual EditorManager *editorManager() const = 0;
-    virtual ModeManager *modeManager() const = 0;
-	virtual MimeDatabase *mimeDatabase() const = 0;
-
-	virtual QString resourcePath() const = 0;
-	
-	virtual QMainWindow *mainWindow() const = 0;
-	
-	virtual void addAdditionalContext(int context) = 0;
-	virtual void removeAdditionalContext(int context) = 0;
-	
-	virtual void updateContext() = 0;
+    virtual IEditor *createEditor(QWidget *parent) = 0;
 };
 
 } // namespace Core
 
-#endif // ICORE_H
+#endif // IEDITORFACTORY_H

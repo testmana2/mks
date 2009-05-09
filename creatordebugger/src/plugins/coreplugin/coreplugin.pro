@@ -28,19 +28,25 @@ SOURCES += \
     rightpane.cpp \
     outputpane.cpp \
     navigationwidget.cpp \
+    mimedatabase.cpp \
     editormanager/editormanager.cpp \
     dialogs/shortcutsettings.cpp \
     actionmanager/actionmanager.cpp \
     actionmanager/command.cpp \
     actionmanager/actioncontainer.cpp \
-    actionmanager/commandsfile.cpp
+    actionmanager/commandsfile.cpp \
 
 HEADERS += \
     core_global.h \
     mainwindow.h \
     coreimpl.h \
+    ifilefactory.h \
     uniqueidmanager.h \
+    mimedatabase.h \
     outputpane.h \
+    editormanager/editormanager.h\
+    editormanager/ieditorfactory.h\
+    editormanager/ieditor.h\
     actionmanager/actioncontainer.h \
     actionmanager/actionmanager.h \
     actionmanager/command.h \
@@ -60,8 +66,6 @@ HEADERS += \
     navigationwidget.h \
     findplaceholder.h \
     rightpane.h \
-    editormanager/editormanager.h \
-    editormanager/ieditor.h \
     dialogs/shortcutsettings.h
 
 FORMS += dialogs/shortcutsettings.ui

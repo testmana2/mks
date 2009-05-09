@@ -48,11 +48,14 @@ public:
     UniqueIDManager *uniqueIDManager() const;
     EditorManager *editorManager() const;
     ModeManager *modeManager() const;
-
+	MimeDatabase *mimeDatabase() const;
+	
     QSettings *settings() const;
     
     QString resourcePath() const;
-    
+
+	QMainWindow *mainWindow() const;
+	
     void addAdditionalContext(int context);
     void removeAdditionalContext(int context);
     void updateContext();

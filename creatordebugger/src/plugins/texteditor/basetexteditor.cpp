@@ -27,6 +27,7 @@
 **
 **************************************************************************/
 
+#include <coreplugin/editormanager/editormanager.h>
 #include "basetexteditor.h"
 
 using namespace TextEditor;
@@ -38,6 +39,12 @@ ITextEditor *BaseTextEditor::openEditorAt(const QString &fileName,
                                              int column,
                                              const QString &editorKind)
 {
-	qDebug () << __FILE__ << __FUNCTION__ << fileName << line << column;
+    Core::EditorManager *editorManager = Core::EditorManager::instance();
+    Core::IEditor *editor = editorManager->openEditor(fileName, editorKind, true);
+    TextEditor::ITextEditor *texteditor = qobject_cast<TextEditor::ITextEditor *>(editor);
+    if (texteditor) {
+        texteditor->gotoLine(line, column);
+        return texteditor;
+    }
     return 0;
 }
