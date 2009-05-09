@@ -57,9 +57,26 @@ CoreImpl::CoreImpl(MainWindow *mainwindow)
     m_mainwindow = mainwindow;
 }
 
+QStringList CoreImpl::showNewItemDialog(const QString &title,
+                                        const QList<IWizard *> &wizards,
+                                        const QString &defaultLocation)
+{
+    return m_mainwindow->showNewItemDialog(title, wizards, defaultLocation);
+}
+
+void CoreImpl::showOptionsDialog(const QString &group, const QString &page)
+{
+    m_mainwindow->showOptionsDialog(group, page);
+}
+
 ActionManager *CoreImpl::actionManager() const
 {
     return m_mainwindow->actionManager();
+}
+
+FileManager *CoreImpl::fileManager() const
+{
+    return m_mainwindow->fileManager();
 }
 
 UniqueIDManager *CoreImpl::uniqueIDManager() const
@@ -67,9 +84,34 @@ UniqueIDManager *CoreImpl::uniqueIDManager() const
     return m_mainwindow->uniqueIDManager();
 }
 
+MessageManager *CoreImpl::messageManager() const
+{
+    return m_mainwindow->messageManager();
+}
+
 EditorManager *CoreImpl::editorManager() const
 {
     return m_mainwindow->editorManager();
+}
+
+ProgressManager *CoreImpl::progressManager() const
+{
+    return m_mainwindow->progressManager();
+}
+
+ScriptManager *CoreImpl::scriptManager() const
+{
+    return m_mainwindow->scriptManager();
+}
+
+VariableManager *CoreImpl::variableManager() const
+{
+    return m_mainwindow->variableManager();
+}
+
+VCSManager *CoreImpl::vcsManager() const
+{
+    return m_mainwindow->vcsManager();
 }
 
 ModeManager *CoreImpl::modeManager() const
@@ -87,6 +129,11 @@ QSettings *CoreImpl::settings() const
     return m_mainwindow->settings();
 }
 
+QPrinter *CoreImpl::printer() const
+{
+    return m_mainwindow->printer();
+}
+
 QString CoreImpl::resourcePath() const
 {
 #if defined(Q_OS_MAC)
@@ -96,11 +143,19 @@ QString CoreImpl::resourcePath() const
 #endif
 }
 
+IContext *CoreImpl::currentContextObject() const
+{
+    return m_mainwindow->currentContextObject();
+}
+
+
 QMainWindow *CoreImpl::mainWindow() const
 {
     return m_mainwindow;
 }
 
+// adds and removes additional active contexts, this context is appended to the
+// currently active contexts. call updateContext after changing
 void CoreImpl::addAdditionalContext(int context)
 {
     m_mainwindow->addAdditionalContext(context);
@@ -111,7 +166,28 @@ void CoreImpl::removeAdditionalContext(int context)
     m_mainwindow->removeAdditionalContext(context);
 }
 
+bool CoreImpl::hasContext(int context) const
+{
+    return m_mainwindow->hasContext(context);
+}
+
+void CoreImpl::addContextObject(IContext *context)
+{
+    m_mainwindow->addContextObject(context);
+}
+
+void CoreImpl::removeContextObject(IContext *context)
+{
+    m_mainwindow->removeContextObject(context);
+}
+
 void CoreImpl::updateContext()
 {
     return m_mainwindow->updateContext();
 }
+
+void CoreImpl::openFiles(const QStringList &arguments)
+{
+    m_mainwindow->openFiles(arguments);
+}
+

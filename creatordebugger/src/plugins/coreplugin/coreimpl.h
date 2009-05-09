@@ -44,21 +44,44 @@ public:
     CoreImpl(MainWindow *mainwindow);
     ~CoreImpl() {}
 
+    QStringList showNewItemDialog(const QString &title,
+                                  const QList<IWizard *> &wizards,
+                                  const QString &defaultLocation = QString());
+    void showOptionsDialog(const QString &group = QString(),
+                                   const QString &page = QString());
+	
     ActionManager *actionManager() const;
+    FileManager *fileManager() const ;
     UniqueIDManager *uniqueIDManager() const;
+    MessageManager *messageManager() const;
     EditorManager *editorManager() const;
+    ProgressManager *progressManager() const;
+    ScriptManager *scriptManager() const;
+    VariableManager *variableManager() const;
+    VCSManager *vcsManager() const;
     ModeManager *modeManager() const;
-	MimeDatabase *mimeDatabase() const;
+    MimeDatabase *mimeDatabase() const;
 	
     QSettings *settings() const;
-    
+    QPrinter *printer() const;
+
     QString resourcePath() const;
+
+    IContext *currentContextObject() const;
 
 	QMainWindow *mainWindow() const;
 	
+    // adds and removes additional active contexts, this context is appended to the
+    // currently active contexts. call updateContext after changing
     void addAdditionalContext(int context);
     void removeAdditionalContext(int context);
+    bool hasContext(int context) const;
+    void addContextObject(IContext *contex);
+    void removeContextObject(IContext *contex);
+
     void updateContext();
+
+    void openFiles(const QStringList &fileNames);
     
 private:
     MainWindow *m_mainwindow;
