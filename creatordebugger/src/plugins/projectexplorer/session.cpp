@@ -337,6 +337,7 @@ bool SessionManager::createImpl(const QString &fileName)
 
     if (success) {
         delete m_file;
+		emit sessionUnloaded();
         m_file = new SessionFile;
         m_file->setFileName(fileName);
     }
@@ -344,6 +345,9 @@ bool SessionManager::createImpl(const QString &fileName)
     if (debug)
         qDebug() << "SessionManager - creating new session returns " << success;
 
+    if (success)
+        emit sessionLoaded();
+	
     return success;
 }
 
