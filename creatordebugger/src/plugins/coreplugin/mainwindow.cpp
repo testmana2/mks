@@ -56,6 +56,8 @@ MainWindow::MainWindow() :
     m_editorManager(0),
     m_modeManager(new ModeManager(this))
 {
+	m_editorManager = new EditorManager(m_coreImpl, this);
+	
 	actionManager()->createMenu ("ProjectExplorer.Menu.Debug");
 	
 	// from projectexplorer.cpp

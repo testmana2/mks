@@ -75,6 +75,5 @@ void ModeManager::objectAdded(QObject *obj)
         return;
 	
 	m_debugmode = mode;
-	qDebug () << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ registered mode";
     //m_mainWindow->addContextObject(mode);
 }

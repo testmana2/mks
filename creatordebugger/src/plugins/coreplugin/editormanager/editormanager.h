@@ -34,6 +34,7 @@
 
 namespace Core {
 
+class ICore;
 class IEditor;
 class IMode;
 
@@ -42,13 +43,22 @@ class EditorManager : public QWidget
     Q_OBJECT
 
 public:
-    static EditorManager *instance();
+	explicit EditorManager(ICore *core, QWidget *parent);
+	
+	static EditorManager *instance() { return m_instance; }
     
     IEditor *currentEditor() const;
     QList<IEditor*> openedEditors() const;	
 	
 	QByteArray saveState() const;
     bool restoreState(const QByteArray &state);
+
+signals:
+    void editorOpened(Core::IEditor *editor);
+    void editorAboutToClose(Core::IEditor *editor);
+	
+private:
+    static EditorManager *m_instance;
 };
 
 class EditorManagerPlaceHolder : public QWidget

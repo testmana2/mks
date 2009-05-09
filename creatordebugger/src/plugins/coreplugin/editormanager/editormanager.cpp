@@ -32,10 +32,12 @@
 
 using namespace Core;
 
-EditorManager* EditorManager::instance()
+EditorManager *EditorManager::m_instance = 0;
+
+EditorManager::EditorManager(ICore *, QWidget *parent) :
+    QWidget(parent)
 {
-	qDebug () << __FILE__ << __FUNCTION__;
-    return NULL;
+    m_instance = this;
 }
 
 IEditor *EditorManager::currentEditor() const
@@ -51,7 +53,7 @@ QList<IEditor*> EditorManager::openedEditors() const
 	return editors;
 }
 
-EditorManagerPlaceHolder::EditorManagerPlaceHolder(Core::IMode *mode, QWidget *parent)
+EditorManagerPlaceHolder::EditorManagerPlaceHolder(Core::IMode *, QWidget *)
 {
 	qDebug () << __FILE__ << __FUNCTION__;
 }
