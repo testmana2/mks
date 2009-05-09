@@ -54,8 +54,7 @@ ModeManager* ModeManager::instance()
 
 IMode *ModeManager::currentMode() const
 {
-	qDebug () << __FILE__ << __FUNCTION__;
-    return NULL;
+    return m_debugmode;
 }
 
 IMode *ModeManager::mode(const QString &/*id*/) const

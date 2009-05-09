@@ -27,38 +27,46 @@
 **
 **************************************************************************/
 
-#ifndef EDITORMANAGER_H
-#define EDITORMANAGER_H
+#ifndef PERSISTENTSETTINGS_H
+#define PERSISTENTSETTINGS_H
 
-#include <QtGui/QWidget>
+#include "projectexplorer_export.h"
 
-namespace Core {
+#include <QtCore/QMap>
+#include <QtCore/QVariant>
+#include <QtXml/QDomElement>
 
-class IEditor;
-class IMode;
+namespace ProjectExplorer {
 
-class EditorManager : public QWidget
+class PROJECTEXPLORER_EXPORT PersistentSettingsReader
 {
-    Q_OBJECT
-
 public:
-    static EditorManager *instance();
-    
-    IEditor *currentEditor() const;
-    QList<IEditor*> openedEditors() const;	
-	
-	QByteArray saveState() const;
-    bool restoreState(const QByteArray &state);
+    PersistentSettingsReader();
+    QVariant restoreValue(const QString & variable) const;
+    bool load(const QString & fileName);
+    void setPrefix(const QString &prefix);
+    QString prefix() const;
+private:
+    QString m_prefix;
+    QVariant readValue(const QDomElement &valElement) const;
+    void readValues(const QDomElement &data);
+    QMap<QString, QVariant> m_valueMap;
 };
 
-class EditorManagerPlaceHolder : public QWidget
+class PROJECTEXPLORER_EXPORT PersistentSettingsWriter
 {
-    Q_OBJECT
 public:
-    EditorManagerPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
-    
+    PersistentSettingsWriter();
+    void saveValue(const QString & variable, const QVariant &value);
+    bool save(const QString & fileName, const QString & docType);
+    void setPrefix(const QString &prefix);
+    QString prefix() const;
+private:
+    QString m_prefix;
+    void writeValue(QDomElement &ps, const QVariant &value);
+    QMap<QString, QVariant> m_valueMap;
 };
 
-} // namespace Core
+} // namespace ProjectExplorer
 
-#endif // EDITORMANAGER_H
+#endif // PERSISTENTSETTINGS_H

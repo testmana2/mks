@@ -30,15 +30,25 @@
 #ifndef PROJECTEXPLORER_H
 #define PROJECTEXPLORER_H
 
+#include <QStringList>
+#include <QObject>
+
 namespace ProjectExplorer {
 
 class SessionManager;
 
-class ProjectExplorerPlugin
+class ProjectExplorerPlugin : public QObject
 {
 public:
+    ProjectExplorerPlugin();
 	static ProjectExplorerPlugin *instance();
     SessionManager *session() const;
+	
+	bool initialize(const QStringList &arguments, QString *error_message);
+	
+private:
+    static ProjectExplorerPlugin *m_instance;
+    SessionManager *m_session;
 };
 
 } // namespace ProjectExplorer

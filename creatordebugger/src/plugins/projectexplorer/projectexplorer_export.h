@@ -27,38 +27,15 @@
 **
 **************************************************************************/
 
-#ifndef EDITORMANAGER_H
-#define EDITORMANAGER_H
+#ifndef PROJECTEXPLORER_EXPORT_H
+#define PROJECTEXPLORER_EXPORT_H
 
-#include <QtGui/QWidget>
+#include <QtCore/qglobal.h>
 
-namespace Core {
+#if defined(PROJECTEXPLORER_LIBRARY)
+#  define PROJECTEXPLORER_EXPORT Q_DECL_EXPORT
+#else
+#  define PROJECTEXPLORER_EXPORT Q_DECL_IMPORT
+#endif
 
-class IEditor;
-class IMode;
-
-class EditorManager : public QWidget
-{
-    Q_OBJECT
-
-public:
-    static EditorManager *instance();
-    
-    IEditor *currentEditor() const;
-    QList<IEditor*> openedEditors() const;	
-	
-	QByteArray saveState() const;
-    bool restoreState(const QByteArray &state);
-};
-
-class EditorManagerPlaceHolder : public QWidget
-{
-    Q_OBJECT
-public:
-    EditorManagerPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
-    
-};
-
-} // namespace Core
-
-#endif // EDITORMANAGER_H
+#endif // PROJECTEXPLORER_EXPORT_H

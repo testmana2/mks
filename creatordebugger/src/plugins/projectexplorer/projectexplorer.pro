@@ -14,12 +14,14 @@ HEADERS += projectexplorer.h \
     environment.h \
     runconfiguration.h \
     applicationlauncher.h \
-    applicationrunconfiguration.h
+    applicationrunconfiguration.h \
+    persistentsettings.h
 
 SOURCES += projectexplorer.cpp \
     session.cpp \
     project.cpp \
     environment.cpp \
     runconfiguration.cpp \
+    persistentsettings.cpp
 
 DEFINES += PROJECTEXPLORER_LIBRARY

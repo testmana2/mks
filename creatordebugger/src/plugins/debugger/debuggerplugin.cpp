@@ -830,7 +830,7 @@ void DebuggerPlugin::setSessionValue(const QString &name, const QVariant &value)
     QTC_ASSERT(sessionManager(), return);
     sessionManager()->setValue(name, value);
 }
-
+#include <QDebug>
 void DebuggerPlugin::querySessionValue(const QString &name, QVariant *value)
 {
     QTC_ASSERT(sessionManager(), return);

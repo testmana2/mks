@@ -12,6 +12,7 @@
 
 #include "mainwindow.h"
 #include "modemanager.h"
+#include "projectexplorer.h"
 
 int main(int argc, char **argv)
 {
@@ -24,6 +25,9 @@ int main(int argc, char **argv)
 	mw->show();
 #endif
 	ExtensionSystem::PluginManager pluginManager;
+	// for create instance
+	ProjectExplorer::ProjectExplorerPlugin projectExplorer;
+	projectExplorer.initialize(QStringList(), &QString());
 	
 	Core::Internal::MainWindow mw;
 	
