@@ -9,7 +9,7 @@ include(../libs/utils/utils.pri)
 
 PRE_TARGETDEPS *= ../plugins/projectexplorer ../libs
 
-INCLUDEPATH *= ../libs/extensionsystem ../plugins/coreplugin ../plugins
+INCLUDEPATH *= ../libs/extensionsystem ../plugins/coreplugin ../plugins/projectexplorer ../plugins
 
 QT *= core gui script
 

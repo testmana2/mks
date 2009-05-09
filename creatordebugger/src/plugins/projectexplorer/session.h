@@ -32,16 +32,44 @@
 
 #include <QtCore/QObject>
 
+namespace Core {
+class ICore;
+}
+
+
 namespace ProjectExplorer {
+
+namespace Internal {
+class SessionFile;
+} // namespace Internal
+
 
 // This could be improved.
 class SessionManager : public QObject
 {
     Q_OBJECT
 public:
+    explicit SessionManager(QObject *parent = 0);
+	
+    // creates a new default session and switches to it
+    void createAndLoadNewDefaultSession();
+	
+    bool save();
+    bool clear();
+	
 	// Let other plugins store persistent values within the session file
 	void setValue(const QString &name, const QVariant &value);
 	QVariant value(const QString &name);
+	
+private:
+	bool createImpl(const QString &fileName);
+    void updateName(const QString &session);
+	QString sessionNameToFileName(const QString &session);
+	
+	Internal::SessionFile *m_file;
+    Core::ICore *m_core;
+	
+    QString m_sessionName;
 };
 
 } // namespace ProjectExplorer

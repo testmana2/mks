@@ -30,17 +30,38 @@
 #ifndef IFILE_H
 #define IFILE_H
 
+#include "core_global.h"
 #include <QtCore/QObject>
 
 namespace Core {
 
 class MimeType;
 
-class IFile : public QObject
+class CORE_EXPORT IFile : public QObject
 {
     Q_OBJECT
+
 public:
+    enum ReloadBehavior { AskForReload, ReloadAll, ReloadPermissions, ReloadNone };
+
+    IFile(QObject *parent = 0) : QObject(parent) {}
+    virtual ~IFile() {}
+
+    virtual bool save(const QString &fileName = QString()) = 0;
     virtual QString fileName() const = 0;
+
+    virtual QString defaultPath() const = 0;
+    virtual QString suggestedFileName() const = 0;
+    virtual QString mimeType() const = 0;
+
+    virtual bool isModified() const = 0;
+    virtual bool isReadOnly() const = 0;
+    virtual bool isSaveAsAllowed() const = 0;
+
+    virtual void modified(ReloadBehavior *behavior) = 0;
+
+signals:
+    void changed();
 };
 
 } // namespace Core

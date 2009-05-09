@@ -44,6 +44,26 @@ IEditor *EditorManager::currentEditor() const
     return NULL;    
 }
 
+QList<IEditor*> EditorManager::openedEditors() const
+{
+    QList<IEditor*> editors;
+	qDebug () << __FILE__ << __FUNCTION__;
+	return editors;
+}
+
 EditorManagerPlaceHolder::EditorManagerPlaceHolder(Core::IMode *mode, QWidget *parent)
 {
+	qDebug () << __FILE__ << __FUNCTION__;
+}
+
+QByteArray EditorManager::saveState() const
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+	return QByteArray();
+}
+
+bool EditorManager::restoreState(const QByteArray &state)
+{
+	qDebug () << __FILE__ << __FUNCTION__;
+	return false;
 }

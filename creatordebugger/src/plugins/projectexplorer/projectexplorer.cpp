@@ -27,19 +27,32 @@
 **
 **************************************************************************/
 #include "projectexplorer.h"
+#include "session.h"
 
 using namespace ProjectExplorer;
 
 #include <QtDebug>
 
+ProjectExplorerPlugin *ProjectExplorerPlugin::m_instance = 0;
+
+ProjectExplorerPlugin::ProjectExplorerPlugin()
+{
+    m_instance = this;
+}
+
+bool ProjectExplorerPlugin::initialize(const QStringList&, QString*)
+{
+    m_session = new SessionManager(this);
+}
+
 ProjectExplorerPlugin *ProjectExplorerPlugin::instance()
- {
-	qDebug () << __FILE__ << __FUNCTION__;
-	return NULL;
+{
+    return m_instance;
 }
 
 SessionManager *ProjectExplorerPlugin::session() const
 {
-	qDebug () << __FILE__ << __FUNCTION__;
+	
+    return m_session;
 	return NULL;
 }
