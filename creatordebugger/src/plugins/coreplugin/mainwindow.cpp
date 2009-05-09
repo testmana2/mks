@@ -110,12 +110,12 @@ ModeManager *MainWindow::modeManager() const
 
 void MainWindow::addAdditionalContext(int /*context*/)
 {
-    qDebug () << __FILE__ << __FUNCTION__;
+    //qDebug () << __FILE__ << __FUNCTION__;
 }
 
 void MainWindow::removeAdditionalContext(int /*context*/)
 {
-    qDebug () << __FILE__ << __FUNCTION__;
+    //qDebug () << __FILE__ << __FUNCTION__;
 }
 
 void MainWindow::updateContext()
