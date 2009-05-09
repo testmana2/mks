@@ -65,7 +65,7 @@ IMode *ModeManager::mode(const QString &/*id*/) const
 
 void ModeManager::activateMode(const QString &/*id*/)
 {
-	qDebug () << __FILE__ << __FUNCTION__;
+	// Debug mode allways is active;
 }
 
 void ModeManager::objectAdded(QObject *obj)
