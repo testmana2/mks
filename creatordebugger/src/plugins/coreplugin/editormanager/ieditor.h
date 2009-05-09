@@ -42,6 +42,8 @@ class IEditor : public IContext
     Q_OBJECT
 public:
     virtual IFile *file() = 0;
+
+    virtual bool open(const QString &fileName = QString()) = 0;
     
     virtual int currentLine() const { return 0; };
     virtual int currentColumn() const { return 0; };

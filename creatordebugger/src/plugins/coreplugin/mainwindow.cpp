@@ -38,6 +38,7 @@
 #include "basemode.h"
 #include "editormanager.h"
 #include "modemanager.h"
+#include "mimedatabase.h"
 #include "uniqueidmanager.h"
 #include "coreimpl.h"
 
@@ -54,7 +55,8 @@ MainWindow::MainWindow() :
 
     m_actionManager(new ActionManagerPrivate(this)),
     m_editorManager(0),
-    m_modeManager(new ModeManager(this))
+    m_modeManager(new ModeManager(this)),
+    m_mimeDatabase(new MimeDatabase)
 {
 	m_editorManager = new EditorManager(m_coreImpl, this);
 	
@@ -106,6 +108,11 @@ EditorManager *MainWindow::editorManager() const
 ModeManager *MainWindow::modeManager() const
 {
     return m_modeManager;
+}
+
+MimeDatabase *MainWindow::mimeDatabase() const
+{
+    return m_mimeDatabase;
 }
 
 void MainWindow::addAdditionalContext(int /*context*/)

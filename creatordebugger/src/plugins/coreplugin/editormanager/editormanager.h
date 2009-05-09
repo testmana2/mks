@@ -36,29 +36,49 @@ namespace Core {
 
 class ICore;
 class IEditor;
+class IEditorFactory;
 class IMode;
+class EditorGroup;
+class MimeType;
 
 class EditorManager : public QWidget
 {
     Q_OBJECT
 
 public:
+    typedef QList<IEditorFactory*> EditorFactoryList;
+	
 	explicit EditorManager(ICore *core, QWidget *parent);
 	
 	static EditorManager *instance() { return m_instance; }
     
+    IEditor *openEditor(const QString &fileName,
+                        const QString &editorKind = QString(),
+                        bool ignoreNavigationHistory = false);
+	
+	QList<IEditor *> editorsForFileName(const QString &filename) const;
+	
+	void setCurrentEditor(IEditor *editor, bool ignoreNavigationHistory = false);
     IEditor *currentEditor() const;
     QList<IEditor*> openedEditors() const;	
 	
 	QByteArray saveState() const;
     bool restoreState(const QByteArray &state);
 
+    EditorFactoryList editorFactories(const MimeType &mimeType, bool bestMatchOnly = true) const;
+	
 signals:
+    void editorCreated(Core::IEditor *editor, const QString &fileName);
     void editorOpened(Core::IEditor *editor);
     void editorAboutToClose(Core::IEditor *editor);
 	
 private:
+    IEditor *createEditor(const QString &mimeType = QString(),
+                          const QString &fileName = QString());
+    void insertEditor(IEditor *editor, bool ignoreNavigationHistory = false, EditorGroup *group = 0);
+	
     static EditorManager *m_instance;
+	Core::ICore *m_core;
 };
 
 class EditorManagerPlaceHolder : public QWidget
