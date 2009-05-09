@@ -60,6 +60,11 @@ public:
 	// Let other plugins store persistent values within the session file
 	void setValue(const QString &name, const QVariant &value);
 	QVariant value(const QString &name);
+
+signals:
+    void sessionUnloaded();
+    void sessionLoaded();
+    void aboutToSaveSession();
 	
 private:
 	bool createImpl(const QString &fileName);
