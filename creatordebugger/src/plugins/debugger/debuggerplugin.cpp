@@ -612,7 +612,7 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     QWidget *centralWidget = new QWidget;
 
     m_manager->mainWindow()->setCentralWidget(centralWidget);
-
+#if 0
     MiniSplitter *splitter = new MiniSplitter;
     splitter->addWidget(m_manager->mainWindow());
     splitter->addWidget(new OutputPanePlaceHolder(m_debugMode));
@@ -625,8 +625,9 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     splitter2->addWidget(splitter);
     splitter2->setStretchFactor(0, 0);
     splitter2->setStretchFactor(1, 1);
-
-    m_debugMode->setWidget(splitter2);
+#endif
+	
+    m_debugMode->setWidget(m_manager->mainWindow());
 
     QToolBar *debugToolBar = new QToolBar;
     debugToolBar->setProperty("topBorder", true);

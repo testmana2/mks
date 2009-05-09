@@ -68,10 +68,12 @@ MainWindow::MainWindow() :
         am->createMenu(ProjectExplorer::Constants::M_DEBUG);
     mdebug->menu()->setTitle("&Debug");
     menubar->addMenu(mdebug);
+#if 0
     Core::ActionContainer *mview =
         am->createMenu(ProjectExplorer::Constants::M_VIEW);
     mview->menu()->setTitle("&View");
     menubar->addMenu(mview);
+#endif
 }
 
 MainWindow::~MainWindow()
