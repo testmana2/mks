@@ -47,6 +47,22 @@ namespace Internal {
 class PluginDialog : public QDialog
 {
     Q_OBJECT
+
+public:
+    explicit PluginDialog(QWidget *parent);
+
+private slots:
+    void updateButtons();
+    void openDetails();
+    void openDetails(ExtensionSystem::PluginSpec *spec);
+    void openErrorDetails();
+
+private:
+    ExtensionSystem::PluginView *m_view;
+
+    QPushButton *m_detailsButton;
+    QPushButton *m_errorDetailsButton;
+    QPushButton *m_closeButton;
 };
 
 } // namespace Internal

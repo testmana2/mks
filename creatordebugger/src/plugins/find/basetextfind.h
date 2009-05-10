@@ -30,14 +30,56 @@
 #ifndef BASETEXTFIND_H
 #define BASETEXTFIND_H
 
-#include <QtCore/QObject>
+#include "find_global.h"
+#include "ifindsupport.h"
+
+#include <QtCore/QPointer>
+#include <QtGui/QPlainTextEdit>
 
 namespace Find {
 
-class BaseTextFind: public QObject
+class FIND_EXPORT BaseTextFind : public Find::IFindSupport
 {
+    Q_OBJECT
+
 public:
-    BaseTextFind (void*);
+    BaseTextFind(QPlainTextEdit *editor);
+    BaseTextFind(QTextEdit *editor);
+
+    bool supportsReplace() const;
+    void resetIncrementalSearch();
+    void clearResults();
+    QString currentFindString() const;
+    QString completedFindString() const;
+
+    bool findIncremental(const QString &txt, QTextDocument::FindFlags findFlags);
+    bool findStep(const QString &txt, QTextDocument::FindFlags findFlags);
+    bool replaceStep(const QString &before, const QString &after,
+        QTextDocument::FindFlags findFlags);
+    int replaceAll(const QString &before, const QString &after,
+        QTextDocument::FindFlags findFlags);
+
+    void defineFindScope();
+    void clearFindScope();
+
+signals:
+    void highlightAll(const QString &txt, QTextDocument::FindFlags findFlags);
+    void findScopeChanged(const QTextCursor &);
+
+private:
+    bool find(const QString &txt,
+              QTextDocument::FindFlags findFlags,
+              QTextCursor start);
+
+    QTextCursor textCursor() const;
+    void setTextCursor(const QTextCursor&);
+    QTextDocument *document() const;
+    bool isReadOnly() const;
+    QPointer<QTextEdit> m_editor;
+    QPointer<QPlainTextEdit> m_plaineditor;
+    QTextCursor m_findScope;
+    bool inScope(int startPosition, int endPosition) const;
+    int m_incrementalStartPos;
 };
 
 } // namespace Find

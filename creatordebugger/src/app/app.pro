@@ -5,6 +5,7 @@ include(../qworkbench.pri)
 include(../libs/aggregation/aggregation.pri)
 include(../libs/extensionsystem/extensionsystem.pri)
 include(../libs/cplusplus/cplusplus.pri)
+include(../libs/qtconcurrent/qtconcurrent.pri)
 include(../libs/utils/utils.pri)
 
 PRE_TARGETDEPS *= ../plugins/projectexplorer ../libs

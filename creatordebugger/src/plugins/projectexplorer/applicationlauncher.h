@@ -31,6 +31,11 @@
 #define APPLICATIONLAUNCHER_H
 
 #include <QtCore/QObject>
+#include <QtCore/QStringList>
+#include <QtCore/QProcess>
+#ifndef Q_OS_WIN
+#include <QtCore/QTextCodec>
+#endif
 
 namespace ProjectExplorer {
 namespace Internal {
@@ -43,6 +48,51 @@ class ApplicationLauncher : public QObject
     Q_OBJECT
 
 public:
+    enum Mode {
+        Console,
+        Gui
+    };
+
+    ApplicationLauncher(QObject *parent = 0);
+    void setWorkingDirectory(const QString &dir);
+    void setEnvironment(const QStringList &env);
+
+    void start(Mode mode, const QString &program,
+               const QStringList &args = QStringList());
+    void stop();
+    bool isRunning() const;
+    qint64 applicationPID() const;
+
+signals:
+    void applicationError(const QString &error);
+    void appendOutput(const QString &line);
+    void processExited(int exitCode);
+    void bringToForegroundRequested(qint64 pid);
+
+private slots:
+    void processStopped();
+#ifdef Q_OS_WIN
+    void readWinDebugOutput(const QString &output);
+    void processFinished(int exitCode);
+#else
+    void guiProcessError();
+    void readStandardOutput();
+    void processDone(int, QProcess::ExitStatus);
+#endif
+
+    void bringToForeground();
+
+private:
+    QProcess *m_guiProcess;
+    ConsoleProcess *m_consoleProcess;
+    Mode m_currentMode;
+
+#ifdef Q_OS_WIN
+    WinGuiProcess *m_winGuiProcess;
+#else
+    QTextCodec *m_outputCodec;
+    QTextCodec::ConverterState m_outputCodecState;
+#endif
 };
 
 } // namespace Internal

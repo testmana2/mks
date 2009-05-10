@@ -30,13 +30,36 @@
 #include "findplaceholder.h"
 #include "modemanager.h"
 
-#include <QtCore/QDebug>
-#include <QtGui/QWidget>
+#include <QtGui/QVBoxLayout>
+
 
 using namespace Core;
 
-FindToolBarPlaceHolder::FindToolBarPlaceHolder(Core::IMode */*mode*/, QWidget *parent)
-    : QWidget(parent)
+FindToolBarPlaceHolder *FindToolBarPlaceHolder::m_current = 0;
+
+FindToolBarPlaceHolder::FindToolBarPlaceHolder(Core::IMode *mode, QWidget *parent)
+    : QWidget(parent), m_mode(mode)
 {
-	qDebug () << __FILE__ << __FUNCTION__;    
+    setLayout(new QVBoxLayout);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+    layout()->setMargin(0);
+    connect(Core::ModeManager::instance(), SIGNAL(currentModeChanged(Core::IMode *)),
+            this, SLOT(currentModeChanged(Core::IMode *)));
+}
+
+FindToolBarPlaceHolder::~FindToolBarPlaceHolder()
+{
+}
+
+void FindToolBarPlaceHolder::currentModeChanged(Core::IMode *mode)
+{
+    if (m_current == this)
+        m_current = 0;
+    if (m_mode == mode)
+        m_current = this;
+}
+
+FindToolBarPlaceHolder *FindToolBarPlaceHolder::getCurrent()
+{
+    return m_current;
 }

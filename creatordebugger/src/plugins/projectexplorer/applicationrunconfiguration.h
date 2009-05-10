@@ -37,17 +37,61 @@ namespace ProjectExplorer {
 
 class Environment;
 
-class ApplicationRunConfiguration : public RunConfiguration
+class PROJECTEXPLORER_EXPORT ApplicationRunConfiguration : public RunConfiguration
 {
     Q_OBJECT
 public:
-    
+    enum RunMode {
+        Console = Internal::ApplicationLauncher::Console,
+        Gui
+    };
+
+    ApplicationRunConfiguration(Project *pro);
+    virtual ~ApplicationRunConfiguration();
+    virtual QString type() const;
     virtual QString executable() const = 0;
+    virtual RunMode runMode() const = 0;
     virtual QString workingDirectory() const = 0;
     virtual QStringList commandLineArguments() const = 0;
     virtual Environment environment() const = 0;
+
+    virtual void save(PersistentSettingsWriter &writer) const;
+    virtual void restore(const PersistentSettingsReader &reader);
 };
 
+namespace Internal {
+
+class ApplicationRunConfigurationRunner : public IRunConfigurationRunner
+{
+    Q_OBJECT
+public:
+    ApplicationRunConfigurationRunner();
+    virtual ~ApplicationRunConfigurationRunner();
+    virtual bool canRun(QSharedPointer<RunConfiguration> runConfiguration, const QString &mode);
+    virtual QString displayName() const;
+    virtual RunControl* run(QSharedPointer<RunConfiguration> runConfiguration, const QString &mode);
+    virtual QWidget *configurationWidget(QSharedPointer<RunConfiguration> runConfiguration);
+};
+
+class ApplicationRunControl : public RunControl
+{
+    Q_OBJECT
+public:
+    ApplicationRunControl(QSharedPointer<ApplicationRunConfiguration> runConfiguration);
+    virtual ~ApplicationRunControl();
+    virtual void start();
+    virtual void stop();
+    virtual bool isRunning() const;
+private slots:
+    void processExited(int exitCode);
+    void slotAddToOutputWindow(const QString &line);
+    void slotError(const QString & error);
+private:
+    ApplicationLauncher m_applicationLauncher;
+    QString m_executable;
+};
+
+} // namespace Internal
 } // namespace ProjectExplorer
 
 #endif // APPLICATIONRUNCONFIGURATION_H

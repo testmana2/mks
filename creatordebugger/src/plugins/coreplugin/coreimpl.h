@@ -49,7 +49,7 @@ public:
                                   const QString &defaultLocation = QString());
     void showOptionsDialog(const QString &group = QString(),
                                    const QString &page = QString());
-	
+
     ActionManager *actionManager() const;
     FileManager *fileManager() const ;
     UniqueIDManager *uniqueIDManager() const;
@@ -61,7 +61,7 @@ public:
     VCSManager *vcsManager() const;
     ModeManager *modeManager() const;
     MimeDatabase *mimeDatabase() const;
-	
+
     QSettings *settings() const;
     QPrinter *printer() const;
 
@@ -69,8 +69,8 @@ public:
 
     IContext *currentContextObject() const;
 
-	QMainWindow *mainWindow() const;
-	
+    QMainWindow *mainWindow() const;
+
     // adds and removes additional active contexts, this context is appended to the
     // currently active contexts. call updateContext after changing
     void addAdditionalContext(int context);
@@ -82,7 +82,7 @@ public:
     void updateContext();
 
     void openFiles(const QStringList &fileNames);
-    
+
 private:
     MainWindow *m_mainwindow;
     friend class MainWindow;
