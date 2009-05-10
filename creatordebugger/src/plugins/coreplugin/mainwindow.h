@@ -30,7 +30,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
 #include "core_global.h"
 
 #include <QtGui/QMainWindow>
@@ -85,14 +84,17 @@ class CORE_EXPORT MainWindow : public QMainWindow
 public:
     MainWindow();
     ~MainWindow();
-    
+
+    bool init(QString *errorMessage);
+    void extensionsInitialized();
+
     IContext *contextObject(QWidget *widget);
     void addContextObject(IContext *contex);
     void removeContextObject(IContext *contex);
     void resetContext();
-	
+
     void openFiles(const QStringList &fileNames);
-	
+
     Core::ActionManager *actionManager() const;
     Core::FileManager *fileManager() const;
     Core::UniqueIDManager *uniqueIDManager() const;
@@ -104,10 +106,9 @@ public:
     Core::ModeManager *modeManager() const;
     Core::MimeDatabase *mimeDatabase() const;
 
-    VCSManager *vcsManager() const;	
+    VCSManager *vcsManager() const;
     inline QSettings *settings() const { return m_settings; }
     virtual QPrinter *printer() const;
-	
     IContext * currentContextObject() const;
     QStatusBar *statusBar() const;
     void addAdditionalContext(int context);
@@ -116,17 +117,49 @@ public:
 
     void updateContext();
 
+    void setSuppressNavigationWidget(bool suppress);
+
+signals:
+    void windowActivated();
+
 public slots:
+    void newFile();
+    void openFileWith();
+    void exit();
+    void setFullScreen(bool on);
+
     QStringList showNewItemDialog(const QString &title,
                                   const QList<IWizard *> &wizards,
                                   const QString &defaultLocation = QString());
 
     void showOptionsDialog(const QString &category = QString(), const QString &page = QString());
 
+protected:
+    virtual void changeEvent(QEvent *e);
+    virtual void closeEvent(QCloseEvent *event);
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+
+private slots:
+    void openFile();
+    void aboutToShowRecentFiles();
+    void openRecentFile();
+    void setFocusToEditor();
+    void saveAll();
+    void aboutQtCreator();
+    void aboutPlugins();
+    void updateFocusWidget(QWidget *old, QWidget *now);
+    void setSidebarVisible(bool visible);
+    void destroyVersionDialog();
 
 private:
     void updateContextObject(IContext *context);
-	
+    void registerDefaultContainers();
+    void registerDefaultActions();
+
+    void readSettings();
+    void writeSettings();
+
     CoreImpl *m_coreImpl;
     UniqueIDManager *m_uniqueIDManager;
     QList<int> m_globalContext;
@@ -153,7 +186,29 @@ private:
     IContext * m_activeContext;
 
     QMap<QWidget *, IContext *> m_contextWidgets;
-	
+
+    BaseMode *m_outputMode;
+    GeneralSettings *m_generalSettings;
+    ShortcutSettings *m_shortcutSettings;
+
+    QMap<QAction*, QString> m_recentFilesActions;
+
+    // actions
+    QShortcut *m_focusToEditor;
+    QAction *m_newAction;
+    QAction *m_openAction;
+    QAction *m_openWithAction;
+    QAction *m_saveAllAction;
+    QAction *m_exitAction;
+    QAction *m_optionsAction;
+    QAction *m_toggleSideBarAction;
+    QAction *m_toggleFullScreenAction;
+#ifdef Q_OS_MAC
+    QAction *m_minimizeAction;
+    QAction *m_zoomAction;
+#endif
+
+    QToolButton *m_toggleSideBarButton;
 };
 
 } // namespace Internal

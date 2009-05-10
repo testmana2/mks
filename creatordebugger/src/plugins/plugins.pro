@@ -4,5 +4,6 @@ SUBDIRS   = \
   coreplugin \
   debugger \
   find \
+  quickopen \
   projectexplorer \
   texteditor

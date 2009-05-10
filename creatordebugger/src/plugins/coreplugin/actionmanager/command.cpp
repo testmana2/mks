@@ -500,6 +500,7 @@ void OverrideableAction::actionChanged()
     bool block = m_action->blockSignals(true);
     m_action->setChecked(m_currentAction->isChecked());
     m_action->blockSignals(block);
+
     m_action->setEnabled(m_currentAction->isEnabled());
     m_action->setVisible(m_currentAction->isVisible());
 }

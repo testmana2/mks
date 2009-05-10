@@ -223,7 +223,8 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
 
     ActionManager *am = m_d->m_core->actionManager();
     ActionContainer *mfile = am->actionContainer(Constants::M_FILE);
-
+	Command *cmd;
+#if 0
     //Revert to saved
     Command *cmd = am->registerAction(m_d->m_revertToSavedAction,
                                        Constants::REVERTTOSAVED, editManagerContext);
@@ -239,7 +240,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     //Save As Action
     am->registerAction(m_d->m_saveAsAction, Constants::SAVEAS, editManagerContext);
     connect(m_d->m_saveAsAction, SIGNAL(triggered()), this, SLOT(saveFileAs()));
-
+#endif
     //Window Menu
     ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
 
@@ -268,7 +269,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Bottom"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_LIST);
-
+	
     //Close Action
     cmd = am->registerAction(m_d->m_closeCurrentEditorAction, Constants::CLOSE, editManagerContext);
     cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+W")));
@@ -282,12 +283,12 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+Shift+W")));
     mfile->addAction(cmd, Constants::G_FILE_CLOSE);
     connect(m_d->m_closeAllEditorsAction, SIGNAL(triggered()), this, SLOT(closeAllEditors()));
-
+#if 0
     //Duplicate Action
     cmd = am->registerAction(m_d->m_duplicateAction, Constants::DUPLICATEDOCUMENT, editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_CLOSE);
     connect(m_d->m_duplicateAction, SIGNAL(triggered()), this, SLOT(duplicateEditor()));
-
+#endif
     // Goto Previous In History Action
     cmd = am->registerAction(m_d->m_gotoPreviousDocHistoryAction, Constants::GOTOPREVINHISTORY, editManagerContext);
 #ifdef Q_WS_MAC
@@ -328,7 +329,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE);
     connect(m_d->m_goForwardAction, SIGNAL(triggered()), this, SLOT(goForwardInNavigationHistory()));
 
-
+#if 0
     ActionContainer *medit = am->actionContainer(Constants::M_EDIT);
     ActionContainer *advancedMenu = am->createMenu(Constants::M_EDIT_ADVANCED);
     medit->addMenu(advancedMenu, Constants::G_EDIT_ADVANCED);
@@ -350,7 +351,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     cmd->setDefaultKeySequence(QKeySequence(tr("Alt+V,Alt+I")));
     advancedMenu->addAction(cmd, Constants::G_EDIT_EDITOR);
     connect(m_d->m_openInExternalEditorAction, SIGNAL(triggered()), this, SLOT(openInExternalEditor()));
-
+#endif
 
     // other setup
     connect(this, SIGNAL(currentEditorChanged(Core::IEditor*)),
@@ -808,7 +809,7 @@ void EditorManager::insertEditor(IEditor *editor,
     else
         m_d->m_splitter->currentGroup()->addEditor(editor);
 
-    setCurrentEditor(editor, ignoreNavigationHistory);
+	setCurrentEditor(editor, ignoreNavigationHistory);
     emit editorOpened(editor);
 }
 

@@ -43,7 +43,7 @@
 #include <QtGui/QMenuBar>
 
 namespace {
-    enum { warnAboutFindFailures = 1 };
+    enum { warnAboutFindFailures = 0 };
 }
 
 /*!
