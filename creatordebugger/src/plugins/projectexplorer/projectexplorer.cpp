@@ -269,7 +269,7 @@ bool ProjectExplorerPlugin::initialize(const QStringList &arguments, QString *er
     Core::ActionContainer *mdebug =
         am->createMenu(Constants::M_DEBUG);
     mdebug->menu()->setTitle("&Debug");
-    menubar->addMenu(mdebug, Core::Constants::G_WINDOW);
+    menubar->addMenu(mdebug, Core::Constants::G_EDIT);
 
 
     //

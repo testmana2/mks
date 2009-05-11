@@ -12,8 +12,11 @@
 
 #include "mainwindow.h"
 #include "modemanager.h"
-#include "projectexplorer.h"
-#include "coreplugin.h"
+#include "projectexplorer/projectexplorer.h"
+#include "coreplugin/coreplugin.h"
+#include "find/findplugin.h"
+#include "quickopen/quickopenplugin.h"
+#include "texteditor/texteditorplugin.h"
 
 int main(int argc, char **argv)
 {
@@ -22,19 +25,32 @@ int main(int argc, char **argv)
 	// for create instance
 	QString error;
 	
-	Core::Internal::CorePlugin core;
-#if 1
-	ProjectExplorer::ProjectExplorerPlugin projectExplorer;
-	Debugger::Internal::DebuggerPlugin debugger;
-#endif	
-	core.initialize (QStringList(), &error);
-#if 1
-	projectExplorer.initialize(QStringList(), &error);
+	Core::Internal::CorePlugin *core = new Core::Internal::CorePlugin();
+	ProjectExplorer::ProjectExplorerPlugin *projectExplorer = new ProjectExplorer::ProjectExplorerPlugin();
+	Debugger::Internal::DebuggerPlugin *debugger = new Debugger::Internal::DebuggerPlugin();
+	Find::Internal::FindPlugin *find = new Find::Internal::FindPlugin();
+	//QuickOpen::Internal::QuickOpenPlugin quickOpen = new QuickOpen::Internal::QuickOpenPlugin();
+	TextEditor::Internal::TextEditorPlugin *textEditor = new TextEditor::Internal::TextEditorPlugin();
 	
-	ExtensionSystem::IPlugin* iplugin = static_cast<ExtensionSystem::IPlugin*>(&debugger);
-	iplugin->initialize (QStringList(), &error);	
-#endif
-	core.extensionsInitialized();
+	core->initialize (QStringList(), &error);
+	projectExplorer->initialize(QStringList(), &error);
+	ExtensionSystem::IPlugin* i_debugger_plugin = static_cast<ExtensionSystem::IPlugin*>(debugger);
+	i_debugger_plugin->initialize (QStringList(), &error);	
+	find->initialize (QStringList(), &error);
+	//quickOpen.initialize (QStringList(), &error);
+	textEditor->initialize (QStringList(), &error);
 	
-	return app.exec();
+	core->extensionsInitialized();
+	
+	int res = app.exec();
+	
+	delete textEditor;
+	//delete quickOpen;
+	delete find;
+	i_debugger_plugin->shutdown();
+	delete debugger;
+	delete projectExplorer;
+	delete core;
+	
+	return res;
 }
