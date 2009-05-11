@@ -37,7 +37,7 @@ int FuncLev1(char *s, int i)
     int e = k;
     v2 += e;
  }
- string[4] = 5;
+ string[40000000] = 5;
  return i;
 }
 

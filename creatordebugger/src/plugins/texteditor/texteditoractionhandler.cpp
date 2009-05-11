@@ -111,6 +111,7 @@ void TextEditorActionHandler::initializeActions()
 
 void TextEditorActionHandler::createActions()
 {
+#if 0
     m_undoAction      = registerNewAction(QLatin1String(Core::Constants::UNDO),      this, SLOT(undoAction()),
                                           tr("&Undo"));
     m_redoAction      = registerNewAction(QLatin1String(Core::Constants::REDO),      this, SLOT(redoAction()),
@@ -246,6 +247,7 @@ void TextEditorActionHandler::createActions()
     command = am->registerAction(m_moveLineDownAction, Constants::MOVE_LINE_DOWN, m_contextId);
     command->setDefaultKeySequence(QKeySequence(tr("Ctrl+Shift+Down")));
     connect(m_moveLineDownAction, SIGNAL(triggered()), this, SLOT(moveLineDown()));
+#endif
 }
 
 bool TextEditorActionHandler::supportsAction(const QString & /*id */) const
@@ -290,6 +292,7 @@ void TextEditorActionHandler::updateActions()
 
 void TextEditorActionHandler::updateActions(UpdateMode um)
 {
+#if 0
     if (!m_initialized)
         return;
     m_pasteAction->setEnabled(um != NoEditor);
@@ -326,6 +329,7 @@ void TextEditorActionHandler::updateActions(UpdateMode um)
     updateRedoAction();
     updateUndoAction();
     updateCopyAction();
+#endif
 }
 
 void TextEditorActionHandler::updateRedoAction()

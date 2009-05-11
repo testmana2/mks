@@ -48,5 +48,4 @@ unix {
     release:MOC_DIR = $${OUT_PWD}/.moc/release-shared
 
     RCC_DIR = $${OUT_PWD}/.rcc/
-    UI_DIR = $${OUT_PWD}/.uic/
 }

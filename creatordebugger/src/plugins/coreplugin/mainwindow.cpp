@@ -439,8 +439,8 @@ void MainWindow::registerDefaultContainers()
     setMenuBar(menubar->menuBar());
 #endif
     menubar->appendGroup(Constants::G_FILE);
-#if 0
     menubar->appendGroup(Constants::G_EDIT);
+#if 0
     menubar->appendGroup(Constants::G_VIEW);
     menubar->appendGroup(Constants::G_TOOLS);
 #endif
@@ -464,16 +464,19 @@ void MainWindow::registerDefaultContainers()
 #if 0
     filemenu->appendGroup(Constants::G_FILE_OTHER);
     connect(filemenu->menu(), SIGNAL(aboutToShow()), this, SLOT(aboutToShowRecentFiles()));
-
+#endif
     // Edit Menu
     ActionContainer *medit = am->createMenu(Constants::M_EDIT);
     menubar->addMenu(medit, Constants::G_EDIT);
     medit->menu()->setTitle(tr("&Edit"));
+#if 0
     medit->appendGroup(Constants::G_EDIT_UNDOREDO);
     medit->appendGroup(Constants::G_EDIT_COPYPASTE);
     medit->appendGroup(Constants::G_EDIT_SELECTALL);
     medit->appendGroup(Constants::G_EDIT_ADVANCED);
+#endif
     medit->appendGroup(Constants::G_EDIT_FIND);
+#if 0
     medit->appendGroup(Constants::G_EDIT_OTHER);
 
     // Tools Menu

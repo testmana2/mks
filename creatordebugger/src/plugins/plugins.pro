@@ -5,5 +5,5 @@ SUBDIRS   = \
   debugger \
   find \
   quickopen \
-  projectexplorer \
-  texteditor
+    texteditor \
+  projectexplorer
