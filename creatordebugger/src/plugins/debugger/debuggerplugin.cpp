@@ -597,7 +597,8 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     QBoxLayout *editorHolderLayout = new QVBoxLayout;
     editorHolderLayout->setMargin(0);
     editorHolderLayout->setSpacing(0);
-    editorHolderLayout->addWidget(new EditorManagerPlaceHolder(m_debugMode));
+	EditorManagerPlaceHolder *editorManagerPlaceHolder = new EditorManagerPlaceHolder(m_debugMode);
+    editorHolderLayout->addWidget(editorManagerPlaceHolder);
     editorHolderLayout->addWidget(new FindToolBarPlaceHolder(m_debugMode));
 
     QWidget *editorAndFindWidget = new QWidget;
@@ -628,7 +629,7 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
 #endif
 	
     m_debugMode->setWidget(m_manager->mainWindow());
-
+	editorManagerPlaceHolder->currentModeChanged (m_debugMode);
     QToolBar *debugToolBar = new QToolBar;
     debugToolBar->setProperty("topBorder", true);
     debugToolBar->addAction(am->command(ProjectExplorer::Constants::DEBUG)->action());

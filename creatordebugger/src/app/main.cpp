@@ -17,6 +17,7 @@
 #include "find/findplugin.h"
 #include "quickopen/quickopenplugin.h"
 #include "texteditor/texteditorplugin.h"
+#include "cppeditor/cppplugin.h"
 
 int main(int argc, char **argv)
 {
@@ -31,6 +32,7 @@ int main(int argc, char **argv)
 	Find::Internal::FindPlugin *find = new Find::Internal::FindPlugin();
 	//QuickOpen::Internal::QuickOpenPlugin quickOpen = new QuickOpen::Internal::QuickOpenPlugin();
 	TextEditor::Internal::TextEditorPlugin *textEditor = new TextEditor::Internal::TextEditorPlugin();
+	CppEditor::Internal::CppPlugin *cpp = new CppEditor::Internal::CppPlugin();
 	
 	core->initialize (QStringList(), &error);
 	projectExplorer->initialize(QStringList(), &error);
@@ -39,11 +41,13 @@ int main(int argc, char **argv)
 	find->initialize (QStringList(), &error);
 	//quickOpen.initialize (QStringList(), &error);
 	textEditor->initialize (QStringList(), &error);
+	cpp->initialize (QStringList(), &error);
 	
 	core->extensionsInitialized();
 	
 	int res = app.exec();
 	
+	delete cpp;
 	delete textEditor;
 	//delete quickOpen;
 	delete find;
