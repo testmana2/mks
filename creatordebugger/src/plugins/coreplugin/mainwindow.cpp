@@ -460,9 +460,11 @@ void MainWindow::registerDefaultContainers()
     filemenu->appendGroup(Constants::G_FILE_SAVE);
 #endif
     filemenu->appendGroup(Constants::G_FILE_CLOSE);
-    filemenu->appendGroup(Constants::G_FILE_PRINT);
 #if 0
+    filemenu->appendGroup(Constants::G_FILE_PRINT);
+#endif
     filemenu->appendGroup(Constants::G_FILE_OTHER);
+#if 0
     connect(filemenu->menu(), SIGNAL(aboutToShow()), this, SLOT(aboutToShowRecentFiles()));
 #endif
     // Edit Menu
@@ -532,10 +534,9 @@ void MainWindow::registerDefaultActions()
 #if 0
     Command *cmd = createSeparator(am, this, QLatin1String("QtCreator.File.Sep.Save"), m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_SAVE);
-#endif
     cmd =  createSeparator(am, this, QLatin1String("QtCreator.File.Sep.Print"), m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_PRINT);
-
+#endif
     cmd =  createSeparator(am, this, QLatin1String("QtCreator.File.Sep.Close"), m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_CLOSE);
 #if 0
@@ -617,20 +618,19 @@ void MainWindow::registerDefaultActions()
 #endif
     mfile->addAction(cmd, Constants::G_FILE_SAVE);
     connect(m_saveAllAction, SIGNAL(triggered()), this, SLOT(saveAll()));
-#endif
+
     // Print Action
     tmpaction = new QAction(tr("&Print..."), this);
     cmd = am->registerAction(tmpaction, Constants::PRINT, m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_PRINT);
-
+#endif
     // Exit Action
     m_exitAction = new QAction(tr("E&xit"), this);
     cmd = am->registerAction(m_exitAction, Constants::EXIT, m_globalContext);
     cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+Q")));
-#if 0
     mfile->addAction(cmd, Constants::G_FILE_OTHER);
     connect(m_exitAction, SIGNAL(triggered()), this, SLOT(exit()));
-
+#if 0
     // Undo Action
     tmpaction = new QAction(QIcon(Constants::ICON_UNDO), tr("&Undo"), this);
     cmd = am->registerAction(tmpaction, Constants::UNDO, m_globalContext);
