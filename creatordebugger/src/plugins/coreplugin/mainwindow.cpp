@@ -1012,8 +1012,10 @@ void MainWindow::changeEvent(QEvent *e)
         m_minimizeAction->setEnabled(!minimized);
         m_zoomAction->setEnabled(!minimized);
 #else
+#if 0
         bool isFullScreen = (windowState() & Qt::WindowFullScreen) != 0;
         m_toggleFullScreenAction->setChecked(isFullScreen);
+#endif
 #endif
     }
 }

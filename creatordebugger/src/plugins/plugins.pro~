@@ -2,7 +2,9 @@ TEMPLATE  = subdirs
 
 SUBDIRS   = \
   coreplugin \
+  cppeditor \
   debugger \
   find \
-  projectexplorer \
-  texteditor
+  quickopen \
+  texteditor \
+  projectexplorer

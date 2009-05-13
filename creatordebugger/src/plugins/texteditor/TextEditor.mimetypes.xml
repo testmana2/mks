@@ -34,9 +34,6 @@
         <comment xml:lang="zh_CN">纯文本文档</comment>
         <comment xml:lang="zh_TW">普通文本檔</comment>
         <glob pattern="*.txt"/>
-        <glob pattern="*.c"/>
-        <glob pattern="*.cpp"/>
-        <glob pattern="*.h"/>
     </mime-type>
     <mime-type type="application/xml">
         <sub-class-of type="text/plain"/>

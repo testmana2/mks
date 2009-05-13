@@ -108,7 +108,7 @@ bool OutputPanePlaceHolder::closeable()
 {
     return m_closeable;
 }
-
+#include <QDebug>
 void OutputPanePlaceHolder::currentModeChanged(Core::IMode *mode)
 {
     if (m_current == this) {
@@ -120,6 +120,8 @@ void OutputPanePlaceHolder::currentModeChanged(Core::IMode *mode)
     if (m_mode == mode) {
         m_current = this;
         layout()->addWidget(OutputPaneManager::instance());
+		qDebug () << "~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+		OutputPaneManager::instance()->setParent(NULL);
         OutputPaneManager::instance()->show();
         OutputPaneManager::instance()->updateStatusButtons(isVisible());
         OutputPaneManager::instance()->setCloseable(m_closeable);

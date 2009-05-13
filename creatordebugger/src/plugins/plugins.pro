@@ -2,8 +2,10 @@ TEMPLATE  = subdirs
 
 SUBDIRS   = \
   coreplugin \
+  cpptools \
+  cppeditor \
   debugger \
   find \
   quickopen \
-    texteditor \
+  texteditor \
   projectexplorer
