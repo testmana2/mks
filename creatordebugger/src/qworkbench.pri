@@ -25,10 +25,10 @@ macx {
     IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH/plugins/
 }
 IDE_APP_PATH = $$IDE_BUILD_TREE/bin
-win32 {
-    IDE_LIBRARY_PATH ~= s|/+|\|
-    IDE_APP_PATH ~= s|/+|\|
-}
+#win32 {
+#    IDE_LIBRARY_PATH ~= s|/+|\|
+#    IDE_APP_PATH ~= s|/+|\|
+#}
 
 INCLUDEPATH += \
     $$IDE_SOURCE_TREE/src/libs \
