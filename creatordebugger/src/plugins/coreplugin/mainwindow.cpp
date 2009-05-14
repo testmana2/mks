@@ -470,7 +470,7 @@ void MainWindow::registerDefaultContainers()
     // Edit Menu
     ActionContainer *medit = am->createMenu(Constants::M_EDIT);
     menubar->addMenu(medit, Constants::G_EDIT);
-    medit->menu()->setTitle(tr("&Edit"));
+    medit->menu()->setTitle(tr("&Find"));
 #if 0
     medit->appendGroup(Constants::G_EDIT_UNDOREDO);
     medit->appendGroup(Constants::G_EDIT_COPYPASTE);

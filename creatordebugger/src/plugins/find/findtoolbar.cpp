@@ -143,20 +143,20 @@ FindToolBar::FindToolBar(FindPlugin *plugin, CurrentDocumentFind *currentDocumen
     globalcontext << Core::Constants::C_GLOBAL_ID;
 
     Core::ActionManager *am = Core::ICore::instance()->actionManager();
-    Core::ActionContainer *mfind = am->actionContainer(Constants::M_FIND);
+    Core::ActionContainer *medit = am->actionContainer(Core::Constants::M_EDIT);
     Core::Command *cmd;
 
     m_findInDocumentAction = new QAction(tr("Current Document"), this);
     cmd = am->registerAction(m_findInDocumentAction, Constants::FIND_IN_DOCUMENT, globalcontext);
     cmd->setDefaultKeySequence(QKeySequence::Find);
-    mfind->addAction(cmd, Constants::G_FIND_FILTERS);
+    medit->addAction(cmd, Constants::G_FIND_FILTERS);
     connect(m_findInDocumentAction, SIGNAL(triggered()), this, SLOT(openFind()));
 
     if (QApplication::clipboard()->supportsFindBuffer()) {
         m_enterFindStringAction = new QAction(tr("Enter Find String"), this);
         cmd = am->registerAction(m_enterFindStringAction, tr("Find.EnterFindString"), globalcontext);
         cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+E")));
-        mfind->addAction(cmd, Constants::G_FIND_ACTIONS);
+        medit->addAction(cmd, Constants::G_FIND_ACTIONS);
         connect(m_enterFindStringAction, SIGNAL(triggered()), this, SLOT(putSelectionToFindClipboard()));
         connect(QApplication::clipboard(), SIGNAL(findBufferChanged()), this, SLOT(updateFromFindClipboard()));
     }
@@ -164,21 +164,21 @@ FindToolBar::FindToolBar(FindPlugin *plugin, CurrentDocumentFind *currentDocumen
     m_findNextAction = new QAction(tr("Find Next"), this);
     cmd = am->registerAction(m_findNextAction, Constants::FIND_NEXT, globalcontext);
     cmd->setDefaultKeySequence(QKeySequence::FindNext);
-    mfind->addAction(cmd, Constants::G_FIND_ACTIONS);
+    medit->addAction(cmd, Constants::G_FIND_ACTIONS);
     connect(m_findNextAction, SIGNAL(triggered()), this, SLOT(invokeFindNext()));
     m_ui.findNextButton->setDefaultAction(cmd->action());
 
     m_findPreviousAction = new QAction(tr("Find Previous"), this);
     cmd = am->registerAction(m_findPreviousAction, Constants::FIND_PREVIOUS, globalcontext);
     cmd->setDefaultKeySequence(QKeySequence::FindPrevious);
-    mfind->addAction(cmd, Constants::G_FIND_ACTIONS);
+    medit->addAction(cmd, Constants::G_FIND_ACTIONS);
     connect(m_findPreviousAction, SIGNAL(triggered()), this, SLOT(invokeFindPrevious()));
     m_ui.findPreviousButton->setDefaultAction(cmd->action());
-
+#if 0
     m_replaceNextAction = new QAction(tr("Replace && Find Next"), this);
     cmd = am->registerAction(m_replaceNextAction, Constants::REPLACE_NEXT, globalcontext);
     cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+=")));
-    mfind->addAction(cmd, Constants::G_FIND_ACTIONS);
+    medit->addAction(cmd, Constants::G_FIND_ACTIONS);
     connect(m_replaceNextAction, SIGNAL(triggered()), this, SLOT(invokeReplaceNext()));
     m_ui.replaceNextButton->setDefaultAction(cmd->action());
 
@@ -186,22 +186,22 @@ FindToolBar::FindToolBar(FindPlugin *plugin, CurrentDocumentFind *currentDocumen
     cmd = am->registerAction(m_replacePreviousAction, Constants::REPLACE_PREVIOUS, globalcontext);
     // shortcut removed, clashes with Ctrl++ on many keyboard layouts
     //cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+Shift+=")));
-    mfind->addAction(cmd, Constants::G_FIND_ACTIONS);
+    medit->addAction(cmd, Constants::G_FIND_ACTIONS);
     connect(m_replacePreviousAction, SIGNAL(triggered()), this, SLOT(invokeReplacePrevious()));
     m_ui.replacePreviousButton->setDefaultAction(cmd->action());
 
     m_replaceAllAction = new QAction(tr("Replace All"), this);
     cmd = am->registerAction(m_replaceAllAction, Constants::REPLACE_ALL, globalcontext);
-    mfind->addAction(cmd, Constants::G_FIND_ACTIONS);
+    medit->addAction(cmd, Constants::G_FIND_ACTIONS);
     connect(m_replaceAllAction, SIGNAL(triggered()), this, SLOT(invokeReplaceAll()));
     m_ui.replaceAllButton->setDefaultAction(cmd->action());
-
+#endif
     m_caseSensitiveAction = new QAction(tr("Case Sensitive"), this);
     m_caseSensitiveAction->setIcon(QIcon(":/find/images/casesensitively.png"));
     m_caseSensitiveAction->setCheckable(true);
     m_caseSensitiveAction->setChecked(false);
     cmd = am->registerAction(m_caseSensitiveAction, Constants::CASE_SENSITIVE, globalcontext);
-    mfind->addAction(cmd, Constants::G_FIND_FLAGS);
+    medit->addAction(cmd, Constants::G_FIND_FLAGS);
     connect(m_caseSensitiveAction, SIGNAL(triggered(bool)), m_plugin, SLOT(setCaseSensitive(bool)));
     lineEditMenu->addAction(m_caseSensitiveAction);
 
@@ -210,7 +210,7 @@ FindToolBar::FindToolBar(FindPlugin *plugin, CurrentDocumentFind *currentDocumen
     m_wholeWordAction->setCheckable(true);
     m_wholeWordAction->setChecked(false);
     cmd = am->registerAction(m_wholeWordAction, Constants::WHOLE_WORDS, globalcontext);
-    mfind->addAction(cmd, Constants::G_FIND_FLAGS);
+    medit->addAction(cmd, Constants::G_FIND_FLAGS);
     connect(m_wholeWordAction, SIGNAL(triggered(bool)), m_plugin, SLOT(setWholeWord(bool)));
     lineEditMenu->addAction(m_wholeWordAction);
 
@@ -274,9 +274,11 @@ void FindToolBar::updateActions()
     m_findInDocumentAction->setEnabled(enabled);
     m_findNextAction->setEnabled(enabled);
     m_findPreviousAction->setEnabled(enabled);
+#if 0
     m_replaceNextAction->setEnabled(replaceEnabled);
     m_replacePreviousAction->setEnabled(replaceEnabled);
     m_replaceAllAction->setEnabled(replaceEnabled);
+#endif
     m_caseSensitiveAction->setEnabled(enabled);
     m_wholeWordAction->setEnabled(enabled);
     if (QApplication::clipboard()->supportsFindBuffer())
