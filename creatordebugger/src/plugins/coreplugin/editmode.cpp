@@ -34,7 +34,6 @@
 #include "uniqueidmanager.h"
 #include "minisplitter.h"
 #include "findplaceholder.h"
-#include "outputpane.h"
 #include "navigationwidget.h"
 #include "rightpane.h"
 
@@ -67,9 +66,13 @@ EditMode::EditMode(EditorManager *editorManager) :
     MiniSplitter *splitter = new MiniSplitter;
     splitter->setOrientation(Qt::Vertical);
     splitter->insertWidget(0, rightPaneSplitter);
+#if 0
     splitter->insertWidget(1, new Core::OutputPanePlaceHolder(this));
+#endif
     splitter->setStretchFactor(0, 3);
+#if 0
     splitter->setStretchFactor(1, 0);
+#endif
 
     m_splitter->insertWidget(0, new NavigationWidgetPlaceHolder(this));
     m_splitter->insertWidget(1, splitter);

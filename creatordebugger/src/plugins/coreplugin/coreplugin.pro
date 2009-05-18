@@ -30,7 +30,6 @@ SOURCES += mainwindow.cpp \
     uniqueidmanager.cpp \
     messagemanager.cpp \
     messageoutputwindow.cpp \
-    outputpane.cpp \
     vcsmanager.cpp \
     viewmanager.cpp \
     versiondialog.cpp \
@@ -87,7 +86,6 @@ HEADERS += mainwindow.h \
     uniqueidmanager.h \
     messagemanager.h \
     messageoutputwindow.h \
-    outputpane.h \
     vcsmanager.h \
     viewmanager.h \
     editormanager/editorgroup.h \

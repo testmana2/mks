@@ -243,8 +243,10 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
 #endif
     //Window Menu
     ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
-
+	
+	QAction *tmpaction;
     //Window menu separators
+#if 0
     QAction *tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Split"), editManagerContext);
@@ -254,22 +256,21 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Close"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_CLOSE);
-
+#endif
     tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Navigate"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE);
-
+#if 0
     tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Navigate.Groups"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE_GROUPS);
-
     tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Bottom"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_LIST);
-	
+#endif
     //Close Action
     cmd = am->registerAction(m_d->m_closeCurrentEditorAction, Constants::CLOSE, editManagerContext);
     cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+W")));

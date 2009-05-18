@@ -43,7 +43,6 @@
 #include "modemanager.h"
 #include "mimedatabase.h"
 #include "newdialog.h"
-#include "outputpane.h"
 #include "plugindialog.h"
 #include "progressmanager_p.h"
 #include "progressview.h"
@@ -144,8 +143,9 @@ MainWindow::MainWindow() :
 #endif
     m_toggleSideBarButton(new QToolButton)
 {
+#if 0
     OutputPaneManager::create();
-
+#endif
     setWindowTitle(tr("Qt Creator"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":/core/images/qtcreator_logo_128.png"));
@@ -252,14 +252,13 @@ MainWindow::~MainWindow()
     m_outputMode = 0;
     //we need to delete editormanager and viewmanager explicitly before the end of the destructor,
     //because they might trigger stuff that tries to access data from editorwindow, like removeContextWidget
-
+#if 0
     // All modes are now gone
     OutputPaneManager::destroy();
-
     // Now that the OutputPaneManager is gone, is a good time to delete the view
     pm->removeObject(m_outputView);
     delete m_outputView;
-
+#endif
     delete m_editorManager;
     m_editorManager = 0;
     delete m_viewManager;
@@ -303,20 +302,21 @@ bool MainWindow::init(QString *errorMessage)
     m_outputMode->setIcon(QIcon(QLatin1String(":/fancyactionbar/images/mode_Output.png")));
     m_outputMode->setPriority(Constants::P_MODE_OUTPUT);
     m_outputMode->setWidget(outputModeWidget);
+#if 0
     OutputPanePlaceHolder *oph = new OutputPanePlaceHolder(m_outputMode);
     oph->setVisible(true);
     oph->setCloseable(false);
     outputModeWidget->layout()->addWidget(oph);
     outputModeWidget->layout()->addWidget(new Core::FindToolBarPlaceHolder(m_outputMode));
     outputModeWidget->setFocusProxy(oph);
-
+#endif
     m_outputMode->setContext(m_globalContext);
 #if 0
     pm->addObject(m_outputMode);
 #endif
     pm->addObject(m_generalSettings);
     pm->addObject(m_shortcutSettings);
-
+#if 0
     // Add widget to the bottom, we create the view here instead of inside the
     // OutputPaneManager, since the ViewManager needs to be initilized before
     m_outputView = new Core::BaseView;
@@ -324,6 +324,7 @@ bool MainWindow::init(QString *errorMessage)
     m_outputView->setWidget(OutputPaneManager::instance()->buttonsWidget());
     m_outputView->setDefaultPosition(Core::IView::Second);
     pm->addObject(m_outputView);
+#endif
     return true;
 }
 
@@ -334,8 +335,9 @@ void MainWindow::extensionsInitialized()
     m_viewManager->extensionsInitalized();
 #endif
     m_messageManager->init();
+#if 0
     OutputPaneManager::instance()->init();
-
+#endif
     m_actionManager->initialize();
     readSettings();
     updateContext();
@@ -490,15 +492,18 @@ void MainWindow::registerDefaultContainers()
     ActionContainer *mwindow = am->createMenu(Constants::M_WINDOW);
     menubar->addMenu(mwindow, Constants::G_WINDOW);
     mwindow->menu()->setTitle(tr("&Window"));
+#if 0
     mwindow->appendGroup(Constants::G_WINDOW_SIZE);
     mwindow->appendGroup(Constants::G_WINDOW_PANES);
     mwindow->appendGroup(Constants::G_WINDOW_SPLIT);
     mwindow->appendGroup(Constants::G_WINDOW_CLOSE);
+#endif
     mwindow->appendGroup(Constants::G_WINDOW_NAVIGATE);
+#if 0
     mwindow->appendGroup(Constants::G_WINDOW_NAVIGATE_GROUPS);
     mwindow->appendGroup(Constants::G_WINDOW_OTHER);
     mwindow->appendGroup(Constants::G_WINDOW_LIST);
-
+#endif
     // Help Menu
     ActionContainer *ac = am->createMenu(Constants::M_HELP);
     menubar->addMenu(ac, Constants::G_HELP);
@@ -839,7 +844,9 @@ void MainWindow::setFocusToEditor()
     if (focusWidget && focusWidget == qApp->focusWidget()) {
         if (FindToolBarPlaceHolder::getCurrent())
             FindToolBarPlaceHolder::getCurrent()->hide();
+#if 0
         OutputPaneManager::instance()->slotHide();
+#endif
         RightPaneWidget::instance()->setShown(false);
     }
 }

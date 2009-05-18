@@ -183,16 +183,19 @@ const char * const G_EDIT_FONT           = "QtCreator.Group.Edit.Font";
 const char * const G_EDIT_EDITOR         = "QtCreator.Group.Edit.Editor";
 
 // window menu groups
+#if 0
 const char * const G_WINDOW_SIZE         = "QtCreator.Group.Window.Size";
 const char * const G_WINDOW_PANES        = "QtCreator.Group.Window.Panes";
 const char * const G_WINDOW_SPLIT        = "QtCreator.Group.Window.Split";
 const char * const G_WINDOW_CLOSE        = "QtCreator.Group.Window.Close";
+#endif
 const char * const G_WINDOW_NAVIGATE     = "QtCreator.Group.Window.Navigate";
+#if 0
 const char * const G_WINDOW_NAVIGATE_GROUPS = "QtCreator.Group.Window.Navigate.Groups";
 const char * const G_WINDOW_OTHER        = "QtCreator.Group.Window.Other";
 const char * const G_WINDOW_LIST         = "QtCreator.Group.Window.List";
 const char * const G_WINDOW_FULLSCREEN   = "QtCreator.Group.Window.Fullscreen";
-
+#endif
 // help groups (global)
 const char * const G_HELP_HELP           = "QtCreator.Group.Help.Help";
 const char * const G_HELP_ABOUT          = "QtCreator.Group.Help.About";
