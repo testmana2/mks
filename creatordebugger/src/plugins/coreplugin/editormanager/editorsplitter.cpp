@@ -69,7 +69,7 @@ void EditorSplitter::registerActions()
     ActionManager *am = ICore::instance()->actionManager();
     ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
     Command *cmd;
-
+#if 0
     //Horizontal Action
     m_horizontalSplitAction = new QAction(tr("Split Left/Right"), this);
     cmd = am->registerAction(m_horizontalSplitAction, Constants::HORIZONTAL, editorManagerContext);
@@ -109,7 +109,7 @@ void EditorSplitter::registerActions()
     mLayout->addAction(cmd);
     connect(m_restoreDefault, SIGNAL(triggered()),
             this, SLOT(restoreDefaultLayout()));
-
+#endif
     // TODO: The previous and next actions are removed, to be reenabled when they
     // navigate according to code navigation history. And they need different shortcuts on the mac
     // since Alt+Left/Right is jumping wordwise in editors
@@ -128,7 +128,7 @@ void EditorSplitter::registerActions()
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE);
     connect(m_gotoNextEditorAction, SIGNAL(triggered()), this, SLOT(gotoNextEditor()));
 #endif
-
+#if 0
     // Previous Group Action
     m_gotoPreviousGroupAction = new QAction(tr("Previous Group"), this);
     cmd = am->registerAction(m_gotoPreviousGroupAction, Constants::GOTOPREVIOUSGROUP, editorManagerContext);
@@ -152,10 +152,12 @@ void EditorSplitter::registerActions()
     cmd = am->registerAction(m_moveDocToNextGroupAction, "QtCreator.DocumentToNextGroup", editorManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE_GROUPS);
     connect(m_moveDocToNextGroupAction, SIGNAL(triggered()), this, SLOT(moveDocToNextGroup()));
+#endif
 }
 
 void EditorSplitter::updateActions()
 {
+#if 0
     const bool hasMultipleGroups = (qobject_cast<QSplitter*>(m_root) != 0);
     QTC_ASSERT(currentGroup(), return);
     const bool hasEditors = (currentGroup()->editorCount() != 0);
@@ -169,6 +171,7 @@ void EditorSplitter::updateActions()
     m_gotoNextGroupAction->setEnabled(hasMultipleGroups);
     m_moveDocToPreviousGroupAction->setEnabled(hasEditors && hasMultipleGroups);
     m_moveDocToNextGroupAction->setEnabled(hasEditors && hasMultipleGroups);
+#endif
 }
 
 int EditorSplitter::editorCount() const
