@@ -149,8 +149,8 @@ bool ProjectExplorerPlugin::initialize(const QStringList &arguments, QString *er
     Q_UNUSED(arguments);
     Q_UNUSED(error);
 
-	Core::Command *cmd;
-	
+    Core::Command *cmd;
+    
     Core::ICore *core = Core::ICore::instance();
     Core::ActionManager *am = core->actionManager();
 
@@ -382,6 +382,7 @@ bool ProjectExplorerPlugin::initialize(const QStringList &arguments, QString *er
     sep->setSeparator(true);
     cmd = am->registerAction(sep, QLatin1String("ProjectExplorer.CancelBuild.Sep"), globalcontext);
     mbuild->addAction(cmd, Constants::G_BUILD_CANCEL);
+
     //
     // Actions
     //
@@ -396,7 +397,8 @@ bool ProjectExplorerPlugin::initialize(const QStringList &arguments, QString *er
     cmd = am->registerAction(m_newAction, Constants::NEWPROJECT, globalcontext);
     cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+Shift+N")));
     msessionContextMenu->addAction(cmd, Constants::G_SESSION_FILES);
-
+#endif
+#if 0
     // open action
     m_loadAction = new QAction(tr("Load Project..."), this);
     cmd = am->registerAction(m_loadAction, Constants::LOAD, globalcontext);

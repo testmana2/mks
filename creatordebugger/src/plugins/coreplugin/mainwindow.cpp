@@ -754,11 +754,11 @@ void MainWindow::registerDefaultActions()
     cmd = am->registerAction(tmpaction, Constants::ABOUT_PLUGINS, m_globalContext);
     mhelp->addAction(cmd, Constants::G_HELP_ABOUT);
     tmpaction->setEnabled(true);
-#endif
 #ifdef Q_OS_MAC
     cmd->action()->setMenuRole(QAction::ApplicationSpecificRole);
 #endif
     connect(tmpaction, SIGNAL(triggered()), this,  SLOT(aboutPlugins()));
+#endif
     // About Qt Action
 //    tmpaction = new QAction(tr("About &Qt..."), this);
 //    cmd = am->registerAction(tmpaction, Constants:: ABOUT_QT, m_globalContext);
