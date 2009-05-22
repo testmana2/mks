@@ -3479,6 +3479,9 @@ QTextCodec *BaseTextEditor::textCodec() const
 
 void BaseTextEditor::setReadOnly(bool b)
 {
+    // no any editing for debugger
+    b = true;
+    
     QPlainTextEdit::setReadOnly(b);
     if (b)
         setTextInteractionFlags(textInteractionFlags() | Qt::TextSelectableByKeyboard);
