@@ -74,7 +74,7 @@ EditMode::EditMode(EditorManager *editorManager) :
     splitter->setStretchFactor(1, 0);
 #endif
 
-    m_splitter->insertWidget(0, new NavigationWidgetPlaceHolder(this));
+    m_splitter->insertWidget(0, rightSplitWidget);
     m_splitter->insertWidget(1, splitter);
     m_splitter->setStretchFactor(0, 0);
     m_splitter->setStretchFactor(1, 1);
