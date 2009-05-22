@@ -281,10 +281,10 @@ void DebuggerManager::init()
         this, SLOT(updateWatchModel()));
 
     m_startExternalAction = new QAction(this);
-    m_startExternalAction->setText(tr("Start and Debug External Application..."));
+    m_startExternalAction->setText(tr("Start Application..."));
 
     m_attachExternalAction = new QAction(this);
-    m_attachExternalAction->setText(tr("Attach to Running External Application..."));
+    m_attachExternalAction->setText(tr("Attach to Running Application..."));
 
     m_continueAction = new QAction(this);
     m_continueAction->setText(tr("Continue"));

@@ -139,7 +139,9 @@ const char * const GOTOPREVIOUSGROUP     = "QtCreator.GotoPreviousTabGroup";
 const char * const GOTONEXTGROUP         = "QtCreator.GotoNextTabGroup";
 const char * const WINDOWSLIST           = "QtCreator.WindowsList";
 const char * const ABOUT_WORKBENCH       = "QtCreator.AboutWorkbench";
+#if 0
 const char * const ABOUT_PLUGINS         = "QtCreator.AboutPlugins";
+#endif
 const char * const ABOUT_QT              = "QtCreator.AboutQt";
 const char * const S_RETURNTOEDITOR      = "QtCreator.ReturnToEditor";
 const char * const OPEN_IN_EXTERNAL_EDITOR = "QtCreator.OpenInExternalEditor";
