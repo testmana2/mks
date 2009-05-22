@@ -219,7 +219,8 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
 
     const QList<int> gc =  QList<int>() << Constants::C_GLOBAL_ID;
     const QList<int> editManagerContext =
-            QList<int>() << m_d->m_core->uniqueIDManager()->uniqueIdentifier(Constants::C_EDITORMANAGER);
+            QList<int>() << m_d->m_core->uniqueIDManager()->uniqueIdentifier(Constants::C_EDITORMANAGER)
+						 << m_d->m_core->uniqueIDManager()->uniqueIdentifier(Constants::C_GLOBAL);
 
     ActionManager *am = m_d->m_core->actionManager();
     ActionContainer *mfile = am->actionContainer(Constants::M_FILE);
