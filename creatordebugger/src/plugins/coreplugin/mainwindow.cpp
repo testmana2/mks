@@ -690,7 +690,7 @@ void MainWindow::registerDefaultActions()
 #endif
     mtools->addAction(cmd, Constants::G_DEFAULT_THREE);
     connect(m_optionsAction, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
-
+#endif
 #ifdef Q_OS_MAC
     // Minimize Action
     m_minimizeAction = new QAction(tr("Minimize"), this);
@@ -709,7 +709,7 @@ void MainWindow::registerDefaultActions()
     cmd = createSeparator(am, this, QLatin1String("QtCreator.Window.Sep.Size"), m_globalContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_SIZE);
 #endif
-
+#if 0
     // Show Sidebar Action
     m_toggleSideBarAction = new QAction(QIcon(Constants::ICON_TOGGLE_SIDEBAR),
                                         tr("Show Sidebar"), this);
