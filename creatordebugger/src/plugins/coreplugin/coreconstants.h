@@ -185,8 +185,8 @@ const char * const G_EDIT_FONT           = "QtCreator.Group.Edit.Font";
 const char * const G_EDIT_EDITOR         = "QtCreator.Group.Edit.Editor";
 
 // window menu groups
-#if 0
 const char * const G_WINDOW_SIZE         = "QtCreator.Group.Window.Size";
+#if 0
 const char * const G_WINDOW_PANES        = "QtCreator.Group.Window.Panes";
 const char * const G_WINDOW_SPLIT        = "QtCreator.Group.Window.Split";
 const char * const G_WINDOW_CLOSE        = "QtCreator.Group.Window.Close";
