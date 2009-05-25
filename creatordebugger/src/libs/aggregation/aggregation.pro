@@ -1,8 +1,8 @@
 TEMPLATE = lib
-CONFIG *= staticlib
-TARGET = Aggregation
 
 include(../../qworkbenchlibrary.pri)
+
+TARGET = Aggregation
 
 DEFINES += AGGREGATION_LIBRARY
 

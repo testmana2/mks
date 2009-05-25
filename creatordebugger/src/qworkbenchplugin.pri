@@ -10,3 +10,4 @@ DESTDIR = $$IDE_LIBRARY_PATH
 
 CONFIG -= release
 CONFIG *= debug
+CONFIG += staticlib
