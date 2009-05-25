@@ -530,8 +530,9 @@ void MainWindow::registerDefaultActions()
 #if 0
     ActionContainer *medit = am->actionContainer(Constants::M_EDIT);
     ActionContainer *mtools = am->actionContainer(Constants::M_TOOLS);
-    ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
 #endif
+    ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
+
     ActionContainer *mhelp = am->actionContainer(Constants::M_HELP);
 
 	Command *cmd;
