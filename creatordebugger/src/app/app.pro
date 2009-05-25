@@ -12,14 +12,15 @@ PRE_TARGETDEPS *= ../plugins/projectexplorer ../libs
 
 INCLUDEPATH *= ../libs/extensionsystem ../plugins/coreplugin  ../plugins
 
-QT *= core gui script
-
 TEMPLATE = app
 TARGET = $$IDE_APP_TARGET
 DESTDIR = ../../bin
 
 CONFIG -= release
 CONFIG *= debug
+
+QT *= core gui script xml webkit
+CONFIG *= help
 
 SOURCES += main.cpp
 

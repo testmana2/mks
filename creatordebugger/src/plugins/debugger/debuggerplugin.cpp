@@ -967,5 +967,3 @@ void DebuggerPlugin::focusCurrentEditor(IMode *mode)
 }
 
 #include "debuggerplugin.moc"
-
-Q_EXPORT_PLUGIN(DebuggerPlugin)

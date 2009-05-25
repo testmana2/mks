@@ -169,6 +169,3 @@ void TextEditorPlugin::invokeCompletion()
     if (editor)
         editor->triggerCompletions();
 }
-
-
-Q_EXPORT_PLUGIN(TextEditorPlugin)

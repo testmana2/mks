@@ -285,5 +285,3 @@ QString CppToolsPlugin::correspondingHeaderOrSource(const QString &fileName) con
         qDebug() << Q_FUNC_INFO << fileName << rc;
     return rc;
 }
-
-Q_EXPORT_PLUGIN(CppToolsPlugin)

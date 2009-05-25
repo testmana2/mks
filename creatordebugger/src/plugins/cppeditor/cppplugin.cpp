@@ -248,5 +248,3 @@ void CppPlugin::jumpToDefinition()
     if (editor)
         editor->jumpToDefinition();
 }
-
-Q_EXPORT_PLUGIN(CppPlugin)
