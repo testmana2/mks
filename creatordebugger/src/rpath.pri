@@ -3,5 +3,5 @@
 QMAKE_RPATHDIR += \$\$ORIGIN/../lib/qtcreator
 IDE_PLUGIN_RPATH = $$join(QMAKE_RPATHDIR, ":")
 
-QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${IDE_PLUGIN_RPATH}\'
+#QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${IDE_PLUGIN_RPATH}\'
 QMAKE_RPATHDIR =

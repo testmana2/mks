@@ -16,7 +16,7 @@ isEmpty(IDE_BUILD_TREE) {
 }
 macx {
     IDE_APP_TARGET   = CreatorDebugger
-    IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/bin/$${IDE_APP_TARGET}.app/Contents/PlugIns
+    IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/lib/qtcreator
     IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH 
     contains(QT_CONFIG, ppc):CONFIG += ppc x86
 } else {

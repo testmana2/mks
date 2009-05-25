@@ -3,6 +3,7 @@ include(qworkbench.pri)
 
 CONFIG -= release
 CONFIG *= debug
+CONFIG += staticlib
 
 win32 {
 	DLLDESTDIR = $$IDE_APP_PATH

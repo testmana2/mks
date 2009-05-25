@@ -1,5 +1,6 @@
 TEMPLATE = lib
-CONFIG *= staticlib
+
+include(../../qworkbenchlibrary.pri)
 
 TARGET = CPlusPlus
 
@@ -7,7 +8,6 @@ DEFINES += HAVE_QT CPLUSPLUS_WITH_NAMESPACE CPLUSPLUS_BUILD_LIB
 DEFINES += NDEBUG
 unix:QMAKE_CXXFLAGS_DEBUG += -O3
 
-include(../../qworkbenchlibrary.pri)
 include(../../shared/cplusplus/cplusplus.pri)
 
 HEADERS += \
