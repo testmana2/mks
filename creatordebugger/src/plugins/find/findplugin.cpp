@@ -259,5 +259,3 @@ void FindPlugin::updateCompletion(const QString &text, QStringList &completions,
         completions.removeLast();
     model->setStringList(completions);
 }
-
-Q_EXPORT_PLUGIN(FindPlugin)

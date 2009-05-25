@@ -109,5 +109,3 @@ void CorePlugin::remoteArgument(const QString& arg)
         m_mainWindow->openFiles(QStringList(arg));
     }
 }
-
-Q_EXPORT_PLUGIN(CorePlugin)

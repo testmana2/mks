@@ -246,5 +246,3 @@ void QuickOpenPlugin::refresh(QList<IQuickOpenFilter*> filters)
             ->progressManager()->addTask(task, tr("Indexing"), Constants::TASK_INDEX, Core::ProgressManager::CloseOnSuccess);
     connect(progress, SIGNAL(finished()), this, SLOT(saveSettings()));
 }
-
-Q_EXPORT_PLUGIN(QuickOpenPlugin)

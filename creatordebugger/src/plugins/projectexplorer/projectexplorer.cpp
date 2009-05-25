@@ -1836,5 +1836,3 @@ void ProjectExplorerPlugin::setSession(QAction *action)
     if (session != m_session->activeSession())
         m_session->loadSession(session);
 }
-
-Q_EXPORT_PLUGIN(ProjectExplorerPlugin)

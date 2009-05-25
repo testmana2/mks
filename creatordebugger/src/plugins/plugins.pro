@@ -1,11 +1,12 @@
 TEMPLATE  = subdirs
+CONFIG *= ordered
 
 SUBDIRS   = \
   coreplugin \
-  cpptools \
-  cppeditor \
-  debugger \
-  find \
   quickopen \
+  find \
   texteditor \
-  projectexplorer
+  projectexplorer \
+  debugger \
+  cpptools \
+  cppeditor
