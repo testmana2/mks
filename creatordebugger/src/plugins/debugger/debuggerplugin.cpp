@@ -354,6 +354,7 @@ DebuggerPlugin::DebuggerPlugin():
     m_locationMark = 0;
     m_manager = 0;
     m_debugMode = 0;
+	Q_INIT_RESOURCE(debugger);
 }
 
 DebuggerPlugin::~DebuggerPlugin()

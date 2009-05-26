@@ -63,6 +63,7 @@ FindPlugin::FindPlugin()
     m_findCompletionModel(new QStringListModel(this)),
     m_replaceCompletionModel(new QStringListModel(this))
 {
+    Q_INIT_RESOURCE(find);
 }
 
 FindPlugin::~FindPlugin()

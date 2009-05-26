@@ -63,6 +63,7 @@ namespace {
 
 QuickOpenPlugin::QuickOpenPlugin()
 {
+    Q_INIT_RESOURCE(quickopen);
     m_refreshTimer.setSingleShot(false);
     connect(&m_refreshTimer, SIGNAL(timeout()), this, SLOT(refresh()));
 }

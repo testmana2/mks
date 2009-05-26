@@ -111,6 +111,7 @@ CppPlugin::CppPlugin() :
     m_factory(0)
 {
     m_instance = this;
+    Q_INIT_RESOURCE(cppeditor);
 }
 
 CppPlugin::~CppPlugin()
