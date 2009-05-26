@@ -68,6 +68,7 @@ TextEditorPlugin::TextEditorPlugin()
 {
     QTC_ASSERT(!m_instance, return);
     m_instance = this;
+    Q_INIT_RESOURCE(texteditor);
 }
 
 TextEditorPlugin::~TextEditorPlugin()

@@ -48,6 +48,7 @@ using namespace Core::Internal;
 CorePlugin::CorePlugin() :
     m_mainWindow(new MainWindow), m_welcomeMode(0), m_editMode(0)
 {
+    Q_INIT_RESOURCE(fancyactionbar);
 }
 
 CorePlugin::~CorePlugin()

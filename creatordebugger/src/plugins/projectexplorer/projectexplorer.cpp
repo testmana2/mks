@@ -132,6 +132,7 @@ ProjectExplorerPlugin::ProjectExplorerPlugin()
       m_debuggingRunControl(0)
 {
     m_instance = this;
+    Q_INIT_RESOURCE(projectexplorer);
 }
 
 ProjectExplorerPlugin::~ProjectExplorerPlugin()
