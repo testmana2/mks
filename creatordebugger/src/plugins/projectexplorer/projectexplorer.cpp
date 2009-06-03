@@ -150,8 +150,6 @@ bool ProjectExplorerPlugin::initialize(const QStringList &arguments, QString *er
     Q_UNUSED(arguments);
     Q_UNUSED(error);
 
-    Core::Command *cmd;
-    
     Core::ICore *core = Core::ICore::instance();
     Core::ActionManager *am = core->actionManager();
 
