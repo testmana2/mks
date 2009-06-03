@@ -267,6 +267,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Navigate.Groups"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE_GROUPS);
+
     tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Bottom"), editManagerContext);
@@ -811,7 +812,7 @@ void EditorManager::insertEditor(IEditor *editor,
     else
         m_d->m_splitter->currentGroup()->addEditor(editor);
 
-	setCurrentEditor(editor, ignoreNavigationHistory);
+    setCurrentEditor(editor, ignoreNavigationHistory);
     emit editorOpened(editor);
 }
 
