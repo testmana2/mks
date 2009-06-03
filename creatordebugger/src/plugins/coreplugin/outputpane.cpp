@@ -211,6 +211,7 @@ QWidget *OutputPaneManager::buttonsWidget()
 
 void OutputPaneManager::init()
 {
+#if 0
     ActionManager *am = Core::ICore::instance()->actionManager();
     ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
 
@@ -282,6 +283,7 @@ void OutputPaneManager::init()
     } while (it != begin);
 
     changePage();
+#endif
 }
 
 void OutputPaneManager::shortcutTriggered()

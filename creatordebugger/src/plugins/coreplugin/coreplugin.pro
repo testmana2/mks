@@ -19,6 +19,7 @@ DEPENDPATH += dialogs \
     editormanager \
     scriptmanager
 SOURCES += mainwindow.cpp \
+    outputpane.cpp \
     welcomemode.cpp \
     editmode.cpp \
     tabpositionindicator.cpp \
@@ -75,6 +76,7 @@ SOURCES += mainwindow.cpp \
     mimedatabase.cpp \
     icore.cpp
 HEADERS += mainwindow.h \
+    outputpane.h \
     welcomemode.h \
     editmode.h \
     tabpositionindicator.h \
