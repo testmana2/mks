@@ -1,6 +1,4 @@
 TEMPLATE = lib
-CONFIG *= staticlib
-
 TARGET = Debugger
 
 # CONFIG += single

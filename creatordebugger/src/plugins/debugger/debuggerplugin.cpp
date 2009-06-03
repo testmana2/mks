@@ -347,14 +347,13 @@ void GdbOptionPage::apply()
 //
 ///////////////////////////////////////////////////////////////////////
 
-DebuggerPlugin::DebuggerPlugin():
-	IPlugin ()
+DebuggerPlugin::DebuggerPlugin()
 {
     m_generalOptionPage = 0;
     m_locationMark = 0;
     m_manager = 0;
     m_debugMode = 0;
-	Q_INIT_RESOURCE(debugger);
+    Q_INIT_RESOURCE(debugger);
 }
 
 DebuggerPlugin::~DebuggerPlugin()
@@ -554,7 +553,7 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     m->setEnabled(true);
     m->setTitle(tr("&Views"));
     mdebug->addMenu(viewsMenu, Core::Constants::G_DEFAULT_THREE);
-	
+
     m_toggleLockedAction = new QAction(tr("Locked"), this);
     m_toggleLockedAction->setCheckable(true);
     m_toggleLockedAction->setChecked(true);
@@ -598,8 +597,7 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     QBoxLayout *editorHolderLayout = new QVBoxLayout;
     editorHolderLayout->setMargin(0);
     editorHolderLayout->setSpacing(0);
-	EditorManagerPlaceHolder *editorManagerPlaceHolder = new EditorManagerPlaceHolder(m_debugMode);
-    editorHolderLayout->addWidget(editorManagerPlaceHolder);
+    editorHolderLayout->addWidget(new EditorManagerPlaceHolder(m_debugMode));
     editorHolderLayout->addWidget(new FindToolBarPlaceHolder(m_debugMode));
 
     QWidget *editorAndFindWidget = new QWidget;
@@ -614,7 +612,7 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     QWidget *centralWidget = new QWidget;
 
     m_manager->mainWindow()->setCentralWidget(centralWidget);
-#if 0
+
     MiniSplitter *splitter = new MiniSplitter;
     splitter->addWidget(m_manager->mainWindow());
     splitter->addWidget(new OutputPanePlaceHolder(m_debugMode));
@@ -627,10 +625,9 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     splitter2->addWidget(splitter);
     splitter2->setStretchFactor(0, 0);
     splitter2->setStretchFactor(1, 1);
-#endif
-	
-    m_debugMode->setWidget(m_manager->mainWindow());
-	editorManagerPlaceHolder->currentModeChanged (m_debugMode);
+
+    m_debugMode->setWidget(splitter2);
+
     QToolBar *debugToolBar = new QToolBar;
     debugToolBar->setProperty("topBorder", true);
     debugToolBar->addAction(am->command(ProjectExplorer::Constants::DEBUG)->action());
@@ -832,7 +829,7 @@ void DebuggerPlugin::setSessionValue(const QString &name, const QVariant &value)
     QTC_ASSERT(sessionManager(), return);
     sessionManager()->setValue(name, value);
 }
-#include <QDebug>
+
 void DebuggerPlugin::querySessionValue(const QString &name, QVariant *value)
 {
     QTC_ASSERT(sessionManager(), return);

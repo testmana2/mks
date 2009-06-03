@@ -77,7 +77,7 @@ public:
     EditorManagerPlaceHolder(Core::IMode *mode, QWidget *parent = 0);
     ~EditorManagerPlaceHolder();
     static EditorManagerPlaceHolder* current();
-public slots:
+private slots:
     void currentModeChanged(Core::IMode *);
 private:
     Core::IMode *m_mode;
