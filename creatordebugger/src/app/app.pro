@@ -19,7 +19,7 @@ DESTDIR = ../../bin
 CONFIG -= release
 CONFIG *= debug
 
-QT *= core gui script xml webkit
+QT *= core gui script xml webkit svg
 CONFIG *= help
 
 SOURCES += main.cpp
