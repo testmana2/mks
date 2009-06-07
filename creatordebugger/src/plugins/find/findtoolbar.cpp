@@ -146,7 +146,7 @@ FindToolBar::FindToolBar(FindPlugin *plugin, CurrentDocumentFind *currentDocumen
     Core::ActionContainer *medit = am->actionContainer(Core::Constants::M_EDIT);
     Core::Command *cmd;
 
-    m_findInDocumentAction = new QAction(tr("Current Document"), this);
+    m_findInDocumentAction = new QAction(tr("Find..."), this);
     cmd = am->registerAction(m_findInDocumentAction, Constants::FIND_IN_DOCUMENT, globalcontext);
     cmd->setDefaultKeySequence(QKeySequence::Find);
     medit->addAction(cmd, Constants::G_FIND_FILTERS);

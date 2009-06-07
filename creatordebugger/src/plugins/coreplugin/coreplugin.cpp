@@ -48,7 +48,8 @@ using namespace Core::Internal;
 CorePlugin::CorePlugin() :
     m_mainWindow(new MainWindow), m_welcomeMode(0), m_editMode(0)
 {
-    Q_INIT_RESOURCE(fancyactionbar);
+	Q_INIT_RESOURCE(core);
+	Q_INIT_RESOURCE(fancyactionbar);
 }
 
 CorePlugin::~CorePlugin()
@@ -110,3 +111,5 @@ void CorePlugin::remoteArgument(const QString& arg)
         m_mainWindow->openFiles(QStringList(arg));
     }
 }
+
+Q_EXPORT_PLUGIN(CorePlugin)

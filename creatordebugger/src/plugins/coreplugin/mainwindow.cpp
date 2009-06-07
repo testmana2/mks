@@ -43,6 +43,7 @@
 #include "modemanager.h"
 #include "mimedatabase.h"
 #include "newdialog.h"
+#include "outputpane.h"
 #include "plugindialog.h"
 #include "progressmanager_p.h"
 #include "progressview.h"
@@ -178,9 +179,8 @@ MainWindow::MainWindow() :
 
     m_navigationWidget = new NavigationWidget(m_toggleSideBarAction);
     m_rightPaneWidget = new RightPaneWidget();
-#if 0
+
     m_modeStack = new FancyTabWidget(this);
-#endif
     m_modeManager = new ModeManager(this, m_modeStack);
     m_modeManager->addWidget(m_progressManager->progressView());
 #if 0
@@ -189,21 +189,20 @@ MainWindow::MainWindow() :
     m_messageManager = new MessageManager;
     m_editorManager = new EditorManager(m_coreImpl, this);
     m_editorManager->hide();
-#if 0
     setCentralWidget(m_modeStack);
-#endif
+
     connect(QApplication::instance(), SIGNAL(focusChanged(QWidget*,QWidget*)),
             this, SLOT(updateFocusWidget(QWidget*,QWidget*)));
     // Add a small Toolbutton for toggling the navigation widget
     m_toggleSideBarButton->setProperty("type", QLatin1String("dockbutton"));
-    // statusBar()->insertPermanentWidget(0, m_toggleSideBarButton);   FIXME why crash???
+    statusBar()->insertPermanentWidget(0, m_toggleSideBarButton);
 
 //    setUnifiedTitleAndToolBarOnMac(true);
 #ifdef Q_OS_UNIX
      //signal(SIGINT, handleSigInt);
 #endif
 
-//    statusBar()->setProperty("p_styled", true);    FIXME why crash???
+    statusBar()->setProperty("p_styled", true);
     setAcceptDrops(true);
 }
 
@@ -247,22 +246,25 @@ MainWindow::~MainWindow()
     m_vcsManager = 0;
 #if 0
     pm->removeObject(m_outputMode);
-#endif
     delete m_outputMode;
     m_outputMode = 0;
+#endif
     //we need to delete editormanager and viewmanager explicitly before the end of the destructor,
     //because they might trigger stuff that tries to access data from editorwindow, like removeContextWidget
 #if 0
     // All modes are now gone
     OutputPaneManager::destroy();
+
     // Now that the OutputPaneManager is gone, is a good time to delete the view
     pm->removeObject(m_outputView);
     delete m_outputView;
 #endif
     delete m_editorManager;
     m_editorManager = 0;
+#if 0
     delete m_viewManager;
     m_viewManager = 0;
+#endif
     delete m_progressManager;
     m_progressManager = 0;
     pm->removeObject(m_coreImpl);
@@ -292,6 +294,7 @@ bool MainWindow::init(QString *errorMessage)
 #endif
     m_modeManager->init();
     m_progressManager->init();
+#if 0
     QWidget *outputModeWidget = new QWidget;
     outputModeWidget->setLayout(new QVBoxLayout);
     outputModeWidget->layout()->setMargin(0);
@@ -302,16 +305,14 @@ bool MainWindow::init(QString *errorMessage)
     m_outputMode->setIcon(QIcon(QLatin1String(":/fancyactionbar/images/mode_Output.png")));
     m_outputMode->setPriority(Constants::P_MODE_OUTPUT);
     m_outputMode->setWidget(outputModeWidget);
-#if 0
     OutputPanePlaceHolder *oph = new OutputPanePlaceHolder(m_outputMode);
     oph->setVisible(true);
     oph->setCloseable(false);
     outputModeWidget->layout()->addWidget(oph);
     outputModeWidget->layout()->addWidget(new Core::FindToolBarPlaceHolder(m_outputMode));
     outputModeWidget->setFocusProxy(oph);
-#endif
+
     m_outputMode->setContext(m_globalContext);
-#if 0
     pm->addObject(m_outputMode);
 #endif
     pm->addObject(m_generalSettings);
@@ -442,10 +443,8 @@ void MainWindow::registerDefaultContainers()
 #endif
     menubar->appendGroup(Constants::G_FILE);
     menubar->appendGroup(Constants::G_EDIT);
-#if 0
     menubar->appendGroup(Constants::G_VIEW);
     menubar->appendGroup(Constants::G_TOOLS);
-#endif
     menubar->appendGroup(Constants::G_WINDOW);
     menubar->appendGroup(Constants::G_HELP);
 
@@ -457,55 +456,45 @@ void MainWindow::registerDefaultContainers()
     filemenu->appendGroup(Constants::G_FILE_NEW);
 #endif
     filemenu->appendGroup(Constants::G_FILE_OPEN);
-#if 0
     filemenu->appendGroup(Constants::G_FILE_PROJECT);
     filemenu->appendGroup(Constants::G_FILE_SAVE);
-#endif
     filemenu->appendGroup(Constants::G_FILE_CLOSE);
-#if 0
     filemenu->appendGroup(Constants::G_FILE_PRINT);
-#endif
     filemenu->appendGroup(Constants::G_FILE_OTHER);
-#if 0
     connect(filemenu->menu(), SIGNAL(aboutToShow()), this, SLOT(aboutToShowRecentFiles()));
-#endif
+
+
     // Edit Menu
     ActionContainer *medit = am->createMenu(Constants::M_EDIT);
     menubar->addMenu(medit, Constants::G_EDIT);
     medit->menu()->setTitle(tr("&Find"));
-#if 0
     medit->appendGroup(Constants::G_EDIT_UNDOREDO);
     medit->appendGroup(Constants::G_EDIT_COPYPASTE);
     medit->appendGroup(Constants::G_EDIT_SELECTALL);
     medit->appendGroup(Constants::G_EDIT_ADVANCED);
-#endif
     medit->appendGroup(Constants::G_EDIT_FIND);
-#if 0
     medit->appendGroup(Constants::G_EDIT_OTHER);
 
     // Tools Menu
     ActionContainer *ac = am->createMenu(Constants::M_TOOLS);
     menubar->addMenu(ac, Constants::G_TOOLS);
     ac->menu()->setTitle(tr("&Tools"));
-#endif
+
     // Window Menu
     ActionContainer *mwindow = am->createMenu(Constants::M_WINDOW);
     menubar->addMenu(mwindow, Constants::G_WINDOW);
     mwindow->menu()->setTitle(tr("&Window"));
-#if 0
     mwindow->appendGroup(Constants::G_WINDOW_SIZE);
     mwindow->appendGroup(Constants::G_WINDOW_PANES);
     mwindow->appendGroup(Constants::G_WINDOW_SPLIT);
     mwindow->appendGroup(Constants::G_WINDOW_CLOSE);
-#endif
     mwindow->appendGroup(Constants::G_WINDOW_NAVIGATE);
-#if 0
     mwindow->appendGroup(Constants::G_WINDOW_NAVIGATE_GROUPS);
     mwindow->appendGroup(Constants::G_WINDOW_OTHER);
     mwindow->appendGroup(Constants::G_WINDOW_LIST);
-#endif
+
     // Help Menu
-    ActionContainer *ac = am->createMenu(Constants::M_HELP);
+    ac = am->createMenu(Constants::M_HELP);
     menubar->addMenu(ac, Constants::G_HELP);
     ac->menu()->setTitle(tr("&Help"));
     ac->appendGroup(Constants::G_HELP_HELP);
@@ -524,28 +513,23 @@ static Command *createSeparator(ActionManager *am, QObject *parent,
 
 void MainWindow::registerDefaultActions()
 {
-	QAction *tmpaction;
     ActionManagerPrivate *am = m_actionManager;
     ActionContainer *mfile = am->actionContainer(Constants::M_FILE);
-#if 0
     ActionContainer *medit = am->actionContainer(Constants::M_EDIT);
     ActionContainer *mtools = am->actionContainer(Constants::M_TOOLS);
-#endif
     ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
-
     ActionContainer *mhelp = am->actionContainer(Constants::M_HELP);
 
-	Command *cmd;
     // File menu separators
-#if 0
     Command *cmd = createSeparator(am, this, QLatin1String("QtCreator.File.Sep.Save"), m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_SAVE);
+
     cmd =  createSeparator(am, this, QLatin1String("QtCreator.File.Sep.Print"), m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_PRINT);
-#endif
+
     cmd =  createSeparator(am, this, QLatin1String("QtCreator.File.Sep.Close"), m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_CLOSE);
-#if 0
+
     cmd = createSeparator(am, this, QLatin1String("QtCreator.File.Sep.Other"), m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_OTHER);
 
@@ -565,7 +549,7 @@ void MainWindow::registerDefaultActions()
     // Tools menu separators
     cmd = createSeparator(am, this, QLatin1String("QtCreator.Tools.Sep.Options"), m_globalContext);
     mtools->addAction(cmd, Constants::G_DEFAULT_THREE);
-#endif
+
     // Return to editor shortcut: Note this requires Qt to fix up
     // handling of shortcut overrides in menus, item views, combos....
     m_focusToEditor = new QShortcut(this);
@@ -592,12 +576,13 @@ void MainWindow::registerDefaultActions()
     cmd = am->registerAction(m_openWithAction, Constants::OPEN_WITH, m_globalContext);
     mfile->addAction(cmd, Constants::G_FILE_OPEN);
     connect(m_openWithAction, SIGNAL(triggered()), this, SLOT(openFileWith()));
-
+#endif
     // File->Recent Files Menu
     ActionContainer *ac = am->createMenu(Constants::M_FILE_RECENTFILES);
     mfile->addMenu(ac, Constants::G_FILE_OPEN);
     ac->menu()->setTitle(tr("Recent Files"));
-
+	QAction *tmpaction;
+#if 0
     // Save Action
     QAction *tmpaction = new QAction(QIcon(Constants::ICON_SAVEFILE), tr("&Save"), this);
     cmd = am->registerAction(tmpaction, Constants::SAVE, m_globalContext);
@@ -676,7 +661,7 @@ void MainWindow::registerDefaultActions()
     cmd = am->registerAction(tmpaction, Constants::SELECTALL, m_globalContext);
     cmd->setDefaultKeySequence(QKeySequence::SelectAll);
     medit->addAction(cmd, Constants::G_EDIT_SELECTALL);
-
+#endif
     // Goto Action
     tmpaction = new QAction(tr("&Go To Line..."), this);
     cmd = am->registerAction(tmpaction, Constants::GOTO, m_globalContext);
@@ -691,7 +676,7 @@ void MainWindow::registerDefaultActions()
 #endif
     mtools->addAction(cmd, Constants::G_DEFAULT_THREE);
     connect(m_optionsAction, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
-#endif
+
 #ifdef Q_OS_MAC
     // Minimize Action
     m_minimizeAction = new QAction(tr("Minimize"), this);
@@ -710,7 +695,7 @@ void MainWindow::registerDefaultActions()
     cmd = createSeparator(am, this, QLatin1String("QtCreator.Window.Sep.Size"), m_globalContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_SIZE);
 #endif
-#if 0
+
     // Show Sidebar Action
     m_toggleSideBarAction = new QAction(QIcon(Constants::ICON_TOGGLE_SIDEBAR),
                                         tr("Show Sidebar"), this);
@@ -736,9 +721,6 @@ void MainWindow::registerDefaultActions()
     connect(m_toggleFullScreenAction, SIGNAL(triggered(bool)), this, SLOT(setFullScreen(bool)));
 #endif
 
-#endif
-
-
     // About IDE Action
 #ifdef Q_OS_MAC
     tmpaction = new QAction(tr("About &Qt Creator"), this); // it's convention not to add dots to the about menu
@@ -749,8 +731,8 @@ void MainWindow::registerDefaultActions()
     mhelp->addAction(cmd, Constants::G_HELP_ABOUT);
     tmpaction->setEnabled(true);
     connect(tmpaction, SIGNAL(triggered()), this,  SLOT(aboutQtCreator()));
-    //About Plugins Action
 #if 0
+    //About Plugins Action
     tmpaction = new QAction(tr("About &Plugins..."), this);
     cmd = am->registerAction(tmpaction, Constants::ABOUT_PLUGINS, m_globalContext);
     mhelp->addAction(cmd, Constants::G_HELP_ABOUT);
@@ -836,7 +818,7 @@ void MainWindow::setFocusToEditor()
     // ### Duplicated code from EditMode::makeSureEditorManagerVisible
     IMode *currentMode = m_coreImpl->modeManager()->currentMode();
     if (currentMode && currentMode->uniqueModeName() != QLatin1String(Constants::MODE_EDIT) &&
-        currentMode->uniqueModeName() != QLatin1String("GdbDebugger.Mode.Debug"))
+        currentMode->uniqueModeName() != QLatin1String("Debugger.Mode.Debug"))
     {
         m_coreImpl->modeManager()->activateMode(QLatin1String(Constants::MODE_EDIT));
     }
@@ -1022,10 +1004,8 @@ void MainWindow::changeEvent(QEvent *e)
         m_minimizeAction->setEnabled(!minimized);
         m_zoomAction->setEnabled(!minimized);
 #else
-#if 0
         bool isFullScreen = (windowState() & Qt::WindowFullScreen) != 0;
         m_toggleFullScreenAction->setChecked(isFullScreen);
-#endif
 #endif
     }
 }
