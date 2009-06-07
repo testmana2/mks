@@ -87,8 +87,10 @@ OutputPanePlaceHolder::OutputPanePlaceHolder(Core::IMode *mode, QWidget *parent)
     sp.setHorizontalStretch(0);
     setSizePolicy(sp);
     layout()->setMargin(0);
+#if 0
     connect(Core::ModeManager::instance(), SIGNAL(currentModeChanged(Core::IMode *)),
             this, SLOT(currentModeChanged(Core::IMode *)));
+#endif
 }
 
 OutputPanePlaceHolder::~OutputPanePlaceHolder()
@@ -108,7 +110,7 @@ bool OutputPanePlaceHolder::closeable()
 {
     return m_closeable;
 }
-#include <QDebug>
+
 void OutputPanePlaceHolder::currentModeChanged(Core::IMode *mode)
 {
     if (m_current == this) {
@@ -120,8 +122,6 @@ void OutputPanePlaceHolder::currentModeChanged(Core::IMode *mode)
     if (m_mode == mode) {
         m_current = this;
         layout()->addWidget(OutputPaneManager::instance());
-		qDebug () << "~~~~~~~~~~~~~~~~~~~~~~~~~~~";
-		OutputPaneManager::instance()->setParent(NULL);
         OutputPaneManager::instance()->show();
         OutputPaneManager::instance()->updateStatusButtons(isVisible());
         OutputPaneManager::instance()->setCloseable(m_closeable);
@@ -211,7 +211,6 @@ QWidget *OutputPaneManager::buttonsWidget()
 
 void OutputPaneManager::init()
 {
-#if 0
     ActionManager *am = Core::ICore::instance()->actionManager();
     ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
 
@@ -283,7 +282,6 @@ void OutputPaneManager::init()
     } while (it != begin);
 
     changePage();
-#endif
 }
 
 void OutputPaneManager::shortcutTriggered()

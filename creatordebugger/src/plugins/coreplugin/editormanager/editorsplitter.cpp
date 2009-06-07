@@ -127,8 +127,7 @@ void EditorSplitter::registerActions()
     cmd->setDefaultKeySequence(QKeySequence(tr("Alt+Right")));
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE);
     connect(m_gotoNextEditorAction, SIGNAL(triggered()), this, SLOT(gotoNextEditor()));
-#endif
-#if 0
+
     // Previous Group Action
     m_gotoPreviousGroupAction = new QAction(tr("Previous Group"), this);
     cmd = am->registerAction(m_gotoPreviousGroupAction, Constants::GOTOPREVIOUSGROUP, editorManagerContext);

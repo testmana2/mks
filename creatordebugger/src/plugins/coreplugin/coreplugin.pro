@@ -19,7 +19,6 @@ DEPENDPATH += dialogs \
     editormanager \
     scriptmanager
 SOURCES += mainwindow.cpp \
-    outputpane.cpp \
     welcomemode.cpp \
     editmode.cpp \
     tabpositionindicator.cpp \
@@ -31,6 +30,7 @@ SOURCES += mainwindow.cpp \
     uniqueidmanager.cpp \
     messagemanager.cpp \
     messageoutputwindow.cpp \
+    outputpane.cpp \
     vcsmanager.cpp \
     viewmanager.cpp \
     versiondialog.cpp \
@@ -76,7 +76,6 @@ SOURCES += mainwindow.cpp \
     mimedatabase.cpp \
     icore.cpp
 HEADERS += mainwindow.h \
-    outputpane.h \
     welcomemode.h \
     editmode.h \
     tabpositionindicator.h \
@@ -88,6 +87,7 @@ HEADERS += mainwindow.h \
     uniqueidmanager.h \
     messagemanager.h \
     messageoutputwindow.h \
+    outputpane.h \
     vcsmanager.h \
     viewmanager.h \
     editormanager/editorgroup.h \

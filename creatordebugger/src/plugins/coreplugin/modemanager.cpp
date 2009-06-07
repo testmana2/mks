@@ -65,13 +65,12 @@ ModeManager::ModeManager(Internal::MainWindow *mainWindow, FancyTabWidget *modeS
     m_signalMapper(new QSignalMapper(this))
 {
     m_instance = this;
-#if 0
+
     m_actionBar = new FancyActionBar(modeStack);
     m_modeStack->addCornerWidget(m_actionBar);
 
     connect(m_modeStack, SIGNAL(currentAboutToShow(int)), SLOT(currentTabAboutToChange(int)));
     connect(m_modeStack, SIGNAL(currentChanged(int)), SLOT(currentTabChanged(int)));
-#endif
     connect(m_signalMapper, SIGNAL(mapped(QString)), this, SLOT(activateMode(QString)));
 }
 
@@ -88,17 +87,12 @@ void ModeManager::addWidget(QWidget *widget)
     // We want the actionbar to stay on the bottom
     // so m_modeStack->cornerWidgetCount() -1 inserts it at the position immediately above
     // the actionbar
-#if 0
     m_modeStack->insertCornerWidget(m_modeStack->cornerWidgetCount() -1, widget);
-#endif
 }
 
 IMode *ModeManager::currentMode() const
 {
-#if 0
     return m_modes.at(m_modeStack->currentIndex());
-#endif
-    return m_modes.at(0);
 }
 
 int ModeManager::indexOf(const QString &id) const
@@ -121,11 +115,9 @@ IMode *ModeManager::mode(const QString &id) const
 
 void ModeManager::activateMode(const QString &id)
 {
-#if 0
     const int index = indexOf(id);
     if (index >= 0)
         m_modeStack->setCurrentIndex(index);
-#endif
 }
 
 void ModeManager::objectAdded(QObject *obj)
@@ -133,10 +125,6 @@ void ModeManager::objectAdded(QObject *obj)
     IMode *mode = Aggregation::query<IMode>(obj);
     if (!mode)
         return;
-	
-	// it should be debugger main window
-	m_mainWindow->setCentralWidget (mode->widget());
-	
     m_mainWindow->addContextObject(mode);
 
     // Count the number of modes with a higher priority
@@ -146,9 +134,8 @@ void ModeManager::objectAdded(QObject *obj)
             ++index;
 
     m_modes.insert(index, mode);
-#if 0
     m_modeStack->insertTab(index, mode->widget(), mode->icon(), mode->name());
-#endif
+
     // Register mode shortcut
     ActionManager *am = m_mainWindow->actionManager();
     const QString shortcutId = QLatin1String("QtCreator.Mode.") + mode->uniqueModeName();
@@ -172,14 +159,12 @@ void ModeManager::objectAdded(QObject *obj)
 
 void ModeManager::updateModeToolTip()
 {
-#if 0
     Command *cmd = qobject_cast<Command *>(sender());
     if (cmd) {
         int index = m_modeShortcuts.indexOf(cmd);
         if (index != -1)
             m_modeStack->setTabToolTip(index, cmd->stringWithAppendedShortcut(cmd->shortcut()->whatsThis()));
     }
-#endif
 }
 
 void ModeManager::aboutToRemoveObject(QObject *obj)
@@ -191,16 +176,15 @@ void ModeManager::aboutToRemoveObject(QObject *obj)
     const int index = m_modes.indexOf(mode);
     m_modes.remove(index);
     m_modeShortcuts.remove(index);
-#if 0
     m_modeStack->removeTab(index);
-#endif
+
     m_mainWindow->removeContextObject(mode);
 }
 
 void ModeManager::addAction(Command *command, int priority, QMenu *menu)
 {
     m_actions.insert(command, priority);
-#if 0
+
     // Count the number of commands with a higher priority
     int index = 0;
     foreach (int p, m_actions.values())
@@ -208,7 +192,6 @@ void ModeManager::addAction(Command *command, int priority, QMenu *menu)
             ++index;
 
     m_actionBar->insertAction(index, command->action(), menu);
-#endif
 }
 
 void ModeManager::currentTabAboutToChange(int index)

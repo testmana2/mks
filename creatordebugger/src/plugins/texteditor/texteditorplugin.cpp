@@ -116,7 +116,7 @@ bool TextEditorPlugin::initialize(const QStringList &arguments, QString *errorMe
     int contextId = core->uniqueIDManager()->uniqueIdentifier(TextEditor::Constants::C_TEXTEDITOR);
     QList<int> context = QList<int>() << contextId;
     Core::ActionManager *am = core->actionManager();
-
+#if 0
     // Add shortcut for invoking automatic completion
     QShortcut *completionShortcut = new QShortcut(core->mainWindow());
     completionShortcut->setWhatsThis(tr("Triggers a completion in this scope"));
@@ -129,7 +129,7 @@ bool TextEditorPlugin::initialize(const QStringList &arguments, QString *errorMe
     command->setDefaultKeySequence(QKeySequence(tr("Meta+Space")));
 #endif
     connect(completionShortcut, SIGNAL(activated()), this, SLOT(invokeCompletion()));
-
+#endif
     addAutoReleasedObject(new FindInFiles(
         ExtensionSystem::PluginManager::instance()->getObject<Find::SearchResultWindow>()));
 

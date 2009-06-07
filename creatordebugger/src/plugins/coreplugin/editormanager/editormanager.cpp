@@ -172,17 +172,23 @@ EditorManagerPrivate::EditorManagerPrivate(ICore *core, QWidget *parent) :
     m_splitter(0),
     m_core(core),
     m_suppressEditorChanges(false),
+#if 0
     m_revertToSavedAction(new QAction(EditorManager::tr("Revert to Saved"), parent)),
+#endif
     m_saveAction(new QAction(parent)),
     m_saveAsAction(new QAction(parent)),
     m_closeCurrentEditorAction(new QAction(EditorManager::tr("Close"), parent)),
     m_closeAllEditorsAction(new QAction(EditorManager::tr("Close All"), parent)),
     m_gotoNextDocHistoryAction(new QAction(EditorManager::tr("Next Document in History"), parent)),
     m_gotoPreviousDocHistoryAction(new QAction(EditorManager::tr("Previous Document in History"), parent)),
+#if 0
     m_duplicateAction(new QAction(EditorManager::tr("Duplicate Document"), parent)),
+#endif
     m_goBackAction(new QAction(EditorManager::tr("Go back"), parent)),
     m_goForwardAction(new QAction(EditorManager::tr("Go forward"), parent)),
+#if 0
     m_openInExternalEditorAction(new QAction(EditorManager::tr("Open in External Editor"), parent)),
+#endif
     currentNavigationHistoryPosition(-1),
     m_windowPopup(0),
     m_coreListener(0)
@@ -219,8 +225,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
 
     const QList<int> gc =  QList<int>() << Constants::C_GLOBAL_ID;
     const QList<int> editManagerContext =
-            QList<int>() << m_d->m_core->uniqueIDManager()->uniqueIdentifier(Constants::C_EDITORMANAGER)
-						 << m_d->m_core->uniqueIDManager()->uniqueIdentifier(Constants::C_GLOBAL);
+            QList<int>() << m_d->m_core->uniqueIDManager()->uniqueIdentifier(Constants::C_EDITORMANAGER);
 
     ActionManager *am = m_d->m_core->actionManager();
     ActionContainer *mfile = am->actionContainer(Constants::M_FILE);
@@ -233,7 +238,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     cmd->setDefaultText(tr("Revert File to Saved"));
     mfile->addAction(cmd, Constants::G_FILE_SAVE);
     connect(m_d->m_revertToSavedAction, SIGNAL(triggered()), this, SLOT(revertToSaved()));
-
+#endif
     //Save Action
     am->registerAction(m_d->m_saveAction, Constants::SAVE, editManagerContext);
     connect(m_d->m_saveAction, SIGNAL(triggered()), this, SLOT(saveFile()));
@@ -241,13 +246,11 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     //Save As Action
     am->registerAction(m_d->m_saveAsAction, Constants::SAVEAS, editManagerContext);
     connect(m_d->m_saveAsAction, SIGNAL(triggered()), this, SLOT(saveFileAs()));
-#endif
+
     //Window Menu
     ActionContainer *mwindow = am->actionContainer(Constants::M_WINDOW);
-	
-	QAction *tmpaction;
+
     //Window menu separators
-#if 0
     QAction *tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Split"), editManagerContext);
@@ -257,12 +260,12 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Close"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_CLOSE);
-#endif
+
     tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Navigate"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE);
-#if 0
+
     tmpaction = new QAction(this);
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Navigate.Groups"), editManagerContext);
@@ -272,7 +275,7 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     tmpaction->setSeparator(true);
     cmd = am->registerAction(tmpaction, QLatin1String("QtCreator.Window.Sep.Bottom"), editManagerContext);
     mwindow->addAction(cmd, Constants::G_WINDOW_LIST);
-#endif
+
     //Close Action
     cmd = am->registerAction(m_d->m_closeCurrentEditorAction, Constants::CLOSE, editManagerContext);
     cmd->setDefaultKeySequence(QKeySequence(tr("Ctrl+W")));
@@ -332,8 +335,9 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     mwindow->addAction(cmd, Constants::G_WINDOW_NAVIGATE);
     connect(m_d->m_goForwardAction, SIGNAL(triggered()), this, SLOT(goForwardInNavigationHistory()));
 
-#if 0
+
     ActionContainer *medit = am->actionContainer(Constants::M_EDIT);
+#if 0
     ActionContainer *advancedMenu = am->createMenu(Constants::M_EDIT_ADVANCED);
     medit->addMenu(advancedMenu, Constants::G_EDIT_ADVANCED);
     advancedMenu->menu()->setTitle(tr("&Advanced"));
@@ -341,7 +345,6 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     advancedMenu->appendGroup(Constants::G_EDIT_COLLAPSING);
     advancedMenu->appendGroup(Constants::G_EDIT_FONT);
     advancedMenu->appendGroup(Constants::G_EDIT_EDITOR);
-
     // Advanced menu separators
     cmd = createSeparator(am, this, QLatin1String("QtCreator.Edit.Sep.Collapsing"), editManagerContext);
     advancedMenu->addAction(cmd, Constants::G_EDIT_COLLAPSING);
@@ -349,7 +352,6 @@ EditorManager::EditorManager(ICore *core, QWidget *parent) :
     advancedMenu->addAction(cmd, Constants::G_EDIT_FONT);
     cmd = createSeparator(am, this, QLatin1String("QtCreator.Edit.Sep.Editor"), editManagerContext);
     advancedMenu->addAction(cmd, Constants::G_EDIT_EDITOR);
-
     cmd = am->registerAction(m_d->m_openInExternalEditorAction, Constants::OPEN_IN_EXTERNAL_EDITOR, editManagerContext);
     cmd->setDefaultKeySequence(QKeySequence(tr("Alt+V,Alt+I")));
     advancedMenu->addAction(cmd, Constants::G_EDIT_EDITOR);
@@ -1179,13 +1181,15 @@ void EditorManager::updateActions()
 
     m_d->m_saveAction->setEnabled(curEditor != 0 && curEditor->file()->isModified());
     m_d->m_saveAsAction->setEnabled(curEditor != 0 && curEditor->file()->isSaveAsAllowed());
+#if 0
     m_d->m_revertToSavedAction->setEnabled(curEditor != 0
         && !curEditor->file()->fileName().isEmpty() && curEditor->file()->isModified());
-
+#endif
     m_d->m_saveAsAction->setText(tr("Save %1 As...").arg(fName));
     m_d->m_saveAction->setText(tr("&Save %1").arg(fName));
+#if 0
     m_d->m_revertToSavedAction->setText(tr("Revert %1 to Saved").arg(fName));
-
+#endif
 
     m_d->m_closeCurrentEditorAction->setEnabled(m_d->m_splitter->currentGroup()->editorCount() > 0);
     m_d->m_closeCurrentEditorAction->setText(tr("Close %1").arg(fName));
@@ -1195,10 +1199,10 @@ void EditorManager::updateActions()
     m_d->m_gotoPreviousDocHistoryAction->setEnabled(m_d->m_editorHistory.count() > 0);
     m_d->m_goBackAction->setEnabled(m_d->currentNavigationHistoryPosition > 0);
     m_d->m_goForwardAction->setEnabled(m_d->currentNavigationHistoryPosition < m_d->m_navigationHistory.size()-1);
-
+#if 0
     m_d->m_duplicateAction->setEnabled(curEditor != 0 && curEditor->duplicateSupported());
-
     m_d->m_openInExternalEditorAction->setEnabled(curEditor != 0);
+#endif
 }
 
 QList<IEditor*> EditorManager::openedEditors() const

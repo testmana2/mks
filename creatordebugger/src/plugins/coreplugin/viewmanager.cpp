@@ -69,12 +69,10 @@ ViewManager::~ViewManager()
 
 void ViewManager::init()
 {
-#if 0
     connect(ExtensionSystem::PluginManager::instance(), SIGNAL(objectAdded(QObject*)),
             this, SLOT(objectAdded(QObject*)));
     connect(ExtensionSystem::PluginManager::instance(), SIGNAL(aboutToRemoveObject(QObject*)),
             this, SLOT(aboutToRemoveObject(QObject*)));
-#endif
 }
 
 void ViewManager::objectAdded(QObject *obj)

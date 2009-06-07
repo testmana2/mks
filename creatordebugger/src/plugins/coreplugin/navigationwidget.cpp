@@ -342,6 +342,7 @@ NavigationSubWidget::NavigationSubWidget(NavigationWidget *parentWidget)
             this, SLOT(objectAdded(QObject*)));
     connect(ExtensionSystem::PluginManager::instance(), SIGNAL(aboutToRemoveObject(QObject*)),
             this, SLOT(aboutToRemoveObject(QObject*)));
+
     m_navigationComboBox = new NavComboBox(this);
     m_navigationWidget = 0;
 #ifdef Q_OS_MAC
