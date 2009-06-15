@@ -854,7 +854,7 @@ static QString formatFileFilters(const Core::ICore *core, QString *selectedFilte
     if (filters.empty())
         return rc;
     const QString filterSeparator = QLatin1String(";;");
-    bool hasAllFilter = false;
+    bool hasAllFilter = true;
     const int size = filters.size();
     for (int i = 0; i < size; i++) {
         const QString &filterString = filters.at(i);
