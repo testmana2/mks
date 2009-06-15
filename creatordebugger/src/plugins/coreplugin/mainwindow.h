@@ -76,6 +76,7 @@ class ProgressManagerPrivate;
 class ShortcutSettings;
 class ViewManager;
 class VersionDialog;
+class BeaverVersionDialog;
 
 class CORE_EXPORT MainWindow : public QMainWindow
 {
@@ -147,10 +148,12 @@ private slots:
     void setFocusToEditor();
     void saveAll();
     void aboutQtCreator();
+    void aboutBeaver();
     void aboutPlugins();
     void updateFocusWidget(QWidget *old, QWidget *now);
     void setSidebarVisible(bool visible);
     void destroyVersionDialog();
+    void destroyBeaverVersionDialog();
 
 private:
     void updateContextObject(IContext *context);
@@ -182,6 +185,7 @@ private:
     RightPaneWidget *m_rightPaneWidget;
     Core::BaseView *m_outputView;
     VersionDialog *m_versionDialog;
+    BeaverVersionDialog *m_beaverVersionDialog;
 
     IContext * m_activeContext;
 
