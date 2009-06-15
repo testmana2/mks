@@ -55,6 +55,7 @@
 #include "stylehelper.h"
 #include "variablemanager.h"
 #include "versiondialog.h"
+#include "beaverversiondialog.h"
 #include "viewmanager.h"
 #include "uniqueidmanager.h"
 #include "manhattanstyle.h"
@@ -125,6 +126,7 @@ MainWindow::MainWindow() :
     m_navigationWidget(0),
     m_rightPaneWidget(0),
     m_versionDialog(0),
+    m_beaverVersionDialog(0),
     m_activeContext(0),
     m_outputMode(0),
     m_generalSettings(new GeneralSettings),
@@ -147,7 +149,7 @@ MainWindow::MainWindow() :
 #if 0
     OutputPaneManager::create();
 #endif
-    setWindowTitle(tr("Qt Creator"));
+    //setWindowTitle(tr("Beaver"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":/core/images/qtcreator_logo_128.png"));
 #endif
@@ -721,16 +723,26 @@ void MainWindow::registerDefaultActions()
     connect(m_toggleFullScreenAction, SIGNAL(triggered(bool)), this, SLOT(setFullScreen(bool)));
 #endif
 
-    // About IDE Action
+    // About original Qt Creator
 #ifdef Q_OS_MAC
-    tmpaction = new QAction(tr("About &Qt Creator"), this); // it's convention not to add dots to the about menu
+    tmpaction = new QAction(tr("About original &Qt Creator"), this); // it's convention not to add dots to the about menu
 #else
-    tmpaction = new QAction(tr("About &Qt Creator..."), this);
+    tmpaction = new QAction(tr("About original &Qt Creator..."), this);
 #endif
     cmd = am->registerAction(tmpaction, Constants:: ABOUT_WORKBENCH, m_globalContext);
     mhelp->addAction(cmd, Constants::G_HELP_ABOUT);
     tmpaction->setEnabled(true);
     connect(tmpaction, SIGNAL(triggered()), this,  SLOT(aboutQtCreator()));
+    // About beaver
+#ifdef Q_OS_MAC
+    tmpaction = new QAction(tr("About &Beaver"), this); // it's convention not to add dots to the about menu
+#else
+    tmpaction = new QAction(tr("About &Beaver..."), this);
+#endif
+    cmd = am->registerAction(tmpaction, Constants::ABOUT_BEAVER, m_globalContext);
+    mhelp->addAction(cmd, Constants::G_HELP_ABOUT);
+    tmpaction->setEnabled(true);
+    connect(tmpaction, SIGNAL(triggered()), this,  SLOT(aboutBeaver()));
 #if 0
     //About Plugins Action
     tmpaction = new QAction(tr("About &Plugins..."), this);
@@ -1182,6 +1194,24 @@ void MainWindow::destroyVersionDialog()
     if (m_versionDialog) {
         m_versionDialog->deleteLater();
         m_versionDialog = 0;
+    }
+}
+
+void MainWindow::aboutBeaver()
+{
+    if (!m_beaverVersionDialog) {
+        m_beaverVersionDialog = new BeaverVersionDialog(this);
+        connect(m_beaverVersionDialog, SIGNAL(finished(int)),
+                this, SLOT(destroyBeaverVersionDialog()));
+    }
+    m_beaverVersionDialog->show();
+}
+
+void MainWindow::destroyBeaverVersionDialog()
+{
+    if (m_beaverVersionDialog) {
+        m_beaverVersionDialog->deleteLater();
+        m_beaverVersionDialog = 0;
     }
 }
 

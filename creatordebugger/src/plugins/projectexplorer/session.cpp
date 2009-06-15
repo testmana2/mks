@@ -907,7 +907,7 @@ Core::IFile *SessionManager::file() const
 
 void SessionManager::updateWindowTitle()
 {
-    QString windowTitle = tr("Qt Creator");
+    QString windowTitle = tr("Beaver");
     if (!isDefaultSession(m_sessionName)) {
         QString sessionName = m_sessionName;
         if (sessionName.isEmpty())

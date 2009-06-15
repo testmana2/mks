@@ -139,6 +139,7 @@ const char * const GOTOPREVIOUSGROUP     = "QtCreator.GotoPreviousTabGroup";
 const char * const GOTONEXTGROUP         = "QtCreator.GotoNextTabGroup";
 const char * const WINDOWSLIST           = "QtCreator.WindowsList";
 const char * const ABOUT_WORKBENCH       = "QtCreator.AboutWorkbench";
+const char * const ABOUT_BEAVER          = "QtCreator.AboutBeaver";
 const char * const ABOUT_PLUGINS         = "QtCreator.AboutPlugins";
 const char * const ABOUT_QT              = "QtCreator.AboutQt";
 const char * const S_RETURNTOEDITOR      = "QtCreator.ReturnToEditor";
@@ -196,6 +197,7 @@ const char * const G_WINDOW_FULLSCREEN   = "QtCreator.Group.Window.Fullscreen";
 // help groups (global)
 const char * const G_HELP_HELP           = "QtCreator.Group.Help.Help";
 const char * const G_HELP_ABOUT          = "QtCreator.Group.Help.About";
+const char * const G_HELP_ABOUT_BEAVER   = "QtCreator.Group.Help.AboutBeaver";
 
 const char * const ICON_MINUS            = ":/core/images/minus.png";
 const char * const ICON_PLUS             = ":/core/images/plus.png";
