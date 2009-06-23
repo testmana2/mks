@@ -2,6 +2,9 @@
 #include <QMainWindow>
 #include <QStatusBar>
 #include <QLabel>
+#include <QStringList>
+#include <QProcess>
+#include <QFileInfo>
 #include <QDebug>
 
 #include <extensionsystem/pluginmanager.h>
@@ -19,9 +22,68 @@
 #include "texteditor/texteditorplugin.h"
 #include "cppeditor/cppplugin.h"
 
-int main(int argc, char **argv)
+static void print_help()
 {
+	qWarning("Usage: beaver PROGRAMM ARGUMENTS");
+}
+
+int main(int argc, char **argv)
+{	
 	QApplication app (argc, argv);
+	
+	QStringList args;
+	for (int i = 1; i < argc; i++)
+	{
+		args << argv[i];
+	}
+	
+	QString targetFileName;
+	QString targetArgs;
+	if (args.size() > 0)
+	{
+		QStringList path;
+		path << "" << ".";
+
+		QStringList env = QProcess::systemEnvironment();
+		foreach(QString var, env)
+		{
+			if (var.startsWith("PATH="))
+			{
+				var.remove(0, 5);
+#ifdef Q_OS_WIN
+				QStringList pathDirs = var.split(";");
+#else
+				QStringList pathDirs = var.split(":");
+#endif
+				path.append(pathDirs);
+			}
+		}
+		bool found  = false;
+		foreach(QString dir, path)
+		{
+			targetFileName = dir + "/" + args[0];
+			QFileInfo info(targetFileName);
+			if (info.isFile() && info.isExecutable())
+			{
+				found = true;
+				break;
+			}
+		}
+		if (found)
+		{
+			args.removeAt(0);
+			targetArgs = args.join(" ");
+		}
+		else
+		{
+			qWarning() << args[0] << "is not a valid executable file";
+			print_help();
+			return -1;
+		}
+	}
+	
+	qDebug () << targetFileName << targetArgs;
+	
 	ExtensionSystem::PluginManager pluginManager;
 	// for create instance
 	QString error;
