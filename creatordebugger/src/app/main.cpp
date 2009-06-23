@@ -25,6 +25,8 @@
 static void print_help()
 {
 	qWarning("Usage: beaver PROGRAMM ARGUMENTS");
+	qWarning("\nTODO: possibility to attach to running process, remote debugging, transcript file");
+	qWarning("	waits for volunteer");
 }
 
 int main(int argc, char **argv)
@@ -39,6 +41,14 @@ int main(int argc, char **argv)
 	
 	QString targetFileName;
 	QString targetArgs;
+	if (args.size() == 1 &&
+		(args[0] == "-h" ||
+		 args[0] == "--help"))
+	{
+		print_help();
+		return 0;
+	}
+	
 	if (args.size() > 0)
 	{
 		QStringList path;
@@ -82,7 +92,10 @@ int main(int argc, char **argv)
 		}
 	}
 	
-	qDebug () << targetFileName << targetArgs;
+	if (! targetFileName.isEmpty())
+	{
+		qDebug () << targetFileName << targetArgs;
+	}
 	
 	ExtensionSystem::PluginManager pluginManager;
 	// for create instance
