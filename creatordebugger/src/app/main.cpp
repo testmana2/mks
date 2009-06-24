@@ -40,7 +40,6 @@ int main(int argc, char **argv)
 	}
 	
 	QString targetFileName;
-	QString targetArgs;
 	if (args.size() == 1 &&
 		(args[0] == "-h" ||
 		 args[0] == "--help"))
@@ -82,7 +81,6 @@ int main(int argc, char **argv)
 		if (found)
 		{
 			args.removeAt(0);
-			targetArgs = args.join(" ");
 		}
 		else
 		{
@@ -90,11 +88,6 @@ int main(int argc, char **argv)
 			print_help();
 			return -1;
 		}
-	}
-	
-	if (! targetFileName.isEmpty())
-	{
-		qDebug () << targetFileName << targetArgs;
 	}
 	
 	ExtensionSystem::PluginManager pluginManager;
@@ -120,6 +113,10 @@ int main(int argc, char **argv)
 	
 	core->extensionsInitialized();
 	
+	if (! targetFileName.isEmpty())
+	{
+		debugger->startNewDebugger(targetFileName, args);
+	}
 	int res = app.exec();
 	
 	delete cpp;

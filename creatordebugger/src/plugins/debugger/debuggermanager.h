@@ -218,6 +218,7 @@ public:
 
 public slots:
     bool startNewDebugger(StartMode mode);
+    bool startNewDebugger(const QString& programm, const QStringList& arguments);
     void exitDebugger(); 
 
     void setSimpleDockWidgetArrangement();

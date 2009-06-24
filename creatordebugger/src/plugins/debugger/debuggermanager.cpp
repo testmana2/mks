@@ -838,6 +838,32 @@ bool DebuggerManager::startNewDebugger(StartMode mode)
     return true;
 }
 
+bool DebuggerManager::startNewDebugger(const QString& programm, const QStringList& arguments)
+{
+    m_startMode = StartExternal;
+    
+    m_executable = programm;
+    m_processArgs = arguments;
+    m_workingDir = QString();
+    m_attachedPID = -1;
+    
+    emit debugModeRequested();
+
+    if (m_executable.endsWith(".js"))
+        setDebuggerType(ScriptDebugger);
+    else 
+        setDebuggerType(GdbDebugger);
+
+    setStatus(DebuggerProcessStartingUp);
+    if (!m_engine->startDebugger()) {
+        setStatus(DebuggerProcessNotReady);
+        return false;
+    }
+
+    m_busy = false;
+    return true;
+}
+
 void DebuggerManager::cleanupViews()
 {
     resetLocation();
