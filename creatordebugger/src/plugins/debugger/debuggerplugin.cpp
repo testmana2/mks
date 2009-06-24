@@ -359,6 +359,12 @@ DebuggerPlugin::DebuggerPlugin()
 DebuggerPlugin::~DebuggerPlugin()
 {}
 
+bool DebuggerPlugin::startNewDebugger(const QString& programm, const QStringList& arguments)
+{
+    m_manager->breakAtMain();
+    return m_manager->startNewDebugger(programm, arguments);
+}
+
 static QSettings *settings()
 {
     return ICore::instance()->settings();
