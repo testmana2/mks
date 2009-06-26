@@ -1,7 +1,10 @@
 IDE_BUILD_TREE = $$OUT_PWD/../../
 
-include(../plugins/plugins.pri)
+CONFIG -= release
+CONFIG *= debug
+
 include(../qworkbench.pri)
+include(../plugins/plugins.pri)
 include(../libs/aggregation/aggregation.pri)
 include(../libs/extensionsystem/extensionsystem.pri)
 include(../libs/cplusplus/cplusplus.pri)
@@ -15,9 +18,6 @@ INCLUDEPATH *= ../libs/extensionsystem ../plugins/coreplugin  ../plugins
 TEMPLATE = app
 TARGET = $$IDE_APP_TARGET
 DESTDIR = ../../bin
-
-CONFIG -= release
-CONFIG *= debug
 
 QT *= core gui script xml webkit svg
 CONFIG *= help
