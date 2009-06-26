@@ -1,10 +1,9 @@
 TEMPLATE = lib
-
-include(../../qworkbenchlibrary.pri)
-
 TARGET = Utils
 
 DEFINES += QWORKBENCH_UTILS_LIBRARY
+
+include(../../qworkbenchlibrary.pri)
 
 SOURCES += \
     reloadpromptutils.cpp \
