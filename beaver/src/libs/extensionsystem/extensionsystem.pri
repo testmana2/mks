@@ -1,3 +1,3 @@
 include(extensionsystem_dependencies.pri)
 
-LIBS *= -l$$libName(ExtensionSystem)
+LIBS *= -l$$qtLibraryTarget(ExtensionSystem)

@@ -1,5 +1,8 @@
 IDE_SOURCE_TREE = $$PWD/../
 
+CONFIG -= release
+CONFIG *= debug
+
 isEmpty(TEST):CONFIG(debug, debug|release) {
     !debug_and_release|build_pass {
         TEST = 1
@@ -16,12 +19,13 @@ isEmpty(IDE_BUILD_TREE) {
 }
 macx {
     IDE_APP_TARGET   = Beaver
-    IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/lib/qtcreator
+    
     IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH
+	IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/bin/$${IDE_APP_TARGET}.app/Contents/PlugIns
     contains(QT_CONFIG, ppc):CONFIG += ppc x86
 } else {
     IDE_APP_TARGET   = beaver
-    IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/bin/$${IDE_APP_TARGET}.app/Contents/PlugIns
+	IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/lib/qtcreator
     IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH/plugins/
 }
 IDE_APP_PATH = $$IDE_BUILD_TREE/bin
@@ -30,7 +34,7 @@ win32 {
     IDE_APP_PATH ~= s|/+|\|
 }
 
-defineReplace(libName) {
+defineReplace(qtLibraryTarget) {
 	unset(Q_LIB_NAME)
 	Q_LIB_NAME = $$1
 	CONFIG(debug, debug|release) {

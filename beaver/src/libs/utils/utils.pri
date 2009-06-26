@@ -1,1 +1,1 @@
-LIBS *= -l$$libName(Utils)
+LIBS *= -l$$qtLibraryTarget(Utils)

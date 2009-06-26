@@ -1,1 +1,1 @@
-LIBS *= -l$$libName(QtConcurrent)
+LIBS *= -l$$qtLibraryTarget(QtConcurrent)

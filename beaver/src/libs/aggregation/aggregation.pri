@@ -1,1 +1,1 @@
-LIBS *= -l$$libName(Aggregation)
+LIBS *= -l$$qtLibraryTarget(Aggregation)
