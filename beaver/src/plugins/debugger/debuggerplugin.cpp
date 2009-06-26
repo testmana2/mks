@@ -104,6 +104,8 @@ const char * const BREAK_AT_MAIN        = "Debugger.BreakAtMain";
 const char * const ADD_TO_WATCH         = "Debugger.AddToWatch";
 
 #ifdef Q_OS_MAC
+const char * const STARTEXTERNAL_KEY        = "Ctrl+E";
+const char * const ATTACHEXTERNAL_KEY       = "Ctrl+T";
 const char * const INTERRUPT_KEY            = "Shift+F5";
 const char * const RESET_KEY                = "Ctrl+Shift+F5";
 const char * const STEP_KEY                 = "F7";
@@ -119,6 +121,8 @@ const char * const BREAK_BY_FUNCTION_KEY    = "Alt+D,Alt+F";
 const char * const BREAK_AT_MAIN_KEY        = "Alt+D,Alt+M";
 const char * const ADD_TO_WATCH_KEY         = "Alt+D,Alt+W";
 #else
+const char * const STARTEXTERNAL_KEY        = "Ctrl+E";
+const char * const ATTACHEXTERNAL_KEY       = "Ctrl+T";
 const char * const INTERRUPT_KEY            = "Shift+F5";
 const char * const RESET_KEY                = "Ctrl+Shift+F5";
 const char * const STEP_KEY                 = "F11";
@@ -447,11 +451,13 @@ bool DebuggerPlugin::initialize(const QStringList &arguments, QString *error_mes
     Core::Command *cmd = 0;
     cmd = am->registerAction(m_manager->m_startExternalAction,
         Constants::STARTEXTERNAL, globalcontext);
+    cmd->setDefaultKeySequence(QKeySequence(Constants::STARTEXTERNAL_KEY));
     mdebug->addAction(cmd, Core::Constants::G_DEFAULT_ONE);
 
 #ifndef Q_OS_WIN
     cmd = am->registerAction(m_manager->m_attachExternalAction,
         Constants::ATTACHEXTERNAL, globalcontext);
+    cmd->setDefaultKeySequence(QKeySequence(Constants::ATTACHEXTERNAL_KEY));
     mdebug->addAction(cmd, Core::Constants::G_DEFAULT_ONE);
 #endif
 
