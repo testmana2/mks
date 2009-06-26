@@ -1,11 +1,8 @@
 TEMPLATE = lib
-
-include(../../qworkbenchlibrary.pri)
-
 TARGET = ExtensionSystem
 QT += xml
 DEFINES += EXTENSIONSYSTEM_LIBRARY
-
+include(../../qworkbenchlibrary.pri)
 include(extensionsystem_dependencies.pri)
 
 DEFINES += IDE_TEST_DIR=\\\"$$IDE_SOURCE_TREE\\\"
