@@ -30,6 +30,18 @@ win32 {
     IDE_APP_PATH ~= s|/+|\|
 }
 
+defineReplace(libName) {
+	unset(Q_LIB_NAME)
+	Q_LIB_NAME = $$1
+	CONFIG(debug, debug|release) {
+		!debug_and_release|build_pass {
+			unix:RET = $$member(Q_LIB_NAME, 0)_debug
+			else:win32:RET = $$member(Q_LIB_NAME, 0)d
+		}
+	}
+	return($$RET)
+}
+
 INCLUDEPATH += \
     $$IDE_SOURCE_TREE/src/libs \
     $$IDE_SOURCE_TREE/tools \

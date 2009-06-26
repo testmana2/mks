@@ -11,3 +11,5 @@ DESTDIR = $$IDE_LIBRARY_PATH
 
 CONFIG -= shared
 CONFIG *= staticlib
+
+TARGET = $$qtLibraryTarget($$TARGET)
