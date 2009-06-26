@@ -246,7 +246,7 @@ FancyTabWidget::FancyTabWidget(QWidget *parent)
     m_tabBar->setUsesScrollButtons(false);
 
     m_selectionWidget = new QWidget(this);
-	m_selectionWidget->setMaximumWidth(0);
+    m_selectionWidget->setMaximumWidth(0);
     QVBoxLayout *selectionLayout = new QVBoxLayout;
     selectionLayout->setSpacing(0);
     selectionLayout->setMargin(0);

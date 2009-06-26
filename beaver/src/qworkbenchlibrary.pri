@@ -1,8 +1,6 @@
 IDE_BUILD_TREE = $$OUT_PWD/../../../
 include(qworkbench.pri)
 
-CONFIG -= release
-CONFIG *= debug
 CONFIG -= shared
 CONFIG *= staticlib
 
@@ -18,7 +16,7 @@ TARGET = $$qtLibraryTarget($$TARGET)
 
 contains(QT_CONFIG, reduce_exports):CONFIG += hide_symbols
 
-#linux-* {
-#	target.path = /lib/qtcreator
-#	INSTALLS += target
-#    }
+linux-* {
+	target.path = /lib/qtcreator
+	INSTALLS += target
+    }

@@ -21,14 +21,14 @@ macx {
     contains(QT_CONFIG, ppc):CONFIG += ppc x86
 } else {
     IDE_APP_TARGET   = beaver
-    IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/lib/qtcreator
+    IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/bin/$${IDE_APP_TARGET}.app/Contents/PlugIns
     IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH/plugins/
 }
 IDE_APP_PATH = $$IDE_BUILD_TREE/bin
-#win32 {
-#    IDE_LIBRARY_PATH ~= s|/+|\|
-#    IDE_APP_PATH ~= s|/+|\|
-#}
+win32 {
+    IDE_LIBRARY_PATH ~= s|/+|\|
+    IDE_APP_PATH ~= s|/+|\|
+}
 
 INCLUDEPATH += \
     $$IDE_SOURCE_TREE/src/libs \
@@ -48,4 +48,5 @@ unix {
     release:MOC_DIR = $${OUT_PWD}/.moc/release-shared
 
     RCC_DIR = $${OUT_PWD}/.rcc/
+    UI_DIR = $${OUT_PWD}/.uic/
 }
