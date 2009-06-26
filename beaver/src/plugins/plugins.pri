@@ -1,7 +1,7 @@
-LIBS *=  -l$$libName(CppEditor) -l$$libName(CppTools ) \
-	-l$$libName(Debugger) -l$$libName(ProjectExplorer) \
-	-l$$libName(TextEditor) -l$$libName(Find) \
-	-l$$libName(QuickOpen) -l$$libName(Core)
+LIBS *=  -l$$qtLibraryTarget(CppEditor) -l$$qtLibraryTarget(CppTools ) \
+	-l$$qtLibraryTarget(Debugger) -l$$qtLibraryTarget(ProjectExplorer) \
+	-l$$qtLibraryTarget(TextEditor) -l$$qtLibraryTarget(Find) \
+	-l$$qtLibraryTarget(QuickOpen) -l$$qtLibraryTarget(Core)
 
 PRE_TARGETDEPS *= $$PWD/debugger $$PWD/texteditor $$PWD/find $$PWD/projectexplorer $$PWD/coreplugin
 
