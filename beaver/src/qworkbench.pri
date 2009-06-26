@@ -17,7 +17,7 @@ isEmpty(IDE_BUILD_TREE) {
 macx {
     IDE_APP_TARGET   = Beaver
     IDE_LIBRARY_PATH = $$IDE_BUILD_TREE/lib/qtcreator
-    IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH 
+    IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH
     contains(QT_CONFIG, ppc):CONFIG += ppc x86
 } else {
     IDE_APP_TARGET   = beaver
@@ -39,6 +39,7 @@ defineReplace(libName) {
 			else:win32:RET = $$member(Q_LIB_NAME, 0)d
 		}
 	}
+	isEmpty(RET):RET = $$Q_LIB_NAME
 	return($$RET)
 }
 
