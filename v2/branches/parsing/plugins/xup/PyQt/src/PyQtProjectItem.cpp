@@ -3,7 +3,6 @@
 #include <XUPProjectItemInfos.h>
 #include <pMonkeyStudio.h>
 #include <BuilderPlugin.h>
-#include <CompilerPlugin.h>
 #include <InterpreterPlugin.h>
 
 #include <QApplication>
@@ -67,11 +66,6 @@ void PyQtProjectItem::registerProjectType() const
 BuilderPlugin* PyQtProjectItem::builder( const QString& plugin ) const
 {
 	return XUPProjectItem::builder( plugin );
-}
-
-CompilerPlugin* PyQtProjectItem::compiler( const QString& plugin ) const
-{
-	return XUPProjectItem::compiler( plugin );
 }
 
 DebuggerPlugin* PyQtProjectItem::debugger( const QString& plugin ) const

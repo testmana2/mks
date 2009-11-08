@@ -46,7 +46,6 @@ PluginsManager::PluginsManager( QObject* p )
 	mMenu->setObjectName( "pluginsMenu" );
 	mMenu->setTitle( tr( "Manage" ) );
 	mBuilder = 0;
-	mCompiler = 0;
 	mDebugger = 0;
 	mInterpreter = 0;
 }
@@ -233,25 +232,6 @@ void PluginsManager::setCurrentBuilder( BuilderPlugin* b )
 
 BuilderPlugin* PluginsManager::currentBuilder()
 { return mBuilder; }
-
-void PluginsManager::setCurrentCompiler( CompilerPlugin* c )
-{
-	// if same cancel
-	if ( mCompiler == c )
-		return;
-	
-	// disabled all builder
-	foreach ( CompilerPlugin* cp, plugins<CompilerPlugin*>( PluginsManager::stAll ) )
-		cp->setEnabled( false );
-	
-	// enabled the one we choose
-	mCompiler = c;
-	if ( mCompiler )
-		mCompiler->setEnabled( true );
-}
-
-CompilerPlugin* PluginsManager::currentCompiler()
-{ return mCompiler; }
 
 void PluginsManager::setCurrentDebugger( DebuggerPlugin* d )
 {
