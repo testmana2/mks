@@ -934,7 +934,7 @@ void pMonkeyStudio::setEditorProperties( pEditor* editor )
 }
 
 /*!
-	\details Save files on custom actions triggered ( builder, compiler, debugger, interpreter )
+	\details Save files on custom actions triggered ( builder, debugger, interpreter )
 	\param save True to save, else false
 */
 void pMonkeyStudio::setSaveFilesOnCustomAction( bool save )

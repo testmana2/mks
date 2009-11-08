@@ -3,7 +3,6 @@
 #include <XUPProjectItemInfos.h>
 #include <pMonkeyStudio.h>
 #include <BuilderPlugin.h>
-#include <CompilerPlugin.h>
 #include <InterpreterPlugin.h>
 
 #include <QApplication>
@@ -67,11 +66,6 @@ void PHPQtProjectItem::registerProjectType() const
 BuilderPlugin* PHPQtProjectItem::builder( const QString& plugin ) const
 {
 	return XUPProjectItem::builder( plugin );
-}
-
-CompilerPlugin* PHPQtProjectItem::compiler( const QString& plugin ) const
-{
-	return XUPProjectItem::compiler( plugin );
 }
 
 DebuggerPlugin* PHPQtProjectItem::debugger( const QString& plugin ) const

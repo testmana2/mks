@@ -58,13 +58,6 @@ UISimpleQMakeEditor::UISimpleQMakeEditor( XUPProjectItem* project, QWidget* pare
 		swBuilders->addWidget( bp->settingsWidget() );
 	}
 	
-	// compilers
-	foreach ( CompilerPlugin* cp, MonkeyCore::pluginsManager()->plugins<CompilerPlugin*>( PluginsManager::stAll ) )
-	{
-		cbCompilers->addItem( cp->infos().Name );
-		swCompilers->addWidget( cp->settingsWidget() );
-	}
-	
 	// debuggers
 	foreach ( DebuggerPlugin* dp, MonkeyCore::pluginsManager()->plugins<DebuggerPlugin*>( PluginsManager::stAll ) )
 	{
