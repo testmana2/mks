@@ -35,6 +35,7 @@
 
 #include <QDebug>
 
+#include "MkSShellInterpreter.h"
 #include "CommandParser.h"
 
 /*!
@@ -47,6 +48,23 @@
 #if PARSERS_DEBUG
 	#include <QTime>
 #endif
+
+//! Implementation for 'parser' MkS scripting interface command
+QString parserCommandImplementation(const QString& command, const QStringList& arguments, int* status, class MkSShellInterpreter*)
+{
+	qDebug() << command << arguments;
+	*status = 0;
+	return QString::null;
+}
+
+void CommandParser::installParserCommand()
+{
+	QString help = tr(	"This command allows to add and remove console output parsing patterns. Usage:\n"
+						"\tparser add <name> <regular expression> <file name> <column> <row> <pattern type> <pattern text> <full text>\n"
+						"\tparser remove <name> <regular expression>\n");
+	
+	MkSShellInterpreter::instance()->addCommandImplementation( "parser", parserCommandImplementation, help);
+}
 
 CommandParser::CommandParser(QObject* parent, const QString& name):
 	AbstractCommandParser(parent),
