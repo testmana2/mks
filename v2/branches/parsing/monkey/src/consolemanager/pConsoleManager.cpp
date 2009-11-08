@@ -37,6 +37,7 @@
 #include <QDir>
 
 #include "pConsoleManager.h"
+#include "CommandParser.h"
 #include "AbstractCommandParser.h"
 
 #include <MonkeyCore.h>
@@ -101,6 +102,8 @@ pConsoleManager::pConsoleManager( QObject* o )
 	mTimerId = startTimer( 100 );
 	mStringBuffer.reserve (MAX_LINES *200);
 	mStopAttempt = 0;
+	
+	CommandParser::installParserCommand();
 }
 
 /*!

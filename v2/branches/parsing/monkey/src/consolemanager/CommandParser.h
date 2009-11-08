@@ -45,7 +45,11 @@
 class Q_MONKEY_EXPORT CommandParser : public AbstractCommandParser
 {
 	Q_OBJECT
-
+	
+public:
+	//! Install 'parser' command of MkS scripting interface
+	static void installParserCommand();
+	
 protected:
 	/*!
 		Structure contains regular expression for searching some phrase
