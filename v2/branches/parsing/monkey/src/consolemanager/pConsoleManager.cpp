@@ -150,6 +150,14 @@ void pConsoleManager::removeParser( const QString& s )
 { removeParser( mParsers.value( s ) ); }
 
 /*!
+	Returns pointer to parser, or NULL if not found
+ */
+AbstractCommandParser* pConsoleManager::getParser(const QString& name)
+{
+	return mParsers[name];
+}
+
+/*!
 	Convert path separators to native for OS
 */
 QString pConsoleManager::nativeSeparators( const QString& s )
