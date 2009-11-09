@@ -36,6 +36,7 @@
 #include <QDebug>
 
 #include "MkSShellInterpreter.h"
+#include "MonkeyCore.h"
 #include "CommandParser.h"
 
 /*!
@@ -52,7 +53,68 @@
 //! Implementation for 'parser' MkS scripting interface command
 QString parserCommandImplementation(const QString& command, const QStringList& arguments, int* status, class MkSShellInterpreter*)
 {
-	qDebug() << command << arguments;
+	CommandParser::Pattern pattern;
+	
+	if (9 != arguments.size())
+	{
+		*status = -1;
+		return QString("Command '%1' has 9 arguments").arg(command);
+	}
+	
+	if (arguments[0] == "add")
+	{
+		pattern.regExp = QRegExp(arguments[2], Qt::CaseSensitive, QRegExp::RegExp2);
+		pattern.FileName = arguments[3];
+		pattern.col = arguments[4];
+		pattern.row = arguments[5];
+		
+		if (arguments[6] == "error")
+			pattern.Type = pConsoleManager::stError;
+		else if (arguments[6] == "warning")
+			pattern.Type = pConsoleManager::stWarning;
+		else if (arguments[6] == "compiling")
+			pattern.Type = pConsoleManager::stCompiling;
+		else if (arguments[6] == "finish")
+			pattern.Type = pConsoleManager::stFinish;
+		else if (arguments[6] == "good")
+			pattern.Type = pConsoleManager::stGood;
+		else if (arguments[6] == "bad")
+			pattern.Type = pConsoleManager::stBad;
+		else
+		{
+			*status = -1;
+			return QString("Invalid type '%1'").arg(arguments[6]);
+		}
+		
+		pattern.Text = arguments[7];
+		pattern.FullText = arguments[8];
+		
+		AbstractCommandParser* parser = MonkeyCore::consoleManager()->getParser(arguments[1]);
+		if (parser) // Already exists, add pattern
+		{
+			if (dynamic_cast<CommandParser*>(parser))
+			{
+				dynamic_cast<CommandParser*>(parser)->addPattern(pattern);
+			}
+			else
+			{
+				*status = -1;
+				return QString("Parser '%1' has invalid type").arg(arguments[1]);
+			}
+		}
+		else // Create parser and add pattern
+		{
+			CommandParser* comParser = new CommandParser(MonkeyCore::consoleManager(), arguments[1]);
+			comParser->addPattern(pattern);
+			MonkeyCore::consoleManager()->addParser(comParser);
+		}
+	}
+	else // Command is not "add"
+	{
+		*status = -1;
+		return QString("Invalid command %1").arg(arguments[0]);
+	}
+	
 	*status = 0;
 	return QString::null;
 }
