@@ -27,15 +27,11 @@
 **
 ****************************************************************************/
 #include "GNUMake.h"
-#include "GNUMakeParser.h"
 
 #include <QTabWidget>
 
 GNUMake::GNUMake ()
 {
-	// install parsers
-	foreach ( QString s, availableParsers() )
-		MonkeyCore::consoleManager()->addParser( getParser( s ) );
 }
 
 void GNUMake::fillPluginInfos()
@@ -132,10 +128,10 @@ void GNUMake::setUserCommands( const pCommandList& l ) const
 }
 
 QStringList GNUMake::availableParsers() const
-{ return QStringList( infos().Name ); }
+{ return QStringList( "GNU Make" ); }
 
 AbstractCommandParser* GNUMake::getParser( const QString& s )
-{ return s == infos().Name ? new GNUMakeParser(this) : 0; }
+{ return 0; } /* FIXME */
 
 pCommand GNUMake::defaultBuildCommand() const
 {
