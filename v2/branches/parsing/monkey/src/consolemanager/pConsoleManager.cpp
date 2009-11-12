@@ -485,10 +485,6 @@ void pConsoleManager::executeProcess()
 #include <QDebug>
 void pConsoleManager::parseOutput (bool commandFinished)
 {
-	foreach ( QString s, mCurrentParsers )
-	{
-		qDebug() << "have parser" << s << (void*)mParsers.value(s);
-	}
 	bool finished;
 	do
 	{

@@ -96,8 +96,8 @@ bool MkSShellInterpreter::loadScript( const QString& fileName )
 		{
 			continue;
 		}
-		
-		interpret( command, 0 );
+		int status;
+		interpret( command, &status );
 	}
 	
 	file.close();
