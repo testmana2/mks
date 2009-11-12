@@ -16,6 +16,5 @@ entering = parsing.RegEx(r"^(mingw32\-)?make\[\d\]: Entering directory\s`([^\n]*
 entering.setComment('Entering dirrectory')
 #TODO create test
 
-print '//WARNING machine generated code. Do not edit'
 print noRule.generateCppCode()
 print entering.generateCppCode()

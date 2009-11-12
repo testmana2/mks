@@ -95,7 +95,6 @@ public:
 	void removeParser( const QString& );
 	AbstractCommandParser* getParser(const QString& name);
 	
-	QString nativeSeparators( const QString& );
 	QString quotedString( const QString& );
 	QString processInternalVariables( const QString& );
 	pCommand processCommand( pCommand );

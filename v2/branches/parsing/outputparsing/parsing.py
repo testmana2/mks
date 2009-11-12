@@ -5,9 +5,8 @@ class RegEx:
 	"""Regular expression pattern. Contains output format info and tests for self
 		Allowed types are 'error', 'warning', 'compiling'
 	"""
-	def __init__(self, pattern, case = True, file = '', line = '-1', column = '-1', type = 'error', text = '%0', hint = '%0'):
+	def __init__(self, pattern, file = '', line = '-1', column = '-1', type = 'error', text = '%0', hint = '%0'):
 		self.pattern = pattern
-		self.case = case
 		self.file = file
 		self.line = line
 		self.column = column
@@ -32,7 +31,7 @@ class RegEx:
 	def parse(self, string):
 		"""Parse the string and return tuple (file, line, column, type, text, hint)
 		"""
-		res = re.findall(self.pattern, string, re.I and not self.case)
+		res = re.findall(self.pattern, string)
 		file = self.processTemplate(self.file, string, res)
 		line = self.processTemplate(self.line, string, res)
 		column = self.processTemplate(self.column, string, res)
@@ -68,45 +67,10 @@ class RegEx:
 		return failed
 	
 	def generateCppCode(self):
-		template = 	"""
-		{   // %s
-			QRegExp("%s",
-							%s, 
-							QRegExp::RegExp2), //reg exp
-			"%s", //file name
-			"%s", //column
-			"%s", //row
-			%s, //type
-			"%s", //text
-			"%s" //full text
-		},
-		""" 
-		if self.case:
-			case = 'Qt::CaseSensitive'
-		else:
-			case = 'Qt::CaseInsensitive'
-		
-		if self.type == 'error':
-			type = 'pConsoleManager::stError'
-		elif self.type == 'warning':
-			type = 'pConsoleManager::stWarning'
-		elif self.type == 'compiling':
-			type = 'pConsoleManager::stCompiling'
-		
-		result =  template % (self.comment, self.pattern, case, self.file, self.column, self.line, type, self.text, self.hint)
-		return result.replace('\\', '\\\\')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		template = 	"""# %s\nparser add "%s" "%s" "%s" "%s" "%s" "%s" "%s" "%s"
+		""" 		
+		arguments = (self.comment, "some parser", self.pattern, self.file, self.column, self.line, self.type, self.text, self.hint)
+		#arguments = [arg.replace('\\', '\\\\') for arg in arguments]
+		arguments = [arg.replace('"', '\\"') for arg in arguments]
+		result =  template % tuple(arguments)
+		return result

@@ -35,6 +35,7 @@
 
 #include <QTimer>
 #include <QDir>
+#include <QDebug>
 
 #include "pConsoleManager.h"
 #include "CommandParser.h"
@@ -122,11 +123,17 @@ pConsoleManager::~pConsoleManager()
 */
 void pConsoleManager::addParser( AbstractCommandParser* p )
 {
-	if ( p && !mParsers.contains( p->name() ) )
+	Q_ASSERT(p);
+	qDebug () << mParsers.keys();
+	if (mParsers.contains(p->name()))
 	{
-		mParsers[p->name()] = p;
-		connect( p, SIGNAL( newStepAvailable( const pConsoleManager::Step& ) ), this, SIGNAL( newStepAvailable( const pConsoleManager::Step& ) ) );
+		qDebug() << QString("Parser '%1' already had been added").arg(p->name());
+		return;
 	}
+	
+	mParsers[p->name()] = p;
+	qDebug() << "added parser" << p->name() << (void*)p;
+	connect( p, SIGNAL( newStepAvailable( const pConsoleManager::Step& ) ), this, SIGNAL( newStepAvailable( const pConsoleManager::Step& ) ) );
 }
 
 /*!
@@ -154,14 +161,8 @@ void pConsoleManager::removeParser( const QString& s )
  */
 AbstractCommandParser* pConsoleManager::getParser(const QString& name)
 {
-	return mParsers[name];
+	return mParsers.value(name);
 }
-
-/*!
-	Convert path separators to native for OS
-*/
-QString pConsoleManager::nativeSeparators( const QString& s )
-{ return QDir::toNativeSeparators( s ); }
 
 /*!
 	Check, if string contains spaces, and, if it do - add quotes <"> to start and end of it
@@ -194,7 +195,6 @@ QString pConsoleManager::processInternalVariables( const QString& s )
 	\return Command for execution
 	\retval Command, gived as parameter
 */
-#include <QDebug>
 pCommand pConsoleManager::processCommand( pCommand c )
 {
 	// process variables
@@ -467,9 +467,7 @@ void pConsoleManager::executeProcess()
 		// execute command
 		mStopAttempt = 0;
 		setWorkingDirectory( c.workingDirectory() );
-qDebug() << c.command();
-qDebug() << c.arguments();
-
+		
 		start( QString( "%1 %2" ).arg( c.command() ).arg( c.arguments() ) );
 
 		mBuffer.open( QBuffer::ReadOnly );
@@ -484,8 +482,13 @@ qDebug() << c.arguments();
 	\param commandFinished If command already are finished, make processing while
 	buffer will not be empty. If not finished - wait for further output.
 */
+#include <QDebug>
 void pConsoleManager::parseOutput (bool commandFinished)
 {
+	foreach ( QString s, mCurrentParsers )
+	{
+		qDebug() << "have parser" << s << (void*)mParsers.value(s);
+	}
 	bool finished;
 	do
 	{

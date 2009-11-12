@@ -141,6 +141,16 @@ void CommandParser::addPattern(const Pattern& pattern)
 			qWarning() << "Duplicating regular expression " << p.regExp << "for" << name();
 	
 	mPatterns.append(pattern);
+	
+#if 0
+	qDebug() << "Added pattern " << pattern.regExp.pattern() << 
+									pattern.FileName << 
+									pattern.col << 
+									pattern.row << 
+									pattern.Type << 
+									pattern.Text << 
+									pattern.FullText;
+#endif
 }
 
 void CommandParser::removePattern(const QString& regExp)

@@ -136,7 +136,7 @@ void PHP::setUserCommands( const pCommandList& commands ) const
 
 QStringList PHP::availableParsers() const
 {
-	return QStringList( infos().Name );
+	return QStringList();
 }
 
 pCommand PHP::defaultInterpretCommand() const
