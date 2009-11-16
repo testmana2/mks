@@ -1,5 +1,6 @@
 import re
 import copy
+import sys
 
 class Pattern:
 	"""Regular expression pattern. Contains output format info and unit tests for self
@@ -24,7 +25,7 @@ class Pattern:
 		string = copy.copy(template)
 		string = string.replace('%0', inputString)
 		for i, val in enumerate(vars):
-			string = string.replace('%%%d' % (i + 1), val[0])
+			string = string.replace('%%%d' % (i + 1), val)
 		
 		return string
 	
@@ -34,6 +35,10 @@ class Pattern:
 		Used for unit tests
 		"""
 		res = re.findall(self.pattern, string)
+		if len(res) != 1:
+			return None
+		res = res[0]
+		
 		file = self.processTemplate(self.file, string, res)
 		line = self.processTemplate(self.line, string, res)
 		column = self.processTemplate(self.column, string, res)
