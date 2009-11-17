@@ -34,17 +34,19 @@ class Pattern:
 		"""Parse the string and return tuple (file, line, column, type, text, hint)
 		Used for unit tests
 		"""
-		res = re.findall(self.pattern, string)
-		if len(res) != 1:
-			return None
-		res = res[0]
+		res = re.search(self.pattern, string)
 		
-		file = self.processTemplate(self.file, string, res)
-		line = self.processTemplate(self.line, string, res)
-		column = self.processTemplate(self.column, string, res)
+		if res is None:
+			return None
+		
+		print '"', res.string[res.start():res.end()], '":', res.groups()
+		
+		file = self.processTemplate(self.file, string, res.groups())
+		line = self.processTemplate(self.line, string, res.groups())
+		column = self.processTemplate(self.column, string, res.groups())
 		type = self.type
-		text = self.processTemplate(self.text, string, res)
-		hint = self.processTemplate(self.hint, string, res)
+		text = self.processTemplate(self.text, string, res.groups())
+		hint = self.processTemplate(self.hint, string, res.groups())
 		
 		return (file, line, column, type, text, hint)
 	
