@@ -3,14 +3,14 @@
 import parsing
 from string import Template
 
-unix_file = "[\w\d\./]+"
+file_name = r"[\w\d\./\\]+"
 number = "\d+"
 compiler = "(gcc|g\+\+|mingw32-gcc|mingw32-g\+\+)"
-source_file = unix_file + "(\.c|\.cpp)"
+source_file = file_name + "\.c(pp)?"
 
-# Error
-regEx = Template("^($unix_file):($number): error: (.+)")
-error =parsing.Pattern(regEx.substitute(unix_file = unix_file, number = number),
+## Error
+regEx = Template("^($file_name):($number): (error:|undefined reference) [^\n]+")
+error =parsing.Pattern(regEx.substitute(file_name = file_name, number = number),
 								   type = 'error',
 								   file = "%1",
 								   line = "%2")
@@ -24,9 +24,39 @@ error.test("src/main.cpp:20: error: expected initializer before 's'",
 				text = "src/main.cpp:20: error: expected initializer before 's'",
 				hint = "src/main.cpp:20: error: expected initializer before 's'")
 
-# Warning
-regEx = Template("^($unix_file):($number): warning: (.+)")
-warning =parsing.Pattern(regEx.substitute(unix_file = unix_file, number = number),
+error.test("/home/a/code/monkeyrepos/v2/branches/dev/monkey/src/main.cpp:30: undefined reference to `fake()'",
+				type = 'error',
+				file = '/home/a/code/monkeyrepos/v2/branches/dev/monkey/src/main.cpp',
+				line = '30',
+				text = "/home/a/code/monkeyrepos/v2/branches/dev/monkey/src/main.cpp:30: undefined reference to `fake()'",
+				hint = "/home/a/code/monkeyrepos/v2/branches/dev/monkey/src/main.cpp:30: undefined reference to `fake()'")
+
+error.test("src/ui/UIMonkeyProjectSettings.cpp:26: error: expected `;' before 'setWindowTitle'",
+				type = 'error',
+				file = 'src/ui/UIMonkeyProjectSettings.cpp',
+				line = '26',
+				text = "src/ui/UIMonkeyProjectSettings.cpp:26: error: expected `;' before 'setWindowTitle'",
+				hint = "src/ui/UIMonkeyProjectSettings.cpp:26: error: expected `;' before 'setWindowTitle'")
+
+text = "/home/a/code/monkeyrepos/v2/branches/dev/monkey/src/xupmanager/ui/UIXUPManager.cpp:313: undefined reference to `pRecentsManager::recentProjectOpenPath() const'"
+error.test(	text,
+					type = 'error',
+					file = '/home/a/code/monkeyrepos/v2/branches/dev/monkey/src/xupmanager/ui/UIXUPManager.cpp',
+					line = '313',
+					text = text,
+					hint = text)
+
+text = "src/views/TreeView.cpp:20: error: cannot allocate an object of abstract type 'TreeViewModel'"
+error.test(	text,
+					type = 'error',
+					file = 'src/views/TreeView.cpp',
+					line = '20',
+					text = text,
+					hint = text)
+
+## Warning
+regEx = Template("^($file_name):($number): warning: (.+)")
+warning =parsing.Pattern(regEx.substitute(file_name = file_name, number = number),
 								   type = 'warning',
 								   file = "%1",
 								   line = "%2")
@@ -40,10 +70,32 @@ warning.test("src/MSVCMake.cpp:122: warning: unused parameter ‘s’",
 				text = "src/MSVCMake.cpp:122: warning: unused parameter ‘s’",
 				hint = "src/MSVCMake.cpp:122: warning: unused parameter ‘s’")
 
-# Building file
-regEx = Template("^($compiler)[^\n]+ ($source_file)")
+# windows specific
+warning.test("src\CmlLineManager.cpp:11: warning: unused variable 'z'",
+					 type = 'warning',
+					 file = 'src\CmlLineManager.cpp',
+					 line = '11',
+					 text = "src\CmlLineManager.cpp:11: warning: unused variable 'z'",
+					 hint = "src\CmlLineManager.cpp:11: warning: unused variable 'z'")
+
+## Link failed
+regEx = "collect2: ld returned 1 exit status"
+link_failed = parsing.Pattern(regEx,
+											type = 'error',
+											text = 'Linking failed')
+link_failed.setComment('Link failed, ld returned 1 exit status')
+link_failed.test(regEx,
+						type = 'error',
+						text = 'Linking failed',
+						hint = regEx)
+
+
+## Building file
+regEx = Template("^$compiler[^\n]+ ($source_file)")
 compiling =parsing.Pattern(regEx.substitute(compiler=compiler, source_file=source_file),
-										   type = 'compiling')
+										   type = 'compiling',
+										   text = 'Compiling %2...',
+										   file = '%2')
 
 compiling.setComment('Compiling')
 
@@ -63,9 +115,35 @@ text = \
 ' -I../../../monkey/src/projectsmanager/ui -I/usr/X11R6/include -I../../../build/debug/.moc -I../../../build/debug/.ui' + \
 ' -o ../../../build/debug/.obj/unix/MSVCMake.o src/MSVCMake.cpp'
 compiling.test(text,
-					type = 'compiling')
+					type = 'compiling',
+					text = 'Compiling src/MSVCMake.cpp...',
+					hint = text,
+					file = 'src/MSVCMake.cpp')
+
+# it is windows specific
+text = 'g++ -c -g -Wall -frtti -fexceptions -mthreads -DPACKAGE_NAME="\"Mirrorad\"" -DQT_DLL -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include" -I"src" -I"src\ie" -I"src\ff" -I"src\ui" -I"src\opera" -I"c:\Development\Qt\4.4.3\include\ActiveQt" -I"build\debug\.moc" -I"build\debug\.ui" -I"..\..\Qt\4.4.3\mkspecs\win32-g++" -o build\debug\.obj\win32\main.o src\main.cpp'
+compiling.test(	text,
+						type = 'compiling',
+						text = 'Compiling src\main.cpp...',
+						file = 'src\main.cpp',
+						hint = text)
+
+# Cannot find library
+regEx = "^/usr/bin/ld: cannot find -l([\w]+)"
+no_lib =parsing.Pattern(regEx,
+									type = 'error',
+									text = 'Cannot find library "%1"')
+
+no_lib.setComment('Linker cannot find library')
+no_lib.test('/usr/bin/ld: cannot find -lqscintilla2d',
+				 type = 'error',
+				 text = 'Cannot find library "qscintilla2d"',
+				 hint = '/usr/bin/ld: cannot find -lqscintilla2d')
 
 print '# It is a machine generated file. Do not edit it manualy!\n'
 
 print error.generateMkSScript('GCC')
 print warning.generateMkSScript('GCC')
+print compiling.generateMkSScript('GCC')
+print no_lib.generateMkSScript('GCC')
+print link_failed.generateMkSScript('GCC')
