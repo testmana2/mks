@@ -26,7 +26,6 @@ class Pattern:
 		string = string.replace('%0', inputString)
 		for i, val in enumerate(vars):
 			string = string.replace('%%%d' % (i + 1), val)
-		
 		return string
 	
 	
@@ -37,10 +36,14 @@ class Pattern:
 		res = re.search(self.pattern, string)
 		
 		if res is None:
-			return None
+			print 'Failed pattern %s, text <%s>\n' %(self.comment, string)
+			assert(None)
 		
-		print '"', res.string[res.start():res.end()], '":', res.groups()
-		
+		if '--debug' in sys.argv:
+			print 'For <%s>' % self.comment
+			print 'Full match: <', res.string[res.start():res.end()], '>'
+			for i, peace in enumerate(res.groups()):
+				print 'match %d: <%s>' % (i + 1, peace)
 		file = self.processTemplate(self.file, string, res.groups())
 		line = self.processTemplate(self.line, string, res.groups())
 		column = self.processTemplate(self.column, string, res.groups())
@@ -50,7 +53,7 @@ class Pattern:
 		
 		return (file, line, column, type, text, hint)
 	
-	def test(self, string, file = '', line = '-1', column = '-1', type = 'error', text = 'text here', hint = 'hint here'):
+	def test(self, string, file = '', line = '-1', column = '-1', type = 'error', text = '', hint = ''):
 		"""Do unit test
 		"""
 		res = self.parse(string)
@@ -70,12 +73,12 @@ class Pattern:
 			print >> sys.stderr, 'type <%s> != <%s>' % (res[3], type)
 			failed = True
 		if res[4] != text:
-			print >> sys.stderr, 'text <%s> != <%s>' % (res[4], text)		
+			print >> sys.stderr, 'text <%s> != <%s>' % (res[4], text)
 			failed = True
 		if res[5] != hint:
 			print >> sys.stderr, 'hint <%s> != <%s>' % (res[5], hint)
 			failed = True
-		return failed
+		assert(not failed)
 	
 	def generateMkSScript(self, parserName):
 		template = 	"""# %s\nparser add "%s" "%s" "%s" "%s" "%s" "%s" "%s" "%s"
