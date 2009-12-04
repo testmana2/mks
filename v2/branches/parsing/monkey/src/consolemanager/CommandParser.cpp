@@ -44,7 +44,7 @@
 	and also check, how much time parsing takes
 	A lot of debug info will be printed
 */
-#define PARSERS_DEBUG 0
+#define PARSERS_DEBUG 1
 
 #if PARSERS_DEBUG
 	#include <QTime>
