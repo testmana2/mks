@@ -314,6 +314,7 @@ void MessageBoxDocks::lwBuildSteps_itemActivated( QListWidgetItem* it )
 {
 	// get filename
 	QString fn = it->data( Qt::UserRole +2 ).toString();
+	qDebug() << "fn " << fn;
 	
 	// cancel if no file
 	if ( fn.isEmpty() )

@@ -152,8 +152,10 @@ pCommand GNUMake::buildCommand() const
 	c.setCommand( s->value( settingsKey( "BuildCommand/Command" ) ).toString() );
 	c.setArguments( s->value( settingsKey( "BuildCommand/Arguments" ) ).toString() );
 	c.setWorkingDirectory( s->value( settingsKey( "BuildCommand/WorkingDirectory" ) ).toString() );
-	c.setParsers( s->value( settingsKey( "BuildCommand/Parsers" ) ).toStringList() );
-	c.setTryAllParsers( s->value( settingsKey( "BuildCommand/TryAll" ), false ).toBool() );
+	QStringList list;
+	list << "GNU Make" << "GCC";
+	c.setParsers( list ); // FIXME
+	c.setTryAllParsers( s->value( settingsKey( "BuildCommand/TryAll" ), true ).toBool() );
 	c.setSkipOnError( s->value( settingsKey( "BuildCommand/SkipOnError" ), false ).toBool() );
 	// if no user commands get global ones
 	if ( !c.isValid() )

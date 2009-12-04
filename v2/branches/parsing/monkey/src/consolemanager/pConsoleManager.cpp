@@ -124,7 +124,6 @@ pConsoleManager::~pConsoleManager()
 void pConsoleManager::addParser( AbstractCommandParser* p )
 {
 	Q_ASSERT(p);
-	qDebug () << mParsers.keys();
 	if (mParsers.contains(p->name()))
 	{
 		qDebug() << QString("Parser '%1' already had been added").arg(p->name());
@@ -132,7 +131,6 @@ void pConsoleManager::addParser( AbstractCommandParser* p )
 	}
 	
 	mParsers[p->name()] = p;
-	qDebug() << "added parser" << p->name() << (void*)p;
 	connect( p, SIGNAL( newStepAvailable( const pConsoleManager::Step& ) ), this, SIGNAL( newStepAvailable( const pConsoleManager::Step& ) ) );
 }
 
@@ -318,7 +316,7 @@ void pConsoleManager::readyRead()
 	// try parse output
 	if (! c.isValid() )
 		return;
-
+	
 	/*Alrorithm is not ideal, need fix, if will be problems with it
 		Some text, that next parser possible to parse, can be removed
 		And, possible, it's not idealy quick.   hlamer
@@ -506,7 +504,11 @@ void pConsoleManager::parseOutput (bool commandFinished)
 		{
 			AbstractCommandParser* p = mParsers.value( s );
 			if ( ! p )
+			{
+				qWarning() << "Invalid parser" << s;
 				continue; //for
+			}
+			
 			linesToRemove =  p->processParsing(&mStringBuffer);
 			if (linesToRemove)
 				break; //for
