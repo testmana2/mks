@@ -23,7 +23,7 @@ class Pattern:
 		Used for unit tests
 		"""
 		string = copy.copy(template)
-		string = string.replace('%0', inputString)
+		string = string.replace('%0', inputString[:-1]) # input string without \n
 		for i, val in enumerate(vars):
 			string = string.replace('%%%d' % (i + 1), val)
 		return string
