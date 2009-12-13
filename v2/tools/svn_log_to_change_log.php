@@ -14,7 +14,6 @@ function usage( $argc, $argv )
 
 function generateChangeLog( $argc, $argv )
 {
-	$title="Monkey Studio IDE ChangeLog";
 	$path = $argv[ 1 ];
 	$fileName = "./ChangeLog";
 	
@@ -23,7 +22,7 @@ function generateChangeLog( $argc, $argv )
 		$fileName = $argv[ 2 ];
 	}
 	
-	system( "svn2cl --html --output=\"$fileName\" --title=\"$title\" \"$path\"" );
+	system( "svn2cl --include-rev --linelen=80 --output=\"$fileName\" \"$path\"" );
 }
 
 if ( $argc == 1 )
