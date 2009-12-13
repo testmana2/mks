@@ -480,7 +480,6 @@ void pConsoleManager::executeProcess()
 	\param commandFinished If command already are finished, make processing while
 	buffer will not be empty. If not finished - wait for further output.
 */
-#include <QDebug>
 void pConsoleManager::parseOutput (bool commandFinished)
 {
 	bool finished;

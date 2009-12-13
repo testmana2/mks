@@ -5,13 +5,13 @@ import sys
 import parsing
 from string import Template
 
-file_name = r"[\w\d\./\\]+"
+file_name = r"[\w\d\./\\\-]+"
 number = "\d+"
 compiler = "(gcc|g\+\+|mingw32-gcc|mingw32-g\+\+)"
 source_file = file_name + "\.c(pp)?"
 
 ## Error
-regEx = Template("^($file_name):($number): (error:|undefined reference) [^\\n]+\\n")
+regEx = Template("^($file_name):($number): (error:|undefined reference) [^\\n]+")
 error =parsing.Pattern(regEx.substitute(file_name = file_name, number = number),
 								   type = 'error',
 								   file = "%1",
@@ -45,19 +45,19 @@ error.test(	text,
 					type = 'error',
 					file = '/home/a/code/monkeyrepos/v2/branches/dev/monkey/src/xupmanager/ui/UIXUPManager.cpp',
 					line = '313',
-					text = text,
-					hint = text)
+					text = text[:-1],
+					hint = text[:-1])
 
 text = "src/views/TreeView.cpp:20: error: cannot allocate an object of abstract type 'TreeViewModel'\n"
 error.test(	text,
 					type = 'error',
 					file = 'src/views/TreeView.cpp',
 					line = '20',
-					text = text,
-					hint = text)
+					text = text[:-1],
+					hint = text[:-1])
 
 ## Warning
-regEx = Template("^($file_name):($number): warning: (.+)\\n")
+regEx = Template("^($file_name):($number): warning: [^\\n]+")
 warning =parsing.Pattern(regEx.substitute(file_name = file_name, number = number),
 								   type = 'warning',
 								   file = "%1",
@@ -81,7 +81,7 @@ warning.test("src\CmlLineManager.cpp:11: warning: unused variable 'z'\n",
 					 hint = "src\CmlLineManager.cpp:11: warning: unused variable 'z'")
 
 ## Link failed
-regEx = "collect2: ld returned 1 exit status\\n"
+regEx = "collect2: ld returned 1 exit status"
 link_failed = parsing.Pattern(regEx,
 											type = 'error',
 											text = 'Linking failed')
@@ -93,7 +93,7 @@ link_failed.test(regEx,
 
 
 ## Building file
-regEx = Template("^$compiler[^\\n]+ ($source_file)\\n")
+regEx = Template("^$compiler[^\\n]+ ($source_file)")
 compiling =parsing.Pattern(regEx.substitute(compiler=compiler, source_file=source_file),
 										   type = 'compiling',
 										   text = 'Compiling %2...',
@@ -119,8 +119,17 @@ text = \
 compiling.test(text,
 					type = 'compiling',
 					text = 'Compiling src/MSVCMake.cpp...',
-					hint = text,
+					hint = text[:-1],
 					file = 'src/MSVCMake.cpp')
+
+text = "g++ -c -pipe -Wall -g -Wall -W -D_REENTRANT -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++ -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4/QtXml -I/usr/include/qt4 -Ieditor-src -Ieditor-src/branche1 -Ieditor-src -I/branche2 -Ibuild/debug/.moc -Ibuild/debug/.ui -o build/debug/.obj/unix/SourceFile.o editor-src/branche2/SourceFile.cpp"
+compiling.test(text,
+					type = 'compiling',
+					text = 'Compiling editor-src/branche2/SourceFile.cpp...',
+					hint = text,
+					file = 'editor-src/branche2/SourceFile.cpp')
+
+
 
 # it is windows specific
 text = 'g++ -c -g -Wall -frtti -fexceptions -mthreads -DPACKAGE_NAME="\"Mirrorad\"" -DQT_DLL -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include" -I"src" -I"src\ie" -I"src\ff" -I"src\ui" -I"src\opera" -I"c:\Development\Qt\4.4.3\include\ActiveQt" -I"build\debug\.moc" -I"build\debug\.ui" -I"..\..\Qt\4.4.3\mkspecs\win32-g++" -o build\debug\.obj\win32\main.o src\main.cpp\n'
@@ -128,10 +137,10 @@ compiling.test(	text,
 						type = 'compiling',
 						text = 'Compiling src\main.cpp...',
 						file = 'src\main.cpp',
-						hint = text)
+						hint = text[:-1])
 
 # Cannot find library
-regEx = "^/usr/bin/ld: cannot find -l([\w]+)\\n"
+regEx = "^/usr/bin/ld: cannot find -l([\w]+)"
 no_lib =parsing.Pattern(regEx,
 									type = 'error',
 									text = 'Cannot find library "%1"')

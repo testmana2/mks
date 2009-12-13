@@ -573,7 +573,6 @@ void QMakeProjectItem::installCommands()
 	{
 		cmd = bp->buildCommand();
 	}
-	
 	cmd.setUserData( QVariant::fromValue( &mCommands ) );
 	cmd.setProject( this );
 	cmd.setSkipOnError( false );
