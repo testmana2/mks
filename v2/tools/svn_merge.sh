@@ -25,4 +25,4 @@ fi
 
 echo "Merging using first revision at $rev1 and second at $rev2 from branches/dev to trunk..."
 
-svn merge -r $rev1:$rev2 branches/dev trunk
+svn merge -r $rev1:$rev2 ../branches/dev ../trunk
