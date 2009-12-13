@@ -128,7 +128,11 @@ void GNUMake::setUserCommands( const pCommandList& l ) const
 }
 
 QStringList GNUMake::availableParsers() const
-{ return QStringList( "GNU Make" ); }
+{
+	QStringList list;
+	list << "GNU Make" << "GCC";
+	return list;
+}
 
 AbstractCommandParser* GNUMake::getParser( const QString& s )
 { return 0; } /* FIXME */
@@ -152,9 +156,7 @@ pCommand GNUMake::buildCommand() const
 	c.setCommand( s->value( settingsKey( "BuildCommand/Command" ) ).toString() );
 	c.setArguments( s->value( settingsKey( "BuildCommand/Arguments" ) ).toString() );
 	c.setWorkingDirectory( s->value( settingsKey( "BuildCommand/WorkingDirectory" ) ).toString() );
-	QStringList list;
-	list << "GNU Make" << "GCC";
-	c.setParsers( list ); // FIXME
+	c.setParsers( availableParsers() );
 	c.setTryAllParsers( s->value( settingsKey( "BuildCommand/TryAll" ), true ).toBool() );
 	c.setSkipOnError( s->value( settingsKey( "BuildCommand/SkipOnError" ), false ).toBool() );
 	// if no user commands get global ones

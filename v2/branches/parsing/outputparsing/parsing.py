@@ -18,12 +18,12 @@ class Pattern:
 	def setComment(self, comment):
 		self.comment = comment
 	
-	def processTemplate(self, template, inputString, vars):
+	def processTemplate(self, template, inputString, match, vars):
 		"""Replace %x with it's value
 		Used for unit tests
 		"""
 		string = copy.copy(template)
-		string = string.replace('%0', inputString[:-1]) # input string without \n
+		string = string.replace('%0', match) # input string without \n
 		for i, val in enumerate(vars):
 			string = string.replace('%%%d' % (i + 1), val)
 		return string
@@ -39,19 +39,20 @@ class Pattern:
 			print 'Failed pattern %s, text <%s>\n' %(self.comment, string)
 			assert(None)
 		
+		match = string[res.start():res.end()]
+		d = {}
+		d['file'] = self.processTemplate(self.file, string, match, res.groups())
+		d['line'] = self.processTemplate(self.line, string, match, res.groups())
+		d['column'] = self.processTemplate(self.column, string, match, res.groups())
+		d['type'] = self.type
+		d['text'] = self.processTemplate(self.text, string, match, res.groups())
+		d['hint'] = self.processTemplate(self.hint, string, match, res.groups())
 		if '--debug' in sys.argv:
 			print 'For <%s>' % self.comment
 			print 'Full match: <', res.string[res.start():res.end()], '>'
-			for i, peace in enumerate(res.groups()):
-				print 'match %d: <%s>' % (i + 1, peace)
-		file = self.processTemplate(self.file, string, res.groups())
-		line = self.processTemplate(self.line, string, res.groups())
-		column = self.processTemplate(self.column, string, res.groups())
-		type = self.type
-		text = self.processTemplate(self.text, string, res.groups())
-		hint = self.processTemplate(self.hint, string, res.groups())
+			print d
 		
-		return (file, line, column, type, text, hint)
+		return d
 	
 	def test(self, string, file = '', line = '-1', column = '-1', type = 'error', text = '', hint = ''):
 		"""Do unit test
@@ -60,23 +61,23 @@ class Pattern:
 		
 		failed = False
 		
-		if res[0] != file:
-			print >> sys.stderr, 'file <%s> != <%s>' % (res[0], file)
+		if res['file'] != file:
+			print >> sys.stderr, 'file <%s> != <%s>' % (res['file'], file)
 			failed = True
-		if res[1] != line:
-			print >> sys.stderr, 'line <%s> != <%s>' % (res[1], line)
+		if res['line'] != line:
+			print >> sys.stderr, 'line <%s> != <%s>' % (res['line'], line)
 			failed = True
-		if res[2] != column:
-			print >> sys.stderr, 'column <%s> != <%s>' % (res[2], column)
+		if res['column'] != column:
+			print >> sys.stderr, 'column <%s> != <%s>' % (res['column'], column)
 			failed = True
-		if res[3] != type:
-			print >> sys.stderr, 'type <%s> != <%s>' % (res[3], type)
+		if res['type'] != type:
+			print >> sys.stderr, 'type <%s> != <%s>' % (res['type'], type)
 			failed = True
-		if res[4] != text:
-			print >> sys.stderr, 'text <%s> != <%s>' % (res[4], text)
+		if res['text'] != text:
+			print >> sys.stderr, 'text <%s> != <%s>' % (res['text'], text)
 			failed = True
-		if res[5] != hint:
-			print >> sys.stderr, 'hint <%s> != <%s>' % (res[5], hint)
+		if res['hint'] != hint:
+			print >> sys.stderr, 'hint <%s> != <%s>' % (res['hint'], hint)
 			failed = True
 		assert(not failed)
 	

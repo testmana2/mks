@@ -44,7 +44,7 @@
 	and also check, how much time parsing takes
 	A lot of debug info will be printed
 */
-#define PARSERS_DEBUG 1
+#define PARSERS_DEBUG 0
 
 #if PARSERS_DEBUG
 	#include <QTime>
@@ -193,12 +193,16 @@ int CommandParser::processParsing(QString* buf)
 			m.mFullText = replaceWithMatch(p.regExp,p.FullText);
 			// emit signal
 			emit newStepAvailable( m );
+			qDebug() << "Emited new step";
+			int linesCount = p.regExp.cap().count ('\n');
+			if (! p.regExp.cap().endsWith('\n'))
+				linesCount++;
 #if PARSERS_DEBUG
 			qDebug () << "Capture :" << p.regExp.cap();
 			qDebug () << "CaptureS :" << p.regExp.capturedTexts ();
-			qDebug () << "Returning " << p.regExp.cap().count ('\n');
+			qDebug () << "Returning " << linesCount;
 #endif
-			return p.regExp.cap().count ('\n');
+			return linesCount;
 		}
 #if PARSERS_DEBUG
 			qDebug () << "Not matching";
