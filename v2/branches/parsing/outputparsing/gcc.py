@@ -80,17 +80,17 @@ warning.test("src\CmlLineManager.cpp:11: warning: unused variable 'z'\n",
 					 text = "src\CmlLineManager.cpp:11: warning: unused variable 'z'",
 					 hint = "src\CmlLineManager.cpp:11: warning: unused variable 'z'")
 
-## Link failed
-regEx = "collect2: ld returned 1 exit status"
-link_failed = parsing.Pattern(regEx,
-											type = 'error',
-											text = 'Linking failed')
-link_failed.setComment('Link failed, ld returned 1 exit status')
-link_failed.test(regEx,
-						type = 'error',
-						text = 'Linking failed',
-						hint = regEx)
+## Linking failed, probably undefined reference
+regEx = "^collect2: ld returned 1 exit status"
+link_failed =parsing.Pattern(regEx,
+									type = 'error',
+									text = 'Linking failed. Check Output dock for more info')
 
+link_failed.setComment('Linking failed')
+link_failed.test('collect2: ld returned 1 exit status\n',
+				 type = 'error',
+				 text = 'Linking failed. Check Output dock for more info',
+				 hint = 'collect2: ld returned 1 exit status')
 
 ## Building file
 regEx = Template("^$compiler[^\\n]+ ($source_file)")
@@ -121,18 +121,30 @@ compiling.test(text,
 					text = 'Compiling src/MSVCMake.cpp...',
 					hint = text[:-1],
 					file = 'src/MSVCMake.cpp')
-
+#g++
 text = "g++ -c -pipe -Wall -g -Wall -W -D_REENTRANT -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++ -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4/QtXml -I/usr/include/qt4 -Ieditor-src -Ieditor-src/branche1 -Ieditor-src -I/branche2 -Ibuild/debug/.moc -Ibuild/debug/.ui -o build/debug/.obj/unix/SourceFile.o editor-src/branche2/SourceFile.cpp"
 compiling.test(text,
 					type = 'compiling',
 					text = 'Compiling editor-src/branche2/SourceFile.cpp...',
 					hint = text,
 					file = 'editor-src/branche2/SourceFile.cpp')
-
-
+#gcc
+text = "gcc -c -pipe -Wall -g -Wall -W -D_REENTRANT -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/share/qt4/mkspecs/linux-g++ -I. -I/usr/include/qt4/QtCore -I/usr/include/qt4/QtGui -I/usr/include/qt4/QtXml -I/usr/include/qt4 -Ieditor-src -Ieditor-src/branche1 -Ieditor-src -I/branche2 -Ibuild/debug/.moc -Ibuild/debug/.ui -o build/debug/.obj/unix/SourceFile.o editor-src/branche2/SourceFile.cpp"
+compiling.test(text,
+					type = 'compiling',
+					text = 'Compiling editor-src/branche2/SourceFile.cpp...',
+					hint = text,
+					file = 'editor-src/branche2/SourceFile.cpp')
 
 # it is windows specific
 text = 'g++ -c -g -Wall -frtti -fexceptions -mthreads -DPACKAGE_NAME="\"Mirrorad\"" -DQT_DLL -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include" -I"src" -I"src\ie" -I"src\ff" -I"src\ui" -I"src\opera" -I"c:\Development\Qt\4.4.3\include\ActiveQt" -I"build\debug\.moc" -I"build\debug\.ui" -I"..\..\Qt\4.4.3\mkspecs\win32-g++" -o build\debug\.obj\win32\main.o src\main.cpp\n'
+compiling.test(	text,
+						type = 'compiling',
+						text = 'Compiling src\main.cpp...',
+						file = 'src\main.cpp',
+						hint = text[:-1])
+# it is windows specific
+text = 'mingw32-gcc -c -g -Wall -frtti -fexceptions -mthreads -DPACKAGE_NAME="\"Mirrorad\"" -DQT_DLL -DQT_CORE_LIB -DQT_THREAD_SUPPORT -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include\QtCore" -I"..\..\Qt\4.4.3\include" -I"src" -I"src\ie" -I"src\ff" -I"src\ui" -I"src\opera" -I"c:\Development\Qt\4.4.3\include\ActiveQt" -I"build\debug\.moc" -I"build\debug\.ui" -I"..\..\Qt\4.4.3\mkspecs\win32-g++" -o build\debug\.obj\win32\main.o src\main.cpp\n'
 compiling.test(	text,
 						type = 'compiling',
 						text = 'Compiling src\main.cpp...',
@@ -150,6 +162,7 @@ no_lib.test('/usr/bin/ld: cannot find -lqscintilla2d\n',
 				 type = 'error',
 				 text = 'Cannot find library "qscintilla2d"',
 				 hint = '/usr/bin/ld: cannot find -lqscintilla2d')
+
 
 print '# It is a machine generated file. Do not edit it manualy!\n'
 
