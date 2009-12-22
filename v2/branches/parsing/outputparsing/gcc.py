@@ -7,7 +7,7 @@ from string import Template
 
 file_name = r"[\w\d\./\\\-]+"
 number = "\d+"
-compiler = "(gcc|g\+\+|mingw32-gcc|mingw32-g\+\+)"
+compiler = "(gcc|g\+\+|mingw32-gcc|mingw32-g\+\+)[\-\d\.]*" #on Mac version could be included, such as g++-4.0
 source_file = file_name + "\.c(pp)?"
 
 ## Error
@@ -150,6 +150,14 @@ compiling.test(	text,
 						text = 'Compiling src\main.cpp...',
 						file = 'src\main.cpp',
 						hint = text[:-1])
+# Mac
+text = 'g++-4.0 -c -pipe -g -gdwarf-2 -arch i386 -Wall -W -DQT_GUI_LIB -DQT_CORE_LIB -DQT_SHARED -I/usr/local/Trolltech/Qt-4.6.0-universal/mkspecs/macx-g++ -I. -I/usr/local/Trolltech/Qt-4.6.0-universal/lib/QtCore.framework/Versions/4/Headers -I/usr/local/Trolltech/Qt-4.6.0-universal/include/QtCore -I/usr/local/Trolltech/Qt-4.6.0-universal/lib/QtGui.framework/Versions/4/Headers -I/usr/local/Trolltech/Qt-4.6.0-universal/include/QtGui -I/usr/local/Trolltech/Qt-4.6.0-universal/include -Ibuild/debug/.moc -Ibuild/debug/.ui -F/usr/local/Trolltech/Qt-4.6.0-universal/lib -o build/debug/.obj/mac/UIMarketOptions.o src/UIMarketOptions.cpp'
+compiling.test(	text,
+						type = 'compiling',
+						text = 'Compiling src/UIMarketOptions.cpp...',
+						file = 'src/UIMarketOptions.cpp',
+						hint = text)
+
 
 # Cannot find library
 regEx = "^/usr/bin/ld: cannot find -l([\w]+)"
@@ -162,7 +170,6 @@ no_lib.test('/usr/bin/ld: cannot find -lqscintilla2d\n',
 				 type = 'error',
 				 text = 'Cannot find library "qscintilla2d"',
 				 hint = '/usr/bin/ld: cannot find -lqscintilla2d')
-
 
 print '# It is a machine generated file. Do not edit it manualy!\n'
 
