@@ -34,7 +34,7 @@ qCtagsSense::qCtagsSense( QObject* parent )
 	qRegisterMetaType<qCtagsSenseEntry>( "qCtagsSenseEntry" );
 	qRegisterMetaType<qCtagsSenseEntry*>( "qCtagsSenseEntry*" );
 	
-	//setLanguageKinds( "C++", "cdefglmnpstuvx" );
+	setLanguageKinds( "C++", "cdefglmnpstuvx" );
 	
 	mInitialized = false;
 	mSQL = new qCtagsSenseSQL( this );

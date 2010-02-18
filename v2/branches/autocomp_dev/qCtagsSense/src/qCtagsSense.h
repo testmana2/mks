@@ -66,102 +66,102 @@ public:
 	{
 		Unknow = -1,
 		// A
-		AllPatterns, // BETA
-		Anchor, // HTML
-		AutoCommandGroup, // Vim
+		AllPatterns, // BETA 0
+		Anchor, // HTML 1
+		AutoCommandGroup, // Vim 2
 		// B
-		BlockData, // Fortran
-		BlockCommon, // Fortran
+		BlockData, // Fortran 3
+		BlockCommon, // Fortran 4
 		// C
-		Class, // Vera, Tcl, Ruby, Python, PHP, JavaScript, Java, Eiffel, C#, C, C++
-		Constant, // Verilog, PHP, Perl, Basic, Asp
-		Cursor, // SQL
+		Class, // Vera, Tcl, Ruby, Python, PHP, JavaScript, Java, Eiffel, C#, C, C++ 5
+		Constant, // Verilog, PHP, Perl, Basic, Asp 6
+		Cursor, // SQL 7
 		// D
-		Define, // Asm
-		DerivatedType, // Fortran
-		Domain, // SQL
+		Define, // Asm 8
+		DerivatedType, // Fortran 9
+		Domain, // SQL 10
 		// E
-		EntryPoint, // Fortran
-		Enumeration, // Vera, Java, C#, C, C++, Basic
-		Enumerator, // Vera, C#, C, C++
-		EnumType, // Java
-		Event, // Verilog, SQL, C#
-		Exception, // SML
+		EntryPoint, // Fortran 11
+		Enumeration, // Vera, Java, C#, C, C++, Basic 12
+		Enumerator, // Vera, C#, C, C++ 13
+		EnumType, // Java 14
+		Event, // Verilog, SQL, C# 15
+		Exception, // SML 16
 		// F
-		Feature, // Eiffel
-		Field, // Java, C#, SQL
-		FileDescriptor, // Cobol
-		Format, // Perl
-		Fragment, // BETA
-		Function, // Vim, Verilog, Vera, SQL, SML, SLang, Sh, Scheme, Python, PHP, Pascal, Lua, Lisp, JavaScript, Fortran, Erlang, C, C++, Basic, Awk, Asp
-		Functor, // SML
+		Feature, // Eiffel 17
+		Field, // Java, C#, SQL 18
+		FileDescriptor, // Cobol 19
+		Format, // Perl 20
+		Fragment, // BETA 21
+		Function, // Vim, Verilog, Vera, SQL, SML, SLang, Sh, Scheme, Python, PHP, Pascal, Lua, Lisp, JavaScript, Fortran, Erlang, C, C++, Basic, Awk, Asp 22
+		Functor, // SML 23
 		// G
 		// H
 		// I
-		Index, // SQL
-		Interface, // PHP, Java, Fortran, C#
-		ItemData, // Cobol
-		ItemGroup, // Cobol
+		Index, // SQL 24
+		Interface, // PHP, Java, Fortran, C# 25
+		ItemData, // Cobol 26
+		ItemGroup, // Cobol 27
 		// J
-		JavaScriptFunction, // PHP, HTML
+		JavaScriptFunction, // PHP, HTML 28
 		// K
 		// L
-		Label, // YACC, SQL, Perl, Fortran, Basic, Asm
+		Label, // YACC, SQL, Perl, Fortran, Basic, Asm 29
 		// M
-		Macro, // Vera, Make, Erlang, C#, C, C++, Asm
-		Map, // Vim
-		Member, // Vera, Python, C, C++
-		Method, // Tcl, Ruby, JavaScript, Java, C#
-		MethodSingleton, // Ruby
-		MobiLinkTableScript, // SQL
-		MobiLinkConnScript, // SQL
-		Module, // Verilog, Ruby, Fortran, Erlang
+		Macro, // Vera, Make, Erlang, C#, C, C++, Asm 30
+		Map, // Vim 31
+		Member, // Vera, Python, C, C++ 32
+		Method, // Tcl, Ruby, JavaScript, Java, C# 33
+		MethodSingleton, // Ruby 34
+		MobiLinkTableScript, // SQL 35
+		MobiLinkConnScript, // SQL 36
+		Module, // Verilog, Ruby, Fortran, Erlang 37
 		// N
-		NameList, // Fortran
-		Namespace, // SLang, C#, C, C++
-		NetDataType, // Verilog
+		NameList, // Fortran 38
+		Namespace, // SLang, C#, C, C++ 39
+		NetDataType, // Verilog 40
 		// O
 		// P
-		Package, // SQL, Perl, Java
-		Paragraph, // Cobol
-		Pattern, // BETA
-		Port, // Verilog
-		Procedure, // Tcl, SQL, Pascal
-		Program, // Vera, Fortran
-		ProgramId, // Cobol
-		Property, // C#
-		Prototype, // Vera, SQL, C, C++
-		Publication, // SQL
+		Package, // SQL, Perl, Java 41
+		Paragraph, // Cobol 42
+		Pattern, // BETA 43
+		Port, // Verilog 44
+		Procedure, // Tcl, SQL, Pascal 45
+		Program, // Vera, Fortran 46
+		ProgramId, // Cobol 47
+		Property, // C# 48
+		Prototype, // Vera, SQL, C, C++ 49
+		Publication, // SQL 50
 		// Q
 		// R
-		Record, // SQL, Erlang
-		RegisterDataType, // Verilog
+		Record, // SQL, Erlang 51
+		RegisterDataType, // Verilog 52
 		// S
-		Section, // Cobol
-		Service, // SQL
-		Set, // Scheme
-		Signature, // SML
-		Slot, // BETA
-		SubRoutine, // REXX, Perl, Fortran, Asp
-		SubRoutineDeclaration, // Perl
-		SubType, // SQL
-		Structure, // SML, C#, C, C++
-		Synonym, // SQL
+		Section, // Cobol 53
+		Service, // SQL 54
+		Set, // Scheme 55
+		Signature, // SML 56
+		Slot, // BETA 57
+		SubRoutine, // REXX, Perl, Fortran, Asp 58
+		SubRoutineDeclaration, // Perl 59
+		SubType, // SQL 60
+		Structure, // SML, C#, C, C++ 61
+		Synonym, // SQL 62
 		// T
-		Table, // SQL
-		Task, // Verilog, Vera
-		Trigger, // SQL
-		Type, // SML, Fortran, Basic, Asm
-		Typedef, // Vera, C#, C, C++
+		Table, // SQL 63
+		Task, // Verilog, Vera 64
+		Trigger, // SQL 65
+		Type, // SML, Fortran, Basic, Asm 66
+		Typedef, // Vera, C#, C, C++ 67
 		// U
-		Union, // C, C++
-		UserDefinedCommand, // Vim
+		Union, // C, C++ 68
+		UserDefinedCommand, // Vim 69
 		// V
-		ValueBinding, // SML
-		Variable, // Vim, Vera, SQL, PHP, Fortran, C, C++, Basic, Asp
-		VariableLocal, // Vera, SQL, Java, Fortran, Eiffel, C#, C, C++
-		VariableGlobal, // JavaScript, Vera, C, C++
-		View, // SQL
+		ValueBinding, // SML 70
+		Variable, // Vim, Vera, SQL, PHP, Fortran, C, C++, Basic, Asp 71
+		VariableLocal, // Vera, SQL, Java, Fortran, Eiffel, C#, C, C++ 72
+		VariableGlobal, // JavaScript, Vera, C, C++ 73
+		View, // SQL 74
 		// W
 		// X
 		// Y

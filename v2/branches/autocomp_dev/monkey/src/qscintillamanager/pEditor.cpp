@@ -30,6 +30,8 @@
 #include "../pMonkeyStudio.h"
 #include "../qscintillamanager/qSciShortcutsManager.h"
 #include "../coremanager/MonkeyCore.h"
+#include "pAbstractChild.h"
+#include "pCompleter.h"
 
 #include <pQueuedMessageToolBar.h>
 
@@ -44,6 +46,8 @@
 #include <QDateTime>
 #include <QTextCodec>
 #include <QRegExp>
+#include <QDebug>
+#include <QSqlQuery>
 
 bool pEditor::mPasteAvailableInit = false;
 bool pEditor::mPasteAvailable = false;
@@ -57,6 +61,14 @@ pEditor::pEditor( QWidget* p )
 	
 	// deal with utf8
 	setUtf8( true );
+	
+	// completer
+	c = new QCompleter();
+	
+	c->setWidget(this);
+    c->setCompletionMode(QCompleter::PopupCompletion);
+    c->setCaseSensitivity(Qt::CaseInsensitive);
+
 
 	// connection
 	connect( this, SIGNAL( linesChanged() ), this, SLOT( linesChanged() ) );
@@ -64,6 +76,7 @@ pEditor::pEditor( QWidget* p )
 	connect( this, SIGNAL( cursorPositionChanged( int, int ) ), this, SLOT( cursorPositionChanged( int, int ) ) );
 	connect( this, SIGNAL( textChanged() ), this, SLOT( textChanged() ) );
 	connect( QApplication::clipboard(), SIGNAL( dataChanged() ), this, SLOT( clipboardDataChanged() ) );
+	connect(c, SIGNAL(activated(QString)), this, SLOT(insertCompletion(QString)));
 
 	// init pasteAvailable
 	if ( !mPasteAvailableInit )
@@ -105,7 +118,7 @@ void pEditor::keyPressEvent( QKeyEvent* e )
 {
 	if ( !e->isAutoRepeat() && e->modifiers() & Qt::ControlModifier && e->key() == Qt::Key_Space )
 	{
-		switch ( autoCompletionSource() )
+		/*switch ( autoCompletionSource() )
 		{
 			case QsciScintilla::AcsAll:
 				autoCompleteFromAll();
@@ -119,8 +132,58 @@ void pEditor::keyPressEvent( QKeyEvent* e )
 			default:
 				break;
 		}
+		return;*/
+		
+		QString completionPrefix = wordUnderCursor();
+		
+		pCompleter comp(MonkeyCore::workspace()->currentDocument()->windowFilePath(), cursorPosition());
+		
+		qDebug() << "Auto comp";
+		c->setModel(comp.autoComplete(currentLineText()));
+
+		if (completionPrefix != c->completionPrefix()) {
+			c->setCompletionPrefix(completionPrefix);
+			c->popup()->setCurrentIndex(c->completionModel()->index(0, 0));
+		}
+
+		c->complete();
+		
 		return;
 	}
+	else if(!e->isAutoRepeat() && e->key() == Qt::Key_Period)
+	{
+		qDebug() << "Key Press";
+		
+		pCompleter comp(MonkeyCore::workspace()->currentDocument()->windowFilePath(), cursorPosition());
+		if(comp.isPointer(currentLineText()))
+		{
+			e->ignore();
+			
+			qDebug() << "-";
+			QKeyEvent *k = new QKeyEvent( QEvent::KeyPress, Qt::Key_Minus, Qt::NoModifier, QString("-") );
+			QApplication::postEvent( this, k );
+			k = new QKeyEvent( QEvent::KeyRelease, Qt::Key_Minus, Qt::NoModifier, QString("-") );
+			QApplication::postEvent( this, k );
+			//keyPressEvent( ke1 );
+			qDebug() << "ok";
+			qDebug() << ">";
+			k = new QKeyEvent( QEvent::KeyPress, Qt::Key_Greater, Qt::NoModifier, QString(">") );
+			QApplication::postEvent( this, k );
+			k = new QKeyEvent( QEvent::KeyRelease, Qt::Key_Greater, Qt::NoModifier, QString(">") );
+			QApplication::postEvent( this, k );
+			//keyPressEvent( ke2 );
+			qDebug() << "ok";
+			
+			return;
+		}
+		
+		
+	}
+	else if(!e->isAutoRepeat() && (e->key() == Qt::Key_Minus || e->key() == Qt::Key_Greater))
+	{
+		qDebug() << "Key press - or >";
+	}
+	
 	QsciScintilla::keyPressEvent( e );
 }
 
@@ -565,3 +628,22 @@ void pEditor::makeBackup()
 
 	QFile::copy( f.absoluteFilePath(), s );
 }
+
+QString pEditor::wordUnderCursor()
+{
+	QRegExp rx(".*\\W(\\w+)$");
+	
+	if(rx.exactMatch(currentLineText()))
+		return rx.cap(1);
+	
+	return "";
+}
+
+void pEditor::insertCompletion(const QString& completion)
+{
+	if (c->widget() != this)
+		return;
+
+	insert(completion);
+}
+ 
