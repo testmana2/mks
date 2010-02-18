@@ -29,6 +29,8 @@
 #ifndef PEDITOR_H
 #define PEDITOR_H
 
+#include <QCompleter>
+
 #include <qscintilla.h>
 #include <fresh.h>
 
@@ -45,6 +47,8 @@ public:
 		// bookmarks
 		mdBookmark = 0,
 	};
+	
+	int* ppi;
 
 	bool lineNumbersMarginEnabled() const;
 	int lineNumbersMarginWidth() const;
@@ -80,6 +84,7 @@ protected slots:
 	void cursorPositionChanged( int, int );
 	void textChanged();
 	void clipboardDataChanged();
+	void insertCompletion(const QString&);
 
 public slots:
 	void setLineNumbersMarginEnabled( bool );
@@ -101,6 +106,11 @@ signals:
 	void undoAvailable( bool );
 	void redoAvailable( bool );
 	void pasteAvailable( bool );
+	
+private:
+	QCompleter* c;
+	
+	QString wordUnderCursor();
 };
 
 #endif // PEDITOR_H
