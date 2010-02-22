@@ -65,8 +65,6 @@ FORMS	*= src/maininterface/ui/UITranslator.ui \
 	src/maininterface/ui/UISettings.ui \
 	src/abbreviationsmanager/ui/UIAddAbbreviation.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui \
-	src/toolsmanager/ui/UIDesktopTools.ui \
-	src/toolsmanager/ui/UIToolsEdit.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui \
 	src/pluginsmanager/ui/UICLIToolSettings.ui \
 	src/pluginsmanager/ui/UIBuilderSettings.ui \
@@ -99,14 +97,10 @@ HEADERS	*= src/main.h \
 	src/templatesmanager/pTemplatesManager.h \
 	src/templatesmanager/ui/UITemplatesWizard.h \
 	src/pMonkeyStudio.h \
-	src/toolsmanager/pDesktopApplications.h \
-	src/toolsmanager/ui/UIDesktopTools.h \
-	src/toolsmanager/ui/UIToolsEdit.h \
 	src/consolemanager/pConsoleManager.h \
 	src/consolemanager/AbstractCommandParser.h \
 	src/consolemanager/CommandParser.h \
 	src/consolemanager/pCommand.h \
-	src/toolsmanager/pToolsManager.h \
 	src/pluginsmanager/BasePlugin.h \
 	src/pluginsmanager/XUPPlugin.h \
 	src/pluginsmanager/ChildPlugin.h \
@@ -163,10 +157,6 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/templatesmanager/pTemplatesManager.cpp \
 	src/templatesmanager/ui/UITemplatesWizard.cpp \
 	src/pMonkeyStudio.cpp \
-	src/toolsmanager/pDesktopApplications.cpp \
-	src/toolsmanager/ui/UIDesktopTools.cpp \
-	src/toolsmanager/ui/UIToolsEdit.cpp \
-	src/toolsmanager/pToolsManager.cpp \
 	src/consolemanager/pConsoleManager.cpp \
 	src/consolemanager/CommandParser.cpp \
 	src/pluginsmanager/PluginsManager.cpp \
@@ -208,13 +198,9 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/consolemanager/pConsoleManagerStepModel.cpp \
 	src/qscintillamanager/pCompleter.cpp
 
-mac:SOURCES	*= src/toolsmanager/pDesktopApplications_mac.cpp
-else:unix:SOURCES	*= src/toolsmanager/pDesktopApplications_unix.cpp
-win32:SOURCES	*= src/toolsmanager/pDesktopApplications_win32.cpp
-
 TRANSLATIONS	*= ../datas/translations/monkey_french.ts \
 	../datas/translations/monkey_belarusian.ts \
 	../datas/translations/monkey_italian.ts \
 	../datas/translations/monkey_arabic.ts \
 	../datas/translations/monkey_spanish.ts \
-	../datas/translations/monkey_catalan.ts
+	../datas/translations/monkey_catalan.ts
