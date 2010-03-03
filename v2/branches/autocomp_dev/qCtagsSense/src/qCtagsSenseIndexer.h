@@ -19,6 +19,7 @@
 #define QCTAGSSENSEINDEXER_H
 
 #include "qCtagsSenseExport.h"
+#include "qCtagsSense.h"
 
 #include <QThread>
 #include <QMutex>
@@ -39,6 +40,7 @@ public:
 	
 	void clear();
 	QStringList filteredSuffixes() const;
+	void setAccessFilter( qCtagsSense::AccessFilter access );
 
 public slots:
 	void addFilteredSuffixes( const QStringList& suffixes );
@@ -62,10 +64,10 @@ protected:
 	bool removeEntries( const QStringList& fileNames );
 	bool indexEntry( const QString& fileName );
 	bool indexEntries( const QMap<QString, QString>& entries );
-	int createFileEntry( const QString& fileName, const QString& language );
+	int createFileEntry( const QString& fileName, qCtagsSense::Language language );
 	bool createEntries( int fileId, TagEntryListItem* item );
 	bool indexTags( const QMap<QString, TagEntryListItem*>& tags );
-	TagEntryListItem* tagFileEntry( const QString& fileName, bool& ok );
+	TagEntryListItem* tagFileEntry(const QString& fileName, bool& ok);
 	QMap<QString, TagEntryListItem*> tagPathEntries( const QString& pathName, bool& ok );
 	QMap<QString, TagEntryListItem*> tagBuffersEntries( const QMap<QString, QString>& entries, bool& ok );
 	
@@ -76,6 +78,9 @@ signals:
 	void indexingProgress( int value, int max );
 	void indexingFinished();
 	void indexingChanged();
+	
+private:
+	qCtagsSense::AccessFilter accessFilter;
 };
 
 #endif // QCTAGSSENSEINDEXER_H

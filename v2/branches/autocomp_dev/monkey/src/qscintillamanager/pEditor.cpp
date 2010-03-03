@@ -48,6 +48,7 @@
 #include <QRegExp>
 #include <QDebug>
 #include <QSqlQuery>
+#include <QRect>
 
 bool pEditor::mPasteAvailableInit = false;
 bool pEditor::mPasteAvailable = false;
@@ -116,27 +117,28 @@ pEditor::~pEditor()
 
 void pEditor::keyPressEvent( QKeyEvent* e )
 {
-	if ( !e->isAutoRepeat() && e->modifiers() & Qt::ControlModifier && e->key() == Qt::Key_Space )
-	{
-		/*switch ( autoCompletionSource() )
-		{
-			case QsciScintilla::AcsAll:
-				autoCompleteFromAll();
-				break;
-			case QsciScintilla::AcsAPIs:
-				autoCompleteFromAPIs();
-				break;
-			case QsciScintilla::AcsDocument:
-				autoCompleteFromDocument();
-				break;
-			default:
-				break;
+	// When the completer is visible we disable some key
+	if (c && c->popup()->isVisible()) {
+		// The following keys are forwarded by the completer to the widget
+		switch (e->key()) {
+		case Qt::Key_Enter:
+		case Qt::Key_Return:
+		case Qt::Key_Escape:
+		case Qt::Key_Tab:
+		case Qt::Key_Backtab:
+			e->ignore();
+			return; // let the completer do default behavior
+		default:
+			break;
 		}
-		return;*/
-		
+	}
+	
+	if ( !e->isAutoRepeat() && e->modifiers() & Qt::ControlModifier && e->key() == Qt::Key_Space && !c->popup()->isVisible() )
+	{
 		QString completionPrefix = wordUnderCursor();
 		
 		pCompleter comp(MonkeyCore::workspace()->currentDocument()->windowFilePath(), cursorPosition());
+		comp.init();
 		
 		qDebug() << "Auto comp";
 		c->setModel(comp.autoComplete(currentLineText()));
@@ -145,8 +147,10 @@ void pEditor::keyPressEvent( QKeyEvent* e )
 			c->setCompletionPrefix(completionPrefix);
 			c->popup()->setCurrentIndex(c->completionModel()->index(0, 0));
 		}
+		
+		QRect rect(mCursorPosition, QPoint(mCursorPosition.x() + 100, mCursorPosition.y() + 100));
 
-		c->complete();
+		c->complete(rect);
 		
 		return;
 	}

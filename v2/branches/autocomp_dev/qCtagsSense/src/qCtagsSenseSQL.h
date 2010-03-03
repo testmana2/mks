@@ -30,6 +30,7 @@ class QCTAGSSENSE_EXPORT qCtagsSenseSQL : public QObject
 	
 public:
 	qCtagsSenseSQL( QObject* parent = 0 );
+	qCtagsSenseSQL( const QString& mDBConnectionName, QObject* parent = 0 );
 	virtual ~qCtagsSenseSQL();
 	
 	bool initializeDatabase( const QString& fileName = QString::null );

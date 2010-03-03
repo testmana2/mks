@@ -35,6 +35,7 @@ namespace qCtagsSenseUtils
 	QCTAGSSENSE_EXPORT QString kindText( const QChar& c );
 	
 	QCTAGSSENSE_EXPORT qCtagsSense::Kind kindType( const QChar& c, const QString& language );
+	QCTAGSSENSE_EXPORT qCtagsSense::Language languageType( const QString& string );
 	QCTAGSSENSE_EXPORT QChar kindChar( qCtagsSense::Kind kind, const QString& language );
 	QCTAGSSENSE_EXPORT QString kindText( qCtagsSense::Kind kind );
 	QCTAGSSENSE_EXPORT QString kindText( const QChar& c, const QString& language );

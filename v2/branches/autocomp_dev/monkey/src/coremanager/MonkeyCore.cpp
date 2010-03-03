@@ -40,6 +40,7 @@
 #include "../statusbar/StatusBar.h"
 #include "../shellmanager/MkSShellInterpreter.h"
 #include "../abbreviationsmanager/pAbbreviationsManager.h"
+#include "../qscintillamanager/pCompleterIndexer.h"
 
 #include "../maininterface/ui/UISettings.h"
 #include "../maininterface/ui/UITranslator.h"
@@ -126,6 +127,10 @@ void MonkeyCore::init()
 	// init abbreviations manager
 	showMessage( &splash, tr( "Initializing abbreviations manager..." ) );
 	abbreviationsManager();
+
+	// init completer
+	showMessage( &splash, tr( "Initializing Completion..." ) );
+	pCompleterIndexer::instance();
 
 	// init file manager
 	showMessage( &splash, tr( "Initializing file manager..." ) );

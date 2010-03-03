@@ -16,7 +16,6 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ****************************************************************************/
 #include "qCtagsSenseIndexer.h"
-#include "qCtagsSense.h"
 #include "qCtagsSenseUtils.h"
 #include "qCtagsSenseSQL.h"
 
@@ -30,6 +29,7 @@ qCtagsSenseIndexer::qCtagsSenseIndexer( qCtagsSenseSQL* parent )
 {
 	mStop = false;
 	mSQL = parent;
+	accessFilter = qCtagsSense::All;
 }
 
 qCtagsSenseIndexer::~qCtagsSenseIndexer()
@@ -56,6 +56,11 @@ QStringList qCtagsSenseIndexer::filteredSuffixes() const
 	QMutexLocker locker( &const_cast<qCtagsSenseIndexer*>( this )->mMutex );
 	
 	return mFilteredSuffixes;
+}
+
+void qCtagsSenseIndexer::setAccessFilter( qCtagsSense::AccessFilter access )
+{
+	accessFilter = access;
 }
 
 void qCtagsSenseIndexer::addFilteredSuffixes( const QStringList& suffixes )
@@ -230,6 +235,7 @@ bool qCtagsSenseIndexer::removeEntries( const QStringList& fileNames )
 
 bool qCtagsSenseIndexer::indexEntry( const QString& fileName )
 {
+	qDebug() << "Index entry from : " << fileName;
 	QMap<QString, TagEntryListItem*> entries;
 	bool ok = false;
 	QFileInfo file( fileName );
@@ -238,6 +244,7 @@ bool qCtagsSenseIndexer::indexEntry( const QString& fileName )
 	if ( file.isFile() )
 	{
 		TagEntryListItem* item = tagFileEntry( fileName, ok );
+		qDebug() << "Pass createTagEntryListItem for " << fileName;
 		
 		if ( ok && item )
 		{
@@ -264,6 +271,8 @@ bool qCtagsSenseIndexer::indexEntry( const QString& fileName )
 	}
 	
 	entries.clear();
+	
+	qDebug() << "Finish index entry";
 	
 	return ok;
 }
@@ -292,7 +301,7 @@ bool qCtagsSenseIndexer::indexEntries( const QMap<QString, QString>& entries )
 	return ok;
 }
 
-int qCtagsSenseIndexer::createFileEntry( const QString& fileName, const QString& language )
+int qCtagsSenseIndexer::createFileEntry( const QString& fileName, qCtagsSense::Language language )
 {
 	QSqlQuery q = mSQL->query();
 	const QString set_sql = "INSERT INTO files (filename, language) VALUES( ?, ? )";
@@ -307,11 +316,16 @@ int qCtagsSenseIndexer::createFileEntry( const QString& fileName, const QString&
 		return -1;
 	}
 	
+	qDebug() << "created file entry from " << fileName << " with ID " << q.lastInsertId().toInt();
+	
 	return q.lastInsertId().toInt();
 }
 
 bool qCtagsSenseIndexer::createEntries( int fileId, TagEntryListItem* item )
 {
+	if ( item != NULL )
+		qDebug() << "create entries from " << fileId;
+	
 	QSqlQuery q = mSQL->query();
 	const QString sql = QString(
 		"INSERT INTO entries "
@@ -344,21 +358,30 @@ bool qCtagsSenseIndexer::createEntries( int fileId, TagEntryListItem* item )
 		q.addBindValue( entry->extensionFields.typeRef[ 0 ] );
 		q.addBindValue( entry->extensionFields.typeRef[ 1 ] );
 		
-		if ( !q.exec() )
+		if( ( QString("private") == entry->extensionFields.access && accessFilter == qCtagsSense::All )
+			|| ( QString("protected") == entry->extensionFields.access && ( accessFilter == qCtagsSense::All || accessFilter == qCtagsSense::Protected ) )
+			|| QString("public") == entry->extensionFields.access
+			|| entry->extensionFields.access == NULL
+			|| QString("") == entry->extensionFields.access)
 		{
-			qWarning() << "Can't create entry for" << entry->name;
-			qWarning() << q.lastError().text();
-			return false;
+			if ( !q.exec() )
+			{
+				qWarning() << "Can't create entry for" << entry->name;
+				qWarning() << q.lastError().text();
+				return false;
+			}
 		}
 		
 		item = item->next;
 		
 		if ( mStop )
 		{
+			qDebug() << "create entries bad finish !";
 			return false;
 		}
 	}
 	
+	qDebug() << "create entries finish ! from " << fileId;
 	return true;
 }
 
@@ -376,7 +399,14 @@ bool qCtagsSenseIndexer::indexTags( const QMap<QString, TagEntryListItem*>& tags
 	{
 		TagEntryListItem* tag = tags[ fileName ];
 		
-		int fileId = createFileEntry( fileName, QString::fromLocal8Bit( tag->tag.language ) );
+		int fileId;
+		
+		if(QString::fromLocal8Bit( tag->tag.language ) == "C++")
+			fileId = createFileEntry( fileName, qCtagsSense::Cpp );
+		else if(QString::fromLocal8Bit( tag->tag.language ) == "C#")
+			fileId = createFileEntry( fileName, qCtagsSense::Csharp );
+		else
+			fileId = createFileEntry( fileName, qCtagsSenseUtils::languageType(QString().fromLocal8Bit(tag->tag.language)) );
 		
 		if ( fileId == -1 )
 		{
@@ -399,6 +429,7 @@ bool qCtagsSenseIndexer::indexTags( const QMap<QString, TagEntryListItem*>& tags
 
 TagEntryListItem* qCtagsSenseIndexer::tagFileEntry( const QString& fileName, bool& ok )
 {
+	qDebug() << "Tag file entry from : " << fileName;
 	if ( !QFile::exists( fileName ) )
 	{
 		qWarning() << "File does not exists" << fileName.toLocal8Bit().constData();
@@ -425,7 +456,9 @@ TagEntryListItem* qCtagsSenseIndexer::tagFileEntry( const QString& fileName, boo
 	}
 	
 	ok = true;
-	return createTagEntryListItem( fileName.toLocal8Bit().constData(), 0 );
+	
+	qDebug() << "Finish tag file entry";
+	return createTagEntryListItem( fileName.toLocal8Bit(), NULL );
 }
 
 QMap<QString, TagEntryListItem*> qCtagsSenseIndexer::tagPathEntries( const QString& pathName, bool& ok )

@@ -28,6 +28,12 @@ qCtagsSenseSQL::qCtagsSenseSQL( QObject* parent )
 	mDBConnectionName = "qCtagsSenseSQL";
 }
 
+qCtagsSenseSQL::qCtagsSenseSQL( const QString& mDBConnectionName, QObject* parent )
+	: QObject( parent )
+{
+	this->mDBConnectionName = mDBConnectionName;
+}
+
 qCtagsSenseSQL::~qCtagsSenseSQL()
 {
 	removeCurrentDatabase();
@@ -79,7 +85,7 @@ bool qCtagsSenseSQL::initializeTables() const
 		"CREATE TABLE 'main'.'files' ("
 		"'id' INTEGER PRIMARY KEY AUTOINCREMENT,"
 		"'fileName' TEXT NOT NULL,"
-		"'language' TEXT NOT NULL"
+		"'language' INTEGER NOT NULL"
 		");"
 	);
 	

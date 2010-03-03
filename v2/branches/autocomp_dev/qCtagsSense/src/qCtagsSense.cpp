@@ -25,19 +25,18 @@
 #include <QMetaType>
 #include <QDebug>
 
-qCtagsSense::qCtagsSense( QObject* parent )
+qCtagsSense::qCtagsSense( QObject* parent, const QString& dbName )
 	: QObject( parent )
 {
+	deInitCtags();
 	initCtags();
 	qCtagsSenseUtils::initMaps();
 	
 	qRegisterMetaType<qCtagsSenseEntry>( "qCtagsSenseEntry" );
 	qRegisterMetaType<qCtagsSenseEntry*>( "qCtagsSenseEntry*" );
 	
-	setLanguageKinds( "C++", "cdefglmnpstuvx" );
-	
 	mInitialized = false;
-	mSQL = new qCtagsSenseSQL( this );
+	mSQL = new qCtagsSenseSQL( dbName, this );
 	mIndexer = new qCtagsSenseIndexer( mSQL );
 	
 	connect( mIndexer, SIGNAL( indexingStarted() ), this, SIGNAL( indexingStarted() ) );
@@ -51,6 +50,16 @@ qCtagsSense::~qCtagsSense()
 	delete mIndexer;
 	delete mSQL;
 	deInitCtags();
+}
+
+void qCtagsSense::setCtagsLanguageKinds( const char* const language, const char* kinds )
+{
+	setLanguageKinds( language, kinds );
+}
+
+void qCtagsSense::setAccessFilter( qCtagsSense::AccessFilter access )
+{
+	mIndexer->setAccessFilter( access );
 }
 
 bool qCtagsSense::isValid() const
