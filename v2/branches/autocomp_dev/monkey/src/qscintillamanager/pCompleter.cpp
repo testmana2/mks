@@ -8,6 +8,10 @@
 
 #include "pCompleter.h"
 
+#include "XUPProjectItem.h"
+#include "MonkeyCore.h"
+#include "XUPProjectManager.h"
+
 pCompleter::pCompleter(QString filename, QPoint cursorPos)
 {
 	this->cursorPos = cursorPos;
@@ -18,6 +22,15 @@ pCompleter::pCompleter(QString filename, QPoint cursorPos)
 
 pCompleter::~pCompleter()
 {
+}
+
+void pCompleter::init()
+{
+	XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
+	
+	qDebug() << "Qt : " << curProject->projectSettingsValue( "QT_VERSION" );
+	
+	
 }
 
 void pCompleter::setCursorPos(QPoint pos)

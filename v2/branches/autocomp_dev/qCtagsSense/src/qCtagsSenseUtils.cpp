@@ -32,6 +32,7 @@ namespace qCtagsSenseUtils
 	typedef QList<CharKindPair> CharKindPairList;
 	
 	QMap<qCtagsSense::Kind, QString> mKindText;
+	QMap<QString, qCtagsSense::Language> mLanguageMap; // enum indice, language
 	QMap<QString, CharKindPairList> mLanguageChars; // language, list of pair of char/kind
 	QMap<QString, qCtagsSense::Kind> mKindStrings; // kind string, kind enum
 	QMap<QString, QPixmap> mPixmaps;
@@ -300,6 +301,42 @@ void qCtagsSenseUtils::initMaps()
 		CharKindPairList yaccList = CharKindPairList()
 			<< CharKindPair( 'l', qCtagsSense::Label );
 		
+		// fill language map
+		mLanguageMap[ "Asm" ] = qCtagsSense::Asm;
+		mLanguageMap[ "Asp" ] = qCtagsSense::Asp;
+		mLanguageMap[ "Awk" ] = qCtagsSense::Awk;
+		mLanguageMap[ "Basic" ] = qCtagsSense::Basic;
+		mLanguageMap[ "BETA" ] = qCtagsSense::BETA;
+		mLanguageMap[ "C" ] = qCtagsSense::C;
+		mLanguageMap[ "C++" ] = qCtagsSense::Cpp;
+		mLanguageMap[ "C#" ] = qCtagsSense::Csharp;
+		mLanguageMap[ "Cobol" ] = qCtagsSense::Cobol;
+		mLanguageMap[ "Eiffel" ] = qCtagsSense::Eiffel;
+		mLanguageMap[ "Erlang" ] = qCtagsSense::Erlang;
+		mLanguageMap[ "Fortran" ] = qCtagsSense::Fortran;
+		mLanguageMap[ "HTML" ] = qCtagsSense::HTML;
+		mLanguageMap[ "Java" ] = qCtagsSense::Java;
+		mLanguageMap[ "JavaScript" ] = qCtagsSense::JavaScript;
+		mLanguageMap[ "Lisp" ] = qCtagsSense::Lisp;
+		mLanguageMap[ "Lua" ] = qCtagsSense::Lua;
+		mLanguageMap[ "Make" ] = qCtagsSense::Make;
+		mLanguageMap[ "Pascal" ] = qCtagsSense::Pascal;
+		mLanguageMap[ "Perl" ] = qCtagsSense::Perl;
+		mLanguageMap[ "PHP" ] = qCtagsSense::PHP;
+		mLanguageMap[ "Python" ] = qCtagsSense::Python;
+		mLanguageMap[ "REXX" ] = qCtagsSense::REXX;
+		mLanguageMap[ "Ruby" ] = qCtagsSense::Ruby;
+		mLanguageMap[ "Scheme" ] = qCtagsSense::Scheme;
+		mLanguageMap[ "Sh" ] = qCtagsSense::Sh;
+		mLanguageMap[ "SLang" ] = qCtagsSense::SLang;
+		mLanguageMap[ "SML" ] = qCtagsSense::SML;
+		mLanguageMap[ "SQL" ] = qCtagsSense::SQL;
+		mLanguageMap[ "Tcl" ] = qCtagsSense::Tcl;
+		mLanguageMap[ "Vera" ] = qCtagsSense::Vera;
+		mLanguageMap[ "Verilog" ] = qCtagsSense::Verilog;
+		mLanguageMap[ "Vim" ] = qCtagsSense::Vim;
+		mLanguageMap[ "YACC" ] = qCtagsSense::YACC;
+		
 		// fill language kinds map
 		mLanguageChars[ "Asm" ] = asmList;
 		mLanguageChars[ "Asp" ] = aspList;
@@ -383,6 +420,11 @@ qCtagsSense::Kind qCtagsSenseUtils::kindType( const QString& string )
 	return mKindStrings.value( string, qCtagsSense::Unknow );
 }
 
+qCtagsSense::Language qCtagsSenseUtils::languageType( const QString& string )
+{
+	return mLanguageMap.value( string, qCtagsSense::UnknowLanguage );
+}
+
 QChar qCtagsSenseUtils::kindChar( qCtagsSense::Kind kind, const QString& language )
 {
 	const CharKindPairList kinds = mLanguageChars.value( language );
@@ -418,7 +460,7 @@ qCtagsSenseEntry* qCtagsSenseUtils::entryForRecord( const QSqlRecord& rec, const
 	qCtagsSenseEntry* entry = new qCtagsSenseEntry;
 	
 	entry->fileName = fileName.isEmpty() ? rec.value( "fileName" ).toString() : fileName;
-	entry->language = rec.value( "language" ).toString();
+	entry->language = rec.value( "language" ).value<uint>();
 	entry->lineNumberEntry = rec.value( "line_number_entry" ).toBool();
 	entry->lineNumber = rec.value( "line_number" ).value<ulong>();
 	entry->isFileScope = rec.value( "is_file_scope" ).toBool();

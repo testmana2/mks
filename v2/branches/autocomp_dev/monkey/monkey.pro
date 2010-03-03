@@ -138,7 +138,8 @@ HEADERS	*= src/main.h \
 	src/consolemanager/EnvironmentVariablesManager.h \
 	src/consolemanager/pConsoleManagerStep.h \
 	src/consolemanager/pConsoleManagerStepModel.h \
-	src/qscintillamanager/pCompleter.h
+	src/qscintillamanager/pCompleter.h \
+	src/qscintillamanager/pCompleterIndexer.h
 
 SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
@@ -196,7 +197,8 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \
 	src/consolemanager/pConsoleManagerStepModel.cpp \
-	src/qscintillamanager/pCompleter.cpp
+	src/qscintillamanager/pCompleter.cpp \
+	src/qscintillamanager/pCompleterIndexer.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkey_french.ts \
 	../datas/translations/monkey_belarusian.ts \

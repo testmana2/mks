@@ -22,7 +22,10 @@ extern TagEntryListItem* createTagEntryListItem( const char* fileName, const cha
 	langType lang; 
 	unsigned int passCount;
 	boolean retried;
-
+	
+	if(langName != NULL)
+		printf( "1) Will parse %s with language %s\n",fileName, langName );
+	
 	firstTagEntry = NULL; // generate new list
 	
 	if ( ( langName != NULL ) && ( strlen( langName ) != 0 ) )
@@ -40,6 +43,8 @@ extern TagEntryListItem* createTagEntryListItem( const char* fileName, const cha
 		return NULL;
 	}
 	
+	printf( "2) Will parse %s\n",fileName );
+	
 	language = LanguageTable[ lang ];
 	
 	if ( language == NULL )
@@ -47,10 +52,14 @@ extern TagEntryListItem* createTagEntryListItem( const char* fileName, const cha
 		return NULL;
 	}
 	
+	printf( "3) Language ok %s\n",fileName );
+	
 	if ( !fileOpen( fileName, lang ) )
 	{
 		return NULL;
 	}
+	
+	printf( "4) Open parse %s\n",fileName );
 	
 	passCount = 0;
 	retried = FALSE;
@@ -66,6 +75,8 @@ extern TagEntryListItem* createTagEntryListItem( const char* fileName, const cha
 			retried = language->parser2( ++passCount );
 		} while ( retried );
 	}
+	
+	printf( "5) Parsing done %s\n",fileName );
 	
 	return firstTagEntry;
 }

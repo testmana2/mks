@@ -14,6 +14,7 @@ class pCompleter
 public:
 	pCompleter(QString fileName, QPoint cursorPos);
 	
+	void init();
 	void setCursorPos(QPoint cursorPos);
 	bool isPointer(QString);
 	QStringListModel* autoComplete(QString);

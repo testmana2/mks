@@ -168,9 +168,55 @@ public:
 		// Z
 	};
 	
-	qCtagsSense( QObject* parent = 0 );
+	enum Language {
+		UnknowLanguage = -1,
+		Asm,
+		Asp,
+		Awk,
+		Basic,
+		BETA,
+		C,
+		Cpp,
+		Csharp,
+		Cobol,
+		Eiffel,
+		Erlang,
+		Fortran,
+		HTML,
+		Java,
+		JavaScript,
+		Lisp,
+		Lua,
+		Make,
+		Pascal,
+		Perl,
+		PHP,
+		Python,
+		REXX,
+		Ruby,
+		Scheme,
+		Sh,
+		SLang,
+		SML,
+		SQL,
+		Tcl,
+		Vera,
+		Verilog,
+		Vim,
+		YACC,
+	};
+	
+	enum AccessFilter {
+		All,
+		Protected,
+		Public,
+	};
+	
+	qCtagsSense( QObject* parent = 0, const QString& dbName = QString("qCtagsSenseSQL") );
 	virtual ~qCtagsSense();
 	
+	void setCtagsLanguageKinds( const char* const language, const char* kinds );
+	void setAccessFilter( AccessFilter access );
 	bool isValid() const;
 	qCtagsSenseProperties properties() const;
 	qCtagsSenseSQL* sql() const;
@@ -219,7 +265,7 @@ struct QCTAGSSENSE_EXPORT qCtagsSenseEntry
 	qCtagsSenseEntry* parent;
 	
 	QString fileName;
-	QString language;
+	uint language;
 	bool lineNumberEntry;
 	ulong lineNumber;
 	bool isFileScope; // is header file
