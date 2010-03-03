@@ -42,10 +42,10 @@ void pCompleterIndexer::opened(XUPProjectItem* project)
 	const QString version = project->projectSettingsValue( "QT_VERSION" );
 	QString xml = MonkeyCore::interpreter()->interpret(QString("qtversion xml \"%1\"").arg( version ), &result);
 	
-	//qDebug() << projectPath;
-	//qDebug() << xml;
+	qDebug() << projectPath;
+	qDebug() << xml;
 	
-	QRegExp rx(".*<Version value=\\\"([^<]*)\\\"/>.*");
+	QRegExp rx(".*<Version value=\\\"([^<]*)\\\"\\s*/>.*");
 	QString effectiveVersion = "";
 	
 	if(rx.exactMatch(xml))
@@ -53,13 +53,13 @@ void pCompleterIndexer::opened(XUPProjectItem* project)
 		effectiveVersion = rx.cap(1);
 	}
 	
-	rx.setPattern(".*<Path value=\\\"([^<]*)\\\"/>.*");
+	rx.setPattern(".*<Path value=\\\"([^<]*)\\\"\\s*/>.*");
 	QString qtSrcPath;
 	
 	if(rx.exactMatch(xml))
 	{
 		//TODO check directory separator
-		qtSrcPath = QDir::cleanPath((rx.cap(1)).append("\\src"));
+		qtSrcPath = QDir::cleanPath((rx.cap(1)).append("/include/qt4"));
 	}
 	
 	if(effectiveVersion != "")
@@ -110,10 +110,10 @@ void pCompleterIndexer::opened(XUPProjectItem* project)
 			
 			qDebug() << "Finish !";
 			
-			/*foreach(QString file, filesList)
+			foreach(QString file, filesList)
 			{
 				qDebug() << file;
-			}*/
+			}
 			
 			sense->tagEntries(filesList);
 			
