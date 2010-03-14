@@ -39,9 +39,6 @@ class Q_MONKEY_EXPORT pEditor : public QsciScintilla
 	Q_OBJECT
 
 public:
-	pEditor( QWidget* = 0 );
-	virtual ~pEditor();
-	
 	enum MarkerDefineType
 	{
 		// bookmarks
@@ -49,6 +46,12 @@ public:
 	};
 	
 	int* ppi;
+
+	pEditor( QWidget* = 0 );
+	
+	virtual bool findFirst( const QString& expr, bool re, bool cs, bool wo, bool wrap, bool forward = true, int line = -1, int index = -1, bool show = true );
+	virtual bool findNext();
+	virtual void replace( const QString& replaceStr );
 
 	bool lineNumbersMarginEnabled() const;
 	int lineNumbersMarginWidth() const;
@@ -71,12 +74,31 @@ public:
 	void autoDetectEol();
 
 protected:
-	void keyPressEvent( QKeyEvent* );
+	struct SearchState
+    {
+        SearchState() : inProgress(0) {}
 
+        bool inProgress;
+        QString expr;
+        bool wrap;
+        bool forward;
+        int flags;
+        long startpos;
+        long endpos;
+        bool show;
+		QRegExp rx;
+    };
+	
 	bool mCopyAvailable;
 	static bool mPasteAvailableInit;
 	static bool mPasteAvailable;
 	QPoint mCursorPosition;
+	pEditor::SearchState mSearchState;
+	
+	virtual void keyPressEvent( QKeyEvent* );
+	
+	int simpleSearch();
+	bool search();
 
 protected slots:
 	void linesChanged();

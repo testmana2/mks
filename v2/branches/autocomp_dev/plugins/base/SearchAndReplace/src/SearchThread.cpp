@@ -3,6 +3,7 @@
 #include <QMutexLocker>
 #include <QTextCodec>
 #include <QTime>
+#include <QTimer>
 #include <QDebug>
 
 int SearchThread::mMaxTime = 125;
@@ -56,7 +57,7 @@ QStringList SearchThread::getFiles( QDir fromDir, const QStringList& filters, bo
 {
 	QStringList files;
 
-	foreach ( const QFileInfo& file, fromDir.entryInfoList( QDir::AllEntries | QDir::NoDotAndDotDot, QDir::DirsFirst | QDir::Name ) )
+	foreach ( const QFileInfo& file, fromDir.entryInfoList( QDir::AllEntries | QDir::AllDirs | QDir::NoDotAndDotDot, QDir::DirsFirst | QDir::Name ) )
 	{
 		if ( file.isFile() && ( filters.isEmpty() || QDir::match( filters, file.fileName() ) ) )
 		{
@@ -230,15 +231,16 @@ void SearchThread::search( const QString& fileName, const QString& content ) con
 		checkable = mProperties.mode & SearchAndReplace::ModeFlagReplace;
 		QString pattern = isRE ? mProperties.searchText : QRegExp::escape( mProperties.searchText );
 
-		if ( !isRE && isWw )
+		if ( isWw )
 		{
 			pattern.prepend( "\\b" ).append( "\\b" );
 		}
 
+		rx.setMinimal( true );
 		rx.setPattern( pattern );
 		rx.setCaseSensitivity( sensitivity );
 	}
-
+	
 	int pos = 0;
 	int lastPos = 0;
 	int eolCount = 0;
@@ -257,6 +259,7 @@ void SearchThread::search( const QString& fileName, const QString& content ) con
 		SearchResultsModel::Result* result = new SearchResultsModel::Result( fileName, capture );
 		result->position = QPoint( column, eolCount );
 		result->offset = pos;
+		result->length = rx.matchedLength();
 		result->checkable = checkable;
 		result->checkState = checkable ? Qt::Checked : Qt::Unchecked;
 		result->capturedTexts = isRE ? rx.capturedTexts() : QStringList();
@@ -323,6 +326,8 @@ void SearchThread::run()
 		
 		const int total = files.count();
 		int value = 0;
+		
+		emit progressChanged( 0, total );
 
 		foreach ( const QString& fileName, files )
 		{
