@@ -17,19 +17,13 @@
 ****************************************************************************/
 #include "qCtagsSenseSQL.h"
 
-#include <QDir>
-#include <QStringList>
+#include <QMetaType>
+#include <QFile>
 #include <QSqlError>
 #include <QDebug>
 
-qCtagsSenseSQL::qCtagsSenseSQL( QObject* parent )
-	: QObject( parent )
-{
-	mDBConnectionName = "qCtagsSenseSQL";
-}
-
 qCtagsSenseSQL::qCtagsSenseSQL( const QString& mDBConnectionName, QObject* parent )
-	: QObject( parent )
+	: QThread( parent )
 {
 	this->mDBConnectionName = mDBConnectionName;
 }
@@ -39,7 +33,7 @@ qCtagsSenseSQL::~qCtagsSenseSQL()
 	removeCurrentDatabase();
 }
 
-bool qCtagsSenseSQL::initializeDatabase( const QString& fileName )
+bool qCtagsSenseSQL::initializeDatabase( const QString& fileName, const QStringList& infoStored )
 {
 	if ( !removeCurrentDatabase() )
 	{
@@ -57,6 +51,8 @@ bool qCtagsSenseSQL::initializeDatabase( const QString& fileName )
 	QSqlDatabase db = QSqlDatabase::addDatabase( "QSQLITE", mDBConnectionName );
 	
 	db.setDatabaseName( fileName.isEmpty() ? ":memory:" : fileName );
+	
+	qDebug() << "BDD créé avec nom : " << mDBConnectionName << " - file : " << fileName;
 	//db.setConnectOptions( "QSQLITE_BUSY_TIMEOUT=500" ); // in milliseconds
 	
 	if ( !db.open() )
@@ -67,7 +63,7 @@ bool qCtagsSenseSQL::initializeDatabase( const QString& fileName )
 	
 	if ( !db.tables().contains( "files", Qt::CaseInsensitive ) )
 	{
-		if ( !initializeTables() )
+		if ( !initializeTables( infoStored ) )
 		{
 			db.close();
 			QSqlDatabase::removeDatabase( mDBConnectionName );
@@ -79,7 +75,7 @@ bool qCtagsSenseSQL::initializeDatabase( const QString& fileName )
 	return true;
 }
 
-bool qCtagsSenseSQL::initializeTables() const
+bool qCtagsSenseSQL::initializeTables( const QStringList& infoStored ) const
 {
 	const QString sql_files = QString(
 		"CREATE TABLE 'main'.'files' ("
@@ -136,6 +132,8 @@ bool qCtagsSenseSQL::initializeTables() const
 	);
 	
 	QSqlQuery q = query();
+	
+	qDebug() << "BDD : " << mDBConnectionName;
 	
 	if ( q.exec( sql_files ) )
 	{

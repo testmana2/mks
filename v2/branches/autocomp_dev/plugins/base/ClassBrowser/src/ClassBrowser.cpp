@@ -49,7 +49,6 @@ bool ClassBrowser::install()
 {
 	// create dock
 	mDock = new pDockClassBrowser( this );
-	mDock->browser()->sense()->setCtagsLanguageKinds( "C++", "cdefglmnpstuvx" );
 	// create menu action for the dock
 	pActionsManager::setDefaultShortcut( mDock->toggleViewAction(), QKeySequence( "F8" ) );
 	// connections

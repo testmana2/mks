@@ -17,7 +17,7 @@ pCompleter::pCompleter(QString filename, QPoint cursorPos)
 	this->cursorPos = cursorPos;
 	this->filename = filename;
 	
-	sqlBase = new qCtagsSenseSQL();
+	sqlBase = new qCtagsSenseSQL(QString("completerProject"));
 }
 
 pCompleter::~pCompleter()

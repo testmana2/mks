@@ -26,24 +26,37 @@
 #include <QStringList>
 #include <QMetaType>
 
-class qCtagsSenseSQL;
 class qCtagsSenseIndexer;
 
-struct QCTAGSSENSE_EXPORT qCtagsSenseProperties
+typedef struct QCTAGSSENSE_EXPORT qCtagsSenseProperties
 {
-	qCtagsSenseProperties( const QStringList& systemPaths = QStringList(), const QStringList filteredSuffixes = QStringList(),
-		bool usePhysicalDatabase = false, const QString& databaseFileName = QString::null )
+	enum AccessFilter {
+		All,
+		Protected,
+		Public,
+	};
+	
+	qCtagsSenseProperties( const QString& _connectionName = QString( "qCtagsSenseSQL" ), const QStringList& systemPaths = QStringList(),
+		const QStringList filteredSuffixes = QStringList(), bool usePhysicalDatabase = false,
+		const QString& databaseFileName = QString::null, const QStringList& _infoStored = QStringList(),
+		qCtagsSenseProperties::AccessFilter _accessFilter = All, const QString& _kindFilter = QString( "cdefgmnstuv" ) )
 	{
+		connectionName = _connectionName;
 		SystemPaths = systemPaths;
 		FilteredSuffixes = filteredSuffixes;
 		UsePhysicalDatabase = usePhysicalDatabase;
 		DatabaseFileName = databaseFileName;
+		infoStored = _infoStored;
+		accessFilter = _accessFilter;
+		kindFilter = _kindFilter;
 	}
 	
 	bool operator==( const qCtagsSenseProperties& other ) const
 	{
 		return SystemPaths == other.SystemPaths && FilteredSuffixes == other.FilteredSuffixes &&
-			UsePhysicalDatabase == other.UsePhysicalDatabase && DatabaseFileName == other.DatabaseFileName;
+			UsePhysicalDatabase == other.UsePhysicalDatabase && DatabaseFileName == other.DatabaseFileName &&
+			infoStored == other.infoStored && accessFilter == other.accessFilter &&
+			connectionName == other.connectionName && kindFilter == other.kindFilter;
 	}
 	
 	bool operator!=( const qCtagsSenseProperties& other ) const
@@ -51,11 +64,15 @@ struct QCTAGSSENSE_EXPORT qCtagsSenseProperties
 		return !operator==( other );
 	}
 	
+	QString connectionName;
 	QStringList SystemPaths;
 	QStringList FilteredSuffixes;
 	bool UsePhysicalDatabase;
 	QString DatabaseFileName;
-};
+	QStringList infoStored;
+	AccessFilter accessFilter;
+	QString kindFilter;
+} qCtagsSenseProperties;
 
 class QCTAGSSENSE_EXPORT qCtagsSense : public QObject
 {
@@ -206,20 +223,11 @@ public:
 		YACC,
 	};
 	
-	enum AccessFilter {
-		All,
-		Protected,
-		Public,
-	};
-	
-	qCtagsSense( QObject* parent = 0, const QString& dbName = QString("qCtagsSenseSQL") );
+	qCtagsSense( QObject* parent = 0 );
 	virtual ~qCtagsSense();
 	
-	void setCtagsLanguageKinds( const char* const language, const char* kinds );
-	void setAccessFilter( AccessFilter access );
 	bool isValid() const;
 	qCtagsSenseProperties properties() const;
-	qCtagsSenseSQL* sql() const;
 	qCtagsSenseIndexer* indexer() const;
 
 public slots:
@@ -231,8 +239,7 @@ public slots:
 protected:
 	bool mInitialized;
 	qCtagsSenseProperties mProperties;
-	qCtagsSenseSQL* mSQL;
-	qCtagsSenseIndexer* mIndexer;
+	static qCtagsSenseIndexer* mIndexer;
 
 signals:
 	void indexingStarted();

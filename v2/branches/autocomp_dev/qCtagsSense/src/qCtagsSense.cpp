@@ -20,24 +20,21 @@
 #include "qCtagsSenseSQL.h"
 #include "qCtagsSenseIndexer.h"
 
-#include <ctags.h>
-
 #include <QMetaType>
 #include <QDebug>
 
-qCtagsSense::qCtagsSense( QObject* parent, const QString& dbName )
+qCtagsSenseIndexer* qCtagsSense::mIndexer = 0;
+
+qCtagsSense::qCtagsSense( QObject* parent )
 	: QObject( parent )
 {
-	deInitCtags();
-	initCtags();
 	qCtagsSenseUtils::initMaps();
 	
 	qRegisterMetaType<qCtagsSenseEntry>( "qCtagsSenseEntry" );
 	qRegisterMetaType<qCtagsSenseEntry*>( "qCtagsSenseEntry*" );
 	
-	mInitialized = false;
-	mSQL = new qCtagsSenseSQL( dbName, this );
-	mIndexer = new qCtagsSenseIndexer( mSQL );
+	if( !mIndexer )
+		mIndexer = new qCtagsSenseIndexer();
 	
 	connect( mIndexer, SIGNAL( indexingStarted() ), this, SIGNAL( indexingStarted() ) );
 	connect( mIndexer, SIGNAL( indexingProgress( int, int ) ), this, SIGNAL( indexingProgress( int, int ) ) );
@@ -48,33 +45,11 @@ qCtagsSense::qCtagsSense( QObject* parent, const QString& dbName )
 qCtagsSense::~qCtagsSense()
 {
 	delete mIndexer;
-	delete mSQL;
-	deInitCtags();
-}
-
-void qCtagsSense::setCtagsLanguageKinds( const char* const language, const char* kinds )
-{
-	setLanguageKinds( language, kinds );
-}
-
-void qCtagsSense::setAccessFilter( qCtagsSense::AccessFilter access )
-{
-	mIndexer->setAccessFilter( access );
-}
-
-bool qCtagsSense::isValid() const
-{
-	return mInitialized;
 }
 
 qCtagsSenseProperties qCtagsSense::properties() const
 {
 	return mProperties;
-}
-
-qCtagsSenseSQL* qCtagsSense::sql() const
-{
-	return mSQL;
 }
 
 qCtagsSenseIndexer* qCtagsSense::indexer() const
@@ -86,51 +61,27 @@ void qCtagsSense::setProperties( const qCtagsSenseProperties& properties )
 {
 	if ( properties != mProperties )
 	{
-		mIndexer->clear();
-		mInitialized = mSQL->initializeDatabase( properties.UsePhysicalDatabase ? properties.DatabaseFileName : QString::null );
+		mProperties = properties;
+		mIndexer->setFilteredSuffixes( properties.FilteredSuffixes );
 		
-		if ( mInitialized )
+		foreach ( const QString& path, properties.SystemPaths )
 		{
-			mProperties = properties;
-			mIndexer->setFilteredSuffixes( properties.FilteredSuffixes );
-			
-			foreach ( const QString& path, properties.SystemPaths )
-			{
-				mIndexer->indexFile( path );
-			}
+			mIndexer->indexFile( path, properties );
 		}
 	}
 }
 
 void qCtagsSense::tagEntry( const QString& fileName )
-{	
-	if ( !mInitialized )
-	{
-		qWarning() << "qCtagsSense instance not initialized";
-		return;
-	}
-	
-	mIndexer->indexFile( fileName );
+{
+	mIndexer->indexFile( fileName, mProperties );
 }
 
 void qCtagsSense::tagEntries( const QStringList& fileNames )
 {
-	if ( !mInitialized )
-	{
-		qWarning() << "qCtagsSense instance not initialized";
-		return;
-	}
-	
-	mIndexer->indexFiles( fileNames );
+	mIndexer->indexFiles( fileNames, mProperties );
 }
 
 void qCtagsSense::tagEntries( const QMap<QString, QString>& entries )
 {
-	if ( !mInitialized )
-	{
-		qWarning() << "qCtagsSense instance not initialized";
-		return;
-	}
-	
-	mIndexer->indexBuffers( entries );
+	mIndexer->indexBuffers( entries, mProperties );
 }
