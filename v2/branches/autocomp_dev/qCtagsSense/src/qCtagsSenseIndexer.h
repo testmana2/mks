@@ -23,7 +23,9 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QSqlQuery>
 #include <QMap>
+#include <QHash>
 #include <QStringList>
 
 #include <ctags.h>
@@ -35,12 +37,11 @@ class QCTAGSSENSE_EXPORT qCtagsSenseIndexer : public QThread
 	Q_OBJECT
 	
 public:
-	qCtagsSenseIndexer( qCtagsSenseSQL* parent );
+	qCtagsSenseIndexer();
 	virtual ~qCtagsSenseIndexer();
 	
 	void clear();
 	QStringList filteredSuffixes() const;
-	void setAccessFilter( qCtagsSense::AccessFilter access );
 
 public slots:
 	void addFilteredSuffixes( const QStringList& suffixes );
@@ -49,26 +50,21 @@ public slots:
 	void setFilteredSuffix( const QString& suffix );
 	
 	void removeFile( const QString& fileName );
-	void indexFile( const QString& fileName );
-	void indexFiles( const QStringList& fileNames );
-	void indexBuffers( const QMap<QString, QString>& buffers );
+	void indexFile( const QString& fileName, const qCtagsSenseProperties& properties );
+	void indexFiles( const QStringList& fileNames, const qCtagsSenseProperties& properties );
+	void indexBuffers( const QMap<QString, QString>& buffers, const qCtagsSenseProperties& properties );
 
 protected:
 	qCtagsSenseSQL* mSQL;
 	QStringList mFilteredSuffixes;
-	QMap<QString, QString> mWaitingIndexation; // fileName, content
+	QHash<QString, QPair<QString, qCtagsSenseProperties> > mWaitingIndexation; // fileName, content
 	QList<QString> mWaitingDeletion; // fileNames
 	QMutex mMutex;
 	bool mStop;
 	
-	bool removeEntries( const QStringList& fileNames );
-	bool indexEntry( const QString& fileName );
-	bool indexEntries( const QMap<QString, QString>& entries );
-	int createFileEntry( const QString& fileName, qCtagsSense::Language language );
-	bool createEntries( int fileId, TagEntryListItem* item );
-	bool indexTags( const QMap<QString, TagEntryListItem*>& tags );
 	TagEntryListItem* tagFileEntry(const QString& fileName, bool& ok);
 	QMap<QString, TagEntryListItem*> tagPathEntries( const QString& pathName, bool& ok );
+	QMap<QString, TagEntryListItem*> tagFilesEntries( const QStringList& fileNames, bool& ok );
 	QMap<QString, TagEntryListItem*> tagBuffersEntries( const QMap<QString, QString>& entries, bool& ok );
 	
 	virtual void run();
@@ -78,9 +74,17 @@ signals:
 	void indexingProgress( int value, int max );
 	void indexingFinished();
 	void indexingChanged();
-	
+
 private:
-	qCtagsSense::AccessFilter accessFilter;
+	qCtagsSenseProperties currentProperty;
+
+	bool removeEntries( const QStringList& fileNames );
+	bool indexEntry( const QString& fileName );
+	bool indexEntries( const QMap<QString, QString>& entries );
+	bool indexTags( const QMap<QString, TagEntryListItem*>& tags );
+	
+	int createFileEntry( const QString& fileName, qCtagsSense::Language language );
+	bool createEntries( int fileId, TagEntryListItem* item );
 };
 
 #endif // QCTAGSSENSEINDEXER_H

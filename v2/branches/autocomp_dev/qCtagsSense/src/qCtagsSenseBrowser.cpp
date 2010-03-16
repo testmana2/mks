@@ -16,6 +16,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ****************************************************************************/
 #include "qCtagsSenseBrowser.h"
+#include "qCtagsSenseSQL.h"
 #include "qCtagsSenseIndexer.h"
 #include "qCtagsSenseLanguagesModel.h"
 #include "qCtagsSenseFilesModel.h"
@@ -173,10 +174,12 @@ qCtagsSenseBrowser::qCtagsSenseBrowser( QWidget* parent )
 	lLoading->setVisible( false );
 	
 	mSense = new qCtagsSense( this );
-	mLanguagesModel = new qCtagsSenseLanguagesModel( mSense->sql() );
-	mFilesModel = new qCtagsSenseFilesModel( mSense->sql() );
-	mMembersModel = new qCtagsSenseMembersModel( mSense->sql() );
-	mSearchModel = new qCtagsSenseSearchModel( mSense->sql() );
+	
+	qCtagsSenseSQL* sql = new qCtagsSenseSQL( mSense->properties().connectionName );
+	mLanguagesModel = new qCtagsSenseLanguagesModel( sql );
+	mFilesModel = new qCtagsSenseFilesModel( sql );
+	mMembersModel = new qCtagsSenseMembersModel( sql );
+	mSearchModel = new qCtagsSenseSearchModel( sql );
 	
 	aMembers = new MembersAction( this );
 	
@@ -279,7 +282,8 @@ void qCtagsSenseBrowser::popupMenu( QTreeView* view, const QPoint& pos )
 		}
 		else
 		{
-			qCtagsSenseKindFinder* cpp = new qCtagsSenseKindFinder( mSense->sql() );
+			qCtagsSenseSQL* sql = new qCtagsSenseSQL( mSense->properties().connectionName );
+			qCtagsSenseKindFinder* cpp = new qCtagsSenseKindFinder( sql );
 			connect( cpp, SIGNAL( entryActivated( const qCtagsSenseEntry& ) ), this, SIGNAL( entryActivated( const qCtagsSenseEntry& ) ) );
 			cpp->goTo( kind, entry );
 		}

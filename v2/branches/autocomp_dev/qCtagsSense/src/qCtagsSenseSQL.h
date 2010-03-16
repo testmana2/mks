@@ -20,21 +20,23 @@
 
 #include "qCtagsSenseExport.h"
 
-#include <QObject>
+#include <QThread>
+#include <QStringList>
 #include <QSqlDatabase>
+#include <QMutex>
+#include <QWaitCondition>
 #include <QSqlQuery>
 
-class QCTAGSSENSE_EXPORT qCtagsSenseSQL : public QObject
+class QCTAGSSENSE_EXPORT qCtagsSenseSQL : public QThread
 {
 	Q_OBJECT
 	
 public:
-	qCtagsSenseSQL( QObject* parent = 0 );
 	qCtagsSenseSQL( const QString& mDBConnectionName, QObject* parent = 0 );
 	virtual ~qCtagsSenseSQL();
 	
-	bool initializeDatabase( const QString& fileName = QString::null );
-	bool initializeTables() const;
+	bool initializeDatabase( const QString& fileName = QString::null, const QStringList& infoStored = QStringList() );
+	bool initializeTables( const QStringList& infoStored ) const;
 	bool removeCurrentDatabase();
 	
 	QSqlDatabase database() const;

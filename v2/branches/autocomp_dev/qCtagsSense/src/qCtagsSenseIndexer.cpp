@@ -19,21 +19,24 @@
 #include "qCtagsSenseUtils.h"
 #include "qCtagsSenseSQL.h"
 
+#include <ctags.h>
+
 #include <QMutexLocker>
 #include <QVariant>
 #include <QSqlError>
+#include <QTime>
 #include <QDebug>
 
-qCtagsSenseIndexer::qCtagsSenseIndexer( qCtagsSenseSQL* parent )
-	: QThread( parent )
+qCtagsSenseIndexer::qCtagsSenseIndexer()
+	: QThread()
 {
 	mStop = false;
-	mSQL = parent;
-	accessFilter = qCtagsSense::All;
+	initCtags();
 }
 
 qCtagsSenseIndexer::~qCtagsSenseIndexer()
 {
+	deInitCtags();
 	mStop = true;
 	wait();
 }
@@ -56,11 +59,6 @@ QStringList qCtagsSenseIndexer::filteredSuffixes() const
 	QMutexLocker locker( &const_cast<qCtagsSenseIndexer*>( this )->mMutex );
 	
 	return mFilteredSuffixes;
-}
-
-void qCtagsSenseIndexer::setAccessFilter( qCtagsSense::AccessFilter access )
-{
-	accessFilter = access;
 }
 
 void qCtagsSenseIndexer::addFilteredSuffixes( const QStringList& suffixes )
@@ -115,7 +113,7 @@ void qCtagsSenseIndexer::removeFile( const QString& fileName )
 	}
 }
 
-void qCtagsSenseIndexer::indexFile( const QString& fileName )
+void qCtagsSenseIndexer::indexFile( const QString& fileName, const qCtagsSenseProperties& properties )
 {
 	if ( mStop )
 	{
@@ -126,7 +124,7 @@ void qCtagsSenseIndexer::indexFile( const QString& fileName )
 	
 	if ( !mWaitingIndexation.contains( fileName ) && QFile::exists( fileName ) )
 	{
-		mWaitingIndexation[ fileName ] = QString::null;
+		mWaitingIndexation[ fileName ] = QPair<QString, qCtagsSenseProperties>(QString::null, properties);
 	}
 	
 	locker.unlock();
@@ -137,7 +135,7 @@ void qCtagsSenseIndexer::indexFile( const QString& fileName )
 	}
 }
 
-void qCtagsSenseIndexer::indexFiles( const QStringList& fileNames )
+void qCtagsSenseIndexer::indexFiles( const QStringList& fileNames, const qCtagsSenseProperties& properties )
 {
 	if ( mStop )
 	{
@@ -150,7 +148,7 @@ void qCtagsSenseIndexer::indexFiles( const QStringList& fileNames )
 	{
 		if ( !mWaitingIndexation.contains( fileName ) && QFile::exists( fileName ) )
 		{
-			mWaitingIndexation[ fileName ] = QString::null;
+			mWaitingIndexation[ fileName ] = QPair<QString, qCtagsSenseProperties>(QString::null, properties);
 		}
 	}
 	
@@ -162,7 +160,7 @@ void qCtagsSenseIndexer::indexFiles( const QStringList& fileNames )
 	}
 }
 
-void qCtagsSenseIndexer::indexBuffers( const QMap<QString, QString>& buffers )
+void qCtagsSenseIndexer::indexBuffers( const QMap<QString, QString>& buffers, const qCtagsSenseProperties& properties )
 {
 	if ( mStop )
 	{
@@ -175,12 +173,12 @@ void qCtagsSenseIndexer::indexBuffers( const QMap<QString, QString>& buffers )
 	{
 		if ( !mWaitingIndexation.contains( fileName ) )
 		{
-			mWaitingIndexation[ fileName ] = buffers[ fileName ];
+			mWaitingIndexation[ fileName ] = QPair<QString, qCtagsSenseProperties>( buffers[ fileName ], properties );
 			
 			// null buffers are not accepted as they conflict with true files
-			if ( mWaitingIndexation[ fileName ].isNull() )
+			if ( mWaitingIndexation[ fileName ].first.isNull() )
 			{
-				mWaitingIndexation[ fileName ] = QString( "" );
+				mWaitingIndexation[ fileName ] = QPair<QString, qCtagsSenseProperties>(QString( "" ), properties);
 			}
 		}
 		
@@ -235,7 +233,6 @@ bool qCtagsSenseIndexer::removeEntries( const QStringList& fileNames )
 
 bool qCtagsSenseIndexer::indexEntry( const QString& fileName )
 {
-	qDebug() << "Index entry from : " << fileName;
 	QMap<QString, TagEntryListItem*> entries;
 	bool ok = false;
 	QFileInfo file( fileName );
@@ -244,7 +241,6 @@ bool qCtagsSenseIndexer::indexEntry( const QString& fileName )
 	if ( file.isFile() )
 	{
 		TagEntryListItem* item = tagFileEntry( fileName, ok );
-		qDebug() << "Pass createTagEntryListItem for " << fileName;
 		
 		if ( ok && item )
 		{
@@ -271,8 +267,6 @@ bool qCtagsSenseIndexer::indexEntry( const QString& fileName )
 	}
 	
 	entries.clear();
-	
-	qDebug() << "Finish index entry";
 	
 	return ok;
 }
@@ -316,16 +310,11 @@ int qCtagsSenseIndexer::createFileEntry( const QString& fileName, qCtagsSense::L
 		return -1;
 	}
 	
-	qDebug() << "created file entry from " << fileName << " with ID " << q.lastInsertId().toInt();
-	
 	return q.lastInsertId().toInt();
 }
 
 bool qCtagsSenseIndexer::createEntries( int fileId, TagEntryListItem* item )
 {
-	if ( item != NULL )
-		qDebug() << "create entries from " << fileId;
-	
 	QSqlQuery q = mSQL->query();
 	const QString sql = QString(
 		"INSERT INTO entries "
@@ -335,41 +324,56 @@ bool qCtagsSenseIndexer::createEntries( int fileId, TagEntryListItem* item )
 		"VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )"
 	);
 	
+	QString privateStr = QString("private");
+	QString protectedStr = QString("protected");
+	QString publicStr = QString("public");
+	QString empty = QString("");
+	QVariantList filesId;
+	QVariantList lineNumberEntry;
+	QVariantList lineNumber;
+	QVariantList isFileScope;
+	QVariantList isFileEntry;
+	QVariantList truncateLine;
+	QVariantList name;
+	QVariantList kind;
+	QVariantList access;
+	QVariantList fileScope;
+	QVariantList implementation;
+	QVariantList inheritance;
+	QVariantList scope_Value;
+	QVariantList scope_Key;
+	QVariantList signature;
+	QVariantList type;
+	QVariantList type_Name;
+	
 	while ( item != NULL )
 	{
 		tagEntryInfo* entry = &item->tag;
 		
-		q.prepare( sql );
-		q.addBindValue( fileId );
-		q.addBindValue( entry->lineNumberEntry -1 );
-		q.addBindValue( QVariant::fromValue( entry->lineNumber -1 ) );
-		q.addBindValue( entry->isFileScope );
-		q.addBindValue( entry->isFileEntry );
-		q.addBindValue( entry->truncateLine );
-		q.addBindValue( entry->name );
-		q.addBindValue( qCtagsSenseUtils::kindType( QChar( entry->kind ), entry->language ) );
-		q.addBindValue( entry->extensionFields.access );
-		q.addBindValue( entry->extensionFields.fileScope );
-		q.addBindValue( entry->extensionFields.implementation );
-		q.addBindValue( entry->extensionFields.inheritance );
-		q.addBindValue( entry->extensionFields.scope[ 0 ] );
-		q.addBindValue( entry->extensionFields.scope[ 1 ] );
-		q.addBindValue( entry->extensionFields.signature );
-		q.addBindValue( entry->extensionFields.typeRef[ 0 ] );
-		q.addBindValue( entry->extensionFields.typeRef[ 1 ] );
-		
-		if( ( QString("private") == entry->extensionFields.access && accessFilter == qCtagsSense::All )
-			|| ( QString("protected") == entry->extensionFields.access && ( accessFilter == qCtagsSense::All || accessFilter == qCtagsSense::Protected ) )
-			|| QString("public") == entry->extensionFields.access
+		if( ( privateStr == entry->extensionFields.access && currentProperty.accessFilter == qCtagsSenseProperties::All )
+			|| ( protectedStr == entry->extensionFields.access &&
+				( currentProperty.accessFilter == qCtagsSenseProperties::All || currentProperty.accessFilter == qCtagsSenseProperties::Protected ) )
+			|| publicStr == entry->extensionFields.access
 			|| entry->extensionFields.access == NULL
-			|| QString("") == entry->extensionFields.access)
+			|| empty == entry->extensionFields.access)
 		{
-			if ( !q.exec() )
-			{
-				qWarning() << "Can't create entry for" << entry->name;
-				qWarning() << q.lastError().text();
-				return false;
-			}
+			filesId << fileId;
+			lineNumberEntry << entry->lineNumberEntry - 1;
+			lineNumber << QVariant::fromValue( entry->lineNumber - 1 );
+			isFileScope << entry->isFileScope;
+			isFileEntry << entry->isFileEntry;
+			truncateLine << entry->truncateLine;
+			name << entry->name;
+			kind << qCtagsSenseUtils::kindType( QChar( entry->kind ), entry->language );
+			access << entry->extensionFields.access;
+			fileScope << entry->extensionFields.fileScope;
+			implementation << entry->extensionFields.implementation;
+			inheritance << entry->extensionFields.inheritance;
+			scope_Value << entry->extensionFields.scope[ 0 ];
+			scope_Key << entry->extensionFields.scope[ 1 ];
+			signature << entry->extensionFields.signature;
+			type << entry->extensionFields.typeRef[ 0 ];
+			type_Name << entry->extensionFields.typeRef[ 1 ];
 		}
 		
 		item = item->next;
@@ -381,7 +385,31 @@ bool qCtagsSenseIndexer::createEntries( int fileId, TagEntryListItem* item )
 		}
 	}
 	
-	qDebug() << "create entries finish ! from " << fileId;
+	q.prepare( sql );
+	q.addBindValue( filesId );
+	q.addBindValue( lineNumberEntry );
+	q.addBindValue( lineNumber );
+	q.addBindValue( isFileScope );
+	q.addBindValue( isFileEntry );
+	q.addBindValue( truncateLine );
+	q.addBindValue( name );
+	q.addBindValue( kind );
+	q.addBindValue( access );
+	q.addBindValue( fileScope );
+	q.addBindValue( implementation );
+	q.addBindValue( inheritance );
+	q.addBindValue( scope_Value );
+	q.addBindValue( scope_Key );
+	q.addBindValue( signature );
+	q.addBindValue( type );
+	q.addBindValue( type_Name );
+	
+	if ( !q.execBatch() )
+	{
+		qWarning() << "Can't create entry";
+		qWarning() << q.lastError().text();
+	}
+	
 	return true;
 }
 
@@ -429,7 +457,6 @@ bool qCtagsSenseIndexer::indexTags( const QMap<QString, TagEntryListItem*>& tags
 
 TagEntryListItem* qCtagsSenseIndexer::tagFileEntry( const QString& fileName, bool& ok )
 {
-	qDebug() << "Tag file entry from : " << fileName;
 	if ( !QFile::exists( fileName ) )
 	{
 		qWarning() << "File does not exists" << fileName.toLocal8Bit().constData();
@@ -457,7 +484,6 @@ TagEntryListItem* qCtagsSenseIndexer::tagFileEntry( const QString& fileName, boo
 	
 	ok = true;
 	
-	qDebug() << "Finish tag file entry";
 	return createTagEntryListItem( fileName.toLocal8Bit(), NULL );
 }
 
@@ -492,6 +518,34 @@ QMap<QString, TagEntryListItem*> qCtagsSenseIndexer::tagPathEntries( const QStri
 		else if ( ok && item )
 		{
 			entries[ file.absoluteFilePath() ] = item;
+		}
+	}
+	
+	ok = true;
+	return entries;
+}
+
+QMap<QString, TagEntryListItem*> qCtagsSenseIndexer::tagFilesEntries( const QStringList& fileNames, bool& ok )
+{
+	QMap<QString, TagEntryListItem*> entries;
+	
+	foreach ( const QString& file, fileNames )
+	{
+		TagEntryListItem* item = tagFileEntry( file, ok );
+		
+		if ( mStop )
+		{
+			ok = false;
+		}
+		
+		if ( !ok )
+		{
+			qWarning() << "Failed to index" << file.toLocal8Bit().constData();
+			return entries;
+		}
+		else if ( ok && item )
+		{
+			entries[ file ] = item;
 		}
 	}
 	
@@ -561,15 +615,16 @@ void qCtagsSenseIndexer::run()
 	int total = 0;
 	
 	// start transaction
-	mSQL->database().transaction();
-	
+	QString* currentDb = new QString("");
+	QTime tracker;
+
 	forever
 	{
 		QMutexLocker locker( &mMutex );
 		
 		// copy
 		QStringList fileNamesToRemove = mWaitingDeletion;
-		QMap<QString, QString> fileNamesToIndex = mWaitingIndexation;
+		QHash<QString, QPair<QString, qCtagsSenseProperties> > fileNamesToIndex = mWaitingIndexation;
 		
 		// clear
 		mWaitingDeletion.clear();
@@ -577,19 +632,13 @@ void qCtagsSenseIndexer::run()
 		
 		locker.unlock();
 		
+		tracker.restart();
 		// compute files
-		foreach ( const QString& fileName, fileNamesToIndex.keys() )
+		foreach ( QString fileName, fileNamesToIndex.keys() )
 		{
 			if ( QFileInfo( fileName ).isDir() )
 			{
 				fileNamesToIndex.remove( fileName );
-				
-				QDir dir( fileName );
-				
-				foreach ( const QFileInfo& file, qCtagsSenseUtils::getFiles( dir, QStringList( "*" ), true ) )
-				{
-					fileNamesToIndex[ file.absoluteFilePath() ] = QString::null;
-				}
 			}
 			
 			if ( mStop )
@@ -605,14 +654,17 @@ void qCtagsSenseIndexer::run()
 		emit indexingProgress( value, total );
 		
 		// deletion
-		if ( removeEntries( fileNamesToRemove ) )
+		if ( !fileNamesToRemove.isEmpty() )
 		{
-			changed = true;
-		}
-		else if ( !error )
-		{
-			qWarning() << "Error while removing file";
-			error = true;
+			if ( removeEntries( fileNamesToRemove ) )
+			{
+				changed = true;
+			}
+			else if ( !error )
+			{
+				qWarning() << "Error while removing file";
+				error = true;
+			}
 		}
 		
 		value += fileNamesToRemove.count();
@@ -626,9 +678,27 @@ void qCtagsSenseIndexer::run()
 		// indexation
 		while ( !fileNamesToIndex.isEmpty() )
 		{
-			foreach ( const QString& fileName, fileNamesToIndex.keys() )
+			QPair<QString, qCtagsSenseProperties> pair;
+			// compute files
+			foreach ( QString fileName, fileNamesToIndex.keys() )
 			{
-				if ( fileNamesToIndex[ fileName ].isNull() )
+				currentProperty = fileNamesToIndex[ fileName ].second;
+				
+				if( currentDb != currentProperty.connectionName )
+				{
+					currentDb = new QString(currentProperty.connectionName);
+					mSQL = new qCtagsSenseSQL( currentProperty.connectionName );
+					mSQL->database().transaction();
+					
+					if( mSQL->database().tables().isEmpty() )
+					{
+						mSQL->initializeDatabase( currentProperty.DatabaseFileName, currentProperty.infoStored );
+					}
+					
+					setLanguageKinds( "C++", currentProperty.kindFilter.toLocal8Bit() );
+				}
+				
+				if ( fileNamesToIndex[ fileName ].first.isNull() )
 				{
 					if ( indexEntry( fileName ) )
 					{
@@ -639,35 +709,44 @@ void qCtagsSenseIndexer::run()
 						qWarning() << "Error while indexing files (" << fileName << ")";
 						error = true;
 					}
+				}
+				else
+				{
+					QMap<QString, QString> bufferEntries;
 					
-					fileNamesToIndex.remove( fileName );
+					bufferEntries[ fileName ] = fileNamesToIndex[ fileName ].first;
 					
-					value++;
-					emit indexingProgress( value, total );
+					if ( indexEntries( bufferEntries ) )
+					{
+						changed = true;
+					}
+					else if ( !error )
+					{
+						qWarning() << "Error while indexing buffers";
+						error = true;
+					}
 				}
 				
+				fileNamesToIndex.remove( fileName );
+					
+				value++;
+				emit indexingProgress( value, total );
+
 				if ( mStop )
 				{
 					return;
 				}
-			}
-			
-			if ( !fileNamesToIndex.isEmpty() )
-			{
-				if ( indexEntries( fileNamesToIndex ) )
-				{
-					changed = true;
-				}
-				else if ( !error )
-				{
-					qWarning() << "Error while indexing buffers";
-					error = true;
-				}
 				
-				fileNamesToIndex.clear();
-				
-				value++;
-				emit indexingProgress( value, total );
+				if ( error )
+				{
+					// rollback transaction
+					mSQL->database().rollback();
+				}
+				else
+				{
+					// commit transaction
+					mSQL->database().commit();
+				}
 			}
 			
 			if ( mStop )
@@ -675,6 +754,8 @@ void qCtagsSenseIndexer::run()
 				return;
 			}
 		}
+		
+		qWarning() << "Indexation of " << total << " file(s) finished in " << tracker.elapsed() /1000.0;
 		
 		locker.relock();
 		
@@ -688,17 +769,6 @@ void qCtagsSenseIndexer::run()
 		}
 		
 		break;
-	}
-	
-	if ( error )
-	{
-		// rollback transaction
-		mSQL->database().rollback();
-	}
-	else
-	{
-		// commit transaction
-		mSQL->database().commit();
 	}
 	
 	if ( changed && !error )

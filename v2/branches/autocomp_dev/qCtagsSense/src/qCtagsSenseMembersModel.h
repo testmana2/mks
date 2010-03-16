@@ -20,6 +20,7 @@
 
 #include "qCtagsSenseExport.h"
 #include "qCtagsSense.h"
+#include "qCtagsSenseSQL.h"
 
 #include <QAbstractItemModel>
 #include <QSqlDatabase>

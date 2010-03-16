@@ -59,7 +59,11 @@ void pCompleterIndexer::opened(XUPProjectItem* project)
 	if(rx.exactMatch(xml))
 	{
 		//TODO check directory separator
+#ifdef Q_OS_LINUX
 		qtSrcPath = QDir::cleanPath((rx.cap(1)).append("/include/qt4"));
+#elif defined Q_OS_WIN
+		qtSrcPath = QDir::cleanPath((rx.cap(1)).append("/src"));
+#endif
 	}
 	
 	if(effectiveVersion != "")
@@ -84,17 +88,16 @@ void pCompleterIndexer::opened(XUPProjectItem* project)
 			qCtagsSenseProperties properties;
 			
 			qDebug() << "Processing properties...";
-		
+			
+			properties.connectionName = QString("systemCompleter");
 			properties.SystemPaths = QStringList();
 			properties.FilteredSuffixes = QStringList();
 			properties.UsePhysicalDatabase = true;
 			properties.DatabaseFileName = completerStorage;
+			properties.accessFilter = qCtagsSenseProperties::Protected;
 			
 			qDebug() << "Create sense...";
-			qCtagsSense* sense = new qCtagsSense(0, QString("systemCompleter"));
-			
-			qDebug() << "Add filters...";
-			sense->setAccessFilter(qCtagsSense::Protected);
+			qCtagsSense* sense = new qCtagsSense(0);
 			
 			qDebug() << "Add properties...";
 			sense->setProperties(properties);
@@ -110,10 +113,10 @@ void pCompleterIndexer::opened(XUPProjectItem* project)
 			
 			qDebug() << "Finish !";
 			
-			foreach(QString file, filesList)
+			/*foreach(QString file, filesList)
 			{
 				qDebug() << file;
-			}
+			}*/
 			
 			sense->tagEntries(filesList);
 			

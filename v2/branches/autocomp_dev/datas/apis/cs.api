@@ -593,7 +593,7 @@ AdditionalSearchPaths
 AddKey(int keySize,bool exportable)
 AddKeyNameMapping(string keyName,object keyObject)
 AddLine(float x1,float y1,float x2,float y2)
-AddLine(int x1,int y1,int x2,int y2)
+AddLine(int x1,int y1,int x2,int y2)
 AddLine(Point pt1,Point pt2)
 AddLine(PointF pt1,PointF pt2)
 AddLines(Point[] points)
@@ -2515,7 +2515,7 @@ Caret
 CaretBlinkTime
 CaretWidth
 CarriedKeyName
-CaseSensitive
+CaseSensitive
 CatalogIconImageUrl
 CatalogLocation
 CatalogPart
@@ -2998,7 +2998,7 @@ ColorSetter
 ColorTable
 ColorTranslator
 Cols
-ColSpan
+ColSpan
 Column
 ColumnAdded
 ColumnChanged
@@ -3740,7 +3740,7 @@ Convert(string msbuildBinPath)
 ConvertCodeSourceFileToAssemblyFile(string codePath,string assemblyPath,string strongNameFilename)
 ConvertCodeSourceStreamToAssemblyFile(ArrayList outCodeStreamList,string assemblyPath,string strongNameFilename)
 ConvertEmptyStringToNull
-Converter
+Converter
 ConvertEventArgs
 ConvertEventHandler
 ConvertFrom(ITypeDescriptorContext context,CultureInfo culture,object value)
@@ -4475,7 +4475,7 @@ DataBound
 DataBoundControl
 DataBoundControlAdapter
 DataBoundControlDesigner
-DataBoundItem
+DataBoundItem
 DataBoundLiteralControl
 DataChanged
 DataColumn
@@ -6993,7 +6993,7 @@ FontSmoothingContrast
 FontSmoothingType
 FontStyle
 FontToIFont(Font fnt)
-FontUnit
+FontUnit
 FontUnitConverter
 Footer
 FooterRow
@@ -8765,7 +8765,7 @@ GraphicsPathIterator
 GraphicsState
 GraphicsUnit
 Gray
-GrayText
+GrayText
 GreaterThan(OracleBinary x,OracleBinary y)
 GreaterThan(OracleDateTime x,OracleDateTime y)
 GreaterThan(OracleMonthSpan x,OracleMonthSpan y)
@@ -8880,7 +8880,7 @@ GrowStyle
 GTRegex
 Guid
 Guideline
-GuidelineUrl
+GuidelineUrl
 Hand
 Handle
 HandleCreated
@@ -10127,7 +10127,7 @@ Insert(int index,DirectoryServer server)
 Insert(int index,DirectoryServicesPermissionEntry value)
 Insert(int index,EmbeddedMailObject value)
 Insert(int index,EncryptionProperty value)
-Insert(int index,EventMappingSettings eventMappingSettings)
+Insert(int index,EventMappingSettings eventMappingSettings)
 Insert(int index,FaultBinding bindingOperationFault)
 Insert(int index,Glyph value)
 Insert(int index,HotSpot spot)
@@ -10501,7 +10501,7 @@ Invoke(object sender,DataGridViewRowContextMenuStripNeededEventArgs e)
 Invoke(object sender,DataGridViewRowDividerDoubleClickEventArgs e)
 Invoke(object sender,DataGridViewRowErrorTextNeededEventArgs e)
 Invoke(object sender,DataGridViewRowEventArgs e)
-Invoke(object sender,DataGridViewRowHeightInfoNeededEventArgs e)
+Invoke(object sender,DataGridViewRowHeightInfoNeededEventArgs e)
 Invoke(object sender,DataGridViewRowHeightInfoPushedEventArgs e)
 Invoke(object sender,DataGridViewRowPostPaintEventArgs e)
 Invoke(object sender,DataGridViewRowPrePaintEventArgs e)
@@ -10583,7 +10583,7 @@ Invoke(object sender,ItemCheckEventArgs e)
 Invoke(object sender,ItemDragEventArgs e)
 Invoke(object sender,KeyEventArgs e)
 Invoke(object sender,KeyPressEventArgs e)
-Invoke(object sender,LabelEditEventArgs e)
+Invoke(object sender,LabelEditEventArgs e)
 Invoke(object sender,LayoutEventArgs e)
 Invoke(object sender,LinkClickedEventArgs e)
 Invoke(object sender,LinkLabelLinkClickedEventArgs e)
@@ -11565,7 +11565,7 @@ KeyPress
 KeyPressedCode
 KeyPressEventArgs
 KeyPressEventHandler
-KeyPreview
+KeyPreview
 KeyReference
 KeyRestrictionBehavior
 KeyRestrictions
@@ -13886,7 +13886,7 @@ ParsingApplied
 Part
 PartChromeState
 PartChromeStyle
-PartChromeType
+PartChromeType
 PartDesigner
 PartialCachingAttribute
 PartialCachingControl
@@ -13987,7 +13987,7 @@ PenWindows
 Percentage(double n)
 PercentagePhysicalMemoryUsedLimit
 PerformanceCounterInstaller
-PerformanceData
+PerformanceData
 PerformAutoScale()
 PerformButtonClick()
 PerformClick()
@@ -17510,7 +17510,7 @@ Sort()
 Sort(DataGridViewColumn dataGridViewColumn,ListSortDirection direction)
 Sort(IComparer comparer)
 Sort(int index,int count,IComparer comparer)
-sort(object thisob,object function)
+sort(object thisob,object function)
 Sort(string sortExpression,SortDirection sortDirection)
 SortArrow
 SortByKeys(Array keys)
@@ -19408,7 +19408,7 @@ UrlPathEncode(string s)
 UrlPathEncode(string str)
 UrlPropertyAttribute
 UrlReferrer
-UrlTokenDecode(string input)
+UrlTokenDecode(string input)
 UrlTokenEncode(Byte[] input)
 Use
 UseAccessibleHeader
