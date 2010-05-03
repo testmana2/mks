@@ -62,7 +62,10 @@ HEADERS	= objects/GetOpt.h \
 	widgets/pEnvironmentVariablesModel.h \
 	widgets/pEnvironmentVariablesManager.h \
 	objects/TranslationManager.h \
-	widgets/TranslationDialog.h
+	widgets/TranslationDialog.h \
+	objects/QVariantHelper.h \
+	objects/XmlObject.h \
+	objects/XmlObjectProcessor.h
 
 SOURCES	= objects/GetOpt.cpp \
 	objects/pIconManager.cpp \
@@ -106,4 +109,7 @@ SOURCES	= objects/GetOpt.cpp \
 	widgets/pEnvironmentVariablesModel.cpp \
 	widgets/pEnvironmentVariablesManager.cpp \
 	objects/TranslationManager.cpp \
-	widgets/TranslationDialog.cpp
+	widgets/TranslationDialog.cpp \
+	objects/QVariantHelper.cpp \
+	objects/XmlObject.cpp \
+	objects/XmlObjectProcessor.cpp

@@ -136,7 +136,19 @@ HEADERS	*= src/main.h \
 	src/workspace/pOpenedFileModel.h \
 	src/consolemanager/EnvironmentVariablesManager.h \
 	src/consolemanager/pConsoleManagerStep.h \
-	src/consolemanager/pConsoleManagerStepModel.h
+	src/consolemanager/pConsoleManagerStepModel.h \
+	src/properties/Properties.h \
+	src/properties/GeneralProperties.h \
+	src/properties/PathsProperties.h \
+	src/properties/EditorProperties.h \
+	src/properties/AutoCompletionProperties.h \
+	src/properties/CallTipsProperties.h \
+	src/properties/IndentationProperties.h \
+	src/properties/BracesProperties.h \
+	src/properties/EdgeProperties.h \
+	src/properties/CaretProperties.h \
+	src/properties/MarginsProperties.h \
+	src/properties/LinesProperties.h
 
 SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/maininterface/ui/UIAbout.cpp \
@@ -193,7 +205,19 @@ SOURCES	*= src/maininterface/ui/UITranslator.cpp \
 	src/pluginsmanager/InterpreterPlugin.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \
-	src/consolemanager/pConsoleManagerStepModel.cpp
+	src/consolemanager/pConsoleManagerStepModel.cpp \
+	src/properties/Properties.cpp \
+	src/properties/GeneralProperties.cpp \
+	src/properties/PathsProperties.cpp \
+	src/properties/EditorProperties.cpp \
+	src/properties/AutoCompletionProperties.cpp \
+	src/properties/CallTipsProperties.cpp \
+	src/properties/IndentationProperties.cpp \
+	src/properties/BracesProperties.cpp \
+	src/properties/EdgeProperties.cpp \
+	src/properties/CaretProperties.cpp \
+	src/properties/MarginsProperties.cpp \
+	src/properties/LinesProperties.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
 	../datas/translations/monkeystudio_be.ts \
