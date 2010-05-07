@@ -11,7 +11,11 @@ if [  $os = "Darwin" ]; then
 	fi
 fi
 
-svn="$svn_path/$svn_bin"
+svn=$svn_bin
+
+if [ -n $svn_path ]; then
+	svn="$svn_path/$svn_bin"
+fi
 
 rev1=$1
 rev2=$2
