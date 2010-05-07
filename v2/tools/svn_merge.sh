@@ -6,7 +6,9 @@ svn_path=
 svn_bin=svn
 
 if [  $os = "Darwin" ]; then
-	svn_path=/usr/local/bin
+	if [ -d "/usr/local/bin" ]; then
+		svn_path=/usr/local/bin
+	fi
 fi
 
 svn="$svn_path/$svn_bin"
