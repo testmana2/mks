@@ -1,6 +1,16 @@
 #!/bin/sh
 #------------
 
+os=(`uname`)
+svn_path=
+svn_bin=svn
+
+if [  $os = "Darwin" ]; then
+	svn_path=/usr/local/bin
+fi
+
+svn="$svn_path/$svn_bin"
+
 rev1=$1
 rev2=$2
 
@@ -25,4 +35,4 @@ fi
 
 echo "Merging using first revision at $rev1 and second at $rev2 from branches/dev to trunk..."
 
-svn merge -r $rev1:$rev2 ../branches/dev ../trunk
+$svn merge -r $rev1:$rev2 ../branches/dev ../trunk
