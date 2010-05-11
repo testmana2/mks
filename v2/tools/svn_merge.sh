@@ -1,7 +1,7 @@
 #!/bin/sh
 #------------
 
-os=(`uname`)
+os=`uname`
 svn_path=
 svn_bin=svn
 
@@ -13,7 +13,7 @@ fi
 
 svn=$svn_bin
 
-if [ -n $svn_path ]; then
+if [ -n "$svn_path" ]; then
 	svn="$svn_path/$svn_bin"
 fi
 
