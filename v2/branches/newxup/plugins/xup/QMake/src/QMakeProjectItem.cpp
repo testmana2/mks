@@ -20,6 +20,14 @@
 
 #include <QDebug>
 
+#if defined( Q_OS_WIN )
+	#define PLATFORM_TYPE_STRING "WINDOWS_PLATFORM"
+#elif defined( Q_OS_MAC )
+	#define PLATFORM_TYPE_STRING "WINDOWS_PLATFORM"
+#else
+	#define PLATFORM_TYPE_STRING "OTHERS_PLATFORM"
+#endif
+
 QMakeProjectItem::QMakeProjectItem()
 	: XUPProjectItem()
 {
@@ -454,8 +462,7 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 */
 	XUPProjectItem* tlProject = topLevelProject();
 	const QString targetTypeString = this->targetTypeString( targetType );
-	const QString platformTypeString = this->platformTypeString( XUPProjectItem::CurrentPlatform );
-	const QString key = QString( "%1_%2" ).arg( platformTypeString ).arg( targetTypeString );
+	const QString key = QString( "%1_%2" ).arg( PLATFORM_TYPE_STRING ).arg( targetTypeString );
 	QString target = tlProject->filePath( projectSettingsValue( key ) );
 	QFileInfo targetInfo( target );
 	
@@ -864,26 +871,4 @@ void QMakeProjectItem::installCommands()
 	
 	// install defaults commands
 	XUPProjectItem::installCommands();
-}
-
-QString QMakeProjectItem::platformTypeString( XUPProjectItem::PlatformType type ) const
-{
-	switch ( type )
-	{
-		case XUPProjectItem::AnyPlatform:
-			return QLatin1String( "ANY_PLATFORM" );
-			break;
-		case XUPProjectItem::WindowsPlatform:
-			return QLatin1String( "WINDOWS_PLATFORM" );
-			break;
-		case XUPProjectItem::MacPlatform:
-			return QLatin1String( "MAC_PLATFORM" );
-			break;
-		case XUPProjectItem::OthersPlatform:
-			return QLatin1String( "OTHERS_PLATFORM" );
-			break;
-	}
-	
-	Q_ASSERT( 0 );
-	return QString::null;
 }
