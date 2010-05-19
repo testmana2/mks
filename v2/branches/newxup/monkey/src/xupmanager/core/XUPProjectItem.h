@@ -24,21 +24,6 @@ public:
 	enum ProjectType { InvalidProject = -1, XUPProject = 0 };
 	// target type
 	enum TargetType { DefaultTarget = 0, DebugTarget, ReleaseTarget };
-	// platform type
-	enum PlatformType
-	{
-		AnyPlatform = 0,
-		WindowsPlatform,
-		MacPlatform,
-		OthersPlatform,
-#if defined( Q_OS_WIN )
-		CurrentPlatform = WindowsPlatform
-#elif defined( Q_OS_MAC )
-		CurrentPlatform = MacPlatform
-#else
-		CurrentPlatform = OthersPlatform
-#endif
-	};
 	
 	// ctor
 	XUPProjectItem();
@@ -146,6 +131,8 @@ public:
 	// save the project
 	virtual bool save();
 	// return the project target file, ie the binary / library file path, if allowToAskUser is set to true - user might be asked for it via doalog
+	/* for PasNox: this method no longer contains targetPlatform parameter, because this parameter never needed.
+	   We always use only current platform */
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
 	QString targetFilePath( const pCommandTargetExecution& execution );
 	

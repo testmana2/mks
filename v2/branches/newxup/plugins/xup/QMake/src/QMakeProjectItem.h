@@ -30,9 +30,6 @@ public:
 
 protected:
 	bool handleSubdirs( XUPItem* subdirs );
-	// return the textual representation key for platform type
-	QString platformTypeString( XUPProjectItem::PlatformType type ) const;
-
 };
 
 #endif // QMAKEPROJECTITEM_H
