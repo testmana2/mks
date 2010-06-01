@@ -70,45 +70,7 @@ QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
 
 QStringList XUPProjectItem::sourceFiles() const
 {
-	QStringList files;
-
-	// get variables that handle files
-	const QStringList fileVariables = mXUPProjectInfos->fileVariables( projectType() );
-
-	// get all variable that represent files
-	foreach ( const QString& variable, fileVariables )
-	{
-		const QStringList values = splitMultiLineValue( mVariableCache.value( variable ) );
-
-		foreach ( const QString& value, values )
-		{
-			const QString file = filePath( value );
-			const QFileInfo fi( file );
-
-			if ( fi.isDir() )
-			{
-				continue;
-			}
-
-			files << file;
-		}
-	}
-	
-	// get dynamic files
-	XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<XUPProjectItem*>( this ), false );
-	
-	if ( dynamicFolderItem )
-	{
-		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
-		{
-			if ( valueItem->type() == XUPItem::File )
-			{
-				files << valueItem->attribute( "content" );
-			}
-		}
-	}
-
-	return files;
+	return QStringList();
 }
 
 QStringList XUPProjectItem::topLevelProjectSourceFiles() const

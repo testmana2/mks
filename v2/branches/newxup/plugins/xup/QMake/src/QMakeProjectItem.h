@@ -23,6 +23,8 @@ public:
 	virtual bool save();
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget);
 	
+	virtual QStringList sourceFiles() const;
+	
 	virtual BuilderPlugin* builder( const QString& plugin = QString() ) const;
 	virtual DebuggerPlugin* debugger( const QString& plugin = QString() ) const;
 	virtual InterpreterPlugin* interpreter( const QString& plugin = QString() ) const;

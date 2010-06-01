@@ -50,7 +50,7 @@ public:
 	// return a filepath relative to project path
 	QString relativeFilePath( const QString& fileName ) const;
 	// return the list of all source files for this project
-	QStringList sourceFiles() const;
+	virtual QStringList sourceFiles() const;
 	// return the list of all source files for all projects from the root project
 	QStringList topLevelProjectSourceFiles() const;
 	
