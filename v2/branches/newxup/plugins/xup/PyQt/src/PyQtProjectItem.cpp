@@ -124,3 +124,30 @@ QStringList PyQtProjectItem::sourceFiles() const
 {
 	return mVariableCache.value( "PYTHON_FILES" ).split(" ");
 }
+
+void PyQtProjectItem::addFilesToScope( XUPItem* scope, const QStringList& allFiles )
+{
+	XUPProjectItem* project = scope->project();
+	
+	foreach (QString file, allFiles)
+	{
+		XUPItem* var = NULL;
+		if (file.endsWith(".ui"))
+		{
+			var = project->getVariable( scope, "FORMS" );
+		}
+		else if (file.endsWith(".py"))
+		{
+			var = project->getVariable( scope, "PYTHON_FILES" );
+		}
+		
+		if (NULL == var)
+		{
+			setLastError("Don't know how to add file " + file);
+			continue;
+		}
+		
+		XUPItem* value = var->addChild( XUPItem::File );
+		value->setAttribute( "content", project->relativeFilePath( file ) );
+	}
+}

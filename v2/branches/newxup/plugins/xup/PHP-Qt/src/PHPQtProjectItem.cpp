@@ -124,3 +124,30 @@ QStringList PHPQtProjectItem::sourceFiles() const
 {
 	return mVariableCache.value( "PHP_FILES" ).split(" ");
 }
+
+void PHPQtProjectItem::addFilesToScope( XUPItem* scope, const QStringList& allFiles )
+{
+	XUPProjectItem* project = scope->project();
+	
+	foreach (QString file, allFiles)
+	{
+		XUPItem* var = NULL;
+		if (file.endsWith(".ui"))
+		{
+			var = project->getVariable( scope, "FORMS" );
+		}
+		else if (file.endsWith(".php"))
+		{
+			var = project->getVariable( scope, "PHP_FILES" );
+		}
+		
+		if (NULL == var)
+		{
+			setLastError("Don't know how to add file " + file);
+			continue;
+		}
+		
+		XUPItem* value = var->addChild( XUPItem::File );
+		value->setAttribute( "content", project->relativeFilePath( file ) );
+	}
+}

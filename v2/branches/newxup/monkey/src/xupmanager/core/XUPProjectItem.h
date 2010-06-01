@@ -53,7 +53,9 @@ public:
 	virtual QStringList sourceFiles() const;
 	// return the list of all source files for all projects from the root project
 	QStringList topLevelProjectSourceFiles() const;
-	
+	// Add files to the project. When scope is not NULL - it points to the child of the project.
+	// It allows, for example, to add files to the particular scope in the QMake projects (win32, !unix ...)
+	virtual void addFilesToScope( XUPItem* /*scope*/, const QStringList& /*allFiles */) {};
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
 	// return the most toplevel project ( ie: the model root project )
@@ -90,6 +92,8 @@ public:
 	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned
 	// if recursive is true, then the scan recurse in each item, else not
 	virtual XUPItemList getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem = 0, bool recursive = true ) const;
+	// return first found variable with name. NULL returned, if not found
+	virtual XUPItem* getVariable( const XUPItem* root, const QString& variableName) const;
 	// return the project datas as qstring
 	virtual QString toString() const;
 	
