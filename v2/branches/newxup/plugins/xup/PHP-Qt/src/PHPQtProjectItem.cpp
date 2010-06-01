@@ -119,3 +119,8 @@ void PHPQtProjectItem::installCommands()
 	// install defaults commands
 	XUPProjectItem::installCommands();
 }
+
+QStringList PHPQtProjectItem::sourceFiles() const
+{
+	return mVariableCache.value( "PHP_FILES" ).split(" ");
+}

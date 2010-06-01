@@ -534,20 +534,6 @@ QStringList QMakeProjectItem::sourceFiles() const
 		}
 	}
 	
-	// get dynamic files
-	XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<QMakeProjectItem*>( this ), false );
-	
-	if ( dynamicFolderItem )
-	{
-		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
-		{
-			if ( valueItem->type() == XUPItem::File )
-			{
-				files << valueItem->attribute( "content" );
-			}
-		}
-	}
-
 	return files;
 }
 

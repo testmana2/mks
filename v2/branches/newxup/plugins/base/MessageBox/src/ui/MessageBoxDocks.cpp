@@ -305,7 +305,6 @@ void MessageBoxDocks::lvBuildSteps_activated( const QModelIndex& index )
 		{
 			QString findFile = fn;
 			QFileInfoList files = topLevelProject->findFile( findFile );
-
 			switch ( files.count() )
 			{
 				case 0:
