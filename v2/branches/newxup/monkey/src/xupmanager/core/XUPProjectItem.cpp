@@ -394,10 +394,8 @@ XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& va
 	mFoundCallerItem = false;
 	XUPItemList variables;
 
-	for ( int i = 0; i < root->childCount(); i++ )
+	foreach(XUPItem* item, root->childrenList())
 	{
-		XUPItem* item = root->child( i );
-
 		switch ( item->type() )
 		{
 			case XUPItem::Project:
@@ -413,7 +411,6 @@ XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& va
 				break;
 			}
 			case XUPItem::Comment:
-				break;
 			case XUPItem::EmptyLine:
 				break;
 			case XUPItem::Variable:
@@ -457,6 +454,20 @@ XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& va
 	}
 
 	return variables;
+}
+
+XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variableName) const
+{
+	foreach(XUPItem* item, root->childrenList())
+	{
+		if (XUPItem::Variable == item->type() &&
+			item->attribute( "name" ) == variableName )
+		{
+			return item;
+		}
+	}
+
+	return NULL;
 }
 
 QString XUPProjectItem::toString() const

@@ -18,6 +18,7 @@ public:
 	virtual void installCommands();
 	
 	virtual QStringList sourceFiles() const;
+	void addFilesToScope( XUPItem* scope, const QStringList& allFiles );
 };
 
 #endif // PYQTPROJECTITEM_H

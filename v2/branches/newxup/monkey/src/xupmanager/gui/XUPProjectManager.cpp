@@ -394,8 +394,10 @@ void XUPProjectManager::editProject()
 
 void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allFiles, const QString& ope )
 {
-	QStringList files = allFiles;
 	XUPProjectItem* project = scope->project();
+	project->addFilesToScope(scope, allFiles);
+#if 0
+	QStringList files = allFiles;
 	XUPProjectItem* rootIncludeProject = project->rootIncludeProject();
 	const StringStringListList mVariableSuffixes = project->projectInfos()->variableSuffixes( project->projectType() );
 	QMap<QString, QString> variablesOperator; // variableName, operator
@@ -508,7 +510,7 @@ void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allF
 			}
 		}
 	}
-	
+#endif	
 	// rebuild cache
 	project->rebuildCache();
 	project->topLevelProject()->rebuildCache();
