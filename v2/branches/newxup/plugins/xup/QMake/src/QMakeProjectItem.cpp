@@ -4,6 +4,7 @@
 #include "QtVersionManager.h"
 
 #include <XUPProjectItemInfos.h>
+#include <XUPProjectItemHelper.h>
 #include <pMonkeyStudio.h>
 #include <pQueuedMessageToolBar.h>
 #include <BuilderPlugin.h>
@@ -421,7 +422,6 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 {
 	QString buffer = QMake2XUP::convertFromPro( fileName, codec );
-	
 	// parse content
 	QString errorMsg;
 	int errorLine;
@@ -501,6 +501,54 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 	}
 	
 	return target;
+}
+
+QStringList QMakeProjectItem::sourceFiles() const
+{
+/* For PasNox this code is too QMake specific for be in XUPProjectItem. Moved to QMake
+   Not all projects has multiline variables, not all multiline variables must
+   be splitted, not all projects store source files list in the variables!!
+   Not all fileVariables() are source files 
+*/
+	QStringList files;
+
+	// get variables that handle files
+	const QStringList fileVariables = mXUPProjectInfos->fileVariables( projectType() );
+
+	// get all variable that represent files
+	foreach ( const QString& variable, fileVariables )
+	{
+		const QStringList values = splitMultiLineValue( mVariableCache.value( variable ) );
+
+		foreach ( const QString& value, values )
+		{
+			const QString file = filePath( value );
+			const QFileInfo fi( file );
+
+			if ( fi.isDir() )
+			{
+				continue;
+			}
+
+			files << file;
+		}
+	}
+	
+	// get dynamic files
+	XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<QMakeProjectItem*>( this ), false );
+	
+	if ( dynamicFolderItem )
+	{
+		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
+		{
+			if ( valueItem->type() == XUPItem::File )
+			{
+				files << valueItem->attribute( "content" );
+			}
+		}
+	}
+
+	return files;
 }
 
 BuilderPlugin* QMakeProjectItem::builder( const QString& plugin ) const
