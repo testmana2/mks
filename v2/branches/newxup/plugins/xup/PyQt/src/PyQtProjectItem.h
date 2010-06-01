@@ -16,6 +16,8 @@ public:
 	
 	virtual InterpreterPlugin* interpreter( const QString& plugin = QString() ) const;
 	virtual void installCommands();
+	
+	virtual QStringList sourceFiles() const;
 };
 
 #endif // PYQTPROJECTITEM_H

@@ -70,6 +70,22 @@ QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
 
 QStringList XUPProjectItem::sourceFiles() const
 {
+#if 0 // TODO review this code and find a place for it
+	// get dynamic files
+	
+	XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<QMakeProjectItem*>( this ), false );
+	
+	if ( dynamicFolderItem )
+	{
+		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
+		{
+			if ( valueItem->type() == XUPItem::File )
+			{
+				files << valueItem->attribute( "content" );
+			}
+		}
+	}
+#endif
 	return QStringList();
 }
 
@@ -177,42 +193,21 @@ QStringList XUPProjectItem::compressedPaths( const QStringList& paths ) const
 
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 {
-	XUPProjectItem* riProject = rootIncludeProject();
-	const QString projectPath = path();
-	const QStringList variablesPath = mXUPProjectInfos->pathVariables( projectType() );
-	QStringList paths;
-
-	// add project path and variables content based on path
-	paths << projectPath;
-	foreach ( const QString& variable, variablesPath )
+	QFileInfoList files;
+	QString searchFileName = QFileInfo( partialFilePath ).fileName();
+	
+	foreach(XUPProjectItem* project, childrenProjects(true))
 	{
-		QString tmpPaths = riProject->variableCache().value( variable );
-
-		foreach ( QString path, splitMultiLineValue( tmpPaths ) )
+		foreach(QString file, project->sourceFiles())
 		{
-			path = filePath( path.remove( '"' ) );
-			if ( !paths.contains( path ) && !path.startsWith( projectPath ) )
+			if (QFileInfo( file ).fileName() == searchFileName)
 			{
-				paths << path;
+				files << QFileInfo(project->filePath(file)); // absolute path
+				qDebug() << project->filePath(file);
 			}
 		}
 	}
-
-	// get compressed path list
-	paths = compressedPaths( paths );
-
-	//qWarning() << "looking in" << paths;
-
-	// get all matching files in paths
-	QFileInfoList files;
-	QDir dir;
-
-	foreach ( const QString& path, paths )
-	{
-		dir.setPath( path );
-		files << pMonkeyStudio::getFiles( dir, QFileInfo( partialFilePath ).fileName(), true );
-	}
-
+	
 	return files;
 }
 

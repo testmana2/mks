@@ -119,3 +119,8 @@ void PyQtProjectItem::installCommands()
 	// install defaults commands
 	XUPProjectItem::installCommands();
 }
+
+QStringList PyQtProjectItem::sourceFiles() const
+{
+	return mVariableCache.value( "PYTHON_FILES" ).split(" ");
+}
