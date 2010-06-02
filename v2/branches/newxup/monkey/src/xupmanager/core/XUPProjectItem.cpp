@@ -203,7 +203,6 @@ QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 			if (QFileInfo( file ).fileName() == searchFileName)
 			{
 				files << QFileInfo(project->filePath(file)); // absolute path
-				qDebug() << project->filePath(file);
 			}
 		}
 	}
@@ -389,68 +388,32 @@ void XUPProjectItem::rebuildCache()
 	analyze( riProject );
 }
 
-XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, const XUPItem* callerItem, bool recursive ) const
+XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive ) const
 {
-	mFoundCallerItem = false;
 	XUPItemList variables;
 
 	foreach(XUPItem* item, root->childrenList())
 	{
-		switch ( item->type() )
+		if ( XUPItem::Variable ==  item->type() &&
+			 variableName == item->attribute( "name" ))
 		{
-			case XUPItem::Project:
-			{
-				if ( recursive )
-				{
-					XUPItem* pItem = item->parent();
-					if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
-					{
-						variables << getVariables( item, variableName, callerItem );
-					}
-				}
-				break;
-			}
-			case XUPItem::Comment:
-			case XUPItem::EmptyLine:
-				break;
-			case XUPItem::Variable:
-			{
-				if ( item->attribute( "name" ) == variableName )
-				{
-					variables << item;
-				}
-				break;
-			}
-			case XUPItem::Value:
-				break;
-			case XUPItem::Function:
-			{
-				if ( recursive )
-				{
-					variables << getVariables( item, variableName, callerItem );
-				}
-				break;
-			}
-			case XUPItem::Scope:
-			{
-				if ( recursive )
-				{
-					variables << getVariables( item, variableName, callerItem );
-				}
-				break;
-			}
-			default:
-				break;
+			variables << item;
 		}
-
-		if ( callerItem && item == callerItem )
+		else if ( XUPItem::Project == item->type() )
 		{
-			mFoundCallerItem = true;
-			break;
+			if ( recursive ) /* QMakeProjectItem specific code. FIXME rewrite it! */
+			{
+				XUPItem* pItem = item->parent();
+				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
+				{
+					variables << getVariables( item, variableName );
+				}
+			}
 		}
-
-		if ( mFoundCallerItem )
-			break;
+		else if ( recursive )
+		{
+			variables << getVariables( item, variableName );
+		}
 	}
 
 	return variables;
@@ -520,7 +483,7 @@ QStringList XUPProjectItem::projectSettingsValues( const QString& variableName, 
 
 		if ( scope )
 		{
-			XUPItemList variables = getVariables( scope, variableName, 0, false );
+			XUPItemList variables = getVariables( scope, variableName, false );
 
 			foreach ( const XUPItem* variable, variables )
 			{
@@ -570,7 +533,7 @@ void XUPProjectItem::setProjectSettingsValues( const QString& variableName, cons
 			return;
 		}
 
-		XUPItemList variables = getVariables( scope, variableName, 0, false );
+		XUPItemList variables = getVariables( scope, variableName, false );
 		XUPItem* variable = variables.value( 0 );
 		bool haveVariable = variable;
 
@@ -635,7 +598,7 @@ void XUPProjectItem::addProjectSettingsValues( const QString& variableName, cons
 			return;
 		}
 
-		XUPItemList variables = getVariables( scope, variableName, 0, false );
+		XUPItemList variables = getVariables( scope, variableName, false );
 		XUPItem* variable = variables.value( 0 );
 		bool haveVariable = variable;
 

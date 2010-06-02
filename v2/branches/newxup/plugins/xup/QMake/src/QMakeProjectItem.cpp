@@ -537,6 +537,79 @@ QStringList QMakeProjectItem::sourceFiles() const
 	return files;
 }
 
+void QMakeProjectItem::addFilesToScope( XUPItem* scope, const QStringList& files )
+{
+	QHash <QString, QString> varNameForSuffix;
+	const QStringList cSuffixtes = pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
+	// HEADERS filters
+	foreach ( QString f, cSuffixtes )
+		if ( f.startsWith( "*.h", Qt::CaseInsensitive ) )
+			varNameForSuffix[f] = "HEADERS";
+	// SOURCES filters
+	foreach ( QString f, cSuffixtes )
+		if ( f.startsWith( "*.c", Qt::CaseInsensitive ) )
+			varNameForSuffix[f] = "SOURCES";
+	// YACC filters
+	foreach ( QString s, sourceSuffixtes )
+		if ( !yaccSuffixes.contains( s.replace( "c", "y", Qt::CaseInsensitive ) ) )
+			varNameForSuffix[f] = "YACCSOURCES";
+	// LEX filters
+	QStringList lexSuffixes;
+	foreach ( QString s, sourceSuffixtes )
+		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !lf.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
+			varNameForSuffix[f] = "LEXSOURCES";
+	// PROJECT filters
+	varNameForSuffix[".pro"] = "SUBDIRS";
+	varNameForSuffix[".m"] = "OBJECTIVE_SOURCES";
+	varNameForSuffix[".mm"] = "OBJECTIVE_SOURCES";
+	varNameForSuffix[".pro"] = "SUBDIRS";
+	varNameForSuffix[".ui"] = "FORMS"; // FORMS3 ignored. Let's user edit his pro by text editor. It makes this code simpler
+	varNameForSuffix[".ts"] = "TRANSLATIONS";
+	varNameForSuffix[".qrc"] = "RESOURCES";
+	varNameForSuffix[".def"] = "DEF_FILE";
+	varNameForSuffix[".rc"] = "RC_FILE";
+	varNameForSuffix[".res"] = "RES_FILE";
+	
+	
+	foreach ( const QString& file, files )
+	{
+		QString varName;
+		foreach(QString suff, varNameForSuffix.keys())
+		{
+			if ( QDir::match( suff, file ) )
+			{
+				varName = varNameForSuffix[suff];
+			}
+		}
+		if (varName)
+		{
+			QString op = checkForBestAddOperator( variables );
+			XUPItem* variable = project->getVariable( scope, variableName );				
+			if (NULL == variable)
+			{
+				variable = scope->addChild( XUPItem::Variable );
+				variable->setAttribute( "name", varName );
+				variable->setAttribute( "operator", op );
+			}
+			
+			if ( variable->attribute( "operator", "=" ) != op )
+			{
+				continue; // TODO warn user?
+			}
+			
+			usedVariable->setAttribute( "multiline", "true" );
+			
+			XUPItem* value = variable->addChild( XUPItem::File );
+			value->setAttribute( "content", project->relativeFilePath( file ) );
+		}
+		else
+		{
+			setLastError(tr("Don't know how to add file " + file));
+			return;
+		}
+	}
+}
+
 BuilderPlugin* QMakeProjectItem::builder( const QString& plugin ) const
 {
 	QString plug = plugin;
