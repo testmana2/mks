@@ -395,122 +395,9 @@ void XUPProjectManager::editProject()
 void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allFiles, const QString& ope )
 {
 	XUPProjectItem* project = scope->project();
+	//TODO check if files already added!
 	project->addFilesToScope(scope, allFiles);
-#if 0
-	QStringList files = allFiles;
-	XUPProjectItem* rootIncludeProject = project->rootIncludeProject();
-	const StringStringListList mVariableSuffixes = project->projectInfos()->variableSuffixes( project->projectType() );
-	QMap<QString, QString> variablesOperator; // variableName, operator
-	QMap<QString, QStringList> suffixeVariables; // suffixe, variable
 	
-	// this map allow to know if a suffixe can be handled by more than one variable
-	foreach ( const PairStringStringList& pair, mVariableSuffixes )
-	{
-		foreach ( QString suffixe, pair.second )
-		{
-			suffixe = suffixe.toLower();
-			
-			if ( !suffixeVariables[ suffixe ].contains( pair.first ) )
-			{
-				suffixeVariables[ suffixe ] << pair.first;
-			}
-		}
-	}
-	
-	foreach ( const QString& file, files )
-	{
-		foreach ( const QString& suffixe, suffixeVariables.keys() )
-		{
-			if ( QDir::match( suffixe, file ) )
-			{
-				const QStringList variablesName = suffixeVariables[ suffixe ];
-			
-				QString variableName;
-				if ( variablesName.count() > 1 )
-				{
-					bool ok;
-					variableName = QInputDialog::getItem( QApplication::activeWindow(), tr( "Choose variable..." ), tr( "More than one variable can handle this file,\nplease select the variable you want to use for this file :\n%1" ).arg( QFileInfo( file ).fileName() ), variablesName, 0, false, &ok );
-					
-					if ( !ok )
-					{
-						variableName.clear();
-					}
-				}
-				else
-				{
-					variableName = variablesName.at( 0 );
-				}
-				
-				if ( variableName.isEmpty() )
-				{
-					variableName = "OTHER_FILES";
-				}
-				
-				XUPItemList variables = project->getVariables( scope, variableName, 0, false );
-				
-				bool foundFile = false;
-				XUPItem* usedVariable = 0;
-				QString op = ope.isEmpty() ? variablesOperator[ variableName ] : ope;
-				
-				if ( op.isEmpty() )
-				{
-					op = checkForBestAddOperator( variables );
-				}
-				
-				foreach ( XUPItem* variable, variables )
-				{
-					if ( variable->attribute( "operator", "=" ) != op )
-					{
-						continue;
-					}
-					
-					usedVariable = variable;
-					
-					foreach ( XUPItem* child, variable->childrenList() )
-					{
-						if ( child->type() != XUPItem::File )
-						{
-							continue;
-						}
-						
-						const QString fn = rootIncludeProject->filePath( child->cacheValue( "content" ) );
-						
-						if ( fn == file )
-						{
-							foundFile = true;
-							break;
-						}
-					}
-					
-					if ( foundFile )
-					{
-						break;
-					}
-				}
-				
-				if ( foundFile )
-				{
-					break;
-				}
-				
-				if ( !usedVariable )
-				{
-					usedVariable = scope->addChild( XUPItem::Variable );
-					usedVariable->setAttribute( "name", variableName );
-					usedVariable->setAttribute( "operator", op );
-					variables << usedVariable;
-				}
-				
-				usedVariable->setAttribute( "multiline", "true" );
-				
-				XUPItem* value = usedVariable->addChild( XUPItem::File );
-				value->setAttribute( "content", project->relativeFilePath( file ) );
-				
-				break;
-			}
-		}
-	}
-#endif	
 	// rebuild cache
 	project->rebuildCache();
 	project->topLevelProject()->rebuildCache();
@@ -523,7 +410,7 @@ void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allF
 }
 
 QString XUPProjectManager::checkForBestAddOperator( const XUPItemList& variables ) const
-{
+{ // TODO kill this funciton!
 	bool haveSet = false;
 	bool haveAdd = false;
 	bool haveAddIfNotExists = false;

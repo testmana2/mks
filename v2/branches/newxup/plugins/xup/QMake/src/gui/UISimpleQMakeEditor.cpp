@@ -376,7 +376,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 XUPItem* UISimpleQMakeEditor::getUniqueVariableItem( const QString& variableName, bool create )
 {
 	const QStringList mOperators = QStringList() << "=" << "+=" << "*=";
-	XUPItemList variables = mProject->getVariables( mProject, variableName, 0, false );
+	XUPItemList variables = mProject->getVariables( mProject, variableName, false );
 	XUPItem* variableItem = 0;
 	
 	// remove duplicate variables
