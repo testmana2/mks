@@ -43,9 +43,9 @@ void PyQtProjectItem::registerProjectType() const
 		<< qMakePair( QString( "PYTHON_FILES" ), QString( "python" ) );
 
 	// Variable suffixes
-	const StringStringListList mVariableSuffixes = StringStringListList()
-		<< qMakePair( QString( "FORMS" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "PYTHON_FILES" ), QStringList( "*.py*" ) );
+	const StringStringListList mSourceFileNamePatterns = StringStringListList()
+		<< qMakePair( QString( "Qt Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( QString( "Python files" ), QStringList( "*.py*" ) );
 
 	// register values
 	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
@@ -56,7 +56,7 @@ void PyQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerVariableSuffixes( pType, mVariableSuffixes );
+	mXUPProjectInfos->registerSourceFileNamePatterns( pType, mSourceFileNamePatterns );
 }
 
 XUPProjectItem* PyQtProjectItem::newProject() const

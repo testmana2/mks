@@ -695,7 +695,7 @@ void XUPProjectItem::registerProjectType() const
 		<< qMakePair( QString( "FILES" ), tr( "Files" ) );
 	const StringStringList mVariableIcons = StringStringList()
 		<< qMakePair( QString( "FILES" ), QString( "files" ) );
-	const StringStringListList mVariableSuffixes = StringStringListList()
+	const StringStringListList mSourceFileNamePatterns = StringStringListList()
 		<< qMakePair( QString( "FILES" ), QStringList( "*" ) );
 
 	// register values
@@ -707,7 +707,7 @@ void XUPProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerVariableSuffixes( pType, mVariableSuffixes );
+	mXUPProjectInfos->registerSourceFileNamePatterns( pType, mSourceFileNamePatterns );
 }
 
 void XUPProjectItem::unRegisterProjectType() const

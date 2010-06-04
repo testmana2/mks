@@ -74,12 +74,7 @@ public:
 	void registerVariableIcons( int projectType, const StringStringList& icons );
 	// return the variable icons for project type
 	StringStringList variableIcons( int projectType ) const;
-	
-	// register variable suffixes for project type: ie. for file base variable, the suffixes they can handle
-	void registerVariableSuffixes( int projectType, const StringStringListList& suffixes );
-	// return the variable suffixes for project type
-	StringStringListList variableSuffixes( int projectType ) const;
-	
+		
 	// return a filter of all project type suffixes: ie. for giving it to open/save file dialog
 	QString projectsFilter() const;
 	// return the project type to use for opening the filename project or -1 if no project type can handle the suffixe
@@ -96,10 +91,13 @@ public:
 	QIcon displayIcon( int projectType, const QString& variableName ) const;
 	// return the icons path for proejct type
 	QString iconsPath( int projectType ) const;
+	/* Source file name patterns is list of string pairs. ExamplesPath
+		("Python file", "*.py") ("Forms file", "*.ui")
+	   This info used for build file name filter for "Add files to the project" dialog
+	 */
+	void registerSourceFileNamePatterns( int projectType, const StringStringListList& suffixes );
 	// return a files filter for variables base on files
-	QString variableSuffixesFilter( int projectType ) const;
-	// return the variable name associated with this filename
-	QString variableNameForFileName( int projectType, const QString& fileName ) const;
+	QString sourceFileNameFilter( int projectType ) const;
 	// return a list of all know variable for this kind of project
 	QStringList knowVariables( int projectType ) const;
 	
@@ -113,7 +111,7 @@ protected:
 	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
 	QMap<int, StringStringList> mVariableLabels; // project type, variable name, label
 	QMap<int, StringStringList> mVariableIcons; // project type, variable name, icon
-	QMap<int, StringStringListList> mVariableSuffixes; // project type, file based variable name, suffixes
+	QMap<int, StringStringListList> mSourceFileNamePatterns; // project type, file based variable name, suffixes
 };
 
 #endif // XUPPROJECTITEMINFOS_H

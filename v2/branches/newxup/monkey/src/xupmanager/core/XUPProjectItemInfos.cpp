@@ -32,7 +32,7 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 	mSuffixes.remove( projectType );
 	mVariableLabels.remove( projectType );
 	mVariableIcons.remove( projectType );
-	mVariableSuffixes.remove( projectType );
+	mSourceFileNamePatterns.remove( projectType );
 }
 
 XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) const
@@ -119,16 +119,6 @@ void XUPProjectItemInfos::registerVariableIcons( int projectType, const StringSt
 StringStringList XUPProjectItemInfos::variableIcons( int projectType ) const
 {
 	return mVariableIcons.value( projectType );
-}
-
-void XUPProjectItemInfos::registerVariableSuffixes( int projectType, const StringStringListList& suffixes )
-{
-	mVariableSuffixes[ projectType ] = suffixes;
-}
-
-StringStringListList XUPProjectItemInfos::variableSuffixes( int projectType ) const
-{
-	return mVariableSuffixes.value( projectType );
 }
 
 QString XUPProjectItemInfos::projectsFilter() const
@@ -219,9 +209,14 @@ QString XUPProjectItemInfos::iconsPath( int projectType ) const
 	return path;
 }
 
-QString XUPProjectItemInfos::variableSuffixesFilter( int projectType ) const
+void XUPProjectItemInfos::registerSourceFileNamePatterns( int projectType, const StringStringListList& suffixes )
 {
-	const StringStringListList suffixes = variableSuffixes( projectType );
+	mSourceFileNamePatterns[ projectType ] = suffixes;
+}
+
+QString XUPProjectItemInfos::sourceFileNameFilter( int projectType ) const
+{
+	const StringStringListList suffixes = mSourceFileNamePatterns[ projectType ];
 	QStringList allSuffixesList;
 	QStringList suffixesList;
 	
@@ -247,23 +242,6 @@ QString XUPProjectItemInfos::variableSuffixesFilter( int projectType ) const
 	}
 	
 	return suffixesList.join( ";;" );
-}
-
-QString XUPProjectItemInfos::variableNameForFileName( int projectType, const QString& fileName ) const
-{
-	const StringStringListList suffixes = variableSuffixes( projectType );
-	
-	foreach ( const PairStringStringList& pair, suffixes )
-	{
-		QString variable = pair.first;
-		
-		if ( QDir::match( pair.second, fileName ) )
-		{
-			return pair.first;
-		}
-	}
-	
-	return QString::null;
 }
 
 QStringList XUPProjectItemInfos::knowVariables( int projectType ) const
@@ -303,14 +281,6 @@ QStringList XUPProjectItemInfos::knowVariables( int projectType ) const
 	}
 	
 	foreach ( const PairStringString& pair, mVariableIcons.value( projectType ) )
-	{
-		if ( !variables.contains( pair.first ) )
-		{
-			variables << pair.first;
-		}
-	}
-	
-	foreach ( const PairStringStringList& pair, mVariableSuffixes.value( projectType ) )
 	{
 		if ( !variables.contains( pair.first ) )
 		{

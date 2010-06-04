@@ -129,20 +129,20 @@ void QMakeProjectItem::registerProjectType() const
 	foreach ( const PairStringStringList& p, mSuffixes )
 		pjf << p.second;
 	// Variable suffixes
-	const StringStringListList mVariableSuffixes = StringStringListList()
-		<< qMakePair( QString( "HEADERS" ), hf )
-		<< qMakePair( QString( "SOURCES" ), sf )
-		<< qMakePair( QString( "YACCSOURCES" ), yf )
-		<< qMakePair( QString( "LEXSOURCES" ), lf )
-		<< qMakePair( QString( "OBJECTIVE_SOURCES" ), QStringList( "*.m" ) << "*.mm" )
-		<< qMakePair( QString( "FORMS" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "FORMS3" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "TRANSLATIONS" ), QStringList( "*.ts" ) )
-		<< qMakePair( QString( "RESOURCES" ), QStringList( "*.qrc" ) )
-		<< qMakePair( QString( "DEF_FILE" ), QStringList( "*.def" ) )
-		<< qMakePair( QString( "RC_FILE" ), QStringList( "*.rc" ) )
-		<< qMakePair( QString( "RES_FILE" ), QStringList( "*.res" ) )
-		<< qMakePair( QString( "SUBDIRS" ), QStringList( "*.pro" ) );
+	const StringStringListList mSourceFileNamePatterns = StringStringListList()
+		<< qMakePair( QString( "Headers" ), hf )
+		<< qMakePair( QString( "Sources" ), sf )
+		<< qMakePair( QString( "YACC sources" ), yf )
+		<< qMakePair( QString( "LEX sources" ), lf )
+		<< qMakePair( QString( "Objective sources" ), QStringList( "*.m" ) << "*.mm" )
+		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( QString( "Qt3 Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( QString( "Translations" ), QStringList( "*.ts" ) )
+		<< qMakePair( QString( "Resources" ), QStringList( "*.qrc" ) )
+		<< qMakePair( QString( "Definition files" ), QStringList( "*.def" ) )
+		<< qMakePair( QString( "Resources files" ), QStringList( "*.rc" ) )
+		<< qMakePair( QString( "Compiled resources files" ), QStringList( "*.res" ) )
+		<< qMakePair( QString( "Projects" ), QStringList( "*.pro" ) );
 	
 	// register values
 	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
@@ -153,7 +153,7 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerVariableSuffixes( pType, mVariableSuffixes );
+	mXUPProjectInfos->registerSourceFileNamePatterns( pType, mSourceFileNamePatterns );
 }
 
 bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
