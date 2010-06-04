@@ -469,29 +469,19 @@ void UISimpleQMakeEditor::on_tbAddFile_clicked()
 		}
 		
 		// add files
-		foreach ( QString fn, files )
-		{
-			fn = mProject->relativeFilePath( fn );
-			
-			if ( fn.contains( " " ) )
-			{
-				fn.prepend( '"' ).append( '"' );
-			}
-			
-			QString variable = mProject->projectInfos()->variableNameForFileName( mProject->projectType(), fn );
-			
-			if ( !mValues[ variable ].contains( fn ) )
-			{
-				mValues[ variable ] += " " +fn;
-			}
-		}
-		
+		mProject->addFilesToScope(mProject, files);
 		updateProjectFiles();
 	}
 }
 
 void UISimpleQMakeEditor::on_tbEditFile_clicked()
 {
+#warning rewrite this method
+/* TODO
+hlamer: this method can't work now because variableNameForFileName() do not exists
+need to write another algorythm
+*/
+#if 0
 	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
 	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
 	{
@@ -510,6 +500,7 @@ void UISimpleQMakeEditor::on_tbEditFile_clicked()
 			updateProjectFiles();
 		}
 	}
+#endif
 }
 
 void UISimpleQMakeEditor::on_tbRemoveFile_clicked()

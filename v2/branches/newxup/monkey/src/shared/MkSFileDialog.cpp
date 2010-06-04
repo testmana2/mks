@@ -135,7 +135,7 @@ pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allow
 		QStringList operators = curProject->projectInfos()->operators( curProject->projectType() );
 		QString caption = tr( "Choose file(s) to add to your project" );
 		QString dir = pMonkeyStudio::defaultProjectsDirectory();
-		QString filter = XUPProjectItem::projectInfos()->variableSuffixesFilter( curProject->projectType() );
+		QString filter = XUPProjectItem::projectInfos()->sourceFileNameFilter( curProject->projectType() );
 		bool enabledTextCodec = false;
 		bool enabledOpenReadOnly = false;
 		
@@ -167,7 +167,7 @@ pFileDialogResult MkSFileDialog::getNewEditorFile( QWidget* parent )
 	QStringList operators = curProject ? curProject->projectInfos()->operators( curProject->projectType() ) : QStringList();
 	QString caption = tr( "New File Name..." );
 	QString dir = pMonkeyStudio::defaultProjectsDirectory();
-	QString filter = curProject ? XUPProjectItem::projectInfos()->variableSuffixesFilter( curProject->projectType() ) : pMonkeyStudio::availableFilesFilters();
+	QString filter = curProject ? XUPProjectItem::projectInfos()->sourceFileNameFilter( curProject->projectType() ) : pMonkeyStudio::availableFilesFilters();
 	bool enabledTextCodec = true;
 	
 	MkSFileDialog fd( parent );
