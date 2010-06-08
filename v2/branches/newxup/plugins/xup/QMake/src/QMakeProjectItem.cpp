@@ -10,6 +10,7 @@
 #include <BuilderPlugin.h>
 #include "UIMain.h"
 
+#include <QObject>
 #include <QApplication>
 #include <QTextCodec>
 #include <QFile>
@@ -550,14 +551,14 @@ void QMakeProjectItem::addFilesToScope( XUPItem* scope, const QStringList& files
 		if ( f.startsWith( "*.c", Qt::CaseInsensitive ) )
 			varNameForSuffix[f] = "SOURCES";
 	// YACC filters
-	foreach ( QString s, sourceSuffixtes )
-		if ( !yaccSuffixes.contains( s.replace( "c", "y", Qt::CaseInsensitive ) ) )
-			varNameForSuffix[f] = "YACCSOURCES";
+	foreach ( QString s, cSuffixtes )
+		if ( !varNameForSuffix.contains( s.replace( "c", "y", Qt::CaseInsensitive ) ) )
+			varNameForSuffix[s.replace( "c", "y", Qt::CaseInsensitive )] = "YACCSOURCES";
 	// LEX filters
 	QStringList lexSuffixes;
-	foreach ( QString s, sourceSuffixtes )
-		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !lf.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
-			varNameForSuffix[f] = "LEXSOURCES";
+	foreach ( QString s, cSuffixtes )
+		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !varNameForSuffix.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
+			varNameForSuffix[s.replace( "c", "l", Qt::CaseInsensitive )] = "LEXSOURCES";
 	// PROJECT filters
 	varNameForSuffix[".pro"] = "SUBDIRS";
 	varNameForSuffix[".m"] = "OBJECTIVE_SOURCES";
@@ -581,30 +582,27 @@ void QMakeProjectItem::addFilesToScope( XUPItem* scope, const QStringList& files
 				varName = varNameForSuffix[suff];
 			}
 		}
-		if (varName)
+		if (! varName.isNull())
 		{
-			QString op = checkForBestAddOperator( variables );
-			XUPItem* variable = project->getVariable( scope, variableName );				
+			XUPItem* variable = getVariable( scope, varName );
 			if (NULL == variable)
 			{
 				variable = scope->addChild( XUPItem::Variable );
 				variable->setAttribute( "name", varName );
-				variable->setAttribute( "operator", op );
+				
 			}
 			
-			if ( variable->attribute( "operator", "=" ) != op )
+			if (variable->attribute( "operator").isNull())
 			{
-				continue; // TODO warn user?
+				variable->setAttribute( "operator", "+=" );
 			}
-			
-			usedVariable->setAttribute( "multiline", "true" );
-			
+			variable->setAttribute( "multiline", "true" );
 			XUPItem* value = variable->addChild( XUPItem::File );
-			value->setAttribute( "content", project->relativeFilePath( file ) );
+			value->setAttribute( "content", relativeFilePath( file ) );
 		}
 		else
 		{
-			setLastError(tr("Don't know how to add file " + file));
+			setLastError("Don't know how to add file " + file);
 			return;
 		}
 	}

@@ -392,7 +392,7 @@ void XUPProjectManager::editProject()
 	}
 }
 
-void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allFiles, const QString& ope )
+void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allFiles)
 {
 	XUPProjectItem* project = scope->project();
 	//TODO check if files already added!
@@ -407,48 +407,6 @@ void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allF
 	{
 		MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 	}
-}
-
-QString XUPProjectManager::checkForBestAddOperator( const XUPItemList& variables ) const
-{ // TODO kill this funciton!
-	bool haveSet = false;
-	bool haveAdd = false;
-	bool haveAddIfNotExists = false;
-	
-	foreach ( const XUPItem* variable, variables )
-	{
-		const QString op = variable->attribute( "operator", "=" );
-		
-		if ( op == "*=" )
-		{
-			haveAddIfNotExists = true;
-		}
-		else if ( op == "+=" )
-		{
-			haveAdd = true;
-		}
-		else if ( op == "=" )
-		{
-			haveSet = true;
-		}
-	}
-	
-	if ( haveAddIfNotExists )
-	{
-		return "*=";
-	}
-	
-	if ( haveAdd )
-	{
-		return "+=";
-	}
-	
-	if ( haveSet )
-	{
-		return "=";
-	}
-	
-	return "+=";
 }
 
 void XUPProjectManager::addFiles()
