@@ -27,13 +27,12 @@ public:
 	XUPItem* currentItem() const;
 	XUPProjectItemList topLevelProjects() const;
 	
-	void addFilesToScope( XUPItem* scope, const QStringList& allFiles, const QString& op = QString::null );
+	void addFilesToScope( XUPItem* scope, const QStringList& allFiles );
 
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
 	XUPFilteredProjectModel* mFilteredModel;
-	
-	QString checkForBestAddOperator( const XUPItemList& variables ) const;
+
 
 public slots:
 	bool openProject( const QString& fileName, const QString& codec );
