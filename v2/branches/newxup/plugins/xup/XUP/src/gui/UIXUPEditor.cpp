@@ -156,6 +156,8 @@ void UIXUPEditor::on_tbDynamicFolder_clicked()
 
 void UIXUPEditor::on_tbAddFile_clicked()
 {
+#warning delete it!
+#if 0
 	pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window(), false );
 	
 	if ( !result.isEmpty() )
@@ -207,10 +209,13 @@ void UIXUPEditor::on_tbAddFile_clicked()
 		
 		updateProjectFiles();
 	}
+#endif
 }
 
 void UIXUPEditor::on_tbEditFile_clicked()
 {
+#warning Delete it!
+#if 0
 	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
 	
 	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
@@ -232,6 +237,7 @@ void UIXUPEditor::on_tbEditFile_clicked()
 			updateProjectFiles();
 		}
 	}
+#endif
 }
 
 void UIXUPEditor::on_tbRemoveFile_clicked()

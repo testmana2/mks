@@ -538,7 +538,7 @@ QStringList QMakeProjectItem::sourceFiles() const
 	return files;
 }
 
-void QMakeProjectItem::addFilesToScope( XUPItem* scope, const QStringList& files )
+void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
 	QHash <QString, QString> varNameForSuffix;
 	const QStringList cSuffixtes = pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
@@ -560,16 +560,16 @@ void QMakeProjectItem::addFilesToScope( XUPItem* scope, const QStringList& files
 		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !varNameForSuffix.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
 			varNameForSuffix[s.replace( "c", "l", Qt::CaseInsensitive )] = "LEXSOURCES";
 	// PROJECT filters
-	varNameForSuffix[".pro"] = "SUBDIRS";
-	varNameForSuffix[".m"] = "OBJECTIVE_SOURCES";
-	varNameForSuffix[".mm"] = "OBJECTIVE_SOURCES";
-	varNameForSuffix[".pro"] = "SUBDIRS";
-	varNameForSuffix[".ui"] = "FORMS"; // FORMS3 ignored. Let's user edit his pro by text editor. It makes this code simpler
-	varNameForSuffix[".ts"] = "TRANSLATIONS";
-	varNameForSuffix[".qrc"] = "RESOURCES";
-	varNameForSuffix[".def"] = "DEF_FILE";
-	varNameForSuffix[".rc"] = "RC_FILE";
-	varNameForSuffix[".res"] = "RES_FILE";
+	varNameForSuffix["*.pro"] = "SUBDIRS";
+	varNameForSuffix["*.m"] = "OBJECTIVE_SOURCES";
+	varNameForSuffix["*.mm"] = "OBJECTIVE_SOURCES";
+	varNameForSuffix["*.pro"] = "SUBDIRS";
+	varNameForSuffix["*.ui"] = "FORMS"; // FORMS3 ignored. Let's user edit his pro by text editor. It makes this code simpler
+	varNameForSuffix["*.ts"] = "TRANSLATIONS";
+	varNameForSuffix["*.qrc"] = "RESOURCES";
+	varNameForSuffix["*.def"] = "DEF_FILE";
+	varNameForSuffix["*.rc"] = "RC_FILE";
+	varNameForSuffix["*.res"] = "RES_FILE";
 	
 	
 	foreach ( const QString& file, files )

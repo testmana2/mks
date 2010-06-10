@@ -18,7 +18,7 @@ public:
 	virtual void installCommands();
 	
 	virtual QStringList sourceFiles() const;
-	void addFilesToScope( XUPItem* scope, const QStringList& allFiles );
+	void addFiles( const QStringList& files, XUPItem* scope = NULL );
 };
 
 #endif // PHPQTPROJECTITEM_H

@@ -27,7 +27,7 @@ public:
 	XUPItem* currentItem() const;
 	XUPProjectItemList topLevelProjects() const;
 	
-	void addFilesToScope( XUPItem* scope, const QStringList& allFiles );
+	void addFiles( const QStringList& files, XUPItem* scope = NULL);
 
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
