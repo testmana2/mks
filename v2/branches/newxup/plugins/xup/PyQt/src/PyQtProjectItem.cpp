@@ -125,26 +125,35 @@ QStringList PyQtProjectItem::sourceFiles() const
 	return mVariableCache.value( "PYTHON_FILES" ).split(" ");
 }
 
-void PyQtProjectItem::addFilesToScope( XUPItem* scope, const QStringList& allFiles )
+void PyQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
 	XUPProjectItem* project = scope->project();
 	
-	foreach (QString file, allFiles)
+	foreach (QString file, files)
 	{
 		XUPItem* var = NULL;
+		QString varName;
 		if (file.endsWith(".ui"))
 		{
-			var = project->getVariable( scope, "FORMS" );
+			varName = "FORMS";
 		}
 		else if (file.endsWith(".py"))
 		{
-			var = project->getVariable( scope, "PYTHON_FILES" );
+			varName = "PYTHON_FILES";
 		}
 		
-		if (NULL == var)
+		if (varName.isNull())
 		{
 			setLastError("Don't know how to add file " + file);
-			continue;
+			return;
+		}
+		
+		var = project->getVariable( scope, varName );
+		if (NULL == var)
+		{
+			var = scope->addChild( XUPItem::Variable );
+			var->setAttribute( "name", varName );
+			
 		}
 		
 		XUPItem* value = var->addChild( XUPItem::File );

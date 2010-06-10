@@ -469,7 +469,7 @@ void UISimpleQMakeEditor::on_tbAddFile_clicked()
 		}
 		
 		// add files
-		mProject->addFilesToScope(mProject, files);
+		mProject->addFiles(files, mProject);
 		updateProjectFiles();
 	}
 }

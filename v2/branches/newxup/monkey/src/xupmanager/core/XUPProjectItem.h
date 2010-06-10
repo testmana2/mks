@@ -53,9 +53,12 @@ public:
 	virtual QStringList sourceFiles() const;
 	// return the list of all source files for all projects from the root project
 	QStringList topLevelProjectSourceFiles() const;
-	// Add files to the project. When scope is not NULL - it points to the child of the project.
-	// It allows, for example, to add files to the particular scope in the QMake projects (win32, !unix ...)
-	virtual void addFilesToScope( XUPItem* /*scope*/, const QStringList& /*files */) {};
+	/* Add files to the project. 
+	 * Optional argument 'scope' allows to add files to the particular part of the project, 
+	 * not to the project root.
+	 * It allows, for example, to add files to the particular scope in the QMake projects (win32, !unix ...)
+	 */
+	virtual void addFiles( const QStringList& files, XUPItem* scope = NULL );
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
 	// return the most toplevel project ( ie: the model root project )

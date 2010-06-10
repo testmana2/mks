@@ -1112,3 +1112,6 @@ void XUPProjectItem::directoryChanged( const QString& path )
 {
 	XUPProjectItemHelper::updateDynamicFolder( this, path );
 }
+
+void XUPProjectItem::addFiles( const QStringList&, XUPItem* ) //FIXME kill this method implementation, replace with =0 and make XUPProjectItem abstract class
+{};

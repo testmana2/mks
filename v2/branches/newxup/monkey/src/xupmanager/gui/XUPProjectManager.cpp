@@ -392,11 +392,11 @@ void XUPProjectManager::editProject()
 	}
 }
 
-void XUPProjectManager::addFilesToScope( XUPItem* scope, const QStringList& allFiles)
+void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )
 {
 	XUPProjectItem* project = scope->project();
 	//TODO check if files already added!
-	project->addFilesToScope(scope, allFiles);
+	project->addFiles(files, scope);
 	
 	// rebuild cache
 	project->rebuildCache();
@@ -442,7 +442,7 @@ void XUPProjectManager::addFiles()
 		}
 		
 		// add files to scope
-		addFilesToScope( scope, files );
+		addFiles( files, scope );
 	}
 }
 
