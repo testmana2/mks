@@ -30,6 +30,9 @@ public:
 	virtual DebuggerPlugin* debugger( const QString& plugin = QString() ) const;
 	virtual InterpreterPlugin* interpreter( const QString& plugin = QString() ) const;
 	virtual void installCommands();
+	
+	// split a multi line value into QStringList
+	static QStringList splitMultiLineValue( const QString& value );
 
 protected:
 	bool handleSubdirs( XUPItem* subdirs );
