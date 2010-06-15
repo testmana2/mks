@@ -1,4 +1,6 @@
 #include "PyQtProjectItem.h"
+#include "PluginsManager.h"
+#include "XUPPlugin.h"
 
 #include <XUPProjectItemInfos.h>
 #include <pMonkeyStudio.h>
@@ -159,4 +161,9 @@ void PyQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 		XUPItem* value = var->addChild( XUPItem::File );
 		value->setAttribute( "content", project->relativeFilePath( file ) );
 	}
+}
+
+XUPPlugin* PyQtProjectItem::editorPlugin()
+{
+	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "PyQt" ).value( 0 );
 }

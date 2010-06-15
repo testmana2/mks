@@ -1,4 +1,6 @@
 #include "PHPQtProjectItem.h"
+#include "PluginsManager.h"
+#include "XUPPlugin.h"
 
 #include <XUPProjectItemInfos.h>
 #include <pMonkeyStudio.h>
@@ -159,4 +161,9 @@ void PHPQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 		XUPItem* value = var->addChild( XUPItem::File );
 		value->setAttribute( "content", project->relativeFilePath( file ) );
 	}
+}
+
+XUPPlugin* PHPQtProjectItem::editorPlugin()
+{
+	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "PHP-Qt" ).value( 0 );
 }

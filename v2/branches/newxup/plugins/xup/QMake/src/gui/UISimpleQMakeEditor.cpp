@@ -1,5 +1,6 @@
 #include "UISimpleQMakeEditor.h"
 #include "XUPProjectItem.h"
+#include "../QMakeProjectItem.h"
 #include "../QMake.h"
 
 #include <MkSFileDialog.h>
@@ -90,7 +91,7 @@ void UISimpleQMakeEditor::updateValuesEditorVariables()
 
 void UISimpleQMakeEditor::updateValuesEditorValues( const QString& variable )
 {
-	const QStringList values = mProject->splitMultiLineValue( mValues[ variable ] );
+	const QStringList values = dynamic_cast<QMakeProjectItem*>(mProject)->splitMultiLineValue( mValues[ variable ] );
 	
 	lwOthersValues->clear();
 	lwOthersValues->addItems( values );
@@ -209,7 +210,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	}
 	
 	// update gui
-	config = project->splitMultiLineValue( mValues[ "CONFIG" ] );
+	config = dynamic_cast<QMakeProjectItem*>(project)->splitMultiLineValue( mValues[ "CONFIG" ] );
 	
 	// project
 	value = mValues[ "TEMPLATE" ];
@@ -261,7 +262,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	}
 	
 	// modules
-	values = project->splitMultiLineValue( mValues[ "QT" ] );
+	values = dynamic_cast<QMakeProjectItem*>(project)->splitMultiLineValue( mValues[ "QT" ] );
 	for ( int i = 0; i < lwQtModules->count(); i++ )
 	{
 		QListWidgetItem* item = lwQtModules->item( i );
@@ -789,7 +790,7 @@ void UISimpleQMakeEditor::accept()
 	on_lwOthersVariables_currentItemChanged( curItem, curItem );
 	
 	// custom configuration
-	config << mProject->splitMultiLineValue( leCustomConfig->text() );
+	config << dynamic_cast<QMakeProjectItem*>(mProject)->splitMultiLineValue( leCustomConfig->text() );
 	
 	mValues[ "TEMPLATE" ] = tmplate;
 	mValues[ "CONFIG" ] = config.join( " " );
@@ -820,7 +821,7 @@ void UISimpleQMakeEditor::accept()
 				// get child type
 				XUPItem::Type type = mFileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
 				// get values
-				QStringList values = mProject->splitMultiLineValue( mValues[ variable ] );
+				QStringList values = dynamic_cast<QMakeProjectItem*>(mProject)->splitMultiLineValue( mValues[ variable ] );
 				
 				// update variable
 				variableItem->setAttribute( "operator", "+=" );

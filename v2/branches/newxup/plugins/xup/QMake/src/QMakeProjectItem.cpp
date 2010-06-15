@@ -8,6 +8,7 @@
 #include <pMonkeyStudio.h>
 #include <pQueuedMessageToolBar.h>
 #include <BuilderPlugin.h>
+#include "PluginsManager.h"
 #include "UIMain.h"
 
 #include <QObject>
@@ -1008,4 +1009,9 @@ QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
 	}
 
 	return multivalues;
+}
+
+XUPPlugin* QMakeProjectItem::editorPlugin()
+{
+	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "QMake" ).value( 0 );
 }

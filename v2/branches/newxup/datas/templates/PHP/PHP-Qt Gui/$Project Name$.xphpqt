@@ -18,9 +18,6 @@
 <!DOCTYPE XUPProject>
 <project name="$Project Name$" >
 	<scope nested="false" name="XUPProjectSettings" >
-		<variable name="EDITOR" operator="=" multiline="false" >
-			<value content="PHP-Qt" />
-		</variable>
 	</scope>
 	<variable name="PHP_FILES" operator="=" multiline="true" >
 		<file content="$Main File Name$" />
