@@ -24,7 +24,6 @@ protected:
 	QStringList mPathVariables;
 	QtVersion mQtVersion;
 	QMap<QString, QString> mValues;
-	QMap<QString, QTreeWidgetItem*> mProjectFilesItems;
 	QStringList mManagedVariables;
 	
 	QStringList mVariablesToRemove;
@@ -36,7 +35,6 @@ protected:
 	QAction* aOthersValuesEditFile;
 	QAction* aOthersValuesEditPath;
 	
-	void updateProjectFiles();
 	void updateValuesEditorVariables();
 	void updateValuesEditorValues( const QString& variable = QString::null );
 	void init( XUPProjectItem* project );
@@ -46,9 +44,6 @@ protected slots:
 	void projectTypeChanged();
 	void on_tbProjectTarget_clicked();
 	void modules_itemSelectionChanged();
-	void on_tbAddFile_clicked();
-	void on_tbEditFile_clicked();
-	void on_tbRemoveFile_clicked();
 	
 	// variables
 	void on_lwOthersVariables_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous );

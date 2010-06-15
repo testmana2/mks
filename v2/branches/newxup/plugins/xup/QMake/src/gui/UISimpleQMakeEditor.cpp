@@ -64,48 +64,6 @@ UISimpleQMakeEditor::~UISimpleQMakeEditor()
 {
 }
 
-void UISimpleQMakeEditor::updateProjectFiles()
-{
-	int pType = mProject->projectType();
-	foreach ( const QString& variable, mFileVariables )
-	{
-		QTreeWidgetItem* topItem = mProjectFilesItems.value( variable );
-		QStringList files = mProject->splitMultiLineValue( mValues[ variable ] );
-		if ( topItem && files.isEmpty() )
-		{
-			delete mProjectFilesItems.take( variable );
-		}
-		else if ( !files.isEmpty() )
-		{
-			if ( !topItem )
-			{
-				topItem = new QTreeWidgetItem( twFiles, QTreeWidgetItem::UserType +1 );
-				topItem->setText( 0, mProject->projectInfos()->displayText( pType, variable ) );
-				topItem->setIcon( 0, mProject->projectInfos()->displayIcon( pType, variable ) );
-				mProjectFilesItems[ variable ] = topItem;
-			}
-			
-			for ( int i = 0; i < topItem->childCount(); i++ )
-			{
-				QTreeWidgetItem* item = topItem->child( i );
-				QString fn = item->data( 0, Qt::UserRole ).toString();
-				if ( files.contains( fn ) )
-				{
-					files.removeAll( fn );
-				}
-			}
-			
-			foreach ( const QString& fn, files )
-			{
-				QTreeWidgetItem* item = new QTreeWidgetItem( topItem, QTreeWidgetItem::UserType );
-				item->setText( 0, fn );
-				item->setData( 0, Qt::UserRole, fn );
-				item->setIcon( 0, mProject->projectInfos()->displayIcon( XUPProjectItem::XUPProject, "FILES" ) );
-			}
-		}
-	}
-}
-
 void UISimpleQMakeEditor::updateValuesEditorVariables()
 {
 	QListWidgetItem* curItem = lwOthersVariables->selectedItems().value( 0 );
@@ -369,7 +327,6 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	// custom configuration
 	leCustomConfig->setText( config.join( " " ) );
 
-	updateProjectFiles();
 	updateValuesEditorVariables();
 }
 
@@ -434,104 +391,6 @@ void UISimpleQMakeEditor::modules_itemSelectionChanged()
 	if ( it )
 	{
 		teModuleHelp->setHtml( it->data( Qt::UserRole ).value<QtItem>().Help );
-	}
-}
-
-void UISimpleQMakeEditor::on_tbAddFile_clicked()
-{
-	pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window(), false );
-	
-	if ( !result.isEmpty() )
-	{
-		QStringList files = result[ "filenames" ].toStringList();
-		
-		// import files if needed
-		if ( result[ "import" ].toBool() )
-		{
-			const QString projectPath = mProject->path();
-			const QString importPath = result[ "importpath" ].toString();
-			const QString importRootPath = result[ "directory" ].toString();
-			QDir dir( importRootPath );
-			
-			for ( int i = 0; i < files.count(); i++ )
-			{
-				if ( !files.at( i ).startsWith( projectPath ) )
-				{
-					QString fn = QString( files.at( i ) ).remove( importRootPath ).replace( "\\", "/" );
-					fn = QDir::cleanPath( QString( "%1/%2/%3" ).arg( projectPath ).arg( importPath ).arg( fn ) );
-					
-					if ( dir.mkpath( QFileInfo( fn ).absolutePath() ) && QFile::copy( files.at( i ), fn ) )
-					{
-						files[ i ] = fn;
-					}
-				}
-			}
-		}
-		
-		// add files
-		mProject->addFiles(files, mProject);
-		updateProjectFiles();
-	}
-}
-
-void UISimpleQMakeEditor::on_tbEditFile_clicked()
-{
-#warning rewrite this method
-/* TODO
-hlamer: this method can't work now because variableNameForFileName() do not exists
-need to write another algorythm
-*/
-#if 0
-	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
-	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
-	{
-		bool ok;
-		QString oldValue = item->data( 0, Qt::UserRole ).toString();
-		QString fn = QInputDialog::getText( this, tr( "Edit file name" ), tr( "Type a new name for this file" ), QLineEdit::Normal, oldValue, &ok );
-		if ( ok && !fn.isEmpty() )
-		{
-			QString variable = mProject->projectInfos()->variableNameForFileName( mProject->projectType(), fn );
-			
-			item->setText( 0, fn );
-			item->setData( 0, Qt::UserRole, fn );
-			
-			mValues[ variable ].remove( oldValue ).append( " " +fn );
-			
-			updateProjectFiles();
-		}
-	}
-#endif
-}
-
-void UISimpleQMakeEditor::on_tbRemoveFile_clicked()
-{
-	QList<QTreeWidgetItem*> selectedItems = twFiles->selectedItems();
-	
-	if ( selectedItems.count() > 0 )
-	{
-		if ( QMessageBox::question( this, tr( "Remove files" ), tr( "Are you sure you want to remove all the selected files ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::No )
-		{
-			return;
-		}
-		
-		foreach ( QTreeWidgetItem* item, selectedItems )
-		{
-			if ( item->type() == QTreeWidgetItem::UserType +1 )
-			{
-				continue;
-			}
-			
-			const QString variable = mProjectFilesItems.key( item->parent() );
-			const QString fn = item->data( 0, Qt::UserRole ).toString();
-			
-			mValues[ variable ].remove( fn );
-			delete item;
-		}
-		
-		if ( !selectedItems.isEmpty() )
-		{
-			updateProjectFiles();
-		}
 	}
 }
 

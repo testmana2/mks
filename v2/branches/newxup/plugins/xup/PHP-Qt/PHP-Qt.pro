@@ -13,4 +13,3 @@ HEADERS	= src/PHPQt.h \
 SOURCES	= src/PHPQt.cpp \
 	src/PHPQtProjectItem.cpp \
 	../XUP/src/gui/UIXUPEditor.cpp
-FORMS	+= ../XUP/src/gui/UIXUPEditor.ui

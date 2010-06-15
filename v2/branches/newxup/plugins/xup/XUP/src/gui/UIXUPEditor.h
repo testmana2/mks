@@ -21,21 +21,14 @@ public:
 
 protected:
 	XUPProjectItem* mProject;
-	QMap<QString, QTreeWidgetItem*> mProjectFilesItems;
 	
 	void updateMainFileComboBox( const QString& selectFile );
-	void updateProjectFiles();
 	
 	void init( XUPProjectItem* project );
 
 protected slots:
 	// dynamic folder
 	void on_tbDynamicFolder_clicked();
-	
-	// files
-	void on_tbAddFile_clicked();
-	void on_tbEditFile_clicked();
-	void on_tbRemoveFile_clicked();
 	
 	void accept();
 };
