@@ -977,3 +977,35 @@ void QMakeProjectItem::installCommands()
 	// install defaults commands
 	XUPProjectItem::installCommands();
 }
+
+QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
+{
+	QStringList tmpValues = value.split( " ", QString::SkipEmptyParts );
+	bool inStr = false;
+	QStringList multivalues;
+	QString ajout;
+
+	for(int ku = 0;ku < tmpValues.size();ku++)
+	{
+		if(tmpValues.value(ku).startsWith('"') )
+				inStr = true;
+		if(inStr)
+		{
+			if(ajout != "")
+					ajout += " ";
+			ajout += tmpValues.value(ku);
+			if(tmpValues.value(ku).endsWith('"') )
+			{
+					multivalues += ajout;
+					ajout = "";
+					inStr = false;
+			}
+		}
+		else
+		{
+			multivalues += tmpValues.value(ku);
+		}
+	}
+
+	return multivalues;
+}
