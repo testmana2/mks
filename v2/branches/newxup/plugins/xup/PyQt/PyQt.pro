@@ -14,5 +14,3 @@ HEADERS	= src/PyQt.h \
 SOURCES	= src/PyQt.cpp \
 	src/PyQtProjectItem.cpp \
 	../XUP/src/gui/UIXUPEditor.cpp
-
-FORMS	+= ../XUP/src/gui/UIXUPEditor.ui
