@@ -5,6 +5,7 @@
 #include <QFileInfo>
 
 #include "MonkeyExport.h"
+
 #include "XUPItem.h"
 #include "XUPProjectItemInfos.h"
 #include "pCommand.h"
@@ -12,6 +13,7 @@
 class BuilderPlugin;
 class DebuggerPlugin;
 class InterpreterPlugin;
+class XUPPlugin;
 
 typedef QList<class XUPProjectItem*> XUPProjectItemList;
 
@@ -152,7 +154,10 @@ public:
 	virtual void installCommands();
 	// uninstall custom project actions in menus
 	virtual void uninstallCommands();
-
+	
+	/* TODO 1: make method =0,
+	 */
+	virtual XUPPlugin* editorPlugin() {return NULL;};
 public slots:
 	// called when a watched path of a DynamicFolder have changed
 	void directoryChanged( const QString& path );

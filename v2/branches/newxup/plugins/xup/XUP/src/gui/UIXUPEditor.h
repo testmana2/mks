@@ -16,9 +16,6 @@ public:
 	UIXUPEditor( XUPProjectItem* project, QWidget* parent = 0 );
 	virtual ~UIXUPEditor();
 	
-	void setVariableEditorVisible( bool visible );
-	bool isVariableEditorVisible() const;
-
 protected:
 	XUPProjectItem* mProject;
 	

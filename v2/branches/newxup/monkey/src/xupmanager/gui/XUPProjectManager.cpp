@@ -324,37 +324,8 @@ void XUPProjectManager::editProject()
 	}
 	
 	XUPProjectItem* topLevelProject = project->topLevelProject();
-	
-	// get plugin name that can manage this project
-	const QString pluginName = topLevelProject->projectSettingsValue( "EDITOR" );
-	
-	if ( pluginName.isEmpty() || !MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, pluginName ).value( 0 ) )
-	{
-		// get xup plugins
-		QHash<QString, XUPPlugin*> plugins;
 		
-		foreach ( XUPPlugin* plugin, MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll ) )
-		{
-			plugins[ plugin->infos().Caption ] = plugin;
-		}
-	
-		bool ok;
-		const QString caption = QInputDialog::getItem( window(), tr( "Choose an editor plugin..." ), tr( "Your project is not yet editable, please select a correct project settings plugin" ), plugins.keys(), 0, false, &ok );
-		
-		if ( ok && !caption.isEmpty() )
-		{
-			topLevelProject->setProjectSettingsValue( "EDITOR", plugins[ caption ]->infos().Name );
-		}
-	}
-	
-	// edit project settings
-	if ( topLevelProject->projectSettingsValue( "EDITOR" ).isEmpty() )
-	{
-		QMessageBox::warning( QApplication::activeWindow(), tr( "Warning..." ), tr( "The project can't be edited because there is no associate project settings plugin." ) );
-		return;
-	}
-	
-	XUPPlugin* plugin = MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, topLevelProject->projectSettingsValue( "EDITOR" ) ).value( 0 );
+	XUPPlugin* plugin = topLevelProject->editorPlugin();
 	
 	if ( plugin )
 	{

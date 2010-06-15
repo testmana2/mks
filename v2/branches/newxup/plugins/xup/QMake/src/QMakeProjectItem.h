@@ -33,7 +33,8 @@ public:
 	
 	// split a multi line value into QStringList
 	static QStringList splitMultiLineValue( const QString& value );
-
+	
+	virtual XUPPlugin* editorPlugin();
 protected:
 	bool handleSubdirs( XUPItem* subdirs );
 };

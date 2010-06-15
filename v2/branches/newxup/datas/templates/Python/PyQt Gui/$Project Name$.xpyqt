@@ -18,9 +18,6 @@
 <!DOCTYPE XUPProject>
 <project name="$Project Name$" >
 	<scope nested="false" name="XUPProjectSettings" >
-		<variable name="EDITOR" operator="=" multiline="false" >
-			<value content="PyQt" />
-		</variable>
 	</scope>
     <variable name="FORMS" operator="=" multiline="true" >
         <file content="$Form File Name$.ui" />
