@@ -10,4 +10,5 @@ SUBDIRS	= FileBrowser \
 	MkSShell \
 	UpdateChecker \
 	FileWatcher \
-	Tools
+	Tools \
+	AppDebug/AppDebug.pro
