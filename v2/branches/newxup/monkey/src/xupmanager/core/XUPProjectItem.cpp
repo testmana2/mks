@@ -1,7 +1,6 @@
 #include "XUPProjectItem.h"
 #include "XUPProjectItemHelper.h"
 #include "XUPProjectModel.h"
-#include "pIconManager.h"
 #include "BuilderPlugin.h"
 #include "DebuggerPlugin.h"
 #include "InterpreterPlugin.h"
@@ -36,17 +35,17 @@ XUPProjectItem::~XUPProjectItem()
 
 void XUPProjectItem::setLastError( const QString& error )
 {
-	setTemporaryValue( "lastError", error );
+	mLastError = error;
 }
 
 QString XUPProjectItem::lastError() const
 {
-	return temporaryValue( "lastError" ).toString();
+	return mLastError;
 }
 
 QString XUPProjectItem::fileName() const
 {
-	return temporaryValue( "fileName" ).toString();
+	return mFileName;
 }
 
 QString XUPProjectItem::path() const
@@ -234,7 +233,7 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 	return projects.values();
 }
 
-QString XUPProjectItem::iconFileName( XUPItem* item ) const
+QString XUPProjectItem::iconFileName( const XUPItem* item ) const
 {
 	int pType = projectType();
 	QString fn;
@@ -269,84 +268,12 @@ QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
 
 QString XUPProjectItem::itemDisplayText( XUPItem* item )
 {
-	QString text;
-
-	if ( item->temporaryValue( "hasDisplayText", false ).toBool() )
-	{
-		text = item->temporaryValue( "displayText" ).toString();
-	}
-	else
-	{
-		item->setTemporaryValue( "hasDisplayText", true );
-		switch ( item->type() )
-		{
-			case XUPItem::Project:
-				text = item->attribute( "name" );
-				break;
-			case XUPItem::Comment:
-				text = item->attribute( "value" );
-				break;
-			case XUPItem::EmptyLine:
-				text = tr( "%1 empty line(s)" ).arg( item->attribute( "count" ) );
-				break;
-			case XUPItem::Variable:
-				text = variableDisplayText( item->attribute( "name" ) );
-				break;
-			case XUPItem::Value:
-				text = item->attribute( "content" );
-				break;
-			case XUPItem::Function:
-				text = QString( "%1(%2)" ).arg( item->attribute( "name" ) ).arg( item->attribute( "parameters" ) );
-				break;
-			case XUPItem::Scope:
-				text = item->attribute( "name" );
-				break;
-			case XUPItem::DynamicFolder:
-				text = tr( "Dynamic Folder" );
-				break;
-			case XUPItem::Folder:
-				text = item->attribute( "name" );
-				break;
-			case XUPItem::File:
-				text = QFileInfo( item->attribute( "content" ) ).fileName();
-				break;
-			case XUPItem::Path:
-				text = item->attribute( "content" );
-				break;
-			default:
-				text = "#Unknow";
-				break;
-		}
-		item->setTemporaryValue( "displayText", text );
-	}
-
-	return text;
+	return item->displayText();
 }
 
 QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
 {
-	QIcon icon;
-
-	if ( item->temporaryValue( "hasDisplayIcon", false ).toBool() )
-	{
-		icon = item->temporaryValue( "displayIcon" ).value<QIcon>();
-	}
-	else
-	{
-		item->setTemporaryValue( "hasDisplayIcon", true );
-		QString path = iconsPath();
-		QString fn = pIconManager::filePath( iconFileName( item ), path );
-
-		if ( !QFile::exists( fn ) )
-		{
-			path = mXUPProjectInfos->pixmapsPath( XUPProjectItem::XUPProject );
-		}
-
-		icon = pIconManager::icon( iconFileName( item ), path );
-		item->setTemporaryValue( "displayIcon", icon );
-	}
-
-	return icon;
+	return item->displayIcon();
 }
 
 void XUPProjectItem::rebuildCache()
@@ -754,7 +681,7 @@ bool XUPProjectItem::handleIncludeFile( XUPItem* function )
 	function->addChild( project );
 
 	// remove and delete project if can't open
-	if ( !project->open( fn, temporaryValue( "codec" ).toString() ) )
+	if ( !project->open( fn, codec() ) )
 	{
 		function->removeChild( project );
 		topLevelProject()->setLastError( tr( "Failed to handle include file %1" ).arg( fn ) );
@@ -904,8 +831,8 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	}
 
 	// all is ok
-	setTemporaryValue( "codec", codec );
-	setTemporaryValue( "fileName", fileName );
+	mCodec = codec;
+	mFileName = fileName;
 	topLevelProject()->setLastError( QString::null );
 	file.close();
 
@@ -915,7 +842,7 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 bool XUPProjectItem::save()
 {
 	// try open file for writing
-	QFile file( temporaryValue( "fileName" ).toString() );
+	QFile file( mFileName );
 
 	if ( !file.open( QIODevice::WriteOnly ) )
 	{
@@ -929,8 +856,8 @@ bool XUPProjectItem::save()
 	setAttribute( "version", XUP_VERSION );
 
 	// encode content
-	QTextCodec* codec = QTextCodec::codecForName( temporaryValue( "codec" ).toString().toUtf8() );
-	QByteArray content = codec->fromUnicode( toString() );
+	QTextCodec* codecObj = QTextCodec::codecForName( codec().toAscii ()  );
+	QByteArray content = codecObj->fromUnicode( toString() );
 
 	// write content
 	bool result = file.write( content ) != -1;
@@ -1074,6 +1001,14 @@ void XUPProjectItem::uninstallCommands()
 	foreach ( const pCommand& cmd, mCommands.values() )
 		emit uninstallCommandRequested( cmd, mCommands.key( cmd ) );
 	mCommands.clear();
+}
+
+QString XUPProjectItem::codec() const
+{
+	if (! mCodec.isNull())
+		return mCodec;
+	else
+		return pMonkeyStudio::defaultCodec();
 }
 
 void XUPProjectItem::directoryChanged( const QString& path )

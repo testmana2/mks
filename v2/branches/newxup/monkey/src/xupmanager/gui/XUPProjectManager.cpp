@@ -122,9 +122,8 @@ void XUPProjectManager::on_tvFiltered_activated( const QModelIndex& index )
 			
 			if ( QFile::exists( fn ) )
 			{
-				const QString codec = project->temporaryValue( "codec" ).toString();
-				emit fileDoubleClicked( project, fn, codec );
-				emit fileDoubleClicked( fn, codec );
+				emit fileDoubleClicked( project, fn, project->codec() );
+				emit fileDoubleClicked( fn, project->codec() );
 			}
 		}
 	}

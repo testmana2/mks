@@ -1,6 +1,7 @@
 #include "XUPItem.h"
 #include "XUPProjectItem.h"
 #include "XUPProjectModel.h"
+#include "pIconManager.h"
 
 #include <QDebug>
 
@@ -366,12 +367,58 @@ XUPItem::Type XUPItem::type() const
 
 QString XUPItem::displayText() const
 {
-	return project()->itemDisplayText( const_cast<XUPItem*>( this ) );
+	switch ( type() )
+	{
+		case XUPItem::Project:
+			return attribute( "name" );
+			break;
+		case XUPItem::Comment:
+			return  attribute( "value" );
+			break;
+		case XUPItem::EmptyLine:
+			return QObject::tr( "%1 empty line(s)" ).arg( attribute( "count" ) );
+			break;
+		case XUPItem::Variable:
+			return project()->variableDisplayText( attribute( "name" ) );
+			break;
+		case XUPItem::Value:
+			return attribute( "content" );
+			break;
+		case XUPItem::Function:
+			return QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
+			break;
+		case XUPItem::Scope:
+			return attribute( "name" );
+			break;
+		case XUPItem::DynamicFolder:
+			return QObject::tr( "Dynamic Folder" );
+			break;
+		case XUPItem::Folder:
+			return attribute( "name" );
+			break;
+		case XUPItem::File:
+			return QFileInfo( attribute( "content" ) ).fileName();
+			break;
+		case XUPItem::Path:
+			return attribute( "content" );
+			break;
+		default:
+			return "#Unknow";
+			break;
+	}
 }
 
 QIcon XUPItem::displayIcon() const
 {
-	return project()->itemDisplayIcon( const_cast<XUPItem*>( this ) );
+	QString path = project()->iconsPath();
+	QString fn = pIconManager::filePath( project()->iconFileName( this ), path );
+
+	if ( !QFile::exists( fn ) )
+	{
+		path = project()->projectInfos()->pixmapsPath( XUPProjectItem::XUPProject );
+	}
+
+	return pIconManager::icon( project()->iconFileName( this ), path );
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
@@ -392,41 +439,22 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 	XUPProjectModel* m = model();
 	if ( m )
 	{
-		//m->itemChanged( this );
-		setTemporaryValue( "hasDisplayText", false );
-		setTemporaryValue( "hasDisplayIcon", false );
-		
 		QModelIndex idx = index();
 		emit m->dataChanged( idx, idx );
 	}
 }
 
-QVariant XUPItem::temporaryValue( const QString& key, const QVariant& defaultValue ) const
-{
-	return mTemporaryValues.value( key, defaultValue );
-}
-
-void XUPItem::setTemporaryValue( const QString& key, const QVariant& value )
-{
-	mTemporaryValues[ key ] = value;
-}
-
-void XUPItem::clearTemporaryValue( const QString& key )
-{
-	mTemporaryValues.remove( key );
-}
-
 QString XUPItem::cacheValue( const QString& key, const QString& defaultValue ) const
 {
-	return temporaryValue( "cache-" +key, defaultValue ).toString();
+	return mCacheValues.value( key, defaultValue ).toString();
 }
 
 void XUPItem::setCacheValue( const QString& key, const QString& value )
 {
-	setTemporaryValue( "cache-" +key, value );
+	mCacheValues[ key ] = value;
 }
 
 void XUPItem::clearCacheValue( const QString& key )
 {
-	clearTemporaryValue( "cache-" +key );
+	mCacheValues.remove( key );
 }
