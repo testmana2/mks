@@ -338,7 +338,7 @@ void MessageBoxDocks::lvBuildSteps_activated( const QModelIndex& index )
 
 	if ( QFile::exists( fn ) )
 	{
-		const QString codec = project ? project->temporaryValue( "codec" ).toString() : pMonkeyStudio::defaultCodec();
+		const QString codec = project ? project->codec() : pMonkeyStudio::defaultCodec();
 		const QPoint position = itemStep.roleValue( pConsoleManagerStep::PositionRole ).toPoint();
 		qWarning() << "point" << position;
 		MonkeyCore::fileManager()->goToLine( fn, position, codec );

@@ -214,7 +214,7 @@ void SearchWidget::setMode( SearchAndReplace::Mode mode )
 	{
 		if ( mProperties.project )
 		{
-			const QString codec = mProperties.project->temporaryValue( "codec", pMonkeyStudio::defaultCodec() ).toString();
+			const QString codec = mProperties.project->codec();
 			
 			mProperties.codec = codec;
 			cbCodec->setCurrentIndex( cbCodec->findText( codec ) );

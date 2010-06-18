@@ -188,8 +188,7 @@ void UITemplatesWizard::on_gbAddToProject_toggled( bool toggled )
 	
 	if ( toggled && project )
 	{
-		QString codec = project->temporaryValue( "codec", pMonkeyStudio::defaultCodec() ).toString();
-		cbCodec->setCurrentIndex( cbCodec->findText( codec ) );
+		cbCodec->setCurrentIndex( cbCodec->findText( project->codec() ) );
 	}
 }
 
@@ -228,8 +227,7 @@ void UITemplatesWizard::on_cbProjects_currentChanged( const QModelIndex& index )
 		
 		if ( gbAddToProject->isChecked() )
 		{
-			QString codec = project->temporaryValue( "codec", pMonkeyStudio::defaultCodec() ).toString();
-			cbCodec->setCurrentIndex( cbCodec->findText( codec ) );
+			cbCodec->setCurrentIndex( cbCodec->findText( project->codec() ) );
 		}
 	}
 }

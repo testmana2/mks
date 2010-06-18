@@ -224,7 +224,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 		proj->addChild( project );
 		
 		// remove and delete project if can't open
-		if ( !project->open( fn, temporaryValue( "codec" ).toString() ) )
+		if ( !project->open( fn, codec() ) )
 		{
 			proj->removeChild( project );
 			topLevelProject()->setLastError( tr( "Failed to handle subdirs file %1" ).arg( fn ) );
@@ -443,8 +443,8 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	}
 	
 	// all is ok
-	setTemporaryValue( "codec", codec );
-	setTemporaryValue( "fileName", fileName );
+	mCodec = codec;
+	mFileName = fileName;
 	topLevelProject()->setLastError( QString::null );
 	
 	return analyze( this );

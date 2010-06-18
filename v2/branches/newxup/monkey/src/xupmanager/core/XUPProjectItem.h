@@ -71,7 +71,7 @@ public:
 	XUPProjectItemList childrenProjects( bool recursive ) const;
 	
 	// return icon filename for item
-	QString iconFileName( XUPItem* item ) const;
+	QString iconFileName( const XUPItem* item ) const;
 	// return the project icons path
 	QString iconsPath() const;
 	
@@ -79,9 +79,9 @@ public:
 	QString variableDisplayText( const QString& variableName ) const;
 	
 	// return the display text for the project item
-	QString itemDisplayText( XUPItem* item );
+	QString itemDisplayText( XUPItem* item ); /* TODO drop the method? replace with item->displayText() ? */
 	// return the display icon for the project item
-	QIcon itemDisplayIcon( XUPItem* item );
+	QIcon itemDisplayIcon( XUPItem* item );/* TODO drop the method? replace with item->displayText() ? */
 	
 	// rebuild the project cache by clearing values and analyzing again the project
 	void rebuildCache();
@@ -155,6 +155,8 @@ public:
 	// uninstall custom project actions in menus
 	virtual void uninstallCommands();
 	
+	QString codec() const;
+	
 	/* TODO 1: make method =0,
 	 */
 	virtual XUPPlugin* editorPlugin() {return NULL;};
@@ -169,7 +171,10 @@ protected:
 	static bool mFoundCallerItem;
 	
 	QMap<QString, QString> mVariableCache;
-
+	
+	QString mCodec;
+	QString mFileName;
+	QString mLastError;
 signals:
 	void installCommandRequested( const pCommand& cmd, const QString& mnu );
 	void uninstallCommandRequested( const pCommand& cmd, const QString& mnu );

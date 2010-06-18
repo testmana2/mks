@@ -77,13 +77,6 @@ public:
 	// set the attribute value for name
 	void setAttribute( const QString& name, const QString& value );
 	
-	// return the stored temporary value for key or defaultValue
-	QVariant temporaryValue( const QString& key, const QVariant& defaultValue = QVariant() ) const;
-	// set the temporary value for key
-	void setTemporaryValue( const QString& key, const QVariant& value );
-	// clear temporary data represented by key
-	void clearTemporaryValue( const QString& key );
-	
 	// return the stored cache value for key or defaultValue
 	QString cacheValue( const QString& key, const QString& defaultValue = QString::null ) const;
 	// set the cache value for key
@@ -101,7 +94,7 @@ protected:
 	QDomElement mDomElement;
 	mutable QMap<int, XUPItem*> mChildItems;
 	XUPItem* mParentItem;
-	QMap<QString, QVariant> mTemporaryValues;
+	QMap<QString, QVariant> mCacheValues;
 	
 	// developer must not be able to create/instanciate items itself, it must be done by the model
 	XUPItem( const QDomElement& node, XUPItem* parent = 0 );
