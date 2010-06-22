@@ -355,7 +355,6 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 			case XUPItem::EmptyLine:
 			case XUPItem::Variable:
 			case XUPItem::Scope:
-			case XUPItem::DynamicFolder:
 			case XUPItem::Folder:
 			default:
 				break;

@@ -161,8 +161,6 @@ public:
 	 */
 	virtual XUPPlugin* editorPlugin() {return NULL;};
 public slots:
-	// called when a watched path of a DynamicFolder have changed
-	void directoryChanged( const QString& path );
 
 protected:
 	QDomDocument mDocument;

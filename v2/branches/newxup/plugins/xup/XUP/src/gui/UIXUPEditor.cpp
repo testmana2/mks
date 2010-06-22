@@ -69,41 +69,18 @@ void UIXUPEditor::updateMainFileComboBox( const QString& selectFile )
 void UIXUPEditor::init( XUPProjectItem* project )
 {
 	mProject = project;
-	const XUPDynamicFolderSettings folder = XUPProjectItemHelper::projectDynamicFolderSettings( mProject );
 
 	leProjectName->setText( mProject->attribute( "name" ) );
-	gbDynamicFolder->setChecked( folder.Active );
-	leDynamicFolder->setText( folder.AbsolutePath );
-	gbDynamicFilesPatterns->setValues( folder.FilesPatterns );
 	updateMainFileComboBox( mProject->projectSettingsValue( "MAIN_FILE" ) );
 	ceEditor->setCommands( XUPProjectItemHelper::projectCommands( mProject ) );
 	ceEditor->setCurrentType( ceEditor->commandTypes().first() );
 }
 
-void UIXUPEditor::on_tbDynamicFolder_clicked()
-{
-	QString path = leDynamicFolder->text();
-	path = QFileDialog::getExistingDirectory( this, tr( "Select the folder to monitor" ), path );
-	
-	if ( path.isEmpty() )
-	{
-		return;
-	}
-	
-	leDynamicFolder->setText( path );
-}
-
 void UIXUPEditor::accept()
 {
-	XUPDynamicFolderSettings folder;
-	folder.Active = gbDynamicFolder->isChecked();
-	folder.AbsolutePath = leDynamicFolder->text();
-	folder.FilesPatterns = gbDynamicFilesPatterns->values();
-	
 	ceEditor->finalize();
 	mProject->setAttribute( "name", leProjectName->text() );
 	mProject->setProjectSettingsValue( "MAIN_FILE", cbMainFile->currentText() );
-	XUPProjectItemHelper::setProjectDynamicFolderSettings( mProject, folder );
 	XUPProjectItemHelper::setProjectCommands( mProject, ceEditor->commands() );
 	
 	// close dialog
