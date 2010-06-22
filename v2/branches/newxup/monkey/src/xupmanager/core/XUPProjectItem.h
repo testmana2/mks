@@ -78,6 +78,7 @@ public:
 	// return the display text of a project variable name
 	QString variableDisplayText( const QString& variableName ) const;
 	
+	// TODO remove 2 methods? Use methods of item?
 	// return the display text for the project item
 	QString itemDisplayText( XUPItem* item ); /* TODO drop the method? replace with item->displayText() ? */
 	// return the display icon for the project item
@@ -100,6 +101,7 @@ public:
 	// return the project datas as qstring
 	virtual QString toString() const;
 	
+	// TODO remove all projectSettings methods?
 	// return the project settings scope, creating it if needed
 	XUPItem* projectSettingsScope( bool create ) const;
 	// return a project settings value as stringlist or string.
@@ -157,8 +159,7 @@ public:
 	
 	QString codec() const;
 	
-	/* TODO 1: make method =0,
-	 */
+	/* TODO make method =0 */
 	virtual XUPPlugin* editorPlugin() {return NULL;};
 public slots:
 

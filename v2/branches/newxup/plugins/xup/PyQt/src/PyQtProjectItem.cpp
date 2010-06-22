@@ -6,6 +6,7 @@
 #include <pMonkeyStudio.h>
 #include <BuilderPlugin.h>
 #include <InterpreterPlugin.h>
+#include <pCommand.h>
 
 #include <QApplication>
 #include <QTextCodec>
@@ -80,46 +81,13 @@ InterpreterPlugin* PyQtProjectItem::interpreter( const QString& plugin ) const
 
 void PyQtProjectItem::installCommands()
 {
-	// get plugins
-	InterpreterPlugin* ip = interpreter();
-	
-	// temp command
-	pCommand cmd;
+	mInterpretAction = MonkeyCore::menuBar()->action("mInterpreter/aInterpret", QObject::tr("Run project"));
+	connect(mInterpretAction, SIGNAL(triggered()), this, SLOT(on_interpret_clicked()));
+}
 
-	// build command
-	if ( ip )
-	{
-		cmd = ip->interpretCommand();
-	}
-	
-	cmd.setUserData( QVariant::fromValue( &mCommands ) );
-	cmd.setProject( this );
-	cmd.setSkipOnError( false );
-	const pCommand cmdInterpret = cmd;
-	
-	// get qt version
-	QString mainFile = relativeFilePath( projectSettingsValue( "MAIN_FILE" ) );
-	
-	if ( mainFile.isEmpty() )
-	{
-		mainFile = relativeFilePath( findFile( "main.py" ).value( 0 ).absoluteFilePath() );
-	}
-	
-	// available commands
-	if ( ip )
-	{
-		// execute project
-		cmd = cmdInterpret;
-		cmd.setText( tr( "Start" ) );
-		cmd.setArguments( mainFile );
-		cmd.setParsers( QStringList() );
-		cmd.setTryAllParsers( false );
-		addCommand( cmd, "mInterpreter" );
-		
-	}
-	
-	// install defaults commands
-	XUPProjectItem::installCommands();
+void PyQtProjectItem::uninstallCommands()
+{
+	delete mInterpretAction;
 }
 
 QStringList PyQtProjectItem::sourceFiles() const
@@ -166,4 +134,35 @@ void PyQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 XUPPlugin* PyQtProjectItem::editorPlugin()
 {
 	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "PyQt" ).value( 0 );
+}
+
+void PyQtProjectItem::on_interpret_clicked(void)
+{
+	// get plugins
+	InterpreterPlugin* ip = interpreter();
+	
+	if ( !ip )
+		return;
+	
+	QString mainFile = relativeFilePath( projectSettingsValue( "MAIN_FILE" ) );
+	if ( mainFile.isEmpty() )
+	{
+		mainFile = relativeFilePath( findFile( "main.py" ).value( 0 ).absoluteFilePath() );
+	}
+	
+	// TODO 1: if there are only one file - take it
+	// TODO 2: ask user for file, save the choise
+	
+	if ( mainFile.isEmpty() )
+		return;
+	
+	pCommand cmd = ip->interpretCommand();
+
+	cmd.setProject( this );
+	cmd.setSkipOnError( false );
+	cmd.setText( tr( "Start" ) );
+	cmd.setArguments( mainFile );
+	cmd.setWorkingDirectory(path());
+	
+	MonkeyCore::consoleManager()->addCommand( cmd );
 }
