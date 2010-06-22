@@ -233,55 +233,6 @@ QString XUPProjectModel::lastError() const
 	return mLastError;
 }
 
-void XUPProjectModel::registerWithFileWatcher( QFileSystemWatcher* watcher, XUPProjectItem* project )
-{
-	const XUPDynamicFolderSettings folder = XUPProjectItemHelper::projectDynamicFolderSettings( project );
-	
-	if ( folder.isNull() || !folder.Active )
-	{
-		return;
-	}
-	
-	connect( watcher, SIGNAL( directoryChanged( const QString& ) ), project, SLOT( directoryChanged( const QString& ) ) );
-	
-	const QString path = project->path();
-	
-	if ( !watcher->directories().contains( path ) )
-	{
-		watcher->addPath( path );
-	}
-	
-	project->directoryChanged( path );
-}
-
-void XUPProjectModel::registerWithFileWatcher( QFileSystemWatcher* watcher )
-{
-	foreach ( XUPProjectItem* project, mRootProject->childrenProjects( true ) )
-	{
-		registerWithFileWatcher( watcher, project );
-	}
-}
-
-void XUPProjectModel::unregisterWithFileWatcher( QFileSystemWatcher* watcher, XUPProjectItem* project )
-{
-	disconnect( watcher, SIGNAL( directoryChanged( const QString& ) ), project, SLOT( directoryChanged( const QString& ) ) );
-	
-	const QString path = project->path();
-	
-	if ( watcher->directories().contains( path ) )
-	{
-		watcher->removePath( path );
-	}
-}
-
-void XUPProjectModel::unregisterWithFileWatcher( QFileSystemWatcher* watcher )
-{
-	foreach ( XUPProjectItem* project, mRootProject->childrenProjects( true ) )
-	{
-		unregisterWithFileWatcher( watcher, project );
-	}
-}
-
 bool XUPProjectModel::open( const QString& fileName, const QString& codec )
 {
 	XUPProjectItem* tmpProject = XUPProjectItem::projectInfos()->newProjectItem( fileName );

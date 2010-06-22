@@ -43,12 +43,6 @@ public:
 	void setLastError( const QString& error );
 	QString lastError() const;
 	
-	// file watcher
-	void registerWithFileWatcher( QFileSystemWatcher* watcher, XUPProjectItem* project );
-	void registerWithFileWatcher( QFileSystemWatcher* watcher );
-	void unregisterWithFileWatcher( QFileSystemWatcher* watcher, XUPProjectItem* project );
-	void unregisterWithFileWatcher( QFileSystemWatcher* watcher );
-	
 	// XUP Project members
 	virtual bool open( const QString& fileName, const QString& codec );
 	virtual void close();

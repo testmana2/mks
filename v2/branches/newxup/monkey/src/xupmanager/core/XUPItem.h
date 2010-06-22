@@ -31,7 +31,6 @@ public:
 		Function, // a function node
 		Scope, // a scope node
 		//
-		DynamicFolder, // a dynamic folder node (ie: children are populate by the folder path dynamically)
 		Folder, // a folder node
 		File, // a value that is a file node
 		Path // a value that is a path node

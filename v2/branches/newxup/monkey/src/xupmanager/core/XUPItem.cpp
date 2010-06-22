@@ -39,7 +39,6 @@ bool XUPItem::sameTypeLess( const XUPItem& other ) const
 		case XUPItem::Value:
 		case XUPItem::Function:
 		case XUPItem::Scope:
-		case XUPItem::DynamicFolder:
 		case XUPItem::Folder:
 		case XUPItem::File:
 		case XUPItem::Path:
@@ -250,9 +249,6 @@ XUPItem* XUPItem::addChild( XUPItem::Type pType, int row )
 		case XUPItem::Scope:
 			stringType = "scope";
 			break;
-		case XUPItem::DynamicFolder:
-			stringType = "dynamicfolder";
-			break;
 		case XUPItem::Folder:
 			stringType = "folder";
 			break;
@@ -354,8 +350,6 @@ XUPItem::Type XUPItem::type() const
 		return XUPItem::Function;
 	else if ( mType == "scope" )
 		return XUPItem::Scope;
-	else if ( mType == "dynamicfolder" )
-		return XUPItem::DynamicFolder;
 	else if ( mType == "folder" )
 		return XUPItem::Folder;
 	else if ( mType == "file" )
@@ -389,9 +383,6 @@ QString XUPItem::displayText() const
 			break;
 		case XUPItem::Scope:
 			return attribute( "name" );
-			break;
-		case XUPItem::DynamicFolder:
-			return QObject::tr( "Dynamic Folder" );
 			break;
 		case XUPItem::Folder:
 			return attribute( "name" );

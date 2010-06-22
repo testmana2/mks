@@ -232,8 +232,6 @@ bool XUPProjectManager::openProject( const QString& fileName, const QString& cod
 			// append file to recents project
 			MonkeyCore::recentsManager()->addRecentProject( fileName );
 			
-			model->registerWithFileWatcher( MonkeyCore::workspace()->fileWatcher() );
-			
 			int id = cbProjects->count();
 			cbProjects->addItem( model->headerData( 0, Qt::Horizontal, Qt::DisplayRole ).toString(), QVariant::fromValue<XUPProjectModel*>( model ) );
 			cbProjects->setItemIcon( id, model->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
@@ -299,7 +297,6 @@ void XUPProjectManager::closeProject()
 		
 		emit projectAboutToClose( preProject );
 		
-		curModel->unregisterWithFileWatcher( MonkeyCore::workspace()->fileWatcher() );
 		curModel->close();
 		delete curModel;
 	}
@@ -331,8 +328,6 @@ void XUPProjectManager::editProject()
 		XUPProjectModel* model = currentProjectModel();
 		QFileSystemWatcher* watcher = MonkeyCore::workspace()->fileWatcher();
 		
-		model->unregisterWithFileWatcher( watcher, project );
-		
 		// edit project and save it if needed
 		if ( plugin->editProject( project ) )
 		{
@@ -357,8 +352,6 @@ void XUPProjectManager::editProject()
 			project->uninstallCommands();
 			project->installCommands();
 		}
-		
-		model->registerWithFileWatcher( watcher, project );
 	}
 }
 

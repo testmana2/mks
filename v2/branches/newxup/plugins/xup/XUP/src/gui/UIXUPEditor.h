@@ -24,8 +24,6 @@ protected:
 	void init( XUPProjectItem* project );
 
 protected slots:
-	// dynamic folder
-	void on_tbDynamicFolder_clicked();
 	
 	void accept();
 };

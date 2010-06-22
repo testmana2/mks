@@ -69,22 +69,6 @@ QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
 
 QStringList XUPProjectItem::sourceFiles() const
 {
-#if 0 // TODO review this code and find a place for it
-	// get dynamic files
-	
-	XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<QMakeProjectItem*>( this ), false );
-	
-	if ( dynamicFolderItem )
-	{
-		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
-		{
-			if ( valueItem->type() == XUPItem::File )
-			{
-				files << valueItem->attribute( "content" );
-			}
-		}
-	}
-#endif
 	return QStringList();
 }
 
@@ -330,7 +314,7 @@ XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variab
 
 QString XUPProjectItem::toString() const
 {
-	return XUPProjectItemHelper::stripDynamicFolderFiles( mDocument ).toString( 4 );
+	return mDocument.toString( 4 );
 }
 
 XUPItem* XUPProjectItem::projectSettingsScope( bool create ) const
@@ -736,7 +720,6 @@ bool XUPProjectItem::analyze( XUPItem* item )
 			case XUPItem::EmptyLine:
 			case XUPItem::Variable:
 			case XUPItem::Scope:
-			case XUPItem::DynamicFolder:
 			case XUPItem::Folder:
 			default:
 				break;
@@ -1009,11 +992,6 @@ QString XUPProjectItem::codec() const
 		return mCodec;
 	else
 		return pMonkeyStudio::defaultCodec();
-}
-
-void XUPProjectItem::directoryChanged( const QString& path )
-{
-	XUPProjectItemHelper::updateDynamicFolder( this, path );
 }
 
 void XUPProjectItem::addFiles( const QStringList&, XUPItem* ) //FIXME kill this method implementation, replace with =0 and make XUPProjectItem abstract class

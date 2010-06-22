@@ -63,7 +63,7 @@
    <item row="1" column="1">
     <widget class="QStackedWidget" name="swPages">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="wProject">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -106,65 +106,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="gbDynamicFolder">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Dynamic Folder</string>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <layout class="QHBoxLayout" name="hlDynamicFolder">
-            <item>
-             <widget class="QLabel" name="lDynamicFolder">
-              <property name="text">
-               <string>Folder</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="leDynamicFolder"/>
-            </item>
-            <item>
-             <widget class="QToolButton" name="tbDynamicFolder">
-              <property name="icon">
-               <iconset resource="../../../../../monkey/src/resources/resources.qrc">
-                <normaloff>:/listeditor/icons/listeditor/folder.png</normaloff>:/listeditor/icons/listeditor/folder.png</iconset>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="pStringListEditor" name="gbDynamicFilesPatterns">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Files Patterns</string>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -306,12 +247,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>pStringListEditor</class>
-   <extends>QGroupBox</extends>
-   <header location="global">pStringListEditor.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>CommandsEditor</class>
    <extends>QFrame</extends>
