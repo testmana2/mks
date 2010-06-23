@@ -2,15 +2,18 @@ TARGET	= PyQt
 include( ../../plugins.pri )
 DESTDIR	= $$MONKEY_PLUGINS_DIR/xup
 
-INCLUDEPATH	*= src/gui .
+INCLUDEPATH	*= src/gui . 
 
 RESOURCES	= src/resources/PyQt.qrc
 
 
 HEADERS	= src/PyQt.h \
 	src/PyQtProjectItem.h \
-	../XUP/src/gui/UIXUPEditor.h
+	src/gui/UIPyQtEditor.h
 
 SOURCES	= src/PyQt.cpp \
 	src/PyQtProjectItem.cpp \
-	../XUP/src/gui/UIXUPEditor.cpp
+	src/gui/UIPyQtEditor.cpp
+
+FORMS	=  \
+	src/gui/UIPyQtEditor.ui

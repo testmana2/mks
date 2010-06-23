@@ -72,7 +72,6 @@ FORMS	*= src/maininterface/ui/UIAbout.ui \
 	src/xupmanager/gui/XUPProjectManager.ui \
 	src/xupmanager/gui/XUPAddFiles.ui \
 	src/pluginsmanager/ui/UIInterpreterSettings.ui \
-	src/xupmanager/gui/CommandsEditor.ui \
 	src/workspace/pOpenedFileExplorer.ui
 
 HEADERS	*= src/main.h \
@@ -126,8 +125,6 @@ HEADERS	*= src/main.h \
 	src/shellmanager/MkSShellConsole.h \
 	src/shellmanager/MkSShellInterpreter.h \
 	src/pluginsmanager/PluginsMenu.h \
-	src/xupmanager/gui/CommandsEditor.h \
-	src/xupmanager/core/XUPProjectItemHelper.h \
 	src/workspace/pOpenedFileExplorer.h \
 	src/workspace/pOpenedFileModel.h \
 	src/consolemanager/EnvironmentVariablesManager.h \
@@ -178,8 +175,6 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/shellmanager/MkSShellInterpreter.cpp \
 	src/shellmanager/MkSShellConsole.cpp \
 	src/pluginsmanager/PluginsMenu.cpp \
-	src/xupmanager/gui/CommandsEditor.cpp \
-	src/xupmanager/core/XUPProjectItemHelper.cpp \
 	src/workspace/pOpenedFileExplorer.cpp \
 	src/workspace/pOpenedFileModel.cpp \
 	src/pluginsmanager/BuilderPlugin.cpp \

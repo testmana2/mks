@@ -4,7 +4,6 @@
 #include "QtVersionManager.h"
 
 #include <XUPProjectItemInfos.h>
-#include <XUPProjectItemHelper.h>
 #include <pMonkeyStudio.h>
 #include <pQueuedMessageToolBar.h>
 #include <BuilderPlugin.h>

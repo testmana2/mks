@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UIXUPEditor</class>
- <widget class="QDialog" name="UIXUPEditor">
+ <class>UIPyQtEditor</class>
+ <widget class="QDialog" name="UIPyQtEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -49,21 +49,12 @@
         <normaloff>:/xupeditor/icons/xupeditor/project.png</normaloff>:/xupeditor/icons/xupeditor/project.png</iconset>
       </property>
      </item>
-     <item>
-      <property name="text">
-       <string>Commands</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../../../../../monkey/src/resources/resources.qrc">
-        <normaloff>:/xupeditor/icons/xupeditor/compiler.png</normaloff>:/xupeditor/icons/xupeditor/compiler.png</iconset>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QStackedWidget" name="swPages">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="wProject">
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -118,7 +109,7 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::Preferred</enum>
+          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -130,7 +121,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="CommandsEditor" name="ceEditor"/>
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
@@ -246,14 +236,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>CommandsEditor</class>
-   <extends>QFrame</extends>
-   <header location="global">src/gui/CommandsEditor.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../../../../../monkey/src/resources/resources.qrc"/>
  </resources>
@@ -261,7 +243,7 @@
   <connection>
    <sender>dbbButtons</sender>
    <signal>accepted()</signal>
-   <receiver>UIXUPEditor</receiver>
+   <receiver>UIPyQtEditor</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -277,7 +259,7 @@
   <connection>
    <sender>dbbButtons</sender>
    <signal>rejected()</signal>
-   <receiver>UIXUPEditor</receiver>
+   <receiver>UIPyQtEditor</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
