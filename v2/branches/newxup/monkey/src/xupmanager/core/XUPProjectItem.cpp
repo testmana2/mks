@@ -1,5 +1,4 @@
 #include "XUPProjectItem.h"
-#include "XUPProjectItemHelper.h"
 #include "XUPProjectModel.h"
 #include "BuilderPlugin.h"
 #include "DebuggerPlugin.h"
@@ -974,9 +973,6 @@ void XUPProjectItem::installCommands()
 			addCommand( cmd, "mInterpreter/mUserCommands" );
 		}
 	}
-	
-	// install custom project commands
-	XUPProjectItemHelper::installProjectCommands( this );
 }
 
 void XUPProjectItem::uninstallCommands()

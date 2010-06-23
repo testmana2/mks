@@ -1,6 +1,5 @@
 #include "XUPProjectModel.h"
 #include "XUPProjectItem.h"
-#include "XUPProjectItemHelper.h"
 
 #include <QFileSystemWatcher>
 #include <QDebug>
