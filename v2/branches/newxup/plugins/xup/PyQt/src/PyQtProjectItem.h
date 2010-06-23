@@ -1,8 +1,6 @@
 #ifndef PYQTPROJECTITEM_H
 #define PYQTPROJECTITEM_H
 
-#include <QAction>
-
 #include "XUPProjectItem.h"
 
 class PyQtProjectItem : public XUPProjectItem
@@ -18,18 +16,11 @@ public:
 	
 	virtual InterpreterPlugin* interpreter( const QString& plugin = QString() ) const;
 	virtual void installCommands();
-	virtual void uninstallCommands();
 	
 	virtual QStringList sourceFiles() const;
 	void addFiles( const QStringList& files, XUPItem* scope = NULL );
 	
 	virtual XUPPlugin* editorPlugin();
-	
-protected slots:
-	void on_interpret_clicked();
-	
-protected:
-	QAction * mInterpretAction;
 };
 
 #endif // PYQTPROJECTITEM_H
