@@ -889,17 +889,39 @@ void pWorkspace::internal_currentProjectChanged( XUPProjectItem* currentProject,
 		disconnect( previousProject, SIGNAL( uninstallCommandRequested( const pCommand&, const QString& ) ), this, SLOT( internal_projectUninstallCommandRequested( const pCommand&, const QString& ) ) );
 	}
 	
+	if (previousProject)
+	{
+		foreach(QString pluginName, previousProject->autoActivatePlugins())
+		{
+			BasePlugin* plugin = MonkeyCore::pluginsManager()->plugin<BasePlugin*>( PluginsManager::stAll, pluginName );
+			if (plugin)
+			{
+				plugin->setEnabled(false);
+			}
+		}
+	}
+	
+	if (currentProject)
+	{
+		foreach(QString pluginName, currentProject->autoActivatePlugins())
+		{
+			BasePlugin* plugin = MonkeyCore::pluginsManager()->plugin<BasePlugin*>( PluginsManager::stAll, pluginName );
+			if (plugin)
+			{
+				plugin->setEnabled(true);
+			}
+		}
+	}
+	
 	// get pluginsmanager
 	PluginsManager* pm = MonkeyCore::pluginsManager();
 	
 	// set debugger and interpreter
 	BuilderPlugin* bp = currentProject ? currentProject->builder() : 0;
 	DebuggerPlugin* dp = currentProject ? currentProject->debugger() : 0;
-	InterpreterPlugin* ip = currentProject ? currentProject->interpreter() : 0;
 	
 	pm->setCurrentBuilder( bp && !bp->neverEnable() ? bp : 0 );
 	pm->setCurrentDebugger( dp && !dp->neverEnable() ? dp : 0 );
-	pm->setCurrentInterpreter( ip && !ip->neverEnable() ? ip : 0 );
 	
 	// install new commands
 	if ( currentProject )

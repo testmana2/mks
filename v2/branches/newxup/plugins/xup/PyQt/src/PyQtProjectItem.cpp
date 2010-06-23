@@ -66,16 +66,9 @@ XUPProjectItem* PyQtProjectItem::newProject() const
 	return new PyQtProjectItem();
 }
 
-InterpreterPlugin* PyQtProjectItem::interpreter( const QString& plugin ) const
+QStringList PyQtProjectItem::autoActivatePlugins() const
 {
-	QString plug = plugin;
-
-	if ( plug.isEmpty() )
-	{
-		plug = "Python";
-	}
-
-	return XUPProjectItem::interpreter( plug );
+	return QStringList("Python");
 }
 
 void PyQtProjectItem::installCommands()
@@ -166,4 +159,9 @@ void PyQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 XUPPlugin* PyQtProjectItem::editorPlugin()
 {
 	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "PyQt" ).value( 0 );
+}
+
+InterpreterPlugin* PyQtProjectItem::interpreter() const
+{
+	return MonkeyCore::pluginsManager()->plugin<InterpreterPlugin*>( PluginsManager::stAll, "Python" );
 }

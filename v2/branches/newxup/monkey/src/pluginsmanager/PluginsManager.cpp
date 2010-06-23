@@ -45,7 +45,6 @@ PluginsManager::PluginsManager( QObject* p )
 	mMenuHandler = new PluginsMenu( this );
 	mBuilder = 0;
 	mDebugger = 0;
-	mInterpreter = 0;
 }
 
 QList<BasePlugin*> PluginsManager::plugins() const
@@ -250,25 +249,6 @@ void PluginsManager::setCurrentDebugger( DebuggerPlugin* d )
 DebuggerPlugin* PluginsManager::currentDebugger()
 { return mDebugger; }
 	
-void PluginsManager::setCurrentInterpreter( InterpreterPlugin* i )
-{
-	// if same cancel
-	if ( mInterpreter == i )
-		return;
-	
-	// disabled all debugger
-	foreach ( InterpreterPlugin* ip, plugins<InterpreterPlugin*>( PluginsManager::stAll ) )
-		ip->setEnabled( false );
-	
-	// enabled the one we choose
-	mInterpreter = i;
-	if ( mInterpreter )
-		mInterpreter->setEnabled( true );
-}
-
-InterpreterPlugin* PluginsManager::currentInterpreter()
-{ return mInterpreter; }
-
 void PluginsManager::manageRequested()
 { ( new UIPluginsSettings() )->show(); }
 
