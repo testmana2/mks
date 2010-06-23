@@ -145,10 +145,13 @@ public:
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
 	QString targetFilePath( const pCommandTargetExecution& execution );
 	
-	// return plugin associated with the project
+	/* When project is activated (selected as current), some plugins can be also enabled.
+	 * for example - PHP-Qt project will activate PHP interpreter plugin.
+	 * When project deselected - plugin will be disabled
+	 */
+	virtual QStringList autoActivatePlugins() const;
 	virtual BuilderPlugin* builder( const QString& plugin = QString() ) const;
 	virtual DebuggerPlugin* debugger( const QString& plugin = QString() ) const;
-	virtual InterpreterPlugin* interpreter( const QString& plugin = QString() ) const;
 
 	// add a pCommand in menu
 	virtual void addCommand( pCommand& cmd, const QString& mnu );

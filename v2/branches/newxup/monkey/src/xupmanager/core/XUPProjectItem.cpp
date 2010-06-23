@@ -868,6 +868,11 @@ QString XUPProjectItem::targetFilePath( const pCommandTargetExecution& execution
 	return targetFilePath( true, (XUPProjectItem::TargetType)execution.targetType );
 }
 
+QStringList XUPProjectItem::autoActivatePlugins() const
+{
+	return QStringList();
+}
+
 BuilderPlugin* XUPProjectItem::builder( const QString& plugin ) const
 {
 	return MonkeyCore::pluginsManager()->plugin<BuilderPlugin*>( PluginsManager::stAll, projectSettingsValue( "BUILDER", plugin ) );
@@ -876,11 +881,6 @@ BuilderPlugin* XUPProjectItem::builder( const QString& plugin ) const
 DebuggerPlugin* XUPProjectItem::debugger( const QString& plugin ) const
 {
 	return MonkeyCore::pluginsManager()->plugin<DebuggerPlugin*>( PluginsManager::stAll, projectSettingsValue( "DEBUGGER", plugin ) );
-}
-
-InterpreterPlugin* XUPProjectItem::interpreter( const QString& plugin ) const
-{
-	return MonkeyCore::pluginsManager()->plugin<InterpreterPlugin*>( PluginsManager::stAll, projectSettingsValue( "INTERPRETER", plugin ) );
 }
 
 void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
@@ -905,7 +905,6 @@ void XUPProjectItem::installCommands()
 	// get plugins
 	BuilderPlugin* bp = builder();
 	//DebuggerPlugin* dp = debugger();
-	InterpreterPlugin* ip = interpreter();
 
 	bool emptyBuilderBuildMenu = MonkeyCore::menuBar()->menu( "mBuilder/mBuild" )->actions().isEmpty();
 	bool emptyInterpreterMenu = MonkeyCore::menuBar()->menu( "mInterpreter" )->actions().isEmpty();
@@ -935,14 +934,6 @@ void XUPProjectItem::installCommands()
 		addCommand( cmd, "mBuilder/mRebuild" );
 	}
 	
-	// interprete file command
-	if ( ip && emptyInterpreterMenu )
-	{
-		pCommand cmd = ip->interpretCommand();
-		cmd.setSkipOnError( false );
-		addCommand( cmd, "mInterpreter" );
-	}
-
 	// install builder user command
 	if ( bp )
 	{
@@ -964,15 +955,6 @@ void XUPProjectItem::installCommands()
 		}
 	}
 	*/
-	// install interpreter user command
-	if ( ip )
-	{
-		foreach ( pCommand cmd, ip->userCommands() )
-		{
-			cmd.setSkipOnError( false );
-			addCommand( cmd, "mInterpreter/mUserCommands" );
-		}
-	}
 }
 
 void XUPProjectItem::uninstallCommands()

@@ -14,13 +14,18 @@ public:
 	virtual void registerProjectType() const;
 	virtual XUPProjectItem* newProject() const;
 
-	virtual InterpreterPlugin* interpreter( const QString& plugin = QString() ) const;
 	virtual void installCommands();
+	
+	virtual QStringList autoActivatePlugins() const;
 	
 	virtual QStringList sourceFiles() const;
 	void addFiles( const QStringList& files, XUPItem* scope = NULL );
 	
 	virtual XUPPlugin* editorPlugin();
+	
+	
+protected:
+	InterpreterPlugin* interpreter() const;
 };
 
 #endif // PHPQTPROJECTITEM_H

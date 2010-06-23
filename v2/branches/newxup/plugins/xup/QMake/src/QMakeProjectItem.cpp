@@ -607,27 +607,34 @@ void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	}
 }
 
+QStringList QMakeProjectItem::autoActivatePlugins() const
+{
+	QStringList res;
+
+	QtVersionManager* manager = QMake::versionManager();
+	const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
+	if ( version.isValid() &&
+		 version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ))
+	{
+		res << "MSVCMake";
+	}
+	else
+	{
+		res << "GNUMake";
+	}
+	
+	res << "BeaverDebugger";
+	res << "GNUMake";
+	
+	return res;
+}
+
 BuilderPlugin* QMakeProjectItem::builder( const QString& plugin ) const
 {
 	QString plug = plugin;
 	
 	if ( plug.isEmpty() )
 	{
-		QtVersionManager* manager = QMake::versionManager();
-		const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
-		
-		if ( version.isValid() )
-		{
-			if ( version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ) )
-			{
-				plug = "MSVCMake";
-			}
-		}
-		
-		if ( plug.isEmpty() )
-		{
-			plug = "GNUMake";
-		}
 	}
 	
 	return XUPProjectItem::builder( plug );
@@ -643,34 +650,6 @@ DebuggerPlugin* QMakeProjectItem::debugger( const QString& plugin ) const
 	}
 	
 	return XUPProjectItem::debugger( plug );
-}
-
-InterpreterPlugin* QMakeProjectItem::interpreter( const QString& plugin ) const
-{
-	QString plug = plugin;
-	
-	if ( plug.isEmpty() )
-	{
-		/*
-		QtVersionManager* manager = QMake::versionManager();
-		const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
-		
-		if ( version.isValid() )
-		{
-			if ( version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ) )
-			{
-				plug = "MSVC";
-			}
-		}
-		
-		if ( plug.isEmpty() )
-		{
-			plug = "G++";
-		}
-		*/
-	}
-	
-	return XUPProjectItem::interpreter( plug );
 }
 
 void QMakeProjectItem::installCommands()

@@ -26,9 +26,10 @@ public:
 	virtual QStringList sourceFiles() const;
 	virtual void addFiles( const QStringList& files, XUPItem* scope = NULL );
 	
+	virtual QStringList autoActivatePlugins() const;
+	
 	virtual BuilderPlugin* builder( const QString& plugin = QString() ) const;
 	virtual DebuggerPlugin* debugger( const QString& plugin = QString() ) const;
-	virtual InterpreterPlugin* interpreter( const QString& plugin = QString() ) const;
 	virtual void installCommands();
 	
 	// split a multi line value into QStringList

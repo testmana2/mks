@@ -66,16 +66,9 @@ XUPProjectItem* PHPQtProjectItem::newProject() const
 	return new PHPQtProjectItem();
 }
 
-InterpreterPlugin* PHPQtProjectItem::interpreter( const QString& plugin ) const
+QStringList PHPQtProjectItem::autoActivatePlugins() const
 {
-	QString plug = plugin;
-
-	if ( plug.isEmpty() )
-	{
-		plug = "PHP";
-	}
-
-	return XUPProjectItem::interpreter( plug );
+	return QStringList("PHP");
 }
 
 void PHPQtProjectItem::installCommands()
@@ -166,4 +159,9 @@ void PHPQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 XUPPlugin* PHPQtProjectItem::editorPlugin()
 {
 	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "PHP-Qt" ).value( 0 );
+}
+
+InterpreterPlugin* PHPQtProjectItem::interpreter() const
+{
+	return MonkeyCore::pluginsManager()->plugin<InterpreterPlugin*>( PluginsManager::stAll, "PHP" );
 }

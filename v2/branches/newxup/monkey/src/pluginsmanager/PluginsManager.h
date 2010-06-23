@@ -89,9 +89,6 @@ public:
 	void setCurrentDebugger( DebuggerPlugin* );
 	DebuggerPlugin* currentDebugger();
 	
-	void setCurrentInterpreter( InterpreterPlugin* );
-	InterpreterPlugin* currentInterpreter();
-	
 	inline PluginsMenu* menuHandler() const { return mMenuHandler; }
 	
 protected:
@@ -99,7 +96,6 @@ protected:
 	QList<BasePlugin*> mPlugins;
 	BuilderPlugin* mBuilder;
 	DebuggerPlugin* mDebugger;
-	InterpreterPlugin* mInterpreter;
 
 	PluginsManager( QObject* = 0 );
 	bool addPlugin( QObject* );
