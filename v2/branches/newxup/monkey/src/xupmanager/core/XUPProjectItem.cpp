@@ -873,11 +873,6 @@ QStringList XUPProjectItem::autoActivatePlugins() const
 	return QStringList();
 }
 
-BuilderPlugin* XUPProjectItem::builder( const QString& plugin ) const
-{
-	return MonkeyCore::pluginsManager()->plugin<BuilderPlugin*>( PluginsManager::stAll, projectSettingsValue( "BUILDER", plugin ) );
-}
-
 DebuggerPlugin* XUPProjectItem::debugger( const QString& plugin ) const
 {
 	return MonkeyCore::pluginsManager()->plugin<DebuggerPlugin*>( PluginsManager::stAll, projectSettingsValue( "DEBUGGER", plugin ) );
@@ -902,59 +897,6 @@ void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
 
 void XUPProjectItem::installCommands()
 {
-	// get plugins
-	BuilderPlugin* bp = builder();
-	//DebuggerPlugin* dp = debugger();
-
-	bool emptyBuilderBuildMenu = MonkeyCore::menuBar()->menu( "mBuilder/mBuild" )->actions().isEmpty();
-	bool emptyInterpreterMenu = MonkeyCore::menuBar()->menu( "mInterpreter" )->actions().isEmpty();
-
-	// build command
-	if ( bp && emptyBuilderBuildMenu )
-	{
-		pCommand cmd = bp->buildCommand();
-
-		cmd.setSkipOnError( false );
-		addCommand( cmd, "mBuilder/mBuild" );
-
-		// clean
-		cmd.setText( tr( "Clean" ) );
-		cmd.setArguments( "clean" );
-		addCommand( cmd, "mBuilder/mClean" );
-
-		// distclean
-		cmd.setText( tr( "Distclean" ) );
-		cmd.setArguments( "distclean" );
-		addCommand( cmd, "mBuilder/mClean" );
-
-		// rebuild
-		cmd.setText( tr( "Rebuild" ) );
-		cmd.setCommand( ( QStringList() << tr( "Clean" ) << tr( "Build" ) ).join( ";" ) );
-		cmd.setArguments( QString() );
-		addCommand( cmd, "mBuilder/mRebuild" );
-	}
-	
-	// install builder user command
-	if ( bp )
-	{
-		foreach ( pCommand cmd, bp->userCommands() )
-		{
-			cmd.setSkipOnError( false );
-			addCommand( cmd, "mBuilder/mUserCommands" );
-		}
-	}
-
-	/*
-	// install debugger user command
-	if ( dp )
-	{
-		foreach ( pCommand cmd, dp->userCommands() )
-		{
-			cmd.setSkipOnError( false );
-			addCommand( cmd, "mDebugger/mUserCommands" );
-		}
-	}
-	*/
 }
 
 void XUPProjectItem::uninstallCommands()

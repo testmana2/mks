@@ -28,8 +28,6 @@ public:
 	
 	virtual QStringList autoActivatePlugins() const;
 	
-	virtual BuilderPlugin* builder( const QString& plugin = QString() ) const;
-	virtual DebuggerPlugin* debugger( const QString& plugin = QString() ) const;
 	virtual void installCommands();
 	
 	// split a multi line value into QStringList
@@ -38,6 +36,7 @@ public:
 	virtual XUPPlugin* editorPlugin();
 protected:
 	bool handleSubdirs( XUPItem* subdirs );
+	BuilderPlugin* builder() const;
 };
 
 #endif // QMAKEPROJECTITEM_H

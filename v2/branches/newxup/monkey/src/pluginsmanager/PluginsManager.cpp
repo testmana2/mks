@@ -43,8 +43,6 @@ PluginsManager::PluginsManager( QObject* p )
 	: QObject( p )
 {
 	mMenuHandler = new PluginsMenu( this );
-	mBuilder = 0;
-	mDebugger = 0;
 }
 
 QList<BasePlugin*> PluginsManager::plugins() const
@@ -211,44 +209,6 @@ QString PluginsManager::childFilters() const
 	return f;
 }
 
-void PluginsManager::setCurrentBuilder( BuilderPlugin* b )
-{
-	// if same cancel
-	if ( mBuilder == b )
-		return;
-	
-	// disabled all builder
-	foreach ( BuilderPlugin* bp, plugins<BuilderPlugin*>( PluginsManager::stAll ) )
-		bp->setEnabled( false );
-	
-	// enabled the one we choose
-	mBuilder = b;
-	if ( mBuilder )
-		mBuilder->setEnabled( true );
-}
-
-BuilderPlugin* PluginsManager::currentBuilder()
-{ return mBuilder; }
-
-void PluginsManager::setCurrentDebugger( DebuggerPlugin* d )
-{
-	// if same cancel
-	if ( mDebugger == d )
-		return;
-	
-	// disabled all debugger
-	foreach ( DebuggerPlugin* dp, plugins<DebuggerPlugin*>( PluginsManager::stAll ) )
-		dp->setEnabled( false );
-	
-	// enabled the one we choose
-	mDebugger = d;
-	if ( mDebugger )
-		mDebugger->setEnabled( true );
-}
-
-DebuggerPlugin* PluginsManager::currentDebugger()
-{ return mDebugger; }
-	
 void PluginsManager::manageRequested()
 { ( new UIPluginsSettings() )->show(); }
 
