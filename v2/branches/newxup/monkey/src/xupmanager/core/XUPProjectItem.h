@@ -150,7 +150,6 @@ public:
 	 * When project deselected - plugin will be disabled
 	 */
 	virtual QStringList autoActivatePlugins() const;
-	virtual BuilderPlugin* builder( const QString& plugin = QString() ) const;
 	virtual DebuggerPlugin* debugger( const QString& plugin = QString() ) const;
 
 	// add a pCommand in menu

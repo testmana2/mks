@@ -913,16 +913,6 @@ void pWorkspace::internal_currentProjectChanged( XUPProjectItem* currentProject,
 		}
 	}
 	
-	// get pluginsmanager
-	PluginsManager* pm = MonkeyCore::pluginsManager();
-	
-	// set debugger and interpreter
-	BuilderPlugin* bp = currentProject ? currentProject->builder() : 0;
-	DebuggerPlugin* dp = currentProject ? currentProject->debugger() : 0;
-	
-	pm->setCurrentBuilder( bp && !bp->neverEnable() ? bp : 0 );
-	pm->setCurrentDebugger( dp && !dp->neverEnable() ? dp : 0 );
-	
 	// install new commands
 	if ( currentProject )
 	{

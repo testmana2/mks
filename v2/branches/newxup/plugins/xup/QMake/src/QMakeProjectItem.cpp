@@ -624,32 +624,8 @@ QStringList QMakeProjectItem::autoActivatePlugins() const
 	}
 	
 	res << "BeaverDebugger";
-	res << "GNUMake";
 	
 	return res;
-}
-
-BuilderPlugin* QMakeProjectItem::builder( const QString& plugin ) const
-{
-	QString plug = plugin;
-	
-	if ( plug.isEmpty() )
-	{
-	}
-	
-	return XUPProjectItem::builder( plug );
-}
-
-DebuggerPlugin* QMakeProjectItem::debugger( const QString& plugin ) const
-{
-	QString plug = plugin;
-	
-	if ( plug.isEmpty() )
-	{
-		plug = "BeaverDebugger";
-	}
-	
-	return XUPProjectItem::debugger( plug );
 }
 
 void QMakeProjectItem::installCommands()
@@ -991,4 +967,23 @@ QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
 XUPPlugin* QMakeProjectItem::editorPlugin()
 {
 	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "QMake" ).value( 0 );
+}
+
+BuilderPlugin* QMakeProjectItem::builder() const
+{
+	QString name;
+	
+	QtVersionManager* manager = QMake::versionManager();
+	const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
+	if ( version.isValid() &&
+		 version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ))
+	{
+		name = "MSVCMake";
+	}
+	else
+	{
+		name = "GNUMake";
+	}
+	
+	return MonkeyCore::pluginsManager()->plugin<BuilderPlugin*>( PluginsManager::stAll, name );
 }

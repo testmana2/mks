@@ -83,19 +83,11 @@ public:
 	QMap<QString, QStringList> childSuffixes() const;
 	QString childFilters() const;
 	
-	void setCurrentBuilder( BuilderPlugin* );
-	BuilderPlugin* currentBuilder();
-	
-	void setCurrentDebugger( DebuggerPlugin* );
-	DebuggerPlugin* currentDebugger();
-	
 	inline PluginsMenu* menuHandler() const { return mMenuHandler; }
 	
 protected:
 	PluginsMenu* mMenuHandler;
 	QList<BasePlugin*> mPlugins;
-	BuilderPlugin* mBuilder;
-	DebuggerPlugin* mDebugger;
 
 	PluginsManager( QObject* = 0 );
 	bool addPlugin( QObject* );
