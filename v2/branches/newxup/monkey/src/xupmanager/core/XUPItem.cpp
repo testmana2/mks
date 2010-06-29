@@ -401,15 +401,21 @@ QString XUPItem::displayText() const
 
 QIcon XUPItem::displayIcon() const
 {
+	QString iconFileName;
+	if ( type() == XUPItem::Variable )
+		iconFileName = project()->variableDisplayIcon( attribute( "name" ) );
+	else
+		iconFileName = mDomElement.nodeName();
+	
 	QString path = project()->iconsPath();
-	QString fn = pIconManager::filePath( project()->iconFileName( this ), path );
+	QString fn = pIconManager::filePath( iconFileName, path );
 
 	if ( !QFile::exists( fn ) )
 	{
 		path = project()->projectInfos()->pixmapsPath( XUPProjectItem::XUPProject );
 	}
 
-	return pIconManager::icon( project()->iconFileName( this ), path );
+	return pIconManager::icon( iconFileName, path );
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const

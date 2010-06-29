@@ -41,8 +41,10 @@ protected:
 	BuilderPlugin* builder() const;
 	virtual StringStringListList sourceFileNamePatterns() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;
+	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
 	static QHash<QString, QString> mVariableLabels;
+	static QHash<QString, QString> mVariableIcons;
 };
 
 #endif // QMAKEPROJECTITEM_H

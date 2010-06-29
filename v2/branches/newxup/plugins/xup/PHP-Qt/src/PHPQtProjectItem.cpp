@@ -37,9 +37,6 @@ void PHPQtProjectItem::registerProjectType() const
 	const QStringList mPathVariables = QStringList();
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) );
-	const StringStringList mVariableIcons = StringStringList()
-		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
-		<< qMakePair( QString( "PHP_FILES" ), QString( "php" ) );
 
 	// register values
 	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
@@ -48,7 +45,6 @@ void PHPQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
 	mXUPProjectInfos->registerPathVariables( pType, mPathVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
-	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
 }
 
 XUPProjectItem* PHPQtProjectItem::newProject() const
@@ -171,4 +167,14 @@ QString PHPQtProjectItem::variableDisplayText( const QString& variableName ) con
 		return tr( "PHP files" );
 	else
 		return variableName;
+}
+
+QString PHPQtProjectItem::variableDisplayIcon( const QString& variableName ) const
+{
+	if ("FORMS" == variableName)
+		return "forms.png";
+	else if ("PHP_FILES" == variableName)
+		return "php.png";
+	else
+		return QString::null;
 }

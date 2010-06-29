@@ -30,6 +30,7 @@ protected:
 	InterpreterPlugin* interpreter() const;
 	virtual StringStringListList sourceFileNamePatterns() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;
+	virtual QString variableDisplayIcon( const QString& variableName ) const;
 };
 
 #endif // PHPQTPROJECTITEM_H

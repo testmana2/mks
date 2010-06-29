@@ -216,35 +216,17 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 	return projects.values();
 }
 
-QString XUPProjectItem::iconFileName( const XUPItem* item ) const
-{
-	int pType = projectType();
-	QString fn;
-
-	if ( item->type() == XUPItem::Variable )
-	{
-		fn = mXUPProjectInfos->iconName( pType, item->attribute( "name" ) );
-	}
-
-	if ( fn.isEmpty() )
-	{
-		fn = item->mDomElement.nodeName();
-	}
-
-	if ( !fn.isEmpty() )
-	{
-		fn.append( ".png" );
-	}
-
-	return fn;
-}
-
 QString XUPProjectItem::iconsPath() const
 {
 	return mXUPProjectInfos->iconsPath( projectType() );
 }
 
 QString XUPProjectItem::variableDisplayText( const QString& ) const
+{
+	return QString::null; //FIXME remove, make =0
+}
+
+QString XUPProjectItem::variableDisplayIcon( const QString& ) const
 {
 	return QString::null; //FIXME remove, make =0
 }
