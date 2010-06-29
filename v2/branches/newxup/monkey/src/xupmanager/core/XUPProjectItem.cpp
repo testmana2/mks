@@ -528,65 +528,8 @@ int XUPProjectItem::projectType() const
 	return XUPProjectItem::XUPProject;
 }
 
-QString XUPProjectItem::targetTypeString( XUPProjectItem::TargetType type ) const
-{
-	switch ( type )
-	{
-		case XUPProjectItem::DefaultTarget:
-			return QLatin1String( "TARGET_DEFAULT" );
-			break;
-		case XUPProjectItem::DebugTarget:
-			return QLatin1String( "TARGET_DEBUG" );
-			break;
-		case XUPProjectItem::ReleaseTarget:
-			return QLatin1String( "TARGET_RELEASE" );
-			break;
-	}
-	
-	Q_ASSERT( 0 );
-	return QString::null;
-}
-
-XUPProjectItem::TargetType XUPProjectItem::projectTargetType() const
-{
-	return (XUPProjectItem::TargetType)projectSettingsValue( "TARGET_TYPE", QString::number( XUPProjectItem::DefaultTarget ) ).toInt();
-}
-
 void XUPProjectItem::registerProjectType() const
-{
-	// get proejct type
-	int pType = projectType();
-
-	// register it
-	mXUPProjectInfos->unRegisterType( pType );
-	mXUPProjectInfos->registerType( pType, const_cast<XUPProjectItem*>( this ) );
-
-	// values
-	const QString mPixmapsPath = ":/items";
-	const QStringList mOperators = QStringList( "=" ) << "+=" << "-=" << "*=";
-	const QStringList mFilteredVariables = QStringList( "FILES" );
-	const QStringList mFileVariables = QStringList( "FILES" );
-	const StringStringListList mSuffixes = StringStringListList()
-		<< qMakePair( tr( "XUP Project" ), QStringList( "*.xup" ) )
-		<< qMakePair( tr( "XUP Include Project" ), QStringList( "*.xui" ) );
-	const StringStringList mVariableLabels = StringStringList()
-		<< qMakePair( QString( "FILES" ), tr( "Files" ) );
-	const StringStringList mVariableIcons = StringStringList()
-		<< qMakePair( QString( "FILES" ), QString( "files" ) );
-	const StringStringListList mSourceFileNamePatterns = StringStringListList()
-		<< qMakePair( QString( "FILES" ), QStringList( "*" ) );
-
-	// register values
-	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
-	mXUPProjectInfos->registerOperators( pType, mOperators );
-	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
-	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
-	mXUPProjectInfos->registerPathVariables( pType, mFileVariables );
-	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
-	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
-	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerSourceFileNamePatterns( pType, mSourceFileNamePatterns );
-}
+{}
 
 void XUPProjectItem::unRegisterProjectType() const
 {
@@ -873,11 +816,6 @@ QStringList XUPProjectItem::autoActivatePlugins() const
 	return QStringList();
 }
 
-DebuggerPlugin* XUPProjectItem::debugger( const QString& plugin ) const
-{
-	return MonkeyCore::pluginsManager()->plugin<DebuggerPlugin*>( PluginsManager::stAll, projectSettingsValue( "DEBUGGER", plugin ) );
-}
-
 void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
 {
 	if ( cmd.isValid() )
@@ -916,3 +854,34 @@ QString XUPProjectItem::codec() const
 
 void XUPProjectItem::addFiles( const QStringList&, XUPItem* ) //FIXME kill this method implementation, replace with =0 and make XUPProjectItem abstract class
 {};
+
+QString XUPProjectItem::sourceFileNameFilter() const
+{
+	const StringStringListList suffixes = sourceFileNamePatterns();
+	QStringList allSuffixesList;
+	QStringList suffixesList;
+	
+	foreach ( const PairStringStringList& pair, suffixes )
+	{
+		QString text = mXUPProjectInfos->displayText( projectType(), pair.first );
+		suffixesList << QString( "%1 (%2)" ).arg( text ).arg( pair.second.join( " " ) );
+		
+		foreach ( const QString& suffixe, pair.second )
+		{
+			if ( !allSuffixesList.contains( suffixe ) )
+			{
+				allSuffixesList << suffixe;
+			}
+		}
+	}
+	
+	suffixesList.prepend( tr( "All Files (*)" ) );
+	
+	if ( !allSuffixesList.isEmpty() )
+	{
+		suffixesList.prepend( tr( "All Supported Files (%2)" ).arg( allSuffixesList.join( " " ) ) );
+	}
+	
+	return suffixesList.join( ";;" );
+
+}

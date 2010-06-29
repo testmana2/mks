@@ -44,11 +44,6 @@ void PHPQtProjectItem::registerProjectType() const
 		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
 		<< qMakePair( QString( "PHP_FILES" ), QString( "php" ) );
 
-	// Variable suffixes
-	const StringStringListList mSourceFileNamePatterns = StringStringListList()
-		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "PHP files" ), QStringList( "*.php*" ) );
-
 	// register values
 	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
 	mXUPProjectInfos->registerOperators( pType, mOperators );
@@ -58,7 +53,6 @@ void PHPQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerSourceFileNamePatterns( pType, mSourceFileNamePatterns );
 }
 
 XUPProjectItem* PHPQtProjectItem::newProject() const
@@ -164,4 +158,11 @@ XUPPlugin* PHPQtProjectItem::editorPlugin()
 InterpreterPlugin* PHPQtProjectItem::interpreter() const
 {
 	return MonkeyCore::pluginsManager()->plugin<InterpreterPlugin*>( PluginsManager::stAll, "PHP" );
+}
+
+StringStringListList PHPQtProjectItem::sourceFileNamePatterns() const
+{
+	return StringStringListList()
+		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( QString( "PHP files" ), QStringList( "*.php*" ) );
 }
