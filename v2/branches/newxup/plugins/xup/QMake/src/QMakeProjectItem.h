@@ -3,6 +3,8 @@
 
 #include "XUPProjectItem.h"
 
+class BuilderPlugin;
+
 class QMakeProjectItem : public XUPProjectItem
 {
 	Q_OBJECT
@@ -37,6 +39,7 @@ public:
 protected:
 	bool handleSubdirs( XUPItem* subdirs );
 	BuilderPlugin* builder() const;
+	virtual StringStringListList sourceFileNamePatterns() const;
 };
 
 #endif // QMAKEPROJECTITEM_H

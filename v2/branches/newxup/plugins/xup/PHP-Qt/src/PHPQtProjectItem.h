@@ -3,6 +3,8 @@
 
 #include "XUPProjectItem.h"
 
+class InterpreterPlugin;
+
 class PHPQtProjectItem : public XUPProjectItem
 {
 	Q_OBJECT
@@ -26,6 +28,7 @@ public:
 	
 protected:
 	InterpreterPlugin* interpreter() const;
+	virtual StringStringListList sourceFileNamePatterns() const;
 };
 
 #endif // PHPQTPROJECTITEM_H

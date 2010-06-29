@@ -10,9 +10,6 @@
 #include "XUPProjectItemInfos.h"
 #include "pCommand.h"
 
-class BuilderPlugin;
-class DebuggerPlugin;
-class InterpreterPlugin;
 class XUPPlugin;
 
 typedef QList<class XUPProjectItem*> XUPProjectItemList;
@@ -116,10 +113,6 @@ public:
 	
 	// return the project type id
 	virtual int projectType() const;
-	// return the textual representation key for target type
-	virtual QString targetTypeString( XUPProjectItem::TargetType type ) const;
-	// return the current project target type
-	virtual XUPProjectItem::TargetType projectTargetType() const;
 	// register the project type
 	virtual void registerProjectType() const;
 	// unregister the project type
@@ -150,7 +143,6 @@ public:
 	 * When project deselected - plugin will be disabled
 	 */
 	virtual QStringList autoActivatePlugins() const;
-	virtual DebuggerPlugin* debugger( const QString& plugin = QString() ) const;
 
 	// add a pCommand in menu
 	virtual void addCommand( pCommand& cmd, const QString& mnu );
@@ -163,9 +155,19 @@ public:
 	
 	/* TODO make method =0 */
 	virtual XUPPlugin* editorPlugin() {return NULL;};
+	
+	// return a files filter for variables base on files
+	QString sourceFileNameFilter() const;
+	
 public slots:
 
 protected:
+	/* Source file name patterns is list of string pairs. ExamplesPath
+		("Python file", "*.py") ("Forms file", "*.ui")
+	   This info used for build file name filter for "Add files to the project" dialog (XUPProjectItem::sourceFileNameFilter())
+	 */
+	virtual StringStringListList sourceFileNamePatterns() const { return StringStringListList(); }; // FIXME = 0 
+	
 	QDomDocument mDocument;
 	pCommandMap mCommands;
 	static XUPProjectItemInfos* mXUPProjectInfos;

@@ -104,46 +104,6 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( QString( "LIBS" ), QString( "libs" ) )
 		<< qMakePair( QString( "DEFINES" ), QString( "defines" ) )
 		<< qMakePair( QString( "OTHER_FILES" ), QString( "file" ) );
-	const QStringList cf = pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
-	// HEADERS filters
-	QStringList hf;
-	foreach ( QString f, cf )
-		if ( f.startsWith( "*.h", Qt::CaseInsensitive ) )
-			hf << f;
-	// SOURCES filters
-	QStringList sf;
-	foreach ( QString f, cf )
-		if ( f.startsWith( "*.c", Qt::CaseInsensitive ) )
-			sf << f;
-	// YACC filters
-	QStringList yf;
-	foreach ( QString s, sf )
-		if ( !yf.contains( s.replace( "c", "y", Qt::CaseInsensitive ) ) )
-			yf << s;
-	// LEX filters
-	QStringList lf;
-	foreach ( QString s, sf )
-		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !lf.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
-			lf << s;
-	// PROJECT filters
-	QStringList pjf;
-	foreach ( const PairStringStringList& p, mSuffixes )
-		pjf << p.second;
-	// Variable suffixes
-	const StringStringListList mSourceFileNamePatterns = StringStringListList()
-		<< qMakePair( QString( "Headers" ), hf )
-		<< qMakePair( QString( "Sources" ), sf )
-		<< qMakePair( QString( "YACC sources" ), yf )
-		<< qMakePair( QString( "LEX sources" ), lf )
-		<< qMakePair( QString( "Objective sources" ), QStringList( "*.m" ) << "*.mm" )
-		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "Qt3 Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "Translations" ), QStringList( "*.ts" ) )
-		<< qMakePair( QString( "Resources" ), QStringList( "*.qrc" ) )
-		<< qMakePair( QString( "Definition files" ), QStringList( "*.def" ) )
-		<< qMakePair( QString( "Resources files" ), QStringList( "*.rc" ) )
-		<< qMakePair( QString( "Compiled resources files" ), QStringList( "*.res" ) )
-		<< qMakePair( QString( "Projects" ), QStringList( "*.pro" ) );
 	
 	// register values
 	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
@@ -154,7 +114,6 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerSourceFileNamePatterns( pType, mSourceFileNamePatterns );
 }
 
 bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
@@ -455,13 +414,22 @@ bool QMakeProjectItem::save()
 
 QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType targetType)
 {
-/* for PasNox: It is not general assertion, that target file path stored in the settings.
-	Some project can generally don't hsve target, some - compute it dynamically. 
-	For some project target is not platform depentent
-	Using platformTypeString_targetTypeString is QMake specific
-*/
+	QString targetTypeString;
+	
+	switch ( targetType )
+	{
+		case XUPProjectItem::DefaultTarget:
+			targetTypeString = QLatin1String( "TARGET_DEFAULT" );
+			break;
+		case XUPProjectItem::DebugTarget:
+			targetTypeString = QLatin1String( "TARGET_DEBUG" );
+			break;
+		case XUPProjectItem::ReleaseTarget:
+			targetTypeString = QLatin1String( "TARGET_RELEASE" );
+			break;
+	}
+
 	XUPProjectItem* tlProject = topLevelProject();
-	const QString targetTypeString = this->targetTypeString( targetType );
 	const QString key = QString( "%1_%2" ).arg( PLATFORM_TYPE_STRING ).arg( targetTypeString );
 	QString target = tlProject->filePath( projectSettingsValue( key ) );
 	QFileInfo targetInfo( target );
@@ -986,4 +954,54 @@ BuilderPlugin* QMakeProjectItem::builder() const
 	}
 	
 	return MonkeyCore::pluginsManager()->plugin<BuilderPlugin*>( PluginsManager::stAll, name );
+}
+
+StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
+{
+	const StringStringListList mSuffixes = StringStringListList()
+		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
+		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
+
+	const QStringList cf = pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
+	// HEADERS filters
+	QStringList hf;
+	foreach ( QString f, cf )
+		if ( f.startsWith( "*.h", Qt::CaseInsensitive ) )
+			hf << f;
+	// SOURCES filters
+	QStringList sf;
+	foreach ( QString f, cf )
+		if ( f.startsWith( "*.c", Qt::CaseInsensitive ) )
+			sf << f;
+	// YACC filters
+	QStringList yf;
+	foreach ( QString s, sf )
+		if ( !yf.contains( s.replace( "c", "y", Qt::CaseInsensitive ) ) )
+			yf << s;
+	// LEX filters
+	QStringList lf;
+	foreach ( QString s, sf )
+		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !lf.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
+			lf << s;
+	// PROJECT filters
+	QStringList pjf;
+	foreach ( const PairStringStringList& p, mSuffixes )
+		pjf << p.second;
+	// Variable suffixes
+	const StringStringListList sourceFileNamePatterns = StringStringListList()
+		<< qMakePair( QString( "Headers" ), hf )
+		<< qMakePair( QString( "Sources" ), sf )
+		<< qMakePair( QString( "YACC sources" ), yf )
+		<< qMakePair( QString( "LEX sources" ), lf )
+		<< qMakePair( QString( "Objective sources" ), QStringList( "*.m" ) << "*.mm" )
+		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( QString( "Qt3 Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( QString( "Translations" ), QStringList( "*.ts" ) )
+		<< qMakePair( QString( "Resources" ), QStringList( "*.qrc" ) )
+		<< qMakePair( QString( "Definition files" ), QStringList( "*.def" ) )
+		<< qMakePair( QString( "Resources files" ), QStringList( "*.rc" ) )
+		<< qMakePair( QString( "Compiled resources files" ), QStringList( "*.res" ) )
+		<< qMakePair( QString( "Projects" ), QStringList( "*.pro" ) );
+	
+	return sourceFileNamePatterns;
 }

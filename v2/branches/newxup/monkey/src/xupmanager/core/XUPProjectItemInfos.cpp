@@ -32,7 +32,6 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 	mSuffixes.remove( projectType );
 	mVariableLabels.remove( projectType );
 	mVariableIcons.remove( projectType );
-	mSourceFileNamePatterns.remove( projectType );
 }
 
 XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) const
@@ -207,41 +206,6 @@ QString XUPProjectItemInfos::iconsPath( int projectType ) const
 	}
 	
 	return path;
-}
-
-void XUPProjectItemInfos::registerSourceFileNamePatterns( int projectType, const StringStringListList& suffixes )
-{
-	mSourceFileNamePatterns[ projectType ] = suffixes;
-}
-
-QString XUPProjectItemInfos::sourceFileNameFilter( int projectType ) const
-{
-	const StringStringListList suffixes = mSourceFileNamePatterns[ projectType ];
-	QStringList allSuffixesList;
-	QStringList suffixesList;
-	
-	foreach ( const PairStringStringList& pair, suffixes )
-	{
-		QString text = displayText( projectType, pair.first );
-		suffixesList << QString( "%1 (%2)" ).arg( text ).arg( pair.second.join( " " ) );
-		
-		foreach ( const QString& suffixe, pair.second )
-		{
-			if ( !allSuffixesList.contains( suffixe ) )
-			{
-				allSuffixesList << suffixe;
-			}
-		}
-	}
-	
-	suffixesList.prepend( tr( "All Files (*)" ) );
-	
-	if ( !allSuffixesList.isEmpty() )
-	{
-		suffixesList.prepend( tr( "All Supported Files (%2)" ).arg( allSuffixesList.join( " " ) ) );
-	}
-	
-	return suffixesList.join( ";;" );
 }
 
 QStringList XUPProjectItemInfos::knowVariables( int projectType ) const

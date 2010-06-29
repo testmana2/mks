@@ -44,11 +44,6 @@ void PyQtProjectItem::registerProjectType() const
 		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
 		<< qMakePair( QString( "PYTHON_FILES" ), QString( "python" ) );
 
-	// Variable suffixes
-	const StringStringListList mSourceFileNamePatterns = StringStringListList()
-		<< qMakePair( QString( "Qt Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "Python files" ), QStringList( "*.py*" ) );
-
 	// register values
 	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
 	mXUPProjectInfos->registerOperators( pType, mOperators );
@@ -58,7 +53,6 @@ void PyQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
-	mXUPProjectInfos->registerSourceFileNamePatterns( pType, mSourceFileNamePatterns );
 }
 
 XUPProjectItem* PyQtProjectItem::newProject() const
@@ -164,4 +158,11 @@ XUPPlugin* PyQtProjectItem::editorPlugin()
 InterpreterPlugin* PyQtProjectItem::interpreter() const
 {
 	return MonkeyCore::pluginsManager()->plugin<InterpreterPlugin*>( PluginsManager::stAll, "Python" );
+}
+
+StringStringListList PyQtProjectItem::sourceFileNamePatterns() const
+{
+	return StringStringListList()
+		<< qMakePair( QString( "Qt Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( QString( "Python files" ), QStringList( "*.py*" ) );
 }

@@ -91,13 +91,6 @@ public:
 	QIcon displayIcon( int projectType, const QString& variableName ) const;
 	// return the icons path for proejct type
 	QString iconsPath( int projectType ) const;
-	/* Source file name patterns is list of string pairs. ExamplesPath
-		("Python file", "*.py") ("Forms file", "*.ui")
-	   This info used for build file name filter for "Add files to the project" dialog
-	 */
-	void registerSourceFileNamePatterns( int projectType, const StringStringListList& suffixes );
-	// return a files filter for variables base on files
-	QString sourceFileNameFilter( int projectType ) const;
 	// return a list of all know variable for this kind of project
 	QStringList knowVariables( int projectType ) const;
 	
@@ -111,7 +104,6 @@ protected:
 	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
 	QMap<int, StringStringList> mVariableLabels; // project type, variable name, label
 	QMap<int, StringStringList> mVariableIcons; // project type, variable name, icon
-	QMap<int, StringStringListList> mSourceFileNamePatterns; // project type, file based variable name, suffixes
 };
 
 #endif // XUPPROJECTITEMINFOS_H

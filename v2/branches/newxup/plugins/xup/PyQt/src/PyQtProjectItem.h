@@ -3,6 +3,8 @@
 
 #include "XUPProjectItem.h"
 
+class InterpreterPlugin;
+
 class PyQtProjectItem : public XUPProjectItem
 {
 	Q_OBJECT
@@ -25,6 +27,7 @@ public:
 	
 protected:
 	InterpreterPlugin* interpreter() const;
+	virtual StringStringListList sourceFileNamePatterns() const;
 };
 
 #endif // PYQTPROJECTITEM_H
