@@ -31,6 +31,7 @@
 #endif
 
 QHash<QString, QString> QMakeProjectItem::mVariableLabels;
+QHash<QString, QString> QMakeProjectItem::mVariableIcons;
 
 QMakeProjectItem::QMakeProjectItem()
 	: XUPProjectItem()
@@ -64,9 +65,26 @@ void QMakeProjectItem::registerProjectType() const
 	mVariableLabels["VPATH"] = tr( "Virtuals Paths" );
 	mVariableLabels["LIBS"] = tr( "Libraries Files" );
 	mVariableLabels["DEFINES"] = tr( "Defines" );
-	mVariableLabels["OTHER_FILES"] = tr( "Other Files" );;
+	mVariableLabels["OTHER_FILES"] = tr( "Other Files" );
 
-
+	mVariableIcons["FORMS"] = tr( "forms.png" );
+	mVariableIcons["FORMS3"] = tr( "forms.png" );
+	mVariableIcons["HEADERS"] = tr( "headers.png" );
+	mVariableIcons["SOURCES"] = tr( "sources.png" );
+	mVariableIcons["OBJECTIVE_SOURCES"] = tr( "objective_sources.png" );
+	mVariableIcons["TRANSLATIONS"] = tr( "translations.png" );
+	mVariableIcons["RESOURCES"] = tr( "resources.png" );
+	mVariableIcons["RC_FILE"] = tr( "rc_file.png" );
+	mVariableIcons["RES_FILE"] = tr( "res_file.png" );
+	mVariableIcons["DEF_FILE"] = tr( "def_file.png" );
+	mVariableIcons["SUBDIRS"] = tr( "project.png" );
+	mVariableIcons["INCLUDEPATH"] = tr( "includepath.png" );
+	mVariableIcons["DEPENDPATH"] = tr( "dependpath.png" );
+	mVariableIcons["VPATH"] = tr( "vpath.png" );
+	mVariableIcons["LIBS"] = tr( "libs.png" );
+	mVariableIcons["DEFINES"] = tr( "defines.png" );
+	mVariableIcons["OTHER_FILES"] = tr( "file.png" );
+	
 	// get proejct type
 	int pType = projectType();
 	
@@ -89,24 +107,6 @@ void QMakeProjectItem::registerProjectType() const
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
-	const StringStringList mVariableIcons = StringStringList()
-		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
-		<< qMakePair( QString( "FORMS3" ), QString( "forms" ) )
-		<< qMakePair( QString( "HEADERS" ), QString( "headers" ) )
-		<< qMakePair( QString( "SOURCES" ), QString( "sources" ) )
-		<< qMakePair( QString( "OBJECTIVE_SOURCES" ), QString( "objective_sources" ) )
-		<< qMakePair( QString( "TRANSLATIONS" ), QString( "translations" ) )
-		<< qMakePair( QString( "RESOURCES" ), QString( "resources" ) )
-		<< qMakePair( QString( "RC_FILE" ), QString( "rc_file" ) )
-		<< qMakePair( QString( "RES_FILE" ), QString( "res_file" ) )
-		<< qMakePair( QString( "DEF_FILE" ), QString( "def_file" ) )
-		<< qMakePair( QString( "SUBDIRS" ), QString( "project" ) )
-		<< qMakePair( QString( "INCLUDEPATH" ), QString( "includepath" ) )
-		<< qMakePair( QString( "DEPENDPATH" ), QString( "dependpath" ) )
-		<< qMakePair( QString( "VPATH" ), QString( "vpath" ) )
-		<< qMakePair( QString( "LIBS" ), QString( "libs" ) )
-		<< qMakePair( QString( "DEFINES" ), QString( "defines" ) )
-		<< qMakePair( QString( "OTHER_FILES" ), QString( "file" ) );
 	
 	// register values
 	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
@@ -115,7 +115,6 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
 	mXUPProjectInfos->registerPathVariables( pType, mPathVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
-	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
 }
 
 bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
@@ -1011,4 +1010,9 @@ StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
 QString QMakeProjectItem::variableDisplayText( const QString& variableName ) const
 {
 	return mVariableLabels.value(variableName, variableName);
+}
+
+QString QMakeProjectItem::variableDisplayIcon( const QString& variableName ) const
+{
+	return mVariableIcons.value(variableName, variableName);
 }

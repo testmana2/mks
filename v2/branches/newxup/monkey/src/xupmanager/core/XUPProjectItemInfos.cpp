@@ -30,7 +30,6 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 	mFileVariables.remove( projectType );
 	mPathVariables.remove( projectType );
 	mSuffixes.remove( projectType );
-	mVariableIcons.remove( projectType );
 }
 
 XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) const
@@ -99,16 +98,6 @@ StringStringListList XUPProjectItemInfos::suffixes( int projectType ) const
 	return mSuffixes.value( projectType );
 }
 
-void XUPProjectItemInfos::registerVariableIcons( int projectType, const StringStringList& icons )
-{
-	mVariableIcons[ projectType ] = icons;
-}
-
-StringStringList XUPProjectItemInfos::variableIcons( int projectType ) const
-{
-	return mVariableIcons.value( projectType );
-}
-
 QString XUPProjectItemInfos::projectsFilter() const
 {
 	QStringList suffixes;
@@ -149,32 +138,6 @@ bool XUPProjectItemInfos::isPathBased( int projectType, const QString& variableN
 	return mPathVariables.value( projectType ).contains( variableName );
 }
 
-QString XUPProjectItemInfos::iconName( int projectType, const QString& variableName ) const
-{
-	foreach ( const PairStringString& pair, mVariableIcons.value( projectType ) )
-	{
-		if ( pair.first == variableName )
-			return pair.second;
-	}
-	return QString::null;
-}
-
-QIcon XUPProjectItemInfos::displayIcon( int projectType, const QString& variableName ) const
-{
-	QIcon icon;
-	QString path = iconsPath( projectType );
-	QString fn = pIconManager::filePath( iconName( projectType, variableName ).append( ".png" ), path );
-	
-	if ( !QFile::exists( fn ) )
-	{
-		path = pixmapsPath( XUPProjectItem::XUPProject );
-	}
-	
-	icon = pIconManager::icon( iconName( projectType, variableName ).append( ".png" ), path );
-	
-	return icon;
-}
-
 QString XUPProjectItemInfos::iconsPath( int projectType ) const
 {
 	QString path = pixmapsPath( projectType );
@@ -212,14 +175,6 @@ QStringList XUPProjectItemInfos::knowVariables( int projectType ) const
 		if ( !variables.contains( variable ) )
 		{
 			variables << variable;
-		}
-	}
-	
-	foreach ( const PairStringString& pair, mVariableIcons.value( projectType ) )
-	{
-		if ( !variables.contains( pair.first ) )
-		{
-			variables << pair.first;
 		}
 	}
 	

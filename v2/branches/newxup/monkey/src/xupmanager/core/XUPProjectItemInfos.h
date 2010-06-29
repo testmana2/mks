@@ -65,11 +65,6 @@ public:
 	// return the project type suffixes
 	StringStringListList suffixes( int projectType ) const;
 	
-	// register the variable icons for project type
-	void registerVariableIcons( int projectType, const StringStringList& icons );
-	// return the variable icons for project type
-	StringStringList variableIcons( int projectType ) const;
-		
 	// return a filter of all project type suffixes: ie. for giving it to open/save file dialog
 	QString projectsFilter() const;
 	// return the project type to use for opening the filename project or -1 if no project type can handle the suffixe
@@ -78,10 +73,6 @@ public:
 	bool isFileBased( int projectType, const QString& variableName ) const;
 	// return true if variable name is variable wich values are paths
 	bool isPathBased( int projectType, const QString& variableName ) const;
-	// return the icon name for a variable name or QString::null
-	QString iconName( int projectType, const QString& variableName ) const;
-	// return the disply icon for a variable name
-	QIcon displayIcon( int projectType, const QString& variableName ) const;
 	// return the icons path for proejct type
 	QString iconsPath( int projectType ) const;
 	// return a list of all know variable for this kind of project
@@ -95,7 +86,6 @@ protected:
 	QMap<int, QStringList> mFileVariables; // project type, filename based variable name
 	QMap<int, QStringList> mPathVariables; // project type, pathname based variable name
 	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
-	QMap<int, StringStringList> mVariableIcons; // project type, variable name, icon
 };
 
 #endif // XUPPROJECTITEMINFOS_H

@@ -67,13 +67,13 @@ public:
 	// return children project recursively according to bool
 	XUPProjectItemList childrenProjects( bool recursive ) const;
 	
-	// return icon filename for item
-	QString iconFileName( const XUPItem* item ) const;
 	// return the project icons path
 	QString iconsPath() const;
 	
 	// return the display text of a project variable name
 	virtual QString variableDisplayText( const QString& variableName ) const;
+	// return the display icon name of a project variable name. Used by XUPItem::displayIcon()
+	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
 	// TODO remove 2 methods? Use methods of item?
 	// return the display text for the project item
@@ -160,7 +160,6 @@ public:
 	   Filter is suitable for QFileDialog
 	 */
 	QString sourceFileNameFilter() const;
-	virtual QString displayTextForVariable(QString /*variableName*/) const { return QString::null; }; // FIXME replace with =0
 	
 public slots:
 
