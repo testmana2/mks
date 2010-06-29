@@ -37,9 +37,6 @@ void PyQtProjectItem::registerProjectType() const
 	const QStringList mPathVariables = QStringList();
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) );
-	const StringStringList mVariableLabels = StringStringList()
-		<< qMakePair( QString( "FORMS" ), tr( "Qt Forms" ) )
-		<< qMakePair( QString( "PYTHON_FILES" ), tr( "Python Files" ) );
 	const StringStringList mVariableIcons = StringStringList()
 		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
 		<< qMakePair( QString( "PYTHON_FILES" ), QString( "python" ) );
@@ -51,7 +48,6 @@ void PyQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
 	mXUPProjectInfos->registerPathVariables( pType, mPathVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
-	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
 }
 
@@ -165,4 +161,14 @@ StringStringListList PyQtProjectItem::sourceFileNamePatterns() const
 	return StringStringListList()
 		<< qMakePair( QString( "Qt Forms" ), QStringList( "*.ui" ) )
 		<< qMakePair( QString( "Python files" ), QStringList( "*.py*" ) );
+}
+
+QString PyQtProjectItem::variableDisplayText( const QString& variableName ) const
+{
+	if ("FORMS" == variableName)
+		return tr( "Qt Forms" );
+	else if ("PYTHON_FILES" == variableName)
+		return tr( "Python files" );
+	else
+		return variableName;
 }

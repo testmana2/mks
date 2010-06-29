@@ -30,7 +30,6 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 	mFileVariables.remove( projectType );
 	mPathVariables.remove( projectType );
 	mSuffixes.remove( projectType );
-	mVariableLabels.remove( projectType );
 	mVariableIcons.remove( projectType );
 }
 
@@ -100,16 +99,6 @@ StringStringListList XUPProjectItemInfos::suffixes( int projectType ) const
 	return mSuffixes.value( projectType );
 }
 
-void XUPProjectItemInfos::registerVariableLabels( int projectType, const StringStringList& labels )
-{
-	mVariableLabels[ projectType ] = labels;
-}
-
-StringStringList XUPProjectItemInfos::variableLabels( int projectType ) const
-{
-	return mVariableLabels.value( projectType );
-}
-
 void XUPProjectItemInfos::registerVariableIcons( int projectType, const StringStringList& icons )
 {
 	mVariableIcons[ projectType ] = icons;
@@ -170,16 +159,6 @@ QString XUPProjectItemInfos::iconName( int projectType, const QString& variableN
 	return QString::null;
 }
 
-QString XUPProjectItemInfos::displayText( int projectType, const QString& variableName ) const
-{
-	foreach ( const PairStringString& pair, mVariableLabels.value( projectType ) )
-	{
-		if ( pair.first == variableName )
-			return pair.second;
-	}
-	return variableName;
-}
-
 QIcon XUPProjectItemInfos::displayIcon( int projectType, const QString& variableName ) const
 {
 	QIcon icon;
@@ -233,14 +212,6 @@ QStringList XUPProjectItemInfos::knowVariables( int projectType ) const
 		if ( !variables.contains( variable ) )
 		{
 			variables << variable;
-		}
-	}
-	
-	foreach ( const PairStringString& pair, mVariableLabels.value( projectType ) )
-	{
-		if ( !variables.contains( pair.first ) )
-		{
-			variables << pair.first;
 		}
 	}
 	

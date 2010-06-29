@@ -65,11 +65,6 @@ public:
 	// return the project type suffixes
 	StringStringListList suffixes( int projectType ) const;
 	
-	// register the project type variable labels: ie. the text shown for some variable in item view
-	void registerVariableLabels( int projectType, const StringStringList& labels );
-	// return the project type variable labels
-	StringStringList variableLabels( int projectType ) const;
-	
 	// register the variable icons for project type
 	void registerVariableIcons( int projectType, const StringStringList& icons );
 	// return the variable icons for project type
@@ -85,8 +80,6 @@ public:
 	bool isPathBased( int projectType, const QString& variableName ) const;
 	// return the icon name for a variable name or QString::null
 	QString iconName( int projectType, const QString& variableName ) const;
-	// return the display text for a variable name or itself if no match found
-	QString displayText( int projectType, const QString& variableName ) const;
 	// return the disply icon for a variable name
 	QIcon displayIcon( int projectType, const QString& variableName ) const;
 	// return the icons path for proejct type
@@ -102,7 +95,6 @@ protected:
 	QMap<int, QStringList> mFileVariables; // project type, filename based variable name
 	QMap<int, QStringList> mPathVariables; // project type, pathname based variable name
 	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
-	QMap<int, StringStringList> mVariableLabels; // project type, variable name, label
 	QMap<int, StringStringList> mVariableIcons; // project type, variable name, icon
 };
 
