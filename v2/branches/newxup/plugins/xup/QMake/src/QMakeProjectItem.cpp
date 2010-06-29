@@ -30,6 +30,8 @@
 	#define PLATFORM_TYPE_STRING "OTHERS_PLATFORM"
 #endif
 
+QHash<QString, QString> QMakeProjectItem::mVariableLabels;
+
 QMakeProjectItem::QMakeProjectItem()
 	: XUPProjectItem()
 {
@@ -46,6 +48,25 @@ QString QMakeProjectItem::toString() const
 
 void QMakeProjectItem::registerProjectType() const
 {
+	mVariableLabels["FORMS"] = tr( "Forms Files" );
+	mVariableLabels["FORMS3"] = tr( "Forms 3 Files" );
+	mVariableLabels["HEADERS"] = tr( "Headers Files" );
+	mVariableLabels["SOURCES"] = tr( "Sources Files" );
+	mVariableLabels["OBJECTIVE_SOURCES"] = tr( "Objective Sources Files" );
+	mVariableLabels["TRANSLATIONS"] = tr( "Qt Translations Files" );
+	mVariableLabels["RESOURCES"] = tr( "Qt Resources Files" );
+	mVariableLabels["RC_FILE"] = tr( "Resources Files" );
+	mVariableLabels["RES_FILE"] = tr( "Compiled Resources Files" );
+	mVariableLabels["DEF_FILE"] = tr( "Definitions Files" );
+	mVariableLabels["SUBDIRS"] = tr( "Sub Projects" );
+	mVariableLabels["INCLUDEPATH"] = tr( "Includes Paths" );
+	mVariableLabels["DEPENDPATH"] = tr( "Depends Paths" );
+	mVariableLabels["VPATH"] = tr( "Virtuals Paths" );
+	mVariableLabels["LIBS"] = tr( "Libraries Files" );
+	mVariableLabels["DEFINES"] = tr( "Defines" );
+	mVariableLabels["OTHER_FILES"] = tr( "Other Files" );;
+
+
 	// get proejct type
 	int pType = projectType();
 	
@@ -68,24 +89,6 @@ void QMakeProjectItem::registerProjectType() const
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
-	const StringStringList mVariableLabels = StringStringList()
-		<< qMakePair( QString( "FORMS" ), tr( "Forms Files" ) )
-		<< qMakePair( QString( "FORMS3" ), tr( "Forms 3 Files" ) )
-		<< qMakePair( QString( "HEADERS" ), tr( "Headers Files" ) )
-		<< qMakePair( QString( "SOURCES" ), tr( "Sources Files" ) )
-		<< qMakePair( QString( "OBJECTIVE_SOURCES" ), tr( "Objective Sources Files" ) )
-		<< qMakePair( QString( "TRANSLATIONS" ), tr( "Qt Translations Files" ) )
-		<< qMakePair( QString( "RESOURCES" ), tr( "Qt Resources Files" ) )
-		<< qMakePair( QString( "RC_FILE" ), tr( "Resources Files" ) )
-		<< qMakePair( QString( "RES_FILE" ), tr( "Compiled Resources Files" ) )
-		<< qMakePair( QString( "DEF_FILE" ), tr( "Definitions Files" ) )
-		<< qMakePair( QString( "SUBDIRS" ), tr( "Sub Projects" ) )
-		<< qMakePair( QString( "INCLUDEPATH" ), tr( "Includes Paths" ) )
-		<< qMakePair( QString( "DEPENDPATH" ), tr( "Depends Paths" ) )
-		<< qMakePair( QString( "VPATH" ), tr( "Virtuals Paths" ) )
-		<< qMakePair( QString( "LIBS" ), tr( "Libraries Files" ) )
-		<< qMakePair( QString( "DEFINES" ), tr( "Defines" ) )
-		<< qMakePair( QString( "OTHER_FILES" ), tr( "Other Files" ) );
 	const StringStringList mVariableIcons = StringStringList()
 		<< qMakePair( QString( "FORMS" ), QString( "forms" ) )
 		<< qMakePair( QString( "FORMS3" ), QString( "forms" ) )
@@ -112,7 +115,6 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
 	mXUPProjectInfos->registerPathVariables( pType, mPathVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
-	mXUPProjectInfos->registerVariableLabels( pType, mVariableLabels );
 	mXUPProjectInfos->registerVariableIcons( pType, mVariableIcons );
 }
 
@@ -1004,4 +1006,9 @@ StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
 		<< qMakePair( QString( "Projects" ), QStringList( "*.pro" ) );
 	
 	return sourceFileNamePatterns;
+}
+
+QString QMakeProjectItem::variableDisplayText( const QString& variableName ) const
+{
+	return mVariableLabels.value(variableName, variableName);
 }

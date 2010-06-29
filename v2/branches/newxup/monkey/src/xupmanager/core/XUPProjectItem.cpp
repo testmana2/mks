@@ -244,9 +244,9 @@ QString XUPProjectItem::iconsPath() const
 	return mXUPProjectInfos->iconsPath( projectType() );
 }
 
-QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
+QString XUPProjectItem::variableDisplayText( const QString& ) const
 {
-	return mXUPProjectInfos->displayText( projectType(), variableName );
+	return QString::null; //FIXME remove, make =0
 }
 
 QString XUPProjectItem::itemDisplayText( XUPItem* item )
@@ -863,7 +863,7 @@ QString XUPProjectItem::sourceFileNameFilter() const
 	
 	foreach ( const PairStringStringList& pair, suffixes )
 	{
-		QString text = mXUPProjectInfos->displayText( projectType(), pair.first );
+		QString text = variableDisplayText( pair.first );
 		suffixesList << QString( "%1 (%2)" ).arg( text ).arg( pair.second.join( " " ) );
 		
 		foreach ( const QString& suffixe, pair.second )

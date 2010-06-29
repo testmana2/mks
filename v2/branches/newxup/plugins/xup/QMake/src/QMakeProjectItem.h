@@ -40,6 +40,9 @@ protected:
 	bool handleSubdirs( XUPItem* subdirs );
 	BuilderPlugin* builder() const;
 	virtual StringStringListList sourceFileNamePatterns() const;
+	virtual QString variableDisplayText( const QString& variableName ) const;
+	
+	static QHash<QString, QString> mVariableLabels;
 };
 
 #endif // QMAKEPROJECTITEM_H
