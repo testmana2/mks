@@ -218,7 +218,7 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 
 QString XUPProjectItem::iconsPath() const
 {
-	return mXUPProjectInfos->iconsPath( projectType() );
+	return QString::null; //FIXME remove, make =0
 }
 
 QString XUPProjectItem::variableDisplayText( const QString& ) const
