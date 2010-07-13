@@ -407,15 +407,7 @@ QIcon XUPItem::displayIcon() const
 	else
 		iconFileName = mDomElement.nodeName();
 	
-	QString path = project()->iconsPath();
-	QString fn = pIconManager::filePath( iconFileName, path );
-
-	if ( !QFile::exists( fn ) )
-	{
-		path = project()->projectInfos()->pixmapsPath( XUPProjectItem::XUPProject );
-	}
-
-	return pIconManager::icon( iconFileName, path );
+	return pIconManager::icon( iconFileName, project()->iconsPath() );
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const

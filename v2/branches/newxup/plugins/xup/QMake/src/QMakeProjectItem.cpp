@@ -93,7 +93,6 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<QMakeProjectItem*>( this ) );
 		
 	// values
-	const QString mPixmapsPath = ":/qmakeitems";
 	const QStringList mOperators = QStringList( "=" ) << "+=" << "-=" << "*=" << "~=";
 	const QStringList mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
 		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
@@ -109,7 +108,6 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
 	
 	// register values
-	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );

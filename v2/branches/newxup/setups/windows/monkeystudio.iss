@@ -66,7 +66,7 @@ Source: {#QT_PATH}\doc\qch\*.qch; DestDir: {app}\qt\doc\qch; Flags: promptifolde
 Source: {#QT_PATH}\plugins\*.dll; DestDir: {app}\qt\plugins; Flags: promptifolder recursesubdirs; Excludes: *d4.dll
 Source: {#QT_PATH}\translations\*.*; DestDir: {app}\qt\translations; Flags: promptifolder recursesubdirs; Excludes: *.pri README
 ; MinGW related files
-Source: D:\pasnox\Disk Wine\windows\system32\mingwm10.dll; DestDir: {app}; Flags: confirmoverwrite promptifolder
+;Source: D:\pasnox\Disk Wine\windows\system32\mingwm10.dll; DestDir: {app}; Flags: confirmoverwrite promptifolder
 
 [Icons]
 Name: {group}\{cm:MKS_NAME}; Filename: {app}\monkeystudio.exe; WorkingDir: {app}; IconFilename: {app}\monkeystudio.exe; IconIndex: 0

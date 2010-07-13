@@ -24,7 +24,6 @@ void XUPProjectItemInfos::registerType( int projectType, XUPProjectItem* project
 void XUPProjectItemInfos::unRegisterType( int projectType )
 {
 	delete mRegisteredProjectItems.take( projectType );
-	mPixmapsPath.remove( projectType );
 	mOperators.remove( projectType );
 	mFilteredVariables.remove( projectType );
 	mFileVariables.remove( projectType );
@@ -36,16 +35,6 @@ XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) c
 {
 	int projectType = projectTypeForFileName( fileName );
 	return projectType == XUPProjectItem::InvalidProject ? 0 : mRegisteredProjectItems[ projectType ]->newProject();
-}
-
-void XUPProjectItemInfos::registerPixmapsPath( int projectType, const QString& path )
-{
-	mPixmapsPath[ projectType ] = path;
-}
-
-QString XUPProjectItemInfos::pixmapsPath( int projectType ) const
-{
-	return mPixmapsPath.value( projectType );
 }
 
 void XUPProjectItemInfos::registerOperators( int projectType, const QStringList& operators )
@@ -136,18 +125,6 @@ bool XUPProjectItemInfos::isFileBased( int projectType, const QString& variableN
 bool XUPProjectItemInfos::isPathBased( int projectType, const QString& variableName ) const
 {
 	return mPathVariables.value( projectType ).contains( variableName );
-}
-
-QString XUPProjectItemInfos::iconsPath( int projectType ) const
-{
-	QString path = pixmapsPath( projectType );
-	
-	if ( path.isEmpty() && projectType != XUPProjectItem::XUPProject )
-	{
-		path = pixmapsPath( XUPProjectItem::XUPProject );
-	}
-	
-	return path;
 }
 
 QStringList XUPProjectItemInfos::knowVariables( int projectType ) const

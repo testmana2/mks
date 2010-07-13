@@ -30,7 +30,6 @@ void PHPQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<PHPQtProjectItem*>( this ) );
 
 	// values
-	const QString mPixmapsPath = ":/phpqtitems";
 	const QStringList mOperators = QStringList( "=" );
 	const QStringList mFilteredVariables = QStringList( "FORMS" ) << "PHP_FILES";
 	const QStringList mFileVariables = QStringList( "FORMS" ) << "PHP_FILES";
@@ -39,7 +38,6 @@ void PHPQtProjectItem::registerProjectType() const
 		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) );
 
 	// register values
-	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
