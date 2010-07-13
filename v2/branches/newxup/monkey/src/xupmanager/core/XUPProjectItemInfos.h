@@ -35,11 +35,6 @@ public:
 	// return a valid project item for fileName
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 	
-	// register the resource path for project type pixmap
-	void registerPixmapsPath( int projectType, const QString& path );
-	// return the resource path for proejct type pixmap
-	QString pixmapsPath( int projectType ) const;
-	
 	// register the operators for project type
 	void registerOperators( int projectType, const QStringList& operators );
 	// return the operators list for proejct type
@@ -73,14 +68,11 @@ public:
 	bool isFileBased( int projectType, const QString& variableName ) const;
 	// return true if variable name is variable wich values are paths
 	bool isPathBased( int projectType, const QString& variableName ) const;
-	// return the icons path for proejct type
-	QString iconsPath( int projectType ) const;
 	// return a list of all know variable for this kind of project
 	QStringList knowVariables( int projectType ) const;
 	
 protected:
 	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
-	QMap<int, QString> mPixmapsPath; // project type, path
 	QMap<int, QStringList> mOperators; // project type, operators
 	QMap<int, QStringList> mFilteredVariables; // project type, filtered variable name
 	QMap<int, QStringList> mFileVariables; // project type, filename based variable name

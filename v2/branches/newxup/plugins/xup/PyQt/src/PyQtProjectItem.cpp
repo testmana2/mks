@@ -30,7 +30,6 @@ void PyQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<PyQtProjectItem*>( this ) );
 
 	// values
-	const QString mPixmapsPath = ":/pyqtitems";
 	const QStringList mOperators = QStringList( "=" );
 	const QStringList mFilteredVariables = QStringList( "FORMS" ) << "PYTHON_FILES";
 	const QStringList mFileVariables = QStringList( "FORMS" ) << "PYTHON_FILES";
@@ -39,7 +38,6 @@ void PyQtProjectItem::registerProjectType() const
 		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) );
 
 	// register values
-	mXUPProjectInfos->registerPixmapsPath( pType, mPixmapsPath );
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
