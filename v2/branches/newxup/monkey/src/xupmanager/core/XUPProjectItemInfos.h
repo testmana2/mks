@@ -57,8 +57,6 @@ public:
 	
 	// register project type suffixes
 	void registerSuffixes( int projectType, const StringStringListList& suffixes );
-	// return the project type suffixes
-	StringStringListList suffixes( int projectType ) const;
 	
 	// return a filter of all project type suffixes: ie. for giving it to open/save file dialog
 	QString projectsFilter() const;

@@ -82,11 +82,6 @@ void XUPProjectItemInfos::registerSuffixes( int projectType, const StringStringL
 	mSuffixes[ projectType ] = suffixes;
 }
 
-StringStringListList XUPProjectItemInfos::suffixes( int projectType ) const
-{
-	return mSuffixes.value( projectType );
-}
-
 QString XUPProjectItemInfos::projectsFilter() const
 {
 	QStringList suffixes;
