@@ -159,6 +159,11 @@ StringStringListList PHPQtProjectItem::sourceFileNamePatterns() const
 		<< qMakePair( QString( "PHP files" ), QStringList( "*.php*" ) );
 }
 
+QString PHPQtProjectItem::iconsPath() const
+{
+	return ":/phpqtitems";
+}
+
 QString PHPQtProjectItem::variableDisplayText( const QString& variableName ) const
 {
 	if ("FORMS" == variableName)

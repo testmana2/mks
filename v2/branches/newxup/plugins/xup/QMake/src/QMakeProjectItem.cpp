@@ -1007,6 +1007,11 @@ StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
 	return sourceFileNamePatterns;
 }
 
+QString QMakeProjectItem::iconsPath() const
+{
+	return ":/qmakeitems";
+}
+
 QString QMakeProjectItem::variableDisplayText( const QString& variableName ) const
 {
 	return mVariableLabels.value(variableName, variableName);
