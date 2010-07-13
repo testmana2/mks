@@ -159,6 +159,11 @@ StringStringListList PyQtProjectItem::sourceFileNamePatterns() const
 		<< qMakePair( QString( "Python files" ), QStringList( "*.py*" ) );
 }
 
+QString PyQtProjectItem::iconsPath() const
+{
+	return ":/pyqtitems";
+}
+
 QString PyQtProjectItem::variableDisplayText( const QString& variableName ) const
 {
 	if ("FORMS" == variableName)

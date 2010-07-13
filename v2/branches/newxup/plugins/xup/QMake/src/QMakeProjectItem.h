@@ -40,6 +40,7 @@ protected:
 	bool handleSubdirs( XUPItem* subdirs );
 	BuilderPlugin* builder() const;
 	virtual StringStringListList sourceFileNamePatterns() const;
+	virtual QString iconsPath() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
