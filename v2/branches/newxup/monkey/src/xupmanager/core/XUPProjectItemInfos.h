@@ -45,16 +45,6 @@ public:
 	// return the filtered variable list for project type
 	QStringList filteredVariables( int projectType ) const;
 	
-	// register the file based variable list for project type: ie variables that contains filepath
-	void registerFileVariables( int projectType, const QStringList& variables );
-	// return the file based variables list for project type
-	QStringList fileVariables( int projectType ) const;
-	
-	// register the path based variable list for project type: ie variables that contains path
-	void registerPathVariables( int projectType, const QStringList& variables );
-	// return the path based variables list for project type
-	QStringList pathVariables( int projectType ) const;
-	
 	// register project type suffixes
 	void registerSuffixes( int projectType, const StringStringListList& suffixes );
 	
@@ -62,10 +52,6 @@ public:
 	QString projectsFilter() const;
 	// return the project type to use for opening the filename project or -1 if no project type can handle the suffixe
 	int projectTypeForFileName( const QString& fileName ) const;
-	// return true if variable name is variable wich values are files
-	bool isFileBased( int projectType, const QString& variableName ) const;
-	// return true if variable name is variable wich values are paths
-	bool isPathBased( int projectType, const QString& variableName ) const;
 	// return a list of all know variable for this kind of project
 	QStringList knowVariables( int projectType ) const;
 	
@@ -73,8 +59,6 @@ protected:
 	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
 	QMap<int, QStringList> mOperators; // project type, operators
 	QMap<int, QStringList> mFilteredVariables; // project type, filtered variable name
-	QMap<int, QStringList> mFileVariables; // project type, filename based variable name
-	QMap<int, QStringList> mPathVariables; // project type, pathname based variable name
 	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
 };
 

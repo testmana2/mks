@@ -32,16 +32,12 @@ void PyQtProjectItem::registerProjectType() const
 	// values
 	const QStringList mOperators = QStringList( "=" );
 	const QStringList mFilteredVariables = QStringList( "FORMS" ) << "PYTHON_FILES";
-	const QStringList mFileVariables = QStringList( "FORMS" ) << "PYTHON_FILES";
-	const QStringList mPathVariables = QStringList();
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) );
 
 	// register values
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
-	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
-	mXUPProjectInfos->registerPathVariables( pType, mPathVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }
 

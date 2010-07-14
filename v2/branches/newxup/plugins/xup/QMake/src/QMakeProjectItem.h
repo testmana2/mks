@@ -46,6 +46,9 @@ protected:
 	
 	static QHash<QString, QString> mVariableLabels;
 	static QHash<QString, QString> mVariableIcons;
+public: // TODO functions?
+	static QStringList fileVariables;
+	static QStringList pathVariables;
 };
 
 #endif // QMAKEPROJECTITEM_H

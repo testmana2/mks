@@ -20,8 +20,6 @@ public:
 protected:
 	XUPProjectItem* mProject;
 	QStringList mConfigGui;
-	QStringList mFileVariables;
-	QStringList mPathVariables;
 	QtVersion mQtVersion;
 	QMap<QString, QString> mValues;
 	QStringList mManagedVariables;
