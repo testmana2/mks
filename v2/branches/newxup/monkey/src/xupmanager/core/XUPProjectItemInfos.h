@@ -35,11 +35,6 @@ public:
 	// return a valid project item for fileName
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 	
-	// register the filtered variable list for project type: ie the list a variable shown in filtered view
-	void registerFilteredVariables( int projectType, const QStringList& variables );
-	// return the filtered variable list for project type
-	QStringList filteredVariables( int projectType ) const;
-	
 	// register project type suffixes
 	void registerSuffixes( int projectType, const StringStringListList& suffixes );
 	
@@ -50,7 +45,6 @@ public:
 	
 protected:
 	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
-	QMap<int, QStringList> mFilteredVariables; // project type, filtered variable name
 	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
 };
 

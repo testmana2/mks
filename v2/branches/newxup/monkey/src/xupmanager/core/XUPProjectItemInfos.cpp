@@ -24,7 +24,6 @@ void XUPProjectItemInfos::registerType( int projectType, XUPProjectItem* project
 void XUPProjectItemInfos::unRegisterType( int projectType )
 {
 	delete mRegisteredProjectItems.take( projectType );
-	mFilteredVariables.remove( projectType );
 	mSuffixes.remove( projectType );
 }
 
@@ -32,16 +31,6 @@ XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) c
 {
 	int projectType = projectTypeForFileName( fileName );
 	return projectType == XUPProjectItem::InvalidProject ? 0 : mRegisteredProjectItems[ projectType ]->newProject();
-}
-
-void XUPProjectItemInfos::registerFilteredVariables( int projectType, const QStringList& variables )
-{
-	mFilteredVariables[ projectType ] = variables;
-}
-
-QStringList XUPProjectItemInfos::filteredVariables( int projectType ) const
-{
-	return mFilteredVariables.value( projectType );
 }
 
 void XUPProjectItemInfos::registerSuffixes( int projectType, const StringStringListList& suffixes )

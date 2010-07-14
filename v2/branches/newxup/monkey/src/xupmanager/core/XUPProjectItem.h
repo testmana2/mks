@@ -160,6 +160,8 @@ public:
 	   Filter is suitable for QFileDialog
 	 */
 	QString sourceFileNameFilter() const;
+	// return the filtered variable list for project type
+	virtual QStringList filteredVariables() const;
 	
 public slots:
 

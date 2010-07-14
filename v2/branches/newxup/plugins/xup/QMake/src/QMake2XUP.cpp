@@ -183,8 +183,8 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 				}
 				QString theOp = (liste[3].trimmed() == "=" ? "" : " operator=\""+liste[3].trimmed()+"\"");
 				file.append("<variable name=\""+MyEscape(liste[2].trimmed())+"\""+theOp+isMulti+">\n");
-				bool isFile = QMakeProjectItem::fileVariables.contains(liste[2].trimmed());
-				bool isPath = QMakeProjectItem::pathVariables.contains(liste[2].trimmed());
+				bool isFile = QMakeProjectItem::fileVariables().contains(liste[2].trimmed());
+				bool isPath = QMakeProjectItem::pathVariables().contains(liste[2].trimmed());
 				if ( isFile || isPath )
 				{
 					QStringList tmpValues = liste[4].trimmed().split(" ");
@@ -245,8 +245,8 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 					while(varLine.exactMatch(v[i]))
 					{
 						QStringList liste3 = varLine.capturedTexts();
-						bool isFile = QMakeProjectItem::fileVariables.contains(liste[2].trimmed());
-						bool isPath = QMakeProjectItem::pathVariables.contains(liste[2].trimmed());
+						bool isFile = QMakeProjectItem::fileVariables().contains(liste[2].trimmed());
+						bool isPath = QMakeProjectItem::pathVariables().contains(liste[2].trimmed());
 						if ( isFile || isPath )
 						{
 							QStringList tmpValues = liste3[1].trimmed().split(" ");
@@ -307,8 +307,8 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 					QString comment;
 					if(liste3.size() == 2)
 						comment = "#"+liste3[1];
-					bool isFile = QMakeProjectItem::fileVariables.contains(liste[2].trimmed());
-					bool isPath = QMakeProjectItem::pathVariables.contains(liste[2].trimmed());
+					bool isFile = QMakeProjectItem::fileVariables().contains(liste[2].trimmed());
+					bool isPath = QMakeProjectItem::pathVariables().contains(liste[2].trimmed());
 					if ( isFile || isPath )
 					{
 						QStringList tmpValues = liste3[0].trimmed().split(" ");
@@ -427,8 +427,8 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 					while(varLine.exactMatch(v[i]))
 					{
 						QStringList liste3 = varLine.capturedTexts();
-						bool isFile = QMakeProjectItem::fileVariables.contains(liste[2].trimmed());
-						bool isPath = QMakeProjectItem::pathVariables.contains(liste[2].trimmed());
+						bool isFile = QMakeProjectItem::fileVariables().contains(liste[2].trimmed());
+						bool isPath = QMakeProjectItem::pathVariables().contains(liste[2].trimmed());
 						if ( isFile || isPath )
 						{
 							QStringList tmpValues = liste3[1].trimmed().split(" ");
@@ -489,8 +489,8 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 					QString comment;
 					if(liste3.size() == 2)
 						comment = "#"+liste3[1];
-					bool isFile = QMakeProjectItem::fileVariables.contains(liste[2].trimmed());
-					bool isPath = QMakeProjectItem::pathVariables.contains(liste[2].trimmed());
+					bool isFile = QMakeProjectItem::fileVariables().contains(liste[2].trimmed());
+					bool isPath = QMakeProjectItem::pathVariables().contains(liste[2].trimmed());
 					if ( isFile || isPath )
 					{
 						QStringList tmpValues = liste3[0].trimmed().split(" ");

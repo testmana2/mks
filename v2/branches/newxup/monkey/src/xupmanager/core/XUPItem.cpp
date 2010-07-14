@@ -25,7 +25,7 @@ bool XUPItem::sameTypeLess( const XUPItem& other ) const
 		case XUPItem::Variable:
 		{
 			XUPProjectItem* pItem = project();
-			QStringList filteredVariables = pItem->projectInfos()->filteredVariables( pItem->projectType() );
+			QStringList filteredVariables = pItem->filteredVariables();
 			return filteredVariables.indexOf( attribute( "name" ) ) < filteredVariables.indexOf( other.attribute( "name" ) );
 			break;
 		}

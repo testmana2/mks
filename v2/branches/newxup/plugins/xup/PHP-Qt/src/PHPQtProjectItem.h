@@ -29,6 +29,7 @@ public:
 protected:
 	InterpreterPlugin* interpreter() const;
 	virtual StringStringListList sourceFileNamePatterns() const;
+	virtual QStringList filteredVariables() const;
 	virtual QString iconsPath() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;
 	virtual QString variableDisplayIcon( const QString& variableName ) const;

@@ -105,7 +105,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	mProject = project;
 	mValues.clear();
 	mManagedVariables.clear();
-	mManagedVariables << "TEMPLATE" << "CONFIG" << "TARGET" << "DESTDIR" << "DLLDESTDIR" << "QT" << QMakeProjectItem::fileVariables;
+	mManagedVariables << "TEMPLATE" << "CONFIG" << "TARGET" << "DESTDIR" << "DLLDESTDIR" << "QT" << QMakeProjectItem::fileVariables();
 	
 	foreach ( QAbstractButton* ab, wCompilerSettings->findChildren<QAbstractButton*>() )
 	{
@@ -813,10 +813,10 @@ void UISimpleQMakeEditor::accept()
 		
 		if ( !isEmpty )
 		{
-			if ( QMakeProjectItem::fileVariables.contains( variable ) || QMakeProjectItem::pathVariables.contains( variable ) )
+			if ( QMakeProjectItem::fileVariables().contains( variable ) || QMakeProjectItem::pathVariables().contains( variable ) )
 			{
 				// get child type
-				XUPItem::Type type = QMakeProjectItem::fileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
+				XUPItem::Type type = QMakeProjectItem::fileVariables().contains( variable ) ? XUPItem::File : XUPItem::Path;
 				// get values
 				QStringList values = dynamic_cast<QMakeProjectItem*>(mProject)->splitMultiLineValue( mValues[ variable ] );
 				
