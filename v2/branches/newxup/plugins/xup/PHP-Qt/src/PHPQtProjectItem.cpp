@@ -30,13 +30,11 @@ void PHPQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<PHPQtProjectItem*>( this ) );
 
 	// values
-	const QStringList mOperators = QStringList( "=" );
 	const QStringList mFilteredVariables = QStringList( "FORMS" ) << "PHP_FILES";
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) );
 
 	// register values
-	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }

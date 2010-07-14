@@ -35,11 +35,6 @@ public:
 	// return a valid project item for fileName
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 	
-	// register the operators for project type
-	void registerOperators( int projectType, const QStringList& operators );
-	// return the operators list for proejct type
-	QStringList operators( int projectType ) const;
-	
 	// register the filtered variable list for project type: ie the list a variable shown in filtered view
 	void registerFilteredVariables( int projectType, const QStringList& variables );
 	// return the filtered variable list for project type
@@ -52,12 +47,9 @@ public:
 	QString projectsFilter() const;
 	// return the project type to use for opening the filename project or -1 if no project type can handle the suffixe
 	int projectTypeForFileName( const QString& fileName ) const;
-	// return a list of all know variable for this kind of project
-	QStringList knowVariables( int projectType ) const;
 	
 protected:
 	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
-	QMap<int, QStringList> mOperators; // project type, operators
 	QMap<int, QStringList> mFilteredVariables; // project type, filtered variable name
 	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
 };
