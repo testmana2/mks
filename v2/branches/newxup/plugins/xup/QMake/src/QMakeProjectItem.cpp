@@ -33,6 +33,10 @@
 QHash<QString, QString> QMakeProjectItem::mVariableLabels;
 QHash<QString, QString> QMakeProjectItem::mVariableIcons;
 
+QStringList QMakeProjectItem::fileVariables;
+QStringList QMakeProjectItem::pathVariables;
+
+
 QMakeProjectItem::QMakeProjectItem()
 	: XUPProjectItem()
 {
@@ -98,11 +102,13 @@ void QMakeProjectItem::registerProjectType() const
 		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
 		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE"
 		<< "INCLUDEPATH" << "DEPENDPATH" << "VPATH" << "LIBS" << "DEFINES" << "OTHER_FILES";
-	const QStringList mFileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
+	
+	fileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
 		<< "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
 		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE" << "SUBDIRS" << "OTHER_FILES";
-	const QStringList mPathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"
+	pathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"
 		<< "VPATH";
+	
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
@@ -110,8 +116,6 @@ void QMakeProjectItem::registerProjectType() const
 	// register values
 	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
-	mXUPProjectInfos->registerFileVariables( pType, mFileVariables );
-	mXUPProjectInfos->registerPathVariables( pType, mPathVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }
 
@@ -478,9 +482,6 @@ QStringList QMakeProjectItem::sourceFiles() const
    Not all fileVariables() are source files 
 */
 	QStringList files;
-
-	// get variables that handle files
-	const QStringList fileVariables = mXUPProjectInfos->fileVariables( projectType() );
 
 	// get all variable that represent files
 	foreach ( const QString& variable, fileVariables )

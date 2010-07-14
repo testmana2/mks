@@ -26,8 +26,6 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 	delete mRegisteredProjectItems.take( projectType );
 	mOperators.remove( projectType );
 	mFilteredVariables.remove( projectType );
-	mFileVariables.remove( projectType );
-	mPathVariables.remove( projectType );
 	mSuffixes.remove( projectType );
 }
 
@@ -55,26 +53,6 @@ void XUPProjectItemInfos::registerFilteredVariables( int projectType, const QStr
 QStringList XUPProjectItemInfos::filteredVariables( int projectType ) const
 {
 	return mFilteredVariables.value( projectType );
-}
-
-void XUPProjectItemInfos::registerFileVariables( int projectType, const QStringList& variables )
-{
-	mFileVariables[ projectType ] = variables;
-}
-
-QStringList XUPProjectItemInfos::fileVariables( int projectType ) const
-{
-	return mFileVariables.value( projectType );
-}
-
-void XUPProjectItemInfos::registerPathVariables( int projectType, const QStringList& variables )
-{
-	mPathVariables[ projectType ] = variables;
-}
-
-QStringList XUPProjectItemInfos::pathVariables( int projectType ) const
-{
-	return mPathVariables.value( projectType );
 }
 
 void XUPProjectItemInfos::registerSuffixes( int projectType, const StringStringListList& suffixes )
@@ -112,37 +90,11 @@ int XUPProjectItemInfos::projectTypeForFileName( const QString& fileName ) const
 	return XUPProjectItem::InvalidProject;
 }
 
-bool XUPProjectItemInfos::isFileBased( int projectType, const QString& variableName ) const
-{
-	return mFileVariables.value( projectType ).contains( variableName );
-}
-
-bool XUPProjectItemInfos::isPathBased( int projectType, const QString& variableName ) const
-{
-	return mPathVariables.value( projectType ).contains( variableName );
-}
-
 QStringList XUPProjectItemInfos::knowVariables( int projectType ) const
 {
 	QStringList variables;
 	
 	foreach ( const QString& variable, mFilteredVariables.value( projectType ) )
-	{
-		if ( !variables.contains( variable ) )
-		{
-			variables << variable;
-		}
-	}
-	
-	foreach ( const QString& variable, mFileVariables.value( projectType ) )
-	{
-		if ( !variables.contains( variable ) )
-		{
-			variables << variable;
-		}
-	}
-	
-	foreach ( const QString& variable, mPathVariables.value( projectType ) )
 	{
 		if ( !variables.contains( variable ) )
 		{
