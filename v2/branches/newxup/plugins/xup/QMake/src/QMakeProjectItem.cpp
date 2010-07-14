@@ -97,7 +97,6 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<QMakeProjectItem*>( this ) );
 		
 	// values
-	const QStringList mOperators = QStringList( "=" ) << "+=" << "-=" << "*=" << "~=";
 	const QStringList mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
 		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
 		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE"
@@ -114,7 +113,6 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
 	
 	// register values
-	mXUPProjectInfos->registerOperators( pType, mOperators );
 	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }

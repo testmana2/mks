@@ -421,8 +421,8 @@ void UISimpleQMakeEditor::on_lwOthersVariables_currentItemChanged( QListWidgetIt
 void UISimpleQMakeEditor::on_tbOthersVariablesAdd_clicked()
 {
 	bool ok;
-	const QStringList variables = mProject->projectInfos()->knowVariables( mProject->projectType() );
-	const QString variable = QInputDialog::getItem( window(), tr( "Add variable..." ), tr( "Select a variable name or enter a new one" ), variables, 0, true, &ok );
+	const QStringList variables;
+	const QString variable = QInputDialog::getText( window(), tr( "Add variable..." ), tr( "Enter variable name" ), QLineEdit::Normal, QString::null, &ok );
 	
 	if ( !variable.isEmpty() && ok )
 	{

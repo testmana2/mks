@@ -24,7 +24,6 @@ void XUPProjectItemInfos::registerType( int projectType, XUPProjectItem* project
 void XUPProjectItemInfos::unRegisterType( int projectType )
 {
 	delete mRegisteredProjectItems.take( projectType );
-	mOperators.remove( projectType );
 	mFilteredVariables.remove( projectType );
 	mSuffixes.remove( projectType );
 }
@@ -33,16 +32,6 @@ XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) c
 {
 	int projectType = projectTypeForFileName( fileName );
 	return projectType == XUPProjectItem::InvalidProject ? 0 : mRegisteredProjectItems[ projectType ]->newProject();
-}
-
-void XUPProjectItemInfos::registerOperators( int projectType, const QStringList& operators )
-{
-	mOperators[ projectType ] = operators;
-}
-
-QStringList XUPProjectItemInfos::operators( int projectType ) const
-{
-	return mOperators.value( projectType );
 }
 
 void XUPProjectItemInfos::registerFilteredVariables( int projectType, const QStringList& variables )
@@ -88,20 +77,4 @@ int XUPProjectItemInfos::projectTypeForFileName( const QString& fileName ) const
 		}
 	}
 	return XUPProjectItem::InvalidProject;
-}
-
-QStringList XUPProjectItemInfos::knowVariables( int projectType ) const
-{
-	QStringList variables;
-	
-	foreach ( const QString& variable, mFilteredVariables.value( projectType ) )
-	{
-		if ( !variables.contains( variable ) )
-		{
-			variables << variable;
-		}
-	}
-	
-	variables.sort();
-	return variables;
 }

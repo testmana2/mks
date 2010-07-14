@@ -132,7 +132,6 @@ pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allow
 	if ( model )
 	{
 		XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
-		QStringList operators = curProject->projectInfos()->operators( curProject->projectType() );
 		QString caption = tr( "Choose file(s) to add to your project" );
 		QString dir = pMonkeyStudio::defaultProjectsDirectory();
 		QString filter = curProject->sourceFileNameFilter();
@@ -164,7 +163,6 @@ pFileDialogResult MkSFileDialog::getNewEditorFile( QWidget* parent )
 	pFileDialogResult result;
 	XUPProjectModel* model = MonkeyCore::projectsManager()->currentProjectModel();
 	XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
-	QStringList operators = curProject ? curProject->projectInfos()->operators( curProject->projectType() ) : QStringList();
 	QString caption = tr( "New File Name..." );
 	QString dir = pMonkeyStudio::defaultProjectsDirectory();
 	QString filter = curProject ? curProject->sourceFileNameFilter() : pMonkeyStudio::availableFilesFilters();
