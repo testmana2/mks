@@ -867,3 +867,8 @@ QString XUPProjectItem::sourceFileNameFilter() const
 	return suffixesList.join( ";;" );
 
 }
+
+QStringList XUPProjectItem::filteredVariables() const // TODO =0
+{
+	return QStringList();
+}

@@ -30,12 +30,10 @@ void PyQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<PyQtProjectItem*>( this ) );
 
 	// values
-	const QStringList mFilteredVariables = QStringList( "FORMS" ) << "PYTHON_FILES";
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) );
 
 	// register values
-	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }
 
@@ -149,6 +147,11 @@ StringStringListList PyQtProjectItem::sourceFileNamePatterns() const
 	return StringStringListList()
 		<< qMakePair( QString( "Qt Forms" ), QStringList( "*.ui" ) )
 		<< qMakePair( QString( "Python files" ), QStringList( "*.py*" ) );
+}
+
+QStringList PyQtProjectItem::filteredVariables() const
+{
+	return QStringList( "FORMS" ) << "PYTHON_FILES";
 }
 
 QString PyQtProjectItem::iconsPath() const

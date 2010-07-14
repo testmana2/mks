@@ -33,8 +33,9 @@
 QHash<QString, QString> QMakeProjectItem::mVariableLabels;
 QHash<QString, QString> QMakeProjectItem::mVariableIcons;
 
-QStringList QMakeProjectItem::fileVariables;
-QStringList QMakeProjectItem::pathVariables;
+QStringList QMakeProjectItem::mFileVariables;
+QStringList QMakeProjectItem::mPathVariables;
+QStringList QMakeProjectItem::mFilteredVariables;
 
 
 QMakeProjectItem::QMakeProjectItem()
@@ -97,15 +98,15 @@ void QMakeProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<QMakeProjectItem*>( this ) );
 		
 	// values
-	const QStringList mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
+	mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
 		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
 		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE"
 		<< "INCLUDEPATH" << "DEPENDPATH" << "VPATH" << "LIBS" << "DEFINES" << "OTHER_FILES";
 	
-	fileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
+	mFileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
 		<< "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
 		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE" << "SUBDIRS" << "OTHER_FILES";
-	pathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"
+	mPathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"
 		<< "VPATH";
 	
 	const StringStringListList mSuffixes = StringStringListList()
@@ -113,7 +114,6 @@ void QMakeProjectItem::registerProjectType() const
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
 	
 	// register values
-	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }
 
@@ -482,7 +482,7 @@ QStringList QMakeProjectItem::sourceFiles() const
 	QStringList files;
 
 	// get all variable that represent files
-	foreach ( const QString& variable, fileVariables )
+	foreach ( const QString& variable, fileVariables() )
 	{
 		const QStringList values = splitMultiLineValue( mVariableCache.value( variable ) );
 
@@ -1002,6 +1002,21 @@ StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
 		<< qMakePair( QString( "Projects" ), QStringList( "*.pro" ) );
 	
 	return sourceFileNamePatterns;
+}
+
+QStringList QMakeProjectItem::fileVariables()
+{
+	return mFileVariables;
+}
+
+QStringList QMakeProjectItem::pathVariables()
+{
+	return mPathVariables;
+}
+
+QStringList QMakeProjectItem::filteredVariables() const
+{
+	return mFilteredVariables;
 }
 
 QString QMakeProjectItem::iconsPath() const

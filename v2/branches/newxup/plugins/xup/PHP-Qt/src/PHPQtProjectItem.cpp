@@ -30,12 +30,10 @@ void PHPQtProjectItem::registerProjectType() const
 	mXUPProjectInfos->registerType( pType, const_cast<PHPQtProjectItem*>( this ) );
 
 	// values
-	const QStringList mFilteredVariables = QStringList( "FORMS" ) << "PHP_FILES";
 	const StringStringListList mSuffixes = StringStringListList()
 		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) );
 
 	// register values
-	mXUPProjectInfos->registerFilteredVariables( pType, mFilteredVariables );
 	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }
 
@@ -149,6 +147,11 @@ StringStringListList PHPQtProjectItem::sourceFileNamePatterns() const
 	return StringStringListList()
 		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
 		<< qMakePair( QString( "PHP files" ), QStringList( "*.php*" ) );
+}
+
+QStringList PHPQtProjectItem::filteredVariables() const
+{
+	return QStringList( "FORMS" ) << "PHP_FILES";
 }
 
 QString PHPQtProjectItem::iconsPath() const

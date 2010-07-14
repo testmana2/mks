@@ -295,7 +295,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 {
 	XUPItemList variables;
 	XUPProjectItem* rootProject = mSourceModel->mRootProject;
-	const QStringList filteredVariables = rootProject->projectInfos()->filteredVariables( rootProject->projectType() );
+	const QStringList filteredVariables = rootProject->filteredVariables();
 	
 	for ( int i = 0; i < root->childCount(); i++ )
 	{
@@ -408,7 +408,7 @@ void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, 
 	emit layoutAboutToBeChanged();
 	
 	XUPProjectItem* project = mSourceModel->mRootProject;
-	const QStringList filteredVariables = project->projectInfos()->filteredVariables( project->projectType() );
+	const QStringList filteredVariables = project->filteredVariables();
 	
 	for ( int i = start; i < end +1; i++ )
 	{
