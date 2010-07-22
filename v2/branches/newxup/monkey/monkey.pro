@@ -103,7 +103,7 @@ HEADERS	*= src/main.h \
 	src/xupmanager/core/XUPFilteredProjectModel.h \
 	src/xupmanager/core/XUPItem.h \
 	src/xupmanager/core/XUPProjectItem.h \
-	src/xupmanager/core/XUPProjectItemInfos.h \
+	src/xupmanager/core/ProjectTypesIndex.h \
 	src/xupmanager/core/XUPProjectModel.h \
 	src/xupmanager/gui/UIXUPFindFiles.h \
 	src/xupmanager/gui/XUPProjectManager.h \
@@ -153,7 +153,7 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/xupmanager/core/XUPFilteredProjectModel.cpp \
 	src/xupmanager/core/XUPItem.cpp \
 	src/xupmanager/core/XUPProjectItem.cpp \
-	src/xupmanager/core/XUPProjectItemInfos.cpp \
+	src/xupmanager/core/ProjectTypesIndex.cpp \
 	src/xupmanager/core/XUPProjectModel.cpp \
 	src/xupmanager/gui/UIXUPFindFiles.cpp \
 	src/xupmanager/gui/XUPProjectManager.cpp \

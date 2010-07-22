@@ -1,4 +1,4 @@
-#include "XUPProjectItemInfos.h"
+#include "ProjectTypesIndex.h"
 #include "XUPProjectItem.h"
 #include "pIconManager.h"
 
@@ -6,22 +6,22 @@
 
 #include <QDebug>
 
-XUPProjectItemInfos::XUPProjectItemInfos()
+ProjectTypesIndex::ProjectTypesIndex()
 {
 }
 
-void XUPProjectItemInfos::registerType( QString projectType, XUPProjectItem* projectItem )
+void ProjectTypesIndex::registerType( QString projectType, XUPProjectItem* projectItem )
 {
 	mRegisteredProjectItems[ projectType ] = projectItem;
 }
 
-void XUPProjectItemInfos::unRegisterType( QString projectType )
+void ProjectTypesIndex::unRegisterType( QString projectType )
 {
 	delete mRegisteredProjectItems.take( projectType );
 	mSuffixes.remove( projectType );
 }
 
-XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) const
+XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) const
 {
 	foreach ( const QString& projectType, mSuffixes.keys() )
 	{
@@ -34,12 +34,12 @@ XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) c
 	return NULL;
 }
 
-void XUPProjectItemInfos::registerSuffixes( QString projectType, const StringStringListList& suffixes )
+void ProjectTypesIndex::registerSuffixes( QString projectType, const StringStringListList& suffixes )
 {
 	mSuffixes[ projectType ] = suffixes;
 }
 
-QString XUPProjectItemInfos::projectsFilter() const
+QString ProjectTypesIndex::projectsFilter() const
 {
 	QStringList suffixes;
 	QStringList filters;

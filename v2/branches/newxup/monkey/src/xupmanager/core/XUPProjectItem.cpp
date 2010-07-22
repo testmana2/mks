@@ -20,7 +20,6 @@
 
 const QString XUP_VERSION = "1.1.0";
 
-XUPProjectItemInfos* XUPProjectItem::mXUPProjectInfos = new XUPProjectItemInfos();
 bool XUPProjectItem::mFoundCallerItem = false;
 
 XUPProjectItem::XUPProjectItem()
@@ -158,11 +157,6 @@ QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 	}
 	
 	return files;
-}
-
-XUPProjectItemInfos* XUPProjectItem::projectInfos()
-{
-	return mXUPProjectInfos;
 }
 
 QMap<QString, QString>&  XUPProjectItem::variableCache()

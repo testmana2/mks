@@ -3085,19 +3085,19 @@ In non expert mode, only projects and scopes will be shown.</source>
     </message>
 </context>
 <context>
-    <name>XUPProjectItemInfos</name>
+    <name>ProjectTypesIndex</name>
     <message>
-        <location filename="../../monkey/src/xupmanager/core/XUPProjectItemInfos.cpp" line="147"/>
+        <location filename="../../monkey/src/xupmanager/core/ProjectTypesIndex.cpp" line="147"/>
         <source>All Projects (%1)</source>
         <translation>Todos los proyectos (%1)</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/xupmanager/core/XUPProjectItemInfos.cpp" line="242"/>
+        <location filename="../../monkey/src/xupmanager/core/ProjectTypesIndex.cpp" line="242"/>
         <source>All Files (*)</source>
         <translation>Todos los archivos (*)</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/xupmanager/core/XUPProjectItemInfos.cpp" line="246"/>
+        <location filename="../../monkey/src/xupmanager/core/ProjectTypesIndex.cpp" line="246"/>
         <source>All Supported Files (%2)</source>
         <translation>Archivos soportados (%2)</translation>
     </message>

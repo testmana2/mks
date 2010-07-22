@@ -1,6 +1,6 @@
 #include "MkSFileDialog.h"
 #include "XUPProjectItem.h"
-#include "XUPProjectItemInfos.h"
+#include "ProjectTypesIndex.h"
 #include "pMonkeyStudio.h"
 #include "pTreeComboBox.h"
 #include "XUPAddFiles.h"
@@ -105,7 +105,7 @@ pFileDialogResult MkSFileDialog::getOpenProjects( QWidget* parent )
 	pFileDialogResult result;
 	QString caption = tr( "Choose project(s) to open" );
 	QString dir = pMonkeyStudio::defaultProjectsDirectory();
-	QString filter = XUPProjectItem::projectInfos()->projectsFilter();
+	QString filter = MonkeyCore::projectTypesIndex()->projectsFilter();
 	bool enabledTextCodec = true;
 	bool enabledOpenReadOnly = false;
 	
