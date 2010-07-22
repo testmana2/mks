@@ -41,7 +41,6 @@ public:
 	static QtVersionManager* versionManager();
 
 protected:
-	QPointer<XUPProjectItem> mItem;
 	static QPointer<QtVersionManager> mQtVersionManager;
 };
 

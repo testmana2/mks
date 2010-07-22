@@ -15,26 +15,9 @@
 
 #include <QDebug>
 
-int PyQtProjectItem::projectType() const
+QString PyQtProjectItem::projectType() const
 {
-	return PyQtProjectItem::PyQtProject;
-}
-
-void PyQtProjectItem::registerProjectType() const
-{
-	// get proejct type
-	int pType = projectType();
-
-	// register it
-	mXUPProjectInfos->unRegisterType( pType );
-	mXUPProjectInfos->registerType( pType, const_cast<PyQtProjectItem*>( this ) );
-
-	// values
-	const StringStringListList mSuffixes = StringStringListList()
-		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) );
-
-	// register values
-	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
+	return PROJECT_TYPE_STRING;
 }
 
 XUPProjectItem* PyQtProjectItem::newProject() const

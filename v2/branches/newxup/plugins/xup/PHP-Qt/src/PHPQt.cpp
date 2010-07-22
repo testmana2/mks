@@ -41,16 +41,21 @@ void PHPQt::fillPluginInfos()
 bool PHPQt::install()
 {
 	// register phpqt item
-	mItem = new PHPQtProjectItem;
-	mItem->registerProjectType();
+	XUPProjectItem::projectInfos()->registerType(PROJECT_TYPE_STRING, new PHPQtProjectItem);
+	// values
+	const StringStringListList mSuffixes = StringStringListList()
+		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) );
+
+	// register values
+	XUPProjectItem::projectInfos()->registerSuffixes( PROJECT_TYPE_STRING, mSuffixes );
+	
 	return true;
 }
 
 bool PHPQt::uninstall()
 {
 	// unregister qmake item, unregistering auto delete the item
-	mItem->unRegisterProjectType();
-	delete mItem;
+	XUPProjectItem::projectInfos()->unRegisterType( PROJECT_TYPE_STRING );
 	return true;
 }
 

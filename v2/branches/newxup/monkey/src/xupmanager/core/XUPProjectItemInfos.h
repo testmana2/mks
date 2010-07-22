@@ -25,27 +25,23 @@ public:
 	
 	inline QString tr( const char* text ) const { return qApp->translate( "XUPProjectItemInfos", text ); }
 	
-	// return true if proejct type is a registered proejct type else false
-	bool isRegisteredType( int projectType ) const;
 	// register the proejct type
-	void registerType( int projectType, XUPProjectItem* projectItem );
+	void registerType( QString projectType, XUPProjectItem* projectItem );
 	// unregister the projecttype
-	void unRegisterType( int projectType );
+	void unRegisterType( QString projectType );
 	
 	// return a valid project item for fileName
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 	
 	// register project type suffixes
-	void registerSuffixes( int projectType, const StringStringListList& suffixes );
+	void registerSuffixes( QString projectType, const StringStringListList& suffixes );
 	
 	// return a filter of all project type suffixes: ie. for giving it to open/save file dialog
 	QString projectsFilter() const;
-	// return the project type to use for opening the filename project or -1 if no project type can handle the suffixe
-	int projectTypeForFileName( const QString& fileName ) const;
 	
 protected:
-	QMap<int, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
-	QMap<int, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
+	QMap<QString, XUPProjectItem*> mRegisteredProjectItems; // project type, project item
+	QMap<QString, StringStringListList> mSuffixes; // project type, suffixe label, suffixes
 };
 
 #endif // XUPPROJECTITEMINFOS_H

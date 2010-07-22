@@ -505,17 +505,9 @@ void XUPProjectItem::addProjectSettingsValue( const QString& variable, const QSt
 	addProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) );
 }
 
-int XUPProjectItem::projectType() const
+QString XUPProjectItem::projectType() const
 {
-	return XUPProjectItem::XUPProject;
-}
-
-void XUPProjectItem::registerProjectType() const
-{}
-
-void XUPProjectItem::unRegisterProjectType() const
-{
-	mXUPProjectInfos->unRegisterType( projectType() );
+	return "invalid project"; // TODO =0 method
 }
 
 QString XUPProjectItem::getVariableContent( const QString& variableName )

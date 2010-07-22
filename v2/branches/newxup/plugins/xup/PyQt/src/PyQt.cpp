@@ -38,18 +38,22 @@ void PyQt::fillPluginInfos()
 
 bool PyQt::install()
 {
-	// register pythonqt item
-	mItem = new PyQtProjectItem;
-	mItem->registerProjectType();
+	// register phpqt item
+	XUPProjectItem::projectInfos()->registerType(PROJECT_TYPE_STRING, new PyQtProjectItem);
+	// values
+	const StringStringListList mSuffixes = StringStringListList()
+		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) );
+
+	// register values
+	XUPProjectItem::projectInfos()->registerSuffixes( PROJECT_TYPE_STRING, mSuffixes );
+	
 	return true;
 }
 
 bool PyQt::uninstall()
 {
-	// unregister item, unregistering auto delete the item
-	mItem->unRegisterProjectType();
-	delete mItem;
-	// return default value
+	// unregister qmake item, unregistering auto delete the item
+	XUPProjectItem::projectInfos()->unRegisterType( PROJECT_TYPE_STRING );
 	return true;
 }
 

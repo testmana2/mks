@@ -32,9 +32,6 @@ protected:
 	virtual bool install();
 	virtual bool uninstall();
 	virtual bool editProject( XUPProjectItem* project );
-
-protected:
-	QPointer<XUPProjectItem> mItem;
 };
 
 #endif // PHPQT_H

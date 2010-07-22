@@ -29,10 +29,6 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	setupUi( this );
 	setActionsManager( MonkeyCore::actionsManager() );
 	
-	// register generic xup project format
-	XUPProjectItem* pItem = new XUPProjectItem();
-	pItem->registerProjectType();
-	
 	titleBar()->addAction( action( atNew ), 0 );
 	titleBar()->addAction( action( atOpen ), 1 );
 	titleBar()->addAction( action( atClose ), 2 );
