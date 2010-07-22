@@ -33,14 +33,23 @@
 QHash<QString, QString> QMakeProjectItem::mVariableLabels;
 QHash<QString, QString> QMakeProjectItem::mVariableIcons;
 
-QStringList QMakeProjectItem::mFileVariables;
-QStringList QMakeProjectItem::mPathVariables;
-QStringList QMakeProjectItem::mFilteredVariables;
+QStringList QMakeProjectItem::mFileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
+		<< "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
+		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE" << "SUBDIRS" << "OTHER_FILES";
+QStringList QMakeProjectItem::mPathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"<< "VPATH";
+QStringList QMakeProjectItem::mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
+		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
+		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE"
+		<< "INCLUDEPATH" << "DEPENDPATH" << "VPATH" << "LIBS" << "DEFINES" << "OTHER_FILES";
 
 
 QMakeProjectItem::QMakeProjectItem()
 	: XUPProjectItem()
 {
+	if (mVariableIcons.isEmpty()) // if not initialised
+	{
+		initHashes();
+	}
 }
 
 QMakeProjectItem::~QMakeProjectItem()
@@ -52,7 +61,12 @@ QString QMakeProjectItem::toString() const
 	return QMake2XUP::convertToPro( mDocument );
 }
 
-void QMakeProjectItem::registerProjectType() const
+QString QMakeProjectItem::projectType() const
+{
+	return PROJECT_TYPE_STRING;
+}
+
+void QMakeProjectItem::initHashes()
 {
 	mVariableLabels["FORMS"] = tr( "Forms Files" );
 	mVariableLabels["FORMS3"] = tr( "Forms 3 Files" );
@@ -89,32 +103,6 @@ void QMakeProjectItem::registerProjectType() const
 	mVariableIcons["LIBS"] = tr( "libs.png" );
 	mVariableIcons["DEFINES"] = tr( "defines.png" );
 	mVariableIcons["OTHER_FILES"] = tr( "file.png" );
-	
-	// get proejct type
-	int pType = projectType();
-	
-	// register it
-	mXUPProjectInfos->unRegisterType( pType );
-	mXUPProjectInfos->registerType( pType, const_cast<QMakeProjectItem*>( this ) );
-		
-	// values
-	mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
-		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
-		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE"
-		<< "INCLUDEPATH" << "DEPENDPATH" << "VPATH" << "LIBS" << "DEFINES" << "OTHER_FILES";
-	
-	mFileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
-		<< "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
-		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE" << "SUBDIRS" << "OTHER_FILES";
-	mPathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"
-		<< "VPATH";
-	
-	const StringStringListList mSuffixes = StringStringListList()
-		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
-		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
-	
-	// register values
-	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
 }
 
 bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )

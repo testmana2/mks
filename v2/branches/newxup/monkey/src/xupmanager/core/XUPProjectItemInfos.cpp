@@ -10,18 +10,12 @@ XUPProjectItemInfos::XUPProjectItemInfos()
 {
 }
 
-bool XUPProjectItemInfos::isRegisteredType( int projectType ) const
+void XUPProjectItemInfos::registerType( QString projectType, XUPProjectItem* projectItem )
 {
-	return mRegisteredProjectItems.keys().contains( projectType );
+	mRegisteredProjectItems[ projectType ] = projectItem;
 }
 
-void XUPProjectItemInfos::registerType( int projectType, XUPProjectItem* projectItem )
-{
-	if ( !isRegisteredType( projectType ) )
-		mRegisteredProjectItems[ projectType ] = projectItem;
-}
-
-void XUPProjectItemInfos::unRegisterType( int projectType )
+void XUPProjectItemInfos::unRegisterType( QString projectType )
 {
 	delete mRegisteredProjectItems.take( projectType );
 	mSuffixes.remove( projectType );
@@ -29,11 +23,18 @@ void XUPProjectItemInfos::unRegisterType( int projectType )
 
 XUPProjectItem* XUPProjectItemInfos::newProjectItem( const QString& fileName ) const
 {
-	int projectType = projectTypeForFileName( fileName );
-	return projectType == XUPProjectItem::InvalidProject ? 0 : mRegisteredProjectItems[ projectType ]->newProject();
+	foreach ( const QString& projectType, mSuffixes.keys() )
+	{
+		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
+		{
+			if ( QDir::match( p.second, fileName ) )
+				return mRegisteredProjectItems[ projectType ]->newProject();
+		}
+	}
+	return NULL;
 }
 
-void XUPProjectItemInfos::registerSuffixes( int projectType, const StringStringListList& suffixes )
+void XUPProjectItemInfos::registerSuffixes( QString projectType, const StringStringListList& suffixes )
 {
 	mSuffixes[ projectType ] = suffixes;
 }
@@ -42,7 +43,7 @@ QString XUPProjectItemInfos::projectsFilter() const
 {
 	QStringList suffixes;
 	QStringList filters;
-	foreach ( const int& projectType, mSuffixes.keys() )
+	foreach ( const QString& projectType, mSuffixes.keys() )
 	{
 		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
 		{
@@ -53,17 +54,4 @@ QString XUPProjectItemInfos::projectsFilter() const
 	if ( !filters.isEmpty() )
 		filters.prepend( tr( QT_TR_NOOP( "All Projects (%1)" ) ).arg( suffixes.join( " " ) ) );
 	return filters.join( ";;" );
-}
-
-int XUPProjectItemInfos::projectTypeForFileName( const QString& fileName ) const
-{
-	foreach ( const int& projectType, mSuffixes.keys() )
-	{
-		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
-		{
-			if ( QDir::match( p.second, fileName ) )
-				return projectType;
-		}
-	}
-	return XUPProjectItem::InvalidProject;
 }

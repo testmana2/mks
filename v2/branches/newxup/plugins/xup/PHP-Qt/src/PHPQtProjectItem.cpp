@@ -15,26 +15,9 @@
 
 #include <QDebug>
 
-int PHPQtProjectItem::projectType() const
+QString PHPQtProjectItem::projectType() const
 {
-	return PHPQtProjectItem::PHPQtProject;
-}
-
-void PHPQtProjectItem::registerProjectType() const
-{
-	// get proejct type
-	int pType = projectType();
-
-	// register it
-	mXUPProjectInfos->unRegisterType( pType );
-	mXUPProjectInfos->registerType( pType, const_cast<PHPQtProjectItem*>( this ) );
-
-	// values
-	const StringStringListList mSuffixes = StringStringListList()
-		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) );
-
-	// register values
-	mXUPProjectInfos->registerSuffixes( pType, mSuffixes );
+	return PROJECT_TYPE_STRING;
 }
 
 XUPProjectItem* PHPQtProjectItem::newProject() const

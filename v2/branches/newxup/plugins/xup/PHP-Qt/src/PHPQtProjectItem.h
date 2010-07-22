@@ -3,6 +3,8 @@
 
 #include "XUPProjectItem.h"
 
+#define PROJECT_TYPE_STRING "PHPQt"
+
 class InterpreterPlugin;
 
 class PHPQtProjectItem : public XUPProjectItem
@@ -10,10 +12,7 @@ class PHPQtProjectItem : public XUPProjectItem
 	Q_OBJECT
 
 public:
-	enum ProjectType { PHPQtProject = 2 };
-
-	virtual int projectType() const;
-	virtual void registerProjectType() const;
+	virtual QString projectType() const;
 	virtual XUPProjectItem* newProject() const;
 
 	virtual void installCommands();

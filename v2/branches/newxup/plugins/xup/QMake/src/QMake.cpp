@@ -44,17 +44,24 @@ bool QMake::install()
 {
 	// create qt version manager
 	mQtVersionManager = new QtVersionManager( this );
+	
 	// register qmake item
-	mItem = new QMakeProjectItem;
-	mItem->registerProjectType();
+	XUPProjectItem::projectInfos()->registerType(PROJECT_TYPE_STRING, new QMakeProjectItem);
+
+	const StringStringListList suffixes = StringStringListList()
+		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
+		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
+	
+	// register values
+	XUPProjectItem::projectInfos()->registerSuffixes( PROJECT_TYPE_STRING, suffixes );
+
 	return true;
 }
 
 bool QMake::uninstall()
 {
 	// unregister qmake item, unregistering auto delete the item
-	mItem->unRegisterProjectType();
-	delete mItem;
+	XUPProjectItem::projectInfos()->unRegisterType( PROJECT_TYPE_STRING );
 	// delete qt version manager
 	delete mQtVersionManager;
 	// return default value
@@ -62,7 +69,9 @@ bool QMake::uninstall()
 }
 
 QWidget* QMake::settingsWidget()
-{ return new UISettingsQMake(); }
+{
+	return new UISettingsQMake();
+}
 
 QtVersionManager* QMake::versionManager()
 {

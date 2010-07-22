@@ -3,6 +3,8 @@
 
 #include "XUPProjectItem.h"
 
+#define PROJECT_TYPE_STRING "QMake"
+
 class BuilderPlugin;
 
 class QMakeProjectItem : public XUPProjectItem
@@ -10,14 +12,11 @@ class QMakeProjectItem : public XUPProjectItem
 	Q_OBJECT
 	
 public:
-	enum ProjectType { QMakeProject = 1 };
-	
 	QMakeProjectItem();
 	virtual ~QMakeProjectItem();
 	
 	virtual QString toString() const;
-	inline virtual int projectType() const { return QMakeProjectItem::QMakeProject; }
-	virtual void registerProjectType() const;
+	virtual QString projectType() const;
 	inline virtual XUPProjectItem* newProject() const { return new QMakeProjectItem(); }
 	virtual QString getVariableContent( const QString& variableName );
 	virtual bool analyze( XUPItem* item );
@@ -37,8 +36,9 @@ public:
 	
 	virtual XUPPlugin* editorPlugin();
 protected:
+	void initHashes();
 	bool handleSubdirs( XUPItem* subdirs );
-	BuilderPlugin* builder() const;
+	BuilderPlugin* builder() const; // init mVariableLabels, mVariableIcons
 	virtual StringStringListList sourceFileNamePatterns() const;
 	virtual QString iconsPath() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;

@@ -19,8 +19,6 @@ class Q_MONKEY_EXPORT XUPProjectItem : public QObject, public XUPItem
 	Q_OBJECT
 	
 public:
-	// project type id
-	enum ProjectType { InvalidProject = -1, XUPProject = 0 };
 	// target type
 	enum TargetType { DefaultTarget = 0, DebugTarget, ReleaseTarget };
 	
@@ -30,6 +28,7 @@ public:
 	virtual ~XUPProjectItem();
 	
 	// return the global static proejcts types informations
+	// TODO move this method to the core 
 	static XUPProjectItemInfos* projectInfos();
 	
 	// the variable cache
@@ -112,11 +111,7 @@ public:
 	virtual void addProjectSettingsValue( const QString& variable, const QString& value );
 	
 	// return the project type id
-	virtual int projectType() const;
-	// register the project type
-	virtual void registerProjectType() const;
-	// unregister the project type
-	virtual void unRegisterProjectType() const;
+	virtual QString projectType() const;
 	// return a new instance of this kind of projecttype
 	// FIXME AK in future I think XUPProject will be abstract class
 	inline virtual XUPProjectItem* newProject() const { return new XUPProjectItem(); }
