@@ -225,16 +225,6 @@ QString XUPProjectItem::variableDisplayIcon( const QString& ) const
 	return QString::null; //FIXME remove, make =0
 }
 
-QString XUPProjectItem::itemDisplayText( XUPItem* item )
-{
-	return item->displayText();
-}
-
-QIcon XUPProjectItem::itemDisplayIcon( XUPItem* item )
-{
-	return item->displayIcon();
-}
-
 void XUPProjectItem::rebuildCache()
 {
 	XUPProjectItem* riProject = rootIncludeProject();

@@ -70,19 +70,11 @@ public:
 	// return the display icon name of a project variable name. Used by XUPItem::displayIcon()
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
-	// TODO remove 2 methods? Use methods of item?
-	// return the display text for the project item
-	QString itemDisplayText( XUPItem* item ); /* TODO drop the method? replace with item->displayText() ? */
-	// return the display icon for the project item
-	QIcon itemDisplayIcon( XUPItem* item );/* TODO drop the method? replace with item->displayText() ? */
-	
 	// rebuild the project cache by clearing values and analyzing again the project
 	void rebuildCache();
 	
 	// return the matching path ( from start ) between left and right string or null string if result isa drive on windows, or / on unix like
 	QString matchingPath( const QString& left, const QString& right ) const;
-	// return the compressed result list of paths list given in parameter
-	QStringList compressedPaths( const QStringList& paths ) const;
 	// return a list of QFileInfo having corresponding partial file path
 	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
 	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned
@@ -145,6 +137,7 @@ public:
 	QString codec() const;
 	
 	/* TODO make method =0 */
+	/* TODO replace with edit() method */
 	virtual XUPPlugin* editorPlugin() {return NULL;};
 	
 	/* returns a filter of source file names, which can be added to the project.
@@ -153,8 +146,7 @@ public:
 	QString sourceFileNameFilter() const;
 	// return the filtered variable list for project type
 	virtual QStringList filteredVariables() const;
-	
-public slots:
+
 
 protected:
 	/* Source file name patterns is list of string pairs. ExamplesPath
