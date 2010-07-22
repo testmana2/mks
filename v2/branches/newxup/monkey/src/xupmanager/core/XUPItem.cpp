@@ -162,10 +162,12 @@ int XUPItem::row() const
 int XUPItem::childCount() const
 {
 	int count = mDomElement.childNodes().count();
-	if ( !mChildItems.isEmpty() )
+	
+	if ( !mChildItems.isEmpty() ) /* TODO ask PasNox, why we need this code */
 	{
 		count = qMax( count, mChildItems.keys().last() +1 );
 	}
+	
 	return count;
 }
 
@@ -376,7 +378,7 @@ QString XUPItem::displayText() const
 			return project()->variableDisplayText( attribute( "name" ) );
 			break;
 		case XUPItem::Value:
-			return attribute( "content" );
+			return content();
 			break;
 		case XUPItem::Function:
 			return QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
@@ -388,10 +390,10 @@ QString XUPItem::displayText() const
 			return attribute( "name" );
 			break;
 		case XUPItem::File:
-			return QFileInfo( attribute( "content" ) ).fileName();
+			return QFileInfo( content() ).fileName();
 			break;
 		case XUPItem::Path:
-			return attribute( "content" );
+			return content();
 			break;
 		default:
 			return "#Unknow";
@@ -408,6 +410,16 @@ QIcon XUPItem::displayIcon() const
 		iconFileName = mDomElement.nodeName();
 	
 	return pIconManager::icon( iconFileName, project()->iconsPath() );
+}
+
+QString XUPItem::content() const
+{
+	return attribute("content");
+}
+
+void XUPItem::setContent(const QString& content)
+{
+	setAttribute("content", content);
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const

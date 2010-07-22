@@ -36,7 +36,7 @@ XUPItem* XUPProjectItemHelper::projectCommandsScope( XUPProjectItem* project, bo
 void XUPProjectItemHelper::addCommandProperty( XUPItem* variableItem, const QString& value )
 {
 	XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
-	valueItem->setAttribute( "content", value );
+	valueItem->setContent( value );
 }
 
 void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const TypeCommandListMap& commands )
@@ -109,7 +109,7 @@ TypeCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* projec
 			
 			foreach ( XUPItem* commandValue, commandVariable->childrenList() )
 			{
-				values << commandValue->attribute( "content" );
+				values << commandValue->content();
 			}
 			
 			if ( values.count() != 8 )

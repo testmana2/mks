@@ -377,7 +377,7 @@ void XUPFilteredProjectModel::populateVariable( XUPItem* variable )
 
 	foreach ( XUPItem* value, tmpValuesItem )
 	{
-		const QString content = value->attribute( "content" );
+		const QString content = value->content();
 		if ( !content.isEmpty() && !variableIterator.value()->findValue( content ) )
 		{
 			createMapping( value, variable );
