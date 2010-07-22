@@ -27,9 +27,6 @@ public:
 	// dtor
 	virtual ~XUPProjectItem();
 	
-	// the variable cache
-	QMap<QString, QString>& variableCache();
-	
 	// set last encounter error
 	void setLastError( const QString& error );
 	// return the last encounter error
@@ -71,7 +68,7 @@ public:
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
 	// rebuild the project cache by clearing values and analyzing again the project
-	virtual void rebuildCache();
+	virtual void rebuildCache() {};
 	
 	// return the matching path ( from start ) between left and right string or null string if result isa drive on windows, or / on unix like
 	QString matchingPath( const QString& left, const QString& right ) const;
@@ -103,12 +100,6 @@ public:
 	// return a new instance of this kind of projecttype
 	// FIXME AK in future I think XUPProject will be abstract class
 	inline virtual XUPProjectItem* newProject() const { return new XUPProjectItem(); }
-	// get a variable content in the project at the call instant
-	virtual QString getVariableContent( const QString& variableName );
-	// interpret the content, ie, replace variables by their content
-	virtual QString interpretContent( const QString& content );
-	// handle the inclusion of include files
-	virtual bool handleIncludeFile( XUPItem* function );
 	// open a project with codec
 	virtual bool open( const QString& fileName, const QString& codec );
 	// save the project
@@ -163,8 +154,6 @@ protected:
 signals:
 	void installCommandRequested( const pCommand& cmd, const QString& mnu );
 	void uninstallCommandRequested( const pCommand& cmd, const QString& mnu );
-public:
-	QMap<QString, QString> mVariableCache; // FIXME make private or remove
 };
 
 #endif // XUPPROJECTITEM_H

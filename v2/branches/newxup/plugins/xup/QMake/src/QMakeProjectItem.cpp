@@ -373,6 +373,56 @@ void QMakeProjectItem::rebuildCache()
 	analyze( riProject );
 }
 
+QString QMakeProjectItem::interpretContent( const QString& content )
+{
+	QRegExp rx( "\\$\\$?[\\{\\(\\[]?([\\w\\.]+(?!\\w*\\s*\\{\\[\\(\\)\\]\\}))[\\]\\)\\}]?" );
+	QString value = content;
+	int pos = 0;
+
+	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
+	{
+		value.replace( rx.cap( 0 ), getVariableContent( rx.cap( 0 ) ) );
+		pos += rx.matchedLength();
+	}
+
+	return value;
+}
+
+bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
+{
+	const QString parameters = function->cacheValue( "parameters" );
+	const QString fn = filePath( parameters );
+	QStringList projects;
+
+	foreach ( XUPItem* cit, function->childrenList() )
+	{
+		if ( cit->type() == XUPItem::Project )
+		{
+			projects << cit->project()->fileName();
+		}
+	}
+
+	// check if project is already handled
+	if ( projects.contains( fn ) )
+	{
+		return true;
+	}
+
+	// open project
+	XUPProjectItem* project = newProject();
+	function->addChild( project );
+
+	// remove and delete project if can't open
+	if ( !project->open( fn, codec() ) )
+	{
+		function->removeChild( project );
+		topLevelProject()->setLastError( tr( "Failed to handle include file %1" ).arg( fn ) );
+		return false;
+	}
+
+	return true;
+}
+
 bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 {
 	QString buffer = QMake2XUP::convertFromPro( fileName, codec );

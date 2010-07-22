@@ -21,6 +21,10 @@ public:
 	virtual QString getVariableContent( const QString& variableName );
 	bool analyze( XUPItem* item );
 	virtual void rebuildCache();
+	// interpret the content, ie, replace variables by their content
+	QString interpretContent( const QString& content );
+	// handle the inclusion of include files
+	bool handleIncludeFile( XUPItem* function );
 	virtual bool open( const QString& fileName, const QString& codec );
 	virtual bool save();
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget);
