@@ -51,7 +51,6 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 
 XUPProjectManager::~XUPProjectManager()
 {
-	delete XUPProjectItem::projectInfos();
 }
 
 void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )

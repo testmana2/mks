@@ -2,7 +2,7 @@
 #include "PluginsManager.h"
 #include "XUPPlugin.h"
 
-#include <XUPProjectItemInfos.h>
+#include <ProjectTypesIndex.h>
 #include <pMonkeyStudio.h>
 #include <BuilderPlugin.h>
 #include <InterpreterPlugin.h>

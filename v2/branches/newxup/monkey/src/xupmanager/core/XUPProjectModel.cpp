@@ -1,5 +1,6 @@
 #include "XUPProjectModel.h"
 #include "XUPProjectItem.h"
+#include "MonkeyCore.h"
 
 #include <QFileSystemWatcher>
 #include <QDebug>
@@ -234,7 +235,7 @@ QString XUPProjectModel::lastError() const
 
 bool XUPProjectModel::open( const QString& fileName, const QString& codec )
 {
-	XUPProjectItem* tmpProject = XUPProjectItem::projectInfos()->newProjectItem( fileName );
+	XUPProjectItem* tmpProject = MonkeyCore::projectTypesIndex()->newProjectItem( fileName );
 	if ( !tmpProject )
 	{
 		setLastError( tr( "No project handler for this project file" ) );

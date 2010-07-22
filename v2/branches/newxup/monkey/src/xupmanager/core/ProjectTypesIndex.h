@@ -8,6 +8,15 @@
 #include <QMap>
 #include <QApplication>
 
+/* TODO PasNox: it's nearly impossible to understand this data types for homo sapiens having standard IQ
+  Replace please pairs with 
+	struct 
+	{
+		QString sensibleName;
+		QString sensibleName;
+	} sensibleTypeName;
+	And do not create please so complex data types.
+*/
 typedef QPair<QString, QStringList> PairStringStringList;
 typedef QList<PairStringStringList> StringStringListList;
 
@@ -16,14 +25,13 @@ typedef QList<PairStringString> StringStringList;
 
 class XUPProjectItem;
 
-class Q_MONKEY_EXPORT XUPProjectItemInfos
+class Q_MONKEY_EXPORT ProjectTypesIndex: public QObject
 {
+	Q_OBJECT
 	friend class XUPProjectItem;
 
 public:
-	XUPProjectItemInfos();
-	
-	inline QString tr( const char* text ) const { return qApp->translate( "XUPProjectItemInfos", text ); }
+	ProjectTypesIndex();
 	
 	// register the proejct type
 	void registerType( QString projectType, XUPProjectItem* projectItem );

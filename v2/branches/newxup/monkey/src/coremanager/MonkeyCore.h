@@ -52,6 +52,7 @@ class MkSShellInterpreter;
 class pAbbreviationsManager;
 class pMultiToolBar;
 class TranslationManager;
+class ProjectTypesIndex;
 
 class Q_MONKEY_EXPORT MonkeyCore : public QObject
 {
@@ -75,6 +76,7 @@ public:
 	static pAbbreviationsManager* abbreviationsManager();
 	static pMultiToolBar* multiToolBar();
 	static TranslationManager* translationsManager();
+	static ProjectTypesIndex* projectTypesIndex();
 // variablemaanger
 // templates manager
 

@@ -7,7 +7,7 @@
 #include "MonkeyExport.h"
 
 #include "XUPItem.h"
-#include "XUPProjectItemInfos.h"
+#include "ProjectTypesIndex.h"
 #include "pCommand.h"
 
 class XUPPlugin;
@@ -26,10 +26,6 @@ public:
 	XUPProjectItem();
 	// dtor
 	virtual ~XUPProjectItem();
-	
-	// return the global static proejcts types informations
-	// TODO move this method to the core 
-	static XUPProjectItemInfos* projectInfos();
 	
 	// the variable cache
 	QMap<QString, QString>& variableCache();
@@ -169,7 +165,6 @@ protected:
 	
 	QDomDocument mDocument;
 	pCommandMap mCommands;
-	static XUPProjectItemInfos* mXUPProjectInfos;
 	static bool mFoundCallerItem;
 	
 	QMap<QString, QString> mVariableCache;

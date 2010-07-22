@@ -46,14 +46,14 @@ bool QMake::install()
 	mQtVersionManager = new QtVersionManager( this );
 	
 	// register qmake item
-	XUPProjectItem::projectInfos()->registerType(PROJECT_TYPE_STRING, new QMakeProjectItem);
+	MonkeyCore::projectTypesIndex()->registerType(PROJECT_TYPE_STRING, new QMakeProjectItem);
 
 	const StringStringListList suffixes = StringStringListList()
 		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
 	
 	// register values
-	XUPProjectItem::projectInfos()->registerSuffixes( PROJECT_TYPE_STRING, suffixes );
+	MonkeyCore::projectTypesIndex()->registerSuffixes( PROJECT_TYPE_STRING, suffixes );
 
 	return true;
 }
@@ -61,7 +61,7 @@ bool QMake::install()
 bool QMake::uninstall()
 {
 	// unregister qmake item, unregistering auto delete the item
-	XUPProjectItem::projectInfos()->unRegisterType( PROJECT_TYPE_STRING );
+	MonkeyCore::projectTypesIndex()->unRegisterType( PROJECT_TYPE_STRING );
 	// delete qt version manager
 	delete mQtVersionManager;
 	// return default value

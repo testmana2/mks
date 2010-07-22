@@ -300,3 +300,10 @@ TranslationManager* MonkeyCore::translationsManager()
 		mInstances[&TranslationManager::staticMetaObject] = new TranslationManager( QCoreApplication::instance() );
 	return qobject_cast<TranslationManager*>( mInstances[&TranslationManager::staticMetaObject] );
 }
+
+ProjectTypesIndex* MonkeyCore::projectTypesIndex()
+{
+	if ( !mInstances.contains( &ProjectTypesIndex::staticMetaObject ) )
+		mInstances[&ProjectTypesIndex::staticMetaObject] = new ProjectTypesIndex();
+	return qobject_cast<ProjectTypesIndex*>( mInstances[&ProjectTypesIndex::staticMetaObject] );
+}
