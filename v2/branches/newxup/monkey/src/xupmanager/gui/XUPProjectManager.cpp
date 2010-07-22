@@ -88,11 +88,11 @@ void XUPProjectManager::on_tvFiltered_activated( const QModelIndex& index )
 		{
 			XUPProjectItem* project = item->project();
 			XUPProjectItem* rootIncludeProject = project->rootIncludeProject();
-			QString fn = rootIncludeProject->filePath( item->cacheValue( "content" ) );
+			QString fn = rootIncludeProject->filePath( item->content() );
 			
 			if ( !QFile::exists( fn ) )
 			{
-				QString findFile = item->attribute( "content" ).remove( '"' );
+				QString findFile = item->content().remove( '"' );
 				QFileInfoList files = rootIncludeProject->findFile( findFile );
 				switch ( files.count() )
 				{
@@ -423,7 +423,7 @@ void XUPProjectManager::removeFiles()
 		if ( curItem->type() == XUPItem::File )
 		{
 			XUPProjectItem* rootIncludeProject = project->rootIncludeProject();
-			const QString fp = rootIncludeProject->filePath( curItem->cacheValue( "content" ) );
+			const QString fp = rootIncludeProject->filePath( curItem->content() );
 			
 			// ask removing file
 			if ( QFile::exists( fp ) && QMessageBox::question( window(), tr( "Delete associations..." ), tr( "Do you want to delete the associate file ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::Yes )

@@ -44,7 +44,7 @@ struct Q_MONKEY_EXPORT Mapping
 				case XUPItem::Value:
 				case XUPItem::File:
 				case XUPItem::Path:
-					if ( item->attribute( "content" ) == content )
+					if ( item->content() == content )
 					{
 						return item;
 					}

@@ -43,6 +43,8 @@ public:
 	virtual bool sameTypeLess( const XUPItem& other ) const;
 	virtual bool operator<( const XUPItem& other ) const;
 	
+	QDomElement toXML() const;
+	
 	// project item
 	XUPProjectItem* project() const;
 	// return the i child item
@@ -87,6 +89,9 @@ public:
 	QString displayText() const;
 	// view icon, the icon to shown in the item view
 	QIcon displayIcon() const;
+	
+	QString content() const;
+	void setContent(const QString&);
 
 protected:
 	XUPProjectModel* mModel;

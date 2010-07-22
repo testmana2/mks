@@ -113,7 +113,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 	{
 		if ( cit->type() == XUPItem::File )
 		{
-			QStringList cacheFns = splitMultiLineValue( cit->cacheValue( "content" ) );
+			QStringList cacheFns = splitMultiLineValue( cit->content() );
 			
 			foreach ( QString cacheFn, cacheFns )
 			{
@@ -270,7 +270,7 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 			case XUPItem::File:
 			case XUPItem::Path:
 			{
-				QString content = interpretContent( cItem->attribute( "content" ) );
+				QString content = interpretContent( cItem->content() );
 				
 				if ( cItem->type() != XUPItem::Value )
 				{
@@ -286,7 +286,7 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 				
 				values << content;
 				
-				cItem->setCacheValue( "content", content );
+				cItem->setContent( content );
 				break;
 			}
 			case XUPItem::Function:
@@ -364,6 +364,13 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 	}
 	
 	return true;
+}
+
+void QMakeProjectItem::rebuildCache()
+{
+	XUPProjectItem* riProject = rootIncludeProject();
+	riProject->mVariableCache.clear();
+	analyze( riProject );
 }
 
 bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
@@ -550,7 +557,7 @@ void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 			}
 			variable->setAttribute( "multiline", "true" );
 			XUPItem* value = variable->addChild( XUPItem::File );
-			value->setAttribute( "content", relativeFilePath( file ) );
+			value->setContent( relativeFilePath( file ) );
 		}
 		else
 		{

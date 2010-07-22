@@ -200,7 +200,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 				}
 				
 				val += mValues[ variableName ].trimmed();
-				val += " " +value->attribute( "content" );
+				val += " " +value->content();
 				mValues[ variableName ] = val.trimmed();
 			}
 		}
@@ -829,7 +829,7 @@ void UISimpleQMakeEditor::accept()
 				{
 					if ( child->type() == type )
 					{
-						QString value = child->attribute( "content" );
+						QString value = child->content();
 						if ( values.contains( value ) )
 						{
 							values.removeAll( value );
@@ -845,7 +845,7 @@ void UISimpleQMakeEditor::accept()
 				foreach ( const QString& v, values )
 				{
 					XUPItem* value = variableItem->addChild( type );
-					value->setAttribute( "content", v );
+					value->setContent( v );
 				}
 			}
 			else if ( variable == "CONFIG" )
@@ -865,7 +865,7 @@ void UISimpleQMakeEditor::accept()
 				
 				// add new one
 				XUPItem* value = variableItem->addChild( XUPItem::Value );
-				value->setAttribute( "content", mValues[ variable ] );
+				value->setContent( mValues[ variable ] );
 			}
 			else
 			{
@@ -884,7 +884,7 @@ void UISimpleQMakeEditor::accept()
 				
 				// add new one
 				XUPItem* value = variableItem->addChild( XUPItem::Value );
-				value->setAttribute( "content", mValues[ variable ] );
+				value->setContent( mValues[ variable ] );
 			}
 		}
 		else if ( isEmpty && variableItem && variableItem->childCount() > 0 )

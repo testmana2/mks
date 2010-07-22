@@ -111,7 +111,7 @@ void PHPQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 		}
 		
 		XUPItem* value = var->addChild( XUPItem::File );
-		value->setAttribute( "content", project->relativeFilePath( file ) );
+		value->setContent( project->relativeFilePath( file ) );
 	}
 }
 

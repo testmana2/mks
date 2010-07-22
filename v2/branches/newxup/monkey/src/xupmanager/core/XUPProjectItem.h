@@ -71,7 +71,7 @@ public:
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
 	// rebuild the project cache by clearing values and analyzing again the project
-	void rebuildCache();
+	virtual void rebuildCache();
 	
 	// return the matching path ( from start ) between left and right string or null string if result isa drive on windows, or / on unix like
 	QString matchingPath( const QString& left, const QString& right ) const;
@@ -109,8 +109,6 @@ public:
 	virtual QString interpretContent( const QString& content );
 	// handle the inclusion of include files
 	virtual bool handleIncludeFile( XUPItem* function );
-	// analyze a project for caching the variables keys
-	virtual bool analyze( XUPItem* item );
 	// open a project with codec
 	virtual bool open( const QString& fileName, const QString& codec );
 	// save the project
@@ -159,14 +157,14 @@ protected:
 	pCommandMap mCommands;
 	static bool mFoundCallerItem;
 	
-	QMap<QString, QString> mVariableCache;
-	
 	QString mCodec;
 	QString mFileName;
 	QString mLastError;
 signals:
 	void installCommandRequested( const pCommand& cmd, const QString& mnu );
 	void uninstallCommandRequested( const pCommand& cmd, const QString& mnu );
+public:
+	QMap<QString, QString> mVariableCache; // FIXME make private or remove
 };
 
 #endif // XUPPROJECTITEM_H

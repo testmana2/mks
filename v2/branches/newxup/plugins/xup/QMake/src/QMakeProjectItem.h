@@ -19,7 +19,8 @@ public:
 	virtual QString projectType() const;
 	inline virtual XUPProjectItem* newProject() const { return new QMakeProjectItem(); }
 	virtual QString getVariableContent( const QString& variableName );
-	virtual bool analyze( XUPItem* item );
+	bool analyze( XUPItem* item );
+	virtual void rebuildCache();
 	virtual bool open( const QString& fileName, const QString& codec );
 	virtual bool save();
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget);
