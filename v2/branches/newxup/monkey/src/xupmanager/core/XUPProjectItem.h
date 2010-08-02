@@ -81,20 +81,7 @@ public:
 	virtual XUPItem* getVariable( const XUPItem* root, const QString& variableName) const;
 	// return the project datas as qstring
 	virtual QString toString() const;
-	
-	// TODO remove all projectSettings methods?
-	// return the project settings scope, creating it if needed
-	XUPItem* projectSettingsScope( bool create ) const;
-	// return a project settings value as stringlist or string.
-	virtual QStringList projectSettingsValues( const QString& variable, const QStringList& defaultValues = QStringList() ) const;
-	virtual QString projectSettingsValue( const QString& variable, const QString& defaultValue = QString() ) const;
-	// set a project setting value
-	virtual void setProjectSettingsValues( const QString& variable, const QStringList& values );
-	virtual void setProjectSettingsValue( const QString& variable, const QString& value );
-	// add project setting value
-	virtual void addProjectSettingsValues( const QString& variable, const QStringList& values );
-	virtual void addProjectSettingsValue( const QString& variable, const QString& value );
-	
+		
 	// return the project type id
 	virtual QString projectType() const;
 	// return a new instance of this kind of projecttype

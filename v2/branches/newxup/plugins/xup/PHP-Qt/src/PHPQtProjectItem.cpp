@@ -50,7 +50,7 @@ void PHPQtProjectItem::installCommands()
 	const pCommand cmdInterpret = cmd;
 	
 	// get qt version
-	QString mainFile = relativeFilePath( projectSettingsValue( "MAIN_FILE" ) );
+	QString mainFile = relativeFilePath( attribute( "MAIN_FILE" ) );
 	
 	if ( mainFile.isEmpty() )
 	{
@@ -76,7 +76,41 @@ void PHPQtProjectItem::installCommands()
 
 QStringList PHPQtProjectItem::sourceFiles() const
 {
-	return mVariableCache.value( "PHP_FILES" ).split(" ");
+	QStringList result;
+	XUPItem* sf = NULL;
+	foreach(XUPItem* child, childrenList())
+	{
+		if (child->attribute( "name" ) == "PHP_FILES")
+		{
+			if (XUPItem::Variable != child->type())
+			{
+				qWarning() << "PHP_FILES item type is not a variable";
+			}
+			
+			sf = child;
+		}
+	}
+	
+	if (NULL == sf)
+	{
+		qWarning() << "PHP_FILES variable not found. Incorrect project\n";
+		return QStringList();
+	}
+	else
+	{
+		qWarning() << "found";
+	}
+	
+	foreach(XUPItem* file, sf->childrenList())
+	{
+		if (XUPItem::File != file->type())
+		{
+			qWarning() << "File is not a file";
+		}
+		result << file->content();
+	}
+	
+	return result;
 }
 
 void PHPQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )

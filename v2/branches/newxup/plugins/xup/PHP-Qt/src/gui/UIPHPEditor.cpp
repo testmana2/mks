@@ -62,13 +62,13 @@ void UIPHPEditor::init( XUPProjectItem* project )
 	mProject = project;
 
 	leProjectName->setText( mProject->attribute( "name" ) );
-	updateMainFileComboBox( mProject->projectSettingsValue( "MAIN_FILE" ) );
+	updateMainFileComboBox( mProject->attribute( "MAIN_FILE" ) );
 }
 
 void UIPHPEditor::accept()
 {
 	mProject->setAttribute( "name", leProjectName->text() );
-	mProject->setProjectSettingsValue( "MAIN_FILE", cbMainFile->currentText() );
+	mProject->setAttribute( "MAIN_FILE", cbMainFile->currentText() );
 	// close dialog
 	QDialog::accept();
 }

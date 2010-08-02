@@ -206,7 +206,7 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 	}
 	else if ( variableName.startsWith( "$$[" ) )
 	{
-		XUPProjectItem* proj = rootIncludeProject();
+		QMakeProjectItem* proj = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
 		
 		if ( proj->variableCache().contains( name ) )
 		{
@@ -249,7 +249,7 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 		}
 		else
 		{
-			return rootIncludeProject()->variableCache().value( name );
+			return dynamic_cast<QMakeProjectItem*>(rootIncludeProject())->variableCache().value( name );
 		}
 	}
 	
@@ -260,7 +260,7 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 {
 	QStringList values;
 	XUPProjectItem* project = item->project();
-	XUPProjectItem* riProject = rootIncludeProject();
+	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
 	
 	foreach ( XUPItem* cItem, item->childrenList() )
 	{
@@ -368,7 +368,7 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 
 void QMakeProjectItem::rebuildCache()
 {
-	XUPProjectItem* riProject = rootIncludeProject();
+	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
 	riProject->mVariableCache.clear();
 	analyze( riProject );
 }
@@ -644,7 +644,7 @@ void QMakeProjectItem::installCommands()
 	BuilderPlugin* bp = builder();
 		
 	// config variable
-	XUPProjectItem* riProject = rootIncludeProject();
+	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
 	QStringList config = splitMultiLineValue( riProject->variableCache().value( "CONFIG" ) );
 	bool haveDebug = config.contains( "debug" );
 	bool haveRelease = config.contains( "release" );
@@ -942,6 +942,211 @@ void QMakeProjectItem::installCommands()
 	XUPProjectItem::installCommands();
 }
 
+XUPItem* QMakeProjectItem::projectSettingsScope( bool create ) const
+{
+	XUPProjectItem* project = topLevelProject();
+
+	if ( project )
+	{
+		const QString mScopeName = "XUPProjectSettings";
+		XUPItemList items = project->childrenList();
+
+		foreach ( XUPItem* child, items )
+		{
+			if ( child->type() == XUPItem::Scope && child->attribute( "name" ) == mScopeName )
+			{
+				return child;
+			}
+		}
+
+		if ( create )
+		{
+			XUPItem* scope = project->addChild( XUPItem::Scope, 0 );
+			scope->setAttribute( "name", mScopeName );
+
+			XUPItem* emptyline = project->addChild( XUPItem::EmptyLine, 1 );
+			emptyline->setAttribute( "count", "1" );
+
+			return scope;
+		}
+	}
+
+	return 0;
+}
+
+QStringList QMakeProjectItem::projectSettingsValues( const QString& variableName, const QStringList& defaultValues ) const
+{
+	QStringList values;
+	XUPProjectItem* project = topLevelProject();
+
+	if ( project )
+	{
+		XUPItem* scope = projectSettingsScope( false );
+
+		if ( scope )
+		{
+			XUPItemList variables = getVariables( scope, variableName, false );
+
+			foreach ( const XUPItem* variable, variables )
+			{
+				foreach ( const XUPItem* child, variable->childrenList() )
+				{
+					if ( child->type() == XUPItem::Value )
+					{
+						values << child->content();
+					}
+				}
+			}
+		}
+	}
+
+	if ( values.isEmpty() )
+	{
+		// a hack that allow xupproejct settings variable to be added to project node
+		if ( defaultValues.isEmpty() )
+		{
+			values = QStringList( attribute( variableName.toLower() ) );
+		}
+		else
+		{
+			values = defaultValues;
+		}
+	}
+
+	return values;
+}
+
+QString QMakeProjectItem::projectSettingsValue( const QString& variableName, const QString& defaultValue ) const 
+{
+	const QStringList dvalue = defaultValue.isEmpty() ? QStringList() : QStringList( defaultValue );
+	return projectSettingsValues(variableName, dvalue ).join( " " );
+}
+
+void QMakeProjectItem::setProjectSettingsValues( const QString& variableName, const QStringList& values )
+{
+	XUPProjectItem* project = topLevelProject();
+
+	if ( project )
+	{
+		XUPItem* scope = projectSettingsScope( !values.isEmpty() );
+
+		if ( !scope )
+		{
+			return;
+		}
+
+		XUPItemList variables = getVariables( scope, variableName, false );
+		XUPItem* variable = variables.value( 0 );
+		bool haveVariable = variable;
+
+		if ( !haveVariable && values.isEmpty() )
+		{
+			return;
+		}
+
+		if ( haveVariable && values.isEmpty() )
+		{
+			scope->removeChild( variable );
+			return;
+		}
+
+		if ( !haveVariable )
+		{
+			variable = scope->addChild( XUPItem::Variable );
+			variable->setAttribute( "name", variableName );
+			variable->setAttribute( "multiline", "true" );
+		}
+
+		QStringList cleanValues = values;
+		foreach ( XUPItem* child, variable->childrenList() )
+		{
+			if ( child->type() == XUPItem::Value )
+			{
+				QString value = child->content();
+				if ( cleanValues.contains( value ) )
+				{
+					cleanValues.removeAll( value );
+				}
+				else if ( !cleanValues.contains( value ) )
+				{
+					variable->removeChild( child );
+				}
+			}
+		}
+
+		foreach ( const QString& value, cleanValues )
+		{
+			XUPItem* valueItem = variable->addChild( XUPItem::Value );
+			valueItem->setContent( value );
+		}
+	}
+}
+
+void QMakeProjectItem::setProjectSettingsValue( const QString& variable, const QString& value ) 
+{
+	setProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) );
+}
+
+void QMakeProjectItem::addProjectSettingsValues( const QString& variableName, const QStringList& values )
+{
+	XUPProjectItem* project = topLevelProject();
+
+	if ( project )
+	{
+		XUPItem* scope = projectSettingsScope( !values.isEmpty() );
+
+		if ( !scope )
+		{
+			return;
+		}
+
+		XUPItemList variables = getVariables( scope, variableName, false );
+		XUPItem* variable = variables.value( 0 );
+		bool haveVariable = variable;
+
+		if ( !haveVariable && values.isEmpty() )
+		{
+			return;
+		}
+
+		if ( haveVariable && values.isEmpty() )
+		{
+			return;
+		}
+
+		if ( !haveVariable )
+		{
+			variable = scope->addChild( XUPItem::Variable );
+			variable->setAttribute( "name", variableName );
+			variable->setAttribute( "multiline", "true" );
+		}
+
+		QStringList cleanValues = values;
+		foreach ( XUPItem* child, variable->childrenList() )
+		{
+			if ( child->type() == XUPItem::Value )
+			{
+				QString value = child->content();
+				if ( cleanValues.contains( value ) )
+				{
+					cleanValues.removeAll( value );
+				}
+			}
+		}
+
+		foreach ( const QString& value, cleanValues )
+		{
+			XUPItem* valueItem = variable->addChild( XUPItem::Value );
+			valueItem->setContent( value );
+		}
+	}
+}
+
+void QMakeProjectItem::addProjectSettingsValue( const QString& variable, const QString& value )
+{
+	addProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) );
+}
+
 QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
 {
 	QStringList tmpValues = value.split( " ", QString::SkipEmptyParts );
@@ -1076,4 +1281,9 @@ QString QMakeProjectItem::variableDisplayText( const QString& variableName ) con
 QString QMakeProjectItem::variableDisplayIcon( const QString& variableName ) const
 {
 	return mVariableIcons.value(variableName, variableName);
+}
+
+QHash <QString, QString> QMakeProjectItem::variableCache()
+{
+	return mVariableCache;
 }

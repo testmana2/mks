@@ -6,6 +6,7 @@
 
 #include <QMap>
 
+class QMakeProjectItem;
 class XUPProjectItem;
 class XUPItem;
 
@@ -18,7 +19,7 @@ public:
 	virtual ~UISimpleQMakeEditor();
 
 protected:
-	XUPProjectItem* mProject;
+	QMakeProjectItem* mProject;
 	QStringList mConfigGui;
 	QtVersion mQtVersion;
 	QMap<QString, QString> mValues;

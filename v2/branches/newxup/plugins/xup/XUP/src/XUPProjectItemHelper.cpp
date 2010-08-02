@@ -29,7 +29,6 @@ XUPItem* XUPProjectItemHelper::projectCommandsScope( XUPProjectItem* project, bo
 	
 	XUPItem* commandsScope = settingsScope->addChild( XUPItem::Scope );
 	commandsScope->setAttribute( "name", CommandsScopeName );
-	commandsScope->setAttribute( "nested", "false" );
 	return commandsScope;
 }
 

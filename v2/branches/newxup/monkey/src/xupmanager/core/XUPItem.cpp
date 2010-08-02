@@ -304,12 +304,6 @@ XUPItem* XUPItem::addChild( XUPItem::Type pType, int row )
 		// end insert
 		m->endInsertRows();
 		
-		// update scope nested property
-		if ( type() == XUPItem::Scope )
-		{
-			setAttribute( "nested", "false" );
-		}
-		
 		return child( row );
 	}
 	
