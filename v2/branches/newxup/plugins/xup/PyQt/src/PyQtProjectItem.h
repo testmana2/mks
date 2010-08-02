@@ -21,6 +21,7 @@ public:
 	
 	virtual QStringList sourceFiles() const;
 	void addFiles( const QStringList& files, XUPItem* scope = NULL );
+	virtual void removeItem( XUPItem* item );
 	
 	virtual bool edit();
 	

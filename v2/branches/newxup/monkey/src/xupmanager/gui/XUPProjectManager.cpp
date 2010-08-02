@@ -317,9 +317,6 @@ void XUPProjectManager::editProject()
 	
 	XUPProjectItem* topLevelProject = project->topLevelProject();
 		
-	XUPProjectModel* model = currentProjectModel();
-	QFileSystemWatcher* watcher = MonkeyCore::workspace()->fileWatcher();
-	
 	// edit project and save it if needed
 	if ( project->edit() )
 	{
@@ -347,11 +344,7 @@ void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )
 	XUPProjectItem* project = scope->project();
 	//TODO check if files already added!
 	project->addFiles(files, scope);
-	
-	// rebuild cache
-	project->rebuildCache();
-	project->topLevelProject()->rebuildCache();
-	
+		
 	// save project
 	if ( !project->save() )
 	{
@@ -426,20 +419,7 @@ void XUPProjectManager::removeFiles()
 			}
 		}
 		
-		// remove value & variable if needed
-		XUPItem* variable = curItem->parent();
-		XUPItem* variableParent = variable->parent();
-		
-		variable->removeChild( curItem );
-		
-		if ( variable->childCount() == 0 )
-		{
-			variableParent->removeChild( variable );
-		}
-		
-		// rebuild cache
-		project->rebuildCache();
-		project->topLevelProject()->rebuildCache();
+		project->removeItem( curItem );
 		
 		// save project
 		if ( !project->save() )

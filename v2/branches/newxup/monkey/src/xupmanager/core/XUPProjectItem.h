@@ -50,6 +50,8 @@ public:
 	 * It allows, for example, to add files to the particular scope in the QMake projects (win32, !unix ...)
 	 */
 	virtual void addFiles( const QStringList& files, XUPItem* scope = NULL );
+	// Remove file, subproject, or other item
+	virtual void removeItem( XUPItem* /*item*/ ) {}; // FIXME =0
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
 	// return the most toplevel project ( ie: the model root project )
@@ -66,9 +68,6 @@ public:
 	virtual QString variableDisplayText( const QString& variableName ) const;
 	// return the display icon name of a project variable name. Used by XUPItem::displayIcon()
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
-	
-	// rebuild the project cache by clearing values and analyzing again the project
-	virtual void rebuildCache() {};
 	
 	// return the matching path ( from start ) between left and right string or null string if result isa drive on windows, or / on unix like
 	QString matchingPath( const QString& left, const QString& right ) const;

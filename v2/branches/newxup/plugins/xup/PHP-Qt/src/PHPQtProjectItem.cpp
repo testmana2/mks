@@ -152,6 +152,17 @@ void PHPQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	}
 }
 
+void PHPQtProjectItem::removeItem( XUPItem* item )
+{
+	if (item->type() != XUPItem::File)
+	{
+		qWarning() << "Atempt to delete non-file item\n";
+		return;
+	}
+	
+	item->parent()->removeChild(item);
+}
+
 bool PHPQtProjectItem::edit()
 {
 	return UIPHPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
