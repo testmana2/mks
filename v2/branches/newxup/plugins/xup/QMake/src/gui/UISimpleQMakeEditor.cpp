@@ -102,7 +102,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	QString value;
 	QStringList config;
 	QStringList values;
-	mProject = project;
+	mProject = dynamic_cast<QMakeProjectItem*>( project );
 	mValues.clear();
 	mManagedVariables.clear();
 	mManagedVariables << "TEMPLATE" << "CONFIG" << "TARGET" << "DESTDIR" << "DLLDESTDIR" << "QT" << QMakeProjectItem::fileVariables();
