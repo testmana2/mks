@@ -2,10 +2,13 @@
 #include "PluginsManager.h"
 #include "XUPPlugin.h"
 
+#include "src/gui/UIPyQtEditor.h"
+
 #include <ProjectTypesIndex.h>
 #include <pMonkeyStudio.h>
 #include <BuilderPlugin.h>
 #include <InterpreterPlugin.h>
+#include <UIMain.h>
 
 #include <QApplication>
 #include <QTextCodec>
@@ -96,10 +99,6 @@ QStringList PyQtProjectItem::sourceFiles() const
 		qWarning() << "PYTHON_FILES variable not found. Incorrect project\n";
 		return QStringList();
 	}
-	else
-	{
-		qWarning() << "found";
-	}
 	
 	foreach(XUPItem* file, sf->childrenList())
 	{
@@ -149,9 +148,9 @@ void PyQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	}
 }
 
-XUPPlugin* PyQtProjectItem::editorPlugin()
+bool PyQtProjectItem::edit()
 {
-	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "PyQt" ).value( 0 );
+	return UIPyQtEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
 InterpreterPlugin* PyQtProjectItem::interpreter() const

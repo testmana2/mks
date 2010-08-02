@@ -317,37 +317,28 @@ void XUPProjectManager::editProject()
 	
 	XUPProjectItem* topLevelProject = project->topLevelProject();
 		
-	XUPPlugin* plugin = topLevelProject->editorPlugin();
+	XUPProjectModel* model = currentProjectModel();
+	QFileSystemWatcher* watcher = MonkeyCore::workspace()->fileWatcher();
 	
-	if ( plugin )
+	// edit project and save it if needed
+	if ( project->edit() )
 	{
-		XUPProjectModel* model = currentProjectModel();
-		QFileSystemWatcher* watcher = MonkeyCore::workspace()->fileWatcher();
-		
-		// edit project and save it if needed
-		if ( plugin->editProject( project ) )
+		if ( project->save() )
 		{
-			if ( project->save() )
+			// need save topLevelProject ( for XUPProejctSettings scope  )
+			if ( !topLevelProject->save() )
 			{
-				// need save topLevelProject ( for XUPProejctSettings scope  )
-				if ( !topLevelProject->save() )
-				{
-					MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( topLevelProject->fileName() ).arg( topLevelProject->lastError() ) );
-				}
+				MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( topLevelProject->fileName() ).arg( topLevelProject->lastError() ) );
 			}
-			else
-			{
-				MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
-			}
-			
-			// rebuild cache
-			project->rebuildCache();
-			topLevelProject->rebuildCache();
-			
-			// update menu actions
-			project->uninstallCommands();
-			project->installCommands();
 		}
+		else
+		{
+			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
+		}
+		
+		// update menu actions
+		project->uninstallCommands();
+		project->installCommands();
 	}
 }
 

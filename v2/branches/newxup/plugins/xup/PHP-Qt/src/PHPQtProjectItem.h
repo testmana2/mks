@@ -22,7 +22,7 @@ public:
 	virtual QStringList sourceFiles() const;
 	void addFiles( const QStringList& files, XUPItem* scope = NULL );
 	
-	virtual XUPPlugin* editorPlugin();
+	virtual bool edit();
 	
 	
 protected:

@@ -18,10 +18,8 @@
 #include "PHPQt.h"
 #include "PHPQtProjectItem.h"
 //#include "UISettingsPHPQt.h"
-#include "src/gui/UIPHPEditor.h"
 
 #include <MonkeyCore.h>
-#include <UIMain.h>
 
 #include <QDir>
 
@@ -57,16 +55,6 @@ bool PHPQt::uninstall()
 	// unregister qmake item, unregistering auto delete the item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PROJECT_TYPE_STRING );
 	return true;
-}
-
-bool PHPQt::editProject( XUPProjectItem* project )
-{
-		if ( !project )
-		{
-		return false;
-	}
-
-	return UIPHPEditor( project, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
 Q_EXPORT_PLUGIN2( ProjectPHPQt, PHPQt )

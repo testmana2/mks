@@ -31,7 +31,6 @@ protected:
 	void fillPluginInfos();
 	virtual bool install();
 	virtual bool uninstall();
-	virtual bool editProject( XUPProjectItem* project );
 };
 
 #endif // PYQT_H

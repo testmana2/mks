@@ -6,6 +6,9 @@
 #include <pMonkeyStudio.h>
 #include <BuilderPlugin.h>
 #include <InterpreterPlugin.h>
+#include <UIMain.h>
+
+#include "src/gui/UIPHPEditor.h"
 
 #include <QApplication>
 #include <QTextCodec>
@@ -149,9 +152,9 @@ void PHPQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	}
 }
 
-XUPPlugin* PHPQtProjectItem::editorPlugin()
+bool PHPQtProjectItem::edit()
 {
-	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "PHP-Qt" ).value( 0 );
+	return UIPHPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
 InterpreterPlugin* PHPQtProjectItem::interpreter() const
