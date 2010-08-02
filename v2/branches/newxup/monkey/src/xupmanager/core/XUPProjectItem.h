@@ -112,9 +112,7 @@ public:
 	
 	QString codec() const;
 	
-	/* TODO make method =0 */
-	/* TODO replace with edit() method */
-	virtual XUPPlugin* editorPlugin() {return NULL;};
+	virtual bool edit() {return false;}; // TODO =0
 	
 	/* returns a filter of source file names, which can be added to the project.
 	   Filter is suitable for QFileDialog

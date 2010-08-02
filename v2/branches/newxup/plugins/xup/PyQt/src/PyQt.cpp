@@ -17,10 +17,8 @@
 ****************************************************************************/
 #include "PyQt.h"
 #include "PyQtProjectItem.h"
-#include "src/gui/UIPyQtEditor.h"
 
 #include <MonkeyCore.h>
-#include <UIMain.h>
 
 #include <QDir>
 
@@ -55,16 +53,6 @@ bool PyQt::uninstall()
 	// unregister qmake item, unregistering auto delete the item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PROJECT_TYPE_STRING );
 	return true;
-}
-
-bool PyQt::editProject( XUPProjectItem* project )
-{
-	if ( !project )
-	{
-		return false;
-	}
-
-	return UIPyQtEditor( project, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
 Q_EXPORT_PLUGIN2( ProjectPyQt, PyQt )

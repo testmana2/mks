@@ -51,7 +51,7 @@ public:
 	// split a multi line value into QStringList
 	static QStringList splitMultiLineValue( const QString& value );
 	
-	virtual XUPPlugin* editorPlugin();
+	virtual bool edit();
 	QHash <QString, QString> variableCache();
 protected:
 	QHash <QString, QString> mVariableCache;

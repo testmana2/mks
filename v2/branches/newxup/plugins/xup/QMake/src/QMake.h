@@ -36,7 +36,6 @@ protected:
 	
 public:
 	virtual QWidget* settingsWidget();
-	virtual bool editProject( XUPProjectItem* project );
 	
 	static QtVersionManager* versionManager();
 

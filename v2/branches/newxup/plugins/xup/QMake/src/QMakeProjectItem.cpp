@@ -9,6 +9,8 @@
 #include "PluginsManager.h"
 #include "UIMain.h"
 
+#include "UISimpleQMakeEditor.h"
+
 #include <QObject>
 #include <QApplication>
 #include <QTextCodec>
@@ -1179,9 +1181,17 @@ QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
 	return multivalues;
 }
 
-XUPPlugin* QMakeProjectItem::editorPlugin()
+bool QMakeProjectItem::edit()
 {
-	return MonkeyCore::pluginsManager()->plugins<XUPPlugin*>( PluginsManager::stAll, "QMake" ).value( 0 );
+	bool ret = UISimpleQMakeEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
+	
+	if ( ret )
+	{
+		// rebuild cache
+		rebuildCache();
+		topLevelProject()->rebuildCache();
+	}
+	return ret;
 }
 
 BuilderPlugin* QMakeProjectItem::builder() const

@@ -19,7 +19,6 @@
 #include "QtVersionManager.h"
 #include "QMakeProjectItem.h"
 #include "UISettingsQMake.h"
-#include "UISimpleQMakeEditor.h"
 
 #include <MonkeyCore.h>
 #include <UIMain.h>
@@ -76,15 +75,6 @@ QWidget* QMake::settingsWidget()
 QtVersionManager* QMake::versionManager()
 {
 	return mQtVersionManager;
-}
-
-bool QMake::editProject( XUPProjectItem* project )
-{
-	if ( !project ) {
-		return false;
-	}
-	
-	return UISimpleQMakeEditor( project, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
 Q_EXPORT_PLUGIN2( ProjectQMake, QMake )
