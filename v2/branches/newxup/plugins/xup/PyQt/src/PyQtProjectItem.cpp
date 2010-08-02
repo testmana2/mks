@@ -148,6 +148,17 @@ void PyQtProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	}
 }
 
+void PyQtProjectItem::removeItem( XUPItem* item )
+{
+	if (item->type() != XUPItem::File)
+	{
+		qWarning() << "Atempt to delete non-file item\n";
+		return;
+	}
+	
+	item->parent()->removeChild(item);
+}
+
 bool PyQtProjectItem::edit()
 {
 	return UIPyQtEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;

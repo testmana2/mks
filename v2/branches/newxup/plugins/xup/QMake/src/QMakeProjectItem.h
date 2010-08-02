@@ -20,7 +20,7 @@ public:
 	inline virtual XUPProjectItem* newProject() const { return new QMakeProjectItem(); }
 	virtual QString getVariableContent( const QString& variableName );
 	bool analyze( XUPItem* item );
-	virtual void rebuildCache();
+	void rebuildCache();
 	// interpret the content, ie, replace variables by their content
 	QString interpretContent( const QString& content );
 	// handle the inclusion of include files
@@ -31,6 +31,7 @@ public:
 	
 	virtual QStringList sourceFiles() const;
 	virtual void addFiles( const QStringList& files, XUPItem* scope = NULL );
+	virtual void removeItem( XUPItem* item );
 	
 	virtual QStringList autoActivatePlugins() const;
 	

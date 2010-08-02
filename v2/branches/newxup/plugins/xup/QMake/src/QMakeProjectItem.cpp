@@ -617,6 +617,24 @@ void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 			return;
 		}
 	}
+	
+	// rebuild cache
+	rebuildCache();
+	dynamic_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
+}
+
+void QMakeProjectItem::removeItem( XUPItem* item )
+{
+	XUPItem* variable = item->parent();
+	variable->removeChild(item);
+	if (0 == variable->childCount())
+	{
+		variable->parent()->removeChild(variable);
+	}
+	
+	// rebuild cache
+	rebuildCache();
+	dynamic_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
 }
 
 QStringList QMakeProjectItem::autoActivatePlugins() const
@@ -1189,7 +1207,7 @@ bool QMakeProjectItem::edit()
 	{
 		// rebuild cache
 		rebuildCache();
-		topLevelProject()->rebuildCache();
+		dynamic_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
 	}
 	return ret;
 }
