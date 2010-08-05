@@ -17,9 +17,7 @@
 -->
 <!DOCTYPE XUPProject>
 <project name="$Project Name$" >
-	<scope nested="false" name="XUPProjectSettings" >
-	</scope>
-	<variable name="PHP_FILES" operator="=" multiline="true" >
-		<file content="$Main File Name$" />
+	<variable name="PHP_FILES" >
+		<file>$Main File Name$</file>
 	</variable>
 </project>

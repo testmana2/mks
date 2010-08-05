@@ -6,7 +6,7 @@
 class $Plugin Name$ : public CompilerPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin CompilerPlugin CLIToolPlugin )
+	Q_INTERFACES( BasePlugin CompilerPlugin CLIToolInterface )
 
 public:
 	virtual pCommand defaultCompileCommand() const;

@@ -1,6 +1,6 @@
 #include "$Plugin Name$.h"
 
-pCommand $Plugin Name$::defaultInterpretCommand() const
+pCommand $Plugin Name$::defaultCommand() const
 {
 	// return your default command
 	return pCommand();

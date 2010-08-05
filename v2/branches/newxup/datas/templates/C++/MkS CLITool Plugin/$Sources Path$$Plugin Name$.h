@@ -1,11 +1,11 @@
 #ifndef $Plugin Name.upper$_H
 #define $Plugin Name.upper$_H
 
-#include <CLIToolPlugin.h>
+#include <CLIToolInterface.h>
 
-class $Plugin Name$ : public CLIToolPlugin
+class $Plugin Name$ : public CLIToolInterface
 {
-	Q_INTERFACES( CLIToolPlugin )
+	Q_INTERFACES( CLIToolInterface )
 
 public:
 	virtual pCommandList defaultCommands() const;
