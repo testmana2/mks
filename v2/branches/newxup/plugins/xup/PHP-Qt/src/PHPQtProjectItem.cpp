@@ -4,7 +4,6 @@
 
 #include <ProjectTypesIndex.h>
 #include <pMonkeyStudio.h>
-#include <BuilderPlugin.h>
 #include <InterpreterPlugin.h>
 #include <UIMain.h>
 
@@ -98,10 +97,6 @@ QStringList PHPQtProjectItem::sourceFiles() const
 	{
 		qWarning() << "PHP_FILES variable not found. Incorrect project\n";
 		return QStringList();
-	}
-	else
-	{
-		qWarning() << "found";
 	}
 	
 	foreach(XUPItem* file, sf->childrenList())

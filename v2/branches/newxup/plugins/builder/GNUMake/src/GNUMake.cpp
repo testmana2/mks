@@ -67,13 +67,10 @@ QWidget* GNUMake::settingsWidget()
 {
 	QTabWidget* tw = new QTabWidget;
 	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( builderSettingsWidget(), tr( "Build Command" ) );
+	tw->addTab( settingsWidget(), tr( "Build Command" ) );
 	tw->addTab( cliToolSettingsWidget(), tr( "User Commands" ) );
 	return tw;
 }
-
-pCommandList GNUMake::defaultCommands() const
-{ return pCommandList(); }
 
 QStringList GNUMake::availableParsers() const
 {
@@ -82,10 +79,7 @@ QStringList GNUMake::availableParsers() const
 	return list;
 }
 
-AbstractCommandParser* GNUMake::getParser( const QString& name )
-{ Q_UNUSED( name ); return 0; } /* FIXME */
-
-pCommand GNUMake::defaultBuildCommand() const
+pCommand GNUMake::defaultCommand() const
 {
 #ifdef Q_OS_WIN
 	const QString mMake = "mingw32-make";

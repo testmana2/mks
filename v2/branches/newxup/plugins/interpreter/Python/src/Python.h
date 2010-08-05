@@ -23,7 +23,7 @@
 class Python : public InterpreterPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolPlugin )
+	Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolInterface )
 
 protected:	
 	void fillPluginInfos();
@@ -34,11 +34,10 @@ public:
 	~Python();
 	// BasePlugin
 	virtual QWidget* settingsWidget();
-	// CLIToolPlugin
-	virtual pCommandList defaultCommands() const;
+	// CLIToolInterface
 	virtual QStringList availableParsers() const;
 	// InterpreterPlugin
-	virtual pCommand defaultInterpretCommand() const;
+	virtual pCommand defaultCommand() const;
 };
 
 #endif // PYTHON_H

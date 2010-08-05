@@ -6,7 +6,6 @@
 
 #include <ProjectTypesIndex.h>
 #include <pMonkeyStudio.h>
-#include <BuilderPlugin.h>
 #include <InterpreterPlugin.h>
 #include <UIMain.h>
 
