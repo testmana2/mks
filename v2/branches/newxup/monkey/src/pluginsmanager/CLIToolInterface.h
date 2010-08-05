@@ -3,7 +3,7 @@
 ** 		Created using Monkey Studio v1.8.1.0
 ** Authors    : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>
 ** Project   : Monkey Studio IDE
-** FileName  : CLIToolPlugin.h
+** FileName  : CLIToolInterface.h
 ** Date      : 2008-01-14T00:37:00
 ** License   : GPL
 ** Comment   : This header has been automatically generated, if you are the original author, or co-author, fill free to replace/append with your informations.
@@ -35,23 +35,22 @@
 #include "BasePlugin.h"
 #include "../consolemanager/AbstractCommandParser.h"
 
-class Q_MONKEY_EXPORT CLIToolPlugin
+class Q_MONKEY_EXPORT CLIToolInterface
 {
 public:
-	CLIToolPlugin( BasePlugin* plugin );
-	virtual ~CLIToolPlugin();
+	CLIToolInterface( BasePlugin* plugin );
+	virtual ~CLIToolInterface();
 	
-	virtual pCommandList defaultCommands() const = 0;
+	virtual pCommandList defaultCommands() const;
 	virtual pCommandList userCommands() const;
 	virtual void setUserCommands( const pCommandList& cmds ) const;
 	virtual QWidget* cliToolSettingsWidget();
 	virtual QStringList availableParsers() const;
-	virtual AbstractCommandParser* getParser( const QString& name );
 
 protected:
 	BasePlugin* mPlugin;
 };
 
-Q_DECLARE_INTERFACE( CLIToolPlugin, "org.monkeystudio.MonkeyStudio.CLIToolPlugin/1.0" )
+Q_DECLARE_INTERFACE( CLIToolInterface, "org.monkeystudio.MonkeyStudio.CLIToolInterface/1.0" )
 
 #endif // CLITOOLPLUGIN_H

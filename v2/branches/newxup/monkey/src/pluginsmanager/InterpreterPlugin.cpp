@@ -15,7 +15,7 @@
 #include "ui/UIInterpreterSettings.h"
 
 InterpreterPlugin::InterpreterPlugin()
-	: BasePlugin(), CLIToolPlugin( this )
+	: BasePlugin(), CLIToolInterface( this )
 {
 }
 
@@ -36,7 +36,7 @@ pCommand InterpreterPlugin::interpretCommand() const
 	// if no user commands get global ones
 	if ( !cmd.isValid() )
 	{
-		cmd = defaultInterpretCommand();
+		cmd = defaultCommand();
 	}
 	
 	return cmd;
@@ -55,7 +55,7 @@ void InterpreterPlugin::setInterpretCommand( const pCommand& cmd )
 	settings->setValue( settingsKey( "InterpretCommand/SkipOnError" ), cmd.skipOnError() );
 }
 
-QWidget* InterpreterPlugin::interpreterSettingsWidget()
+QWidget* InterpreterPlugin::settingsWidget()
 {
 	return new UIInterpreterSettings( this, QApplication::activeWindow() );
 }
