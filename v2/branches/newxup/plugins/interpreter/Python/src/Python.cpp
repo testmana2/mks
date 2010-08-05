@@ -21,11 +21,13 @@
 
 Python::Python ()
 {
+#if 0
 	// install parsers
 	foreach ( QString s, availableParsers() )
 	{
 		MonkeyCore::consoleManager()->addParser( getParser( s ) );
 	}
+#endif
 }
 
 void Python::fillPluginInfos()
@@ -42,12 +44,15 @@ void Python::fillPluginInfos()
 }
 
 Python::~Python()
-{ // TODO move to uninstall
+{
+#if 0
+ // TODO move to uninstall
 	// uninstall parsers
 	foreach ( QString s, availableParsers() )
 	{
 		MonkeyCore::consoleManager()->removeParser( s );
 	}
+#endif
 }
 
 bool Python::install()
@@ -64,14 +69,9 @@ QWidget* Python::settingsWidget()
 {
 	QTabWidget* tw = new QTabWidget;
 	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( interpreterSettingsWidget(), tr( "Interpret Command" ) );
+	tw->addTab( settingsWidget(), tr( "Interpret Command" ) );
 	tw->addTab( cliToolSettingsWidget(), tr( "User Commands" ) );
 	return tw;
-}
-
-pCommandList Python::defaultCommands() const
-{
-	return pCommandList();
 }
 
 QStringList Python::availableParsers() const
@@ -79,7 +79,7 @@ QStringList Python::availableParsers() const
 	return QStringList();
 }
 
-pCommand Python::defaultInterpretCommand() const
+pCommand Python::defaultCommand() const
 {
 	const QString mPython = "python";
 	return pCommand( "Interpret", mPython, QString::null, false, availableParsers(), "$cpp$" );

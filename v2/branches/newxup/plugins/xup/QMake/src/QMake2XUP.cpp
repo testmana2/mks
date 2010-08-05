@@ -675,7 +675,7 @@ QString convertNodeToPro( const QDomElement& element, const QString& EOL = pMonk
 		else if ( tag == "value" || tag == "file" || tag == "path" )
 		{
 			int vtabs = tabs;
-			QString value = element.attribute( "content" );
+			QString value = element.text();
 			comment = element.attribute( "comment" );
 			
 			if ( !element.previousSibling().isNull() && isMultiline )

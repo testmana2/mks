@@ -21,11 +21,6 @@
 
 PHP::PHP ()
 {
-	// install parsers
-	foreach ( QString s, availableParsers() )
-	{
-		MonkeyCore::consoleManager()->addParser( getParser( s ) );
-	}
 }
 
 void PHP::fillPluginInfos()
@@ -64,14 +59,9 @@ QWidget* PHP::settingsWidget()
 {
 	QTabWidget* tw = new QTabWidget;
 	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( interpreterSettingsWidget(), tr( "Interpret Command" ) );
+	tw->addTab( settingsWidget(), tr( "Interpret Command" ) );
 	tw->addTab( cliToolSettingsWidget(), tr( "User Commands" ) );
 	return tw;
-}
-
-pCommandList PHP::defaultCommands() const
-{
-	return pCommandList();
 }
 
 QStringList PHP::availableParsers() const
@@ -79,7 +69,7 @@ QStringList PHP::availableParsers() const
 	return QStringList();
 }
 
-pCommand PHP::defaultInterpretCommand() const
+pCommand PHP::defaultCommand() const
 {
 	const QString mPHP = "php";
 	return pCommand( "Interpret", mPHP, QString::null, false, availableParsers(), "$cpp$" );
