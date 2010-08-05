@@ -6,10 +6,10 @@
 class $Plugin Name$ : public InterpreterPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolPlugin )
+	Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolInterface )
 
 public:
-	virtual pCommand defaultInterpretCommand() const;
+	virtual pCommand defaultCommand() const;
 	virtual pCommandList defaultCommands() const;
 
 protected:

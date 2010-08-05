@@ -6,10 +6,10 @@
 class $Plugin Name$ : public BuilderPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin BuilderPlugin CLIToolPlugin )
+	Q_INTERFACES( BasePlugin BuilderPlugin CLIToolInterface )
 
 public:
-	virtual pCommand defaultBuildCommand() const;
+	virtual pCommand defaultCommand() const;
 	virtual pCommandList defaultCommands() const;
 
 protected:

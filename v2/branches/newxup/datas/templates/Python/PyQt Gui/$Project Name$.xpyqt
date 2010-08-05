@@ -17,13 +17,11 @@
 -->
 <!DOCTYPE XUPProject>
 <project name="$Project Name$" >
-	<scope nested="false" name="XUPProjectSettings" >
-	</scope>
-    <variable name="FORMS" operator="=" multiline="true" >
-        <file content="$Form File Name$.ui" />
+    <variable name="FORMS">
+        <file>$Form File Name$.ui</file>
     </variable>
-	<variable name="PYTHON_FILES" operator="=" multiline="true" >
-		<file content="$Main File Name$" />
-		<file content="$Class File Name$.py" />
+	<variable name="PYTHON_FILES" >
+		<file>$Main File Name$</file>
+		<file>$Class File Name$.py</file>
 	</variable>
 </project>
