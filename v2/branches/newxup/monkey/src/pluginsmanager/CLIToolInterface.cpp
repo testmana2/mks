@@ -3,7 +3,7 @@
 ** 		Created using Monkey Studio v1.8.1.0
 ** Authors   : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>, Andrei KOPATS aka hlamer <hlamer@tut.by>
 ** Project   : Monkey Studio IDE
-** FileName  : BuilderPlugin.cpp
+** FileName  : CLIToolInterface.cpp
 ** Date      : 2009-12-09T00:37:00
 ** License   : GPL
 ** Comment   : 
@@ -11,20 +11,25 @@
 **
 **
 ****************************************************************************/
-#include "CLIToolPlugin.h"
+#include "CLIToolInterface.h"
 #include "ui/UICLIToolSettings.h"
 
-CLIToolPlugin::CLIToolPlugin( BasePlugin* plugin )
+CLIToolInterface::CLIToolInterface( BasePlugin* plugin )
 {
 	Q_ASSERT( plugin );
 	mPlugin = plugin;
 }
 
-CLIToolPlugin::~CLIToolPlugin()
+CLIToolInterface::~CLIToolInterface()
 {
 }
 
-pCommandList CLIToolPlugin::userCommands() const
+pCommandList CLIToolInterface::defaultCommands() const
+{
+	return pCommandList();
+}
+
+pCommandList CLIToolInterface::userCommands() const
 {
 	// commands list
 	pCommandList cmds;
@@ -60,7 +65,7 @@ pCommandList CLIToolPlugin::userCommands() const
 	return cmds;
 }
 
-void CLIToolPlugin::setUserCommands( const pCommandList& cmds ) const
+void CLIToolInterface::setUserCommands( const pCommandList& cmds ) const
 {
 	// get settings object
 	pSettings* settings = MonkeyCore::settings();
@@ -86,18 +91,12 @@ void CLIToolPlugin::setUserCommands( const pCommandList& cmds ) const
 	settings->endArray();
 }
 
-QWidget* CLIToolPlugin::cliToolSettingsWidget()
+QWidget* CLIToolInterface::cliToolSettingsWidget()
 {
 	return new UICLIToolSettings( mPlugin, defaultCommands(), userCommands(), QApplication::activeWindow() );
 }
 
-QStringList CLIToolPlugin::availableParsers() const
+QStringList CLIToolInterface::availableParsers() const
 {
 	return QStringList();
-}
-
-AbstractCommandParser* CLIToolPlugin::getParser( const QString& name )
-{
-	Q_UNUSED( name );
-	return 0;
 }

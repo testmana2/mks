@@ -10,6 +10,14 @@ XUPItem::XUPItem( const QDomElement& node, XUPItem* parent )
 	mModel = 0;
 	mDomElement = node;
 	mParentItem = parent;
+	
+	{ /* FIX old format projects */
+		if (!mDomElement.attribute("content").isEmpty())
+		{
+			setContent(mDomElement.attribute("content"));
+			mDomElement.removeAttribute("content");
+		}
+	}
 }
 
 XUPItem::~XUPItem()
@@ -408,12 +416,22 @@ QIcon XUPItem::displayIcon() const
 
 QString XUPItem::content() const
 {
-	return attribute("content");
+	return mDomElement.text();
 }
 
 void XUPItem::setContent(const QString& content)
 {
-	setAttribute("content", content);
+	QDomNodeList childNodes = mDomElement.childNodes();
+	for (int i = 0; i < childNodes.count(); i++)
+	{
+		if (childNodes.at(i).isText())
+		{
+			mDomElement.removeChild(childNodes.at(i));
+		}
+	}
+	
+	QDomText newText = mDomElement.ownerDocument().createTextNode(content);
+	mDomElement.appendChild(newText);
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const

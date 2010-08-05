@@ -15,7 +15,7 @@
 #include "ui/UIBuilderSettings.h"
 
 BuilderPlugin::BuilderPlugin()
-	: BasePlugin(), CLIToolPlugin( this )
+	: BasePlugin(), CLIToolInterface( this )
 {
 }
 
@@ -36,7 +36,7 @@ pCommand BuilderPlugin::buildCommand() const
 	// if no user commands get global ones
 	if ( !cmd.isValid() )
 	{
-		cmd = defaultBuildCommand();
+		cmd = defaultCommand();
 	}
 	
 	return cmd;
@@ -55,7 +55,7 @@ void BuilderPlugin::setBuildCommand( const pCommand& cmd )
 	settings->setValue( settingsKey( "BuildCommand/SkipOnError" ), cmd.skipOnError() );
 }
 
-QWidget* BuilderPlugin::builderSettingsWidget()
+QWidget* BuilderPlugin::settingsWidget()
 {
 	return new UIBuilderSettings( this, QApplication::activeWindow() );
 }

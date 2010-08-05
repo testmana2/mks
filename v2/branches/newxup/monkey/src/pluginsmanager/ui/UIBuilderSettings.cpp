@@ -50,7 +50,7 @@ UIBuilderSettings::UIBuilderSettings( BuilderPlugin* p, QWidget* w )
 	// delete widget when close
 	setAttribute( Qt::WA_DeleteOnClose );
 	// memorize defaults and user commands
-	mDefault = mPlugin->defaultBuildCommand();
+	mDefault = mPlugin->defaultCommand();
 	mCommand = mPlugin->buildCommand();
 	mReset = mCommand;
 	// add parsers

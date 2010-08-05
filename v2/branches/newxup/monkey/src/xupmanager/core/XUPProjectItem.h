@@ -49,9 +49,9 @@ public:
 	 * not to the project root.
 	 * It allows, for example, to add files to the particular scope in the QMake projects (win32, !unix ...)
 	 */
-	virtual void addFiles( const QStringList& files, XUPItem* scope = NULL );
+	virtual void addFiles( const QStringList& files, XUPItem* scope = NULL ) = 0;
 	// Remove file, subproject, or other item
-	virtual void removeItem( XUPItem* /*item*/ ) {}; // FIXME =0
+	virtual void removeItem( XUPItem* item ) = 0;
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
 	// return the most toplevel project ( ie: the model root project )
@@ -62,7 +62,7 @@ public:
 	XUPProjectItemList childrenProjects( bool recursive ) const;
 	
 	// return the project icons path
-	virtual QString iconsPath() const;
+	virtual QString iconsPath() const = 0;
 	
 	// return the display text of a project variable name
 	virtual QString variableDisplayText( const QString& variableName ) const;
@@ -70,6 +70,7 @@ public:
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
 	// return the matching path ( from start ) between left and right string or null string if result isa drive on windows, or / on unix like
+	// FIXME PasNox: add to the comments example: input and output of the function
 	QString matchingPath( const QString& left, const QString& right ) const;
 	// return a list of QFileInfo having corresponding partial file path
 	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
@@ -82,17 +83,14 @@ public:
 	virtual QString toString() const;
 		
 	// return the project type id
-	virtual QString projectType() const;
+	virtual QString projectType() const = 0;
 	// return a new instance of this kind of projecttype
-	// FIXME AK in future I think XUPProject will be abstract class
-	inline virtual XUPProjectItem* newProject() const { return new XUPProjectItem(); }
+	virtual XUPProjectItem* newProject() const = 0;
 	// open a project with codec
 	virtual bool open( const QString& fileName, const QString& codec );
 	// save the project
 	virtual bool save();
 	// return the project target file, ie the binary / library file path, if allowToAskUser is set to true - user might be asked for it via doalog
-	/* for PasNox: this method no longer contains targetPlatform parameter, because this parameter never needed.
-	   We always use only current platform */
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
 	QString targetFilePath( const pCommandTargetExecution& execution );
 	
@@ -111,13 +109,15 @@ public:
 	
 	QString codec() const;
 	
-	virtual bool edit() {return false;}; // TODO =0
+	virtual bool edit() = 0;
 	
 	/* returns a filter of source file names, which can be added to the project.
 	   Filter is suitable for QFileDialog
 	 */
 	QString sourceFileNameFilter() const;
-	// return the filtered variable list for project type
+	/** Return the filtered variable list for project type.
+	 *  Filtered variables not dispayed in the Project Manager GUI
+	 */
 	virtual QStringList filteredVariables() const;
 
 
@@ -126,7 +126,7 @@ protected:
 		("Python file", "*.py") ("Forms file", "*.ui")
 	   This info used for build file name filter for "Add files to the project" dialog (XUPProjectItem::sourceFileNameFilter())
 	 */
-	virtual StringStringListList sourceFileNamePatterns() const { return StringStringListList(); }; // FIXME = 0 
+	virtual StringStringListList sourceFileNamePatterns() const = 0;
 	
 	QDomDocument mDocument;
 	pCommandMap mCommands;

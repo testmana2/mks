@@ -39,7 +39,7 @@ UIInterpreterSettings::UIInterpreterSettings( InterpreterPlugin* p, QWidget* w )
 	// delete widget when close
 	setAttribute( Qt::WA_DeleteOnClose );
 	// memorize defaults and user commands
-	mDefault = mPlugin->defaultInterpretCommand();
+	mDefault = mPlugin->defaultCommand();
 	mCommand = mPlugin->interpretCommand();
 	mReset = mCommand;
 	// add parsers

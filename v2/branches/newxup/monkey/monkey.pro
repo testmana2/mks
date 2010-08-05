@@ -89,7 +89,7 @@ HEADERS	*= src/main.h \
 	src/pluginsmanager/BasePlugin.h \
 	src/pluginsmanager/XUPPlugin.h \
 	src/pluginsmanager/ChildPlugin.h \
-	src/pluginsmanager/CLIToolPlugin.h \
+	src/pluginsmanager/CLIToolInterface.h \
 	src/pluginsmanager/BuilderPlugin.h \
 	src/pluginsmanager/PluginsManager.h \
 	src/pluginsmanager/ui/UIPluginsSettings.h \
@@ -168,7 +168,7 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/workspace/pOpenedFileExplorer.cpp \
 	src/workspace/pOpenedFileModel.cpp \
 	src/pluginsmanager/BuilderPlugin.cpp \
-	src/pluginsmanager/CLIToolPlugin.cpp \
+	src/pluginsmanager/CLIToolInterface.cpp \
 	src/pluginsmanager/InterpreterPlugin.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \

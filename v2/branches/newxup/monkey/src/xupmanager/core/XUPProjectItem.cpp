@@ -1,8 +1,5 @@
 #include "XUPProjectItem.h"
 #include "XUPProjectModel.h"
-#include "BuilderPlugin.h"
-#include "DebuggerPlugin.h"
-#include "InterpreterPlugin.h"
 #include "MonkeyCore.h"
 #include "pMenuBar.h"
 #include "PluginsManager.h"
@@ -175,19 +172,14 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 	return projects.values();
 }
 
-QString XUPProjectItem::iconsPath() const
+QString XUPProjectItem::variableDisplayText( const QString& variableName) const
 {
-	return QString::null; //FIXME remove, make =0
+	return variableName;
 }
 
-QString XUPProjectItem::variableDisplayText( const QString& ) const
+QString XUPProjectItem::variableDisplayIcon( const QString& variableName) const
 {
-	return QString::null; //FIXME remove, make =0
-}
-
-QString XUPProjectItem::variableDisplayIcon( const QString& ) const
-{
-	return QString::null; //FIXME remove, make =0
+	return variableName;
 }
 
 XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive ) const
@@ -203,10 +195,10 @@ XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& va
 		}
 		else if ( XUPItem::Project == item->type() )
 		{
-			if ( recursive ) /* QMakeProjectItem specific code. FIXME rewrite it! */
+			if ( recursive )
 			{
 				XUPItem* pItem = item->parent();
-				if ( pItem->type() == XUPItem::Function && pItem->attribute( "name" ).toLower() == "include" )
+				if ( pItem->type() == XUPItem::Function)
 				{
 					variables << getVariables( item, variableName );
 				}
@@ -238,11 +230,6 @@ XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variab
 QString XUPProjectItem::toString() const
 {
 	return mDocument.toString( 4 );
-}
-
-QString XUPProjectItem::projectType() const
-{
-	return "invalid project"; // TODO =0 method
 }
 
 bool XUPProjectItem::open( const QString& fileName, const QString& codec )
@@ -384,9 +371,6 @@ QString XUPProjectItem::codec() const
 		return pMonkeyStudio::defaultCodec();
 }
 
-void XUPProjectItem::addFiles( const QStringList&, XUPItem* ) //FIXME kill this method implementation, replace with =0 and make XUPProjectItem abstract class
-{};
-
 QString XUPProjectItem::sourceFileNameFilter() const
 {
 	const StringStringListList suffixes = sourceFileNamePatterns();
@@ -418,7 +402,7 @@ QString XUPProjectItem::sourceFileNameFilter() const
 
 }
 
-QStringList XUPProjectItem::filteredVariables() const // TODO =0
+QStringList XUPProjectItem::filteredVariables() const
 {
 	return QStringList();
 }

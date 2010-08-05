@@ -29,16 +29,16 @@
 #ifndef BUILDERPLUGIN_H
 #define BUILDERPLUGIN_H
 
-#include "CLIToolPlugin.h"
+#include "CLIToolInterface.h"
 
-class Q_MONKEY_EXPORT BuilderPlugin : public BasePlugin, public CLIToolPlugin
+class Q_MONKEY_EXPORT BuilderPlugin : public BasePlugin, public CLIToolInterface
 {	
 public:
 	BuilderPlugin();
 	virtual pCommand buildCommand() const;
 	virtual void setBuildCommand( const pCommand& cmd );
-	virtual QWidget* builderSettingsWidget();
-	virtual pCommand defaultBuildCommand() const = 0;
+	virtual QWidget* settingsWidget();
+	virtual pCommand defaultCommand() const = 0;
 };
 
 Q_DECLARE_INTERFACE( BuilderPlugin, "org.monkeystudio.MonkeyStudio.BuilderPlugin/1.0" )

@@ -29,16 +29,16 @@
 #ifndef INTERPRETERPLUGIN_H
 #define INTERPRETERPLUGIN_H
 
-#include "CLIToolPlugin.h"
+#include "CLIToolInterface.h"
 
-class Q_MONKEY_EXPORT InterpreterPlugin : public BasePlugin, public CLIToolPlugin
+class Q_MONKEY_EXPORT InterpreterPlugin : public BasePlugin, public CLIToolInterface
 {
 public:
 	InterpreterPlugin();
 	virtual pCommand interpretCommand() const;
 	virtual void setInterpretCommand( const pCommand& cmd );
-	virtual QWidget* interpreterSettingsWidget();
-	virtual pCommand defaultInterpretCommand() const = 0;
+	virtual QWidget* settingsWidget();
+	virtual pCommand defaultCommand() const = 0;
 };
 
 Q_DECLARE_INTERFACE( InterpreterPlugin, "org.monkeystudio.MonkeyStudio.InterpreterPlugin/1.0" )
