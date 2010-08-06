@@ -29,9 +29,9 @@
 #ifndef GNUMAKE_H
 #define GNUMAKE_H
 
-#include <BuilderPlugin.h>
+#include <CLIToolPlugin.h>
 
-class GNUMake : public BuilderPlugin
+class GNUMake : public CLIToolPlugin
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin CLIToolInterface )
@@ -47,7 +47,7 @@ public:
 	virtual QWidget* settingsWidget();
 	// CLIToolInterface
 	virtual QStringList availableParsers() const;
-	// BuilderPlugin
+	// CLIToolPlugin
 	virtual pCommand defaultCommand() const;
 };
 
