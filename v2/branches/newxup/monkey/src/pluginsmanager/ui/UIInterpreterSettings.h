@@ -25,7 +25,7 @@
 
 #include <QWidget>
 
-class InterpreterPlugin;
+class CLIToolPlugin;
 
 class Q_MONKEY_EXPORT UIInterpreterSettings : public QWidget, public Ui::UIInterpreterSettings
 {
@@ -35,10 +35,10 @@ protected:
 	pCommand mDefault;
 	pCommand mReset;
 	pCommand mCommand;
-	InterpreterPlugin* mPlugin;
+	CLIToolPlugin* mPlugin;
 
 public:
-	UIInterpreterSettings( InterpreterPlugin*, QWidget* = 0 );
+	UIInterpreterSettings( CLIToolPlugin*, QWidget* = 0 );
 
 	void updateCommand();
 	void restoreDefault();

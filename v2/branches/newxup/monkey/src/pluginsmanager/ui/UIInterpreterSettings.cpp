@@ -16,7 +16,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ****************************************************************************/
 #include "UIInterpreterSettings.h"
-#include "../InterpreterPlugin.h"
+#include "../CLIToolPlugin.h"
 #include  "../../consolemanager/pConsoleManager.h"
 #include "../../pMonkeyStudio.h"
 #include "../../coremanager/MonkeyCore.h"
@@ -26,7 +26,7 @@
 
 using namespace pMonkeyStudio;
 
-UIInterpreterSettings::UIInterpreterSettings( InterpreterPlugin* p, QWidget* w )
+UIInterpreterSettings::UIInterpreterSettings( CLIToolPlugin* p, QWidget* w )
 	: QWidget( w ), mPlugin( p )
 {
 	Q_ASSERT( mPlugin );
@@ -40,7 +40,7 @@ UIInterpreterSettings::UIInterpreterSettings( InterpreterPlugin* p, QWidget* w )
 	setAttribute( Qt::WA_DeleteOnClose );
 	// memorize defaults and user commands
 	mDefault = mPlugin->defaultCommand();
-	mCommand = mPlugin->interpretCommand();
+	mCommand = mPlugin->command();
 	mReset = mCommand;
 	// add parsers
 	lwBuildCommandParsers->addItems( MonkeyCore::consoleManager()->parsersName() );
