@@ -4,7 +4,7 @@
 
 #include <ProjectTypesIndex.h>
 #include <pMonkeyStudio.h>
-#include <InterpreterPlugin.h>
+#include <CLIToolPlugin.h>
 #include <UIMain.h>
 
 #include "src/gui/UIPHPEditor.h"
@@ -35,7 +35,7 @@ QStringList PHPQtProjectItem::autoActivatePlugins() const
 void PHPQtProjectItem::installCommands()
 {
 	// get plugins
-	InterpreterPlugin* ip = interpreter();
+	CLIToolPlugin* ip = interpreter();
 	
 	// temp command
 	pCommand cmd;
@@ -43,7 +43,7 @@ void PHPQtProjectItem::installCommands()
 	// build command
 	if ( ip )
 	{
-		cmd = ip->interpretCommand();
+		cmd = ip->command();
 	}
 	
 	cmd.setUserData( QVariant::fromValue( &mCommands ) );
@@ -163,9 +163,9 @@ bool PHPQtProjectItem::edit()
 	return UIPHPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
-InterpreterPlugin* PHPQtProjectItem::interpreter() const
+CLIToolPlugin* PHPQtProjectItem::interpreter() const
 {
-	return MonkeyCore::pluginsManager()->plugin<InterpreterPlugin*>( PluginsManager::stAll, "PHP" );
+	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "PHP" );
 }
 
 StringStringListList PHPQtProjectItem::sourceFileNamePatterns() const
