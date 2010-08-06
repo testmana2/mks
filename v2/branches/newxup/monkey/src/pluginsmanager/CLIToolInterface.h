@@ -44,7 +44,7 @@ public:
 	virtual pCommandList defaultCommands() const;
 	virtual pCommandList userCommands() const;
 	virtual void setUserCommands( const pCommandList& cmds ) const;
-	virtual QWidget* cliToolSettingsWidget();
+	virtual QWidget* cliToolInterfaceSettingsWidget();
 	virtual QStringList availableParsers() const;
 
 protected:
