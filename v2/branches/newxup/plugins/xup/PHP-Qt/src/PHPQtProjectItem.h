@@ -5,7 +5,7 @@
 
 #define PROJECT_TYPE_STRING "PHPQt"
 
-class InterpreterPlugin;
+class CLIToolPlugin;
 
 class PHPQtProjectItem : public XUPProjectItem
 {
@@ -27,7 +27,7 @@ public:
 	
 	
 protected:
-	InterpreterPlugin* interpreter() const;
+	CLIToolPlugin* interpreter() const;
 	virtual StringStringListList sourceFileNamePatterns() const;
 	virtual QStringList filteredVariables() const;
 	virtual QString iconsPath() const;
