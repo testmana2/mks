@@ -5,7 +5,7 @@
 
 #define PROJECT_TYPE_STRING "QMake"
 
-class BuilderPlugin;
+class CLIToolPlugin;
 
 class QMakeProjectItem : public XUPProjectItem
 {
@@ -58,7 +58,7 @@ protected:
 	QHash <QString, QString> mVariableCache;
 	void initHashes();
 	bool handleSubdirs( XUPItem* subdirs );
-	BuilderPlugin* builder() const; // init mVariableLabels, mVariableIcons
+	CLIToolPlugin* builder() const; // init mVariableLabels, mVariableIcons
 	virtual StringStringListList sourceFileNamePatterns() const;
 	virtual QString iconsPath() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;

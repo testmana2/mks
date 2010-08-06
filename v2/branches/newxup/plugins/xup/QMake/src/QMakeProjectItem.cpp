@@ -5,7 +5,7 @@
 
 #include <pMonkeyStudio.h>
 #include <pQueuedMessageToolBar.h>
-#include <BuilderPlugin.h>
+#include <CLIToolPlugin.h>
 #include "PluginsManager.h"
 #include "UIMain.h"
 
@@ -661,7 +661,7 @@ QStringList QMakeProjectItem::autoActivatePlugins() const
 void QMakeProjectItem::installCommands()
 {
 	// get plugins
-	BuilderPlugin* bp = builder();
+	CLIToolPlugin* bp = builder();
 		
 	// config variable
 	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
@@ -676,7 +676,7 @@ void QMakeProjectItem::installCommands()
 	// build command
 	if ( bp )
 	{
-		cmd = bp->buildCommand();
+		cmd = bp->command();
 	}
 	cmd.setUserData( QVariant::fromValue( &mCommands ) );
 	cmd.setProject( this );
@@ -1212,7 +1212,7 @@ bool QMakeProjectItem::edit()
 	return ret;
 }
 
-BuilderPlugin* QMakeProjectItem::builder() const
+CLIToolPlugin* QMakeProjectItem::builder() const
 {
 	QString name;
 	
@@ -1228,7 +1228,7 @@ BuilderPlugin* QMakeProjectItem::builder() const
 		name = "GNUMake";
 	}
 	
-	return MonkeyCore::pluginsManager()->plugin<BuilderPlugin*>( PluginsManager::stAll, name );
+	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, name );
 }
 
 StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
