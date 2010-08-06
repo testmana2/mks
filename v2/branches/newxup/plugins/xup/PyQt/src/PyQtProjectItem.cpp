@@ -6,7 +6,7 @@
 
 #include <ProjectTypesIndex.h>
 #include <pMonkeyStudio.h>
-#include <InterpreterPlugin.h>
+#include <CLIToolPlugin.h>
 #include <UIMain.h>
 
 #include <QApplication>
@@ -35,7 +35,7 @@ QStringList PyQtProjectItem::autoActivatePlugins() const
 void PyQtProjectItem::installCommands()
 {
 	// get plugins
-	InterpreterPlugin* ip = interpreter();
+	CLIToolPlugin* ip = interpreter();
 	
 	// temp command
 	pCommand cmd;
@@ -43,7 +43,7 @@ void PyQtProjectItem::installCommands()
 	// build command
 	if ( ip )
 	{
-		cmd = ip->interpretCommand();
+		cmd = ip->command();
 	}
 	
 	cmd.setUserData( QVariant::fromValue( &mCommands ) );
@@ -163,9 +163,9 @@ bool PyQtProjectItem::edit()
 	return UIPyQtEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
-InterpreterPlugin* PyQtProjectItem::interpreter() const
+CLIToolPlugin* PyQtProjectItem::interpreter() const
 {
-	return MonkeyCore::pluginsManager()->plugin<InterpreterPlugin*>( PluginsManager::stAll, "Python" );
+	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "Python" );
 }
 
 StringStringListList PyQtProjectItem::sourceFileNamePatterns() const
