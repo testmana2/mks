@@ -18,12 +18,12 @@
 #ifndef PHP_H
 #define PHP_H
 
-#include <InterpreterPlugin.h>
+#include <CLIToolPlugin.h>
 
-class PHP : public InterpreterPlugin
+class PHP : public CLIToolPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolInterface )
+	Q_INTERFACES( BasePlugin CLIToolPlugin CLIToolInterface )
 
 protected:	
 	void fillPluginInfos();
@@ -36,7 +36,7 @@ public:
 	virtual QWidget* settingsWidget();
 	// CLIToolInterface
 	virtual QStringList availableParsers() const;
-	// InterpreterPlugin
+	// CLIToolPlugin
 	virtual pCommand defaultCommand() const;
 };
 
