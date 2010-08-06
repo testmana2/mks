@@ -35,7 +35,7 @@
 #include "ChildPlugin.h"
 #include "BuilderPlugin.h"
 #include "DebuggerPlugin.h"
-#include "InterpreterPlugin.h"
+#include "CLIToolPlugin.h"
 
 class XUPItem;
 class pAbstractChild;
