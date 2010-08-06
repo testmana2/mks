@@ -1,12 +1,12 @@
 #ifndef $Plugin Name.upper$_H
 #define $Plugin Name.upper$_H
 
-#include <InterpreterPlugin.h>
+#include <CLIToolPlugin.h>
 
-class $Plugin Name$ : public InterpreterPlugin
+class $Plugin Name$ : public CLIToolPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolInterface )
+	Q_INTERFACES( BasePlugin CLIToolPlugin CLIToolInterface )
 
 public:
 	virtual pCommand defaultCommand() const;
