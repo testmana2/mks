@@ -5,7 +5,7 @@
 
 #include "XUPProjectItem.h"
 
-class InterpreterPlugin;
+class CLIToolPlugin;
 
 class PyQtProjectItem : public XUPProjectItem
 {
@@ -26,7 +26,7 @@ public:
 	virtual bool edit();
 	
 protected:
-	InterpreterPlugin* interpreter() const;
+	CLIToolPlugin* interpreter() const;
 	virtual StringStringListList sourceFileNamePatterns() const;
 	virtual QStringList filteredVariables() const;
 	virtual QString iconsPath() const;
