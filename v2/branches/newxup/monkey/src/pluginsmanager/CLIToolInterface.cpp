@@ -91,7 +91,7 @@ void CLIToolInterface::setUserCommands( const pCommandList& cmds ) const
 	settings->endArray();
 }
 
-QWidget* CLIToolInterface::cliToolSettingsWidget()
+QWidget* CLIToolInterface::cliToolInterfaceSettingsWidget()
 {
 	return new UICLIToolSettings( mPlugin, defaultCommands(), userCommands(), QApplication::activeWindow() );
 }
