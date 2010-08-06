@@ -3,7 +3,7 @@
 ** 		Created using Monkey Studio v1.8.1.0
 ** Authors   : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>, Andrei KOPATS aka hlamer <hlamer@tut.by>
 ** Project   : Monkey Studio IDE
-** FileName  : InterpreterPlugin.cpp
+** FileName  : CLIToolPlugin.cpp
 ** Date      : 2009-12-09T00:37:00
 ** License   : GPL
 ** Comment   : 
@@ -11,15 +11,15 @@
 **
 **
 ****************************************************************************/
-#include "InterpreterPlugin.h"
+#include "CLIToolPlugin.h"
 #include "ui/UIInterpreterSettings.h"
 
-InterpreterPlugin::InterpreterPlugin()
+CLIToolPlugin::CLIToolPlugin()
 	: BasePlugin(), CLIToolInterface( this )
 {
 }
 
-pCommand InterpreterPlugin::interpretCommand() const
+pCommand CLIToolPlugin::interpretCommand() const
 {
 	// get settings object
 	pSettings* settings = MonkeyCore::settings();
@@ -42,7 +42,7 @@ pCommand InterpreterPlugin::interpretCommand() const
 	return cmd;
 }
 
-void InterpreterPlugin::setInterpretCommand( const pCommand& cmd )
+void CLIToolPlugin::setInterpretCommand( const pCommand& cmd )
 {
 	pSettings* settings = MonkeyCore::settings();
 	
@@ -55,7 +55,7 @@ void InterpreterPlugin::setInterpretCommand( const pCommand& cmd )
 	settings->setValue( settingsKey( "InterpretCommand/SkipOnError" ), cmd.skipOnError() );
 }
 
-QWidget* InterpreterPlugin::settingsWidget()
+QWidget* CLIToolPlugin::settingsWidget()
 {
 	return new UIInterpreterSettings( this, QApplication::activeWindow() );
 }
