@@ -26,8 +26,8 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#ifndef CLITOOLPLUGIN_H
-#define CLITOOLPLUGIN_H
+#ifndef CLITOOLINTERFACE_H
+#define CLITOOLINTERFACE_H
 
 #include <MonkeyExport.h>
 
@@ -53,4 +53,4 @@ protected:
 
 Q_DECLARE_INTERFACE( CLIToolInterface, "org.monkeystudio.MonkeyStudio.CLIToolInterface/1.0" )
 
-#endif // CLITOOLPLUGIN_H
+#endif // CLITOOLINTERFACE_H
