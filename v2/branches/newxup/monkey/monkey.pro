@@ -55,7 +55,6 @@ FORMS	*= src/maininterface/ui/UIAbout.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui \
 	src/pluginsmanager/ui/UICLIToolSettings.ui \
-	src/pluginsmanager/ui/UIBuilderSettings.ui \
 	src/pluginsmanager/ui/UIPluginsSettingsElement.ui \
 	src/pluginsmanager/ui/UIPluginsSettingsAbout.ui \
 	src/xupmanager/gui/UIXUPFindFiles.ui \
@@ -90,11 +89,9 @@ HEADERS	*= src/main.h \
 	src/pluginsmanager/XUPPlugin.h \
 	src/pluginsmanager/ChildPlugin.h \
 	src/pluginsmanager/CLIToolInterface.h \
-	src/pluginsmanager/BuilderPlugin.h \
 	src/pluginsmanager/PluginsManager.h \
 	src/pluginsmanager/ui/UIPluginsSettings.h \
 	src/pluginsmanager/ui/UICLIToolSettings.h \
-	src/pluginsmanager/ui/UIBuilderSettings.h \
 	src/settingsmanager/Settings.h \
 	src/coremanager/MonkeyCore.h \
 	src/statusbar/StatusBar.h \
@@ -143,7 +140,6 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/pluginsmanager/BasePlugin.cpp \
 	src/pluginsmanager/ui/UIPluginsSettings.cpp \
 	src/pluginsmanager/ui/UICLIToolSettings.cpp \
-	src/pluginsmanager/ui/UIBuilderSettings.cpp \
 	src/main.cpp \
 	src/settingsmanager/Settings.cpp \
 	src/coremanager/MonkeyCore.cpp \
@@ -167,9 +163,8 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/pluginsmanager/PluginsMenu.cpp \
 	src/workspace/pOpenedFileExplorer.cpp \
 	src/workspace/pOpenedFileModel.cpp \
-	src/pluginsmanager/BuilderPlugin.cpp \
 	src/pluginsmanager/CLIToolInterface.cpp \
-	src/pluginsmanager/InterpreterPlugin.cpp \
+	src/pluginsmanager/CLIToolPlugin.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \
 	src/consolemanager/pConsoleManagerStepModel.cpp
