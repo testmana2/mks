@@ -33,7 +33,6 @@
 
 #include "BasePlugin.h"
 #include "ChildPlugin.h"
-#include "BuilderPlugin.h"
 #include "DebuggerPlugin.h"
 #include "CLIToolPlugin.h"
 
