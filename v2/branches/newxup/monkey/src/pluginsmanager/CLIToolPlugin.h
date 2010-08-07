@@ -35,8 +35,8 @@ class Q_MONKEY_EXPORT CLIToolPlugin : public BasePlugin, public CLIToolInterface
 {
 public:
 	CLIToolPlugin();
-	virtual pCommand interpretCommand() const;
-	virtual void setInterpretCommand( const pCommand& cmd );
+	virtual pCommand command() const;
+	virtual void setCommand( const pCommand& cmd );
 	virtual QWidget* settingsWidget();
 	virtual pCommand defaultCommand() const = 0;
 };

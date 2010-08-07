@@ -4,8 +4,7 @@ SUBDIRS	= xup \
 	base \
 	builder \
 	compiler \
-	cli \
+	clitool \
 	child \
 	debugger \
-	network \
-	interpreter
+	network

@@ -94,7 +94,7 @@ void UIInterpreterSettings::save()
 	}
 	mCommand.setParsers( l );
 	mCommand.setTryAllParsers( cbBuildCommandTryAll->isChecked() );
-	mPlugin->setInterpretCommand( mCommand );
+	mPlugin->setCommand( mCommand );
 }
 
 void UIInterpreterSettings::on_tbBuildCommandCommand_clicked()

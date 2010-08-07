@@ -15,64 +15,74 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ****************************************************************************/
-#include "PHP.h"
+#include "Python.h"
 
 #include <QTabWidget>
 
-PHP::PHP ()
+Python::Python ()
 {
+#if 0
+	// install parsers
+	foreach ( QString s, availableParsers() )
+	{
+		MonkeyCore::consoleManager()->addParser( getParser( s ) );
+	}
+#endif
 }
 
-void PHP::fillPluginInfos()
+void Python::fillPluginInfos()
 {
-	mPluginInfos.Caption = tr( "PHP" );
-	mPluginInfos.Description = tr( "This plugin provide PHP interpreter and php parser." );
-	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>";
+	mPluginInfos.Caption = tr( "Python" );
+	mPluginInfos.Description = tr( "This plugin provide Python interpreter and python parser." );
+	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>, Michon Aurelien aka aurelien <aurelien.french@gmail.com>";
 	mPluginInfos.Type = BasePlugin::iInterpreter;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = true;
-	mPluginInfos.Pixmap = pIconManager::pixmap( "php.png", ":/icons" );
+	mPluginInfos.Pixmap = pIconManager::pixmap( "python.png", ":/icons" );
 }
 
-PHP::~PHP()
-{//TODO move to uninstall
+Python::~Python()
+{
+#if 0
+ // TODO move to uninstall
 	// uninstall parsers
 	foreach ( QString s, availableParsers() )
 	{
 		MonkeyCore::consoleManager()->removeParser( s );
 	}
+#endif
 }
 
-bool PHP::install()
+bool Python::install()
 {
 	return true;
 }
 
-bool PHP::uninstall()
+bool Python::uninstall()
 {
 	return true;
 }
 
-QWidget* PHP::settingsWidget()
+QWidget* Python::settingsWidget()
 {
 	QTabWidget* tw = new QTabWidget;
 	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( settingsWidget(), tr( "Interpret Command" ) );
-	tw->addTab( cliToolSettingsWidget(), tr( "User Commands" ) );
+	tw->addTab( CLIToolPlugin::settingsWidget(), tr( "Interpret Command" ) );
+	tw->addTab( cliToolInterfaceSettingsWidget(), tr( "User Commands" ) );
 	return tw;
 }
 
-QStringList PHP::availableParsers() const
+QStringList Python::availableParsers() const
 {
 	return QStringList();
 }
 
-pCommand PHP::defaultCommand() const
+pCommand Python::defaultCommand() const
 {
-	const QString mPHP = "php";
-	return pCommand( "Interpret", mPHP, QString::null, false, availableParsers(), "$cpp$" );
+	const QString mPython = "python";
+	return pCommand( "Interpret", mPython, QString::null, false, availableParsers(), "$cpp$" );
 }
 
-Q_EXPORT_PLUGIN2( InterpreterPHP, PHP )
+Q_EXPORT_PLUGIN2( InterpreterPython, Python )

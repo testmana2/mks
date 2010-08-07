@@ -67,8 +67,8 @@ QWidget* GNUMake::settingsWidget()
 {
 	QTabWidget* tw = new QTabWidget;
 	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( settingsWidget(), tr( "Build Command" ) );
-	tw->addTab( cliToolSettingsWidget(), tr( "User Commands" ) );
+	tw->addTab( CLIToolPlugin::settingsWidget(), tr( "Build Command" ) );
+	tw->addTab( cliToolInterfaceSettingsWidget(), tr( "User Commands" ) );
 	return tw;
 }
 
