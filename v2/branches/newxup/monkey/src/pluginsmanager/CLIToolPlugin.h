@@ -26,12 +26,13 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#ifndef CLIToolPlugin_H
-#define CLIToolPlugin_H
+#ifndef CLITOOLPLUGIN_H
+#define CLITOOLPLUGIN_H
 
-#include "CLIToolInterface.h"
+#include "BasePlugin.h"
+#include "pCommand.h"
 
-class Q_MONKEY_EXPORT CLIToolPlugin : public BasePlugin, public CLIToolInterface
+class Q_MONKEY_EXPORT CLIToolPlugin : public BasePlugin
 {
 public:
 	CLIToolPlugin();
@@ -39,8 +40,14 @@ public:
 	virtual void setCommand( const pCommand& cmd );
 	virtual QWidget* settingsWidget();
 	virtual pCommand defaultCommand() const = 0;
+	
+	virtual pCommandList defaultCommands() const;
+	virtual pCommandList userCommands() const;
+	virtual void setUserCommands( const pCommandList& cmds ) const;
+	virtual QWidget* additionalCommandsSettingsWidget();
+	virtual QStringList availableParsers() const;
 };
 
 Q_DECLARE_INTERFACE( CLIToolPlugin, "org.monkeystudio.MonkeyStudio.CLIToolPlugin/1.0" )
 
-#endif // CLIToolPlugin_H
+#endif // CLITOOLPLUGIN_H
