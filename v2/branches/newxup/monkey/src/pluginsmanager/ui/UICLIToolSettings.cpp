@@ -15,7 +15,7 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ****************************************************************************/
-#include "UIInterpreterSettings.h"
+#include "UICLIToolSettings.h"
 #include "../CLIToolPlugin.h"
 #include  "../../consolemanager/pConsoleManager.h"
 #include "../../pMonkeyStudio.h"
@@ -26,7 +26,7 @@
 
 using namespace pMonkeyStudio;
 
-UIInterpreterSettings::UIInterpreterSettings( CLIToolPlugin* p, QWidget* w )
+UICLIToolSettings::UICLIToolSettings( CLIToolPlugin* p, QWidget* w )
 	: QWidget( w ), mPlugin( p )
 {
 	Q_ASSERT( mPlugin );
@@ -51,7 +51,7 @@ UIInterpreterSettings::UIInterpreterSettings( CLIToolPlugin* p, QWidget* w )
 	updateCommand();
 }
 
-void UIInterpreterSettings::updateCommand()
+void UICLIToolSettings::updateCommand()
 {
 	leBuildCommandText->setText( mCommand.text() );
 	leBuildCommandCommand->setText( mCommand.command() );
@@ -66,19 +66,19 @@ void UIInterpreterSettings::updateCommand()
 	cbBuildCommandTryAll->setChecked( mCommand.tryAllParsers() );
 }
 
-void UIInterpreterSettings::restoreDefault()
+void UICLIToolSettings::restoreDefault()
 {
 	mCommand = mDefault;
 	updateCommand();
 }
 
-void UIInterpreterSettings::reset()
+void UICLIToolSettings::reset()
 {
 	mCommand = mReset;
 	updateCommand();
 }
 
-void UIInterpreterSettings::save()
+void UICLIToolSettings::save()
 {
 	mCommand.setText( leBuildCommandText->text() );
 	mCommand.setCommand( leBuildCommandCommand->text() );
@@ -97,21 +97,21 @@ void UIInterpreterSettings::save()
 	mPlugin->setCommand( mCommand );
 }
 
-void UIInterpreterSettings::on_tbBuildCommandCommand_clicked()
+void UICLIToolSettings::on_tbBuildCommandCommand_clicked()
 {
 	QString s = getOpenFileName( tr( "Select an executable" ), leBuildCommandCommand->text() );
 	if ( !s.isNull() )
 		leBuildCommandCommand->setText( s );
 }
 
-void UIInterpreterSettings::on_tbBuildCommandWorkingDirectory_clicked()
+void UICLIToolSettings::on_tbBuildCommandWorkingDirectory_clicked()
 {
 	QString s = getExistingDirectory( tr( "Select a folder" ), leBuildCommandWorkingDirectory->text() );
 	if ( !s.isNull() )
 		leBuildCommandWorkingDirectory->setText( s );
 }
 
-void UIInterpreterSettings::on_dbbButtons_clicked( QAbstractButton* b )
+void UICLIToolSettings::on_dbbButtons_clicked( QAbstractButton* b )
 {
 	if ( dbbButtons->standardButton( b ) == QDialogButtonBox::Reset )
 		reset();

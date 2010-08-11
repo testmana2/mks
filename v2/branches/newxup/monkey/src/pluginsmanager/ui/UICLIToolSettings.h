@@ -15,19 +15,19 @@
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ****************************************************************************/
-#ifndef UIINTERPRETERSETTINGS_H
-#define UIINTERPRETERSETTINGS_H
+#ifndef UICLIToolSettings_H
+#define UICLIToolSettings_H
 
 #include <MonkeyExport.h>
 #include <pCommand.h>
 
-#include "ui_UIInterpreterSettings.h"
+#include "ui_UICLIToolSettings.h"
 
 #include <QWidget>
 
 class CLIToolPlugin;
 
-class Q_MONKEY_EXPORT UIInterpreterSettings : public QWidget, public Ui::UIInterpreterSettings
+class Q_MONKEY_EXPORT UICLIToolSettings : public QWidget, public Ui::UICLIToolSettings
 {
 	Q_OBJECT
 	
@@ -38,7 +38,7 @@ protected:
 	CLIToolPlugin* mPlugin;
 
 public:
-	UIInterpreterSettings( CLIToolPlugin*, QWidget* = 0 );
+	UICLIToolSettings( CLIToolPlugin*, QWidget* = 0 );
 
 	void updateCommand();
 	void restoreDefault();
@@ -51,4 +51,4 @@ protected slots:
 	void on_dbbButtons_clicked( QAbstractButton* );
 };
 
-#endif // UIINTERPRETERSETTINGS_H
+#endif // UICLIToolSettings_H

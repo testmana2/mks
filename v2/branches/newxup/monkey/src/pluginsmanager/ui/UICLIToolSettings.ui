@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>UIInterpreterSettings</class>
- <widget class="QWidget" name="UIInterpreterSettings" >
+ <class>UICLIToolSettings</class>
+ <widget class="QWidget" name="UICLIToolSettings" >
   <property name="geometry" >
    <rect>
     <x>0</x>

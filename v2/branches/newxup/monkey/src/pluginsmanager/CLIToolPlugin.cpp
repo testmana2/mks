@@ -13,7 +13,7 @@
 ****************************************************************************/
 #include "CLIToolPlugin.h"
 #include "ui/UIAdditionalCommandsSettings.h"
-#include "ui/UIInterpreterSettings.h"
+#include "ui/UICLIToolSettings.h"
 
 CLIToolPlugin::CLIToolPlugin()
 	: BasePlugin()
@@ -58,7 +58,7 @@ void CLIToolPlugin::setCommand( const pCommand& cmd )
 
 QWidget* CLIToolPlugin::settingsWidget()
 {
-	return new UIInterpreterSettings( this, QApplication::activeWindow() );
+	return new UICLIToolSettings( this, QApplication::activeWindow() );
 }
 
 
