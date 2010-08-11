@@ -69,9 +69,6 @@ public:
 	// return the display icon name of a project variable name. Used by XUPItem::displayIcon()
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
-	// return the matching path ( from start ) between left and right string or null string if result isa drive on windows, or / on unix like
-	// FIXME PasNox: add to the comments example: input and output of the function
-	QString matchingPath( const QString& left, const QString& right ) const;
 	// return a list of QFileInfo having corresponding partial file path
 	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
 	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned

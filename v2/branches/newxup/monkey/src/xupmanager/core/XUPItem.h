@@ -43,8 +43,6 @@ public:
 	virtual bool sameTypeLess( const XUPItem& other ) const;
 	virtual bool operator<( const XUPItem& other ) const;
 	
-	QDomElement toXML() const;
-	
 	// project item
 	XUPProjectItem* project() const;
 	// return the i child item
