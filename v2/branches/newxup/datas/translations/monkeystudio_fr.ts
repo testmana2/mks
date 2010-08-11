@@ -826,95 +826,95 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>UICLIToolSettings</name>
+    <name>UIAdditionalCommandsSettings</name>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="190"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.cpp" line="190"/>
         <source>Select a folder</source>
         <translation>Choisissez un dossier</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="13"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="13"/>
         <source>Commands Editor</source>
         <translation>Éditeur de commandes</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="48"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="48"/>
         <source>Commands :</source>
         <translation>Commandes :</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="58"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="58"/>
         <source>Add</source>
         <translation>Ajouter</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="71"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="71"/>
         <source>Remove</source>
         <translation>Enlever</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="97"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="97"/>
         <source>Down</source>
         <translation>Descendre</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="107"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="107"/>
         <source>Up</source>
         <translation>Monter</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="119"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="119"/>
         <source>Command</source>
         <translation>Commande</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="154"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="154"/>
         <source>Text :</source>
         <translation>Texte :</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="164"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="164"/>
         <source>Command :</source>
         <translation>Commande :</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="174"/>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="204"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="174"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="204"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="184"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="184"/>
         <source>Arguments :</source>
         <translation>Arguments :</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="194"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="194"/>
         <source>Working Directory :</source>
         <translation>Répertoire de travail :</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="235"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="235"/>
         <source>Parsers :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="252"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="252"/>
         <source>Try All</source>
         <translation>Essayer tout</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="214"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="214"/>
         <source>Skip On Error</source>
         <translation>Passer l&apos;erreur</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="135"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.cpp" line="135"/>
         <source>New Command</source>
         <translation>Nouvelle commande</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="183"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.cpp" line="183"/>
         <source>Select an executable</source>
         <translation>Sélectionner un exécutable</translation>
     </message>
