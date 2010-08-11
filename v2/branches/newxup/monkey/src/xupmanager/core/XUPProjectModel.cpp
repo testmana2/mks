@@ -187,7 +187,7 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 					{
 						if ( name == "parameters" )
 						{
-							attributes << QString( "cache-%1" ).arg( name ) +"=\"" +item->cacheValue( name ) +"\"";
+							attributes << QString( "cache-%1" ).arg( name ) +"=\"" +item->content() +"\"";
 						}
 					}
 				}

@@ -295,7 +295,7 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 			{
 				QString parameters = interpretContent( cItem->attribute( "parameters" ) );
 				
-				cItem->setCacheValue( "parameters", parameters );
+				cItem->setContent( parameters );
 				break;
 			}
 			case XUPItem::Project:
@@ -392,7 +392,7 @@ QString QMakeProjectItem::interpretContent( const QString& content )
 
 bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 {
-	const QString parameters = function->cacheValue( "parameters" );
+	const QString parameters = function->content();
 	const QString fn = filePath( parameters );
 	QStringList projects;
 

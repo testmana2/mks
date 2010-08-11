@@ -456,18 +456,3 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 		emit m->dataChanged( idx, idx );
 	}
 }
-
-QString XUPItem::cacheValue( const QString& key, const QString& defaultValue ) const
-{
-	return mCacheValues.value( key, defaultValue ).toString();
-}
-
-void XUPItem::setCacheValue( const QString& key, const QString& value )
-{
-	mCacheValues[ key ] = value;
-}
-
-void XUPItem::clearCacheValue( const QString& key )
-{
-	mCacheValues.remove( key );
-}
