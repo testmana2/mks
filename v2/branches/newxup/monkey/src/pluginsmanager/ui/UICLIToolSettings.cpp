@@ -29,7 +29,7 @@
 #include "UICLIToolSettings.h"
 #include  "../../consolemanager/pConsoleManager.h"
 #include "../../pMonkeyStudio.h"
-#include "../CLIToolInterface.h"
+#include "../CLIToolPlugin.h"
 #include "../../coremanager/MonkeyCore.h"
 
 #include <QInputDialog>
@@ -89,7 +89,7 @@ void UICLIToolSettings::reset()
 void UICLIToolSettings::save()
 {
 	on_lwCommands_currentItemChanged( lwCommands->currentItem(), lwCommands->currentItem() );
-	qobject_cast<CLIToolInterface*>( mPlugin )->setUserCommands( mCommands );
+	qobject_cast<CLIToolPlugin*>( mPlugin )->setUserCommands( mCommands );
 }
 
 void UICLIToolSettings::on_lwCommands_itemSelectionChanged()
