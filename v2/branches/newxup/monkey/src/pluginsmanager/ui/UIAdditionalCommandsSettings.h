@@ -3,7 +3,7 @@
 ** 		Created using Monkey Studio v1.8.1.0
 ** Authors    : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>
 ** Project   : Monkey Studio IDE
-** FileName  : UICLIToolSettings.h
+** FileName  : UIAdditionalCommandsSettings.h
 ** Date      : 2008-01-14T00:36:59
 ** License   : GPL
 ** Comment   : This header has been automatically generated, if you are the original author, or co-author, fill free to replace/append with your informations.
@@ -26,19 +26,19 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#ifndef UICLITOOLSETTINGS_H
-#define UICLITOOLSETTINGS_H
+#ifndef UIAdditionalCommandsSettings_H
+#define UIAdditionalCommandsSettings_H
 
 #include <MonkeyExport.h>
 
-#include "ui_UICLIToolSettings.h"
+#include "ui_UIAdditionalCommandsSettings.h"
 #include "../../consolemanager/pCommand.h"
 
 #include <QWidget>
 
 class BasePlugin;
 
-class Q_MONKEY_EXPORT UICLIToolSettings : public QWidget, public Ui::UICLIToolSettings
+class Q_MONKEY_EXPORT UIAdditionalCommandsSettings : public QWidget, public Ui::UIAdditionalCommandsSettings
 {
 	Q_OBJECT
 	
@@ -50,7 +50,7 @@ protected:
 	bool mUpdating;
 
 public:
-	UICLIToolSettings( BasePlugin*, const pCommandList&, const pCommandList&, QWidget* = 0 );
+	UIAdditionalCommandsSettings( BasePlugin*, const pCommandList&, const pCommandList&, QWidget* = 0 );
 
 	void updateCommands();
 	void restoreDefaults();
@@ -70,4 +70,4 @@ protected slots:
 
 };
 
-#endif // UICLITOOLSETTINGS_H
+#endif // UIAdditionalCommandsSettings_H

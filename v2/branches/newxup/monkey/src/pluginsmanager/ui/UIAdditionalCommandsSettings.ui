@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>UICLIToolSettings</class>
- <widget class="QWidget" name="UICLIToolSettings" >
+ <class>UIAdditionalCommandsSettings</class>
+ <widget class="QWidget" name="UIAdditionalCommandsSettings" >
   <property name="geometry" >
    <rect>
     <x>0</x>

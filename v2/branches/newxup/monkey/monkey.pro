@@ -54,7 +54,7 @@ FORMS	*= src/maininterface/ui/UIAbout.ui \
 	src/abbreviationsmanager/ui/UIAddAbbreviation.ui \
 	src/templatesmanager/ui/UITemplatesWizard.ui \
 	src/pluginsmanager/ui/UIPluginsSettings.ui \
-	src/pluginsmanager/ui/UICLIToolSettings.ui \
+	src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui \
 	src/pluginsmanager/ui/UIPluginsSettingsElement.ui \
 	src/pluginsmanager/ui/UIPluginsSettingsAbout.ui \
 	src/xupmanager/gui/UIXUPFindFiles.ui \
@@ -90,7 +90,7 @@ HEADERS	*= src/main.h \
 	src/pluginsmanager/ChildPlugin.h \
 	src/pluginsmanager/PluginsManager.h \
 	src/pluginsmanager/ui/UIPluginsSettings.h \
-	src/pluginsmanager/ui/UICLIToolSettings.h \
+	src/pluginsmanager/ui/UIAdditionalCommandsSettings.h \
 	src/settingsmanager/Settings.h \
 	src/coremanager/MonkeyCore.h \
 	src/statusbar/StatusBar.h \
@@ -138,7 +138,7 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/pluginsmanager/PluginsManager.cpp \
 	src/pluginsmanager/BasePlugin.cpp \
 	src/pluginsmanager/ui/UIPluginsSettings.cpp \
-	src/pluginsmanager/ui/UICLIToolSettings.cpp \
+	src/pluginsmanager/ui/UIAdditionalCommandsSettings.cpp \
 	src/main.cpp \
 	src/settingsmanager/Settings.cpp \
 	src/coremanager/MonkeyCore.cpp \

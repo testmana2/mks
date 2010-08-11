@@ -12,7 +12,7 @@
 **
 ****************************************************************************/
 #include "CLIToolPlugin.h"
-#include "ui/UICLIToolSettings.h"
+#include "ui/UIAdditionalCommandsSettings.h"
 #include "ui/UIInterpreterSettings.h"
 
 CLIToolPlugin::CLIToolPlugin()
@@ -131,7 +131,7 @@ void CLIToolPlugin::setUserCommands( const pCommandList& cmds ) const
 
 QWidget* CLIToolPlugin::additionalCommandsSettingsWidget()
 {
-	return new UICLIToolSettings( this, defaultCommands(), userCommands(), QApplication::activeWindow() );
+	return new UIAdditionalCommandsSettings( this, defaultCommands(), userCommands(), QApplication::activeWindow() );
 }
 
 QStringList CLIToolPlugin::availableParsers() const
