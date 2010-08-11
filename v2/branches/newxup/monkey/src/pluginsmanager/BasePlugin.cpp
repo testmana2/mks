@@ -59,9 +59,6 @@ QString BasePlugin::typeToString( BasePlugin::Type type )
 		case BasePlugin::iCLITool:
 			return QCoreApplication::translate( "BasePlugin", "Command Line Tool" );
 			break;
-		case BasePlugin::iBuilder:
-			return QCoreApplication::translate( "BasePlugin", "Builder" );
-			break;
 		case BasePlugin::iDebugger:
 			return QCoreApplication::translate( "BasePlugin", "Debugger" );
 			break;

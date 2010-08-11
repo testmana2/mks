@@ -1,2 +1,2 @@
 TEMPLATE	= subdirs
-SUBDIRS	= PHP Python
+SUBDIRS	= PHP Python GNUMake
