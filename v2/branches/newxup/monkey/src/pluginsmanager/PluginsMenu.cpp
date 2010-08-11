@@ -111,10 +111,6 @@ void PluginsMenu::addPlugin( BasePlugin* plugin )
 	{
 		initPluginMenusActions( plugin, BasePlugin::iCLITool );
 	}
-	else if ( type & BasePlugin::iBuilder )
-	{
-		initPluginMenusActions( plugin, BasePlugin::iBuilder );
-	}
 	else if ( type & BasePlugin::iDebugger )
 	{
 		initPluginMenusActions( plugin, BasePlugin::iDebugger );
