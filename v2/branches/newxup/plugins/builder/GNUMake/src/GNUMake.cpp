@@ -30,6 +30,8 @@
 
 #include <QTabWidget>
 
+#include "pConsoleManager.h"
+
 GNUMake::GNUMake()
 {
 }
@@ -68,7 +70,7 @@ QWidget* GNUMake::settingsWidget()
 	QTabWidget* tw = new QTabWidget;
 	tw->setAttribute( Qt::WA_DeleteOnClose );
 	tw->addTab( CLIToolPlugin::settingsWidget(), tr( "Build Command" ) );
-	tw->addTab( cliToolInterfaceSettingsWidget(), tr( "User Commands" ) );
+	tw->addTab( additionalCommandsSettingsWidget(), tr( "User Commands" ) );
 	return tw;
 }
 

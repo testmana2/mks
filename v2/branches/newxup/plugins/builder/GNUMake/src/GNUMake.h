@@ -34,7 +34,7 @@
 class GNUMake : public CLIToolPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin CLIToolInterface )
+	Q_INTERFACES( BasePlugin CLIToolPlugin )
 
 protected:	
 	void fillPluginInfos();
@@ -45,9 +45,8 @@ public:
 	virtual ~GNUMake();
 	// BasePlugin
 	virtual QWidget* settingsWidget();
-	// CLIToolInterface
-	virtual QStringList availableParsers() const;
 	// CLIToolPlugin
+	virtual QStringList availableParsers() const;
 	virtual pCommand defaultCommand() const;
 };
 
