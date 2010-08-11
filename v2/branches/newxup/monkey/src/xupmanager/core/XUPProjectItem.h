@@ -40,6 +40,7 @@ public:
 	QString filePath( const QString& fileName ) const;
 	// return a filepath relative to project path
 	QString relativeFilePath( const QString& fileName ) const;
+	
 	// return the list of all source files for this project
 	virtual QStringList sourceFiles() const;
 	// return the list of all source files for all projects from the root project
@@ -57,6 +58,7 @@ public:
 	// return the most toplevel project ( ie: the model root project )
 	XUPProjectItem* topLevelProject() const;
 	// return the parent project for include project ( recursive parent project for include project, else return project itself )
+	/* FIXME hlamer: this method must be killed from XUP, it is QMake specific. But, I don't know, how to remove */
 	XUPProjectItem* rootIncludeProject() const;
 	// return children project recursively according to bool
 	XUPProjectItemList childrenProjects( bool recursive ) const;
