@@ -86,27 +86,6 @@ QStringList XUPProjectItem::topLevelProjectSourceFiles() const
 	return files.toList();
 }
 
-QString XUPProjectItem::matchingPath( const QString& left, const QString& right ) const
-{
-	QString result;
-	for ( int i = 1; i < left.count() +1; i++ )
-	{
-		result = left.left( i );
-		if ( !right.startsWith( result ) )
-		{
-			result.chop( 1 );
-			break;
-		}
-	}
-
-	if ( QDir::drives().contains( result ) || result.isEmpty() )
-	{
-		return QString::null;
-	}
-
-	return result;
-}
-
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 {
 	QFileInfoList files;
