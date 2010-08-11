@@ -61,7 +61,6 @@ public:
 		iChild = 0x2,
 		iCLITool = 0x4,
 		iDebugger = 0x20,
-		iInterpreter = 0x40,
 		iXUP = 0x80,
 		iLast = 0x100
 	};

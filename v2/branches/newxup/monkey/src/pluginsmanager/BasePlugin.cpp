@@ -62,9 +62,6 @@ QString BasePlugin::typeToString( BasePlugin::Type type )
 		case BasePlugin::iDebugger:
 			return QCoreApplication::translate( "BasePlugin", "Debugger" );
 			break;
-		case BasePlugin::iInterpreter:
-			return QCoreApplication::translate( "BasePlugin", "Interpreter" );
-			break;
 		case BasePlugin::iXUP:
 			return QCoreApplication::translate( "BasePlugin", "XUP Project" );
 			break;
