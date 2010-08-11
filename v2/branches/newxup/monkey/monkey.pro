@@ -60,7 +60,7 @@ FORMS	*= src/maininterface/ui/UIAbout.ui \
 	src/xupmanager/gui/UIXUPFindFiles.ui \
 	src/xupmanager/gui/XUPProjectManager.ui \
 	src/xupmanager/gui/XUPAddFiles.ui \
-	src/pluginsmanager/ui/UIInterpreterSettings.ui \
+	src/pluginsmanager/ui/UICLIToolSettings.ui \
 	src/workspace/pOpenedFileExplorer.ui
 
 HEADERS	*= src/main.h \
@@ -106,7 +106,7 @@ HEADERS	*= src/main.h \
 	src/xupmanager/core/XUPProjectModelProxy.h \
 	src/xupmanager/gui/XUPAddFiles.h \
 	src/shared/MkSFileDialog.h \
-	src/pluginsmanager/ui/UIInterpreterSettings.h \
+	src/pluginsmanager/ui/UICLIToolSettings.h \
 	src/commandlinemanager/CommandLineManager.h \
 	src/shellmanager/MkSShellConsole.h \
 	src/shellmanager/MkSShellInterpreter.h \
@@ -155,7 +155,7 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/xupmanager/core/XUPProjectModelProxy.cpp \
 	src/xupmanager/gui/XUPAddFiles.cpp \
 	src/shared/MkSFileDialog.cpp \
-	src/pluginsmanager/ui/UIInterpreterSettings.cpp \
+	src/pluginsmanager/ui/UICLIToolSettings.cpp \
 	src/commandlinemanager/CommandLineManager.cpp \
 	src/shellmanager/MkSShellInterpreter.cpp \
 	src/shellmanager/MkSShellConsole.cpp \

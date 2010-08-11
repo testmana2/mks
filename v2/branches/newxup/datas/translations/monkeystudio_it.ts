@@ -920,59 +920,59 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>UIInterpreterSettings</name>
+    <name>UICLIToolSettings</name>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.cpp" line="102"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="102"/>
         <source>Select an executable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.cpp" line="109"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="109"/>
         <source>Select a folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="13"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="13"/>
         <source>Interpreter Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="31"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="31"/>
         <source>Build Command</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="63"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="63"/>
         <source>Text :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="73"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="73"/>
         <source>Command :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="91"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="91"/>
         <source>Arguments :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="101"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="101"/>
         <source>Working Directory :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="119"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="119"/>
         <source>Skip On Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="140"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="140"/>
         <source>Parsers :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UIInterpreterSettings.ui" line="157"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="157"/>
         <source>Try All</source>
         <translation type="unfinished"></translation>
     </message>
