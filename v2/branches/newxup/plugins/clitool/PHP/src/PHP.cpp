@@ -19,6 +19,8 @@
 
 #include <QTabWidget>
 
+#include "pConsoleManager.h"
+
 PHP::PHP ()
 {
 }
@@ -60,7 +62,7 @@ QWidget* PHP::settingsWidget()
 	QTabWidget* tw = new QTabWidget;
 	tw->setAttribute( Qt::WA_DeleteOnClose );
 	tw->addTab( CLIToolPlugin::settingsWidget(), tr( "Interpret Command" ) );
-	tw->addTab( cliToolInterfaceSettingsWidget(), tr( "User Commands" ) );
+	tw->addTab( additionalCommandsSettingsWidget(), tr( "User Commands" ) );
 	return tw;
 }
 
