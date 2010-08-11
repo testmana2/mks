@@ -6,7 +6,7 @@
 class $Plugin Name$ : public CLIToolPlugin
 {
 	Q_OBJECT
-	Q_INTERFACES( BasePlugin CLIToolPlugin CLIToolInterface )
+	Q_INTERFACES( BasePlugin CLIToolPlugin )
 
 public:
 	virtual pCommand defaultCommand() const;
