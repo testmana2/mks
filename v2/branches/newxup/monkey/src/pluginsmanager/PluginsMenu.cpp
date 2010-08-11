@@ -115,10 +115,6 @@ void PluginsMenu::addPlugin( BasePlugin* plugin )
 	{
 		initPluginMenusActions( plugin, BasePlugin::iDebugger );
 	}
-	else if ( type & BasePlugin::iInterpreter )
-	{
-		initPluginMenusActions( plugin, BasePlugin::iInterpreter );
-	}
 	else if ( type & BasePlugin::iXUP )
 	{
 		initPluginMenusActions( plugin, BasePlugin::iXUP );
