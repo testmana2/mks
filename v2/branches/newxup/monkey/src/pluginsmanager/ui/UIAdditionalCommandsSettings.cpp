@@ -3,7 +3,7 @@
 ** 		Created using Monkey Studio v1.8.1.0
 ** Authors    : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>
 ** Project   : Monkey Studio IDE
-** FileName  : UICLIToolSettings.cpp
+** FileName  : UIAdditionalCommandsSettings.cpp
 ** Date      : 2008-01-14T00:36:59
 ** License   : GPL
 ** Comment   : This header has been automatically generated, if you are the original author, or co-author, fill free to replace/append with your informations.
@@ -26,7 +26,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#include "UICLIToolSettings.h"
+#include "UIAdditionalCommandsSettings.h"
 #include  "../../consolemanager/pConsoleManager.h"
 #include "../../pMonkeyStudio.h"
 #include "../CLIToolPlugin.h"
@@ -36,7 +36,7 @@
 
 using namespace pMonkeyStudio;
 
-UICLIToolSettings::UICLIToolSettings( BasePlugin* p, const pCommandList& d, const pCommandList& c, QWidget* w )
+UIAdditionalCommandsSettings::UIAdditionalCommandsSettings( BasePlugin* p, const pCommandList& d, const pCommandList& c, QWidget* w )
 	: QWidget( w ), mPlugin( p ), mUpdating( false )
 {
 	Q_ASSERT( mPlugin );
@@ -63,7 +63,7 @@ UICLIToolSettings::UICLIToolSettings( BasePlugin* p, const pCommandList& d, cons
 	updateCommands();
 }
 
-void UICLIToolSettings::updateCommands()
+void UIAdditionalCommandsSettings::updateCommands()
 {
 	mUpdating = true;
 	lwCommands->clear();
@@ -74,28 +74,28 @@ void UICLIToolSettings::updateCommands()
 		lwCommands->setCurrentRow( 0 );
 }
 
-void UICLIToolSettings::restoreDefaults()
+void UIAdditionalCommandsSettings::restoreDefaults()
 {
 	mCommands = mDefaults;
 	updateCommands();
 }
 
-void UICLIToolSettings::reset()
+void UIAdditionalCommandsSettings::reset()
 {
 	mCommands = mReset;
 	updateCommands();
 }
 
-void UICLIToolSettings::save()
+void UIAdditionalCommandsSettings::save()
 {
 	on_lwCommands_currentItemChanged( lwCommands->currentItem(), lwCommands->currentItem() );
 	qobject_cast<CLIToolPlugin*>( mPlugin )->setUserCommands( mCommands );
 }
 
-void UICLIToolSettings::on_lwCommands_itemSelectionChanged()
+void UIAdditionalCommandsSettings::on_lwCommands_itemSelectionChanged()
 { lwCommands->setCurrentItem( lwCommands->selectedItems().value( 0 ) ); }
 
-void UICLIToolSettings::on_lwCommands_currentItemChanged( QListWidgetItem* cit, QListWidgetItem* pit )
+void UIAdditionalCommandsSettings::on_lwCommands_currentItemChanged( QListWidgetItem* cit, QListWidgetItem* pit )
 {
 	if ( pit && !mUpdating )
 	{
@@ -130,7 +130,7 @@ void UICLIToolSettings::on_lwCommands_currentItemChanged( QListWidgetItem* cit, 
 	cbCommandTryAll->setChecked( c.tryAllParsers() );
 }
 
-void UICLIToolSettings::on_pbCommandAdd_clicked()
+void UIAdditionalCommandsSettings::on_pbCommandAdd_clicked()
 {
 	pCommand c( tr( "New Command" ), "command", "arguments" );
 	mCommands << c;
@@ -138,7 +138,7 @@ void UICLIToolSettings::on_pbCommandAdd_clicked()
 	lwCommands->setCurrentRow( lwCommands->count() -1 );
 }
 
-void UICLIToolSettings::on_pbCommandRemove_clicked()
+void UIAdditionalCommandsSettings::on_pbCommandRemove_clicked()
 {
 	if ( QListWidgetItem* it = lwCommands->currentItem() )
 	{
@@ -150,7 +150,7 @@ void UICLIToolSettings::on_pbCommandRemove_clicked()
 	}
 }
 
-void UICLIToolSettings::on_pbCommandUp_clicked()
+void UIAdditionalCommandsSettings::on_pbCommandUp_clicked()
 {
 	if ( QListWidgetItem* it = lwCommands->currentItem() )
 	{
@@ -164,7 +164,7 @@ void UICLIToolSettings::on_pbCommandUp_clicked()
 	}
 }
 
-void UICLIToolSettings::on_pbCommandDown_clicked()
+void UIAdditionalCommandsSettings::on_pbCommandDown_clicked()
 {
 	if ( QListWidgetItem* it = lwCommands->currentItem() )
 	{
@@ -178,21 +178,21 @@ void UICLIToolSettings::on_pbCommandDown_clicked()
 	}
 }
 
-void UICLIToolSettings::on_tbCommandCommand_clicked()
+void UIAdditionalCommandsSettings::on_tbCommandCommand_clicked()
 {
 	QString s = getOpenFileName( tr( "Select an executable" ), leCommandCommand->text() );
 	if ( !s.isNull() )
 		leCommandCommand->setText( s );
 }
 
-void UICLIToolSettings::on_tbCommandWorkingDirectory_clicked()
+void UIAdditionalCommandsSettings::on_tbCommandWorkingDirectory_clicked()
 {
 	QString s = getExistingDirectory( tr( "Select a folder" ), leCommandWorkingDirectory->text() );
 	if ( !s.isNull() )
 		leCommandWorkingDirectory->setText( s );
 }
 
-void UICLIToolSettings::on_dbbButtons_clicked( QAbstractButton* b )
+void UIAdditionalCommandsSettings::on_dbbButtons_clicked( QAbstractButton* b )
 {
 	if ( dbbButtons->standardButton( b ) == QDialogButtonBox::Reset )
 		reset();
