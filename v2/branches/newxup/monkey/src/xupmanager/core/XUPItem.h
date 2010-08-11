@@ -78,13 +78,6 @@ public:
 	// set the attribute value for name
 	void setAttribute( const QString& name, const QString& value );
 	
-	// return the stored cache value for key or defaultValue
-	QString cacheValue( const QString& key, const QString& defaultValue = QString::null ) const;
-	// set the cache value for key
-	void setCacheValue( const QString& key, const QString& value );
-	// clear cache data represented by key
-	void clearCacheValue( const QString& key );
-	
 	// view text, the text to shown in the item view
 	QString displayText() const;
 	// view icon, the icon to shown in the item view
@@ -98,7 +91,6 @@ protected:
 	QDomElement mDomElement;
 	mutable QMap<int, XUPItem*> mChildItems;
 	XUPItem* mParentItem;
-	QMap<QString, QVariant> mCacheValues;
 	
 	// developer must not be able to create/instanciate items itself, it must be done by the model
 	XUPItem( const QDomElement& node, XUPItem* parent = 0 );
