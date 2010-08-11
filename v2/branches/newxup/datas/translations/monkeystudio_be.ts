@@ -3702,95 +3702,95 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>UICLIToolSettings</name>
+    <name>UIAdditionalCommandsSettings</name>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="135"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.cpp" line="135"/>
         <source>New Command</source>
         <translation type="unfinished">Новая каманда</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="183"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.cpp" line="183"/>
         <source>Select an executable</source>
         <translation type="unfinished">Абярыце выканальны файл</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.cpp" line="190"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.cpp" line="190"/>
         <source>Select a folder</source>
         <translation type="unfinished">Абарысе папку</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="13"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="13"/>
         <source>Commands Editor</source>
         <translation>Рэдактар каманд</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="48"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="48"/>
         <source>Commands :</source>
         <translation>Каманды:</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="58"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="58"/>
         <source>Add</source>
         <translation>Дадаць</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="71"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="71"/>
         <source>Remove</source>
         <translation>Выдаліць</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="97"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="97"/>
         <source>Down</source>
         <translation>Уніз</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="107"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="107"/>
         <source>Up</source>
         <translation>Уверх</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="119"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="119"/>
         <source>Command</source>
         <translation>Каманда</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="154"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="154"/>
         <source>Text :</source>
         <translation>Тэкст:</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="164"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="164"/>
         <source>Command :</source>
         <translation>Каманда:</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="174"/>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="204"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="174"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="204"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="184"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="184"/>
         <source>Arguments :</source>
         <translation>Аргументы:</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="194"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="194"/>
         <source>Working Directory :</source>
         <translation>Працоўная дырэкторыя:</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="214"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="214"/>
         <source>Skip On Error</source>
         <translation>Прапусціць пры памылцы</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="235"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="235"/>
         <source>Parsers :</source>
         <translation>Парсеры:</translation>
     </message>
     <message>
-        <location filename="../../monkey/src/pluginsmanager/ui/UICLIToolSettings.ui" line="252"/>
+        <location filename="../../monkey/src/pluginsmanager/ui/UIAdditionalCommandsSettings.ui" line="252"/>
         <source>Try All</source>
         <translation>Спрабаваць усе</translation>
     </message>
