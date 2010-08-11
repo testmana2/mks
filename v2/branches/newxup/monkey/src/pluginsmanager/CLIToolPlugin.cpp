@@ -12,10 +12,11 @@
 **
 ****************************************************************************/
 #include "CLIToolPlugin.h"
+#include "ui/UICLIToolSettings.h"
 #include "ui/UIInterpreterSettings.h"
 
 CLIToolPlugin::CLIToolPlugin()
-	: BasePlugin(), CLIToolInterface( this )
+	: BasePlugin()
 {
 }
 
@@ -58,4 +59,82 @@ void CLIToolPlugin::setCommand( const pCommand& cmd )
 QWidget* CLIToolPlugin::settingsWidget()
 {
 	return new UIInterpreterSettings( this, QApplication::activeWindow() );
+}
+
+
+pCommandList CLIToolPlugin::defaultCommands() const
+{
+	return pCommandList();
+}
+
+pCommandList CLIToolPlugin::userCommands() const
+{
+	// commands list
+	pCommandList cmds;
+	// get settings object
+	pSettings* settings = MonkeyCore::settings();
+	
+	// read user commands for this plugin
+	int size = settings->beginReadArray( settingsKey( "Commands" ) );
+	for ( int i = 0; i < size; i++ )
+	{
+		settings->setArrayIndex( i );
+		pCommand cmd;
+		
+		cmd.setText( settings->value( "Text" ).toString() );
+		cmd.setCommand( settings->value( "Command" ).toString() );
+		cmd.setArguments( settings->value( "Arguments" ).toString() );
+		cmd.setWorkingDirectory( settings->value( "WorkingDirectory" ).toString() );
+		cmd.setParsers( settings->value( "Parsers" ).toStringList() );
+		cmd.setTryAllParsers( settings->value( "TryAll" ).toBool() );
+		cmd.setSkipOnError( settings->value( "SkipOnError" ).toBool() );
+		
+		cmds << cmd;
+	}
+	settings->endArray();
+	
+	// if no user commands get global ones
+	if ( cmds.isEmpty() )
+	{
+		cmds << defaultCommands();
+	}
+	
+	// return list
+	return cmds;
+}
+
+void CLIToolPlugin::setUserCommands( const pCommandList& cmds ) const
+{
+	// get settings object
+	pSettings* settings = MonkeyCore::settings();
+	
+	// remove old key
+	settings->remove( settingsKey( "Commands" ) );
+	
+	// write user commands for this plugin
+	settings->beginWriteArray( settingsKey( "Commands" ) );
+	for ( int i = 0; i < cmds.count(); i++ )
+	{
+		settings->setArrayIndex( i );
+		const pCommand& cmd = cmds[i];
+		
+		settings->setValue( "Text", cmd.text() );
+		settings->setValue( "Command", cmd.command() );
+		settings->setValue( "Arguments", cmd.arguments() );
+		settings->setValue( "WorkingDirectory", cmd.workingDirectory() );
+		settings->setValue( "Parsers", cmd.parsers() );
+		settings->setValue( "TryAll", cmd.tryAllParsers() );
+		settings->setValue( "SkipOnError", cmd.skipOnError() );
+	}
+	settings->endArray();
+}
+
+QWidget* CLIToolPlugin::additionalCommandsSettingsWidget()
+{
+	return new UICLIToolSettings( this, defaultCommands(), userCommands(), QApplication::activeWindow() );
+}
+
+QStringList CLIToolPlugin::availableParsers() const
+{
+	return QStringList();
 }
