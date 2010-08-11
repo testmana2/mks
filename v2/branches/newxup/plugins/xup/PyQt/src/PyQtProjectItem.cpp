@@ -79,20 +79,7 @@ void PyQtProjectItem::installCommands()
 QStringList PyQtProjectItem::sourceFiles() const
 {
 	QStringList result;
-	XUPItem* sf = NULL;
-	foreach(XUPItem* child, childrenList())
-	{
-		if (child->attribute( "name" ) == "PYTHON_FILES")
-		{
-			if (XUPItem::Variable != child->type())
-			{
-				qWarning() << "PYTHON_FILES item type is not a variable";
-			}
-			
-			sf = child;
-		}
-	}
-	
+	XUPItem* sf = getVariable(this, "PYTHON_FILES");
 	if (NULL == sf)
 	{
 		qWarning() << "PYTHON_FILES variable not found. Incorrect project\n";

@@ -79,20 +79,7 @@ void PHPQtProjectItem::installCommands()
 QStringList PHPQtProjectItem::sourceFiles() const
 {
 	QStringList result;
-	XUPItem* sf = NULL;
-	foreach(XUPItem* child, childrenList())
-	{
-		if (child->attribute( "name" ) == "PHP_FILES")
-		{
-			if (XUPItem::Variable != child->type())
-			{
-				qWarning() << "PHP_FILES item type is not a variable";
-			}
-			
-			sf = child;
-		}
-	}
-	
+	XUPItem* sf = getVariable(this, "PHP_FILES");
 	if (NULL == sf)
 	{
 		qWarning() << "PHP_FILES variable not found. Incorrect project\n";
