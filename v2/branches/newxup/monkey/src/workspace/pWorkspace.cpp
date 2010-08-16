@@ -983,60 +983,27 @@ void pWorkspace::internal_projectCustomActionTriggered()
 			fileSaveAll_triggered();
 		}
 		
-		// check that command to execute exists, else ask to user if he want to choose another one
-		if ( cmd.targetExecution().isActive && cmd.project() )
+		cmd = cm->processCommand( cm->getCommand( cmds, cmd.text() ) );
+		QString fileName = cmd.project()->filePath( cmd.command() );
+		QString workDir = cmd.workingDirectory();
+		const QFileInfo fileInfo( fileName );
+		
+		// if not exists ask user to select one
+		if ( !fileInfo.exists() )
 		{
-			cmd = cm->processCommand( cm->getCommand( cmds, cmd.text() ) );
-			QString fileName = cmd.project()->filePath( cmd.command() );
-			QString workDir = cmd.workingDirectory();
-			
-			// Try to correct command by asking user
-			if ( !QFile::exists( fileName ) )
-			{
-				XUPProjectItem* project = cmd.project();
-				fileName = project->targetFilePath( cmd.targetExecution() );
-				
-				if ( fileName.isEmpty() )
-				{
-					return;
-				}
-				
-				const QFileInfo fileInfo( fileName );
-				
-				// if not exists ask user to select one
-				if ( !fileInfo.exists() )
-				{
-					QMessageBox::critical( window(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
-					return;
-				}
-				
-				if ( !fileInfo.isExecutable() )
-				{
-					QMessageBox::critical( window(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
-					return;
-				}
-				
-				// file found, and it is executable. Correct command
-				cmd.setCommand( fileName );
-				cmd.setWorkingDirectory( fileInfo.absolutePath() );
-			}
-			
-			cm->addCommand( cmd );
-			
+			QMessageBox::critical( window(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
 			return;
 		}
 		
-		// generate commands list
-		pCommandList mCmds = cm->recursiveCommandList( cmds, cm->getCommand( cmds, cmd.text() ) );
-		
-		// the first one must not be skipped on last error
-		if ( !mCmds.isEmpty() )
+		if ( !fileInfo.isExecutable() )
 		{
-			mCmds.first().setSkipOnError( false );
+			QMessageBox::critical( window(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
+			return;
 		}
+			
+		cm->addCommand( cmd );
 		
-		// send command to consolemanager
-		cm->addCommands( mCmds );
+		return;
 	}
 }
 
