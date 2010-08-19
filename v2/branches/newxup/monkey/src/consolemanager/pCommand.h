@@ -42,24 +42,6 @@
 
 class XUPProjectItem;
 
-struct Q_MONKEY_EXPORT pCommandTargetExecution
-{
-	pCommandTargetExecution()
-	{
-		isActive = false;
-		targetType = -1;
-	}
-	
-	bool operator==( const pCommandTargetExecution& other ) const
-	{
-		return isActive == other.isActive &&
-			targetType == other.targetType;
-	}
-	
-	bool isActive;
-	int targetType;
-};
-
 /*!
 	Container for storing console command
 	
@@ -76,6 +58,7 @@ public:
 		mSkipOnError = false;
 		mTryAllParsers = false;
 		mProject = 0;
+		mExecutableCheckingEnabled = false;
 	}
 	
 	pCommand( const QString& t, const QString& c, const QString& a, bool b = false, const QStringList& p = QStringList(), const QString& d = QString::null, bool bb = false )
@@ -88,17 +71,18 @@ public:
 		mWorkingDirectory = d;
 		mTryAllParsers = bb;
 		mProject = 0;
+		mExecutableCheckingEnabled = false;
 	}
 	~pCommand() {}
 	
 	bool isValid() const
-	{ return !text().isEmpty() && ( !command().isEmpty() || mTargetExecution.isActive ); }
+	{ return !text().isEmpty() && !command().isEmpty(); }
 	
 	bool operator==( const pCommand& t ) const
 	{ return mText == t.mText && mCommand == t.mCommand && mArguments == t.mArguments &&
 			mWorkingDirectory == t.mWorkingDirectory && mParsers == t.mParsers && mSkipOnError == t.mSkipOnError &&
-			mTryAllParsers == t.mTryAllParsers && mUserData == t.mUserData && mProject == t.mProject &&
-			mTargetExecution == t.mTargetExecution; }
+			mTryAllParsers == t.mTryAllParsers && mUserData == t.mUserData && mProject == t.mProject;
+	}
 
 	QString text() const { return mText; }
 	QString command() const { return mCommand; }
@@ -109,7 +93,11 @@ public:
 	bool tryAllParsers() const { return mTryAllParsers; }
 	QVariant userData() const { return mUserData; }
 	XUPProjectItem* project() const { return mProject; }
-	pCommandTargetExecution& targetExecution() { return mTargetExecution; }
+	/* If true, MkS core will check if executable file exists, and warn user, if it not.
+	   File searched in the working dirrectory.
+	   This parameter could be usable for execute project targets
+	 */
+	bool executableCheckingEnabled() { return mExecutableCheckingEnabled; };
 
 	void setText( const QString& s ) { mText = s; }
 	void setCommand( const QString& s ) { mCommand = s; }
@@ -122,6 +110,11 @@ public:
 	void setTryAllParsers( bool b ) { mTryAllParsers = b; }
 	void setUserData( const QVariant& data ) { mUserData = data; }
 	void setProject( XUPProjectItem* project ) { mProject = project; }
+	/* If true, MkS core will check if executable file exists, and warn user, if it not.
+	   File searched in the working dirrectory.
+	   This parameter could be usable for execute project targets
+	 */
+	void setExecutableCheckingEnabled(bool enabled) { mExecutableCheckingEnabled = enabled; };
 	
 	QString toString() const
 	{
@@ -134,7 +127,8 @@ public:
 		s += QString( "mParsers: %1\n" ).arg( mParsers.join( " " ) );
 		s += QString( "mTryAllParsers: %1\n" ).arg( mTryAllParsers );
 		s += QString( "mUserData: %1\n" ).arg( mUserData.toString() );
-		s += QString( "mProject: %1" ).arg( (quintptr)mProject );
+		s += QString( "mProject: %1\n" ).arg( (quintptr)mProject );
+		s += QString( "mExecutableCheckingEnabled: %1" ).arg( mExecutableCheckingEnabled );
 		return s;
 	}
 	
@@ -151,7 +145,7 @@ protected:
 	bool mTryAllParsers;						/**< Try to use all availible parsers after parsers from list */
 	XUPProjectItem* mProject;					/**< Project, for which command is executing */
 	QVariant mUserData;							/**< User custom placeholder to stock customdata, currently it's internally used to store commands map */
-	pCommandTargetExecution mTargetExecution;	/**< Determine if the command is the result of proejct target execution */
+	bool mExecutableCheckingEnabled;			/**< Warn user, if executable file does not exist */
 };
 
 /*!

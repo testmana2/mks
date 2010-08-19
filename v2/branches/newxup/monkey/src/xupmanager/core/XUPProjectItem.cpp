@@ -304,11 +304,6 @@ QString XUPProjectItem::targetFilePath( bool, XUPProjectItem::TargetType )
 	return QString::null;
 }
 
-QString XUPProjectItem::targetFilePath( const pCommandTargetExecution& execution )
-{
-	return targetFilePath( true, (XUPProjectItem::TargetType)execution.targetType );
-}
-
 QStringList XUPProjectItem::autoActivatePlugins() const
 {
 	return QStringList();
