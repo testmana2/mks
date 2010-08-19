@@ -100,9 +100,6 @@ public:
 	 */
 	virtual QStringList autoActivatePlugins() const;
 	
-	void addCommands( const QString& mnu, const QString& text, pCommandList& cmds );
-	// add a pCommand in menu
-	virtual void addCommand( pCommand& cmd, const QString& mnu );
 	// install custom project actions in menus
 	virtual void installCommands();
 	// uninstall custom project actions in menus
@@ -123,6 +120,13 @@ public:
 
 
 protected:
+	/** Add pCommand console commands to the main menu. When menu item triggered - console command executed.
+	 * If more than one command set for the menu - commands will be executed one by one
+	 * XUPProjectItem remembers create QAction's and deletes it by uninstallCommands()
+	 */
+	virtual void addCommand( pCommand& cmd, const QString& mnu );
+	void addCommands( const QString& mnu, const QString& text, pCommandList& cmds );
+	
 	/* Source file name patterns is list of string pairs. ExamplesPath
 		("Python file", "*.py") ("Forms file", "*.ui")
 	   This info used for build file name filter for "Add files to the project" dialog (XUPProjectItem::sourceFileNameFilter())
