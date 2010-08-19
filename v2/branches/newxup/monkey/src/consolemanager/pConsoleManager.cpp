@@ -192,48 +192,6 @@ pCommand pConsoleManager::processCommand( pCommand c )
 }
 
 /*!
-	Search command in the list by it's text, or return empty one
-	\param l List of commands, where to search
-	\param s Text of command for searhing
-	\return Finded command, or empty command if not finded
-*/
-pCommand pConsoleManager::getCommand( const pCommandList& l, const QString& s )
-{
-	foreach ( pCommand c, l )
-		if ( c.text() == s )
-			return c;
-	return pCommand();
-}
-
-/*!
-	FIXME PasNox, comment please
-
-*/
-pCommandList pConsoleManager::recursiveCommandList( const pCommandList& l, pCommand c )
-{
-	pCommandList cl;
-	// check if chan command
-	QStringList lc = c.command().split( ";" );
-	if ( lc.count() > 1 )
-	{
-		foreach ( QString s, lc )
-			cl << recursiveCommandList( l, getCommand( l, s ) );
-	}
-	// process variables
-	else
-	{
-		// process variables
-		pCommand pc = processCommand( c );
-		// set skit on error
-		pc.setSkipOnError( true );
-		// add to list
-		cl << pc;
-	}
-	// return list
-	return cl;
-}
-
-/*!
 	Return human readable string of a QProcess::ProcessError
 
 	\param error The error to get string from

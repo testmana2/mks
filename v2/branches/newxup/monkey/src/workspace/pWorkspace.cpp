@@ -969,21 +969,19 @@ void pWorkspace::internal_projectUninstallCommandRequested( const pCommand& cmd,
 void pWorkspace::internal_projectCustomActionTriggered()
 {
 	QAction* action = qobject_cast<QAction*>( sender() );
+	Q_ASSERT(action);
 	
 	if ( action )
 	{
-		pConsoleManager* cm = MonkeyCore::consoleManager();
-		pCommand cmd = action->data().value<pCommand>();
-		pCommandMap* cmdsHash = cmd.userData().value<pCommandMap*>();
-		const pCommandList cmds = cmdsHash ? cmdsHash->values() : pCommandList();
-		
 		// save project files
 		if ( pMonkeyStudio::saveFilesOnCustomAction() )
 		{
 			fileSaveAll_triggered();
 		}
 		
-		cmd = cm->processCommand( cm->getCommand( cmds, cmd.text() ) );
+		pCommand cmd = action->data().value<pCommand>();
+		
+		cmd = MonkeyCore::consoleManager()->processCommand( cmd );
 		
 		if (cmd.executableCheckingEnabled())
 		{
@@ -1005,7 +1003,7 @@ void pWorkspace::internal_projectCustomActionTriggered()
 			}
 		}
 			
-		cm->addCommand( cmd );
+		MonkeyCore::consoleManager()->addCommand( cmd );
 		
 		return;
 	}
