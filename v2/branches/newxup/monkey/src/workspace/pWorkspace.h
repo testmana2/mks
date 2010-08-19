@@ -129,9 +129,6 @@ protected slots:
 	
 	void internal_urlsDropped( const QList<QUrl>& urls );
 	void internal_currentProjectChanged( XUPProjectItem* currentProject, XUPProjectItem* previousProject );
-	void internal_projectInstallCommandRequested( const pCommand& cmd, const QString& mnu );
-	void internal_projectUninstallCommandRequested( const pCommand& cmd, const QString& mnu );
-	void internal_projectCustomActionTriggered();
 
 public slots:
 	// file menu
