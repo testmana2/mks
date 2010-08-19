@@ -53,7 +53,6 @@ public:
 	static QStringList splitMultiLineValue( const QString& value );
 	
 	virtual bool edit();
-	QHash <QString, QString> variableCache();
 protected:
 	QHash <QString, QString> mVariableCache;
 	void initHashes();

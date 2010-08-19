@@ -210,9 +210,9 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 	{
 		QMakeProjectItem* proj = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
 		
-		if ( proj->variableCache().contains( name ) )
+		if ( proj->mVariableCache.contains( name ) )
 		{
-			return proj->variableCache().value( name );
+			return proj->mVariableCache.value( name );
 		}
 		
 		QString result;
@@ -232,7 +232,7 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 			}
 		}
 		
-		//proj->variableCache()[ name ] = result;
+		//proj->mVariableCache[ name ] = result;
 		return result;
 	}
 	else
@@ -251,7 +251,7 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 		}
 		else
 		{
-			return dynamic_cast<QMakeProjectItem*>(rootIncludeProject())->variableCache().value( name );
+			return dynamic_cast<QMakeProjectItem*>(rootIncludeProject())->mVariableCache.value( name );
 		}
 	}
 	
@@ -321,24 +321,24 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 		
 		if ( op == "=" )
 		{
-			riProject->variableCache()[ name ] = values.join( " " );
+			riProject->mVariableCache[ name ] = values.join( " " );
 		}
 		else if ( op == "-=" )
 		{
 			foreach ( const QString& value, values )
 			{
-				riProject->variableCache()[ name ].replace( QRegExp( QString( "\\b%1\\b" ).arg( value ) ), QString::null );
+				riProject->mVariableCache[ name ].replace( QRegExp( QString( "\\b%1\\b" ).arg( value ) ), QString::null );
 			}
 		}
 		else if ( op == "+=" )
 		{
-			riProject->variableCache()[ name ] += " " +values.join( " " );
+			riProject->mVariableCache[ name ] += " " +values.join( " " );
 		}
 		else if ( op == "*=" )
 		{
-			//if ( !riProject->variableCache()[ name ].contains( content ) )
+			//if ( !riProject->mVariableCache[ name ].contains( content ) )
 			{
-				riProject->variableCache()[ name ] += " " +values.join( " " );
+				riProject->mVariableCache[ name ] += " " +values.join( " " );
 			}
 		}
 		else if ( op == "~=" )
@@ -665,7 +665,7 @@ void QMakeProjectItem::installCommands()
 		
 	// config variable
 	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
-	QStringList config = splitMultiLineValue( riProject->variableCache().value( "CONFIG" ) );
+	QStringList config = splitMultiLineValue( riProject->mVariableCache.value( "CONFIG" ) );
 	bool haveDebug = config.contains( "debug" );
 	bool haveRelease = config.contains( "release" );
 	bool haveDebugRelease = config.contains( "debug_and_release" );
@@ -689,7 +689,7 @@ void QMakeProjectItem::installCommands()
 	
 	// evaluate some variables
 	QString s;
-	s = riProject->variableCache().value( "TARGET" );
+	s = riProject->mVariableCache.value( "TARGET" );
 	
 	if ( s.isEmpty() )
 	{
@@ -697,11 +697,11 @@ void QMakeProjectItem::installCommands()
 	}
 	
 	const QString target = s;
-	s = riProject->variableCache().value( "DESTDIR" );
+	s = riProject->mVariableCache.value( "DESTDIR" );
 	
 	if ( s.isEmpty() )
 	{
-		s = riProject->variableCache().value( "DLLDESTDIR" );
+		s = riProject->mVariableCache.value( "DLLDESTDIR" );
 	}
 	
 	if ( QDir( s ).isRelative() )
@@ -1309,9 +1309,4 @@ QString QMakeProjectItem::variableDisplayText( const QString& variableName ) con
 QString QMakeProjectItem::variableDisplayIcon( const QString& variableName ) const
 {
 	return mVariableIcons.value(variableName, variableName);
-}
-
-QHash <QString, QString> QMakeProjectItem::variableCache()
-{
-	return mVariableCache;
 }
