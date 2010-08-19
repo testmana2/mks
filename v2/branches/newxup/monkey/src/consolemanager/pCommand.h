@@ -152,11 +152,8 @@ protected:
 	List of pCommand objects
 */
 typedef QList<pCommand> pCommandList;
-typedef QMap<QString, pCommand> pCommandMap;
 
 Q_DECLARE_METATYPE( pCommand );
 Q_DECLARE_METATYPE( pCommandList );
-Q_DECLARE_METATYPE( pCommandMap );
-Q_DECLARE_METATYPE( pCommandMap* );
 
 #endif // PCOMMAND_H
