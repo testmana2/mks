@@ -888,9 +888,6 @@ void pWorkspace::internal_currentProjectChanged( XUPProjectItem* currentProject,
 	if ( previousProject )
 	{
 		previousProject->uninstallCommands();
-		
-		disconnect( previousProject, SIGNAL( installCommandRequested( const pCommand&, const QString& ) ), this, SLOT( internal_projectInstallCommandRequested( const pCommand&, const QString& ) ) );
-		disconnect( previousProject, SIGNAL( uninstallCommandRequested( const pCommand&, const QString& ) ), this, SLOT( internal_projectUninstallCommandRequested( const pCommand&, const QString& ) ) );
 	}
 	
 	if (previousProject)
@@ -920,93 +917,11 @@ void pWorkspace::internal_currentProjectChanged( XUPProjectItem* currentProject,
 	// install new commands
 	if ( currentProject )
 	{
-		connect( currentProject, SIGNAL( installCommandRequested( const pCommand&, const QString& ) ), this, SLOT( internal_projectInstallCommandRequested( const pCommand&, const QString& ) ) );
-		connect( currentProject, SIGNAL( uninstallCommandRequested( const pCommand&, const QString& ) ), this, SLOT( internal_projectUninstallCommandRequested( const pCommand&, const QString& ) ) );
-		
 		currentProject->installCommands();
 	}
 	
 	// update menu visibility
 	MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
-}
-
-void pWorkspace::internal_projectInstallCommandRequested( const pCommand& cmd, const QString& mnu )
-{
-	// create action
-	QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( cmd.text() ) , cmd.text() );
-	action->setStatusTip( cmd.text() );
-	
-	// set action custom data contain the command to execute
-	action->setData( QVariant::fromValue( cmd ) );
-	
-	// connect to signal
-	connect( action, SIGNAL( triggered() ), this, SLOT( internal_projectCustomActionTriggered() ) );
-	
-	// update menu visibility
-	MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
-}
-
-void pWorkspace::internal_projectUninstallCommandRequested( const pCommand& cmd, const QString& mnu )
-{
-	QMenu* menu = MonkeyCore::menuBar()->menu( mnu );
-	
-	foreach ( QAction* action, menu->actions() )
-	{
-		if ( action->menu() )
-		{
-			internal_projectUninstallCommandRequested( cmd, QString( "%1/%2" ).arg( mnu ).arg( action->menu()->objectName() ) );
-		}
-		else if ( !action->isSeparator() && action->data().value<pCommand>() == cmd )
-		{
-			delete action;
-		}
-	}
-	
-	// update menu visibility
-	MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
-}
-
-void pWorkspace::internal_projectCustomActionTriggered()
-{
-	QAction* action = qobject_cast<QAction*>( sender() );
-	Q_ASSERT(action);
-	
-	if ( action )
-	{
-		// save project files
-		if ( pMonkeyStudio::saveFilesOnCustomAction() )
-		{
-			fileSaveAll_triggered();
-		}
-		
-		pCommand cmd = action->data().value<pCommand>();
-		
-		cmd = MonkeyCore::consoleManager()->processCommand( cmd );
-		
-		if (cmd.executableCheckingEnabled())
-		{
-			QString fileName = cmd.project()->filePath( cmd.command() );
-			QString workDir = cmd.workingDirectory();
-			const QFileInfo fileInfo( fileName );
-			
-			// if not exists ask user to select one
-			if ( !fileInfo.exists() )
-			{
-				QMessageBox::critical( window(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
-				return;
-			}
-			
-			if ( !fileInfo.isExecutable() )
-			{
-				QMessageBox::critical( window(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
-				return;
-			}
-		}
-			
-		MonkeyCore::consoleManager()->addCommand( cmd );
-		
-		return;
-	}
 }
 
 // file menu

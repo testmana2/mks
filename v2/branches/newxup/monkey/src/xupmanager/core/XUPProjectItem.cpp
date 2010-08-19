@@ -12,12 +12,11 @@
 #include <QProcess>
 #include <QFileDialog>
 #include <QLibrary>
+#include <QMessageBox>
 
 #include <QDebug>
 
 const QString XUP_VERSION = "1.1.0";
-
-bool XUPProjectItem::mFoundCallerItem = false;
 
 XUPProjectItem::XUPProjectItem()
 	: XUPItem( QDomElement(), 0 )
@@ -321,7 +320,19 @@ void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
 			cmd.setWorkingDirectory( path() );
 		}
 		
-		emit installCommandRequested( cmd, mnu );
+		// create action
+		QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( cmd.text() ) , cmd.text() );
+		action->setStatusTip( cmd.text() );
+		
+		// set action custom data contain the command to execute
+		action->setData( QVariant::fromValue( cmd ) );
+		
+		// connect to signal
+		connect( action, SIGNAL( triggered() ), this, SLOT( internal_projectCustomActionTriggered() ) );
+		
+		// update menu visibility
+		MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
+		
 		mCommands.insertMulti( mnu, cmd );
 	}
 }
@@ -333,7 +344,21 @@ void XUPProjectItem::installCommands()
 void XUPProjectItem::uninstallCommands()
 {
 	foreach ( const pCommand& cmd, mCommands.values() )
-		emit uninstallCommandRequested( cmd, mCommands.key( cmd ) );
+	{
+		QString mnu = mCommands.key( cmd );
+		QMenu* menu = MonkeyCore::menuBar()->menu( mnu );
+		
+		foreach ( QAction* action, menu->actions() )
+		{
+			if ( !action->isSeparator() && action->data().value<pCommand>() == cmd )
+			{
+				delete action;
+			}
+		}
+		
+		// update menu visibility
+		MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
+	}
 	mCommands.clear();
 }
 
@@ -379,4 +404,47 @@ QString XUPProjectItem::sourceFileNameFilter() const
 QStringList XUPProjectItem::filteredVariables() const
 {
 	return QStringList();
+}
+
+void XUPProjectItem::internal_projectCustomActionTriggered()
+{
+	QAction* action = qobject_cast<QAction*>( sender() );
+	Q_ASSERT(action);
+	
+	if ( action )
+	{
+		// save project files
+		if ( pMonkeyStudio::saveFilesOnCustomAction() )
+		{
+			MonkeyCore::workspace()->fileSaveAll_triggered();
+		}
+		
+		pCommand cmd = action->data().value<pCommand>();
+		
+		cmd = MonkeyCore::consoleManager()->processCommand( cmd );
+		
+		if (cmd.executableCheckingEnabled())
+		{
+			QString fileName = cmd.project()->filePath( cmd.command() );
+			QString workDir = cmd.workingDirectory();
+			const QFileInfo fileInfo( fileName );
+			
+			// if not exists ask user to select one
+			if ( !fileInfo.exists() )
+			{
+				QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
+				return;
+			}
+			
+			if ( !fileInfo.isExecutable() )
+			{
+				QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
+				return;
+			}
+		}
+			
+		MonkeyCore::consoleManager()->addCommand( cmd );
+		
+		return;
+	}
 }

@@ -128,14 +128,15 @@ protected:
 	
 	QDomDocument mDocument;
 	pCommandMap mCommands;
-	static bool mFoundCallerItem;
 	
 	QString mCodec;
 	QString mFileName;
 	QString mLastError;
-signals:
-	void installCommandRequested( const pCommand& cmd, const QString& mnu );
-	void uninstallCommandRequested( const pCommand& cmd, const QString& mnu );
+protected slots:
+	/* Common handler for actions, which execute pCommand.
+	   Does few checks, then executes pCommand
+	 */
+	void internal_projectCustomActionTriggered();
 };
 
 #endif // XUPPROJECTITEM_H
