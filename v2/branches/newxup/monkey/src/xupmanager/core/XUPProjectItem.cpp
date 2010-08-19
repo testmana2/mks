@@ -308,33 +308,29 @@ QStringList XUPProjectItem::autoActivatePlugins() const
 	return QStringList();
 }
 
+void XUPProjectItem::addCommands( const QString& mnu, const QString& text, pCommandList& cmds )
+{
+	// create action
+	QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( text ) , text );
+	action->setStatusTip( text );
+	
+	// set action custom data contain the command to execute
+	action->setData( QVariant::fromValue( cmds ) );
+	
+	// connect to signal
+	connect( action, SIGNAL( triggered() ), this, SLOT( internal_projectCustomActionTriggered() ) );
+	
+	// update menu visibility
+	MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
+	
+	mInstalledActions << action;
+}
+
 void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
 {
-	if ( cmd.isValid() )
-	{
-		cmd.setUserData( QVariant::fromValue( &mCommands ) );
-		cmd.setProject( this );
-		
-		if ( cmd.workingDirectory().isEmpty() )
-		{
-			cmd.setWorkingDirectory( path() );
-		}
-		
-		// create action
-		QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( cmd.text() ) , cmd.text() );
-		action->setStatusTip( cmd.text() );
-		
-		// set action custom data contain the command to execute
-		action->setData( QVariant::fromValue( cmd ) );
-		
-		// connect to signal
-		connect( action, SIGNAL( triggered() ), this, SLOT( internal_projectCustomActionTriggered() ) );
-		
-		// update menu visibility
-		MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
-		
-		mCommands.insertMulti( mnu, cmd );
-	}
+	pCommandList cmds;
+	cmds << cmd;
+	return addCommands( mnu, cmd.text(), cmds);
 }
 
 void XUPProjectItem::installCommands()
@@ -343,23 +339,15 @@ void XUPProjectItem::installCommands()
 
 void XUPProjectItem::uninstallCommands()
 {
-	foreach ( const pCommand& cmd, mCommands.values() )
+	foreach( QAction* action, mInstalledActions )
 	{
-		QString mnu = mCommands.key( cmd );
-		QMenu* menu = MonkeyCore::menuBar()->menu( mnu );
-		
-		foreach ( QAction* action, menu->actions() )
-		{
-			if ( !action->isSeparator() && action->data().value<pCommand>() == cmd )
-			{
-				delete action;
-			}
-		}
-		
-		// update menu visibility
-		MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
+		delete action;
 	}
-	mCommands.clear();
+	
+	mInstalledActions.clear();
+
+	// update menu visibility
+	MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
 }
 
 QString XUPProjectItem::codec() const
@@ -419,32 +407,34 @@ void XUPProjectItem::internal_projectCustomActionTriggered()
 			MonkeyCore::workspace()->fileSaveAll_triggered();
 		}
 		
-		pCommand cmd = action->data().value<pCommand>();
+		pCommandList cmds = action->data().value<pCommandList>();
 		
-		cmd = MonkeyCore::consoleManager()->processCommand( cmd );
-		
-		if (cmd.executableCheckingEnabled())
+		foreach ( pCommand cmd, cmds )
 		{
-			QString fileName = cmd.project()->filePath( cmd.command() );
-			QString workDir = cmd.workingDirectory();
-			const QFileInfo fileInfo( fileName );
+			cmd = MonkeyCore::consoleManager()->processCommand( cmd );
 			
-			// if not exists ask user to select one
-			if ( !fileInfo.exists() )
+			if (cmd.executableCheckingEnabled())
 			{
-				QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
-				return;
+				QString fileName = cmd.project()->filePath( cmd.command() );
+				QString workDir = cmd.workingDirectory();
+				const QFileInfo fileInfo( fileName );
+				
+				// if not exists ask user to select one
+				if ( !fileInfo.exists() )
+				{
+					QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
+					return;
+				}
+				
+				if ( !fileInfo.isExecutable() )
+				{
+					QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
+					return;
+				}
 			}
-			
-			if ( !fileInfo.isExecutable() )
-			{
-				QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
-				return;
-			}
-		}
-			
-		MonkeyCore::consoleManager()->addCommand( cmd );
+				
+			MonkeyCore::consoleManager()->addCommand( cmd );
 		
-		return;
+		}
 	}
 }

@@ -10,6 +10,8 @@
 #include "ProjectTypesIndex.h"
 #include "pCommand.h"
 
+class QAction;
+
 class XUPPlugin;
 
 typedef QList<class XUPProjectItem*> XUPProjectItemList;
@@ -97,7 +99,8 @@ public:
 	 * When project deselected - plugin will be disabled
 	 */
 	virtual QStringList autoActivatePlugins() const;
-
+	
+	void addCommands( const QString& mnu, const QString& text, pCommandList& cmds );
 	// add a pCommand in menu
 	virtual void addCommand( pCommand& cmd, const QString& mnu );
 	// install custom project actions in menus
@@ -127,7 +130,8 @@ protected:
 	virtual StringStringListList sourceFileNamePatterns() const = 0;
 	
 	QDomDocument mDocument;
-	pCommandMap mCommands;
+	/* Action pointers stored here for delete it, when current project changed */
+	QList<QAction*> mInstalledActions;
 	
 	QString mCodec;
 	QString mFileName;

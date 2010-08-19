@@ -678,6 +678,8 @@ void QMakeProjectItem::installCommands()
 	{
 		cmd = bp->command();
 	}
+	cmd.setProject( this );
+	cmd.setWorkingDirectory( path() );
 	cmd.setUserData( QVariant::fromValue( &mCommands ) );
 	cmd.setProject( this );
 	cmd.setSkipOnError( false );
@@ -914,8 +916,6 @@ void QMakeProjectItem::installCommands()
 			const QString debugTarget = targetFilePath( false, XUPProjectItem::DebugTarget );
 			
 			cmd = cmdBuild;
-			cmd.targetExecution().isActive = true;
-			cmd.targetExecution().targetType = XUPProjectItem::DebugTarget;
 			cmd.setText( tr( "Execute Debug" ) );
 			cmd.setCommand( debugTarget );
 			cmd.setArguments( QString() );
@@ -932,8 +932,6 @@ void QMakeProjectItem::installCommands()
 			const QString releaseTarget = targetFilePath( false, XUPProjectItem::ReleaseTarget );
 			
 			cmd = cmdBuild;
-			cmd.targetExecution().isActive = true;
-			cmd.targetExecution().targetType = XUPProjectItem::ReleaseTarget;
 			cmd.setText( tr( "Execute Release" ) );
 			cmd.setCommand( releaseTarget );
 			cmd.setArguments( QString() );
@@ -949,8 +947,6 @@ void QMakeProjectItem::installCommands()
 			const QString defaultTarget = targetFilePath( false, XUPProjectItem::DefaultTarget);
 			
 			cmd = cmdBuild;
-			cmd.targetExecution().isActive = true;
-			cmd.targetExecution().targetType = XUPProjectItem::DefaultTarget;
 			cmd.setText( tr( "Execute" ) );
 			cmd.setCommand( defaultTarget );
 			cmd.setArguments( QString() );
