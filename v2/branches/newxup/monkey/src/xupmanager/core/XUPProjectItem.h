@@ -91,7 +91,6 @@ public:
 	virtual bool save();
 	// return the project target file, ie the binary / library file path, if allowToAskUser is set to true - user might be asked for it via doalog
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
-	QString targetFilePath( const pCommandTargetExecution& execution );
 	
 	/* When project is activated (selected as current), some plugins can be also enabled.
 	 * for example - PHP-Qt project will activate PHP interpreter plugin.

@@ -984,21 +984,25 @@ void pWorkspace::internal_projectCustomActionTriggered()
 		}
 		
 		cmd = cm->processCommand( cm->getCommand( cmds, cmd.text() ) );
-		QString fileName = cmd.project()->filePath( cmd.command() );
-		QString workDir = cmd.workingDirectory();
-		const QFileInfo fileInfo( fileName );
 		
-		// if not exists ask user to select one
-		if ( !fileInfo.exists() )
+		if (cmd.executableCheckingEnabled())
 		{
-			QMessageBox::critical( window(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
-			return;
-		}
-		
-		if ( !fileInfo.isExecutable() )
-		{
-			QMessageBox::critical( window(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
-			return;
+			QString fileName = cmd.project()->filePath( cmd.command() );
+			QString workDir = cmd.workingDirectory();
+			const QFileInfo fileInfo( fileName );
+			
+			// if not exists ask user to select one
+			if ( !fileInfo.exists() )
+			{
+				QMessageBox::critical( window(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
+				return;
+			}
+			
+			if ( !fileInfo.isExecutable() )
+			{
+				QMessageBox::critical( window(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
+				return;
+			}
 		}
 			
 		cm->addCommand( cmd );

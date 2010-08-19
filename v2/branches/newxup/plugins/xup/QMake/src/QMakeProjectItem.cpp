@@ -681,6 +681,7 @@ void QMakeProjectItem::installCommands()
 	cmd.setUserData( QVariant::fromValue( &mCommands ) );
 	cmd.setProject( this );
 	cmd.setSkipOnError( false );
+	cmd.setExecutableCheckingEnabled( false );
 	const pCommand cmdBuild = cmd;
 	
 	// get qt version
@@ -921,6 +922,7 @@ void QMakeProjectItem::installCommands()
 			cmd.setWorkingDirectory( QFileInfo( debugTarget ).absolutePath() );
 			cmd.setParsers( QStringList() );
 			cmd.setTryAllParsers( false );
+			cmd.setExecutableCheckingEnabled( true );
 			addCommand( cmd, "mBuilder/mExecute" );
 		}
 		
@@ -938,6 +940,7 @@ void QMakeProjectItem::installCommands()
 			cmd.setWorkingDirectory( QFileInfo( releaseTarget ).absolutePath() );
 			cmd.setParsers( QStringList() );
 			cmd.setTryAllParsers( false );
+			cmd.setExecutableCheckingEnabled( true );
 			addCommand( cmd, "mBuilder/mExecute" );
 		}
 		
@@ -954,6 +957,7 @@ void QMakeProjectItem::installCommands()
 			cmd.setWorkingDirectory( QFileInfo( defaultTarget ).absolutePath() );
 			cmd.setParsers( QStringList() );
 			cmd.setTryAllParsers( false );
+			cmd.setExecutableCheckingEnabled( true );
 			addCommand( cmd, "mBuilder/mExecute" );
 		}
 	}
