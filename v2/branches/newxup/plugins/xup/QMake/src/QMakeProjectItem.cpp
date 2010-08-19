@@ -680,7 +680,6 @@ void QMakeProjectItem::installCommands()
 	}
 	cmd.setProject( this );
 	cmd.setWorkingDirectory( path() );
-	cmd.setUserData( QVariant::fromValue( &mCommands ) );
 	cmd.setProject( this );
 	cmd.setSkipOnError( false );
 	cmd.setExecutableCheckingEnabled( false );
@@ -719,6 +718,9 @@ void QMakeProjectItem::installCommands()
 	
 	const QString destdir = s;
 	
+	pCommand cmdBuildDebug;
+	pCommand cmdBuildRelease;
+	
 	// compiler
 	if ( bp && cmdBuild.isValid() )
 	{
@@ -732,6 +734,7 @@ void QMakeProjectItem::installCommands()
 				cmd.setArguments( "debug" );
 			}
 			addCommand( cmd, "mBuilder/mBuild" );
+			cmdBuildDebug = cmd;
 		}
 		
 		// build release
@@ -744,6 +747,7 @@ void QMakeProjectItem::installCommands()
 				cmd.setArguments( "release" );
 			}
 			addCommand( cmd, "mBuilder/mBuild" );
+			cmdBuildRelease = cmd;
 		}
 		
 		// build all
@@ -795,6 +799,10 @@ void QMakeProjectItem::installCommands()
 			cmd.setArguments( "clean" );
 			addCommand( cmd, "mBuilder/mClean" );
 		}
+
+		pCommand cmdDistcleanRelease;
+		pCommand cmdDistcleanDebug;
+		pCommand cmdDistclean;
 		
 		// distclean debug
 		if ( haveDebug || haveDebugRelease )
@@ -810,6 +818,7 @@ void QMakeProjectItem::installCommands()
 				cmd.setArguments( "distclean" );
 			}
 			addCommand( cmd, "mBuilder/mClean" );
+			cmdDistcleanDebug = cmd;
 		}
 		
 		// distclean release
@@ -826,6 +835,7 @@ void QMakeProjectItem::installCommands()
 				cmd.setArguments( "distclean" );
 			}
 			addCommand( cmd, "mBuilder/mClean" );
+			cmdDistcleanRelease = cmd;
 		}
 		
 		// distclean all
@@ -835,7 +845,10 @@ void QMakeProjectItem::installCommands()
 			cmd.setText( tr( "Distclean All" ) );
 			cmd.setArguments( "distclean" );
 			addCommand( cmd, "mBuilder/mClean" );
+			cmdDistclean = cmd;
 		}
+		
+		pCommand cmdQmake;
 		
 		// add qt commands only if possible
 		if ( version.isValid() )
@@ -846,10 +859,10 @@ void QMakeProjectItem::installCommands()
 			cmd.setCommand( version.qmake() );
 			cmd.setArguments( version.qmakeParameters() );
 			cmd.setWorkingDirectory( "$cpp$" );
-			cmd.setUserData( QVariant::fromValue( &mCommands ) );
 			cmd.setProject( this );
 			cmd.setSkipOnError( false );
 			addCommand( cmd, "mBuilder" );
+			cmdQmake = cmd;
 			
 			// lupdate command
 			cmd = pCommand();
@@ -857,7 +870,6 @@ void QMakeProjectItem::installCommands()
 			cmd.setCommand( version.lupdate() );
 			cmd.setArguments( "\"$cp$\"" );
 			cmd.setWorkingDirectory( "$cpp$" );
-			cmd.setUserData( QVariant::fromValue( &mCommands ) );
 			cmd.setProject( this );
 			cmd.setSkipOnError( false );
 			addCommand( cmd, "mBuilder" );
@@ -868,7 +880,6 @@ void QMakeProjectItem::installCommands()
 			cmd.setCommand( version.lrelease() );
 			cmd.setArguments( "\"$cp$\"" );
 			cmd.setWorkingDirectory( "$cpp$" );
-			cmd.setUserData( QVariant::fromValue( &mCommands ) );
 			cmd.setProject( this );
 			cmd.setSkipOnError( false );
 			addCommand( cmd, "mBuilder" );
@@ -876,31 +887,25 @@ void QMakeProjectItem::installCommands()
 			// rebuild debug
 			if ( haveDebug || haveDebugRelease )
 			{
-				cmd = cmdBuild;
-				cmd.setText( tr( "Rebuild Debug" ) );
-				cmd.setCommand( ( QStringList() << tr( "QMake" ) << tr( "Distclean Debug" ) << tr( "QMake" ) << tr( "Build Debug" ) ).join( ";" ) );
-				cmd.setArguments( QString() );
-				addCommand( cmd, "mBuilder/mRebuild" );
+				pCommandList cmds;
+				cmds << cmdDistcleanDebug << cmdQmake << cmdBuildDebug;
+				addCommands( "mBuilder/mRebuild", tr( "Rebuild Debug" ), cmds );
 			}
 			
 			// rebuild release
 			if ( haveRelease || haveDebugRelease )
 			{
-				cmd = cmdBuild;
-				cmd.setText( tr( "Rebuild Release" ) );
-				cmd.setCommand( ( QStringList() << tr( "QMake" ) << tr( "Distclean Release" ) << tr( "QMake" ) << tr( "Build Release" ) ).join( ";" ) );
-				cmd.setArguments( QString() );
-				addCommand( cmd, "mBuilder/mRebuild" );
+				pCommandList cmds;
+				cmds << cmdDistcleanRelease << cmdQmake << cmdBuildRelease;
+				addCommands( "mBuilder/mRebuild", tr( "Rebuild Release" ), cmds );
 			}
 			
 			// rebuild all
 			if ( haveDebugRelease )
 			{
-				cmd = cmdBuild;
-				cmd.setText( tr( "Rebuild All" ) );
-				cmd.setCommand( ( QStringList() << tr( "QMake" ) << tr( "Distclean All" ) << tr( "QMake" ) << tr( "Build All" ) ).join( ";" ) );
-				cmd.setArguments( QString() );
-				addCommand( cmd, "mBuilder/mRebuild" );
+				pCommandList cmds;
+				cmds << cmdDistclean << cmdQmake << cmdBuild;
+				addCommands( "mBuilder/mRebuild", tr( "Rebuild All" ), cmds );
 			}
 		}
 		else if ( projectSettingsValue( "SHOW_QT_VERSION_WARNING", "1" ) == "1" )
