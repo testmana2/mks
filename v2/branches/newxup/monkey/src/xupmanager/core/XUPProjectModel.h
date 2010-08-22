@@ -15,6 +15,7 @@ class Q_MONKEY_EXPORT XUPProjectModel : public QAbstractItemModel
 	friend class XUPFilteredProjectModel;
 	friend class XUPProjectManager;
 	friend class XUPItem;
+	friend class XUPDynamicFolderItem;
 	
 public:
 	enum CustomRole
@@ -33,6 +34,7 @@ public:
 	virtual QVariant headerData( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
 	virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
+	virtual bool hasChildren( const QModelIndex& parent = QModelIndex() ) const;
 	
 	//
 	QModelIndex indexFromItem( XUPItem* item ) const;

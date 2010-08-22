@@ -212,6 +212,22 @@ Qt::ItemFlags XUPProjectModel::flags( const QModelIndex& index ) const
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
+bool XUPProjectModel::hasChildren( const QModelIndex& parent ) const
+{
+	if ( parent.column() > 0 )
+	{
+		return 0;
+	}
+
+	if ( !parent.isValid() )
+	{
+		return mRootProject ? 1 : 0;
+	}
+
+	XUPItem* parentItem = static_cast<XUPItem*>( parent.internalPointer() );
+	return parentItem->hasChildren();
+}
+
 void XUPProjectModel::setLastError( const QString& error )
 {
 	mLastError = error;
