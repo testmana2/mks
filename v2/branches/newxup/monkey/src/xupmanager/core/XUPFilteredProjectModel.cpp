@@ -291,7 +291,7 @@ XUPProjectModel* XUPFilteredProjectModel::sourceModel() const
 	return mSourceModel;
 }
 
-XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
+XUPItemList XUPFilteredProjectModel::getFilteredVariables( XUPItem* root )
 {
 	XUPItemList variables;
 	XUPProjectItem* rootProject = mSourceModel->mRootProject;
@@ -333,7 +333,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( const XUPItem* root )
 	return variables;
 }
 
-XUPItemList XUPFilteredProjectModel::getValues( const XUPItem* root )
+XUPItemList XUPFilteredProjectModel::getValues( XUPItem* root )
 {
 	XUPItemList values;
 	for ( int i = 0; i < root->childCount(); i++ )

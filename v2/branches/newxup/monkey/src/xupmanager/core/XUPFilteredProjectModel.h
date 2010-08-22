@@ -81,8 +81,8 @@ public:
 	void setSourceModel( XUPProjectModel* model );
 	XUPProjectModel* sourceModel() const;
 	
-	XUPItemList getFilteredVariables( const XUPItem* root );
-	XUPItemList getValues( const XUPItem* root );
+	XUPItemList getFilteredVariables( XUPItem* root );
+	XUPItemList getValues( XUPItem* root );
 	
 	void populateVariable( XUPItem* variable );
 	void populateProject( XUPProjectItem* item );
