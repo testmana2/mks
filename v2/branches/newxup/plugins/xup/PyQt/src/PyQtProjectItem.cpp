@@ -46,7 +46,7 @@ void PyQtProjectItem::installCommands()
 		cmd = ip->command();
 	}
 	
-	cmd.setUserData( QVariant::fromValue( &mCommands ) );
+	//cmd.setUserData( QVariant::fromValue( &mCommands ) );
 	cmd.setProject( this );
 	cmd.setSkipOnError( false );
 	const pCommand cmdInterpret = cmd;
