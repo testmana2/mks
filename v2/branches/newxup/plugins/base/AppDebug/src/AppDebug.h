@@ -3,12 +3,16 @@
 
 #include <BasePlugin.h>
 
+class DebugDockWidget;
+
 class AppDebug : public BasePlugin
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin )
 
 protected:
+	QWeakPointer<DebugDockWidget> mDock;
+	
 	virtual void fillPluginInfos();
 
 	virtual bool install();

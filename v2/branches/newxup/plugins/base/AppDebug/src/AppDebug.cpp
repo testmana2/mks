@@ -1,4 +1,9 @@
 #include "AppDebug.h"
+#include "DebugDockWidget.h"
+
+#include <MonkeyCore.h>
+#include <UIMain.h>
+#include <pDockToolBar.h>
 
 #include <stdio.h>
 
@@ -17,7 +22,9 @@ void AppDebug::fillPluginInfos()
 
 bool AppDebug::install()
 {
+	mDock = new DebugDockWidget;
 	qInstallMsgHandler( AppDebug::qtMessageHandler );
+	MonkeyCore::mainWindow()->dockToolBar( Qt::LeftToolBarArea )->addDock( mDock.data(), infos().Caption, pIconManager::icon( "AppDebug.png", ":/icons" ) );
 	
 	return true;
 }
@@ -25,6 +32,7 @@ bool AppDebug::install()
 bool AppDebug::uninstall()
 {
 	qInstallMsgHandler( 0 );
+	mDock.data()->deleteLater();
 	
 	return true;
 }
