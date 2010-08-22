@@ -18,6 +18,7 @@ class Q_MONKEY_EXPORT XUPItem
 {
 	friend class XUPProjectModel;
 	friend class XUPProjectItem;
+	friend class XUPDynamicFolderItem;
 	
 public:
 	// possible types for a node
@@ -31,6 +32,7 @@ public:
 		Function, // a function node
 		Scope, // a scope node
 		//
+		DynamicFolder, // a dynamic folder node
 		Folder, // a folder node
 		File, // a value that is a file node
 		Path // a value that is a path node
@@ -46,11 +48,11 @@ public:
 	// project item
 	XUPProjectItem* project() const;
 	// return the i child item
-	XUPItem* child( int i ) const;
+	virtual XUPItem* child( int i );
 	// return children list
 	XUPItemList childrenList() const;
 	// index of a child
-	int childIndex( XUPItem* child ) const;
+	virtual int childIndex( XUPItem* child ) const;
 	// set a child item for row i
 	void addChild( XUPItem* item );
 	// return the parent item
@@ -58,7 +60,8 @@ public:
 	// return the item row. If item hasn't parent -1 will be return
 	int row() const;
 	// return child count
-	int childCount() const;
+	virtual int childCount() const;
+	virtual bool hasChildren() const;
 	// remove a child and inform the model if possible
 	void removeChild( XUPItem* item );
 	// create a new child of type at given row, if row is -1 the item is append to the end
@@ -69,7 +72,7 @@ public:
 	QModelIndex index() const;
 	
 	// the type enum of this item
-	XUPItem::Type type() const;
+	virtual XUPItem::Type type() const;
 
 	// return the content of attribute name or defaultValue if null/invalid
 	QString attribute( const QString& name, const QString& defaultValue = QString::null ) const;
@@ -77,9 +80,9 @@ public:
 	void setAttribute( const QString& name, const QString& value );
 	
 	// view text, the text to shown in the item view
-	QString displayText() const;
+	virtual QString displayText() const;
 	// view icon, the icon to shown in the item view
-	QIcon displayIcon() const;
+	virtual QIcon displayIcon() const;
 	
 	QString content() const;
 	void setContent(const QString&);
@@ -92,6 +95,8 @@ protected:
 	
 	// developer must not be able to create/instanciate items itself, it must be done by the model
 	XUPItem( const QDomElement& node, XUPItem* parent = 0 );
+	// add a new domnode child, this can be use to insert a new node, the item will be created on demand
+	virtual QDomElement addChildElement( XUPItem::Type type, int& row, bool emitSignals = true );
 	// set the parent item. Call automaticaly from parent's addChild
 	void setParent( XUPItem* parentItem );
 

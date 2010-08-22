@@ -1,4 +1,5 @@
 #include "XUPItem.h"
+#include "XUPDynamicFolderItem.h"
 #include "XUPProjectItem.h"
 #include "XUPProjectModel.h"
 #include "pIconManager.h"
@@ -102,7 +103,7 @@ void XUPItem::setParent( XUPItem* parentItem )
 	mParentItem = parentItem;
 }
 
-XUPItem* XUPItem::child( int i ) const
+XUPItem* XUPItem::child( int i )
 {
 	if ( mChildItems.contains( i ) )
 		return mChildItems[ i ];
@@ -110,7 +111,9 @@ XUPItem* XUPItem::child( int i ) const
 	if ( i >= 0 && i < mDomElement.childNodes().count() )
 	{
 		QDomElement childElement = mDomElement.childNodes().item( i ).toElement();
-		XUPItem* childItem = new XUPItem( childElement, const_cast<XUPItem*>( this ) );
+		XUPItem* childItem = childElement.tagName().toLower() == "dynamicfolder"
+			? new XUPDynamicFolderItem( childElement, const_cast<XUPItem*>( this ) )
+			: new XUPItem( childElement, const_cast<XUPItem*>( this ) );
 		mChildItems[ i ] = childItem;
 		return childItem;
 	}
@@ -122,7 +125,7 @@ XUPItemList XUPItem::childrenList() const
 	// create all child if needed before returning list
 	for ( int i = 0; i < childCount(); i++ )
 	{
-		child( i );
+		const_cast<XUPItem*>( this )->child( i );
 	}
 	
 	// return children
@@ -171,12 +174,17 @@ int XUPItem::childCount() const
 {
 	int count = mDomElement.childNodes().count();
 	
-	if ( !mChildItems.isEmpty() ) /* TODO ask PasNox, why we need this code */
+	if ( !mChildItems.isEmpty() ) // TODO ask PasNox, why we need this code
 	{
 		count = qMax( count, mChildItems.keys().last() +1 );
 	}
 	
 	return count;
+}
+
+bool XUPItem::hasChildren() const
+{
+	return !mDomElement.childNodes().isEmpty();
 }
 
 void XUPItem::removeChild( XUPItem* item )
@@ -227,7 +235,7 @@ void XUPItem::removeChild( XUPItem* item )
 	}
 }
 
-XUPItem* XUPItem::addChild( XUPItem::Type pType, int row )
+QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSignals )
 {
 	// calculate row if needed
 	if ( row == -1 )
@@ -236,7 +244,8 @@ XUPItem* XUPItem::addChild( XUPItem::Type pType, int row )
 	}
 	
 	QString stringType;
-	switch ( pType )
+	
+	switch ( type )
 	{
 		case XUPItem::Project:
 			stringType = "project";
@@ -268,16 +277,24 @@ XUPItem* XUPItem::addChild( XUPItem::Type pType, int row )
 		case XUPItem::Path:
 			stringType = "path";
 			break;
+		case XUPItem::DynamicFolder:
+			stringType = "dynamicfolder";
+			break;
 		case XUPItem::Unknow:
 			break;
 	}
 	
 	// inform model of add
 	XUPProjectModel* m = model();
-	if ( !stringType.isEmpty() && row <= childCount() && m )
+	
+	const int count = childCount();
+	
+	if ( !stringType.isEmpty() && row <= count && m )
 	{
 		// begin insert
-		m->beginInsertRows( index(), row, row );
+		if ( emitSignals ) {
+			m->beginInsertRows( index(), row, row );
+		}
 		
 		// re inde existing items
 		QList<int> rows = mChildItems.keys();
@@ -291,9 +308,10 @@ XUPItem* XUPItem::addChild( XUPItem::Type pType, int row )
 		}
 		
 		// add new one
-		mChildItems.remove( row );
+		//mChildItems.remove( row );
 		QDomElement element = mDomElement.ownerDocument().createElement( stringType );
-		if ( childCount() == 0 )
+		
+		if ( count == 0 )
 		{
 			mDomElement.appendChild( element );
 		}
@@ -301,21 +319,31 @@ XUPItem* XUPItem::addChild( XUPItem::Type pType, int row )
 		{
 			if ( row == 0 )
 			{
-				mDomElement.insertBefore( element, child( 1 )->node() );
+				const QDomElement childElement = mDomElement.childNodes().at( 1 ).toElement();
+				mDomElement.insertBefore( element, childElement );
 			}
 			else
 			{
-				mDomElement.insertAfter( element, child( row -1 )->node() );
+				const QDomElement childElement = mDomElement.childNodes().at( row -1 ).toElement();
+				mDomElement.insertAfter( element, childElement );
 			}
 		}
 		
 		// end insert
-		m->endInsertRows();
+		if ( emitSignals ) {
+			m->endInsertRows();
+		}
 		
-		return child( row );
+		return element;
 	}
 	
-	return 0;
+	return QDomElement();
+}
+
+XUPItem* XUPItem::addChild( XUPItem::Type type, int row )
+{
+	const QDomElement element = addChildElement( type, row );
+	return element.isNull() ? 0 : child( row );
 }
 
 XUPProjectModel* XUPItem::model() const
@@ -339,7 +367,7 @@ QModelIndex XUPItem::index() const
 
 XUPItem::Type XUPItem::type() const
 {
-	const QString mType = mDomElement.nodeName();
+	const QString mType = mDomElement.nodeName().toLower();
 	if ( mType == "project" )
 		return XUPItem::Project;
 	else if ( mType == "comment" )
@@ -360,6 +388,8 @@ XUPItem::Type XUPItem::type() const
 		return XUPItem::File;
 	else if ( mType == "path" )
 		return XUPItem::Path;
+	else if ( mType == "dynamicfolder" )
+		return XUPItem::DynamicFolder;
 	return XUPItem::Unknow;
 }
 
@@ -389,7 +419,7 @@ QString XUPItem::displayText() const
 			return attribute( "name" );
 			break;
 		case XUPItem::Folder:
-			return attribute( "name" );
+			return QFileInfo( attribute( "name" ) ).fileName();
 			break;
 		case XUPItem::File:
 			return QFileInfo( content() ).fileName();
@@ -397,10 +427,13 @@ QString XUPItem::displayText() const
 		case XUPItem::Path:
 			return content();
 			break;
-		default:
-			return "#Unknow";
+		case XUPItem::DynamicFolder:
+			return QObject::tr( "Dynamic Folder" );
+		case XUPItem::Unknow:
 			break;
 	}
+	
+	return "#Unknow";
 }
 
 QIcon XUPItem::displayIcon() const
