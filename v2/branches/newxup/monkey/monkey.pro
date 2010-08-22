@@ -12,7 +12,7 @@ DEFINES	*= MONKEY_CORE_BUILD
 DESTDIR	= $$PACKAGE_DESTDIR
 
 # monkey sources paths // added at first to avoid conflict with possible same name files in subprojects (like main.h from ctags)
-MONKEY_SOURCES_PATHS = $$getFolders( ./src, resources )
+MONKEY_SOURCES_PATHS	= $$getFolders( ./src, resources )
 INCLUDEPATH	*= $${MONKEY_SOURCES_PATHS}
 DEPENDPATH	*= $${MONKEY_SOURCES_PATHS}
 
@@ -115,7 +115,8 @@ HEADERS	*= src/main.h \
 	src/workspace/pOpenedFileModel.h \
 	src/consolemanager/EnvironmentVariablesManager.h \
 	src/consolemanager/pConsoleManagerStep.h \
-	src/consolemanager/pConsoleManagerStepModel.h
+	src/consolemanager/pConsoleManagerStepModel.h \
+	src/xupmanager/core/XUPDynamicFolderItem.h
 
 SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/maininterface/ui/UISettings.cpp \
@@ -165,7 +166,8 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/pluginsmanager/CLIToolPlugin.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \
-	src/consolemanager/pConsoleManagerStepModel.cpp
+	src/consolemanager/pConsoleManagerStepModel.cpp \
+	src/xupmanager/core/XUPDynamicFolderItem.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
 	../datas/translations/monkeystudio_be.ts \
