@@ -19,6 +19,8 @@ DESTDIR	= $$MONKEY_PLUGINS_DIR/base
 INCLUDEPATH	*= src
 RESOURCES	= src/resources/AppDebug.qrc
 
-HEADERS	= src/AppDebug.h
+HEADERS	= src/AppDebug.h \
+	src/DebugDockWidget.h
 
-SOURCES	= src/AppDebug.cpp
+SOURCES	= src/AppDebug.cpp \
+	src/DebugDockWidget.cpp
