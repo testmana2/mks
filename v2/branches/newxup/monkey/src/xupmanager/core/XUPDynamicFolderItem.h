@@ -25,9 +25,6 @@ protected:
 	pFileSystemModel* mFSModel;
 	QPersistentModelIndex mFSRootIndex;
 	QHash<QPersistentModelIndex, XUPItem*> mFSItems; // fs persistent index, item
-	
-	QDomElement childElement( const QDomElement& root, const QString& filePath ) const;
-	QDomElement walkToElement( const QString& filePath ) const;
 
 protected slots:
 	void columnsAboutToBeInserted( const QModelIndex& parent, int start, int end );

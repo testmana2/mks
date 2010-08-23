@@ -23,19 +23,26 @@ class XUPDynamicFolderChildItem : public XUPItem
 public:
 	virtual ~XUPDynamicFolderChildItem()
 	{
+		// remove children
+		if ( mFSModel->hasChildren( mFSIndex ) ) {
+			for ( int row = 0; row < mFSModel->rowCount( mFSIndex ); row++ ) {
+				const QModelIndex index = mFSModel->index( row, 0, mFSIndex );
+				delete mDynamicFolderItem->mFSItems.value( index );
+			}
+		}
+		
+		// unregister
 		qWarning() << "** UNREGISTERING" << this << mFSModel->filePath( mFSIndex );
 		mDynamicFolderItem->mFSItems.remove( mFSIndex );
 	}
 	
 	virtual int childCount() const
 	{
-		const int count = mFSModel->rowCount( mFSIndex );
-		
 		if ( mFSModel->canFetchMore( mFSIndex ) ) {
 			mFSModel->fetchMore( mFSIndex );
 		}
 		
-		return count;
+		return mFSModel->rowCount( mFSIndex );
 	}
 
 	virtual bool hasChildren() const
@@ -170,59 +177,6 @@ XUPItem* XUPDynamicFolderItem::child( int row )
 	return 0;
 }
 
-QDomElement XUPDynamicFolderItem::childElement( const QDomElement& root, const QString& filePath ) const
-{
-	const QDomNodeList nodes = root.childNodes();
-	
-	for ( int i = 0; i < nodes.count(); i++ ) {
-		const QDomElement element = nodes.at( i ).toElement();
-		const QString tagName = element.tagName().toLower();
-		
-		if ( tagName == "folder" ) {
-			if ( element.attribute( "name" ) == filePath ) {
-				return element;
-			}
-		}
-		
-		if ( tagName == "file" ) {
-			if ( element.text() == filePath ) {
-				return element;
-			}
-		}
-	}
-	
-	return QDomElement();
-}
-
-QDomElement XUPDynamicFolderItem::walkToElement( const QString& filePath ) const
-{
-	const QString rootPath = mFSModel->filePath( mFSRootIndex );
-	const QDomElement rootElement = mDomElement;
-	QDomElement element;
-	
-	if ( filePath == rootPath ) {
-		return mDomElement;
-	}
-	else if ( filePath.mid( rootPath.length() ).isEmpty() ) {
-		return element;
-	}
-	
-	element = rootElement;
-	int rootSectionCount = rootPath.count( "/" ) +1;
-	int sectionCount = filePath.count( "/" ) +1;
-	
-	for ( int i = rootSectionCount; i < sectionCount; i++ ) {
-		const QString part = filePath.section( '/', 0, i );
-		element = childElement( element, part );
-		
-		if ( element.isNull() ) {
-			break;
-		}
-	}
-	
-	return element;
-}
-
 void XUPDynamicFolderItem::columnsAboutToBeInserted( const QModelIndex& parent, int start, int end )
 {
 	qWarning() << Q_FUNC_INFO;
@@ -265,7 +219,6 @@ void XUPDynamicFolderItem::headerDataChanged( Qt::Orientation orientation, int f
 
 void XUPDynamicFolderItem::layoutAboutToBeChanged()
 {
-	qWarning() << Q_FUNC_INFO;
 	XUPProjectModel* model = this->model();
 	
 	if ( model ) {
@@ -275,7 +228,6 @@ void XUPDynamicFolderItem::layoutAboutToBeChanged()
 
 void XUPDynamicFolderItem::layoutChanged()
 {
-	qWarning() << Q_FUNC_INFO;
 	XUPProjectModel* model = this->model();
 	
 	if ( model ) {
@@ -295,7 +247,7 @@ void XUPDynamicFolderItem::modelReset()
 
 void XUPDynamicFolderItem::rowsAboutToBeInserted( const QModelIndex& parent, int start, int end )
 {
-	qWarning() << Q_FUNC_INFO;
+	//qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::rowsAboutToBeMoved( const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow )
@@ -308,6 +260,13 @@ void XUPDynamicFolderItem::rowsAboutToBeRemoved( const QModelIndex& parent, int 
 	XUPItem* item = mFSItems.value( parent, this );
 	XUPProjectModel* model = this->model();
 	
+	// Don't handle mFSRootIndex parents - parents will be removed, so tweak the parent / start / end to remove
+	if ( mFSModel->filePath( parent ).length() < mFSModel->filePath( mFSRootIndex ).length() || !mFSRootIndex.isValid() ) {
+		item = this;
+		start = 0;
+		end = mFSModel->rowCount( mFSRootIndex );
+	}
+	
 	Q_ASSERT( item );
 	
 	if ( model ) {
@@ -315,16 +274,14 @@ void XUPDynamicFolderItem::rowsAboutToBeRemoved( const QModelIndex& parent, int 
 		
 		for ( int row = start; row <= end; row++ ) {
 			const QModelIndex index = mFSModel->index( row, 0, parent );
-			delete mFSItems.take( index );
+			delete mFSItems.value( index );
 		}
-		
-		model->endInsertRows();
 	}
 }
 
 void XUPDynamicFolderItem::rowsInserted( const QModelIndex& parent, int start, int end )
 {
-	// Don't map mFSRootIndex parents
+	// Don't handle mFSRootIndex parents
 	if ( mFSModel->filePath( parent ).length() < mFSModel->filePath( mFSRootIndex ).length() || !mFSRootIndex.isValid() ) {
 		return;
 	}
@@ -348,7 +305,11 @@ void XUPDynamicFolderItem::rowsMoved( const QModelIndex& sourceParent, int sourc
 
 void XUPDynamicFolderItem::rowsRemoved( const QModelIndex& parent, int start, int end )
 {
-	qWarning() << Q_FUNC_INFO;
+	XUPProjectModel* model = this->model();
+	
+	if ( model ) {
+		model->endRemoveRows();
+	}
 }
 
 void XUPDynamicFolderItem::rootPathChanged( const QString& newPath )
