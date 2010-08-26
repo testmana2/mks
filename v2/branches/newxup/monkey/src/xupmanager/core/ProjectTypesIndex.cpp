@@ -27,7 +27,7 @@ XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) con
 	{
 		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
 		{
-			if ( QDir::match( p.second, fileName ) )
+			if ( QDir::match( p.second, QFileInfo(fileName).fileName() ) )
 				return mRegisteredProjectItems[ projectType ]->newProject();
 		}
 	}

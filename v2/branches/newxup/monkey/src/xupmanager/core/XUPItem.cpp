@@ -368,6 +368,7 @@ QModelIndex XUPItem::index() const
 XUPItem::Type XUPItem::type() const
 {
 	const QString mType = mDomElement.nodeName().toLower();
+	
 	if ( mType == "project" )
 		return XUPItem::Project;
 	else if ( mType == "comment" )

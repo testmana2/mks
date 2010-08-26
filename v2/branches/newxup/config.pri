@@ -61,9 +61,9 @@ PACKAGE_DOMAIN	= "monkeystudio.org"
 PACKAGE_VERSION	= 1.8.4.0
 
 CONFIG( debug, debug|release ) {
-	PACKAGE_VERSION_STR	= $${PACKAGE_VERSION}svn_debug
+	PACKAGE_VERSION_STR	= $${PACKAGE_VERSION}newxup_debug
 } else {
-	PACKAGE_VERSION_STR	= $${PACKAGE_VERSION}svn_release
+	PACKAGE_VERSION_STR	= $${PACKAGE_VERSION}newxup_release
 }
 
 # define variable for source code
