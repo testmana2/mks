@@ -41,6 +41,7 @@ void MakefileProjectItem::installCommands()
 {
 	QStringList targets;
 	QFile file(fileName());
+	file.open(QIODevice::ReadOnly);
 	QRegExp targetRex("^([\\w\\-\\d]+):.*");
 	while (! file.atEnd())
 	{
@@ -63,10 +64,12 @@ void MakefileProjectItem::installCommands()
 	baseCmd.setSkipOnError( false );
 	baseCmd.setTryAllParsers( true );
 	
+	QString makeFileArg = QString("-f %1 ").arg(QFileInfo(fileName()).fileName());
+	
 	foreach(QString target, targets)
 	{
 		baseCmd.setText( target );
-		baseCmd.setArguments( target );
+		baseCmd.setArguments( makeFileArg + target );
 		addCommand( baseCmd, "mBuilder" );
 	}
 }
