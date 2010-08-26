@@ -20,6 +20,7 @@ public:
 	virtual bool hasChildren() const;
 	virtual int childIndex( XUPItem* child ) const;
 	virtual XUPItem* child( int i );
+	virtual XUPItemList childrenList() const;
 
 protected:
 	pFileSystemModel* mFSModel;
