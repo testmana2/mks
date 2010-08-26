@@ -195,6 +195,8 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 				return attributes.join( "\n" );
 			}
 		}
+		case Qt::SizeHintRole:
+			return QSize( -1, 18 );
 		default:
 			break;
 	}
