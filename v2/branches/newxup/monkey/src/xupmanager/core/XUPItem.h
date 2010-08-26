@@ -50,7 +50,7 @@ public:
 	// return the i child item
 	virtual XUPItem* child( int i );
 	// return children list
-	XUPItemList childrenList() const;
+	virtual XUPItemList childrenList() const;
 	// index of a child
 	virtual int childIndex( XUPItem* child ) const;
 	// set a child item for row i
@@ -75,7 +75,7 @@ public:
 	virtual XUPItem::Type type() const;
 
 	// return the content of attribute name or defaultValue if null/invalid
-	QString attribute( const QString& name, const QString& defaultValue = QString::null ) const;
+	virtual QString attribute( const QString& name, const QString& defaultValue = QString::null ) const;
 	// set the attribute value for name
 	void setAttribute( const QString& name, const QString& value );
 	
@@ -84,7 +84,7 @@ public:
 	// view icon, the icon to shown in the item view
 	virtual QIcon displayIcon() const;
 	
-	QString content() const;
+	virtual QString content() const;
 	void setContent(const QString&);
 
 protected:

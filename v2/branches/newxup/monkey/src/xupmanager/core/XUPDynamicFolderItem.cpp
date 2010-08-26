@@ -32,7 +32,7 @@ public:
 		}
 		
 		// unregister
-		qWarning() << "** UNREGISTERING" << this << mFSModel->filePath( mFSIndex );
+		//qWarning() << "** UNREGISTERING" << this << mFSModel->filePath( mFSIndex );
 		mDynamicFolderItem->mFSItems.remove( mFSIndex );
 	}
 	
@@ -72,6 +72,24 @@ public:
 		return 0;
 	}
 	
+	virtual XUPItemList childrenList() const
+	{
+		XUPItemList children;
+		
+		if ( hasChildren() ) {
+			for ( int row = 0; row < childCount(); row++ ) {
+				const QModelIndex index = mFSModel->index( row, 0, mFSIndex );
+				XUPItem* item = mDynamicFolderItem->mFSItems.value( index );
+				
+				if ( item ) {
+					children << item;
+				}
+			}
+		}
+		
+		return children;
+	}
+	
 	virtual XUPItem::Type type() const
 	{
 		if ( !mFSIndex.isValid() ) {
@@ -89,6 +107,32 @@ public:
 	virtual QIcon displayIcon() const
 	{
 		return mFSIndex.data( Qt::DecorationRole ).value<QIcon>();
+	}
+	
+	virtual QString attribute( const QString& name, const QString& defaultValue = QString::null ) const
+	{
+		if ( name.compare( "name", Qt::CaseInsensitive ) == 0 ) {
+			switch ( type() ) {
+				case XUPItem::Folder:
+					return mFSModel->filePath( mFSIndex );
+				default:
+					break;
+			}
+		}
+		
+		return XUPItem::attribute( name, defaultValue );
+	}
+	
+	virtual QString content() const
+	{
+		switch ( type() ) {
+			case XUPItem::File:
+				return mFSModel->filePath( mFSIndex );
+			default:
+				break;
+		}
+		
+		return XUPItem::content();
 	}
 
 protected:
@@ -109,7 +153,7 @@ protected:
 		
 		mDynamicFolderItem->mFSItems[ mFSIndex ] = this;
 		
-		qWarning() << "** REGISTERED IN" << this << mFSModel->filePath( fsIndex ) << parent->displayText();
+		//qWarning() << "** REGISTERED IN" << this << mFSModel->filePath( fsIndex ) << parent->displayText();
 	}
 };
 
@@ -147,6 +191,10 @@ XUPDynamicFolderItem::~XUPDynamicFolderItem()
 
 int XUPDynamicFolderItem::childCount() const
 {
+	if ( mFSModel->canFetchMore( mFSRootIndex ) ) {
+		mFSModel->fetchMore( mFSRootIndex );
+	}
+	
 	return mFSModel->rowCount( mFSRootIndex );
 }
 
@@ -175,6 +223,24 @@ XUPItem* XUPDynamicFolderItem::child( int row )
 	}
 	
 	return 0;
+}
+
+XUPItemList XUPDynamicFolderItem::childrenList() const
+{
+	XUPItemList children;
+	
+	if ( hasChildren() ) {
+		for ( int row = 0; row < childCount(); row++ ) {
+			const QModelIndex index = mFSModel->index( row, 0, mFSRootIndex );
+			XUPItem* item = mFSItems.value( index );
+			
+			if ( item ) {
+				children << item;
+			}
+		}
+	}
+	
+	return children;
 }
 
 void XUPDynamicFolderItem::columnsAboutToBeInserted( const QModelIndex& parent, int start, int end )

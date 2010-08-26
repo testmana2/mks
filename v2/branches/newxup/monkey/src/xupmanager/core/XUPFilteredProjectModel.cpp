@@ -117,9 +117,14 @@ int XUPFilteredProjectModel::rowCount( const QModelIndex& proxyParent ) const
 		XUPItem* item = mapToSource( proxyParent );
 		XUPItemMappingIterator it = mItemsMapping.constFind( item );
 		
-		if ( it != mItemsMapping.constEnd() )
-		{
-			return it.value()->mMappedChildren.count();
+		if ( it != mItemsMapping.constEnd() ) {
+			switch ( item->type() ) {
+				case XUPItem::DynamicFolder:
+				case XUPItem::Folder:
+					return item->childCount();
+				default:
+					return it.value()->mMappedChildren.count();
+			}
 		}
 		
 		return 1;
@@ -161,6 +166,29 @@ Qt::ItemFlags XUPFilteredProjectModel::flags( const QModelIndex& proxyIndex ) co
 	}
 	
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+}
+
+bool XUPFilteredProjectModel::hasChildren( const QModelIndex& proxyParent ) const
+{
+	if ( mSourceModel )
+	{
+		XUPItem* item = mapToSource( proxyParent );
+		XUPItemMappingIterator it = mItemsMapping.constFind( item );
+		
+		if ( it != mItemsMapping.constEnd() ) {
+			switch ( item->type() ) {
+				case XUPItem::DynamicFolder:
+				case XUPItem::Folder:
+					return item->hasChildren();
+				default:
+					return !it.value()->mMappedChildren.isEmpty();
+			}
+		}
+		
+		return 1;
+	}
+	
+	return 0;
 }
 
 // MAPPING
@@ -279,10 +307,10 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 		beginInsertColumns( QModelIndex(), 0, 0 );
 		endInsertColumns();
 		
-		// tree items
-		emit layoutAboutToBeChanged();
-		populateProject( mSourceModel->mRootProject );
-		emit layoutChanged();
+		// populate existing indexes
+		if ( model->hasChildren() ) {
+			internal_rowsInserted( QModelIndex(), 0, model->rowCount() -1 );
+		}
 	}
 }
 
@@ -377,8 +405,7 @@ void XUPFilteredProjectModel::populateVariable( XUPItem* variable )
 
 	foreach ( XUPItem* value, tmpValuesItem )
 	{
-		const QString content = value->content();
-		if ( !content.isEmpty() && !variableIterator.value()->findValue( content ) )
+		if ( !value->content().isEmpty() && !variableIterator.value()->findValue( value ) )
 		{
 			createMapping( value, variable );
 		}
@@ -401,6 +428,20 @@ void XUPFilteredProjectModel::populateProject( XUPProjectItem* project )
 	
 	XUPItemList& projectVariables = projectIterator.value()->mMappedChildren;
 	qSortItems( projectVariables );
+}
+
+void XUPFilteredProjectModel::populateFolder( XUPItem* folder )
+{
+	XUPItemMappingIterator folderIterator = createMapping( folder, folder->project() );
+	
+	foreach ( XUPItem* child, folder->childrenList() ) {
+		if ( !folderIterator.value()->findValue( child ) ) {
+			createMapping( child, folder );
+		}
+	}
+	
+	XUPItemList& childrenItems = folderIterator.value()->mMappedChildren;
+	qSortItems( childrenItems );
 }
 
 void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, int start, int end )
@@ -429,14 +470,27 @@ void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, 
 			case XUPItem::Value:
 			case XUPItem::File:
 			case XUPItem::Path:
-				if ( item->parent()->type() == XUPItem::Variable && filteredVariables.contains( item->parent()->attribute( "name" ) ) )
-				{
-					populateVariable( item->parent() );
+			case XUPItem::Folder: {
+				switch ( item->parent()->type() ) {
+					case XUPItem::Variable: {
+						if ( filteredVariables.contains( item->parent()->attribute( "name" ) ) ) {
+							populateVariable( item->parent() );
+						}
+						
+						break;
+					}
+					default:
+						populateFolder( item->parent() );
+						break;
 				}
+				
 				break;
+			}
 			case XUPItem::Scope:
 			case XUPItem::Function:
 				break;
+			case XUPItem::DynamicFolder:
+				populateFolder( item );
 			default:
 				break;
 		}

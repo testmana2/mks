@@ -70,10 +70,8 @@ bool XUPItem::operator<( const XUPItem& other ) const
 		{
 			case XUPItem::Project:
 				return false;
-				break;
 			default:
-				return true;
-				break;
+				return other.type() != XUPItem::Folder;
 		}
 	}
 
