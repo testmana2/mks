@@ -435,7 +435,6 @@ void XUPFilteredProjectModel::populateProject( XUPProjectItem* project )
 
 void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, int start, int end )
 {
-qWarning() << "** Inserting" << parent << start << end;
 	emit layoutAboutToBeChanged();
 	
 	XUPProjectItem* project = mSourceModel->mRootProject;
@@ -453,7 +452,6 @@ qWarning() << "** Inserting" << parent << start << end;
 				case XUPItem::DynamicFolder:
 				case XUPItem::File:
 				case XUPItem::Folder: {
-					qWarning() << "*** mapping" << item->displayText();
 					hasDynamicFolderItems = true;
 					createMapping( item, parentItem );
 					continue;
@@ -466,13 +464,11 @@ qWarning() << "** Inserting" << parent << start << end;
 		// normal case
 		switch ( item->type() ) {
 			case XUPItem::Project: {
-			qWarning() << "populateProject" << item->project()->displayText();
 				populateProject( item->project() );
 				break;
 			}
 			case XUPItem::Variable: {
 				if ( filteredVariables.contains( item->attribute( "name" ) ) ) {
-				qWarning() << "populateVariable" << item->displayText();
 					populateVariable( item );
 				}
 				break;
@@ -482,7 +478,6 @@ qWarning() << "** Inserting" << parent << start << end;
 			case XUPItem::Path: {
 				if ( parentItem->type() == XUPItem::Variable
 					&& filteredVariables.contains( parentItem->attribute( "name" ) ) ) {
-					qWarning() << "populateVariable" << parentItem->displayText();
 					populateVariable( parentItem );
 				}
 				
