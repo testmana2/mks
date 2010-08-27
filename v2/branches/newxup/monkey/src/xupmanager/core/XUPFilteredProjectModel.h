@@ -93,7 +93,6 @@ public:
 	
 	void populateVariable( XUPItem* variable );
 	void populateProject( XUPProjectItem* item );
-	void populateFolder( XUPItem* folder );
 	
 	void debug( XUPItem* root, int mode = 0 );
 
