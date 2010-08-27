@@ -90,6 +90,7 @@ public slots:
 	void closeFile( const QString& fileName );
 	void goToLine( const QString& fileName, const QPoint& position, const QString& codec, int selectionLength = 0 );
 	void openProject( const QString& fileName, const QString& codec );
+	void open( const QString& fileName, const QString& codec );
 
 signals:
 	// files

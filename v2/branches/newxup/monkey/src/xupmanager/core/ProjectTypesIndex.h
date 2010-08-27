@@ -38,6 +38,9 @@ public:
 	// unregister the projecttype
 	void unRegisterType( QString projectType );
 	
+	// check if filename matches to some project type
+	bool fileIsAProject( const QString& fileName ) const;
+	
 	// return a valid project item for fileName
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 	

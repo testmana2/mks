@@ -21,6 +21,19 @@ void ProjectTypesIndex::unRegisterType( QString projectType )
 	mSuffixes.remove( projectType );
 }
 
+bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
+{
+	foreach ( const QString& projectType, mSuffixes.keys() )
+	{
+		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
+		{
+			if ( QDir::match( p.second, QFileInfo(fileName).fileName() ) )
+				return true;
+		}
+	}
+	return false;
+}
+
 XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) const
 {
 	foreach ( const QString& projectType, mSuffixes.keys() )

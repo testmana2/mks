@@ -484,3 +484,15 @@ void pFileManager::openProject( const QString& fileName, const QString& codec )
 {
 	MonkeyCore::projectsManager()->openProject( fileName, codec );
 }
+
+void pFileManager::open( const QString& fileName, const QString& codec )
+{
+	if (MonkeyCore::projectTypesIndex()->fileIsAProject( fileName ))
+	{
+		MonkeyCore::projectsManager()->openProject( fileName, codec );
+	}
+	else
+	{
+		MonkeyCore::workspace()->openFile( fileName, codec );
+	}
+}
