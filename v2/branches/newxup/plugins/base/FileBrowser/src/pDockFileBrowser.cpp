@@ -285,7 +285,7 @@ void pDockFileBrowser::tv_activated( const QModelIndex& idx )
 	}
 	else
 	{
-		MonkeyCore::fileManager()->openFile( mDirsModel->filePath( index ), pMonkeyStudio::defaultCodec() );
+		MonkeyCore::fileManager()->open( mDirsModel->filePath( index ), pMonkeyStudio::defaultCodec() );
 	}
 }
 
@@ -302,7 +302,7 @@ void pDockFileBrowser::tv_doubleClicked( const QModelIndex& idx )
 	
 	if ( !mDirsModel->isDir( index ) )
 	{
-		MonkeyCore::fileManager()->openFile( mDirsModel->filePath( index ), pMonkeyStudio::defaultCodec() );
+		MonkeyCore::fileManager()->open( mDirsModel->filePath( index ), pMonkeyStudio::defaultCodec() );
 	}
 }
 

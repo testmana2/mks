@@ -233,7 +233,6 @@ bool XUPProjectManager::openProject( const QString& fileName, const QString& cod
 			cbProjects->setItemIcon( id, model->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
 			setCurrentProject( model->rootProject(), currentProject() );
 			emit projectOpened( currentProject() );
-			
 			return true;
 		}
 		else
