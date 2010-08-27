@@ -62,7 +62,6 @@ MessageBoxDocks::MessageBoxDocks( QObject* parent )
 	
 	// connections
 	connect( mBuildStep->lvBuildSteps, SIGNAL( activated( const QModelIndex& ) ), this, SLOT( lvBuildSteps_activated( const QModelIndex& ) ) );
-	connect( mOutput->cbRawCommand->lineEdit(), SIGNAL( returnPressed() ), this, SLOT( cbRawCommand_returnPressed() ) );
 	connect( MonkeyCore::consoleManager(), SIGNAL( commandError( const pCommand&, QProcess::ProcessError ) ), this, SLOT( commandError( const pCommand&, QProcess::ProcessError ) ) );
 	connect( MonkeyCore::consoleManager(), SIGNAL( commandFinished( const pCommand&, int, QProcess::ExitStatus ) ), this, SLOT( commandFinished( const pCommand&, int, QProcess::ExitStatus ) ) );
 	connect( MonkeyCore::consoleManager(), SIGNAL( commandReadyRead( const pCommand&, const QByteArray& ) ), this, SLOT( commandReadyRead( const pCommand&, const QByteArray& ) ) );
@@ -344,18 +343,6 @@ void MessageBoxDocks::lvBuildSteps_activated( const QModelIndex& index )
 		qWarning() << "point" << position;
 		MonkeyCore::fileManager()->goToLine( fn, position, codec );
 	}
-}
-
-/*!
-	Handler of pressing return in the edit of Raw Command. Executes command
-	using console manager
-*/
-void MessageBoxDocks::cbRawCommand_returnPressed()
-{
-	// send command
-	MonkeyCore::consoleManager()->sendRawCommand( mOutput->cbRawCommand->currentText() );
-	// clear lineedit
-	mOutput->cbRawCommand->setCurrentIndex( -1 );
 }
 
 /*!
