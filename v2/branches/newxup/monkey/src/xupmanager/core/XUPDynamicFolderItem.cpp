@@ -212,17 +212,13 @@ int XUPDynamicFolderItem::childIndex( XUPItem* child ) const
 XUPItem* XUPDynamicFolderItem::child( int row )
 {
 	const QPersistentModelIndex index = mFSModel->index( row, 0, mFSRootIndex );
-	
-	if ( mFSItems.contains( index ) ) {
-		return mFSItems.value( index );
-	}
+	XUPItem* item = mFSItems.value( index );
 
-	if ( index.isValid() ) {
-		XUPItem* childItem = new XUPDynamicFolderChildItem( this, index, this );
-		return childItem;
+	if ( !item && index.isValid() ) {
+		item = new XUPDynamicFolderChildItem( this, index, this );
 	}
 	
-	return 0;
+	return item;
 }
 
 XUPItemList XUPDynamicFolderItem::childrenList() const
@@ -241,6 +237,16 @@ XUPItemList XUPDynamicFolderItem::childrenList() const
 	}
 	
 	return children;
+}
+
+QString XUPDynamicFolderItem::displayText() const
+{
+	return QString( "%1 (%2)" ).arg( attribute( "name" ) ).arg( mFSRootIndex.data( Qt::DisplayRole ).toString() );
+}
+
+QIcon XUPDynamicFolderItem::displayIcon() const
+{
+	return mFSRootIndex.data( Qt::DecorationRole ).value<QIcon>();
 }
 
 void XUPDynamicFolderItem::columnsAboutToBeInserted( const QModelIndex& parent, int start, int end )
