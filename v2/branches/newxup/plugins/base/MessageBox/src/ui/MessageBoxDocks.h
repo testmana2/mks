@@ -85,10 +85,6 @@ public:
 	{
 		setObjectName( metaObject()->className() );
 		setupUi( this );
-		lRawCommand->setAttribute( Qt::WA_MacShowFocusRect, false );
-		lRawCommand->setAttribute( Qt::WA_MacSmallSize );
-		cbRawCommand->setAttribute( Qt::WA_MacShowFocusRect, false );
-		cbRawCommand->setAttribute( Qt::WA_MacSmallSize );
 		tbOutput->setAttribute( Qt::WA_MacShowFocusRect, false );
 		tbOutput->setAttribute( Qt::WA_MacSmallSize );
 	}
@@ -148,7 +144,6 @@ public slots:
 
 protected slots:
 	void lvBuildSteps_activated( const QModelIndex& index );
-	void cbRawCommand_returnPressed();
 	void commandError( const pCommand& command, QProcess::ProcessError error );
 	void commandFinished( const pCommand& command, int exitCode, QProcess::ExitStatus exitStatus );
 	void commandReadyRead( const pCommand& command, const QByteArray& data );
