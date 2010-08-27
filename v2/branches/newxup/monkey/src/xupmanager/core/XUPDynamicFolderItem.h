@@ -21,6 +21,8 @@ public:
 	virtual int childIndex( XUPItem* child ) const;
 	virtual XUPItem* child( int i );
 	virtual XUPItemList childrenList() const;
+	virtual QString displayText() const;
+	virtual QIcon displayIcon() const;
 
 protected:
 	pFileSystemModel* mFSModel;
