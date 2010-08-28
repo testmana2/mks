@@ -17,7 +17,6 @@ struct Q_MONKEY_EXPORT Mapping
 		mParent = 0;
 	}
 	
-	QModelIndex mProxyIndex;
 	XUPItem* mParent;
 	XUPItemList mMappedChildren;
 	XUPItemMappingIterator mIterator;
