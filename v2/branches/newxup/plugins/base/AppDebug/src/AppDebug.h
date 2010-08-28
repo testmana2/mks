@@ -11,7 +11,7 @@ class AppDebug : public BasePlugin
 	Q_INTERFACES( BasePlugin )
 
 protected:
-	QWeakPointer<DebugDockWidget> mDock;
+	static QWeakPointer<DebugDockWidget> mDock;
 	
 	virtual void fillPluginInfos();
 

@@ -11,19 +11,38 @@
 DebugDockWidget::DebugDockWidget( QWidget* parent )
 	: pDockWidget( parent )
 {
-	tvProjects = new QTreeView( this );
-	setWidget( tvProjects );
-	
-	QAction* aXml = new QAction( this );
-	aXml->setText( "Show Xml" );
-	titleBar()->addAction( aXml );
+	setupUi( this );
+
+	titleBar()->addAction( aShowXml );
 	
 	connect( MonkeyCore::projectsManager(), SIGNAL( currentProjectChanged( XUPProjectItem* ) ), this, SLOT( currentProjectChanged() ) );
-	connect( aXml, SIGNAL( triggered() ), this, SLOT( showXml() ) );
+	connect( aShowXml, SIGNAL( triggered() ), this, SLOT( showXml() ) );
 }
 
 DebugDockWidget::~DebugDockWidget()
 {
+}
+
+void DebugDockWidget::qtMessageHandler( QtMsgType type, const char* msg )
+{
+	switch ( type ) {
+		case QtDebugMsg:
+			pteDebug->appendPlainText( QString::fromLocal8Bit( msg ) );
+			printf( "*** Debug: %s\n", msg );
+			break;
+		case QtWarningMsg:
+			pteWarning->appendPlainText( QString::fromLocal8Bit( msg ) );
+			printf( "*** Warning: %s\n", msg );
+			break;
+		case QtCriticalMsg:
+			pteCritical->appendPlainText( QString::fromLocal8Bit( msg ) );
+			printf( "*** Critical: %s\n", msg );
+			break;
+		case QtFatalMsg:
+			pteFatal->appendPlainText( QString::fromLocal8Bit( msg ) );
+			printf( "*** Fatal: %s\n", msg );
+			//abort();
+	}
 }
 
 void DebugDockWidget::currentProjectChanged()
@@ -33,7 +52,13 @@ void DebugDockWidget::currentProjectChanged()
 
 void DebugDockWidget::showXml()
 {
-	XUPProjectItem* project = MonkeyCore::projectsManager()->currentProject();
+	const QModelIndex index = tvProjects->selectionModel()->selectedIndexes().value( 0 );
+	XUPItem* item = MonkeyCore::projectsManager()->currentProjectModel()->itemFromIndex( index );
+	XUPProjectItem* project = item ? item->project() : 0;
+	
+	if ( !project ) {
+		return;
+	}
 	
 	QPlainTextEdit* pte = new QPlainTextEdit( this );
 	pte->setWindowFlags( Qt::Window );

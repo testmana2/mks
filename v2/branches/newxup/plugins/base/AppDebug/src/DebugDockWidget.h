@@ -1,11 +1,9 @@
 #ifndef DEBUGDOCKWIDGET_H
 #define DEBUGDOCKWIDGET_H
 
-#include <pDockWidget.h>
+#include "ui_DebugDockWidget.h"
 
-class QTreeView;
-
-class DebugDockWidget : public pDockWidget
+class DebugDockWidget : public pDockWidget, public Ui::DebugDockWidget
 {
 	Q_OBJECT
 	
@@ -13,8 +11,8 @@ public:
 	DebugDockWidget( QWidget* parent = 0 );
 	virtual ~DebugDockWidget();
 
-protected:
-	QTreeView* tvProjects;
+public slots:
+	void qtMessageHandler( QtMsgType type, const char* msg );
 
 protected slots:
 	void currentProjectChanged();
