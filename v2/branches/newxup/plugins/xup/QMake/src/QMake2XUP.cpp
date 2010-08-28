@@ -3,9 +3,9 @@
 
 /**************************
 WARNING :
-si "operator" n'existe pas, il vaut "="
-si "multiline" n'existe pas, il vaut "false"
-si "nested" n'existe pas, il vaut "false"
+if "operator" does not exists it imply "="
+if "multiline" does not exists it imply "false"
+if "nested" does not exists it imply "false"
 **************************/
 
 #include <QApplication>
