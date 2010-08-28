@@ -128,8 +128,13 @@ bool PluginsManager::addPlugin( QObject* o )
 	// show plugin infos
 	qWarning("%s", tr( "Found plugin: %1, type: %2" ).arg( bp->infos().Name ).arg( bp->infos().Type ).toLocal8Bit().constData() );
 	
-	// add it to plugins list
-	mPlugins << bp;
+	// add it to plugins list, AppDebug is prepend as first plugin to allow track quicker
+	if ( bp->infos().Name == "AppDebug" ) {
+		mPlugins.prepend( bp );
+	}
+	else {
+		mPlugins << bp;
+	}
 	
 	mMenuHandler->addPlugin( bp );
 	
@@ -219,6 +224,7 @@ void PluginsManager::clearPlugins()
 		qWarning( "Clearing plugin...%s", bp->infos().Name.toLocal8Bit().constData() );
 		bp->setEnabled( false );
 	}
+	
 	qDeleteAll( mPlugins );
 	mPlugins.clear();
 }
