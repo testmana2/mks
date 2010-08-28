@@ -7,9 +7,11 @@
 
 #include <stdio.h>
 
+QWeakPointer<DebugDockWidget> AppDebug::mDock;
+
 void AppDebug::fillPluginInfos()
 {
-	mPluginInfos.Caption = tr( "AppDebug" );
+	mPluginInfos.Caption = tr( "Application Debug View" );
 	mPluginInfos.Description = tr( "A plugin that help to debug Mks itself" );
 	mPluginInfos.Author = "Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>";
 	mPluginInfos.Type = BasePlugin::iBase;
@@ -39,19 +41,8 @@ bool AppDebug::uninstall()
 
 void AppDebug::qtMessageHandler( QtMsgType type, const char* msg )
 {
-	switch ( type ) {
-		case QtDebugMsg:
-			fprintf( stderr, "Debug: %s\n", msg );
-			break;
-		case QtWarningMsg:
-			fprintf( stderr, "Warning: %s\n", msg );
-			break;
-		case QtCriticalMsg:
-			fprintf( stderr, "Critical: %s\n", msg );
-			break;
-		case QtFatalMsg:
-			fprintf( stderr, "Fatal: %s\n", msg );
-			abort();
+	if ( mDock ) {
+		mDock.data()->qtMessageHandler( type, msg );
 	}
 }
 

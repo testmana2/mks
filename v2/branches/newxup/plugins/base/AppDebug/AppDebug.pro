@@ -24,3 +24,4 @@ HEADERS	= src/AppDebug.h \
 
 SOURCES	= src/AppDebug.cpp \
 	src/DebugDockWidget.cpp
+FORMS	+= src/DebugDockWidget.ui
