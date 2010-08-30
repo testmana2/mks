@@ -58,7 +58,6 @@ UIMessageBoxSettings::UIMessageBoxSettings( MessageBox* plugin, QWidget* parent 
 	// fill combobox
 	cbActivateDock->addItem( tr( "Build Step" ), UIMessageBoxSettings::BuildStep );
 	cbActivateDock->addItem( tr( "Output" ), UIMessageBoxSettings::Output );
-	cbActivateDock->addItem( tr( "Commands" ), UIMessageBoxSettings::Command );
 	
 	// restore settings
 	gbActivateDock->setChecked( mPlugin->settingsValue( "ActivateDock", true ).toBool() );

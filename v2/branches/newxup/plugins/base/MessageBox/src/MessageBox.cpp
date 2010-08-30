@@ -84,7 +84,6 @@ bool MessageBox::install()
 	// add docks to main window
 	MonkeyCore::mainWindow()->dockToolBar( Qt::BottomToolBarArea )->addDock( mMessageBoxDocks->mBuildStep, mMessageBoxDocks->mBuildStep->windowTitle(), mMessageBoxDocks->mBuildStep->windowIcon() );
 	MonkeyCore::mainWindow()->dockToolBar( Qt::BottomToolBarArea )->addDock( mMessageBoxDocks->mOutput, mMessageBoxDocks->mOutput->windowTitle(), mMessageBoxDocks->mOutput->windowIcon() );
-	MonkeyCore::mainWindow()->dockToolBar( Qt::BottomToolBarArea )->addDock( mMessageBoxDocks->mCommand, mMessageBoxDocks->mCommand->windowTitle(), mMessageBoxDocks->mCommand->windowIcon() );
 	
 	// connections
 	connect( warning, SIGNAL( triggered() ), mMessageBoxDocks, SLOT( showNextWarning() ) );
@@ -146,9 +145,6 @@ void MessageBox::onConsoleStarted()
 				break;
 			case UIMessageBoxSettings::Output:
 				mMessageBoxDocks->mOutput->show();
-				break;
-			case UIMessageBoxSettings::Command:
-				mMessageBoxDocks->mCommand->show();
 				break;
 		}
 	}

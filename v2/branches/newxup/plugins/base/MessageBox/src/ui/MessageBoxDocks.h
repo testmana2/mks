@@ -43,7 +43,6 @@
 
 #include "ui_UIBuildStep.h"
 #include "ui_UIOutput.h"
-#include "ui_UICommand.h"
 
 #include <pIconManager.h>
 #include <pConsoleManager.h>
@@ -91,22 +90,6 @@ public:
 };
 
 /*!
-	Implementation of Commands tab of Message box
-*/
-class UICommand : public pDockWidget, public Ui::UICommand
-{
-public:
-	UICommand( QWidget* parent = 0 )
-		: pDockWidget( parent )
-	{
-		setObjectName( metaObject()->className() );
-		setupUi( this );
-		teLog->setAttribute( Qt::WA_MacShowFocusRect, false );
-		teLog->setAttribute( Qt::WA_MacSmallSize );
-	}
-};
-
-/*!
 	Implementation of GUI of MessageBox plugin
 	
 	Manages tabs, implements functionality of plugin. Appends and removes 
@@ -127,7 +110,6 @@ public:
 protected:
 	UIBuildStep* mBuildStep;
 	UIOutput* mOutput;
-	UICommand* mCommand;
 	pConsoleManagerStepModel* mStepModel;
 
 public slots:
@@ -138,7 +120,6 @@ public slots:
 	void appendSteps( const pConsoleManagerStepList& steps );
 	void showBuild();
 	void showOutput();
-	void showLog();
 	void showNextWarning();
 	void showNextError();
 
