@@ -51,14 +51,12 @@ MessageBoxDocks::MessageBoxDocks( QObject* parent )
 	// create docks
 	mBuildStep = new UIBuildStep;
 	mOutput = new UIOutput;
-	mCommand = new UICommand;
 	mStepModel = new pConsoleManagerStepModel( this );
 	mBuildStep->lvBuildSteps->setModel( mStepModel );
 	
 	// set defaultshortcuts
 	pActionsManager::setDefaultShortcut( mBuildStep->toggleViewAction(), QKeySequence( "F9" ) );
 	pActionsManager::setDefaultShortcut( mOutput->toggleViewAction(), QKeySequence( "F10" ) );
-	pActionsManager::setDefaultShortcut( mCommand->toggleViewAction(), QKeySequence( "F11" ) );
 	
 	// connections
 	connect( mBuildStep->lvBuildSteps, SIGNAL( activated( const QModelIndex& ) ), this, SLOT( lvBuildSteps_activated( const QModelIndex& ) ) );
@@ -81,7 +79,6 @@ MessageBoxDocks::~MessageBoxDocks()
 {
 	delete mBuildStep;
 	delete mOutput;
-	delete mCommand;
 }
 
 /*!
@@ -120,16 +117,16 @@ void MessageBoxDocks::appendOutput( const QString& s )
 void MessageBoxDocks::appendLog( const QString& s )
 {
 	// we check if the scroll bar is at maximum
-	int p = mCommand->teLog->verticalScrollBar()->value();
-	bool b = p == mCommand->teLog->verticalScrollBar()->maximum();
+	int p = mOutput->tbOutput->verticalScrollBar()->value();
+	bool b = p == mOutput->tbOutput->verticalScrollBar()->maximum();
 	// appendOutput text
-	mCommand->teLog->moveCursor( QTextCursor::End );
+	mOutput->tbOutput->moveCursor( QTextCursor::End );
 	// QPlainTextEdit does not have an insertHtml member
-	QTextCursor cursor = mCommand->teLog->textCursor();
+	QTextCursor cursor = mOutput->tbOutput->textCursor();
 	cursor.insertHtml( s +"<br />" );
-	mCommand->teLog->setTextCursor( cursor );
+	mOutput->tbOutput->setTextCursor( cursor );
 	// if scrollbar is at maximum, increase it
-	mCommand->teLog->verticalScrollBar()->setValue( b ? mCommand->teLog->verticalScrollBar()->maximum() : p );
+	mOutput->tbOutput->verticalScrollBar()->setValue( b ? mOutput->tbOutput->verticalScrollBar()->maximum() : p );
 }
 
 /*!
@@ -199,16 +196,6 @@ void MessageBoxDocks::showOutput()
 	// show it if need
 	if ( !mOutput->isVisible() )
 		mOutput->show();
-}
-
-/*!
-	Show Log dock
-*/
-void MessageBoxDocks::showLog()
-{
-	// show it if need
-	if ( !mCommand->isVisible() )
-		mCommand->show();
 }
 
 /*!
@@ -474,7 +461,7 @@ void MessageBoxDocks::commandStateChanged( const pCommand& c, QProcess::ProcessS
 			// clear all tabs
 			mStepModel->clear();
 			mOutput->tbOutput->clear();
-			mCommand->teLog->clear();
+			mOutput->tbOutput->clear();
 			break;
 		case QProcess::Running:
 			ss = tr( "Running" );
