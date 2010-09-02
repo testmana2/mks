@@ -499,6 +499,7 @@ void pConsoleManager::parseOutput( bool commandFinished )
 			if ( !parser )
 			{
 				qWarning() << "Invalid parser" << parserName;
+				qWarning() << mParsers;
 				continue; //for
 			}
 			
