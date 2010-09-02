@@ -437,6 +437,7 @@ QString XUPItem::displayText() const
 
 QIcon XUPItem::displayIcon() const
 {
+return QIcon();
 	QString iconFileName;
 	if ( type() == XUPItem::Variable )
 		iconFileName = project()->variableDisplayIcon( attribute( "name" ) );

@@ -141,9 +141,9 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 
 	switch ( role )
 	{
+		case Qt::ToolTipRole:
 		case Qt::DecorationRole:
 		case Qt::DisplayRole:
-		case Qt::ToolTipRole:
 		case XUPProjectModel::TypeRole:
 		{
 			XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
@@ -171,12 +171,6 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 				{
 					attributes << QString( "Project: %1" ).arg( item->project()->fileName() );
 				}
-				
-				if ( ! item->content().isEmpty() )
-				{
-					attributes << QString( "Content: %1" ).arg( item->content());
-				}
-				
 				for ( int i = 0; i < attributeMap.count(); i++ )
 				{
 					QDomNode attribute = attributeMap.item( i );
