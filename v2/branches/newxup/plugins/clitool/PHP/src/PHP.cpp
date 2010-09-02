@@ -39,12 +39,7 @@ void PHP::fillPluginInfos()
 }
 
 PHP::~PHP()
-{//TODO move to uninstall
-	// uninstall parsers
-	foreach ( QString s, availableParsers() )
-	{
-		MonkeyCore::consoleManager()->removeParser( s );
-	}
+{
 }
 
 bool PHP::install()
