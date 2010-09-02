@@ -45,14 +45,6 @@ void Python::fillPluginInfos()
 
 Python::~Python()
 {
-#if 0
- // TODO move to uninstall
-	// uninstall parsers
-	foreach ( QString s, availableParsers() )
-	{
-		MonkeyCore::consoleManager()->removeParser( s );
-	}
-#endif
 }
 
 bool Python::install()
