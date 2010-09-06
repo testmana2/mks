@@ -30,7 +30,6 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	setActionsManager( MonkeyCore::actionsManager() );
 	
 	titleBar()->addAction( action( atNew ), 0 );
-	titleBar()->addAction( action( atOpen ), 1 );
 	titleBar()->addAction( action( atClose ), 2 );
 	titleBar()->addAction( action( atCloseAll ), 3 );
 	titleBar()->addAction( action( atEdit ), 4 );
@@ -162,11 +161,6 @@ QAction* XUPProjectManager::action( XUPProjectManager::ActionType type )
 			mActionsManager->setDefaultShortcut( action, tr( "Ctrl+Shift+N" ) );
 			connect( action, SIGNAL( triggered() ), this, SLOT( newProject() ) );
 			break;
-		case XUPProjectManager::atOpen:
-			action = new QAction( pIconManager::icon( "open.png", ":/project" ), tr( "Open project..." ), this );
-			mActionsManager->setDefaultShortcut( action, tr( "Ctrl+Shift+O" ) );
-			connect( action, SIGNAL( triggered() ), this, SLOT( openProject() ) );
-			break;
 		case XUPProjectManager::atClose:
 			action = new QAction( pIconManager::icon( "close.png", ":/project" ), tr( "Close current project" ), this );
 			connect( action, SIGNAL( triggered() ), this, SLOT( closeProject() ) );
@@ -244,28 +238,6 @@ bool XUPProjectManager::openProject( const QString& fileName, const QString& cod
 			// free
 			delete model;
 		}
-	}
-	
-	return false;
-}
-
-bool XUPProjectManager::openProject()
-{
-	pFileDialogResult result = MkSFileDialog::getOpenProjects( window() );
-	
-	const QStringList files = result[ "filenames" ].toStringList();
-	if ( !files.isEmpty() )
-	{
-		const QString codec = result[ "codec" ].toString();
-		foreach ( const QString file, files )
-		{
-			if ( !openProject( file, codec ) )
-			{
-				return false;
-			}
-		}
-		
-		return true;
 	}
 	
 	return false;

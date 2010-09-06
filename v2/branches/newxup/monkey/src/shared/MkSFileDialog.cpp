@@ -100,30 +100,6 @@ pFileDialogResult MkSFileDialog::getSaveFileName( QWidget* parent, const QString
 	return result;
 }
 
-pFileDialogResult MkSFileDialog::getOpenProjects( QWidget* parent )
-{
-	pFileDialogResult result;
-	QString caption = tr( "Choose project(s) to open" );
-	QString dir = pMonkeyStudio::defaultProjectsDirectory();
-	QString filter = MonkeyCore::projectTypesIndex()->projectsFilter();
-	bool enabledTextCodec = true;
-	bool enabledOpenReadOnly = false;
-	
-	MkSFileDialog fd( parent );
-	setOpenFileNamesDialog( &fd, caption, dir, filter, enabledTextCodec, enabledOpenReadOnly, 0, 0 );
-	fd.setTextCodec( pMonkeyStudio::defaultCodec() );
-	fd.mAddFiles->setVisible( false );
-	
-	if ( fd.exec() == QDialog::Accepted )
-	{
-		result[ "filenames" ] = fd.selectedFiles();
-		result[ "codec" ] = fd.textCodec();
-		result[ "openreadonly" ] = fd.openReadOnly();
-	}
-	
-	return result;
-}
-
 pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allowChooseScope )
 {
 	pFileDialogResult result;
