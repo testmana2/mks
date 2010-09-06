@@ -84,8 +84,6 @@ public:
 	void unhandleDocument( pAbstractChild* document );
 
 public slots:
-	pAbstractChild* openFile( const QString& fileName, const QString& codec );
-	pChild* openTextFile( const QString& fileName, const QString& codec );
 	void closeFile( const QString& );
 	
 	void closeCurrentDocument();
