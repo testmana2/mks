@@ -31,8 +31,10 @@
 #include "../../pMonkeyStudio.h"
 #include "../CLIToolPlugin.h"
 #include "../../coremanager/MonkeyCore.h"
+#include "UIMain.h"
 
 #include <QInputDialog>
+#include <QFileDialog>
 
 using namespace pMonkeyStudio;
 
@@ -180,7 +182,7 @@ void UIAdditionalCommandsSettings::on_pbCommandDown_clicked()
 
 void UIAdditionalCommandsSettings::on_tbCommandCommand_clicked()
 {
-	QString s = getOpenFileName( tr( "Select an executable" ), leCommandCommand->text() );
+	QString s = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Select an executable" ), leCommandCommand->text() );
 	if ( !s.isNull() )
 		leCommandCommand->setText( s );
 }

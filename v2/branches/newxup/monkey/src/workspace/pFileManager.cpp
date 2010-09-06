@@ -482,7 +482,7 @@ void pFileManager::fileOpen_triggered()
 	}
 	
 	// show filedialog to user
-	pFileDialogResult result = MkSFileDialog::getOpenFileNames( MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, mFilters, true, false );
+	pFileDialogResult result = MkSFileDialog::getOpenFileNames( MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, mFilters, true );
 
 	// open open file dialog
 	const QStringList fileNames = result[ "filenames" ].toStringList();
@@ -536,7 +536,7 @@ void pFileManager::fileOpenText_triggered()
 	}
 	
 	// show filedialog to user
-	pFileDialogResult result = MkSFileDialog::getOpenFileNames( MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, QString( "All Files (*);;" ), true, false );
+	pFileDialogResult result = MkSFileDialog::getOpenFileNames( MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, QString( "All Files (*);;" ), true );
 
 	// open open file dialog
 	const QStringList fileNames = result[ "filenames" ].toStringList();

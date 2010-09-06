@@ -65,7 +65,6 @@
 #endif
 
 #include <QTextCodec>
-#include <QImageReader>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QLocale>
@@ -113,21 +112,6 @@ QStringList pMonkeyStudio::availableTextCodecs()
 		}
 	}
 	return codecs.values();
-}
-
-/*!
-	\details Return a list of all know image formats
-*/
-QStringList pMonkeyStudio::availableImageFormats()
-{
-	static QStringList l;
-	if ( l.isEmpty() )
-	{
-		foreach ( QByteArray a, QImageReader::supportedImageFormats() )
-			l << a;
-		l.sort();
-	}
-	return l;
 }
 
 /*!
@@ -223,54 +207,7 @@ QFileDialog* getOpenDialog( QFileDialog::FileMode fileMode, const QString& capti
 	return dlg;
 }
 
-/*!
-	\details A dialog that return a list of files name choosen from available know image formats
-	\param caption The window title
-	\param fileName The default filename to select ( or path )
-	\param parent The parent widget
-*/
-QStringList pMonkeyStudio::getImageFileNames( const QString& caption, const QString& fileName, QWidget* parent )
-{
-	// get image filters
-	QStringList filters;
-	foreach ( QString filter, availableImageFormats() )
-		filters << QObject::tr( "%1 Files (*.%2)" ).arg( filter.toUpper() ).arg( filter );
-	// add all format as one filter at begining
-	if ( !filters.isEmpty() )
-		filters.prepend( QObject::tr( "All Image Files (%1)" ).arg( QStringList( availableImageFormats() ).replaceInStrings( QRegExp( "^(.*)$" ), "*.\\1" ).join( " " ) ) );
-	// create dialog
-	QFileDialog* dlg = getOpenDialog( QFileDialog::ExistingFiles, caption.isEmpty() ? QObject::tr( "Select image(s)" ) : caption, fileName, filters.join( ";;" ), parent );
-	// choose last used filter if available
-	if ( !filters.isEmpty() )
-		dlg->selectFilter( MonkeyCore::settings()->value( "Recents/ImageFilter" ).toString() );
-	// execute dialog
-	if ( dlg->exec() )
-	{
-		// remember last filter if available
-		if ( !filters.isEmpty() )
-			MonkeyCore::settings()->setValue( "Recents/ImageFilter", dlg->selectedFilter() );
-		// remember selected files
-		filters = dlg->selectedFiles();
-		// delete dialog
-		delete dlg;
-		// return selected files
-		return filters;
-	}
-	// delete dialog
-	delete dlg;
-	// return empty list
-	return QStringList();
-}
-
-/*!
-	\details A dialog that return a file name choosen from available know image formats
-	\param caption The window title
-	\param fileName The default filename to select ( or path )
-	\param parent The parent widget
-*/
-QString pMonkeyStudio::getImageFileName( const QString& caption, const QString& fileName, QWidget* parent )
-{ return getImageFileNames( caption, fileName, parent ).value( 0 ); }
-
+#if 0 // FIXME use or remove
 /*!
 	\details Return a QStringList of files name
 	\param caption The window title
@@ -313,7 +250,7 @@ QStringList pMonkeyStudio::getOpenFileNames( const QString& caption, const QStri
 */
 QString pMonkeyStudio::getOpenFileName( const QString& caption, const QString& fileName, const QString& filter, QWidget* parent )
 { return getOpenFileNames( caption, fileName, filter, parent ).value( 0 ); }
-
+#endif
 /*!
 	\details Return a QString file name
 	\param caption The window title
