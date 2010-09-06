@@ -229,7 +229,6 @@ void UIMain::initMenuBar()
 	mb->menu( "mProject", tr( "Project" ) );
 	mb->beginGroup( "mProject" );
 		mb->addAction( QString::null, MonkeyCore::projectsManager()->action( XUPProjectManager::atNew ) );
-		mb->addAction( QString::null, MonkeyCore::projectsManager()->action( XUPProjectManager::atOpen ) );
 		mb->action( "aSeparator1" );
 		mb->addAction( QString::null, MonkeyCore::projectsManager()->action( XUPProjectManager::atClose ) );
 		mb->addAction( QString::null, MonkeyCore::projectsManager()->action( XUPProjectManager::atCloseAll ) );
@@ -367,7 +366,7 @@ void UIMain::initConnections()
 	connect( menuBar()->menu( "mDocks" ), SIGNAL( aboutToShow() ), this, SLOT( menu_Docks_aboutToShow() ) );
 	// project connection
 	connect( MonkeyCore::recentsManager(), SIGNAL( openProjectRequested( const QString&, const QString& ) ), MonkeyCore::projectsManager(), SLOT( openProject( const QString&, const QString& ) ) );
-	connect( MonkeyCore::projectsManager(), SIGNAL( fileDoubleClicked( const QString&, const QString& ) ), MonkeyCore::workspace(), SLOT( openFile( const QString&, const QString& ) ) );
+	connect( MonkeyCore::projectsManager(), SIGNAL( fileDoubleClicked( const QString&, const QString& ) ), MonkeyCore::fileManager(), SLOT( openFile( const QString&, const QString& ) ) );
 	// builder debugger interpreter menu
 	connect( menuBar()->menu( "mBuilder" ), SIGNAL( aboutToShow() ), this, SLOT( menu_CustomAction_aboutToShow() ) );
 	connect( menuBar()->menu( "mDebugger" ), SIGNAL( aboutToShow() ), this, SLOT( menu_CustomAction_aboutToShow() ) );

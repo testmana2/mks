@@ -16,7 +16,7 @@ class Q_MONKEY_EXPORT XUPProjectManager : public pDockWidget, public Ui::XUPProj
 	Q_OBJECT
 
 public:
-	enum ActionType { atNew = 0, atOpen, atClose, atCloseAll, atEdit, atAddFiles, atRemoveFiles };
+	enum ActionType { atNew = 0, atClose, atCloseAll, atEdit, atAddFiles, atRemoveFiles };
 	
 	XUPProjectManager( QWidget* parent = 0 );
 	virtual ~XUPProjectManager();
@@ -37,7 +37,6 @@ protected:
 public slots:
 	bool openProject( const QString& fileName, const QString& codec );
 	void newProject();
-	bool openProject();
 	void closeProject();
 	void closeAllProjects();
 	void editProject();

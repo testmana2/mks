@@ -529,7 +529,7 @@ QString pMonkeyStudio::languageForFileName( const QString& fileName )
 QsciLexer* pMonkeyStudio::lexerForFileName( const QString& fileName )
 {
 	// get suffixes
-	QMap<QString, QStringList> l = availableFilesSuffixes();
+	QMap<QString, QStringList> l = availableLanguagesSuffixes();
 	// check suffixe
 	foreach ( QString k, l.keys() )
 		if ( QDir::match( l.value( k ), fileName ) )

@@ -498,7 +498,16 @@ void pFileManager::fileOpen_triggered()
 	{
 		if (MonkeyCore::projectTypesIndex()->fileIsAProject( file ))
 		{
-			MonkeyCore::projectsManager()->openProject( file, result[ "codec" ].toString() );
+			if (MonkeyCore::projectsManager()->openProject( file, result[ "codec" ].toString() ))
+			{
+				// append file to recents
+				MonkeyCore::recentsManager()->addRecentProject( file );
+			}
+			else
+			{
+				// remove it from recents files
+				MonkeyCore::recentsManager()->removeRecentProject( file );
+			}
 		}
 		else
 		{
