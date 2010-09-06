@@ -20,8 +20,10 @@
 #include  "../../consolemanager/pConsoleManager.h"
 #include "../../pMonkeyStudio.h"
 #include "../../coremanager/MonkeyCore.h"
+#include "UIMain.h"
 
 #include <QInputDialog>
+#include <QFileDialog>
 #include <QPushButton>
 
 using namespace pMonkeyStudio;
@@ -99,7 +101,7 @@ void UICLIToolSettings::save()
 
 void UICLIToolSettings::on_tbBuildCommandCommand_clicked()
 {
-	QString s = getOpenFileName( tr( "Select an executable" ), leBuildCommandCommand->text() );
+	QString s = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Select an executable" ), leBuildCommandCommand->text() );
 	if ( !s.isNull() )
 		leBuildCommandCommand->setText( s );
 }

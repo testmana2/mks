@@ -172,7 +172,7 @@ void UIMain::initMenuBar()
 	mb->beginGroup( "mFile" );
 		mb->action( "aNew", tr( "&New..." ), QIcon( ":/file/icons/file/new.png" ), tr( "Ctrl+N" ), tr( "Create a new file" ) );
 		mb->action( "aNewTextEditor", tr( "&New Text File..." ), QIcon( ":/file/icons/file/new.png" ), QString::null, tr( "Quickly create a new text based file" ) );
-		mb->action( "aOpen", tr( "&Open..." ), QIcon( ":/file/icons/file/open.png" ), tr( "Ctrl+O" ), tr( "Open a file" ) );
+		mb->action( "aOpen", tr( "&Open file or project..." ), QIcon( ":/file/icons/file/open.png" ), tr( "Ctrl+O" ), tr( "Open a file" ) );
 		mb->action( "aOpenText", tr( "&Open as text..." ), QIcon( ":/file/icons/file/open.png" ), tr( "Ctrl+Shift+O" ), tr( "Open a file in text editor" ) );
 		mb->menu( "mRecents", tr( "&Recents" ), QIcon( ":/file/icons/file/recents.png" ) );
 		mb->action( "mRecents/aClear", tr( "&Clear" ), QIcon( ":/file/icons/file/clear.png" ), QString::null, tr( "Clear the recents files list" ) );

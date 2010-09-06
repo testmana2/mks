@@ -9,8 +9,8 @@
 
 #include <QComboBox>
 
-MkSFileDialog::MkSFileDialog( QWidget* parent, const QString& caption, const QString& directory, const QString& filter, bool textCodecEnabled, bool openReadOnlyEnabled )
-	: pFileDialog( parent, caption, directory, filter, textCodecEnabled, openReadOnlyEnabled )
+MkSFileDialog::MkSFileDialog( QWidget* parent, const QString& caption, const QString& directory, const QString& filter, bool textCodecEnabled )
+	: pFileDialog( parent, caption, directory, filter, textCodecEnabled, false )
 {
 	mAddFiles = new XUPAddFiles( this );
 	glDialog->addWidget( mAddFiles, 6, 0, 1, -1 );
@@ -31,11 +31,11 @@ void MkSFileDialog::currentScopeChanged( XUPItem* scope )
 	}
 }
 
-pFileDialogResult MkSFileDialog::getOpenFileName( QWidget* parent, const QString& caption, const QString& dir, const QString& filter, bool enabledTextCodec, bool enabledOpenReadOnly, QString* selectedFilter, Options options )
+pFileDialogResult MkSFileDialog::getOpenFileName( QWidget* parent, const QString& caption, const QString& dir, const QString& filter, bool enabledTextCodec, QString* selectedFilter, Options options )
 {
 	pFileDialogResult result;
 	MkSFileDialog fd( parent );
-	setOpenFileNameDialog( &fd, caption, dir, filter, enabledTextCodec, enabledOpenReadOnly, selectedFilter, options );
+	setOpenFileNameDialog( &fd, caption, dir, filter, enabledTextCodec, false, selectedFilter, options );
 	fd.setTextCodec( pMonkeyStudio::defaultCodec() );
 	fd.mAddFiles->setVisible( false );
 	
@@ -48,17 +48,16 @@ pFileDialogResult MkSFileDialog::getOpenFileName( QWidget* parent, const QString
 		
 		result[ "filename" ] = fd.selectedFiles().value( 0 );
 		result[ "codec" ] = fd.textCodec();
-		result[ "openreadonly" ] = fd.openReadOnly();
 	}
 	
 	return result;
 }
 
-pFileDialogResult MkSFileDialog::getOpenFileNames( QWidget* parent, const QString& caption, const QString& dir, const QString& filter, bool enabledTextCodec, bool enabledOpenReadOnly, QString* selectedFilter, Options options )
+pFileDialogResult MkSFileDialog::getOpenFileNames( QWidget* parent, const QString& caption, const QString& dir, const QString& filter, bool enabledTextCodec, QString* selectedFilter, Options options )
 {
 	pFileDialogResult result;
 	MkSFileDialog fd( parent );
-	setOpenFileNamesDialog( &fd, caption, dir, filter, enabledTextCodec, enabledOpenReadOnly, selectedFilter, options );
+	setOpenFileNamesDialog( &fd, caption, dir, filter, enabledTextCodec, false, selectedFilter, options );
 	fd.setTextCodec( pMonkeyStudio::defaultCodec() );
 	fd.mAddFiles->setVisible( false );
 	
@@ -71,30 +70,6 @@ pFileDialogResult MkSFileDialog::getOpenFileNames( QWidget* parent, const QStrin
 		
 		result[ "filenames" ] = fd.selectedFiles();
 		result[ "codec" ] = fd.textCodec();
-		result[ "openreadonly" ] = fd.openReadOnly();
-	}
-	
-	return result;
-}
-
-pFileDialogResult MkSFileDialog::getSaveFileName( QWidget* parent, const QString& caption, const QString& dir, const QString& filter, bool enabledTextCodec, QString* selectedFilter, Options options )
-{
-	pFileDialogResult result;
-	MkSFileDialog fd( parent );
-	setSaveFileNameDialog( &fd, caption, dir, filter, enabledTextCodec, selectedFilter, options );
-	fd.setTextCodec( pMonkeyStudio::defaultCodec() );
-	fd.mAddFiles->setVisible( false );
-	
-	if ( fd.exec() == QDialog::Accepted )
-	{
-		if ( selectedFilter )
-		{
-			*selectedFilter = fd.selectedFilter();
-		}
-		
-		result[ "filename" ] = fd.selectedFiles().value( 0 );
-		result[ "codec" ] = fd.textCodec();
-		result[ "openreadonly" ] = fd.openReadOnly();
 	}
 	
 	return result;
@@ -112,10 +87,9 @@ pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allow
 		QString dir = pMonkeyStudio::defaultProjectsDirectory();
 		QString filter = curProject->sourceFileNameFilter();
 		bool enabledTextCodec = false;
-		bool enabledOpenReadOnly = false;
 		
 		MkSFileDialog fd( parent );
-		setOpenFileNamesDialog( &fd, caption, dir, filter, enabledTextCodec, enabledOpenReadOnly, 0, 0 );
+		setOpenFileNamesDialog( &fd, caption, dir, filter, enabledTextCodec, false, 0, 0 );
 		fd.setTextCodec( pMonkeyStudio::defaultCodec() );
 		fd.mAddFiles->setModel( model );
 		fd.mAddFiles->setCurrentScope( curProject );

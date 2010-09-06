@@ -54,19 +54,16 @@ namespace pMonkeyStudio
 	Q_MONKEY_EXPORT bool isSameFile( const QString& left, const QString& right );
 
 	Q_MONKEY_EXPORT QStringList availableTextCodecs();
-	Q_MONKEY_EXPORT QStringList availableImageFormats();
 	Q_MONKEY_EXPORT QStringList availableLanguages();
 
 	Q_MONKEY_EXPORT QFileInfoList getFolders( QDir fromDir, const QStringList& filters, bool recursive = true );
 	Q_MONKEY_EXPORT QFileInfoList getFiles( QDir fromDir, const QStringList& filters, bool recursive = true );
 	Q_MONKEY_EXPORT QFileInfoList getFiles( QDir fromDir, const QString& filters = QString::null, bool recursive = true );
 
-	Q_MONKEY_EXPORT QStringList getImageFileNames( const QString& title, const QString& filename, QWidget* parent = QApplication::activeWindow() );
-	Q_MONKEY_EXPORT QString getImageFileName( const QString& title, const QString& filename, QWidget* parent = QApplication::activeWindow() );
-
+#if 0
 	Q_MONKEY_EXPORT QStringList getOpenFileNames( const QString& title, const QString& filename, const QString& filters = QString(), QWidget* parent = QApplication::activeWindow() );
 	Q_MONKEY_EXPORT QString getOpenFileName( const QString& title, const QString& filename, const QString& filters = QString(), QWidget* parent = QApplication::activeWindow() );
-	
+#endif
 	Q_MONKEY_EXPORT QString getSaveFileName( const QString& title, const QString& filename, const QString& filters = QString(), QWidget* parent = QApplication::activeWindow() );
 
 	Q_MONKEY_EXPORT QString getExistingDirectory( const QString& title, const QString& path, QWidget* parent = QApplication::activeWindow() );
