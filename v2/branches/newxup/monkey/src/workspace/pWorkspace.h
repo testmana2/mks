@@ -37,6 +37,7 @@
 #include <QMdiArea>
 
 class pAbstractChild;
+class pChild;
 class QMainWindow;
 class XUPProjectItem;
 class QFileSystemWatcher;
@@ -84,6 +85,7 @@ public:
 
 public slots:
 	pAbstractChild* openFile( const QString& fileName, const QString& codec );
+	pChild* openTextFile( const QString& fileName, const QString& codec );
 	void closeFile( const QString& );
 	
 	void closeCurrentDocument();
@@ -133,7 +135,6 @@ protected slots:
 public slots:
 	// file menu
 	void fileNew_triggered();
-	void fileOpen_triggered();
 	void fileSessionSave_triggered();
 	void fileSessionRestore_triggered();
 	void fileSaveCurrent_triggered();
