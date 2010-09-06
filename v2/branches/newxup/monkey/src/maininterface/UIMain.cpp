@@ -329,8 +329,8 @@ void UIMain::initConnections()
 	// file connection
 	connect( menuBar()->action( "mFile/aNew" ), SIGNAL( triggered() ), MonkeyCore::workspace(), SLOT( fileNew_triggered() ) );
 	connect( menuBar()->action( "mFile/aNewTextEditor" ), SIGNAL( triggered() ), MonkeyCore::workspace(), SLOT( createNewTextEditor() ) );
-	connect( menuBar()->action( "mFile/aOpen" ), SIGNAL( triggered() ), MonkeyCore::workspace(), SLOT( fileOpen_triggered() ) );
-	connect( menuBar()->action( "mFile/aOpenText" ), SIGNAL( triggered() ), MonkeyCore::workspace(), SLOT( fileOpenText_triggered() ) );
+	connect( menuBar()->action( "mFile/aOpen" ), SIGNAL( triggered() ), MonkeyCore::fileManager(), SLOT( fileOpen_triggered() ) );
+	connect( menuBar()->action( "mFile/aOpenText" ), SIGNAL( triggered() ), MonkeyCore::fileManager(), SLOT( fileOpenText_triggered() ) );
 	connect( MonkeyCore::recentsManager(), SIGNAL( openFileRequested( const QString&, const QString& ) ), MonkeyCore::fileManager(), SLOT( openFile( const QString&, const QString& ) ) );
 	connect( menuBar()->action( "mFile/mSession/aSave" ), SIGNAL( triggered() ), MonkeyCore::workspace(), SLOT( fileSessionSave_triggered() ) );
 	connect( menuBar()->action( "mFile/mSession/aRestore" ), SIGNAL( triggered() ), MonkeyCore::workspace(), SLOT( fileSessionRestore_triggered() ) );
