@@ -530,9 +530,50 @@ pAbstractChild* pWorkspace::openFile( const QString& fileName, const QString& co
 	document->showMaximized();
 	mMdiArea->setActiveSubWindow( document );
 	
-	// update gui state
-	//updateGuiState( document );
+	// return child instance
+	return document;
+}
 
+pChild* pWorkspace::openTextFile( const QString& fileName, const QString& codec )
+{
+	// if it not exists
+	if ( !QFile::exists( fileName ) || !QFileInfo( fileName ).isFile() )
+	{
+		return 0;
+	}
+	
+	// check if file is already opened
+	foreach ( QMdiSubWindow* window, mMdiArea->subWindowList() )
+	{
+		pChild* document = qobject_cast<pChild*>( window );
+		
+		if ( pMonkeyStudio::isSameFile( document->filePath(), fileName ) )
+		{
+			setCurrentDocument( document );
+			return document;
+		}
+	}
+	
+	pChild* document = new pChild;
+	
+	// make connection if worksapce don t contains this document
+	if ( !mMdiArea->subWindowList().contains( document ) )
+	{
+		handleDocument( document );
+	}
+
+	// open file
+	if ( !document->openFile( fileName, codec ) )
+	{
+		MonkeyCore::messageManager()->appendMessage( tr( "An error occur while opening this file: '%1'" ).arg( QFileInfo( fileName ).fileName() ) );
+		closeDocument( document );
+		
+		return 0;
+	}
+	
+	document->showMaximized();
+	mMdiArea->setActiveSubWindow( document );
+	
 	// return child instance
 	return document;
 }
@@ -934,7 +975,7 @@ void pWorkspace::fileNew_triggered()
 
 void pWorkspace::fileOpen_triggered()
 {
-	const QString mFilters = pMonkeyStudio::availableFilesFilters(); // get available filters
+	QString mFilters = pMonkeyStudio::availableFilesFilters(); // get available filters
 	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
 	
 	if ( path.isEmpty() )
@@ -958,7 +999,52 @@ void pWorkspace::fileOpen_triggered()
 	// for each entry, open file
 	foreach ( const QString& file, fileNames )
 	{
-		if ( openFile( file, result[ "codec" ].toString() ) )
+		if (MonkeyCore::projectTypesIndex()->fileIsAProject( file ))
+		{
+			MonkeyCore::projectsManager()->openProject( file, result[ "codec" ].toString() );
+		}
+		else
+		{
+			if ( openFile( file, result[ "codec" ].toString() ) )
+			{
+				// append file to recents
+				MonkeyCore::recentsManager()->addRecentFile( file );
+			}
+			else
+			{
+				// remove it from recents files
+				MonkeyCore::recentsManager()->removeRecentFile( file );
+			}
+		}
+	}
+}
+
+void pWorkspace::fileOpenText_triggered()
+{
+	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
+	
+	if ( path.isEmpty() )
+	{
+		XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
+		path = curProject ? curProject->path() : pMonkeyStudio::defaultProjectsDirectory();
+	}
+	
+	// show filedialog to user
+	pFileDialogResult result = MkSFileDialog::getOpenFileNames( window(), tr( "Choose the file(s) to open" ), path, QString( "All Files (*);;" ), true, false );
+
+	// open open file dialog
+	const QStringList fileNames = result[ "filenames" ].toStringList();
+	
+	// return 0 if user cancel
+	if ( fileNames.isEmpty() )
+	{
+		return;
+	}
+
+	// for each entry, open file
+	foreach ( const QString& file, fileNames )
+	{
+		if ( openTextFile( file, result[ "codec" ].toString() ) )
 		{
 			// append file to recents
 			MonkeyCore::recentsManager()->addRecentFile( file );
