@@ -29,7 +29,10 @@
 #include "UICtags2Api.h"
 
 #include <pMonkeyStudio.h>
+#include <MonkeyCore.h>
+#include <UIMain.h>
 
+#include <QFileDialog>
 #include <QPushButton>
 #include <QRegExp>
 #include <QFile>
@@ -106,7 +109,7 @@ QList<QByteArray> UICtags2Api::getFileContent( const QString& s )
 
 void UICtags2Api::on_tbCtagsBinary_clicked()
 {
-	QString s = getOpenFileName( tr( "Select the ctags binary file" ), leCtagsBinary->text(), QString::null, this );
+	QString s = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Select the ctags binary file" ), leCtagsBinary->text() );
 	if ( !s.isNull() )
 		leCtagsBinary->setText( s );
 }
@@ -126,7 +129,7 @@ void UICtags2Api::on_tbBrowse_clicked()
 			s = getExistingDirectory( tr( "Select the include path to scan" ), leLabel->text(), this );
 			break;
 		case 1: // ctags
-			s = getOpenFileName( tr( "Select the tags file to convert" ), leLabel->text(), tr( "Ctags File (tags *.tags)" ), this );
+			s = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Select the tags file to convert" ), leLabel->text(), tr( "Ctags File (tags *.tags)" ));
 			break;
 	}
 	if ( !s.isNull() )

@@ -33,7 +33,7 @@
 #include <pFileManager.h>
 #include <XUPProjectItem.h>
 #include <UIXUPFindFiles.h>
-#include <pConsoleManagerStepModel.h>
+#include "../pConsoleManagerStepModel.h"
 
 #include <QDebug>
 
