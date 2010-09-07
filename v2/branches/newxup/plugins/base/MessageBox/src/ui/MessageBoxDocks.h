@@ -67,8 +67,7 @@ public:
 		lvBuildSteps->setAttribute( Qt::WA_MacShowFocusRect, false );
 		lvBuildSteps->setAttribute( Qt::WA_MacSmallSize );
 		
-		titleBar()->addAction( MonkeyCore::menuBar()->action( "mView/aShowNextWarning" ), 0 );
-		titleBar()->addAction( MonkeyCore::menuBar()->action( "mView/aShowNextError" ), 1 );
+		titleBar()->addAction( MonkeyCore::menuBar()->action( "mView/aShowNextErrorOrWarning" ), 0 );
 		titleBar()->addSeparator( 2 );
 	}
 };
@@ -120,8 +119,7 @@ public slots:
 	void appendSteps( const pConsoleManagerStepList& steps );
 	void showBuild();
 	void showOutput();
-	void showNextWarning();
-	void showNextError();
+	void showNextErrorOrWarning();
 
 protected slots:
 	void lvBuildSteps_activated( const QModelIndex& index );

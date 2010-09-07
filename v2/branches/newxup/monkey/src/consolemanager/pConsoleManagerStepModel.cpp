@@ -66,7 +66,7 @@ pConsoleManagerStep pConsoleManagerStepModel::step( const QModelIndex& index ) c
 	return mSteps.value( index.row() );
 }
 
-QModelIndex pConsoleManagerStepModel::nextWarning( const QModelIndex& fromIndex ) const
+QModelIndex pConsoleManagerStepModel::nextErrorOrWarning( const QModelIndex& fromIndex ) const
 {
 	const int row = fromIndex.isValid() ? fromIndex.row() +1 : 0;
 	
@@ -79,29 +79,8 @@ QModelIndex pConsoleManagerStepModel::nextWarning( const QModelIndex& fromIndex 
 	{
 		pConsoleManagerStep& step = mSteps[ i ];
 		
-		if ( step.type() == pConsoleManagerStep::Warning )
-		{
-			return createIndex( i, 0, &step );
-		}
-	}
-	
-	return QModelIndex();
-}
-
-QModelIndex pConsoleManagerStepModel::nextError( const QModelIndex& fromIndex ) const
-{
-	const int row = fromIndex.isValid() ? fromIndex.row() +1 : 0;
-	
-	if ( row >= rowCount() )
-	{
-		return QModelIndex();
-	}
-	
-	for ( int i = row; i < rowCount(); i++ )
-	{
-		pConsoleManagerStep& step = mSteps[ i ];
-		
-		if ( step.type() == pConsoleManagerStep::Error )
+		if ( step.type() == pConsoleManagerStep::Warning || 
+			 step.type() == pConsoleManagerStep::Error)
 		{
 			return createIndex( i, 0, &step );
 		}
