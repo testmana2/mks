@@ -26,7 +26,7 @@ public:
 	QModelIndex index( const pConsoleManagerStep& step ) const;
 	pConsoleManagerStep step( const QModelIndex& index ) const;
 	
-	QModelIndex nextWarning( const QModelIndex& fromIndex ) const;
+	QModelIndex nextErrorOrWarning( const QModelIndex& fromIndex ) const;
 	QModelIndex nextError( const QModelIndex& fromIndex ) const;
 
 public slots:

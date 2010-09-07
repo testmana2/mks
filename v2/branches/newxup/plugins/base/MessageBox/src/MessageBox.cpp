@@ -70,12 +70,10 @@ bool MessageBox::install()
 {
 	// create actions
 	pMenuBar* mb = MonkeyCore::menuBar();
-	QAction* warning;
-	QAction* error;
+	QAction* errorOrWarning;
 
 	mb->beginGroup( "mView" );
-		warning = mb->action( "aShowNextWarning", tr( "Next Warning..." ), pIconManager::icon( "warning.png", ":/icons" ), tr( "Ctrl+Shift++" ), tr( "Show the next build step warning." ) );
-		error = mb->action( "aShowNextError", tr( "Next Error..." ), pIconManager::icon( "error.png", ":/icons" ), tr( "Ctrl+Alt++" ), tr( "Show the next build step error." ) );
+		errorOrWarning = mb->action( "aShowNextErrorOrWarning", tr( "Next Error/Warning..." ), pIconManager::icon( "error.png", ":/icons" ), tr( "Ctrl+Shift++" ), tr( "Show the next build step error/warning." ) );
 	mb->endGroup();
 	
 	// create docks
@@ -86,8 +84,7 @@ bool MessageBox::install()
 	MonkeyCore::mainWindow()->dockToolBar( Qt::BottomToolBarArea )->addDock( mMessageBoxDocks->mOutput, mMessageBoxDocks->mOutput->windowTitle(), mMessageBoxDocks->mOutput->windowIcon() );
 	
 	// connections
-	connect( warning, SIGNAL( triggered() ), mMessageBoxDocks, SLOT( showNextWarning() ) );
-	connect( error, SIGNAL( triggered() ), mMessageBoxDocks, SLOT( showNextError() ) );
+	connect( errorOrWarning, SIGNAL( triggered() ), mMessageBoxDocks, SLOT( showNextErrorOrWarning() ) );
 	connect( MonkeyCore::consoleManager(), SIGNAL( started() ), this, SLOT( onConsoleStarted() ) );
 	
 	return true;

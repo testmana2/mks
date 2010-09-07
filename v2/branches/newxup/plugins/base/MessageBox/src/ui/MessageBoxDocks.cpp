@@ -201,33 +201,10 @@ void MessageBoxDocks::showOutput()
 /*!
 	Show next warning on Build Steps dock
 */
-void MessageBoxDocks::showNextWarning()
+void MessageBoxDocks::showNextErrorOrWarning()
 {
 	const QModelIndex selectedIndex = mBuildStep->lvBuildSteps->selectionModel()->selectedIndexes().value( 0 );
-	const QModelIndex index = mStepModel->nextWarning( selectedIndex );
-	
-	if ( !index.isValid() )
-	{
-		return;
-	}
-	
-	// show it if need
-	if ( !mBuildStep->isVisible() )
-	{
-		mBuildStep->show();
-	}
-	
-	mBuildStep->lvBuildSteps->setCurrentIndex( index );
-	lvBuildSteps_activated( index );
-}
-
-/*!
-	Show next error on Build Steps dock
-*/
-void MessageBoxDocks::showNextError()
-{
-	const QModelIndex selectedIndex = mBuildStep->lvBuildSteps->selectionModel()->selectedIndexes().value( 0 );
-	const QModelIndex index = mStepModel->nextError( selectedIndex );
+	const QModelIndex index = mStepModel->nextErrorOrWarning( selectedIndex );
 	
 	if ( !index.isValid() )
 	{
