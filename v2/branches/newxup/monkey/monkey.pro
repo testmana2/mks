@@ -115,7 +115,6 @@ HEADERS	*= src/main.h \
 	src/workspace/pOpenedFileModel.h \
 	src/consolemanager/EnvironmentVariablesManager.h \
 	src/consolemanager/pConsoleManagerStep.h \
-	src/consolemanager/pConsoleManagerStepModel.h \
 	src/xupmanager/core/XUPDynamicFolderItem.h
 
 SOURCES	*= src/maininterface/ui/UIAbout.cpp \
@@ -166,7 +165,6 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/pluginsmanager/CLIToolPlugin.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \
-	src/consolemanager/pConsoleManagerStepModel.cpp \
 	src/xupmanager/core/XUPDynamicFolderItem.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
