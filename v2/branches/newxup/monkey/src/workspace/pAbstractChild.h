@@ -46,6 +46,7 @@ class Q_MONKEY_EXPORT pAbstractChild : public QMdiSubWindow
 {
 	Q_OBJECT
 	Q_ENUMS( DocumentMode LayoutMode )
+	friend class DebugDockWidget;
 
 public:
 	enum DocumentMode { mNone = 0, mNa, mInsert, mOverwrite, mReadOnly } mDocument;

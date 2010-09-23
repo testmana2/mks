@@ -15,7 +15,7 @@ public:
 	QMakeProjectItem();
 	virtual ~QMakeProjectItem();
 	
-	virtual QString toString() const;
+	virtual QString toNativeString() const;
 	virtual QString projectType() const;
 	inline virtual XUPProjectItem* newProject() const { return new QMakeProjectItem(); }
 	virtual QString getVariableContent( const QString& variableName );

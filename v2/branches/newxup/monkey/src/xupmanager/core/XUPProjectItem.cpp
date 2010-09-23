@@ -205,9 +205,14 @@ XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variab
 	return NULL;
 }
 
-QString XUPProjectItem::toString() const
+QString XUPProjectItem::toXml() const
 {
 	return mDocument.toString( 4 );
+}
+
+QString XUPProjectItem::toNativeString() const
+{
+	return toXml();
 }
 
 bool XUPProjectItem::open( const QString& fileName, const QString& codec )
@@ -279,7 +284,7 @@ bool XUPProjectItem::save()
 
 	// encode content
 	QTextCodec* codecObj = QTextCodec::codecForName( codec().toAscii ()  );
-	QByteArray content = codecObj->fromUnicode( toString() );
+	QByteArray content = codecObj->fromUnicode( toNativeString() );
 
 	// write content
 	bool result = file.write( content ) != -1;

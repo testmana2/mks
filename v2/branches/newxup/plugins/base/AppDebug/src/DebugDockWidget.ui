@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>407</height>
+    <width>328</width>
+    <height>405</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -23,17 +23,13 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QTreeView" name="tvProjects"/>
-        </item>
-        <item>
-         <widget class="Line" name="line">
+         <widget class="QSplitter" name="splitter">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Vertical</enum>
           </property>
+          <widget class="QTreeView" name="tvProjects"/>
+          <widget class="QTreeView" name="tvFilteredProjects"/>
          </widget>
-        </item>
-        <item>
-         <widget class="QTreeView" name="tvFilteredProjects"/>
         </item>
        </layout>
       </widget>
@@ -136,6 +132,11 @@
   <action name="aShowXml">
    <property name="text">
     <string>Show Xml</string>
+   </property>
+  </action>
+  <action name="aShowNativeString">
+   <property name="text">
+    <string>Show Native String</string>
    </property>
   </action>
  </widget>

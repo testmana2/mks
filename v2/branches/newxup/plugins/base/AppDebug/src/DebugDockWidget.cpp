@@ -4,6 +4,9 @@
 #include <XUPProjectManager.h>
 #include <XUPFilteredProjectModel.h>
 #include <pDockWidgetTitleBar.h>
+#include <pEditor.h>
+#include <pChild.h>
+#include <pFileManager.h>
 
 #include <QTreeView>
 #include <QPlainTextEdit>
@@ -14,9 +17,11 @@ DebugDockWidget::DebugDockWidget( QWidget* parent )
 	setupUi( this );
 
 	titleBar()->addAction( aShowXml );
+	titleBar()->addAction( aShowNativeString );
 	
 	connect( MonkeyCore::projectsManager(), SIGNAL( currentProjectChanged( XUPProjectItem* ) ), this, SLOT( currentProjectChanged() ) );
 	connect( aShowXml, SIGNAL( triggered() ), this, SLOT( showXml() ) );
+	connect( aShowNativeString, SIGNAL( triggered() ), this, SLOT( showNativeString() ) );
 }
 
 DebugDockWidget::~DebugDockWidget()
@@ -60,9 +65,58 @@ void DebugDockWidget::showXml()
 		return;
 	}
 	
-	QPlainTextEdit* pte = new QPlainTextEdit( this );
-	pte->setWindowFlags( Qt::Window );
-	pte->setAttribute( Qt::WA_DeleteOnClose );
-	pte->setPlainText( project->toString() );
-	pte->show();
+	pWorkspace* workspace = MonkeyCore::workspace();
+	static pAbstractChild* document = 0;
+	bool exists = document;
+	
+	if ( !document ) {
+		document = new pChild;
+	}
+	
+	pEditor* editor = document->editor();
+	
+	editor->setText( project->toXml() );
+	editor->setModified( false );
+	document->setFilePath( "xml content" );
+	
+	if ( !exists ) {
+		workspace->handleDocument( document );
+		emit document->fileOpened();
+		document->showMaximized();
+	}
+	
+	workspace->setCurrentDocument( document );
+}
+
+void DebugDockWidget::showNativeString()
+{
+	const QModelIndex index = tvProjects->selectionModel()->selectedIndexes().value( 0 );
+	XUPItem* item = MonkeyCore::projectsManager()->currentProjectModel()->itemFromIndex( index );
+	XUPProjectItem* project = item ? item->project() : 0;
+	
+	if ( !project ) {
+		return;
+	}
+	
+	pWorkspace* workspace = MonkeyCore::workspace();
+	static pAbstractChild* document = 0;
+	bool exists = document;
+	
+	if ( !document ) {
+		document = new pChild;
+	}
+	
+	pEditor* editor = document->editor();
+	
+	editor->setText( project->toNativeString() );
+	editor->setModified( false );
+	document->setFilePath( "native content" );
+	
+	if ( !exists ) {
+		workspace->handleDocument( document );
+		emit document->fileOpened();
+		document->showMaximized();
+	}
+	
+	workspace->setCurrentDocument( document );
 }
