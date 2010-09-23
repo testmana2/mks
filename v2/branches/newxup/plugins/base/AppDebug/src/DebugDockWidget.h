@@ -17,6 +17,7 @@ public slots:
 protected slots:
 	void currentProjectChanged();
 	void showXml();
+	void showNativeString();
 };
 
 #endif // DEBUGDOCKWIDGET_H

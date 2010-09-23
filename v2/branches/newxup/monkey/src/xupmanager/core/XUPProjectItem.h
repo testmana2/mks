@@ -83,7 +83,8 @@ public:
 	// return first found variable with name. NULL returned, if not found
 	virtual XUPItem* getVariable( const XUPItem* root, const QString& variableName) const;
 	// return the project datas as qstring
-	virtual QString toString() const;
+	virtual QString toXml() const;
+	virtual QString toNativeString() const;
 		
 	// return the project type id
 	virtual QString projectType() const = 0;

@@ -57,7 +57,7 @@ QMakeProjectItem::~QMakeProjectItem()
 {
 }
 
-QString QMakeProjectItem::toString() const
+QString QMakeProjectItem::toNativeString() const
 {
 	return QMake2XUP::convertToPro( mDocument );
 }
