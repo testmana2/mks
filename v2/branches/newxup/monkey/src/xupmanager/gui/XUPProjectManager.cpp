@@ -200,6 +200,18 @@ void XUPProjectManager::newProject()
 	wizard.exec();
 }
 
+void XUPProjectManager::openProject( XUPProjectItem* project )
+{
+	XUPProjectModel* model = new XUPProjectModel( this );
+	model->handleProject( project );
+	
+	int id = cbProjects->count();
+	cbProjects->addItem( model->headerData( 0, Qt::Horizontal, Qt::DisplayRole ).toString(), QVariant::fromValue<XUPProjectModel*>( model ) );
+	cbProjects->setItemIcon( id, model->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
+	setCurrentProject( model->rootProject(), currentProject() );
+	emit projectOpened( currentProject() );
+}
+
 bool XUPProjectManager::openProject( const QString& fileName, const QString& codec )
 {
 	// check that project is not yet open

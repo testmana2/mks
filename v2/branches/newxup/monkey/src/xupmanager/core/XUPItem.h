@@ -86,12 +86,20 @@ public:
 	
 	virtual QString content() const;
 	void setContent(const QString&);
+	
+	// return the stored cache value for key or defaultValue
+	QString cacheValue( const QString& key, const QString& defaultValue = QString::null ) const;
+	// set the cache value for key
+	void setCacheValue( const QString& key, const QString& value );
+	// clear cache data represented by key
+	void clearCacheValue( const QString& key );
 
 protected:
 	XUPProjectModel* mModel;
 	QDomElement mDomElement;
 	mutable QMap<int, XUPItem*> mChildItems;
 	XUPItem* mParentItem;
+	QMap<QString, QString> mCacheValues;
 	
 	// developer must not be able to create/instanciate items itself, it must be done by the model
 	XUPItem( const QDomElement& node, XUPItem* parent = 0 );

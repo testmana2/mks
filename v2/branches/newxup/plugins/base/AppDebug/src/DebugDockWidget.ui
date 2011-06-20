@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>328</width>
-    <height>405</height>
+    <width>326</width>
+    <height>403</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -137,6 +137,11 @@
   <action name="aShowNativeString">
    <property name="text">
     <string>Show Native String</string>
+   </property>
+  </action>
+  <action name="aGenerateFakeProject">
+   <property name="text">
+    <string>Generate Fake Project</string>
    </property>
   </action>
  </widget>

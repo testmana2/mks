@@ -206,9 +206,10 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 			return QString::fromLocal8Bit( qgetenv( name.toLocal8Bit().constData() ) );
 		}
 	}
+	// qmake value
 	else if ( variableName.startsWith( "$$[" ) )
 	{
-		QMakeProjectItem* proj = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
+		QMakeProjectItem* proj = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
 		
 		if ( proj->mVariableCache.contains( name ) )
 		{
@@ -235,6 +236,7 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 		//proj->mVariableCache[ name ] = result;
 		return result;
 	}
+	// variable value
 	else
 	{
 		if ( name == "PWD" )
@@ -251,7 +253,8 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 		}
 		else
 		{
-			return dynamic_cast<QMakeProjectItem*>(rootIncludeProject())->mVariableCache.value( name );
+			return qobject_cast<QMakeProjectItem*>( rootIncludeProject() )->mVariableCache.value( name );
+			Q_ASSERT( 0 );
 		}
 	}
 	
@@ -262,7 +265,7 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 {
 	QStringList values;
 	XUPProjectItem* project = item->project();
-	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
+	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>( rootIncludeProject() );
 	
 	foreach ( XUPItem* cItem, item->childrenList() )
 	{
@@ -288,14 +291,14 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 				
 				values << content;
 				
-				cItem->setContent( content );
+				cItem->setCacheValue( "content", content );
 				break;
 			}
 			case XUPItem::Function:
 			{
 				QString parameters = interpretContent( cItem->attribute( "parameters" ) );
 				
-				cItem->setContent( parameters );
+				cItem->setCacheValue( "parameters", parameters );
 				break;
 			}
 			case XUPItem::Project:
@@ -370,7 +373,7 @@ bool QMakeProjectItem::analyze( XUPItem* item )
 
 void QMakeProjectItem::rebuildCache()
 {
-	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
+	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
 	riProject->mVariableCache.clear();
 	analyze( riProject );
 }
@@ -403,6 +406,9 @@ bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 			projects << cit->project()->fileName();
 		}
 	}
+	
+	qWarning() << "---" << projects << parameters;
+	qWarning() << "BOOM";
 
 	// check if project is already handled
 	if ( projects.contains( fn ) )
@@ -450,6 +456,8 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	mCodec = codec;
 	mFileName = fileName;
 	topLevelProject()->setLastError( QString::null );
+	
+	qWarning() << mDocument.toString( 4 );
 	
 	return analyze( this );
 }
@@ -546,6 +554,20 @@ QStringList QMakeProjectItem::sourceFiles() const
 		}
 	}
 	
+	// get dynamic files
+	/*XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<XUPProjectItem*>( this ), false );
+	
+	if ( dynamicFolderItem )
+	{
+		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
+		{
+			if ( valueItem->type() == XUPItem::File )
+			{
+				files << valueItem->attribute( "content" );
+			}
+		}
+	}*/
+	
 	return files;
 }
 
@@ -620,7 +642,7 @@ void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	
 	// rebuild cache
 	rebuildCache();
-	dynamic_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
+	qobject_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
 }
 
 void QMakeProjectItem::removeItem( XUPItem* item )
@@ -634,7 +656,7 @@ void QMakeProjectItem::removeItem( XUPItem* item )
 	
 	// rebuild cache
 	rebuildCache();
-	dynamic_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
+	qobject_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
 }
 
 QStringList QMakeProjectItem::autoActivatePlugins() const
@@ -664,7 +686,7 @@ void QMakeProjectItem::installCommands()
 	CLIToolPlugin* bp = builder();
 		
 	// config variable
-	QMakeProjectItem* riProject = dynamic_cast<QMakeProjectItem*>(rootIncludeProject());
+	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
 	QStringList config = splitMultiLineValue( riProject->mVariableCache.value( "CONFIG" ) );
 	bool haveDebug = config.contains( "debug" );
 	bool haveRelease = config.contains( "release" );
@@ -1212,7 +1234,7 @@ bool QMakeProjectItem::edit()
 	{
 		// rebuild cache
 		rebuildCache();
-		dynamic_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
+		qobject_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
 	}
 	return ret;
 }

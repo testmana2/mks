@@ -14,6 +14,7 @@ class XUPItem;
 class Q_MONKEY_EXPORT XUPProjectManager : public pDockWidget, public Ui::XUPProjectManager
 {
 	Q_OBJECT
+	friend class DebugDockWidget;
 
 public:
 	enum ActionType { atNew = 0, atClose, atCloseAll, atEdit, atAddFiles, atRemoveFiles };
@@ -32,7 +33,9 @@ public:
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
 	XUPFilteredProjectModel* mFilteredModel;
-
+	
+	// debug member to be used by AppDebug plugin
+	void openProject( XUPProjectItem* project );
 
 public slots:
 	bool openProject( const QString& fileName, const QString& codec );
