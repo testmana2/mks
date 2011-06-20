@@ -287,10 +287,10 @@ QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSig
 	
 	const int count = childCount();
 	
-	if ( !stringType.isEmpty() && row <= count && m )
+	if ( !stringType.isEmpty() && row <= count )
 	{
 		// begin insert
-		if ( emitSignals ) {
+		if ( m && emitSignals ) {
 			m->beginInsertRows( index(), row, row );
 		}
 		
@@ -328,7 +328,7 @@ QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSig
 		}
 		
 		// end insert
-		if ( emitSignals ) {
+		if ( m && emitSignals ) {
 			m->endInsertRows();
 		}
 		
@@ -453,17 +453,15 @@ QString XUPItem::content() const
 
 void XUPItem::setContent(const QString& content)
 {
-	QDomNodeList childNodes = mDomElement.childNodes();
-	for (int i = 0; i < childNodes.count(); i++)
-	{
-		if (childNodes.at(i).isText())
-		{
-			mDomElement.removeChild(childNodes.at(i));
-		}
-	}
+	QDomText textNode = mDomElement.firstChild().toText();
 	
-	QDomText newText = mDomElement.ownerDocument().createTextNode(content);
-	mDomElement.appendChild(newText);
+	if ( textNode.isNull() ) {
+		textNode = mDomElement.ownerDocument().createTextNode( content );
+		mDomElement.appendChild( textNode );
+	}
+	else {
+		textNode.setData( content );
+	}
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
@@ -487,4 +485,19 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 		QModelIndex idx = index();
 		emit m->dataChanged( idx, idx );
 	}
+}
+
+QString XUPItem::cacheValue( const QString& key, const QString& defaultValue ) const
+{
+	return mCacheValues.value( key, defaultValue );
+}
+
+void XUPItem::setCacheValue( const QString& key, const QString& value )
+{
+	mCacheValues[ key ] = value;
+}
+
+void XUPItem::clearCacheValue( const QString& key )
+{
+	mCacheValues.remove( key );
 }

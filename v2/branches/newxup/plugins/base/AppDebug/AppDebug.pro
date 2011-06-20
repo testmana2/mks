@@ -16,12 +16,18 @@ TARGET	= AppDebug
 
 include( ../../plugins.pri )
 DESTDIR	= $$MONKEY_PLUGINS_DIR/base
-INCLUDEPATH	*= src
-RESOURCES	= src/resources/AppDebug.qrc
 
-HEADERS	= src/AppDebug.h \
+LIBS	*= -L$${MONKEY_PLUGINS_DIR}/xup -lQMake_debug
+
+INCLUDEPATH	*= src \
+	$$PWD/../../xup/QMake/src
+
+RESOURCES	*= src/resources/AppDebug.qrc
+
+FORMS	*= src/DebugDockWidget.ui
+
+HEADERS	*= src/AppDebug.h \
 	src/DebugDockWidget.h
 
-SOURCES	= src/AppDebug.cpp \
+SOURCES	*= src/AppDebug.cpp \
 	src/DebugDockWidget.cpp
-FORMS	+= src/DebugDockWidget.ui

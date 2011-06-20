@@ -152,12 +152,7 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 			{
 				return item->type();
 			}
-
-			QDomNode node = item->node();
-			QStringList attributes;
-			QDomNamedNodeMap attributeMap = node.attributes();
-			
-			if ( role == Qt::DecorationRole )
+			else if ( role == Qt::DecorationRole )
 			{
 				return item->displayIcon();
 			}
@@ -167,6 +162,10 @@ QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 			}
 			else if ( role == Qt::ToolTipRole )
 			{
+				QDomNode node = item->node();
+				QStringList attributes;
+				QDomNamedNodeMap attributeMap = node.attributes();
+				
 				if ( item->type() == XUPItem::Project )
 				{
 					attributes << QString( "Project: %1" ).arg( item->project()->fileName() );
@@ -234,9 +233,17 @@ QString XUPProjectModel::lastError() const
 	return mLastError;
 }
 
+void XUPProjectModel::handleProject( XUPProjectItem* project )
+{
+	setLastError( QString::null );
+	mRootProject = project;
+	mRootProject->mModel = this;
+}
+
 bool XUPProjectModel::open( const QString& fileName, const QString& codec )
 {
 	XUPProjectItem* tmpProject = MonkeyCore::projectTypesIndex()->newProjectItem( fileName );
+	
 	if ( !tmpProject )
 	{
 		setLastError( tr( "No project handler for this project file" ) );
@@ -245,9 +252,7 @@ bool XUPProjectModel::open( const QString& fileName, const QString& codec )
 	
 	if ( tmpProject->open( fileName, codec ) )
 	{
-		setLastError( QString::null );
-		mRootProject = tmpProject;
-		mRootProject->mModel = this;
+		handleProject( tmpProject );
 		return true;
 	}
 	

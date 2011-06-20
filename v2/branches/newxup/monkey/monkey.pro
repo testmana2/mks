@@ -22,6 +22,10 @@ else:*-g++*:LIBS	*= -Wl,--whole-archive # import all symbols as the not used one
 mac:*-g++*:LIBS	*= -dynamic
 else:unix:*-g++*:LIBS	*= -rdynamic
 
+debug {
+	LIBS *=  -Wl,-R$${PACKAGE_DESTDIR}/plugins/xup
+}
+
 # include qscintilla framework
 include( ../qscintilla/qscintilla.pri )
 

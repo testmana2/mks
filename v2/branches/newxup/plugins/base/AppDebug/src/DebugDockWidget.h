@@ -18,6 +18,7 @@ protected slots:
 	void currentProjectChanged();
 	void showXml();
 	void showNativeString();
+	void generateFakeProject();
 };
 
 #endif // DEBUGDOCKWIDGET_H

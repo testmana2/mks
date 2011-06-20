@@ -19,6 +19,7 @@ typedef QList<class XUPProjectItem*> XUPProjectItemList;
 class Q_MONKEY_EXPORT XUPProjectItem : public QObject, public XUPItem
 {
 	Q_OBJECT
+	friend class DebugDockWidget;
 	
 public:
 	// target type
