@@ -24,8 +24,12 @@ QSCINTILLA_TARGET	= qscintilla2
 contains( TEMPLATE, .*app ) {
 	CONFIG(debug, debug|release) {
 		#Debug
-		unix:LIBS	*= -l$${QSCINTILLA_TARGET}_debug
-		else:LIBS	*= -l$${QSCINTILLA_TARGET}d
+		isEqual( SYSTEM_QSCINTILLA, 1 ) {
+			LIBS	*= -l$${QSCINTILLA_TARGET}
+		} else {
+			unix:LIBS	*= -l$${QSCINTILLA_TARGET}_debug
+			else:LIBS	*= -l$${QSCINTILLA_TARGET}d
+		}
 	} else {
 		#Release
 		LIBS	*= -l$${QSCINTILLA_TARGET}
