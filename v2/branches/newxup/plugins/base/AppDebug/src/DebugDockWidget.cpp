@@ -98,6 +98,8 @@ void DebugDockWidget::showNativeString()
 	XUPItem* item = MonkeyCore::projectsManager()->currentProjectModel()->itemFromIndex( index );
 	XUPProjectItem* project = item ? item->project() : 0;
 	
+	//qWarning() << Q_FUNC_INFO << project << project->toNativeString();
+	
 	if ( !project ) {
 		return;
 	}
@@ -125,13 +127,87 @@ void DebugDockWidget::showNativeString()
 	workspace->setCurrentDocument( document );
 }
 
+void DebugDockWidget::createAllScopes( XUPItem* parent )
+{
+	createScope( parent, false, false, false ); createScope( parent, true, true, true );
+	createScope( parent, true, false, true ); createScope( parent, false, true, false );
+	createScope( parent, true, false, false ); createScope( parent, false, true, true );
+	createScope( parent, true, true, false ); createScope( parent, false, false, true );
+}
+
+void DebugDockWidget::createScope( XUPItem* parent, bool nested1, bool nested2, bool nested3, bool nested4, bool nested5 )
+{
+	// an empty line
+	XUPItem* item = parent->addChild( XUPItem::EmptyLine );
+	item->setAttribute( "count", "1" );
+	
+	// a comment
+	XUPItem* comment = parent->addChild( XUPItem::Comment );
+	comment->setAttribute( "value", QString( "# %1 %2 %3 %4 %5" ).arg( QVariant( nested1 ).toString() ).arg( QVariant( nested2 ).toString() ).arg( QVariant( nested3 ).toString() ).arg( QVariant( nested4 ).toString() ).arg( QVariant( nested5 ).toString() ) );
+	
+	// an empty line
+	item = parent->addChild( XUPItem::EmptyLine );
+	item->setAttribute( "count", "1" );
+	
+	// a function
+	XUPItem* function = parent->addChild( XUPItem::Function );
+	function->setAttribute( "name", "isEmpty" );
+	function->setAttribute( "nested", QVariant( nested1 ).toString() );
+	function->setAttribute( "parameters", "$${NAME}" );
+	function->setAttribute( "comment", "# $${NAME} comment" );
+	
+	// a scope
+	XUPItem* scope = function->addChild( XUPItem::Scope );
+	scope->setAttribute( "nested", QVariant( nested2 ).toString() );
+	scope->setAttribute( "name", "unix" );
+	scope->setAttribute( "comment", "# unix comment" );
+	
+	// a comment
+	comment = scope->addChild( XUPItem::Comment );
+	comment->setAttribute( "value", QString( "# %1 %2 %3 %4 %5" ).arg( QVariant( nested1 ).toString() ).arg( QVariant( nested2 ).toString() ).arg( QVariant( nested3 ).toString() ).arg( QVariant( nested4 ).toString() ).arg( QVariant( nested5 ).toString() ) );
+	
+	// a variable
+	XUPItem* variable = scope->addChild( XUPItem::Variable );
+	variable->setAttribute( "operator", "-=" );
+	variable->setAttribute( "name", "LIBS" );
+	
+	// values
+	XUPItem* value = variable->addChild( XUPItem::Value );
+	value->setContent( "-lz" );
+	value->setAttribute( "comment", "# -lz comment" );
+	
+	// path
+	value = variable->addChild( XUPItem::Path );
+	value->setContent( "/usr/include" );
+	value->setAttribute( "comment", "# /usr/include comment" );
+	
+	// a sub scope
+	XUPItem* subScope = scope->addChild( XUPItem::Scope );
+	subScope->setAttribute( "nested", QVariant( nested3 ).toString() );
+	subScope->setAttribute( "name", "linux-*" );
+	subScope->setAttribute( "comment", "# linux-* comment" );
+	
+	// a variable
+	variable = subScope->addChild( XUPItem::Variable );
+	variable->setAttribute( "operator", "*=" );
+	variable->setAttribute( "name", "DEFINES" );
+	variable->setAttribute( "comment", "# DEFINES comment" );
+	
+	// values
+	value = variable->addChild( XUPItem::Value );
+	value->setContent( "HAVE_TEST_H=1" );
+	value->setAttribute( "comment", "# HAVE_TEST_H=1 comment" );
+}
+
 void DebugDockWidget::generateFakeProject()
 {
 	QMakeProjectItem* project = new QMakeProjectItem;
 	XUPItem* item;
+	XUPItem* comment;
 	XUPItem* variable;
 	XUPItem* value;
 	XUPItem* scope;
+	XUPItem* subScope;
 	XUPItem* function;
 	
 	project->mDocument = QDomDocument( "XUPProject" );
@@ -148,7 +224,7 @@ void DebugDockWidget::generateFakeProject()
 	
 	// an empty line
 	item = project->addChild( XUPItem::EmptyLine );
-	item->setAttribute( "count", "4" );
+	item->setAttribute( "count", "1" );
 	
 	// a variable
 	variable = project->addChild( XUPItem::Variable );
@@ -158,50 +234,21 @@ void DebugDockWidget::generateFakeProject()
 	// values
 	value = variable->addChild( XUPItem::Value );
 	value->setContent( "-L/usr/include" );
+	value->setAttribute( "comment", "# -L/usr/include comment" );
 	
 	value = variable->addChild( XUPItem::Value );
 	value->setContent( "-lpng" );
+	value->setAttribute( "comment", "# -lpng comment" );
 	
 	value = variable->addChild( XUPItem::Value );
 	value->setContent( "-lz" );
+	value->setAttribute( "comment", "# -lz comment" );
 	
-	// a function
-	function = project->addChild( XUPItem::Function );
-	function->setAttribute( "name", "isEqual" );
-	function->setAttribute( "parameters", "TOTO = TITI" );
-	
-	// a variable
-	variable = function->addChild( XUPItem::Variable );
-	variable->setAttribute( "operator", "-=" );
-	variable->setAttribute( "name", "LIBS" );
-	
-	value = variable->addChild( XUPItem::Value );
-	value->setContent( "-lz" );
+	createAllScopes( project );
 	
 	// finish project
 	project->mCodec = "UTF-8";
 	project->mFileName = QString( "Fake project %1" ).arg( qrand() % INT_MAX );
 	
 	MonkeyCore::projectsManager()->openProject( project );
-	
-	// scope : name
-	// folder : name
-	// file : content
-	// path : content
-	
-	/*XUPItem* addChild( XUPItem::Type type, int row = -1 );
-	
-	Unknow = -1,
-	Project, // a project node
-	Comment, // a comment node
-	EmptyLine, // a empty line node
-	Variable, // a variabel node
-	Value, // a value node
-	Function, // a function node
-	Scope, // a scope node
-	//
-	DynamicFolder, // a dynamic folder node
-	Folder, // a folder node
-	File, // a value that is a file node
-	Path // a value that is a path node*/
 }
