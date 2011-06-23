@@ -93,6 +93,8 @@ public:
 	void setCacheValue( const QString& key, const QString& value );
 	// clear cache data represented by key
 	void clearCacheValue( const QString& key );
+	// mostly for debugging purpose
+	QString xmlContent() const;
 
 protected:
 	XUPProjectModel* mModel;
