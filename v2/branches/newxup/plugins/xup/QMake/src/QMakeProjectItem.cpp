@@ -407,7 +407,7 @@ bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 		}
 	}
 	
-	qWarning() << "---" << projects << parameters;
+	qWarning() << "---" << projects << parameters << parameters << fn << function->xmlContent();
 	qWarning() << "BOOM";
 
 	// check if project is already handled
