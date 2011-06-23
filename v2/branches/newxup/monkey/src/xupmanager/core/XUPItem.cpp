@@ -177,12 +177,30 @@ int XUPItem::childCount() const
 		count = qMax( count, mChildItems.keys().last() +1 );
 	}
 	
-	return count;
+	switch ( type() ) {
+		case XUPItem::Comment:
+		case XUPItem::EmptyLine:
+		case XUPItem::Path:
+		case XUPItem::File:
+		case XUPItem::Value:
+			return 0;
+		default:
+			return count;
+	}
 }
 
 bool XUPItem::hasChildren() const
 {
-	return !mDomElement.childNodes().isEmpty();
+	switch ( type() ) {
+		case XUPItem::Comment:
+		case XUPItem::EmptyLine:
+		case XUPItem::Path:
+		case XUPItem::File:
+		case XUPItem::Value:
+			return 0;
+		default:
+			return !mDomElement.childNodes().isEmpty();
+	}
 }
 
 void XUPItem::removeChild( XUPItem* item )
@@ -412,7 +430,7 @@ QString XUPItem::displayText() const
 			return content();
 			break;
 		case XUPItem::Function:
-			return QString( "%1(%2)" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
+			return QString( "%1( %2 )" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
 			break;
 		case XUPItem::Scope:
 			return attribute( "name" );
@@ -500,4 +518,12 @@ void XUPItem::setCacheValue( const QString& key, const QString& value )
 void XUPItem::clearCacheValue( const QString& key )
 {
 	mCacheValues.remove( key );
+}
+
+QString XUPItem::xmlContent() const
+{
+	QString content;
+	QTextStream stream( &content );
+	stream << mDomElement;
+	return content;
 }
