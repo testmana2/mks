@@ -6,65 +6,68 @@
 
 #include <QDebug>
 
-ProjectTypesIndex::ProjectTypesIndex()
+ProjectTypesIndex::ProjectTypesIndex( QObject* parent )
+	: QObject( parent )
 {
 }
 
-void ProjectTypesIndex::registerType( QString projectType, XUPProjectItem* projectItem )
+void ProjectTypesIndex::registerType( const QString& projectType, const QMetaObject* projectMetaObject )
 {
-	mRegisteredProjectItems[ projectType ] = projectItem;
+	mRegisteredProjectItems[ projectType.toLower() ] = projectMetaObject;
 }
 
-void ProjectTypesIndex::unRegisterType( QString projectType )
+void ProjectTypesIndex::unRegisterType( const QString& projectType )
 {
-	delete mRegisteredProjectItems.take( projectType );
-	mSuffixes.remove( projectType );
+	mRegisteredProjectItems.remove( projectType.toLower() );
+	mSuffixes.remove( projectType.toLower() );
 }
 
 bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
 {
-	foreach ( const QString& projectType, mSuffixes.keys() )
-	{
-		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
-		{
-			if ( QDir::match( p.second, QFileInfo(fileName).fileName() ) )
+	foreach ( const QString& projectType, mSuffixes.keys() ) {
+		foreach ( const Pair_String_StringList& pair, mSuffixes[ projectType ] ) {
+			if ( QDir::match( pair.second, fileName ) ) {
 				return true;
+			}
 		}
 	}
+	
 	return false;
 }
 
 XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) const
 {
-	foreach ( const QString& projectType, mSuffixes.keys() )
-	{
-		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
-		{
-			if ( QDir::match( p.second, QFileInfo(fileName).fileName() ) )
-				return mRegisteredProjectItems[ projectType ]->newProject();
+	foreach ( const QString& projectType, mSuffixes.keys() ) {
+		foreach ( const Pair_String_StringList& pair, mSuffixes[ projectType ] ) {
+			if ( QDir::match( pair.second, fileName ) ) {
+				return qobject_cast<XUPProjectItem*>( mRegisteredProjectItems[ projectType ]->newInstance() );
+			}
 		}
 	}
-	return NULL;
+	
+	return 0;
 }
 
-void ProjectTypesIndex::registerSuffixes( QString projectType, const StringStringListList& suffixes )
+void ProjectTypesIndex::registerSuffixes( const QString& projectType, const Pair_String_StringList_List& suffixes )
 {
-	mSuffixes[ projectType ] = suffixes;
+	mSuffixes[ projectType.toLower() ] = suffixes;
 }
 
 QString ProjectTypesIndex::projectsFilter() const
 {
 	QStringList suffixes;
 	QStringList filters;
-	foreach ( const QString& projectType, mSuffixes.keys() )
-	{
-		foreach ( const PairStringStringList& p, mSuffixes[ projectType ] )
-		{
-			suffixes << p.second;
-			filters << QString( "%1 (%2)" ).arg( p.first ).arg( p.second.join( " " ) );
+	
+	foreach ( const QString& projectType, mSuffixes.keys() ) {
+		foreach ( const Pair_String_StringList& pair, mSuffixes[ projectType ] ) {
+			suffixes << pair.second;
+			filters << QString( "%1 (%2)" ).arg( pair.first ).arg( pair.second.join( " " ) );
 		}
 	}
-	if ( !filters.isEmpty() )
-		filters.prepend( tr( QT_TR_NOOP( "All Projects (%1)" ) ).arg( suffixes.join( " " ) ) );
+	
+	if ( !filters.isEmpty() ) {
+		filters.prepend( tr( "All Projects (%1)" ).arg( suffixes.join( " " ) ) );
+	}
+	
 	return filters.join( ";;" );
 }

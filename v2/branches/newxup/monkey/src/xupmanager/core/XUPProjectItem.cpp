@@ -365,11 +365,11 @@ QString XUPProjectItem::codec() const
 
 QString XUPProjectItem::sourceFileNameFilter() const
 {
-	const StringStringListList suffixes = sourceFileNamePatterns();
+	const Pair_String_StringList_List suffixes = sourceFileNamePatterns();
 	QStringList allSuffixesList;
 	QStringList suffixesList;
 	
-	foreach ( const PairStringStringList& pair, suffixes )
+	foreach ( const Pair_String_StringList& pair, suffixes )
 	{
 		QString text = variableDisplayText( pair.first );
 		suffixesList << QString( "%1 (%2)" ).arg( text ).arg( pair.second.join( " " ) );

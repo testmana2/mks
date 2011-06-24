@@ -37,13 +37,13 @@ void MakefileProject::fillPluginInfos()
 bool MakefileProject::install()
 {
 	// register phpqt item
-	MonkeyCore::projectTypesIndex()->registerType(PROJECT_TYPE_STRING, new MakefileProjectItem);
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject );
 	// values
-	const StringStringListList mSuffixes = StringStringListList()
+	const Pair_String_StringList_List mSuffixes = Pair_String_StringList_List()
 		<< qMakePair( tr( "Makefile Project" ), QStringList( "*Makefile*" ) );
 
 	// register values
-	MonkeyCore::projectTypesIndex()->registerSuffixes( PROJECT_TYPE_STRING, mSuffixes );
+	MonkeyCore::projectTypesIndex()->registerSuffixes( PLUGIN_NAME, mSuffixes );
 	
 	return true;
 }
@@ -51,7 +51,7 @@ bool MakefileProject::install()
 bool MakefileProject::uninstall()
 {
 	// unregister qmake item, unregistering auto delete the item
-	MonkeyCore::projectTypesIndex()->unRegisterType( PROJECT_TYPE_STRING );
+	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
 	return true;
 }
 

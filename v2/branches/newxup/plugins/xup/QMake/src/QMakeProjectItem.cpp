@@ -64,7 +64,7 @@ QString QMakeProjectItem::toNativeString() const
 
 QString QMakeProjectItem::projectType() const
 {
-	return PROJECT_TYPE_STRING;
+	return PLUGIN_NAME;
 }
 
 void QMakeProjectItem::initHashes()
@@ -168,7 +168,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 	foreach ( const QString& fn, projects )
 	{
 		// open project
-		XUPProjectItem* project = newProject();
+		XUPProjectItem* project = new QMakeProjectItem();
 		proj->addChild( project );
 		
 		// remove and delete project if can't open
@@ -417,7 +417,7 @@ bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 	}
 
 	// open project
-	XUPProjectItem* project = newProject();
+	XUPProjectItem* project = new QMakeProjectItem();
 	function->addChild( project );
 
 	// remove and delete project if can't open
@@ -1258,9 +1258,9 @@ CLIToolPlugin* QMakeProjectItem::builder() const
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, name );
 }
 
-StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
+Pair_String_StringList_List QMakeProjectItem::sourceFileNamePatterns() const
 {
-	const StringStringListList mSuffixes = StringStringListList()
+	const Pair_String_StringList_List mSuffixes = Pair_String_StringList_List()
 		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
 		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
 
@@ -1287,10 +1287,10 @@ StringStringListList QMakeProjectItem::sourceFileNamePatterns() const
 			lf << s;
 	// PROJECT filters
 	QStringList pjf;
-	foreach ( const PairStringStringList& p, mSuffixes )
+	foreach ( const Pair_String_StringList& p, mSuffixes )
 		pjf << p.second;
 	// Variable suffixes
-	const StringStringListList sourceFileNamePatterns = StringStringListList()
+	const Pair_String_StringList_List sourceFileNamePatterns = Pair_String_StringList_List()
 		<< qMakePair( QString( "Headers" ), hf )
 		<< qMakePair( QString( "Sources" ), sf )
 		<< qMakePair( QString( "YACC sources" ), yf )

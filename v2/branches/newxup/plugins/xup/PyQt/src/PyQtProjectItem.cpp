@@ -17,14 +17,14 @@
 
 #include <QDebug>
 
-QString PyQtProjectItem::projectType() const
+PyQtProjectItem::PyQtProjectItem()
+	: XUPProjectItem()
 {
-	return PROJECT_TYPE_STRING;
 }
 
-XUPProjectItem* PyQtProjectItem::newProject() const
+QString PyQtProjectItem::projectType() const
 {
-	return new PyQtProjectItem();
+	return PLUGIN_NAME;
 }
 
 QStringList PyQtProjectItem::autoActivatePlugins() const
@@ -155,9 +155,9 @@ CLIToolPlugin* PyQtProjectItem::interpreter() const
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "Python" );
 }
 
-StringStringListList PyQtProjectItem::sourceFileNamePatterns() const
+Pair_String_StringList_List PyQtProjectItem::sourceFileNamePatterns() const
 {
-	return StringStringListList()
+	return Pair_String_StringList_List()
 		<< qMakePair( QString( "Qt Forms" ), QStringList( "*.ui" ) )
 		<< qMakePair( QString( "Python files" ), QStringList( "*.py*" ) );
 }

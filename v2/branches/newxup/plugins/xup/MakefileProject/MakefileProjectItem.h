@@ -1,8 +1,6 @@
 #ifndef MakefileProjectItem_H
 #define MakefileProjectItem_H
 
-#define PROJECT_TYPE_STRING "MakefileProject"
-
 #include "XUPProjectItem.h"
 
 class CLIToolPlugin;
@@ -12,9 +10,8 @@ class MakefileProjectItem : public XUPProjectItem
 	Q_OBJECT
 
 public:
-	MakefileProjectItem();
+	Q_INVOKABLE MakefileProjectItem();
 	virtual QString projectType() const;
-	virtual XUPProjectItem* newProject() const;
 	
 	virtual QStringList autoActivatePlugins() const;
 	
@@ -27,7 +24,7 @@ public:
 	
 	virtual bool edit();
 	
-	virtual StringStringListList sourceFileNamePatterns() const;
+	virtual Pair_String_StringList_List sourceFileNamePatterns() const;
 protected:
 	virtual QString iconsPath() const;
 };
