@@ -197,6 +197,10 @@ void DebugDockWidget::createScope( XUPItem* parent, bool nested1, bool nested2, 
 	value = variable->addChild( XUPItem::Value );
 	value->setContent( "HAVE_TEST_H=1" );
 	value->setAttribute( "comment", "# HAVE_TEST_H=1 comment" );
+	
+	if ( !parent->parent() ) {
+		createAllScopes( subScope );
+	}
 }
 
 void DebugDockWidget::generateFakeProject()
