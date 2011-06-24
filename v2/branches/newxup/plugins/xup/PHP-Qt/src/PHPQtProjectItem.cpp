@@ -17,14 +17,14 @@
 
 #include <QDebug>
 
-QString PHPQtProjectItem::projectType() const
+PHPQtProjectItem::PHPQtProjectItem()
+	: XUPProjectItem()
 {
-	return PROJECT_TYPE_STRING;
 }
 
-XUPProjectItem* PHPQtProjectItem::newProject() const
+QString PHPQtProjectItem::projectType() const
 {
-	return new PHPQtProjectItem();
+	return PLUGIN_NAME;
 }
 
 QStringList PHPQtProjectItem::autoActivatePlugins() const
@@ -155,9 +155,9 @@ CLIToolPlugin* PHPQtProjectItem::interpreter() const
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "PHP" );
 }
 
-StringStringListList PHPQtProjectItem::sourceFileNamePatterns() const
+Pair_String_StringList_List PHPQtProjectItem::sourceFileNamePatterns() const
 {
-	return StringStringListList()
+	return Pair_String_StringList_List()
 		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
 		<< qMakePair( QString( "PHP files" ), QStringList( "*.php*" ) );
 }

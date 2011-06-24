@@ -89,8 +89,6 @@ public:
 		
 	// return the project type id
 	virtual QString projectType() const = 0;
-	// return a new instance of this kind of projecttype
-	virtual XUPProjectItem* newProject() const = 0;
 	// open a project with codec
 	virtual bool open( const QString& fileName, const QString& codec );
 	// save the project
@@ -135,7 +133,7 @@ protected:
 		("Python file", "*.py") ("Forms file", "*.ui")
 	   This info used for build file name filter for "Add files to the project" dialog (XUPProjectItem::sourceFileNameFilter())
 	 */
-	virtual StringStringListList sourceFileNamePatterns() const = 0;
+	virtual Pair_String_StringList_List sourceFileNamePatterns() const = 0;
 	
 	QDomDocument mDocument;
 	/* Action pointers stored here for delete it, when current project changed */

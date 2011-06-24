@@ -3,8 +3,6 @@
 
 #include "XUPProjectItem.h"
 
-#define PROJECT_TYPE_STRING "PHPQt"
-
 class CLIToolPlugin;
 
 class PHPQtProjectItem : public XUPProjectItem
@@ -12,8 +10,8 @@ class PHPQtProjectItem : public XUPProjectItem
 	Q_OBJECT
 
 public:
+	Q_INVOKABLE PHPQtProjectItem();
 	virtual QString projectType() const;
-	virtual XUPProjectItem* newProject() const;
 
 	virtual void installCommands();
 	
@@ -28,7 +26,7 @@ public:
 	
 protected:
 	CLIToolPlugin* interpreter() const;
-	virtual StringStringListList sourceFileNamePatterns() const;
+	virtual Pair_String_StringList_List sourceFileNamePatterns() const;
 	virtual QStringList filteredVariables() const;
 	virtual QString iconsPath() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;

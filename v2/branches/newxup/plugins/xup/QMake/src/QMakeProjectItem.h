@@ -3,8 +3,6 @@
 
 #include "XUPProjectItem.h"
 
-#define PROJECT_TYPE_STRING "QMake"
-
 class CLIToolPlugin;
 
 class QMakeProjectItem : public XUPProjectItem
@@ -12,12 +10,11 @@ class QMakeProjectItem : public XUPProjectItem
 	Q_OBJECT
 	
 public:
-	QMakeProjectItem();
+	Q_INVOKABLE QMakeProjectItem();
 	virtual ~QMakeProjectItem();
 	
 	virtual QString toNativeString() const;
 	virtual QString projectType() const;
-	inline virtual XUPProjectItem* newProject() const { return new QMakeProjectItem(); }
 	virtual QString getVariableContent( const QString& variableName );
 	bool analyze( XUPItem* item );
 	void rebuildCache();
@@ -58,7 +55,7 @@ protected:
 	void initHashes();
 	bool handleSubdirs( XUPItem* subdirs );
 	CLIToolPlugin* builder() const; // init mVariableLabels, mVariableIcons
-	virtual StringStringListList sourceFileNamePatterns() const;
+	virtual Pair_String_StringList_List sourceFileNamePatterns() const;
 	virtual QString iconsPath() const;
 	virtual QString variableDisplayText( const QString& variableName ) const;
 	virtual QString variableDisplayIcon( const QString& variableName ) const;

@@ -18,18 +18,14 @@
 #include <QDebug>
 
 MakefileProjectItem::MakefileProjectItem()
+	: XUPProjectItem()
 {
 	mDomElement = mDocument.createElement("project");
 }
 
 QString MakefileProjectItem::projectType() const
 {
-	return PROJECT_TYPE_STRING;
-}
-
-XUPProjectItem* MakefileProjectItem::newProject() const
-{
-	return new MakefileProjectItem();
+	return PLUGIN_NAME;
 }
 
 QStringList MakefileProjectItem::autoActivatePlugins() const
@@ -108,7 +104,7 @@ QString MakefileProjectItem::iconsPath() const
 	return ":/pyqtitems";
 }
 
-StringStringListList MakefileProjectItem::sourceFileNamePatterns() const
+Pair_String_StringList_List MakefileProjectItem::sourceFileNamePatterns() const
 {
-	return StringStringListList();
+	return Pair_String_StringList_List();
 }
