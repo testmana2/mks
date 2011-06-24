@@ -70,7 +70,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 	QRegExp comments("^#(.*)");
 	QRegExp varLine("^(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
 	
-	file.append( QString( "<!DOCTYPE XUPProject>\n<project codec=\"%1\" name=\"%2\" editor=\"%3\" expanded=\"false\">\n" ).arg( codec ).arg( QFileInfo( s ).fileName() ).arg( mQMakeEditor ) );
+	file.append( QString( "<!DOCTYPE XUPProject>\n<project name=\"%1\" expanded=\"false\">\n" ).arg( QFileInfo( s ).fileName() ) );
 	try
 	{
 		for(int i = 0;i < v.size();i++)
@@ -223,17 +223,17 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 						{
 							if ( isFile )
 							{
-								file.append("<file"+(liste[5].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste[5].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+								file.append("<file"+(liste[5].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste[5].trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</file>\n");
 							}
 							else if ( isPath )
 							{
-								file.append("<path"+(liste[5].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste[5].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+								file.append("<path"+(liste[5].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste[5].trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</path>\n");
 							}
 						}
 					}
 				}
 				else
-					file.append("<value"+(liste[5].trimmed() != "" ? " comment=\""+MyEscape(liste[5].trimmed())+"\"" : "")+" content=\""+MyEscape(liste[4].trimmed())+"\" />\n");
+					file.append("<value"+(liste[5].trimmed() != "" ? " comment=\""+MyEscape(liste[5].trimmed())+"\"" : "")+">"+MyEscape(liste[4].trimmed())+"</value>\n");
 				if(isMulti == " multiline=\"true\"")
 				{
 					i++;
@@ -285,17 +285,17 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 								{
 									if ( isFile )
 									{
-										file.append("<file"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+										file.append("<file"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</file>\n");
 									}
 									else if ( isPath )
 									{
-										file.append("<path"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+										file.append("<path"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</path>\n");
 									}
 								}
 							}
 						}
 						else
-							file.append("<value"+(liste3[2].trimmed() != "" ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(liste3[1].trimmed())+"\" />\n");
+							file.append("<value"+(liste3[2].trimmed() != "" ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+">"+MyEscape(liste3[1].trimmed())+"</value>\n");
 						i++;
 					}
 					QStringList liste3 = v[i].split( "#" );
@@ -347,17 +347,17 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 							{
 								if ( isFile )
 								{
-									file.append("<file"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+									file.append("<file"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</file>\n");
 								}
 								else if ( isPath )
 								{
-									file.append("<path"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+									file.append("<path"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</path>\n");
 								}
 							}
 						}
 					}
 					else
-						file.append("<value"+(comment.trimmed() != "" ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(liste3[0].trimmed())+"\" />\n");
+						file.append("<value"+(comment.trimmed() != "" ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+">"+MyEscape(liste3[0].trimmed())+"</value>\n");
 				}
 				file.append("</variable>\n");
 			}
@@ -415,7 +415,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 				if ( liste[7].trimmed().startsWith( "#" ) )
 					file.append( QString( "<comment value=\"%1\" />\n" ).arg( QString( liste[7].trimmed() ) ) );
 				else
-					file.append("<value"+(liste[7].trimmed() != "" ? " comment=\""+MyEscape(liste[7].trimmed())+"\"" : "")+" content=\""+MyEscape(liste[5].trimmed())+"\" />\n");
+					file.append("<value"+(liste[7].trimmed() != "" ? " comment=\""+MyEscape(liste[7].trimmed())+"\"" : "")+">"+MyEscape(liste[5].trimmed())+"</value>\n");
 				if(isMulti == " multiline=\"true\"")
 				{
 					i++;
@@ -467,17 +467,17 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 								{
 									if ( isFile )
 									{
-										file.append("<file"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+										file.append("<file"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</file>\n");
 									}
 									else if ( isPath )
 									{
-										file.append("<path"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+										file.append("<path"+(liste3[2].trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</path>\n");
 									}
 								}
 							}
 						}
 						else
-							file.append("<value"+(liste3[2].trimmed() != "" ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+" content=\""+MyEscape(liste3[1].trimmed())+"\" />\n");
+							file.append("<value"+(liste3[2].trimmed() != "" ? " comment=\""+MyEscape(liste3[2].trimmed())+"\"" : "")+">"+MyEscape(liste3[1].trimmed())+"</value>\n");
 						i++;
 					}
 					QStringList liste3 = v[i].split( "#" );
@@ -529,17 +529,17 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 							{
 								if ( isFile )
 								{
-									file.append("<file"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+									file.append("<file"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</file>\n");
 								}
 								else if ( isPath )
 								{
-									file.append("<path"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(multivalues.value(ku)).remove( '"' )+"\" />\n");
+									file.append("<path"+(comment.trimmed() != "" && ku+1 == multivalues.size() ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+">"+MyEscape(multivalues.value(ku)).remove( '"' )+"</path>\n");
 								}
 							}
 						}
 					}
 					else
-						file.append("<value"+(comment.trimmed() != "" ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+" content=\""+MyEscape(liste3[0].trimmed())+"\" />\n");
+						file.append("<value"+(comment.trimmed() != "" ? " comment=\""+MyEscape(comment.trimmed())+"\"" : "")+">"+MyEscape(liste3[0].trimmed())+"</value>\n");
 				}
 				file.append("</variable>\n");
 			}
@@ -600,7 +600,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 	catch(const std::exception & e)
 	{
 		// re-init the XML output
-		file.append( QString( "<!DOCTYPE XUPProject>\n<project codec=\"%1\" name=\"%2\" editor=\"%3\" expanded=\"false\">\n" ).arg( codec ).arg( QFileInfo( s ).fileName() ).arg( mQMakeEditor ) );
+		file.append( QString( "<!DOCTYPE XUPProject>\n<project name=\"%1\" expanded=\"false\">\n" ).arg( QFileInfo( s ).fileName() ) );
 		// empty both stacks
 		isNested.clear();
 		pile.clear();
