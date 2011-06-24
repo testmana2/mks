@@ -115,7 +115,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 	{
 		if ( cit->type() == XUPItem::File )
 		{
-			QStringList cacheFns = splitMultiLineValue( cit->content() );
+			QStringList cacheFns = splitMultiLineValue( interpretContent( cit->content() ) );
 			
 			foreach ( QString cacheFn, cacheFns )
 			{
@@ -124,7 +124,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 					continue;
 				}
 				
-				QString fn = filePath( cacheFn );
+				QString fn = filePath( cacheFn ); // content interpreted some lines above
 				QFileInfo fi( fn );
 				
 				if ( cacheFn.endsWith( "/" ) )
@@ -395,8 +395,8 @@ QString QMakeProjectItem::interpretContent( const QString& content )
 
 bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 {
-	const QString parameters = function->content();
-	const QString fn = filePath( parameters );
+	const QString parameters = function->attribute( "parameters" );
+	const QString fn = filePath( interpretContent( parameters ) );
 	QStringList projects;
 
 	foreach ( XUPItem* cit, function->childrenList() )
@@ -407,8 +407,8 @@ bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 		}
 	}
 	
-	qWarning() << "---" << projects << parameters << parameters << fn << function->xmlContent();
-	qWarning() << "BOOM";
+	/*qWarning() << "---" << projects << parameters << fn << function->xmlContent();
+	qWarning() << "BOOM";*/
 
 	// check if project is already handled
 	if ( projects.contains( fn ) )
@@ -457,7 +457,7 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	mFileName = fileName;
 	topLevelProject()->setLastError( QString::null );
 	
-	qWarning() << mDocument.toString( 4 );
+	//qWarning() << mDocument.toString( 4 );
 	
 	return analyze( this );
 }
@@ -486,7 +486,7 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 
 	XUPProjectItem* tlProject = topLevelProject();
 	const QString key = QString( "%1_%2" ).arg( PLATFORM_TYPE_STRING ).arg( targetTypeString );
-	QString target = tlProject->filePath( projectSettingsValue( key ) );
+	QString target = tlProject->filePath( interpretContent( projectSettingsValue( key ) ) );
 	QFileInfo targetInfo( target );
 	
 	if ( !targetInfo.exists() || ( !targetInfo.isExecutable() && !QLibrary::isLibrary( target ) ) )
@@ -542,7 +542,7 @@ QStringList QMakeProjectItem::sourceFiles() const
 
 		foreach ( const QString& value, values )
 		{
-			const QString file = filePath( value );
+			const QString file = filePath( value ); // no need content interpretation as its cached values
 			const QFileInfo fi( file );
 
 			if ( fi.isDir() )
