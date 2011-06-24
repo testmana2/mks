@@ -14,8 +14,6 @@ if "nested" does not exists it imply "false"
 #include <QtXml>
 #include <QTextCodec>
 
-#include <pMonkeyStudio.h>
-
 #include <exception>
 
 class MksException : public std::exception
@@ -38,102 +36,6 @@ const QString mQMakeEditor = "QMake";
 
 QString MyEscape( QString b )
 { return Qt::escape( b ).replace( "\"" , "&quot;" ); }
-
-QString tabbedString( int weight, const QString& string, const QString& eol = QString::null )
-{
-	return QString( weight, '\t' ).append( string ).append( eol );
-}
-
-bool isMultiline( const QDomNode& node )
-{
-	QString string = node.attributes().namedItem( "multiline" ).nodeValue();
-	
-	if ( string.isEmpty() ) {
-		string = "false";
-	}
-	
-	return QVariant( string ).toBool();
-}
-
-bool isNested( const QDomNode& node )
-{
-	QString string = node.attributes().namedItem( "nested" ).nodeValue();
-	
-	if ( string.isEmpty() ) {
-		string = "false";
-	}
-	
-	bool nested = QVariant( string ).toBool();
-	
-	if ( nested && node.childNodes().count() > 1 ) {
-		nested = false;
-	}
-	
-	return nested;
-}
-
-bool isBlock( const QDomNode& node )
-{
-	const QString name = node.nodeName();
-	
-	return name.compare( "function", Qt::CaseInsensitive ) == 0
-		|| name.compare( "scope", Qt::CaseInsensitive ) == 0
-		;
-}
-
-bool isProject( const QDomNode& node )
-{
-	return node.nodeName().compare( "project", Qt::CaseInsensitive ) == 0;
-}
-
-bool isComment( const QDomNode& node )
-{
-	return node.nodeName().compare( "comment", Qt::CaseInsensitive ) == 0;
-}
-
-bool isEmptyLine( const QDomNode& node )
-{
-	return node.nodeName().compare( "emptyline", Qt::CaseInsensitive ) == 0;
-}
-
-bool isVariable( const QDomNode& node )
-{
-	return node.nodeName().compare( "variable", Qt::CaseInsensitive ) == 0;
-}
-
-bool isValue( const QDomNode& node )
-{
-	const QString name = node.nodeName();
-	
-	return name.compare( "value", Qt::CaseInsensitive ) == 0
-		|| name.compare( "file", Qt::CaseInsensitive ) == 0
-		|| name.compare( "path", Qt::CaseInsensitive ) == 0
-		;
-}
-
-bool isLastValue( const QDomNode& node )
-{
-	QDomNode sibling = node;
-	
-	while ( !( sibling = sibling.nextSibling() ).isNull() ) {
-		if ( isValue( sibling ) ) {
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-QString nodeAttribute( const QDomNode& node, const QString& attribute, const QString& defaultValue = QString::null )
-{
-	QString value = node.attributes().namedItem( attribute ).nodeValue();
-	
-	if ( value.isEmpty() ) {
-		value = defaultValue;
-	}
-	
-	return value;
-}
 
 QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 {
@@ -717,7 +619,29 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 	return file;
 }
 
-QString convertNodeToPro( const QDomNode& node, int weight = 0, bool multiline = false, bool nested = false, const QString& EOL = pMonkeyStudio::getEol() )
+QString QMake2XUP::convertToPro( const QDomDocument& document )
+{
+	// get project node
+	QDomElement element  = document.firstChildElement( "project" ).toElement();
+	
+	// check project available
+	if ( element.isNull() ) {
+		return QString::null;
+	}
+	
+	// parse project scope
+	QString contents = convertNodeToPro( element );
+	
+	// remove last eol
+	if ( contents.length() > 0 ) {
+		contents.chop( 1 );
+	}
+	
+	// return buffer
+	return contents;
+}
+
+QString QMake2XUP::convertNodeToPro( const QDomNode& node, int weight, bool multiline, bool nested, const QString& EOL )
 {
 	const QStringList notContainers = QStringList()
 		<< "comment"
@@ -846,24 +770,98 @@ QString convertNodeToPro( const QDomNode& node, int weight = 0, bool multiline =
 	return data;
 }
 
-QString QMake2XUP::convertToPro( const QDomDocument& document )
+QString QMake2XUP::tabbedString( int weight, const QString& string, const QString& eol )
 {
-	// get project node
-	QDomElement element  = document.firstChildElement( "project" ).toElement();
+	return QString( weight, '\t' ).append( string ).append( eol );
+}
+
+QString QMake2XUP::nodeAttribute( const QDomNode& node, const QString& attribute, const QString& defaultValue )
+{
+	QString value = node.attributes().namedItem( attribute ).nodeValue();
 	
-	// check project available
-	if ( element.isNull() ) {
-		return QString::null;
+	if ( value.isEmpty() ) {
+		value = defaultValue;
 	}
 	
-	// parse project scope
-	QString contents = convertNodeToPro( element );
+	return value;
+}
+
+bool QMake2XUP::isMultiline( const QDomNode& node )
+{
+	QString string = node.attributes().namedItem( "multiline" ).nodeValue();
 	
-	// remove last eol
-	if ( contents.length() > 0 ) {
-		contents.chop( 1 );
+	if ( string.isEmpty() ) {
+		string = "false";
 	}
 	
-	// return buffer
-	return contents;
+	return QVariant( string ).toBool();
+}
+
+bool QMake2XUP::isNested( const QDomNode& node )
+{
+	QString string = node.attributes().namedItem( "nested" ).nodeValue();
+	
+	if ( string.isEmpty() ) {
+		string = "false";
+	}
+	
+	bool nested = QVariant( string ).toBool();
+	
+	if ( nested && node.childNodes().count() > 1 ) {
+		nested = false;
+	}
+	
+	return nested;
+}
+
+bool QMake2XUP::isBlock( const QDomNode& node )
+{
+	const QString name = node.nodeName();
+	
+	return name.compare( "function", Qt::CaseInsensitive ) == 0
+		|| name.compare( "scope", Qt::CaseInsensitive ) == 0
+		;
+}
+
+bool QMake2XUP::isProject( const QDomNode& node )
+{
+	return node.nodeName().compare( "project", Qt::CaseInsensitive ) == 0;
+}
+
+bool QMake2XUP::isComment( const QDomNode& node )
+{
+	return node.nodeName().compare( "comment", Qt::CaseInsensitive ) == 0;
+}
+
+bool QMake2XUP::isEmptyLine( const QDomNode& node )
+{
+	return node.nodeName().compare( "emptyline", Qt::CaseInsensitive ) == 0;
+}
+
+bool QMake2XUP::isVariable( const QDomNode& node )
+{
+	return node.nodeName().compare( "variable", Qt::CaseInsensitive ) == 0;
+}
+
+bool QMake2XUP::isValue( const QDomNode& node )
+{
+	const QString name = node.nodeName();
+	
+	return name.compare( "value", Qt::CaseInsensitive ) == 0
+		|| name.compare( "file", Qt::CaseInsensitive ) == 0
+		|| name.compare( "path", Qt::CaseInsensitive ) == 0
+		;
+}
+
+bool QMake2XUP::isLastValue( const QDomNode& node )
+{
+	QDomNode sibling = node;
+	
+	while ( !( sibling = sibling.nextSibling() ).isNull() ) {
+		if ( isValue( sibling ) ) {
+			return false;
+		}
+	}
+	
+	return true;
 }
