@@ -1,6 +1,7 @@
 #include "UISettingsQMake.h"
 #include "../QMake.h"
 #include "../QtVersionManager.h"
+#include "MkSFileDialog.h"
 
 #include <pMonkeyStudio.h>
 
@@ -165,9 +166,9 @@ void UISettingsQMake::qtVersionChanged()
 
 void UISettingsQMake::on_tbQtVersionPath_clicked()
 {
-	const QString s = pMonkeyStudio::getExistingDirectory( tr( "Locate your qt installation directory" ), leQtVersionPath->text(), window() );
-	if ( !s.isNull() )
-	{
+	const QString s = MkSFileDialog::getExistingDirectory( false, window(), tr( "Locate your qt installation directory" ), leQtVersionPath->text(), false ).value( "filename" ).toString();
+	
+	if ( !s.isEmpty() ) {
 		leQtVersionPath->setText( s );
 		qtVersionChanged();
 	}
@@ -175,11 +176,13 @@ void UISettingsQMake::on_tbQtVersionPath_clicked()
 
 void UISettingsQMake::on_tbQtVersionQMakeSpec_clicked()
 {
-	const QString s = pMonkeyStudio::getExistingDirectory( tr( "Locate the mk spec folder to use" ), leQtVersionPath->text(), window() );
-	if ( !s.isNull() )
-	{
-		if ( cbQtVersionQMakeSpec->findText( s ) == -1 )
+	const QString s = MkSFileDialog::getExistingDirectory( false, window(), tr( "Locate the mk spec folder to use" ), leQtVersionPath->text(), false ).value( "filename" ).toString();
+	
+	if ( !s.isEmpty() ) {
+		if ( cbQtVersionQMakeSpec->findText( s ) == -1 ) {
 			cbQtVersionQMakeSpec->addItem( s );
+		}
+		
 		cbQtVersionQMakeSpec->setCurrentIndex( cbQtVersionQMakeSpec->findText( s ) );
 		qtVersionChanged();
 	}

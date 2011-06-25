@@ -32,6 +32,7 @@
 #include "../CLIToolPlugin.h"
 #include "../../coremanager/MonkeyCore.h"
 #include "UIMain.h"
+#include "MkSFileDialog.h"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -189,9 +190,11 @@ void UIAdditionalCommandsSettings::on_tbCommandCommand_clicked()
 
 void UIAdditionalCommandsSettings::on_tbCommandWorkingDirectory_clicked()
 {
-	QString s = getExistingDirectory( tr( "Select a folder" ), leCommandWorkingDirectory->text() );
-	if ( !s.isNull() )
+	const QString s = MkSFileDialog::getExistingDirectory( false, this, tr( "Select a folder" ), leCommandWorkingDirectory->text(), false ).value( "filename" ).toString();
+	
+	if ( !s.isEmpty() ) {
 		leCommandWorkingDirectory->setText( s );
+	}
 }
 
 void UIAdditionalCommandsSettings::on_dbbButtons_clicked( QAbstractButton* b )

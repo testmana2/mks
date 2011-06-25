@@ -984,13 +984,11 @@ void pWorkspace::fileSaveAsBackup_triggered()
 {
 	pAbstractChild* document = currentDocument();
 	
-	if ( document )
-	{
-		const QString fileName = pMonkeyStudio::getSaveFileName( tr( "Choose a filename to backup your file" ), document->fileName(), QString::null, this );
+	if ( document ) {
+		const QString filePath = MkSFileDialog::getSaveFileName( false, this, tr( "Choose a filename to backup your file" ), document->fileName(), QString::null ).value( "filename" ).toString();
 		
-		if ( !fileName.isEmpty() )
-		{
-			document->backupFileAs( fileName );
+		if ( !filePath.isEmpty() ) {
+			document->backupFileAs( filePath );
 		}
 	}
 }

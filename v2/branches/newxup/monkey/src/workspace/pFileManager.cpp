@@ -472,7 +472,7 @@ QString pFileManager::currentItemPath() const
 
 void pFileManager::fileOpen_triggered()
 {
-	QString mFilters = pMonkeyStudio::availableFilesFilters(); // get available filters
+	QString filters = pMonkeyStudio::availableFilesFilters(); // get available filters
 	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
 	
 	if ( path.isEmpty() )
@@ -482,7 +482,7 @@ void pFileManager::fileOpen_triggered()
 	}
 	
 	// show filedialog to user
-	pFileDialogResult result = MkSFileDialog::getOpenFileNames( MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, mFilters, true );
+	pFileDialogResult result = MkSFileDialog::getOpenFileNames( true, MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, filters, true );
 
 	// open open file dialog
 	const QStringList fileNames = result[ "filenames" ].toStringList();
@@ -527,6 +527,7 @@ void pFileManager::fileOpen_triggered()
 
 void pFileManager::fileOpenText_triggered()
 {
+	QString filters = pMonkeyStudio::availableFilesFilters(); // get available filters
 	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
 	
 	if ( path.isEmpty() )
@@ -536,7 +537,7 @@ void pFileManager::fileOpenText_triggered()
 	}
 	
 	// show filedialog to user
-	pFileDialogResult result = MkSFileDialog::getOpenFileNames( MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, QString( "All Files (*);;" ), true );
+	pFileDialogResult result = MkSFileDialog::getOpenFileNames( true, MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, filters, true );
 
 	// open open file dialog
 	const QStringList fileNames = result[ "filenames" ].toStringList();

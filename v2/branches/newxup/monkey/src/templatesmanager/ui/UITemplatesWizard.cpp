@@ -37,6 +37,7 @@
 #include <XUPProjectItem.h>
 #include <XUPProjectManager.h>
 #include <VariablesManager.h>
+#include "MkSFileDialog.h"
 
 #include <QDir>
 #include <QMessageBox>
@@ -234,9 +235,11 @@ void UITemplatesWizard::on_cbProjects_currentChanged( const QModelIndex& index )
 
 void UITemplatesWizard::on_tbDestination_clicked()
 {
-	QString s = pMonkeyStudio::getExistingDirectory( tr( "Select the file(s) destination" ), leDestination->text(), window() );
-	if ( !s.isNull() )
+	const QString s = MkSFileDialog::getExistingDirectory( false, window(), tr( "Select the file(s) destination" ), leDestination->text(), false ).value( "filename" ).toString();
+	
+	if ( !s.isEmpty() ) {
 		leDestination->setText( s );
+	}
 }
 
 bool UITemplatesWizard::checkTemplate()
