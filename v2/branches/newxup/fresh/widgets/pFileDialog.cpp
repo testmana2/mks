@@ -129,6 +129,7 @@ void pFileDialog::setDialog( pFileDialog* dlg, const QString& caption, const QSt
 	// dialog settings
 	dlg->setWindowTitle( caption );
 	dlg->setDirectory( dir );
+	dlg->setOption( QFileDialog::HideNameFilterDetails );
 	dlg->setNameFilter( filter );
 	dlg->setTextCodecEnabled( enabledTextCodec );
 	dlg->setOpenReadOnlyEnabled( enabledOpenReadOnly );
@@ -182,7 +183,7 @@ pFileDialogResult pFileDialog::getOpenFileName( QWidget* parent, const QString& 
 	{
 		if ( selectedFilter )
 		{
-			*selectedFilter = fd.selectedFilter();
+			*selectedFilter = fd.selectedNameFilter();
 		}
 		
 		result[ "filename" ] = fd.selectedFiles().value( 0 );
@@ -203,7 +204,7 @@ pFileDialogResult pFileDialog::getOpenFileNames( QWidget* parent, const QString&
 	{
 		if ( selectedFilter )
 		{
-			*selectedFilter = fd.selectedFilter();
+			*selectedFilter = fd.selectedNameFilter();
 		}
 		
 		result[ "filenames" ] = fd.selectedFiles().value( 0 );
@@ -224,7 +225,7 @@ pFileDialogResult pFileDialog::getSaveFileName( QWidget* parent, const QString& 
 	{
 		if ( selectedFilter )
 		{
-			*selectedFilter = fd.selectedFilter();
+			*selectedFilter = fd.selectedNameFilter();
 		}
 		
 		result[ "filename" ] = fd.selectedFiles().value( 0 );
