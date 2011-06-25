@@ -655,7 +655,13 @@ QString QMake2XUP::convertNodeToPro( const QDomNode& node, int weight, bool mult
 	if ( !isProject( node ) ) {
 		if ( isComment( node ) ) {
 			const QString cmt = nodeAttribute( node, "value" );
-			data.append( tabbedString( weight, cmt, EOL ) );
+			int cweight = weight;
+			
+			if ( multiline ) {
+				cweight++;
+			}
+			
+			data.append( tabbedString( cweight, cmt, EOL ) );
 		}
 		else if ( isEmptyLine( node ) ) {
 			const int count = node.attributes().namedItem( "count" ).nodeValue().toInt();
@@ -727,14 +733,16 @@ QString QMake2XUP::convertNodeToPro( const QDomNode& node, int weight, bool mult
 				data.append( ':' );
 			}
 			else {
-				data.append( " {" );
+				if ( node.hasChildNodes() ) {
+					data.append( " {" );
+					weight++;
+				}
 				
 				if ( !comment.isEmpty() ) {
 					data.append( ' ' +comment );
 				}
 				
 				data.append( EOL );
-				weight++;
 			}
 		}
 	}
@@ -751,16 +759,19 @@ QString QMake2XUP::convertNodeToPro( const QDomNode& node, int weight, bool mult
 		const QString comment = nodeAttribute( node, "closing-comment" );
 		const QDomNode sibling = node.nextSibling();
 		
-		weight--;
-		
-		data.append( tabbedString( weight, "}" ) );
+		if ( node.hasChildNodes() ) {
+			weight--;
+			data.append( tabbedString( weight, "}" ) );
+		}
 		
 		if ( !( isBlock( sibling ) && ( nodeAttribute( sibling, "name" ).compare( "else", Qt::CaseInsensitive ) == 0 ) ) ) {
-			if ( !comment.isEmpty() ) {
-				data.append( ' ' +comment );
+			if ( node.hasChildNodes() ) {
+				if ( !comment.isEmpty() ) {
+					data.append( ' ' +comment );
+				}
+				
+				data.append( EOL );
 			}
-			
-			data.append( EOL );
 		}
 		else {
 			data.append( ' ' );
