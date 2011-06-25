@@ -134,59 +134,52 @@ QVariant XUPProjectModel::headerData( int section, Qt::Orientation orientation, 
 
 QVariant XUPProjectModel::data( const QModelIndex& index, int role ) const
 {
-	if ( !index.isValid() )
-	{
+	if ( !index.isValid() ) {
 		return QVariant();
 	}
+	
+	XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
 
-	switch ( role )
-	{
-		case Qt::ToolTipRole:
+	switch ( role ) {
 		case Qt::DecorationRole:
+			return item->displayIcon();
 		case Qt::DisplayRole:
+			return item->displayText();
 		case XUPProjectModel::TypeRole:
+			return item->type();
+		case Qt::ToolTipRole:
 		{
-			XUPItem* item = static_cast<XUPItem*>( index.internalPointer() );
+			const QDomNode node = item->node();
+			const QDomNamedNodeMap attributeMap = node.attributes();
+			QStringList attributes;
 			
-			if ( role == XUPProjectModel::TypeRole )
-			{
-				return item->type();
+			if ( item->type() == XUPItem::Project ) {
+				attributes << QString( "Project: %1" ).arg( item->project()->fileName() );
 			}
-			else if ( role == Qt::DecorationRole )
-			{
-				return item->displayIcon();
-			}
-			else if ( role == Qt::DisplayRole )
-			{
-				return item->displayText();
-			}
-			else if ( role == Qt::ToolTipRole )
-			{
-				QDomNode node = item->node();
-				QStringList attributes;
-				QDomNamedNodeMap attributeMap = node.attributes();
+			
+			for ( int i = 0; i < attributeMap.count(); i++ ) {
+				const QDomNode attribute = attributeMap.item( i );
+				const QString name = attribute.nodeName();
+				const QString value = attribute.nodeValue();
 				
-				if ( item->type() == XUPItem::Project )
-				{
-					attributes << QString( "Project: %1" ).arg( item->project()->fileName() );
-				}
-				for ( int i = 0; i < attributeMap.count(); i++ )
-				{
-					QDomNode attribute = attributeMap.item( i );
-					QString name = attribute.nodeName();
-					attributes << name +"=\"" +attribute.nodeValue() +"\"";
-					
-					if (XUPItem::Function == item->type())
-					{
-						if ( name == "parameters" )
-						{
-							attributes << QString( "cache-%1" ).arg( name ) +"=\"" +item->content() +"\"";
-						}
-					}
-				}
-				
-				return attributes.join( "\n" );
+				attributes << QString( "%1=\"%2\"" ).arg( name ).arg( value );
 			}
+			
+			switch ( item->type() ) {
+				case XUPItem::Value:
+					attributes << QString( "Value=\"%1\"" ).arg( item->content() );
+					break;
+				case XUPItem::File:
+					attributes << QString( "File=\"%1\"" ).arg( item->content() );
+					break;
+				case XUPItem::Path:
+					attributes << QString( "Path=\"%1\"" ).arg( item->content() );
+					break;
+				default:
+					break;
+			}
+			
+			return attributes.join( "\n" );
 		}
 		case Qt::SizeHintRole:
 			return QSize( -1, 18 );
