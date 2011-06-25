@@ -150,6 +150,11 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 	return projects.values();
 }
 
+QString XUPProjectItem::iconsPath() const
+{
+	return ":/items";
+}
+
 QString XUPProjectItem::variableDisplayText( const QString& variableName) const
 {
 	return variableName;
@@ -157,7 +162,7 @@ QString XUPProjectItem::variableDisplayText( const QString& variableName) const
 
 QString XUPProjectItem::variableDisplayIcon( const QString& variableName) const
 {
-	return variableName;
+	return QDir::cleanPath( QString( "%1/%2.png" ).arg( iconsPath() ).arg( variableName.toLower() ) );
 }
 
 XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive ) const

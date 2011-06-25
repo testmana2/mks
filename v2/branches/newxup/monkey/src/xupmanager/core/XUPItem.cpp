@@ -455,13 +455,18 @@ QString XUPItem::displayText() const
 
 QIcon XUPItem::displayIcon() const
 {
-	QString iconFileName;
-	if ( type() == XUPItem::Variable )
-		iconFileName = project()->variableDisplayIcon( attribute( "name" ) );
-	else
-		iconFileName = mDomElement.nodeName();
+	if ( type() == XUPItem::Variable ) {
+		return pIconManager::icon( project()->variableDisplayIcon( attribute( "name" ) ) );
+	}
 	
-	return pIconManager::icon( iconFileName, project()->iconsPath() );
+	const QString iconFileName = QString( "%1.png" ).arg( mDomElement.nodeName() );
+	QString iconFilePath = pIconManager::filePath( iconFileName, project()->iconsPath() );
+	
+	if ( iconFilePath.isEmpty() ) {
+		iconFilePath = pIconManager::filePath( iconFileName, project()->XUPProjectItem::iconsPath() );
+	}
+	
+	return pIconManager::icon( iconFilePath );
 }
 
 QString XUPItem::content() const

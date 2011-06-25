@@ -69,7 +69,7 @@ public:
 	XUPProjectItemList childrenProjects( bool recursive ) const;
 	
 	// return the project icons path
-	virtual QString iconsPath() const = 0;
+	virtual QString iconsPath() const;
 	
 	// return the display text of a project variable name
 	virtual QString variableDisplayText( const QString& variableName ) const;

@@ -87,23 +87,23 @@ void QMakeProjectItem::initHashes()
 	mVariableLabels["DEFINES"] = tr( "Defines" );
 	mVariableLabels["OTHER_FILES"] = tr( "Other Files" );
 
-	mVariableIcons["FORMS"] = tr( "forms.png" );
-	mVariableIcons["FORMS3"] = tr( "forms.png" );
-	mVariableIcons["HEADERS"] = tr( "headers.png" );
-	mVariableIcons["SOURCES"] = tr( "sources.png" );
-	mVariableIcons["OBJECTIVE_SOURCES"] = tr( "objective_sources.png" );
-	mVariableIcons["TRANSLATIONS"] = tr( "translations.png" );
-	mVariableIcons["RESOURCES"] = tr( "resources.png" );
-	mVariableIcons["RC_FILE"] = tr( "rc_file.png" );
-	mVariableIcons["RES_FILE"] = tr( "res_file.png" );
-	mVariableIcons["DEF_FILE"] = tr( "def_file.png" );
-	mVariableIcons["SUBDIRS"] = tr( "project.png" );
-	mVariableIcons["INCLUDEPATH"] = tr( "includepath.png" );
-	mVariableIcons["DEPENDPATH"] = tr( "dependpath.png" );
-	mVariableIcons["VPATH"] = tr( "vpath.png" );
-	mVariableIcons["LIBS"] = tr( "libs.png" );
-	mVariableIcons["DEFINES"] = tr( "defines.png" );
-	mVariableIcons["OTHER_FILES"] = tr( "file.png" );
+	mVariableIcons["FORMS"] = "forms.png";
+	mVariableIcons["FORMS3"] = "forms.png";
+	mVariableIcons["HEADERS"] = "headers.png";
+	mVariableIcons["SOURCES"] = "sources.png";
+	mVariableIcons["OBJECTIVE_SOURCES"] = "objective_sources.png";
+	mVariableIcons["TRANSLATIONS"] = "translations.png";
+	mVariableIcons["RESOURCES"] = "resources.png";
+	mVariableIcons["RC_FILE"] = "rc_file.png";
+	mVariableIcons["RES_FILE"] = "res_file.png";
+	mVariableIcons["DEF_FILE"] = "def_file.png";
+	mVariableIcons["SUBDIRS"] = "project.png";
+	mVariableIcons["INCLUDEPATH"] = "includepath.png";
+	mVariableIcons["DEPENDPATH"] = "dependpath.png";
+	mVariableIcons["VPATH"] = "vpath.png";
+	mVariableIcons["LIBS"] = "libs.png";
+	mVariableIcons["DEFINES"] = "defines.png";
+	mVariableIcons["OTHER_FILES"] = "file.png";
 }
 
 bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
@@ -1291,19 +1291,19 @@ Pair_String_StringList_List QMakeProjectItem::sourceFileNamePatterns() const
 		pjf << p.second;
 	// Variable suffixes
 	const Pair_String_StringList_List sourceFileNamePatterns = Pair_String_StringList_List()
-		<< qMakePair( QString( "Headers" ), hf )
-		<< qMakePair( QString( "Sources" ), sf )
-		<< qMakePair( QString( "YACC sources" ), yf )
-		<< qMakePair( QString( "LEX sources" ), lf )
-		<< qMakePair( QString( "Objective sources" ), QStringList( "*.m" ) << "*.mm" )
-		<< qMakePair( QString( "Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "Qt3 Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( QString( "Translations" ), QStringList( "*.ts" ) )
-		<< qMakePair( QString( "Resources" ), QStringList( "*.qrc" ) )
-		<< qMakePair( QString( "Definition files" ), QStringList( "*.def" ) )
-		<< qMakePair( QString( "Resources files" ), QStringList( "*.rc" ) )
-		<< qMakePair( QString( "Compiled resources files" ), QStringList( "*.res" ) )
-		<< qMakePair( QString( "Projects" ), QStringList( "*.pro" ) );
+		<< qMakePair( tr( "Headers" ), hf )
+		<< qMakePair( tr( "Sources" ), sf )
+		<< qMakePair( tr( "YACC sources" ), yf )
+		<< qMakePair( tr( "LEX sources" ), lf )
+		<< qMakePair( tr( "Objective sources" ), QStringList( "*.m" ) << "*.mm" )
+		<< qMakePair( tr( "Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( tr( "Qt3 Forms" ), QStringList( "*.ui" ) )
+		<< qMakePair( tr( "Translations" ), QStringList( "*.ts" ) )
+		<< qMakePair( tr( "Resources" ), QStringList( "*.qrc" ) )
+		<< qMakePair( tr( "Definition files" ), QStringList( "*.def" ) )
+		<< qMakePair( tr( "Resources files" ), QStringList( "*.rc" ) )
+		<< qMakePair( tr( "Compiled resources files" ), QStringList( "*.res" ) )
+		<< qMakePair( tr( "Projects" ), pjf );
 	
 	return sourceFileNamePatterns;
 }
@@ -1330,10 +1330,16 @@ QString QMakeProjectItem::iconsPath() const
 
 QString QMakeProjectItem::variableDisplayText( const QString& variableName ) const
 {
-	return mVariableLabels.value(variableName, variableName);
+	return mVariableLabels.value( variableName, XUPProjectItem::variableDisplayText( variableName ) );
 }
 
 QString QMakeProjectItem::variableDisplayIcon( const QString& variableName ) const
 {
-	return mVariableIcons.value(variableName, variableName);
+	const QString iconFilePath = mVariableIcons.value( variableName );
+	
+	if ( iconFilePath.isEmpty() ) {
+		return XUPProjectItem::variableDisplayIcon( variableName );
+	}
+	
+	return QDir::cleanPath( QString( "%1/%2" ).arg( iconsPath() ).arg( iconFilePath ) );
 }

@@ -48,7 +48,8 @@ bool QMake::install()
 	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &QMakeProjectItem::staticMetaObject );
 
 	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) );
+		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
+		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
 	
 	// register values
 	MonkeyCore::projectTypesIndex()->registerSuffixes( PLUGIN_NAME, suffixes );
