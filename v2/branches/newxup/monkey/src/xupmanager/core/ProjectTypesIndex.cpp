@@ -53,21 +53,15 @@ XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) con
 	return 0;
 }
 
-QString ProjectTypesIndex::projectFilters() const
+QMap<QString, QStringList> ProjectTypesIndex::suffixes() const
 {
-	QStringList suffixes;
-	QStringList filters;
+	QMap<QString, QStringList> suffixes;
 	
 	foreach ( const QString& projectType, mSuffixes.keys() ) {
 		foreach ( const Pair_String_StringList& pair, mSuffixes[ projectType ] ) {
-			suffixes << pair.second;
-			filters << QString( "%1 (%2)" ).arg( pair.first ).arg( pair.second.join( " " ) );
+			suffixes[ pair.first ] = pair.second;
 		}
 	}
 	
-	if ( !filters.isEmpty() ) {
-		filters.prepend( tr( "All Projects (%1)" ).arg( suffixes.join( " " ) ) );
-	}
-	
-	return filters.join( ";;" );
+	return suffixes;
 }

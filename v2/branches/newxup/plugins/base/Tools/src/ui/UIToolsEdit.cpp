@@ -17,6 +17,7 @@
 ****************************************************************************/
 #include "UIToolsEdit.h"
 #include "../ToolsManager.h"
+#include "MkSFileDialog.h"
 
 #include <pMonkeyStudio.h>
 #include <MonkeyCore.h>
@@ -347,7 +348,7 @@ void UIToolsEdit::on_tbWorkingPath_clicked()
 {
 	if ( QListWidgetItem* item = lwTools->selectedItems().value( 0 ) ) {
 		ToolsManager::Tool tool = item->data( Qt::UserRole ).value<ToolsManager::Tool>();
-		const QString path = pMonkeyStudio::getExistingDirectory( tr( "Choose the working path for this tool" ), tool.workingPath, this );
+		const QString path = MkSFileDialog::getExistingDirectory( false, this, tr( "Choose the working path for this tool" ), tool.workingPath, false ).value( "filename" ).toString();
 		
 		if ( path.isEmpty() ) {
 			return;

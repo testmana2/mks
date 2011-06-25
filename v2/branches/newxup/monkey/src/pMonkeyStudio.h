@@ -35,6 +35,8 @@
 class pEditor;
 class QsciAPIs;
 
+typedef QSet<QString> QStringSet;
+
 namespace pMonkeyStudio
 {
 	enum OSVariant
@@ -59,14 +61,6 @@ namespace pMonkeyStudio
 	Q_MONKEY_EXPORT QFileInfoList getFolders( QDir fromDir, const QStringList& filters, bool recursive = true );
 	Q_MONKEY_EXPORT QFileInfoList getFiles( QDir fromDir, const QStringList& filters, bool recursive = true );
 	Q_MONKEY_EXPORT QFileInfoList getFiles( QDir fromDir, const QString& filters = QString::null, bool recursive = true );
-
-#if 0
-	Q_MONKEY_EXPORT QStringList getOpenFileNames( const QString& title, const QString& filename, const QString& filters = QString(), QWidget* parent = QApplication::activeWindow() );
-	Q_MONKEY_EXPORT QString getOpenFileName( const QString& title, const QString& filename, const QString& filters = QString(), QWidget* parent = QApplication::activeWindow() );
-#endif
-	Q_MONKEY_EXPORT QString getSaveFileName( const QString& title, const QString& filename, const QString& filters = QString(), QWidget* parent = QApplication::activeWindow() );
-
-	Q_MONKEY_EXPORT QString getExistingDirectory( const QString& title, const QString& path, QWidget* parent = QApplication::activeWindow() );
 
 	Q_MONKEY_EXPORT QString tokenizeHome( const QString& string );
 	Q_MONKEY_EXPORT QString unTokenizeHome( const QString& string );

@@ -37,8 +37,8 @@ public:
 	// return a valid project item for fileName
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
 	
-	// return a filter of all project type suffixes: ie. for giving it to open/save file dialog
-	QString projectFilters() const;
+	// return a map that can be used to create file dialog filter
+	QMap<QString, QStringList> suffixes() const;
 	
 protected:
 	QHash<QString, const QMetaObject*> mRegisteredProjectItems; // project type, project item
