@@ -16,6 +16,8 @@ class XUPPlugin;
 
 typedef QList<class XUPProjectItem*> XUPProjectItemList;
 
+#define XUP_VERSION "1.1.0"
+
 class Q_MONKEY_EXPORT XUPProjectItem : public QObject, public XUPItem
 {
 	Q_OBJECT

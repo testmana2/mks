@@ -14,9 +14,9 @@
 #include <QLibrary>
 #include <QMessageBox>
 
-#include <QDebug>
+#include <pVersion.h>
 
-const QString XUP_VERSION = "1.1.0";
+#include <QDebug>
 
 XUPProjectItem::XUPProjectItem()
 	: XUPItem( QDomElement(), 0 )
@@ -258,6 +258,13 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	if ( mDomElement.isNull() )
 	{
 		topLevelProject()->setLastError( "no project node" );
+		return false;
+	}
+	
+	// check xup version
+	const QString docVersion = mDomElement.attribute( "version" );
+	if ( pVersion( docVersion ) < XUP_VERSION ) {
+		topLevelProject()->setLastError( tr( "The document format is too old, current version is '%1', your document is '%2'" ).arg( XUP_VERSION ).arg( docVersion ) );
 		return false;
 	}
 
