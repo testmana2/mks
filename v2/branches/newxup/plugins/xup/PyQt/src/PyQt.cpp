@@ -37,13 +37,11 @@ void PyQt::fillPluginInfos()
 bool PyQt::install()
 {
 	// register phpqt item
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject );
-	// values
-	const Pair_String_StringList_List mSuffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) );
-
-	// register values
-	MonkeyCore::projectTypesIndex()->registerSuffixes( PLUGIN_NAME, mSuffixes );
+	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
+		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) )
+		;
+		
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject, suffixes );
 	
 	return true;
 }
