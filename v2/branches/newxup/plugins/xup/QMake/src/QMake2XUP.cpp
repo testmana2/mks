@@ -70,7 +70,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 	QRegExp comments("^#(.*)");
 	QRegExp varLine("^(.*)[ \\t]*\\\\[ \\t]*(#.*)?");
 	
-	file.append( QString( "<!DOCTYPE XUPProject>\n<project name=\"%1\" expanded=\"false\">\n" ).arg( QFileInfo( s ).fileName() ) );
+	file.append( QString( "<!DOCTYPE XUPProject>\n<project name=\"%1\" version=\"1.1.0\" expanded=\"false\">\n" ).arg( QFileInfo( s ).fileName() ) );
 	try
 	{
 		for(int i = 0;i < v.size();i++)
@@ -600,7 +600,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 	catch(const std::exception & e)
 	{
 		// re-init the XML output
-		file.append( QString( "<!DOCTYPE XUPProject>\n<project name=\"%1\" expanded=\"false\">\n" ).arg( QFileInfo( s ).fileName() ) );
+		file.append( QString( "<!DOCTYPE XUPProject>\n<project name=\"%1\" version=\"1.1.0\" expanded=\"false\">\n" ).arg( QFileInfo( s ).fileName() ) );
 		// empty both stacks
 		isNested.clear();
 		pile.clear();

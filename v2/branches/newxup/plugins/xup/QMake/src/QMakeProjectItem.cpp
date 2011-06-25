@@ -2,14 +2,15 @@
 #include "QMake2XUP.h"
 #include "QMake.h"
 #include "QtVersionManager.h"
+#include "UISimpleQMakeEditor.h"
 
 #include <pMonkeyStudio.h>
 #include <pQueuedMessageToolBar.h>
 #include <CLIToolPlugin.h>
-#include "PluginsManager.h"
-#include "UIMain.h"
+#include <PluginsManager.h>
+#include <UIMain.h>
 
-#include "UISimpleQMakeEditor.h"
+#include <pVersion.h>
 
 #include <QObject>
 #include <QApplication>
@@ -449,6 +450,13 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	if ( mDomElement.isNull() )
 	{
 		topLevelProject()->setLastError("no project node" );
+		return false;
+	}
+	
+	// check xup version
+	const QString docVersion = mDomElement.attribute( "version" );
+	if ( pVersion( docVersion ) < XUP_VERSION ) {
+		topLevelProject()->setLastError( tr( "The document format is too old, current version is '%1', your document is '%2'" ).arg( XUP_VERSION ).arg( docVersion ) );
 		return false;
 	}
 	
