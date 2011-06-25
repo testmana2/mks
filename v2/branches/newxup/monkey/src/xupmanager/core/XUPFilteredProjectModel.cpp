@@ -323,10 +323,9 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 		endInsertColumns();
 		
 		// populate existing indexes
-		if ( model->hasChildren() ) {
-			const QModelIndex index = model->rootProject()->index();
-			internal_rowsInserted( QModelIndex(), 0, model->rowCount() -1 );
-			//internal_rowsInserted( index, 0, model->rowCount( index ) -1 );
+		if ( mSourceModel->hasChildren() ) {
+			const QModelIndex index = mSourceModel->rootProject()->index();
+			internal_rowsInserted( QModelIndex(), 0, mSourceModel->rowCount() -1 );
 		}
 	}
 }

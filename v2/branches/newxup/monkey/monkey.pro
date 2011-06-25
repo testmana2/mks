@@ -23,7 +23,7 @@ mac:*-g++*:LIBS	*= -dynamic
 else:unix:*-g++*:LIBS	*= -rdynamic
 
 debug {
-	LIBS *=  -Wl,-R$${PACKAGE_DESTDIR}/plugins/xup
+	LIBS	*= -Wl,-R$${PACKAGE_DESTDIR}/plugins/xup
 }
 
 # include qscintilla framework
@@ -119,7 +119,8 @@ HEADERS	*= src/main.h \
 	src/workspace/pOpenedFileModel.h \
 	src/consolemanager/EnvironmentVariablesManager.h \
 	src/consolemanager/pConsoleManagerStep.h \
-	src/xupmanager/core/XUPDynamicFolderItem.h
+	src/xupmanager/core/XUPDynamicFolderItem.h \
+	src/xupmanager/gui/XUPOpenedProjectsModel.h
 
 SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/maininterface/ui/UISettings.cpp \
@@ -169,7 +170,8 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/pluginsmanager/CLIToolPlugin.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \
-	src/xupmanager/core/XUPDynamicFolderItem.cpp
+	src/xupmanager/core/XUPDynamicFolderItem.cpp \
+	src/xupmanager/gui/XUPOpenedProjectsModel.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
 	../datas/translations/monkeystudio_be.ts \

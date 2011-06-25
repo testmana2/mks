@@ -53,7 +53,7 @@ XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) con
 	return 0;
 }
 
-QString ProjectTypesIndex::projectsFilter() const
+QString ProjectTypesIndex::projectFilters() const
 {
 	QStringList suffixes;
 	QStringList filters;

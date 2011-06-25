@@ -3,6 +3,7 @@
 #include "pIconManager.h"
 #include "XUPProjectModel.h"
 #include "XUPFilteredProjectModel.h"
+#include "XUPOpenedProjectsModel.h"
 #include "MkSFileDialog.h"
 #include "pMonkeyStudio.h"
 #include "MonkeyCore.h"
@@ -30,15 +31,18 @@ XUPProjectManager::XUPProjectManager( QWidget* parent )
 	setActionsManager( MonkeyCore::actionsManager() );
 	
 	titleBar()->addAction( action( atNew ), 0 );
-	titleBar()->addAction( action( atClose ), 2 );
-	titleBar()->addAction( action( atCloseAll ), 3 );
-	titleBar()->addAction( action( atEdit ), 4 );
-	titleBar()->addAction( action( atAddFiles ), 5 );
-	titleBar()->addAction( action( atRemoveFiles ), 6 );
-	titleBar()->addSeparator( 7 );
+	titleBar()->addAction( action( atClose ), 1 );
+	titleBar()->addAction( action( atCloseAll ), 2 );
+	titleBar()->addAction( action( atEdit ), 3 );
+	titleBar()->addAction( action( atAddFiles ), 4 );
+	titleBar()->addAction( action( atRemoveFiles ), 5 );
+	titleBar()->addSeparator( 6 );
 	
 	mFilteredModel = new XUPFilteredProjectModel( tvFiltered );
 	tvFiltered->setModel( mFilteredModel );
+	
+	mOpenedProjectsModel = new XUPOpenedProjectsModel( this );
+	cbProjects->setModel( mOpenedProjectsModel );
 	
 	connect( tvFiltered->selectionModel(), SIGNAL( currentChanged( const QModelIndex&, const QModelIndex& ) ), this, SLOT( tvFiltered_currentChanged( const QModelIndex&, const QModelIndex& ) ) );
 	connect( tvFiltered, SIGNAL( customContextMenuRequested( const QPoint& ) ), this, SIGNAL( projectCustomContextMenuRequested( const QPoint& ) ) );
@@ -54,8 +58,8 @@ XUPProjectManager::~XUPProjectManager()
 
 void XUPProjectManager::on_cbProjects_currentIndexChanged( int id )
 {
-	XUPProjectModel* model = cbProjects->itemData( id ).value<XUPProjectModel*>();
-	XUPProjectItem* project = model ? model->mRootProject : 0;
+	XUPProjectModel* model = mOpenedProjectsModel->project( id );
+	XUPProjectItem* project = model ? model->rootProject() : 0;
 	setCurrentProject( project, currentProject() );
 }
 
@@ -205,9 +209,7 @@ void XUPProjectManager::openProject( XUPProjectItem* project )
 	XUPProjectModel* model = new XUPProjectModel( this );
 	model->handleProject( project );
 	
-	int id = cbProjects->count();
-	cbProjects->addItem( model->headerData( 0, Qt::Horizontal, Qt::DisplayRole ).toString(), QVariant::fromValue<XUPProjectModel*>( model ) );
-	cbProjects->setItemIcon( id, model->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
+	mOpenedProjectsModel->addProject( model );
 	setCurrentProject( model->rootProject(), currentProject() );
 	emit projectOpened( currentProject() );
 }
@@ -234,9 +236,7 @@ bool XUPProjectManager::openProject( const QString& fileName, const QString& cod
 			// append file to recents project
 			MonkeyCore::recentsManager()->addRecentProject( fileName );
 			
-			int id = cbProjects->count();
-			cbProjects->addItem( model->headerData( 0, Qt::Horizontal, Qt::DisplayRole ).toString(), QVariant::fromValue<XUPProjectModel*>( model ) );
-			cbProjects->setItemIcon( id, model->headerData( 0, Qt::Horizontal, Qt::DecorationRole ).value<QIcon>() );
+			mOpenedProjectsModel->addProject( model );
 			setCurrentProject( model->rootProject(), currentProject() );
 			emit projectOpened( currentProject() );
 			return true;
@@ -259,32 +259,41 @@ void XUPProjectManager::closeProject()
 {
 	XUPProjectModel* curModel = currentProjectModel();
 	
-	if ( curModel )
-	{
+	if ( curModel ) {
 		XUPProjectItem* preProject = currentProject();
+		const int curRow = mOpenedProjectsModel->row( curModel );
+		int row = curRow;
 		
-		bool blocked = cbProjects->blockSignals( true );
-		int id = cbProjects->findData( QVariant::fromValue<XUPProjectModel*>( curModel ) );
-		cbProjects->removeItem( id );
-		XUPProjectModel* model = cbProjects->itemData( cbProjects->currentIndex() ).value<XUPProjectModel*>();
-		setCurrentProjectModel( model );
-		cbProjects->blockSignals( blocked );
+		if ( row > 0 ) {
+			row--;
+		}
+		else {
+			row++;
+		}
 		
-		XUPProjectItem* curProject = currentProject();
+		row = qBound( 0, row, mOpenedProjectsModel->rowCount() -1 );
 		
-		setCurrentProject( curProject, preProject );
+		if ( row != curRow ) {
+			setCurrentProjectModel( mOpenedProjectsModel->project( row ) );
+			XUPProjectItem* curProject = currentProject();
+			setCurrentProject( curProject, preProject );
+		}
+		else {
+			setCurrentProjectModel( 0 );
+			setCurrentProject( 0, preProject );
+		}
 		
 		emit projectAboutToClose( preProject );
 		
+		mOpenedProjectsModel->removeProject( curModel );
 		curModel->close();
-		delete curModel;
+		curModel->deleteLater();
 	}
 }
 
 void XUPProjectManager::closeAllProjects()
 {
-	while ( cbProjects->count() > 0 )
-	{
+	while ( !mOpenedProjectsModel->projects().isEmpty() ) {
 		closeProject();
 	}
 }
@@ -445,10 +454,8 @@ XUPProjectItemList XUPProjectManager::topLevelProjects() const
 {
 	XUPProjectItemList projects;
 	
-	for ( int i = 0; i < cbProjects->count(); i++ )
-	{
-		XUPProjectItem* project = cbProjects->itemData( i ).value<XUPProjectModel*>()->mRootProject;
-		projects << project;
+	foreach ( const XUPProjectModel* model, mOpenedProjectsModel->projects() ) {
+		projects << model->rootProject();
 	}
 	
 	return projects;
@@ -457,8 +464,7 @@ XUPProjectItemList XUPProjectManager::topLevelProjects() const
 void XUPProjectManager::setCurrentProjectModel( XUPProjectModel* model )
 {
 	mFilteredModel->setSourceModel( model );
-	int id = cbProjects->findData( QVariant::fromValue<XUPProjectModel*>( model ) );
-	cbProjects->setCurrentIndex( id );
+	cbProjects->setCurrentIndex( mOpenedProjectsModel->row( model ) );
 }
 
 void XUPProjectManager::setCurrentProject( XUPProjectItem* curProject, XUPProjectItem* preProject )

@@ -9,6 +9,7 @@
 
 class XUPProjectModel;
 class XUPFilteredProjectModel;
+class XUPOpenedProjectsModel;
 class XUPItem;
 
 class Q_MONKEY_EXPORT XUPProjectManager : public pDockWidget, public Ui::XUPProjectManager
@@ -33,6 +34,7 @@ public:
 protected:
 	QMap<XUPProjectManager::ActionType, QAction*> mActions;
 	XUPFilteredProjectModel* mFilteredModel;
+	XUPOpenedProjectsModel* mOpenedProjectsModel;
 	
 	// debug member to be used by AppDebug plugin
 	void openProject( XUPProjectItem* project );
