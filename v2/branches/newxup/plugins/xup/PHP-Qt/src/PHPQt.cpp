@@ -39,13 +39,11 @@ void PHPQt::fillPluginInfos()
 bool PHPQt::install()
 {
 	// register phpqt item
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PHPQtProjectItem::staticMetaObject );
-	// values
-	const Pair_String_StringList_List mSuffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) );
-
-	// register values
-	MonkeyCore::projectTypesIndex()->registerSuffixes( PLUGIN_NAME, mSuffixes );
+	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
+		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) )
+		;
+		
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PHPQtProjectItem::staticMetaObject, suffixes );
 	
 	return true;
 }

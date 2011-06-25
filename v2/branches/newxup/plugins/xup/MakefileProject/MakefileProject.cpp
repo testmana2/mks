@@ -37,13 +37,11 @@ void MakefileProject::fillPluginInfos()
 bool MakefileProject::install()
 {
 	// register phpqt item
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject );
-	// values
-	const Pair_String_StringList_List mSuffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "Makefile Project" ), QStringList( "*Makefile*" ) );
-
-	// register values
-	MonkeyCore::projectTypesIndex()->registerSuffixes( PLUGIN_NAME, mSuffixes );
+	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
+		<< qMakePair( tr( "Makefile Project" ), QStringList( "*Makefile*" ) )
+		;
+		
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject, suffixes );
 	
 	return true;
 }

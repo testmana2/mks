@@ -3,7 +3,6 @@
 #include "pIconManager.h"
 
 #include <QDir>
-
 #include <QDebug>
 
 ProjectTypesIndex::ProjectTypesIndex( QObject* parent )
@@ -11,15 +10,21 @@ ProjectTypesIndex::ProjectTypesIndex( QObject* parent )
 {
 }
 
-void ProjectTypesIndex::registerType( const QString& projectType, const QMetaObject* projectMetaObject )
+void ProjectTypesIndex::registerType( const QString& projectType, const QMetaObject* projectMetaObject, const Pair_String_StringList_List& suffixes )
 {
-	mRegisteredProjectItems[ projectType.toLower() ] = projectMetaObject;
+	mRegisteredProjectItems[ projectType ] = projectMetaObject;
+	mSuffixes[ projectType ] = suffixes;
 }
 
 void ProjectTypesIndex::unRegisterType( const QString& projectType )
 {
-	mRegisteredProjectItems.remove( projectType.toLower() );
-	mSuffixes.remove( projectType.toLower() );
+	mRegisteredProjectItems.remove( projectType );
+	mSuffixes.remove( projectType );
+}
+
+Pair_String_StringList_List ProjectTypesIndex::typeSuffixes( const QString& projectType ) const
+{
+	return mSuffixes.value( projectType );
 }
 
 bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
@@ -46,11 +51,6 @@ XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) con
 	}
 	
 	return 0;
-}
-
-void ProjectTypesIndex::registerSuffixes( const QString& projectType, const Pair_String_StringList_List& suffixes )
-{
-	mSuffixes[ projectType.toLower() ] = suffixes;
 }
 
 QString ProjectTypesIndex::projectsFilter() const
