@@ -16,7 +16,7 @@
 ###########################################################################################
 -->
 <!DOCTYPE XUPProject>
-<project name="$Project Name$" >
+<project name="$Project Name$" version="1.1.0" >
 	<variable name="PHP_FILES">
 		<file>$Main File Name$</file>
 	</variable>
