@@ -830,38 +830,32 @@ void pWorkspace::internal_urlsDropped( const QList<QUrl>& urls )
 void pWorkspace::internal_currentProjectChanged( XUPProjectItem* currentProject, XUPProjectItem* previousProject )
 {
 	// uninstall old commands
-	if ( previousProject )
-	{
+	if ( previousProject ) {
 		previousProject->uninstallCommands();
 	}
 	
-	if (previousProject)
-	{
-		foreach(QString pluginName, previousProject->autoActivatePlugins())
-		{
+	if ( previousProject ) {
+		foreach( const QString& pluginName, previousProject->autoActivatePlugins() ) {
 			BasePlugin* plugin = MonkeyCore::pluginsManager()->plugin<BasePlugin*>( PluginsManager::stAll, pluginName );
-			if (plugin)
-			{
-				plugin->setEnabled(false);
+			
+			if ( plugin ) {
+				plugin->setEnabled( false );
 			}
 		}
 	}
 	
-	if (currentProject)
-	{
-		foreach(QString pluginName, currentProject->autoActivatePlugins())
-		{
+	if ( currentProject ) {
+		foreach( const QString& pluginName, currentProject->autoActivatePlugins() ) {
 			BasePlugin* plugin = MonkeyCore::pluginsManager()->plugin<BasePlugin*>( PluginsManager::stAll, pluginName );
-			if (plugin)
-			{
-				plugin->setEnabled(true);
+			
+			if ( plugin ) {
+				plugin->setEnabled( true );
 			}
 		}
 	}
 	
 	// install new commands
-	if ( currentProject )
-	{
+	if ( currentProject ) {
 		currentProject->installCommands();
 	}
 	

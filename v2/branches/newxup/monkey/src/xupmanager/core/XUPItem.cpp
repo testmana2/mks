@@ -485,6 +485,14 @@ void XUPItem::setContent(const QString& content)
 	else {
 		textNode.setData( content );
 	}
+	
+	// update model if needed
+	XUPProjectModel* m = model();
+	
+	if ( m ) {
+		QModelIndex idx = index();
+		emit m->dataChanged( idx, idx );
+	}
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
@@ -503,8 +511,8 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 	
 	// update model if needed
 	XUPProjectModel* m = model();
-	if ( m )
-	{
+	
+	if ( m ) {
 		QModelIndex idx = index();
 		emit m->dataChanged( idx, idx );
 	}
