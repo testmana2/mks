@@ -10,28 +10,28 @@ ProjectTypesIndex::ProjectTypesIndex( QObject* parent )
 {
 }
 
-void ProjectTypesIndex::registerType( const QString& projectType, const QMetaObject* projectMetaObject, const Pair_String_StringList_List& suffixes )
+void ProjectTypesIndex::registerType( const QString& projectType, const QMetaObject* projectMetaObject, const DocumentFilterMap& filters )
 {
 	mRegisteredProjectItems[ projectType ] = projectMetaObject;
-	mSuffixes[ projectType ] = suffixes;
+	mFilters[ projectType ] = filters;
 }
 
 void ProjectTypesIndex::unRegisterType( const QString& projectType )
 {
 	mRegisteredProjectItems.remove( projectType );
-	mSuffixes.remove( projectType );
+	mFilters.remove( projectType );
 }
 
-Pair_String_StringList_List ProjectTypesIndex::typeSuffixes( const QString& projectType ) const
+DocumentFilterMap ProjectTypesIndex::typeFilters( const QString& projectType ) const
 {
-	return mSuffixes.value( projectType );
+	return mFilters.value( projectType );
 }
 
 bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
 {
-	foreach ( const QString& projectType, mSuffixes.keys() ) {
-		foreach ( const Pair_String_StringList& pair, mSuffixes[ projectType ] ) {
-			if ( QDir::match( pair.second, fileName ) ) {
+	foreach ( const QString& projectType, mFilters.keys() ) {
+		foreach ( const DocumentFilter& filter, mFilters[ projectType ] ) {
+			if ( QDir::match( filter.filters, fileName ) ) {
 				return true;
 			}
 		}
@@ -42,9 +42,9 @@ bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
 
 XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) const
 {
-	foreach ( const QString& projectType, mSuffixes.keys() ) {
-		foreach ( const Pair_String_StringList& pair, mSuffixes[ projectType ] ) {
-			if ( QDir::match( pair.second, fileName ) ) {
+	foreach ( const QString& projectType, mFilters.keys() ) {
+		foreach ( const DocumentFilter& filter, mFilters[ projectType ] ) {
+			if ( QDir::match( filter.filters, fileName ) ) {
 				return qobject_cast<XUPProjectItem*>( mRegisteredProjectItems[ projectType ]->newInstance() );
 			}
 		}
@@ -57,9 +57,9 @@ QMap<QString, QStringList> ProjectTypesIndex::suffixes() const
 {
 	QMap<QString, QStringList> suffixes;
 	
-	foreach ( const QString& projectType, mSuffixes.keys() ) {
-		foreach ( const Pair_String_StringList& pair, mSuffixes[ projectType ] ) {
-			suffixes[ pair.first ] = pair.second;
+	foreach ( const QString& projectType, mFilters.keys() ) {
+		foreach ( const DocumentFilter& filter, mFilters[ projectType ] ) {
+			suffixes[ filter.label ] = filter.filters;
 		}
 	}
 	

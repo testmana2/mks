@@ -17,11 +17,8 @@
 ****************************************************************************/
 #include "PHPQt.h"
 #include "PHPQtProjectItem.h"
-//#include "UISettingsPHPQt.h"
 
 #include <MonkeyCore.h>
-
-#include <QDir>
 
 void PHPQt::fillPluginInfos()
 {
@@ -33,24 +30,27 @@ void PHPQt::fillPluginInfos()
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = false;
+	mPluginInfos.dependencies << "PHP";
+	mPluginInfos.iconsPath = ":/phpqtitems";
 }
-
 
 bool PHPQt::install()
 {
-	// register phpqt item
-	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "PHP-Qt Project" ), QStringList( "*.xphpqt" ) )
-		;
-		
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PHPQtProjectItem::staticMetaObject, suffixes );
+	// register item
+	DocumentFilterMap filters;
+	int weight = 0;
 	
+	filters[ "PHPQT_PROJECTS" ].weight = weight++;
+	filters[ "PHPQT_PROJECTS" ].label = tr( "PHP-Qt Project" );
+	filters[ "PHPQT_PROJECTS" ].filters << "*.xphpqt";
+	
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PHPQtProjectItem::staticMetaObject, filters );
 	return true;
 }
 
 bool PHPQt::uninstall()
 {
-	// unregister qmake item, unregistering auto delete the item
+	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
 	return true;
 }

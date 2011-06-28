@@ -5,6 +5,7 @@
 #include "PluginsManager.h"
 #include "pMonkeyStudio.h"
 #include "UIMain.h"
+#include "XUPPlugin.h"
 
 #include <QTextCodec>
 #include <QDir>
@@ -63,7 +64,35 @@ QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
 
 QStringList XUPProjectItem::sourceFiles() const
 {
-	return QStringList();
+	QStringList entries;
+	
+	foreach ( const QString& name, sourceFileNamePatterns().keys() ) {
+		XUPItem* variable = getVariable( this, name );
+		
+		if ( variable ) {
+			foreach( XUPItem* item, variable->childrenList() ) {
+				if ( item->type() == XUPItem::File ) {
+					entries << filePath( item->content() );
+				}
+			}
+		}
+	}
+	
+	// get dynamic files
+	/*XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<XUPProjectItem*>( this ), false );
+	
+	if ( dynamicFolderItem )
+	{
+		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
+		{
+			if ( valueItem->type() == XUPItem::File )
+			{
+				files << valueItem->attribute( "content" );
+			}
+		}
+	}*/
+	
+	return entries;
 }
 
 QStringList XUPProjectItem::topLevelProjectSourceFiles() const
@@ -72,17 +101,93 @@ QStringList XUPProjectItem::topLevelProjectSourceFiles() const
 
 	XUPProjectItemList projects = childrenProjects( true );
 
-	foreach ( XUPProjectItem* project, projects )
-	{
+	foreach ( XUPProjectItem* project, projects ) {
 		const QStringList sources = project->sourceFiles();
 
-		foreach ( const QString& source, sources )
-		{
+		foreach ( const QString& source, sources ) {
 			files << source;
 		}
 	}
 
 	return files.toList();
+}
+
+XUPPlugin* XUPProjectItem::driver() const
+{
+	return MonkeyCore::pluginsManager()->plugin<XUPPlugin*>( PluginsManager::stAll, projectType() );
+}
+
+QStringList XUPProjectItem::autoActivatePlugins() const
+{
+	return driver()->infos().dependencies;
+}
+
+QString XUPProjectItem::defaultIconsPath() const
+{
+	return ":/items";
+}
+
+QString XUPProjectItem::iconsPath() const
+{
+	return driver()->infos().iconsPath;
+}
+
+void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
+{
+	const DocumentFilterMap filters = sourceFileNamePatterns();
+	QStringList notImported;
+	XUPProjectItem* project = scope->project();
+	
+	foreach ( const QString& file, files ) {
+		bool found = false;
+		
+		foreach ( const QString& name, filters.keys() ) {
+			const DocumentFilter& filter = filters[ name ];
+			
+			if ( QDir::match( filter.filters, file ) ) {
+				XUPItem* variable = project->getVariable( scope, name );
+				
+				if ( !variable ) {
+					variable = scope->addChild( XUPItem::Variable );
+					variable->setAttribute( "name", name );
+					
+				}
+				
+				XUPItem* value = variable->addChild( XUPItem::File );
+				value->setContent( project->relativeFilePath( file ) );
+				
+				found = true;
+				break;
+			}
+		}
+		
+		if ( !found ) {
+			notImported << file;
+		}
+	}
+	
+	if ( !notImported.isEmpty() ) {
+		setLastError( tr( "Don't know how to add files:\n" ).arg( notImported.join( "\n" ) ) );
+	}
+}
+
+void XUPProjectItem::removeItem( XUPItem* item )
+{
+	switch ( item->type() ) {
+		case XUPItem::File:
+			#warning may ask to delete file here
+			break;
+		case XUPItem::Variable:
+			#warning may ask to delete files here
+			break;
+		case XUPItem::Path:
+		case XUPItem::Value:
+			break;
+		default:
+			return;
+	}
+	
+	item->parent()->removeChild( item );
 }
 
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
@@ -150,19 +255,19 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 	return projects.values();
 }
 
-QString XUPProjectItem::iconsPath() const
+QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
 {
-	return ":/items";
+	const QString text = sourceFileNamePatterns().value( variableName ).label;
+	return text.isEmpty() ? variableName : text;
 }
 
-QString XUPProjectItem::variableDisplayText( const QString& variableName) const
+QString XUPProjectItem::variableDisplayIcon( const QString& variableName ) const
 {
-	return variableName;
-}
-
-QString XUPProjectItem::variableDisplayIcon( const QString& variableName) const
-{
-	return QDir::cleanPath( QString( "%1/%2.png" ).arg( iconsPath() ).arg( variableName.toLower() ) );
+	const QString icon = sourceFileNamePatterns().value( variableName ).icon;
+	return icon.isEmpty()
+		? QDir::cleanPath( QString( "%1/%2.png" ).arg( iconsPath() ).arg( variableName.toLower() ) )
+		: QDir::cleanPath( QString( "%1/%2" ).arg( iconsPath() ).arg( icon ) )
+		;
 }
 
 XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive ) const
@@ -207,7 +312,7 @@ XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variab
 		}
 	}
 
-	return NULL;
+	return 0;
 }
 
 QString XUPProjectItem::toXml() const
@@ -320,11 +425,6 @@ QString XUPProjectItem::targetFilePath( bool, XUPProjectItem::TargetType )
 	return QString::null;
 }
 
-QStringList XUPProjectItem::autoActivatePlugins() const
-{
-	return QStringList();
-}
-
 void XUPProjectItem::addCommands( const QString& mnu, const QString& text, pCommandList& cmds )
 {
 	// create action
@@ -377,38 +477,20 @@ QString XUPProjectItem::codec() const
 
 QString XUPProjectItem::sourceFileNameFilter() const
 {
-	const Pair_String_StringList_List suffixes = sourceFileNamePatterns();
-	QStringList allSuffixesList;
-	QStringList suffixesList;
-	
-	foreach ( const Pair_String_StringList& pair, suffixes )
-	{
-		QString text = variableDisplayText( pair.first );
-		suffixesList << QString( "%1 (%2)" ).arg( text ).arg( pair.second.join( " " ) );
-		
-		foreach ( const QString& suffixe, pair.second )
-		{
-			if ( !allSuffixesList.contains( suffixe ) )
-			{
-				allSuffixesList << suffixe;
-			}
-		}
-	}
-	
-	suffixesList.prepend( tr( "All Files (*)" ) );
-	
-	if ( !allSuffixesList.isEmpty() )
-	{
-		suffixesList.prepend( tr( "All Supported Files (%2)" ).arg( allSuffixesList.join( " " ) ) );
-	}
-	
-	return suffixesList.join( ";;" );
-
+	return pMonkeyStudio::buildFileDialogFilter( sourceFileNamePatterns(), true, true );
 }
 
 QStringList XUPProjectItem::filteredVariables() const
 {
-	return QStringList();
+	const DocumentFilterMap filters = sourceFileNamePatterns();
+	QMap<int, QString> variables;
+	
+	foreach ( const QString& name, filters.keys() ) {
+		const DocumentFilter& filter = filters[ name ];
+		variables.insertMulti( filter.weight, name );
+	}
+	
+	return variables.values();
 }
 
 void XUPProjectItem::internal_projectCustomActionTriggered()

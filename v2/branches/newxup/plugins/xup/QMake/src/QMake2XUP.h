@@ -5,11 +5,31 @@
 
 #include <pMonkeyStudio.h>
 
+class QMakeDocumentFilter : public DocumentFilter
+{
+public:
+	typedef QMap<QString, QMakeDocumentFilter> Map;
+	
+	enum Type {
+		Other = 0,
+		File,
+		Path
+	};
+	
+	QMakeDocumentFilter();
+	
+	Type type;
+	bool filtered;
+};
+
 namespace QMake2XUP
 {
+	QMakeDocumentFilter::Map qmakeFilters();
 	QString convertFromPro( const QString& fileName, const QString& codec );
 	QString convertToPro( const QDomDocument& project );
 	
+	QString escape( const QString& string );
+
 	QString convertNodeToPro( const QDomNode& node, int weight = 0, bool multiline = false, bool nested = false, const QString& EOL = pMonkeyStudio::getEol() );
 	QString tabbedString( int weight, const QString& string, const QString& eol = QString::null );
 	QString nodeAttribute( const QDomNode& node, const QString& attribute, const QString& defaultValue = QString::null );

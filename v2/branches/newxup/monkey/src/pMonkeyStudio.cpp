@@ -78,7 +78,11 @@ bool insensitiveStringLesserThan( const QString& left, const QString& right )
 	return left.toLower() < right.toLower();
 }
 
-QString buildFileDialogFilter( const QMap<QString, QStringList>& map, bool addAll, bool addSupported )
+/*!
+	\details Build a \a QFileDialog filter from \map.
+	Add "All Files" filter according to \a addAll and "All Supported Files" filter according to addSupported.
+*/
+QString pMonkeyStudio::buildFileDialogFilter( const QMap<QString, QStringList>& map, bool addAll, bool addSupported )
 {
 	QStringList filters;
 	QStringList allSuffixes;
@@ -86,23 +90,40 @@ QString buildFileDialogFilter( const QMap<QString, QStringList>& map, bool addAl
 	foreach ( const QString& name, map.keys() ) {
 		const QStringList& suffixes = map[ name ];
 		
-		filters << QObject::tr( "%1 Files (%2)" ).arg( name ).arg( suffixes.join( " " ) );
-		
-		if ( addSupported ) {
-			allSuffixes << suffixes;
+		if ( !suffixes.isEmpty() ) {
+			filters << QObject::tr( "%1 Files (%2)" ).arg( name ).arg( suffixes.join( " " ) );
+			
+			if ( addSupported ) {
+				allSuffixes << suffixes;
+			}
 		}
 	}
 	
-	if ( addAll ) {
-		filters.prepend( QObject::tr( "All Files (*)" ) );
-	}
-	
-	if ( addSupported ) {
-		qSort( allSuffixes.begin(), allSuffixes.end(), insensitiveStringLesserThan );
-		filters.prepend( QObject::tr( "All Supported Files (%1)" ).arg( allSuffixes.join( " " ) ) );
+	if ( !filters.isEmpty() ) {
+		if ( addAll ) {
+			filters.prepend( QObject::tr( "All Files (*)" ) );
+		}
+		
+		if ( addSupported ) {
+			qSort( allSuffixes.begin(), allSuffixes.end(), insensitiveStringLesserThan );
+			filters.prepend( QObject::tr( "All Supported Files (%1)" ).arg( allSuffixes.join( " " ) ) );
+		}
 	}
 	
 	return filters.join( ";;" );
+}
+
+QString pMonkeyStudio::buildFileDialogFilter( const DocumentFilterMap& filters, bool addAll, bool addSupported )
+{
+	QMap<QString, QStringList> map;
+	
+	foreach ( const QString& name, filters.keys() ) {
+		const DocumentFilter& filter = filters[ name ];
+		
+		map[ filter.label ] = filter.filters;
+	}
+	
+	return buildFileDialogFilter( map, addAll, addSupported );
 }
 
 /*!

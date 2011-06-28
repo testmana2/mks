@@ -1,26 +1,16 @@
 #include "MakefileProjectItem.h"
-#include "PluginsManager.h"
-#include "XUPPlugin.h"
 
-#include <ProjectTypesIndex.h>
-#include <pMonkeyStudio.h>
-#include <pFileManager.h>
-#include <CLIToolPlugin.h>
+#include <MonkeyCore.h>
+#include <PluginsManager.h>
 #include <UIMain.h>
+#include <pFileManager.h>
 
-#include <QApplication>
-#include <QTextCodec>
 #include <QMessageBox>
-#include <QFile>
-#include <QDir>
-#include <QFileInfo>
-
 #include <QDebug>
 
 MakefileProjectItem::MakefileProjectItem()
 	: XUPProjectItem()
 {
-	mDomElement = mDocument.createElement("project");
 }
 
 QString MakefileProjectItem::projectType() const
@@ -28,29 +18,26 @@ QString MakefileProjectItem::projectType() const
 	return PLUGIN_NAME;
 }
 
-QStringList MakefileProjectItem::autoActivatePlugins() const
-{
-	return QStringList("GNUMake");
-}
-
 void MakefileProjectItem::installCommands()
 {
 	QStringList targets;
-	QFile file(fileName());
-	file.open(QIODevice::ReadOnly);
-	QRegExp targetRex("^([\\w\\-\\d]+):.*");
-	while (! file.atEnd())
-	{
+	QFile file( fileName() );
+	file.open( QIODevice::ReadOnly );
+	QRegExp targetRex( "^([\\w\\-\\d]+):.*" );
+	
+	while ( !file.atEnd() ) {
 		QString line = file.readLine();
-		int pos = targetRex.indexIn(line);
-		if (-1 != pos)
-			targets << targetRex.cap(1);
+		int pos = targetRex.indexIn( line );
+		
+		if ( pos != -1 ) {
+			targets << targetRex.cap( 1 );
+		}
 	}
+	
 	CLIToolPlugin* make = MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "GNUMake" );
-	if (! make)
-	{
-		QMessageBox::critical(MonkeyCore::mainWindow(), tr("Makefile Project"),
-							  tr("Can't build Makefile projects. GNUMake plugin not enabled"));
+	
+	if ( !make ) {
+		QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Makefile Project" ), tr( "Can't build Makefile projects. GNUMake plugin not enabled" ) );
 		return;
 	}
 	
@@ -60,51 +47,48 @@ void MakefileProjectItem::installCommands()
 	baseCmd.setSkipOnError( false );
 	baseCmd.setTryAllParsers( true );
 	
-	QString makeFileArg = QString("-f %1 ").arg(QFileInfo(fileName()).fileName());
+	QString makeFileArg = QString( "-f %1 " ).arg( QFileInfo( fileName() ).fileName() );
 	
-	foreach(QString target, targets)
-	{
+	foreach( const QString& target, targets ) {
 		baseCmd.setText( target );
-		baseCmd.setArguments( makeFileArg + target );
+		baseCmd.setArguments( makeFileArg +target );
 		addCommand( baseCmd, "mBuilder" );
 	}
 }
 
-void MakefileProjectItem::addFiles( const QStringList&, XUPItem*)
+void MakefileProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
-	QMessageBox::information (MonkeyCore::mainWindow(), 
-							  tr("Makefile project"),
-							  tr("Adding files to the Makefile project does not make sense. "
-							    "Press 'Edit current project...' for edit your Makefile"));
+	Q_UNUSED( files );
+	Q_UNUSED( scope );
+	QMessageBox::information( MonkeyCore::mainWindow(), tr( "Makefile project" ),
+		tr( "Adding files to the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
 }
 
-void MakefileProjectItem::removeItem( XUPItem* )
+void MakefileProjectItem::removeItem( XUPItem* scope )
 {
-	Q_ASSERT(0);
+	Q_UNUSED( scope );
+	Q_ASSERT( 0 );
 }
 
 bool MakefileProjectItem::open( const QString& fileName, const QString& codec )
 {
+	const QFileInfo fileInfo = QFileInfo( fileName );
 	mFileName = fileName;
 	mCodec = codec;
-	QString parentDirName = QFileInfo(QFileInfo(fileName).path()).fileName();
-	setAttribute("name",
-				 parentDirName + "/" + QFileInfo(fileName).fileName()); // "directoryname/Makefile"
+	QString parentDirName = QFileInfo( fileInfo.path() ).fileName();
+	mDocument.clear();
+	mDomElement = mDocument.createElement( "project" );
+	setAttribute( "name", QString( "%1/%2" ).arg( parentDirName ).arg( fileInfo.fileName() ) ); // "directoryname/Makefile"
 	return true;
 }
 
 bool MakefileProjectItem::edit()
 {
-	MonkeyCore::fileManager()->openFile(fileName(), codec());
+	MonkeyCore::fileManager()->openFile( fileName(), codec() );
 	return false; /* not saved */
 }
 
-QString MakefileProjectItem::iconsPath() const
+DocumentFilterMap MakefileProjectItem::sourceFileNamePatterns() const
 {
-	return ":/pyqtitems";
-}
-
-Pair_String_StringList_List MakefileProjectItem::sourceFileNamePatterns() const
-{
-	return Pair_String_StringList_List();
+	return DocumentFilterMap();
 }

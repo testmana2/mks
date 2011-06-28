@@ -90,6 +90,8 @@ public:
 		bool HaveSettingsWidget; // plugin has settings widget
 		QPixmap Pixmap; // plugin icon
 		QString ApplicationVersionRequired; // the minimum mks version this plugin require, plugin must not enable itself if minimum version is not reached !
+		QStringList dependencies; // the plugin to enable as dependency for this plugin
+		QString iconsPath; // the path to access the plugin icons
 	};
 	
 	BasePlugin();

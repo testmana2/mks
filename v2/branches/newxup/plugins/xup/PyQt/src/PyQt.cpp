@@ -20,35 +20,37 @@
 
 #include <MonkeyCore.h>
 
-#include <QDir>
-
 void PyQt::fillPluginInfos()
 {
 	mPluginInfos.Caption = tr( "PyQt Project" );
 	mPluginInfos.Description = tr( "PyQt Project support for XUPManager" );
-	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>, Michon Aurelien aka aurelien <aurelien.french@gmail.com>";
+	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>";
 	mPluginInfos.Type = BasePlugin::iXUP;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = false;
+	mPluginInfos.dependencies << "Python";
+	mPluginInfos.iconsPath = ":/pyqtitems";
 }
 
 bool PyQt::install()
 {
-	// register phpqt item
-	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "PyQt Project" ), QStringList( "*.xpyqt" ) )
-		;
-		
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject, suffixes );
+	// register item
+	DocumentFilterMap filters;
+	int weight = 0;
 	
+	filters[ "PYQT_PROJECT" ].weight = weight++;
+	filters[ "PYQT_PROJECT" ].label = tr( "PyQt Project" );
+	filters[ "PYQT_PROJECT" ].filters << "*.xpyqt";
+	
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject, filters );
 	return true;
 }
 
 bool PyQt::uninstall()
 {
-	// unregister qmake item, unregistering auto delete the item
+	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
 	return true;
 }
