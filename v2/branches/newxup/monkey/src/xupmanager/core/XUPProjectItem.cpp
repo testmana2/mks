@@ -146,15 +146,36 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 			
 			if ( QDir::match( filter.filters, file ) ) {
 				XUPItem* variable = project->getVariable( scope, name );
+				bool exists = false;
 				
-				if ( !variable ) {
-					variable = scope->addChild( XUPItem::Variable );
-					variable->setAttribute( "name", name );
-					
+				if ( variable ) {
+					foreach ( XUPItem* item, variable->childrenList() ) {
+						switch ( item->type() ) {
+							case XUPItem::Value:
+							case XUPItem::File:
+							case XUPItem::Path:
+								exists = pMonkeyStudio::isSameFile( file, filePath( item->content() ) );
+								break;
+							
+							default:
+								break;
+						}
+						
+						if ( exists ) {
+							break;
+						}
+					}
 				}
 				
-				XUPItem* value = variable->addChild( XUPItem::File );
-				value->setContent( project->relativeFilePath( file ) );
+				if ( !exists ) {
+					if ( !variable ) {
+						variable = scope->addChild( XUPItem::Variable );
+						variable->setAttribute( "name", name );
+					}
+					
+					XUPItem* value = variable->addChild( XUPItem::File );
+					value->setContent( project->relativeFilePath( file ) );
+				}
 				
 				found = true;
 				break;
