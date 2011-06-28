@@ -263,11 +263,20 @@ QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
 
 QString XUPProjectItem::variableDisplayIcon( const QString& variableName ) const
 {
-	const QString icon = sourceFileNamePatterns().value( variableName ).icon;
-	return icon.isEmpty()
-		? QDir::cleanPath( QString( "%1/%2.png" ).arg( iconsPath() ).arg( variableName.toLower() ) )
-		: QDir::cleanPath( QString( "%1/%2" ).arg( iconsPath() ).arg( icon ) )
-		;
+	QString icon = sourceFileNamePatterns().value( variableName ).icon;
+	QString filePath;
+	
+	if ( icon.isEmpty() ) {
+		icon = QString( "%1.png" ).arg( variableName.toLower() );
+	}
+	
+	filePath = QString( "%1/%2" ).arg( iconsPath() ).arg( icon );
+	
+	if ( !QFile::exists( filePath ) ) {
+		filePath = QString( "%1/%2" ).arg( defaultIconsPath() ).arg( icon );
+	}
+	
+	return QDir::cleanPath( filePath );
 }
 
 XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive ) const

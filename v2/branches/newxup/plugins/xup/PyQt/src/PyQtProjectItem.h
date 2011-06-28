@@ -11,11 +11,10 @@ class PyQtProjectItem : public XUPProjectItem
 
 public:
 	Q_INVOKABLE PyQtProjectItem();
-	virtual QString projectType() const;
 	
+	virtual QString projectType() const;
 	virtual void installCommands();
 	virtual bool edit();
-	virtual QStringList filteredVariables() const;
 	
 protected:
 	virtual DocumentFilterMap sourceFileNamePatterns() const;
