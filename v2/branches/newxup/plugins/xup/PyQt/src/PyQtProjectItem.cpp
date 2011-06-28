@@ -64,19 +64,6 @@ bool PyQtProjectItem::edit()
 	return UIPyQtEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
-QStringList PyQtProjectItem::filteredVariables() const
-{
-	const DocumentFilterMap filters = sourceFileNamePatterns();
-	QMap<int, QString> variables;
-	
-	foreach ( const QString& name, filters.keys() ) {
-		const DocumentFilter& filter = filters[ name ];
-		variables.insertMulti( filter.weight, name );
-	}
-	
-	return variables.values();
-}
-
 DocumentFilterMap PyQtProjectItem::sourceFileNamePatterns() const
 {
 	DocumentFilterMap filters;

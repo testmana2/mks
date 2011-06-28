@@ -463,7 +463,7 @@ QIcon XUPItem::displayIcon() const
 	QString iconFilePath = pIconManager::filePath( iconFileName, project()->iconsPath() );
 	
 	if ( iconFilePath.isEmpty() ) {
-		iconFilePath = pIconManager::filePath( iconFileName, project()->XUPProjectItem::iconsPath() );
+		iconFilePath = pIconManager::filePath( iconFileName, project()->defaultIconsPath() );
 	}
 	
 	return pIconManager::icon( iconFilePath );
