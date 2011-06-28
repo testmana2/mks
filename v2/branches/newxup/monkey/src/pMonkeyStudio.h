@@ -26,6 +26,7 @@
 
 #include "workspace/pWorkspace.h"
 #include "workspace/pOpenedFileModel.h"
+#include "xupmanager/core/ProjectTypesIndex.h"
 
 #include <qsciscintilla.h>
 
@@ -53,6 +54,8 @@ namespace pMonkeyStudio
 #endif
 	};
 
+	Q_MONKEY_EXPORT QString buildFileDialogFilter( const QMap<QString, QStringList>& map, bool addAll, bool addSupported );
+	Q_MONKEY_EXPORT QString buildFileDialogFilter( const DocumentFilterMap& filters, bool addAll, bool addSupported );
 	Q_MONKEY_EXPORT bool isSameFile( const QString& left, const QString& right );
 
 	Q_MONKEY_EXPORT QStringList availableTextCodecs();

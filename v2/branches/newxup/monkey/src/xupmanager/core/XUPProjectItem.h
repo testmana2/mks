@@ -49,17 +49,31 @@ public:
 	/* return the list of all source files for this project
 	 * Defautl implementation returns empty list
 	 */
-	virtual QStringList sourceFiles() const;
+	QStringList sourceFiles() const;
 	// return the list of all source files for all projects from the root project
 	QStringList topLevelProjectSourceFiles() const;
+	
+	// return the xup plugin associated with this project
+	XUPPlugin* driver() const;
+	
+	/* When project is activated (selected as current), some plugins can be also enabled.
+	 * for example - PHP-Qt project will activate PHP interpreter plugin.
+	 * When project deselected - plugin will be disabled
+	 */
+	QStringList autoActivatePlugins() const;
+	
+	// return the project icons path
+	QString defaultIconsPath() const;
+	QString iconsPath() const;
+	
 	/* Add files to the project. 
 	 * Optional argument 'scope' allows to add files to the particular part of the project, 
 	 * not to the project root.
 	 * It allows, for example, to add files to the particular scope in the QMake projects (win32, !unix ...)
 	 */
-	virtual void addFiles( const QStringList& files, XUPItem* scope = NULL ) = 0;
+	virtual void addFiles( const QStringList& files, XUPItem* scope = 0 );
 	// Remove file, subproject, or other item
-	virtual void removeItem( XUPItem* item ) = 0;
+	virtual void removeItem( XUPItem* item );
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
 	// return the most toplevel project ( ie: the model root project )
@@ -69,9 +83,6 @@ public:
 	XUPProjectItem* rootIncludeProject() const;
 	// return children project recursively according to bool
 	XUPProjectItemList childrenProjects( bool recursive ) const;
-	
-	// return the project icons path
-	virtual QString iconsPath() const;
 	
 	// return the display text of a project variable name
 	virtual QString variableDisplayText( const QString& variableName ) const;
@@ -83,12 +94,12 @@ public:
 	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned
 	// if recursive is true, then the scan recurse in each item, else not
 	virtual XUPItemList getVariables( const XUPItem* root, const QString& variableName, bool recursive = true ) const;
-	// return first found variable with name. NULL returned, if not found
+	// return first found variable with name. 0 returned, if not found
 	virtual XUPItem* getVariable( const XUPItem* root, const QString& variableName) const;
 	// return the project datas as qstring
 	virtual QString toXml() const;
 	virtual QString toNativeString() const;
-		
+	
 	// return the project type id
 	virtual QString projectType() const = 0;
 	// open a project with codec
@@ -97,12 +108,6 @@ public:
 	virtual bool save();
 	// return the project target file, ie the binary / library file path, if allowToAskUser is set to true - user might be asked for it via doalog
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
-	
-	/* When project is activated (selected as current), some plugins can be also enabled.
-	 * for example - PHP-Qt project will activate PHP interpreter plugin.
-	 * When project deselected - plugin will be disabled
-	 */
-	virtual QStringList autoActivatePlugins() const;
 	
 	// install custom project actions in menus
 	virtual void installCommands();
@@ -135,7 +140,7 @@ protected:
 		("Python file", "*.py") ("Forms file", "*.ui")
 	   This info used for build file name filter for "Add files to the project" dialog (XUPProjectItem::sourceFileNameFilter())
 	 */
-	virtual Pair_String_StringList_List sourceFileNamePatterns() const = 0;
+	virtual DocumentFilterMap sourceFileNamePatterns() const = 0;
 	
 	QDomDocument mDocument;
 	/* Action pointers stored here for delete it, when current project changed */
@@ -144,6 +149,7 @@ protected:
 	QString mCodec;
 	QString mFileName;
 	QString mLastError;
+	
 protected slots:
 	/* Common handler for actions, which execute pCommand.
 	   Does few checks, then executes pCommand

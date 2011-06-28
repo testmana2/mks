@@ -29,11 +29,6 @@ class QMake : public XUPPlugin
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin XUPPlugin )
 
-protected:	
-	virtual void fillPluginInfos();
-	virtual bool install();
-	virtual bool uninstall();
-	
 public:
 	virtual QWidget* settingsWidget();
 	
@@ -41,6 +36,10 @@ public:
 
 protected:
 	static QPointer<QtVersionManager> mQtVersionManager;
+	
+	virtual void fillPluginInfos();
+	virtual bool install();
+	virtual bool uninstall();
 };
 
 #endif // QMAKE_H

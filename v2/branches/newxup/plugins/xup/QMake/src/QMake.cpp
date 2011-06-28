@@ -27,6 +27,16 @@
 
 QPointer<QtVersionManager> QMake::mQtVersionManager = 0;
 
+QWidget* QMake::settingsWidget()
+{
+	return new UISettingsQMake();
+}
+
+QtVersionManager* QMake::versionManager()
+{
+	return mQtVersionManager;
+}
+
 void QMake::fillPluginInfos()
 {
 	mPluginInfos.Caption = tr( "QMake Project" );
@@ -37,6 +47,12 @@ void QMake::fillPluginInfos()
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = true;
+	mPluginInfos.dependencies
+		<< "MSVCMake"
+		<< "GNUMake"
+		<< "BeaverDebugger"
+		;
+	mPluginInfos.iconsPath = ":/qmakeitems";
 }
 
 bool QMake::install()
@@ -44,34 +60,30 @@ bool QMake::install()
 	// create qt version manager
 	mQtVersionManager = new QtVersionManager( this );
 	
-	// register qmake item
-	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
-		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
+	// register item
+	DocumentFilterMap filters;
+	int weight = 0;
 	
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &QMakeProjectItem::staticMetaObject, suffixes );
-
+	filters[ "QMAKE_PROJECT" ].weight = weight++;
+	filters[ "QMAKE_PROJECT" ].label = tr( "Qt Project" );
+	filters[ "QMAKE_PROJECT" ].filters << "*.pro";
+	
+	filters[ "QMAKE_INCLUDE_PROJECT" ].weight = weight++;
+	filters[ "QMAKE_INCLUDE_PROJECT" ].label = tr( "Qt Include Project" );
+	filters[ "QMAKE_INCLUDE_PROJECT" ].filters << "*.pri";
+	
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &QMakeProjectItem::staticMetaObject, filters );
 	return true;
 }
 
 bool QMake::uninstall()
 {
-	// unregister qmake item, unregistering auto delete the item
+	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
 	// delete qt version manager
 	delete mQtVersionManager;
 	// return default value
 	return true;
-}
-
-QWidget* QMake::settingsWidget()
-{
-	return new UISettingsQMake();
-}
-
-QtVersionManager* QMake::versionManager()
-{
-	return mQtVersionManager;
 }
 
 Q_EXPORT_PLUGIN2( ProjectQMake, QMake )

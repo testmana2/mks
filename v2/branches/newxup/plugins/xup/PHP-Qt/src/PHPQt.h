@@ -20,15 +20,13 @@
 
 #include <XUPPlugin.h>
 
-#include <QPointer>
-
 class PHPQt : public XUPPlugin
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin XUPPlugin )
 
-protected:	
-	void fillPluginInfos();
+protected:
+	virtual void fillPluginInfos();
 	virtual bool install();
 	virtual bool uninstall();
 };

@@ -32,26 +32,10 @@
 	#define PLATFORM_TYPE_STRING "OTHERS_PLATFORM"
 #endif
 
-QHash<QString, QString> QMakeProjectItem::mVariableLabels;
-QHash<QString, QString> QMakeProjectItem::mVariableIcons;
-
-QStringList QMakeProjectItem::mFileVariables = QStringList( "FORMS" ) << "FORMS3" << "HEADERS"
-		<< "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
-		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE" << "SUBDIRS" << "OTHER_FILES";
-QStringList QMakeProjectItem::mPathVariables = QStringList( "INCLUDEPATH" ) << "DEPENDPATH"<< "VPATH";
-QStringList QMakeProjectItem::mFilteredVariables = QStringList() << "FORMS" << "FORMS3"
-		<< "HEADERS" << "SOURCES" << "OBJECTIVE_SOURCES" << "YACCSOURCES" << "LEXSOURCES"
-		<< "TRANSLATIONS" << "RESOURCES" << "RC_FILE" << "RES_FILE" << "DEF_FILE"
-		<< "INCLUDEPATH" << "DEPENDPATH" << "VPATH" << "LIBS" << "DEFINES" << "OTHER_FILES";
-
 
 QMakeProjectItem::QMakeProjectItem()
 	: XUPProjectItem()
 {
-	if (mVariableIcons.isEmpty()) // if not initialised
-	{
-		initHashes();
-	}
 }
 
 QMakeProjectItem::~QMakeProjectItem()
@@ -66,45 +50,6 @@ QString QMakeProjectItem::toNativeString() const
 QString QMakeProjectItem::projectType() const
 {
 	return PLUGIN_NAME;
-}
-
-void QMakeProjectItem::initHashes()
-{
-	mVariableLabels["FORMS"] = tr( "Forms Files" );
-	mVariableLabels["FORMS3"] = tr( "Forms 3 Files" );
-	mVariableLabels["HEADERS"] = tr( "Headers Files" );
-	mVariableLabels["SOURCES"] = tr( "Sources Files" );
-	mVariableLabels["OBJECTIVE_SOURCES"] = tr( "Objective Sources Files" );
-	mVariableLabels["TRANSLATIONS"] = tr( "Qt Translations Files" );
-	mVariableLabels["RESOURCES"] = tr( "Qt Resources Files" );
-	mVariableLabels["RC_FILE"] = tr( "Resources Files" );
-	mVariableLabels["RES_FILE"] = tr( "Compiled Resources Files" );
-	mVariableLabels["DEF_FILE"] = tr( "Definitions Files" );
-	mVariableLabels["SUBDIRS"] = tr( "Sub Projects" );
-	mVariableLabels["INCLUDEPATH"] = tr( "Includes Paths" );
-	mVariableLabels["DEPENDPATH"] = tr( "Depends Paths" );
-	mVariableLabels["VPATH"] = tr( "Virtuals Paths" );
-	mVariableLabels["LIBS"] = tr( "Libraries Files" );
-	mVariableLabels["DEFINES"] = tr( "Defines" );
-	mVariableLabels["OTHER_FILES"] = tr( "Other Files" );
-
-	mVariableIcons["FORMS"] = "forms.png";
-	mVariableIcons["FORMS3"] = "forms.png";
-	mVariableIcons["HEADERS"] = "headers.png";
-	mVariableIcons["SOURCES"] = "sources.png";
-	mVariableIcons["OBJECTIVE_SOURCES"] = "objective_sources.png";
-	mVariableIcons["TRANSLATIONS"] = "translations.png";
-	mVariableIcons["RESOURCES"] = "resources.png";
-	mVariableIcons["RC_FILE"] = "rc_file.png";
-	mVariableIcons["RES_FILE"] = "res_file.png";
-	mVariableIcons["DEF_FILE"] = "def_file.png";
-	mVariableIcons["SUBDIRS"] = "project.png";
-	mVariableIcons["INCLUDEPATH"] = "includepath.png";
-	mVariableIcons["DEPENDPATH"] = "dependpath.png";
-	mVariableIcons["VPATH"] = "vpath.png";
-	mVariableIcons["LIBS"] = "libs.png";
-	mVariableIcons["DEFINES"] = "defines.png";
-	mVariableIcons["OTHER_FILES"] = "file.png";
 }
 
 bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
@@ -534,123 +479,11 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 	return target;
 }
 
-QStringList QMakeProjectItem::sourceFiles() const
-{
-/* For PasNox this code is too QMake specific for be in XUPProjectItem. Moved to QMake
-   Not all projects has multiline variables, not all multiline variables must
-   be splitted, not all projects store source files list in the variables!!
-   Not all fileVariables() are source files 
-*/
-	QStringList files;
-
-	// get all variable that represent files
-	foreach ( const QString& variable, fileVariables() )
-	{
-		const QStringList values = splitMultiLineValue( mVariableCache.value( variable ) );
-
-		foreach ( const QString& value, values )
-		{
-			const QString file = filePath( value ); // no need content interpretation as its cached values
-			const QFileInfo fi( file );
-
-			if ( fi.isDir() )
-			{
-				continue;
-			}
-
-			files << file;
-		}
-	}
-	
-	// get dynamic files
-	/*XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<XUPProjectItem*>( this ), false );
-	
-	if ( dynamicFolderItem )
-	{
-		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
-		{
-			if ( valueItem->type() == XUPItem::File )
-			{
-				files << valueItem->attribute( "content" );
-			}
-		}
-	}*/
-	
-	return files;
-}
-
 void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
-	QHash <QString, QString> varNameForSuffix;
-	const QStringList cSuffixtes = pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
-	// HEADERS filters
-	foreach ( QString f, cSuffixtes )
-		if ( f.startsWith( "*.h", Qt::CaseInsensitive ) )
-			varNameForSuffix[f] = "HEADERS";
-	// SOURCES filters
-	foreach ( QString f, cSuffixtes )
-		if ( f.startsWith( "*.c", Qt::CaseInsensitive ) )
-			varNameForSuffix[f] = "SOURCES";
-	// YACC filters
-	foreach ( QString s, cSuffixtes )
-		if ( !varNameForSuffix.contains( s.replace( "c", "y", Qt::CaseInsensitive ) ) )
-			varNameForSuffix[s.replace( "c", "y", Qt::CaseInsensitive )] = "YACCSOURCES";
-	// LEX filters
-	QStringList lexSuffixes;
-	foreach ( QString s, cSuffixtes )
-		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !varNameForSuffix.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
-			varNameForSuffix[s.replace( "c", "l", Qt::CaseInsensitive )] = "LEXSOURCES";
-	// PROJECT filters
-	varNameForSuffix["*.pro"] = "SUBDIRS";
-	varNameForSuffix["*.m"] = "OBJECTIVE_SOURCES";
-	varNameForSuffix["*.mm"] = "OBJECTIVE_SOURCES";
-	varNameForSuffix["*.pro"] = "SUBDIRS";
-	varNameForSuffix["*.ui"] = "FORMS"; // FORMS3 ignored. Let's user edit his pro by text editor. It makes this code simpler
-	varNameForSuffix["*.ts"] = "TRANSLATIONS";
-	varNameForSuffix["*.qrc"] = "RESOURCES";
-	varNameForSuffix["*.def"] = "DEF_FILE";
-	varNameForSuffix["*.rc"] = "RC_FILE";
-	varNameForSuffix["*.res"] = "RES_FILE";
-	
-	
-	foreach ( const QString& file, files )
-	{
-		QString varName;
-		foreach(QString suff, varNameForSuffix.keys())
-		{
-			if ( QDir::match( suff, file ) )
-			{
-				varName = varNameForSuffix[suff];
-			}
-		}
-		if (! varName.isNull())
-		{
-			XUPItem* variable = getVariable( scope, varName );
-			if (NULL == variable)
-			{
-				variable = scope->addChild( XUPItem::Variable );
-				variable->setAttribute( "name", varName );
-				
-			}
-			
-			if (variable->attribute( "operator").isNull())
-			{
-				variable->setAttribute( "operator", "+=" );
-			}
-			variable->setAttribute( "multiline", "true" );
-			XUPItem* value = variable->addChild( XUPItem::File );
-			value->setContent( relativeFilePath( file ) );
-		}
-		else
-		{
-			setLastError("Don't know how to add file " + file);
-			return;
-		}
-	}
-	
-	// rebuild cache
+	XUPProjectItem::addFiles( files, scope );
 	rebuildCache();
-	qobject_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
+	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
 }
 
 void QMakeProjectItem::removeItem( XUPItem* item )
@@ -665,27 +498,6 @@ void QMakeProjectItem::removeItem( XUPItem* item )
 	// rebuild cache
 	rebuildCache();
 	qobject_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
-}
-
-QStringList QMakeProjectItem::autoActivatePlugins() const
-{
-	QStringList res;
-
-	QtVersionManager* manager = QMake::versionManager();
-	const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
-	if ( version.isValid() &&
-		 version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ))
-	{
-		res << "MSVCMake";
-	}
-	else
-	{
-		res << "GNUMake";
-	}
-	
-	res << "BeaverDebugger";
-	
-	return res;
 }
 
 void QMakeProjectItem::installCommands()
@@ -1266,88 +1078,78 @@ CLIToolPlugin* QMakeProjectItem::builder() const
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, name );
 }
 
-Pair_String_StringList_List QMakeProjectItem::sourceFileNamePatterns() const
+DocumentFilterMap QMakeProjectItem::sourceFileNamePatterns() const
 {
-	const Pair_String_StringList_List mSuffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "Qt Project" ), QStringList( "*.pro" ) )
-		<< qMakePair( tr( "Qt Include Project" ), QStringList( "*.pri" ) );
-
-	const QStringList cf = pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
-	// HEADERS filters
-	QStringList hf;
-	foreach ( QString f, cf )
-		if ( f.startsWith( "*.h", Qt::CaseInsensitive ) )
-			hf << f;
-	// SOURCES filters
-	QStringList sf;
-	foreach ( QString f, cf )
-		if ( f.startsWith( "*.c", Qt::CaseInsensitive ) )
-			sf << f;
-	// YACC filters
-	QStringList yf;
-	foreach ( QString s, sf )
-		if ( !yf.contains( s.replace( "c", "y", Qt::CaseInsensitive ) ) )
-			yf << s;
-	// LEX filters
-	QStringList lf;
-	foreach ( QString s, sf )
-		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !lf.contains( s.replace( "c", "l", Qt::CaseInsensitive ) ) )
-			lf << s;
-	// PROJECT filters
-	QStringList pjf;
-	foreach ( const Pair_String_StringList& p, mSuffixes )
-		pjf << p.second;
-	// Variable suffixes
-	const Pair_String_StringList_List sourceFileNamePatterns = Pair_String_StringList_List()
-		<< qMakePair( tr( "Headers" ), hf )
-		<< qMakePair( tr( "Sources" ), sf )
-		<< qMakePair( tr( "YACC sources" ), yf )
-		<< qMakePair( tr( "LEX sources" ), lf )
-		<< qMakePair( tr( "Objective sources" ), QStringList( "*.m" ) << "*.mm" )
-		<< qMakePair( tr( "Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( tr( "Qt3 Forms" ), QStringList( "*.ui" ) )
-		<< qMakePair( tr( "Translations" ), QStringList( "*.ts" ) )
-		<< qMakePair( tr( "Resources" ), QStringList( "*.qrc" ) )
-		<< qMakePair( tr( "Definition files" ), QStringList( "*.def" ) )
-		<< qMakePair( tr( "Resources files" ), QStringList( "*.rc" ) )
-		<< qMakePair( tr( "Compiled resources files" ), QStringList( "*.res" ) )
-		<< qMakePair( tr( "Projects" ), pjf );
+	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
+	DocumentFilterMap filters;
 	
-	return sourceFileNamePatterns;
-}
-
-QStringList QMakeProjectItem::fileVariables()
-{
-	return mFileVariables;
-}
-
-QStringList QMakeProjectItem::pathVariables()
-{
-	return mPathVariables;
-}
-
-QStringList QMakeProjectItem::filteredVariables() const
-{
-	return mFilteredVariables;
-}
-
-QString QMakeProjectItem::iconsPath() const
-{
-	return ":/qmakeitems";
+	foreach ( const QString& name, qmFilters.keys() ) {
+		const QMakeDocumentFilter& filter = qmFilters[ name ];
+		
+		if ( filter.type == QMakeDocumentFilter::File ) {
+			filters[ name ] = filter;
+		}
+	}
+	
+	return filters;
 }
 
 QString QMakeProjectItem::variableDisplayText( const QString& variableName ) const
 {
-	return mVariableLabels.value( variableName, XUPProjectItem::variableDisplayText( variableName ) );
+	const QString text = QMake2XUP::qmakeFilters().value( variableName ).label;
+	return text.isEmpty() ? XUPProjectItem::variableDisplayText( variableName ) : text;
 }
 
 QString QMakeProjectItem::variableDisplayIcon( const QString& variableName ) const
 {
-	const QString iconFilePath = mVariableIcons.value( variableName );
+	const QString icon = QMake2XUP::qmakeFilters().value( variableName ).icon;
+	return icon.isEmpty() ? XUPProjectItem::variableDisplayIcon( variableName ) : QDir::cleanPath( QString( "%1/%2" ).arg( iconsPath() ).arg( icon ) );
+}
+
+QStringList QMakeProjectItem::filteredVariables() const
+{
+	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
+	QMap<int, QString> variables;
 	
-	if ( iconFilePath.isEmpty() ) {
-		return XUPProjectItem::variableDisplayIcon( variableName );
+	foreach ( const QString& name, qmFilters.keys() ) {
+		const QMakeDocumentFilter& filter = qmFilters[ name ];
+		
+		if ( filter.filtered ) {
+			variables.insertMulti( filter.weight, name );
+		}
 	}
 	
-	return QDir::cleanPath( QString( "%1/%2" ).arg( iconsPath() ).arg( iconFilePath ) );
+	return variables.values();
+}
+
+QStringList QMakeProjectItem::fileVariables()
+{
+	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
+	QStringList variables;
+	
+	foreach ( const QString& name, qmFilters.keys() ) {
+		const QMakeDocumentFilter& filter = qmFilters[ name ];
+		
+		if ( filter.type == QMakeDocumentFilter::File ) {
+			variables << name;
+		}
+	}
+	
+	return variables;
+}
+
+QStringList QMakeProjectItem::pathVariables()
+{
+	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
+	QStringList variables;
+	
+	foreach ( const QString& name, qmFilters.keys() ) {
+		const QMakeDocumentFilter& filter = qmFilters[ name ];
+		
+		if ( filter.type == QMakeDocumentFilter::Path ) {
+			variables << name;
+		}
+	}
+	
+	return variables;
 }

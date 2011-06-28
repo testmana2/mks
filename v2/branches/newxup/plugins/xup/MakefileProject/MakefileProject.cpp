@@ -32,23 +32,24 @@ void MakefileProject::fillPluginInfos()
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = false;
+	mPluginInfos.dependencies << "GNUMake";
+	mPluginInfos.iconsPath = ":/pyqtitems";
 }
 
 bool MakefileProject::install()
 {
-	// register phpqt item
-	const Pair_String_StringList_List suffixes = Pair_String_StringList_List()
-		<< qMakePair( tr( "Makefile Project" ), QStringList( "*Makefile*" ) )
-		;
-		
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject, suffixes );
+	// register item
+	DocumentFilterMap filters;
+	filters[ "MAKEFILE_PROJECTS" ].label = tr( "Makefile Project" );
+	filters[ "MAKEFILE_PROJECTS" ].filters << "*Makefile*";
 	
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject, filters );
 	return true;
 }
 
 bool MakefileProject::uninstall()
 {
-	// unregister qmake item, unregistering auto delete the item
+	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
 	return true;
 }
