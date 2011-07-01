@@ -120,7 +120,9 @@ QString pMonkeyStudio::buildFileDialogFilter( const DocumentFilterMap& filters, 
 	foreach ( const QString& name, filters.keys() ) {
 		const DocumentFilter& filter = filters[ name ];
 		
-		map[ filter.label ] = filter.filters;
+		if ( filter.type == DocumentFilter::File ) {
+			map[ filter.label ] = filter.filters;
+		}
 	}
 	
 	return buildFileDialogFilter( map, addAll, addSupported );

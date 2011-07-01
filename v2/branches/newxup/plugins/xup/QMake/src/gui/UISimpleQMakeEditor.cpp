@@ -90,7 +90,7 @@ void UISimpleQMakeEditor::updateValuesEditorVariables()
 
 void UISimpleQMakeEditor::updateValuesEditorValues( const QString& variable )
 {
-	const QStringList values = dynamic_cast<QMakeProjectItem*>(mProject)->splitMultiLineValue( mValues[ variable ] );
+	const QStringList values = mProject->documentFilters().splitValue( mValues[ variable ] );
 	
 	lwOthersValues->clear();
 	lwOthersValues->addItems( values );
@@ -105,7 +105,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	mProject = dynamic_cast<QMakeProjectItem*>( project );
 	mValues.clear();
 	mManagedVariables.clear();
-	mManagedVariables << "TEMPLATE" << "CONFIG" << "TARGET" << "DESTDIR" << "DLLDESTDIR" << "QT" << QMakeProjectItem::fileVariables();
+	mManagedVariables << "TEMPLATE" << "CONFIG" << "TARGET" << "DESTDIR" << "DLLDESTDIR" << "QT" << project->documentFilters().fileVariables();
 	
 	foreach ( QAbstractButton* ab, wCompilerSettings->findChildren<QAbstractButton*>() )
 	{
@@ -207,7 +207,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	}
 	
 	// update gui
-	config = dynamic_cast<QMakeProjectItem*>(project)->splitMultiLineValue( mValues[ "CONFIG" ] );
+	config = project->documentFilters().splitValue( mValues[ "CONFIG" ] );
 	
 	// project
 	value = mValues[ "TEMPLATE" ];
@@ -259,7 +259,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	}
 	
 	// modules
-	values = dynamic_cast<QMakeProjectItem*>(project)->splitMultiLineValue( mValues[ "QT" ] );
+	values = project->documentFilters().splitValue( mValues[ "QT" ] );
 	for ( int i = 0; i < lwQtModules->count(); i++ )
 	{
 		QListWidgetItem* item = lwQtModules->item( i );
@@ -673,6 +673,9 @@ void UISimpleQMakeEditor::on_tbOthersValuesClear_clicked()
 
 void UISimpleQMakeEditor::accept()
 {
+	const DocumentFilterMap filters = mProject->documentFilters();
+	const QStringList fileVariables = filters.fileVariables();
+	const QStringList pathVariables = filters.pathVariables();
 	QString plugin;
 	QString tmplate;
 	QStringList config;
@@ -787,7 +790,7 @@ void UISimpleQMakeEditor::accept()
 	on_lwOthersVariables_currentItemChanged( curItem, curItem );
 	
 	// custom configuration
-	config << dynamic_cast<QMakeProjectItem*>(mProject)->splitMultiLineValue( leCustomConfig->text() );
+	config << filters.splitValue( leCustomConfig->text() );
 	
 	mValues[ "TEMPLATE" ] = tmplate;
 	mValues[ "CONFIG" ] = config.join( " " );
@@ -813,12 +816,12 @@ void UISimpleQMakeEditor::accept()
 		
 		if ( !isEmpty )
 		{
-			if ( QMakeProjectItem::fileVariables().contains( variable ) || QMakeProjectItem::pathVariables().contains( variable ) )
+			if ( fileVariables.contains( variable ) || pathVariables.contains( variable ) )
 			{
 				// get child type
-				XUPItem::Type type = QMakeProjectItem::fileVariables().contains( variable ) ? XUPItem::File : XUPItem::Path;
+				XUPItem::Type type = fileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
 				// get values
-				QStringList values = dynamic_cast<QMakeProjectItem*>(mProject)->splitMultiLineValue( mValues[ variable ] );
+				QStringList values = filters.splitValue( mValues[ variable ] );
 				
 				// update variable
 				variableItem->setAttribute( "operator", "+=" );

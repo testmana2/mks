@@ -31,18 +31,33 @@ void PHPQt::fillPluginInfos()
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = false;
 	mPluginInfos.dependencies << "PHP";
-	mPluginInfos.iconsPath = ":/phpqtitems";
 }
 
 bool PHPQt::install()
 {
 	// register item
-	DocumentFilterMap filters;
+	DocumentFilterMap filters( ":/phpqtitems" );
 	int weight = 0;
 	
-	filters[ "PHPQT_PROJECTS" ].weight = weight++;
-	filters[ "PHPQT_PROJECTS" ].label = tr( "PHP-Qt Project" );
-	filters[ "PHPQT_PROJECTS" ].filters << "*.xphpqt";
+	filters[ "PROJECT" ].weight = weight++;
+	filters[ "PROJECT" ].label = tr( "PHP-Qt Project" );
+	filters[ "PROJECT" ].icon = "project.png";
+	filters[ "PROJECT" ].type = DocumentFilter::Project;
+	filters[ "PROJECT" ].filters << "*.xphpqt";
+	
+	filters[ "FORMS" ].weight = weight++;
+	filters[ "FORMS" ].label = tr( "Qt Forms" );
+	filters[ "FORMS" ].icon = "forms.png";
+	filters[ "FORMS" ].type = DocumentFilter::File;
+	filters[ "FORMS" ].filters << "*.ui";
+	filters[ "FORMS" ].filtered = true;
+	
+	filters[ "PHP_FILES" ].weight = weight++;
+	filters[ "PHP_FILES" ].label = tr( "PHP Files" );
+	filters[ "PHP_FILES" ].icon = "php.png";
+	filters[ "PHP_FILES" ].type = DocumentFilter::File;
+	filters[ "PHP_FILES" ].filters << "*.php*";
+	filters[ "PHP_FILES" ].filtered = true;
 	
 	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PHPQtProjectItem::staticMetaObject, filters );
 	return true;

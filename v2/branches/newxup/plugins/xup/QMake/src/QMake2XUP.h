@@ -5,26 +5,8 @@
 
 #include <pMonkeyStudio.h>
 
-class QMakeDocumentFilter : public DocumentFilter
-{
-public:
-	typedef QMap<QString, QMakeDocumentFilter> Map;
-	
-	enum Type {
-		Other = 0,
-		File,
-		Path
-	};
-	
-	QMakeDocumentFilter();
-	
-	Type type;
-	bool filtered;
-};
-
 namespace QMake2XUP
 {
-	QMakeDocumentFilter::Map qmakeFilters();
 	QString convertFromPro( const QString& fileName, const QString& codec );
 	QString convertToPro( const QDomDocument& project );
 	

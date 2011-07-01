@@ -18,21 +18,54 @@ class XUPProjectItem;
 
 struct DocumentFilter
 {
-	DocumentFilter( int weight = -1, const QString& label = QString::null, const QString& icon = QString::null, const QStringList& filters = QStringList() )
+	enum Type {
+		Standard = 0,
+		Project,
+		File,
+		Path
+	};
+	
+	DocumentFilter( const DocumentFilter::Type& type = DocumentFilter::Standard )
 	{
-		this->weight = weight;
-		this->label = label;
-		this->icon = icon;
-		this->filters = filters;
+		this->type = type;
+		filtered = false;
+		weight = -1;
 	}
 	
-	int weight; // the weight is sued for sorting items in model
+	Type type;
+	bool filtered;
+	int weight; // the weight is used for sorting items in model
 	QString label;
 	QString icon;
 	QStringList filters;
 };
 
-typedef QMap<QString, DocumentFilter> DocumentFilterMap; // filter name, filter
+class DocumentFilterMap : public QMap<QString, DocumentFilter> // filter name, filter
+{
+public:
+	DocumentFilterMap( const QString& iconsPath = QString::null );
+	// return the display text of a project variable name. Used by XUPItem::displayText()
+	virtual QString variableDisplayText( const QString& variableName ) const;
+	// return the display icon name of a project variable name. Used by XUPItem::displayIcon()
+	virtual QString variableDisplayIcon( const QString& variableName ) const;
+	// return a splited value
+	virtual QStringList splitValue( const QString& value ) const;
+	// return the default icons path
+	QString defaultIconsPath() const;
+	// return the document icons path
+	QString iconsPath() const;
+	// return a QFileDialog filter from the File filters
+	QString sourceFileNameFilter() const;
+	// return the filtered variables ( the ones visible in the project tree )
+	QStringList filteredVariables() const;
+	// return the file based variables
+	QStringList fileVariables() const;
+	// return the file based variables
+	QStringList pathVariables() const;
+
+protected:
+	QString mIconsPath;
+};
 
 class Q_MONKEY_EXPORT ProjectTypesIndex: public QObject
 {
@@ -48,7 +81,7 @@ public:
 	void unRegisterType( const QString& projectType );
 	
 	// return the registered filters for project type
-	DocumentFilterMap typeFilters( const QString& projectType ) const;
+	DocumentFilterMap documentFilters( const QString& projectType ) const;
 	
 	// check if filename matches to some project type
 	bool fileIsAProject( const QString& fileName ) const;

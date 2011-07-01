@@ -61,25 +61,8 @@ void PHPQtProjectItem::installCommands()
 
 bool PHPQtProjectItem::edit()
 {
+	#warning FIX ME: use UIXUPEditor
 	return UIPHPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
-}
-
-DocumentFilterMap PHPQtProjectItem::sourceFileNamePatterns() const
-{
-	DocumentFilterMap filters;
-	int weight = 0;
-	
-	filters[ "FORMS" ].weight = weight++;
-	filters[ "FORMS" ].label = tr( "Qt Forms" );
-	filters[ "FORMS" ].icon = "forms.png";
-	filters[ "FORMS" ].filters << "*.ui";
-	
-	filters[ "PHP_FILES" ].weight = weight++;
-	filters[ "PHP_FILES" ].label = tr( "PHP Files" );
-	filters[ "PHP_FILES" ].icon = "php.png";
-	filters[ "PHP_FILES" ].filters << "*.php*";
-	
-	return filters;
 }
 
 CLIToolPlugin* PHPQtProjectItem::interpreter() const

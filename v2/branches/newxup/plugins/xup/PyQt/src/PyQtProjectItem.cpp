@@ -61,25 +61,8 @@ void PyQtProjectItem::installCommands()
 
 bool PyQtProjectItem::edit()
 {
+	#warning FIX ME: use UIXUPEditor
 	return UIPyQtEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
-}
-
-DocumentFilterMap PyQtProjectItem::sourceFileNamePatterns() const
-{
-	DocumentFilterMap filters;
-	int weight = 0;
-	
-	filters[ "FORMS" ].weight = weight++;
-	filters[ "FORMS" ].label = tr( "Qt Forms" );
-	filters[ "FORMS" ].icon = "forms.png";
-	filters[ "FORMS" ].filters << "*.ui";
-	
-	filters[ "PYTHON_FILES" ].weight = weight++;
-	filters[ "PYTHON_FILES" ].label = tr( "Python Files" );
-	filters[ "PYTHON_FILES" ].icon = "python.png";
-	filters[ "PYTHON_FILES" ].filters << "*.py*";
-	
-	return filters;
 }
 
 CLIToolPlugin* PyQtProjectItem::interpreter() const

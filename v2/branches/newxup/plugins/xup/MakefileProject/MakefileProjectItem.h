@@ -18,9 +18,6 @@ public:
 	virtual void removeItem( XUPItem* item );
 	virtual bool open( const QString& fileName, const QString& codec );
 	virtual bool edit();
-	
-protected:
-	virtual DocumentFilterMap sourceFileNamePatterns() const;
 };
 
 #endif // MakefileProjectItem_H

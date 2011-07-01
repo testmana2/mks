@@ -172,7 +172,7 @@ pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allow
 		XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
 		QString caption = tr( "Choose file(s) to add to your project" );
 		QString dir = pMonkeyStudio::defaultProjectsDirectory();
-		QString filter = curProject->sourceFileNameFilter();
+		QString filter = curProject->documentFilters().sourceFileNameFilter();
 		bool enabledTextCodec = false;
 		
 		MkSFileDialog fd( parent );
@@ -201,7 +201,7 @@ pFileDialogResult MkSFileDialog::getNewEditorFile( QWidget* parent )
 	XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
 	QString caption = tr( "New File Name..." );
 	QString dir = pMonkeyStudio::defaultProjectsDirectory();
-	QString filter = curProject ? curProject->sourceFileNameFilter() : pMonkeyStudio::availableFilesFilters();
+	QString filter = curProject ? curProject->documentFilters().sourceFileNameFilter() : pMonkeyStudio::availableFilesFilters();
 	bool enabledTextCodec = true;
 	
 	MkSFileDialog fd( parent );
