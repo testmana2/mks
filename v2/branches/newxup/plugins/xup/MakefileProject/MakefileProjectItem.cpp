@@ -87,8 +87,3 @@ bool MakefileProjectItem::edit()
 	MonkeyCore::fileManager()->openFile( fileName(), codec() );
 	return false; /* not saved */
 }
-
-DocumentFilterMap MakefileProjectItem::sourceFileNamePatterns() const
-{
-	return DocumentFilterMap();
-}

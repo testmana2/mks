@@ -64,12 +64,12 @@ QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
 
 QStringList XUPProjectItem::sourceFiles() const
 {
-	QStringList entries;
+	QSet<QString> entries;
 	
-	foreach ( const QString& name, sourceFileNamePatterns().keys() ) {
-		XUPItem* variable = getVariable( this, name );
+	foreach ( const QString& name, documentFilters().fileVariables() ) {
+		XUPItemList variables = getVariables( this, name );
 		
-		if ( variable ) {
+		foreach ( XUPItem* variable, variables ) {
 			foreach( XUPItem* item, variable->childrenList() ) {
 				if ( item->type() == XUPItem::File ) {
 					entries << filePath( item->content() );
@@ -92,7 +92,7 @@ QStringList XUPProjectItem::sourceFiles() const
 		}
 	}*/
 	
-	return entries;
+	return entries.toList();
 }
 
 QStringList XUPProjectItem::topLevelProjectSourceFiles() const
@@ -122,19 +122,9 @@ QStringList XUPProjectItem::autoActivatePlugins() const
 	return driver()->infos().dependencies;
 }
 
-QString XUPProjectItem::defaultIconsPath() const
-{
-	return ":/items";
-}
-
-QString XUPProjectItem::iconsPath() const
-{
-	return driver()->infos().iconsPath;
-}
-
 void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
-	const DocumentFilterMap filters = sourceFileNamePatterns();
+	const DocumentFilterMap filters = documentFilters();
 	QStringList notImported;
 	XUPProjectItem* project = scope->project();
 	
@@ -274,30 +264,6 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 	}
 
 	return projects.values();
-}
-
-QString XUPProjectItem::variableDisplayText( const QString& variableName ) const
-{
-	const QString text = sourceFileNamePatterns().value( variableName ).label;
-	return text.isEmpty() ? variableName : text;
-}
-
-QString XUPProjectItem::variableDisplayIcon( const QString& variableName ) const
-{
-	QString icon = sourceFileNamePatterns().value( variableName ).icon;
-	QString filePath;
-	
-	if ( icon.isEmpty() ) {
-		icon = QString( "%1.png" ).arg( variableName.toLower() );
-	}
-	
-	filePath = QString( "%1/%2" ).arg( iconsPath() ).arg( icon );
-	
-	if ( !QFile::exists( filePath ) ) {
-		filePath = QString( "%1/%2" ).arg( defaultIconsPath() ).arg( icon );
-	}
-	
-	return QDir::cleanPath( filePath );
 }
 
 XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive ) const
@@ -505,22 +471,9 @@ QString XUPProjectItem::codec() const
 		return pMonkeyStudio::defaultCodec();
 }
 
-QString XUPProjectItem::sourceFileNameFilter() const
+DocumentFilterMap XUPProjectItem::documentFilters() const
 {
-	return pMonkeyStudio::buildFileDialogFilter( sourceFileNamePatterns(), true, true );
-}
-
-QStringList XUPProjectItem::filteredVariables() const
-{
-	const DocumentFilterMap filters = sourceFileNamePatterns();
-	QMap<int, QString> variables;
-	
-	foreach ( const QString& name, filters.keys() ) {
-		const DocumentFilter& filter = filters[ name ];
-		variables.insertMulti( filter.weight, name );
-	}
-	
-	return variables.values();
+	return MonkeyCore::projectTypesIndex()->documentFilters( projectType() );
 }
 
 void XUPProjectItem::internal_projectCustomActionTriggered()

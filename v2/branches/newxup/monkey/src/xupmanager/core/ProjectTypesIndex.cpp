@@ -1,9 +1,136 @@
 #include "ProjectTypesIndex.h"
 #include "XUPProjectItem.h"
 #include "pIconManager.h"
+#include "pMonkeyStudio.h"
 
 #include <QDir>
 #include <QDebug>
+
+DocumentFilterMap::DocumentFilterMap( const QString& iconsPath )
+{
+	mIconsPath = iconsPath;
+}
+
+QString DocumentFilterMap::variableDisplayText( const QString& variableName ) const
+{
+	const QString text = value( variableName ).label;
+	return text.isEmpty() ? variableName : text;
+}
+
+QString DocumentFilterMap::variableDisplayIcon( const QString& variableName ) const
+{
+	QString icon = value( variableName ).icon;
+	QString filePath;
+	
+	if ( icon.isEmpty() ) {
+		icon = QString( "%1.png" ).arg( variableName.toLower() );
+	}
+	
+	filePath = QString( "%1/%2" ).arg( iconsPath() ).arg( icon );
+	
+	if ( !QFile::exists( filePath ) ) {
+		filePath = QString( "%1/%2" ).arg( defaultIconsPath() ).arg( icon );
+	}
+	
+	return QDir::cleanPath( filePath );
+}
+
+QStringList DocumentFilterMap::splitValue( const QString& value ) const
+{
+	//return value.split( " " );
+	QStringList tmpValues = value.split( " ", QString::SkipEmptyParts );
+	bool inStr = false;
+	QStringList multivalues;
+	QString ajout;
+
+	for ( int ku = 0; ku < tmpValues.size(); ku++ ) {
+		if ( tmpValues.value( ku ).startsWith( '"' ) ) {
+			inStr = true;
+		}
+		
+		if ( inStr ) {
+			if( ajout != "" ) {
+				ajout += " ";
+			}
+			
+			ajout += tmpValues.value( ku );
+			
+			if ( tmpValues.value( ku ).endsWith('"') ) {
+					multivalues += ajout;
+					ajout = "";
+					inStr = false;
+			}
+		}
+		else {
+			multivalues += tmpValues.value( ku );
+		}
+	}
+
+	return multivalues;
+}
+
+QString DocumentFilterMap::defaultIconsPath() const
+{
+	return ":/items";
+}
+
+QString DocumentFilterMap::iconsPath() const
+{
+	return mIconsPath;
+}
+
+QString DocumentFilterMap::sourceFileNameFilter() const
+{
+	return pMonkeyStudio::buildFileDialogFilter( *this, true, true );
+}
+
+QStringList DocumentFilterMap::filteredVariables() const
+{
+	QMap<int, QString> variables;
+	
+	foreach ( const QString& name, keys() ) {
+		const DocumentFilter& filter = (*this)[ name ];
+		
+		if ( filter.filtered ) {
+			// use insert multi in case on many variable with same weight, ie: all are -1 weight.
+			variables.insertMulti( filter.weight, name );
+		}
+	}
+	
+	return variables.values();
+}
+
+QStringList DocumentFilterMap::fileVariables() const
+{
+	QMap<int, QString> variables;
+	
+	foreach ( const QString& name, keys() ) {
+		const DocumentFilter& filter = (*this)[ name ];
+		
+		if ( filter.type == DocumentFilter::File ) {
+			// use insert multi in case on many variable with same weight, ie: all are -1 weight.
+			variables.insertMulti( filter.weight, name );
+		}
+	}
+	
+	return variables.values();
+}
+
+QStringList DocumentFilterMap::pathVariables() const
+{
+	QMap<int, QString> variables;
+	
+	foreach ( const QString& name, keys() ) {
+		const DocumentFilter& filter = (*this)[ name ];
+		
+		if ( filter.type == DocumentFilter::Path ) {
+			// use insert multi in case on many variable with same weight, ie: all are -1 weight.
+			variables.insertMulti( filter.weight, name );
+		}
+	}
+	
+	return variables.values();
+}
 
 ProjectTypesIndex::ProjectTypesIndex( QObject* parent )
 	: QObject( parent )
@@ -22,7 +149,7 @@ void ProjectTypesIndex::unRegisterType( const QString& projectType )
 	mFilters.remove( projectType );
 }
 
-DocumentFilterMap ProjectTypesIndex::typeFilters( const QString& projectType ) const
+DocumentFilterMap ProjectTypesIndex::documentFilters( const QString& projectType ) const
 {
 	return mFilters.value( projectType );
 }

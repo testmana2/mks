@@ -61,7 +61,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 	{
 		if ( cit->type() == XUPItem::File )
 		{
-			QStringList cacheFns = splitMultiLineValue( interpretContent( cit->content() ) );
+			QStringList cacheFns = documentFilters().splitValue( interpretContent( cit->content() ) );
 			
 			foreach ( QString cacheFn, cacheFns )
 			{
@@ -488,16 +488,9 @@ void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 
 void QMakeProjectItem::removeItem( XUPItem* item )
 {
-	XUPItem* variable = item->parent();
-	variable->removeChild(item);
-	if (0 == variable->childCount())
-	{
-		variable->parent()->removeChild(variable);
-	}
-	
-	// rebuild cache
+	XUPProjectItem::removeItem( item );
 	rebuildCache();
-	qobject_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
+	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
 }
 
 void QMakeProjectItem::installCommands()
@@ -507,7 +500,7 @@ void QMakeProjectItem::installCommands()
 		
 	// config variable
 	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
-	QStringList config = splitMultiLineValue( riProject->mVariableCache.value( "CONFIG" ) );
+	QStringList config = documentFilters().splitValue( riProject->mVariableCache.value( "CONFIG" ) );
 	bool haveDebug = config.contains( "debug" );
 	bool haveRelease = config.contains( "release" );
 	bool haveDebugRelease = config.contains( "debug_and_release" );
@@ -1014,7 +1007,7 @@ void QMakeProjectItem::addProjectSettingsValue( const QString& variable, const Q
 	addProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) );
 }
 
-QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
+/*QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
 {
 	QStringList tmpValues = value.split( " ", QString::SkipEmptyParts );
 	bool inStr = false;
@@ -1044,7 +1037,7 @@ QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
 	}
 
 	return multivalues;
-}
+}*/
 
 bool QMakeProjectItem::edit()
 {
@@ -1076,80 +1069,4 @@ CLIToolPlugin* QMakeProjectItem::builder() const
 	}
 	
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, name );
-}
-
-DocumentFilterMap QMakeProjectItem::sourceFileNamePatterns() const
-{
-	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
-	DocumentFilterMap filters;
-	
-	foreach ( const QString& name, qmFilters.keys() ) {
-		const QMakeDocumentFilter& filter = qmFilters[ name ];
-		
-		if ( filter.type == QMakeDocumentFilter::File ) {
-			filters[ name ] = filter;
-		}
-	}
-	
-	return filters;
-}
-
-QString QMakeProjectItem::variableDisplayText( const QString& variableName ) const
-{
-	const QString text = QMake2XUP::qmakeFilters().value( variableName ).label;
-	return text.isEmpty() ? XUPProjectItem::variableDisplayText( variableName ) : text;
-}
-
-QString QMakeProjectItem::variableDisplayIcon( const QString& variableName ) const
-{
-	const QString icon = QMake2XUP::qmakeFilters().value( variableName ).icon;
-	return icon.isEmpty() ? XUPProjectItem::variableDisplayIcon( variableName ) : QDir::cleanPath( QString( "%1/%2" ).arg( iconsPath() ).arg( icon ) );
-}
-
-QStringList QMakeProjectItem::filteredVariables() const
-{
-	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
-	QMap<int, QString> variables;
-	
-	foreach ( const QString& name, qmFilters.keys() ) {
-		const QMakeDocumentFilter& filter = qmFilters[ name ];
-		
-		if ( filter.filtered ) {
-			variables.insertMulti( filter.weight, name );
-		}
-	}
-	
-	return variables.values();
-}
-
-QStringList QMakeProjectItem::fileVariables()
-{
-	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
-	QStringList variables;
-	
-	foreach ( const QString& name, qmFilters.keys() ) {
-		const QMakeDocumentFilter& filter = qmFilters[ name ];
-		
-		if ( filter.type == QMakeDocumentFilter::File ) {
-			variables << name;
-		}
-	}
-	
-	return variables;
-}
-
-QStringList QMakeProjectItem::pathVariables()
-{
-	const QMakeDocumentFilter::Map qmFilters = QMake2XUP::qmakeFilters();
-	QStringList variables;
-	
-	foreach ( const QString& name, qmFilters.keys() ) {
-		const QMakeDocumentFilter& filter = qmFilters[ name ];
-		
-		if ( filter.type == QMakeDocumentFilter::Path ) {
-			variables << name;
-		}
-	}
-	
-	return variables;
 }

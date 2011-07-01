@@ -33,15 +33,19 @@ void MakefileProject::fillPluginInfos()
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = false;
 	mPluginInfos.dependencies << "GNUMake";
-	mPluginInfos.iconsPath = ":/pyqtitems";
 }
 
 bool MakefileProject::install()
 {
 	// register item
-	DocumentFilterMap filters;
-	filters[ "MAKEFILE_PROJECTS" ].label = tr( "Makefile Project" );
-	filters[ "MAKEFILE_PROJECTS" ].filters << "*Makefile*";
+	DocumentFilterMap filters( ":/makefileitems" );
+	int weight = 0;
+	
+	filters[ "PROJECT" ].weight = weight++;
+	filters[ "PROJECT" ].label = tr( "Makefile Project" );
+	filters[ "PROJECT" ].icon = "project.png";
+	filters[ "PROJECT" ].type = DocumentFilter::Project;
+	filters[ "PROJECT" ].filters << "*Makefile*";
 	
 	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject, filters );
 	return true;

@@ -17,8 +17,6 @@ public:
 	virtual bool edit();
 	
 protected:
-	virtual DocumentFilterMap sourceFileNamePatterns() const;
-	
 	CLIToolPlugin* interpreter() const;
 };
 

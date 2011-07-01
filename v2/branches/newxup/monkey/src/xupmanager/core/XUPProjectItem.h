@@ -62,10 +62,6 @@ public:
 	 */
 	QStringList autoActivatePlugins() const;
 	
-	// return the project icons path
-	QString defaultIconsPath() const;
-	QString iconsPath() const;
-	
 	/* Add files to the project. 
 	 * Optional argument 'scope' allows to add files to the particular part of the project, 
 	 * not to the project root.
@@ -83,11 +79,6 @@ public:
 	XUPProjectItem* rootIncludeProject() const;
 	// return children project recursively according to bool
 	XUPProjectItemList childrenProjects( bool recursive ) const;
-	
-	// return the display text of a project variable name
-	virtual QString variableDisplayText( const QString& variableName ) const;
-	// return the display icon name of a project variable name. Used by XUPItem::displayIcon()
-	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	
 	// return a list of QFileInfo having corresponding partial file path
 	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
@@ -118,17 +109,11 @@ public:
 	
 	virtual bool edit() = 0;
 	
-	/* returns a filter of source file names, which can be added to the project.
-	   Filter is suitable for QFileDialog
+	/* Source file name patterns is list of string pairs. ExamplesPath
+		("Python file", "*.py") ("Forms file", "*.ui")
 	 */
-	QString sourceFileNameFilter() const;
-	/** Return the filtered variable list for project type.
-	 *  Filtered variables not dispayed in the Project Manager GUI
-	 */
-	virtual QStringList filteredVariables() const;
-
-
-protected:
+	DocumentFilterMap documentFilters() const;
+	
 	/** Add pCommand console commands to the main menu. When menu item triggered - console command executed.
 	 * If more than one command set for the menu - commands will be executed one by one
 	 * XUPProjectItem remembers create QAction's and deletes it by uninstallCommands()
@@ -136,24 +121,16 @@ protected:
 	virtual void addCommand( pCommand& cmd, const QString& mnu );
 	void addCommands( const QString& mnu, const QString& text, pCommandList& cmds );
 	
-	/* Source file name patterns is list of string pairs. ExamplesPath
-		("Python file", "*.py") ("Forms file", "*.ui")
-	   This info used for build file name filter for "Add files to the project" dialog (XUPProjectItem::sourceFileNameFilter())
-	 */
-	virtual DocumentFilterMap sourceFileNamePatterns() const = 0;
-	
+protected:
 	QDomDocument mDocument;
-	/* Action pointers stored here for delete it, when current project changed */
-	QList<QAction*> mInstalledActions;
-	
 	QString mCodec;
 	QString mFileName;
 	QString mLastError;
+	// Action pointers stored here for delete it, when current project changed
+	QList<QAction*> mInstalledActions;
 	
 protected slots:
-	/* Common handler for actions, which execute pCommand.
-	   Does few checks, then executes pCommand
-	 */
+	// Common handler for actions, which execute pCommand. Does few checks, then executes pCommand
 	void internal_projectCustomActionTriggered();
 };
 

@@ -31,18 +31,33 @@ void PyQt::fillPluginInfos()
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = false;
 	mPluginInfos.dependencies << "Python";
-	mPluginInfos.iconsPath = ":/pyqtitems";
 }
 
 bool PyQt::install()
 {
 	// register item
-	DocumentFilterMap filters;
+	DocumentFilterMap filters( ":/pyqtitems" );
 	int weight = 0;
 	
-	filters[ "PYQT_PROJECT" ].weight = weight++;
-	filters[ "PYQT_PROJECT" ].label = tr( "PyQt Project" );
-	filters[ "PYQT_PROJECT" ].filters << "*.xpyqt";
+	filters[ "PROJECT" ].weight = weight++;
+	filters[ "PROJECT" ].label = tr( "PyQt Project" );
+	filters[ "PROJECT" ].icon = "project.png";
+	filters[ "PROJECT" ].type = DocumentFilter::Project;
+	filters[ "PROJECT" ].filters << "*.xpyqt";
+	
+	filters[ "FORMS" ].weight = weight++;
+	filters[ "FORMS" ].label = tr( "Qt Forms" );
+	filters[ "FORMS" ].icon = "forms.png";
+	filters[ "FORMS" ].type = DocumentFilter::File;
+	filters[ "FORMS" ].filters << "*.ui";
+	filters[ "FORMS" ].filtered = true;
+	
+	filters[ "PYTHON_FILES" ].weight = weight++;
+	filters[ "PYTHON_FILES" ].label = tr( "Python Files" );
+	filters[ "PYTHON_FILES" ].icon = "python.png";
+	filters[ "PYTHON_FILES" ].type = DocumentFilter::File;
+	filters[ "PYTHON_FILES" ].filters << "*.py*";
+	filters[ "PYTHON_FILES" ].filtered = true;
 	
 	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject, filters );
 	return true;

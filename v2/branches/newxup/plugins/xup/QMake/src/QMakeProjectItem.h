@@ -40,21 +40,8 @@ public:
 	
 	virtual bool edit();
 	
-	virtual QString variableDisplayText( const QString& variableName ) const;
-	virtual QString variableDisplayIcon( const QString& variableName ) const;
-	virtual QStringList filteredVariables() const;
-	
-	// list of variables handling files
-	static QStringList fileVariables();
-	// list of variables handling paths
-	static QStringList pathVariables();
-	// split a multi line value into QStringList
-	static QStringList splitMultiLineValue( const QString& value );
-	
 protected:
 	QHash <QString, QString> mVariableCache;
-	
-	virtual DocumentFilterMap sourceFileNamePatterns() const;
 	
 	// analyze the project for handling subdirs and includes
 	bool analyze( XUPItem* item );

@@ -33,17 +33,22 @@ bool XUPItem::sameTypeLess( const XUPItem& other ) const
 	{
 		case XUPItem::Variable:
 		{
-			XUPProjectItem* pItem = project();
-			QStringList filteredVariables = pItem->filteredVariables();
-			return filteredVariables.indexOf( attribute( "name" ) ) < filteredVariables.indexOf( other.attribute( "name" ) );
-			break;
+			const XUPProjectItem* project = this->project();
+			const DocumentFilterMap filters = project->documentFilters();
+			const QString left = attribute( "name" );
+			const QString right = other.attribute( "name" );
+			const int leftWeight = filters.value( left ).weight;
+			const int rightWeight = filters.value( right ).weight;
+			
+			return leftWeight != rightWeight
+				? leftWeight < rightWeight
+				: left.toLower() < right.toLower()
+				;
 		}
 		case XUPItem::Comment:
 			return row() < other.row();
-			break;
 		case XUPItem::EmptyLine:
 			return attribute( "count" ).toInt() < other.attribute( "count" ).toInt();
-			break;
 		case XUPItem::Project:
 		case XUPItem::Value:
 		case XUPItem::Function:
@@ -424,7 +429,7 @@ QString XUPItem::displayText() const
 			return QObject::tr( "%1 empty line(s)" ).arg( attribute( "count" ) );
 			break;
 		case XUPItem::Variable:
-			return project()->variableDisplayText( attribute( "name" ) );
+			return project()->documentFilters().variableDisplayText( attribute( "name" ) );
 			break;
 		case XUPItem::Value:
 			return content();
@@ -456,14 +461,14 @@ QString XUPItem::displayText() const
 QIcon XUPItem::displayIcon() const
 {
 	if ( type() == XUPItem::Variable ) {
-		return pIconManager::icon( project()->variableDisplayIcon( attribute( "name" ) ) );
+		return pIconManager::icon( project()->documentFilters().variableDisplayIcon( attribute( "name" ) ) );
 	}
 	
 	const QString iconFileName = QString( "%1.png" ).arg( mDomElement.nodeName() );
-	QString iconFilePath = pIconManager::filePath( iconFileName, project()->iconsPath() );
+	QString iconFilePath = pIconManager::filePath( iconFileName, project()->documentFilters().iconsPath() );
 	
 	if ( iconFilePath.isEmpty() ) {
-		iconFilePath = pIconManager::filePath( iconFileName, project()->defaultIconsPath() );
+		iconFilePath = pIconManager::filePath( iconFileName, project()->documentFilters().defaultIconsPath() );
 	}
 	
 	return pIconManager::icon( iconFilePath );

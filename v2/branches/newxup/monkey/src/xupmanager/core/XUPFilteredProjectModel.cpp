@@ -339,7 +339,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( XUPItem* root )
 {
 	XUPItemList variables;
 	XUPProjectItem* project = root->project();
-	const QStringList filteredVariables = project->filteredVariables();
+	const QStringList filteredVariables = project->documentFilters().filteredVariables();
 	
 	for ( int i = 0; i < root->childCount(); i++ )
 	{
@@ -451,7 +451,7 @@ void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, 
 	emit layoutAboutToBeChanged();
 	
 	XUPProjectItem* project = mSourceModel->mRootProject;
-	const QStringList filteredVariables = project->filteredVariables();
+	const QStringList filteredVariables = project->documentFilters().filteredVariables();
 	bool hasDynamicFolderItems = false;
 	
 	for ( int i = start; i < end +1; i++ ) {

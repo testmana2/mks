@@ -65,7 +65,10 @@ FORMS	*= src/maininterface/ui/UIAbout.ui \
 	src/xupmanager/gui/XUPProjectManager.ui \
 	src/xupmanager/gui/XUPAddFiles.ui \
 	src/pluginsmanager/ui/UICLIToolSettings.ui \
-	src/workspace/pOpenedFileExplorer.ui
+	src/workspace/pOpenedFileExplorer.ui \
+	src/xupmanager/gui/CommandsEditor.ui \
+	src/xupmanager/gui/VariablesEditor.ui \
+	src/xupmanager/gui/UIXUPEditor.ui
 
 HEADERS	*= src/main.h \
 	src/maininterface/ui/UIAbout.h \
@@ -120,7 +123,11 @@ HEADERS	*= src/main.h \
 	src/consolemanager/EnvironmentVariablesManager.h \
 	src/consolemanager/pConsoleManagerStep.h \
 	src/xupmanager/core/XUPDynamicFolderItem.h \
-	src/xupmanager/gui/XUPOpenedProjectsModel.h
+	src/xupmanager/gui/XUPOpenedProjectsModel.h \
+	src/xupmanager/gui/CommandsEditor.h \
+	src/xupmanager/gui/VariablesEditor.h \
+	src/xupmanager/gui/UIXUPEditor.h \
+	src/xupmanager/core/XUPProjectItemHelper.h
 
 SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/maininterface/ui/UISettings.cpp \
@@ -171,7 +178,11 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/consolemanager/EnvironmentVariablesManager.cpp \
 	src/consolemanager/pConsoleManagerStep.cpp \
 	src/xupmanager/core/XUPDynamicFolderItem.cpp \
-	src/xupmanager/gui/XUPOpenedProjectsModel.cpp
+	src/xupmanager/gui/XUPOpenedProjectsModel.cpp \
+	src/xupmanager/gui/CommandsEditor.cpp \
+	src/xupmanager/gui/VariablesEditor.cpp \
+	src/xupmanager/gui/UIXUPEditor.cpp \
+	src/xupmanager/core/XUPProjectItemHelper.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
 	../datas/translations/monkeystudio_be.ts \
