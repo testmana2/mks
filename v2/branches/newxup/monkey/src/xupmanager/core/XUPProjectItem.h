@@ -82,11 +82,11 @@ public:
 	
 	// return a list of QFileInfo having corresponding partial file path
 	virtual QFileInfoList findFile( const QString& partialFilePath ) const;
-	// return all variable items named variableName until caller is found ( if define ) or until the the complete tree is scanned
+	// return all variable items named variableName until caller is found ( if define ) or until the complete tree is scanned
 	// if recursive is true, then the scan recurse in each item, else not
-	virtual XUPItemList getVariables( const XUPItem* root, const QString& variableName, bool recursive = true ) const;
+	virtual XUPItemList getVariables( const XUPItem* root, const QString& variableName, bool recursive = true, const XUPItem* caller = 0 ) const;
 	// return first found variable with name. 0 returned, if not found
-	virtual XUPItem* getVariable( const XUPItem* root, const QString& variableName) const;
+	virtual XUPItem* getVariable( const XUPItem* root, const QString& variableName ) const;
 	// return the project datas as qstring
 	virtual QString toXml() const;
 	virtual QString toNativeString() const;

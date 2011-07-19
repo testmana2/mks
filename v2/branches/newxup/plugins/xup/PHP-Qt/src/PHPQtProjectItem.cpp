@@ -1,6 +1,6 @@
 #include "PHPQtProjectItem.h"
-#include "src/gui/UIPHPEditor.h"
 
+#include <UIXUPEditor.h>
 #include <CLIToolPlugin.h>
 #include <UIMain.h>
 #include <PluginsManager.h>
@@ -61,8 +61,7 @@ void PHPQtProjectItem::installCommands()
 
 bool PHPQtProjectItem::edit()
 {
-	#warning FIX ME: use UIXUPEditor
-	return UIPHPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
+	return UIXUPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
 CLIToolPlugin* PHPQtProjectItem::interpreter() const

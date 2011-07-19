@@ -266,14 +266,13 @@ XUPProjectItemList XUPProjectItem::childrenProjects( bool recursive ) const
 	return projects.values();
 }
 
-XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive ) const
+XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& variableName, bool recursive, const XUPItem* caller ) const
 {
 	XUPItemList variables;
 
 	foreach(XUPItem* item, root->childrenList())
 	{
-		if ( XUPItem::Variable ==  item->type() &&
-			 variableName == item->attribute( "name" ))
+		if ( XUPItem::Variable ==  item->type() && variableName == item->attribute( "name" ) )
 		{
 			variables << item;
 		}
@@ -292,17 +291,20 @@ XUPItemList XUPProjectItem::getVariables( const XUPItem* root, const QString& va
 		{
 			variables << getVariables( item, variableName );
 		}
+		
+		if ( item == caller ) {
+			break;
+		}
 	}
 
 	return variables;
 }
 
-XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variableName) const
+XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variableName ) const
 {
-	foreach(XUPItem* item, root->childrenList())
+	foreach( XUPItem* item, root->childrenList() )
 	{
-		if (XUPItem::Variable == item->type() &&
-			item->attribute( "name" ) == variableName )
+		if ( XUPItem::Variable == item->type() && item->attribute( "name" ) == variableName )
 		{
 			return item;
 		}

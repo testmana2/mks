@@ -421,34 +421,24 @@ QString XUPItem::displayText() const
 	{
 		case XUPItem::Project:
 			return attribute( "name" );
-			break;
 		case XUPItem::Comment:
 			return  attribute( "value" );
-			break;
 		case XUPItem::EmptyLine:
 			return QObject::tr( "%1 empty line(s)" ).arg( attribute( "count" ) );
-			break;
 		case XUPItem::Variable:
 			return project()->documentFilters().variableDisplayText( attribute( "name" ) );
-			break;
 		case XUPItem::Value:
-			return content();
-			break;
+			return content()+"toto";
 		case XUPItem::Function:
 			return QString( "%1( %2 )" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
-			break;
 		case XUPItem::Scope:
 			return attribute( "name" );
-			break;
 		case XUPItem::Folder:
 			return QFileInfo( attribute( "name" ) ).fileName();
-			break;
 		case XUPItem::File:
 			return QFileInfo( content() ).fileName();
-			break;
 		case XUPItem::Path:
 			return content();
-			break;
 		case XUPItem::DynamicFolder:
 			return QObject::tr( "Dynamic Folder" );
 		case XUPItem::Unknow:

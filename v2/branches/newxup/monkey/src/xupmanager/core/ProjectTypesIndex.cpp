@@ -69,6 +69,36 @@ QStringList DocumentFilterMap::splitValue( const QString& value ) const
 	return multivalues;
 }
 
+QStringList DocumentFilterMap::fileNameVariables( const QString& fileName ) const
+{
+	QStringList variables;
+	
+	foreach ( const QString& name, keys() ) {
+		const DocumentFilter& filter = (*this)[ name ];
+		
+		if ( QDir::match( filter.filters, fileName ) ) {
+			variables << name;
+		}
+	}
+	
+	return variables;
+}
+
+QStringList DocumentFilterMap::knownVariables() const
+{
+	QStringList variables = keys().toSet().toList();
+	
+	for ( int i = 0; i < variables.count(); i++ ) {
+		const QString& variable = variables[ i ];
+		
+		if ( variable.contains( "project", Qt::CaseInsensitive ) ) {
+			variables.removeAt( i );
+		}
+	}
+	
+	return variables;
+}
+
 QString DocumentFilterMap::defaultIconsPath() const
 {
 	return ":/items";

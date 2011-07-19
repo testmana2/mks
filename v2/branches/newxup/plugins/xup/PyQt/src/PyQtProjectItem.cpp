@@ -1,6 +1,6 @@
 #include "PyQtProjectItem.h"
-#include "src/gui/UIPyQtEditor.h"
 
+#include <UIXUPEditor.h>
 #include <CLIToolPlugin.h>
 #include <UIMain.h>
 #include <PluginsManager.h>
@@ -61,8 +61,7 @@ void PyQtProjectItem::installCommands()
 
 bool PyQtProjectItem::edit()
 {
-	#warning FIX ME: use UIXUPEditor
-	return UIPyQtEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
+	return UIXUPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
 }
 
 CLIToolPlugin* PyQtProjectItem::interpreter() const

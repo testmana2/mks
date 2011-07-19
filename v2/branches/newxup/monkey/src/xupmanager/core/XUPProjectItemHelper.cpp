@@ -5,10 +5,83 @@
 #include <QDir>
 #include <QDebug>
 
+QString settingsKey( const QString& key )
+{
+	const QString prefix = QString( "%1." ).arg( XUPProjectItemHelper::SettingsScopeName );
+	QString k = key;
+	
+	if ( !k.startsWith( prefix, Qt::CaseInsensitive ) ) {
+		k.prepend( prefix );
+	}
+	
+	return k;
+}
+
 XUPItem* XUPProjectItemHelper::projectSettingsScope( XUPProjectItem* project, bool create )
 {
 	Q_UNUSED( create );
 	return project;
+}
+
+void XUPProjectItemHelper::setProjectSettingsValues( XUPProjectItem* project, const QString& key, const QStringList& _values )
+{
+	XUPItem* variable = project->getVariable( project, settingsKey( key ) );
+	QStringList values = _values;
+	
+	if ( !variable && values.isEmpty() ) {
+		return;
+	}
+	
+	if ( !variable ) {
+		variable = XUPProjectItemHelper::projectSettingsScope( project, true )->addChild( XUPItem::Variable );
+		variable->setAttribute( "name", settingsKey( key ) );
+	}
+	
+	foreach ( XUPItem* item, variable->childrenList() ) {
+		if ( item->type() != XUPItem::Value ) {
+			continue;
+		}
+		
+		const int index = values.indexOf( item->content() );
+		
+		if ( index == -1 ) {
+			variable->removeChild( item );
+		}
+		else {
+			values.removeAt( index );
+		}
+	}
+	
+	foreach ( const QString& value, values ) {
+		XUPItem* item = variable->addChild( XUPItem::Value );
+		item->setContent( value );
+	}
+}
+
+QStringList XUPProjectItemHelper::projectSettingsValues( XUPProjectItem* project, const QString& key )
+{
+	XUPItem* variable = project->getVariable( project, settingsKey( key ) );
+	QStringList values;
+	
+	if ( variable ) {
+		foreach ( XUPItem* item, variable->childrenList() ) {
+			if ( item->type() == XUPItem::Value ) {
+				values << item->content();
+			}
+		}
+	}
+	
+	return values;
+}
+
+void XUPProjectItemHelper::setProjectSettingsValue( XUPProjectItem* project, const QString& key, const QString& value )
+{
+	XUPProjectItemHelper::setProjectSettingsValues( project, key, QStringList( value ) );
+}
+
+QString XUPProjectItemHelper::projectSettingsValue( XUPProjectItem* project, const QString& key )
+{
+	return XUPProjectItemHelper::projectSettingsValues( project, key ).join( " " );
 }
 
 XUPItem* XUPProjectItemHelper::projectCommandsScope( XUPProjectItem* project, bool create )
@@ -42,7 +115,7 @@ XUPItem* XUPProjectItemHelper::projectCommandsScope( XUPProjectItem* project, bo
 void XUPProjectItemHelper::addCommandProperty( XUPItem* variableItem, const QString& value )
 {
 	XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
-	valueItem->setAttribute( "content", value );
+	valueItem->setContent( value );
 }
 
 void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const TypeCommandListMap& commands )
@@ -115,7 +188,7 @@ TypeCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* projec
 			
 			foreach ( XUPItem* commandValue, commandVariable->childrenList() )
 			{
-				values << commandValue->attribute( "content" );
+				values << commandValue->content();
 			}
 			
 			if ( values.count() != 8 )
@@ -191,7 +264,7 @@ XUPItem* XUPProjectItemHelper::projectDynamicFolderSettingsItem( XUPProjectItem*
 void XUPProjectItemHelper::addDynamicFolderSettingsProperty( XUPItem* dynamicFolderSettingsItem, const QString& value )
 {
 	XUPItem* valueItem = dynamicFolderSettingsItem->addChild( XUPItem::Value );
-	valueItem->setAttribute( "content", value );
+	valueItem->setContent( value );
 }
 
 XUPDynamicFolderSettings XUPProjectItemHelper::projectDynamicFolderSettings( XUPProjectItem* project )
@@ -205,7 +278,7 @@ XUPDynamicFolderSettings XUPProjectItemHelper::projectDynamicFolderSettings( XUP
 		
 		foreach ( XUPItem* valueItem, dynamicFolderSettingsItem->childrenList() )
 		{
-			values << valueItem->attribute( "content" );
+			values << valueItem->content();
 		}
 		
 		if ( values.count() != 3 )
@@ -271,7 +344,7 @@ XUPItem* XUPProjectItemHelper::projectDynamicFolderItem( XUPProjectItem* project
 void XUPProjectItemHelper::addDynamicFolderProperty( XUPItem* dynamicFolderItem, const QString& value )
 {
 	XUPItem* valueItem = dynamicFolderItem->addChild( XUPItem::File );
-	valueItem->setAttribute( "content", value );
+	valueItem->setContent( value );
 }
 
 void XUPProjectItemHelper::updateDynamicFolder( XUPProjectItem* project, const QString& path )

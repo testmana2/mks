@@ -50,6 +50,10 @@ public:
 	virtual QString variableDisplayIcon( const QString& variableName ) const;
 	// return a splited value
 	virtual QStringList splitValue( const QString& value ) const;
+	// return variables that can handle fileName
+	virtual QStringList fileNameVariables( const QString& fileName ) const;
+	// return a list of known variables name
+	virtual QStringList knownVariables() const;
 	// return the default icons path
 	QString defaultIconsPath() const;
 	// return the document icons path
