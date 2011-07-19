@@ -1,11 +1,13 @@
 #include "VariablesEditor.h"
 #include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItemHelper.h"
 #include "pMonkeyStudio.h"
 
 #include <QMenu>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDebug>
 
 VariablesEditor::VariablesEditor( QWidget* parent )
 	: QFrame( parent )
@@ -35,13 +37,11 @@ VariablesEditor::~VariablesEditor()
 
 void VariablesEditor::init( XUPProjectItem* project )
 {
-	#warning FIX ME
-	/*mProject = project;
-	
-	int pType = mProject->projectType();
-	mFileVariables = mProject->projectInfos()->fileVariables( pType );
-	mPathVariables = mProject->projectInfos()->pathVariables( pType );
-	mManagedVariables << mFileVariables << XUPProjectItemHelper::DynamicFolderName << XUPProjectItemHelper::DynamicFolderSettingsName;
+	const DocumentFilterMap filters = project->documentFilters();
+	mProject = project;
+	mFileVariables = filters.fileVariables();
+	mPathVariables = filters.pathVariables();
+	mManagedVariables = QStringList( mFileVariables ) << XUPProjectItemHelper::DynamicFolderName << XUPProjectItemHelper::DynamicFolderSettingsName;
 	
 	// loading datas from variable of root scope having operator =, += or *= only
 	foreach ( XUPItem* child, mProject->childrenList() )
@@ -72,20 +72,20 @@ void VariablesEditor::init( XUPProjectItem* project )
 					continue;
 				}
 				
-				val += mValues[ variableName ].trimmed();
-				val += " " +value->attribute( "content" );
+				val = mValues[ variableName ].trimmed();
+				val += " " +value->content();
 				mValues[ variableName ] = val.trimmed();
 			}
 		}
 	}
 	
-	updateValuesEditorVariables();*/
+	updateValuesEditorVariables();
 }
 
 void VariablesEditor::finalize()
 {
-	#warning FIX ME
-	/*QListWidgetItem* curItem = lwOthersVariables->currentItem();
+	const DocumentFilterMap filters = mProject->documentFilters();
+	QListWidgetItem* curItem = lwOthersVariables->currentItem();
 	on_lwOthersVariables_currentItemChanged( curItem, curItem );
 	
 	// tell about variables to remove
@@ -111,7 +111,7 @@ void VariablesEditor::finalize()
 				// get child type
 				XUPItem::Type type = mFileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
 				// get values
-				QStringList values = mProject->splitMultiLineValue( mValues[ variable ] );
+				QStringList values = filters.splitValue( mValues[ variable ] );
 				
 				// update variable
 				variableItem->setAttribute( "operator", "=" );
@@ -122,7 +122,7 @@ void VariablesEditor::finalize()
 				{
 					if ( child->type() == type )
 					{
-						QString value = child->attribute( "content" );
+						QString value = child->content();
 						if ( values.contains( value ) )
 						{
 							values.removeAll( value );
@@ -138,7 +138,7 @@ void VariablesEditor::finalize()
 				foreach ( const QString& v, values )
 				{
 					XUPItem* value = variableItem->addChild( type );
-					value->setAttribute( "content", v );
+					value->setContent( v );
 				}
 			}
 			else if ( variable == "CONFIG" )
@@ -158,7 +158,7 @@ void VariablesEditor::finalize()
 				
 				// add new one
 				XUPItem* value = variableItem->addChild( XUPItem::Value );
-				value->setAttribute( "content", mValues[ variable ] );
+				value->setContent( mValues[ variable ] );
 			}
 			else
 			{
@@ -177,7 +177,7 @@ void VariablesEditor::finalize()
 				
 				// add new one
 				XUPItem* value = variableItem->addChild( XUPItem::Value );
-				value->setAttribute( "content", mValues[ variable ] );
+				value->setContent( mValues[ variable ] );
 			}
 		}
 		else if ( isEmpty && variableItem && variableItem->childCount() > 0 )
@@ -197,15 +197,13 @@ void VariablesEditor::finalize()
 		{
 			variableItem->parent()->removeChild( variableItem );
 		}
-	}*/
+	}
 }
 
 XUPItem* VariablesEditor::getUniqueVariableItem( const QString& variableName, bool create )
 {
-	return 0;
-	#warning FIX ME
-	/*const QStringList mOperators = QStringList() << "=" << "+=" << "*=";
-	XUPItemList variables = mProject->getVariables( mProject, variableName, 0, false );
+	const QStringList mOperators = QStringList() << "=" << "+=" << "*=";
+	XUPItemList variables = mProject->getVariables( mProject, variableName, false, 0 );
 	XUPItem* variableItem = 0;
 	
 	// remove duplicate variables
@@ -231,7 +229,7 @@ XUPItem* VariablesEditor::getUniqueVariableItem( const QString& variableName, bo
 	}
 	
 	// return item
-	return variableItem;*/
+	return variableItem;
 }
 
 void VariablesEditor::updateValuesEditorVariables()
@@ -260,11 +258,11 @@ void VariablesEditor::updateValuesEditorVariables()
 
 void VariablesEditor::updateValuesEditorValues( const QString& variable )
 {
-	#warning FIX ME
-	/*const QStringList values = XUPProjectItem::splitMultiLineValue( mValues[ variable ] );
+	const DocumentFilterMap filters = mProject->documentFilters();
+	const QStringList values = filters.splitValue( mValues[ variable ] );
 	
 	lwOthersValues->clear();
-	lwOthersValues->addItems( values );*/
+	lwOthersValues->addItems( values );
 }
 
 void VariablesEditor::on_lwOthersVariables_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous )
@@ -295,9 +293,11 @@ void VariablesEditor::on_lwOthersVariables_currentItemChanged( QListWidgetItem* 
 
 void VariablesEditor::on_tbOthersVariablesAdd_clicked()
 {
-	#warning FIX ME
-	/*bool ok;
-	const QStringList variables = mProject->projectInfos()->knowVariables( mProject->projectType() );
+qWarning() << "ici";
+	const DocumentFilterMap filters = mProject->documentFilters();
+	const QStringList variables = filters.knownVariables();
+	bool ok;
+	qWarning() << variables << filters.keys();
 	const QString variable = QInputDialog::getItem( window(), tr( "Add variable..." ), tr( "Select a variable name or enter a new one" ), variables, 0, true, &ok );
 	
 	if ( !variable.isEmpty() && ok )
@@ -314,7 +314,7 @@ void VariablesEditor::on_tbOthersVariablesAdd_clicked()
 		{
 			QMessageBox::information( window(), tr( "Information..." ), tr( "This variable already exists or is filtered out." ) );
 		}
-	}*/
+	}
 }
 
 void VariablesEditor::on_tbOthersVariablesEdit_clicked()

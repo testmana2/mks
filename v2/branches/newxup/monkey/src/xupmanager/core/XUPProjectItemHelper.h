@@ -34,12 +34,17 @@ struct Q_MONKEY_EXPORT XUPDynamicFolderSettings
 
 namespace XUPProjectItemHelper
 {
-	static const QString CommandsScopeName = "XUP.Commands";
-	static const QString CommandScopeName = "XUP.Command";
-	static const QString DynamicFolderSettingsName = "XUP.DynamicFolder.Settings";
-	static const QString DynamicFolderName = "XUP.DynamicFolder";
+	static const QString SettingsScopeName = "XUP";
+	static const QString CommandsScopeName = QString( "%1.Commands" ).arg( SettingsScopeName );
+	static const QString CommandScopeName = QString( "%1.Command" ).arg( SettingsScopeName );
+	static const QString DynamicFolderName = QString( "%1.DynamicFolder" ).arg( SettingsScopeName );
+	static const QString DynamicFolderSettingsName = QString( "%1.Settings" ).arg( DynamicFolderName );
 	
 	Q_MONKEY_EXPORT XUPItem* projectSettingsScope( XUPProjectItem* project, bool create );
+	Q_MONKEY_EXPORT void setProjectSettingsValues( XUPProjectItem* project, const QString& key, const QStringList& values );
+	Q_MONKEY_EXPORT QStringList projectSettingsValues( XUPProjectItem* project, const QString& key );
+	Q_MONKEY_EXPORT void setProjectSettingsValue( XUPProjectItem* project, const QString& key, const QString& value );
+	Q_MONKEY_EXPORT QString projectSettingsValue( XUPProjectItem* project, const QString& key );
 	
 	Q_MONKEY_EXPORT XUPItem* projectCommandsScope( XUPProjectItem* project, bool create );
 	Q_MONKEY_EXPORT void addCommandProperty( XUPItem* variableItem, const QString& value );

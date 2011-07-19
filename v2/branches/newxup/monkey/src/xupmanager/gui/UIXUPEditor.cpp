@@ -27,7 +27,7 @@ UIXUPEditor::UIXUPEditor( XUPProjectItem* project, QWidget* parent )
 		item->setSizeHint( QSize( 154, 40 ) );
 	}
 	
-	// does not show variable editor by defaultAction
+	// does not show variable editor by default
 	setVariableEditorVisible( false );
 	
 	// commands
@@ -80,14 +80,13 @@ void UIXUPEditor::updateMainFileComboBox( const QString& selectFile )
 
 void UIXUPEditor::updateProjectFiles()
 {
-	#warning FIX ME
-	/*int pType = mProject->projectType();
+	const DocumentFilterMap filters = mProject->documentFilters();
 	QMap<QString, QString>& values = veEditor->values();
 	
 	foreach ( const QString& variable, veEditor->fileVariables() )
 	{
 		QTreeWidgetItem* topItem = mProjectFilesItems.value( variable );
-		QStringList files = mProject->splitMultiLineValue( values[ variable ] );
+		QStringList files = filters.splitValue( values[ variable ] );
 		
 		if ( topItem && files.isEmpty() )
 		{
@@ -98,8 +97,8 @@ void UIXUPEditor::updateProjectFiles()
 			if ( !topItem )
 			{
 				topItem = new QTreeWidgetItem( twFiles, QTreeWidgetItem::UserType +1 );
-				topItem->setText( 0, mProject->projectInfos()->displayText( pType, variable ) );
-				topItem->setIcon( 0, mProject->projectInfos()->displayIcon( pType, variable ) );
+				topItem->setText( 0, filters.variableDisplayText( variable ) );
+				topItem->setIcon( 0, QIcon( filters.variableDisplayIcon( variable ) ) );
 				mProjectFilesItems[ variable ] = topItem;
 			}
 			
@@ -119,27 +118,26 @@ void UIXUPEditor::updateProjectFiles()
 				QTreeWidgetItem* item = new QTreeWidgetItem( topItem, QTreeWidgetItem::UserType );
 				item->setText( 0, fn );
 				item->setData( 0, Qt::UserRole, fn );
-				item->setIcon( 0, mProject->projectInfos()->displayIcon( XUPProjectItem::XUPProject, "FILES" ) );
+				item->setIcon( 0, QIcon( filters.variableDisplayIcon( "FILES" ) ) );
 			}
 		}
-	}*/
+	}
 }
 
 void UIXUPEditor::init( XUPProjectItem* project )
 {
-	#warning FIX ME
-	/*mProject = project;
+	mProject = project;
 	const XUPDynamicFolderSettings folder = XUPProjectItemHelper::projectDynamicFolderSettings( mProject );
 
 	leProjectName->setText( mProject->attribute( "name" ) );
 	gbDynamicFolder->setChecked( folder.Active );
 	leDynamicFolder->setText( folder.AbsolutePath );
 	gbDynamicFilesPatterns->setValues( folder.FilesPatterns );
-	updateMainFileComboBox( mProject->projectSettingsValue( "MAIN_FILE" ) );
+	updateMainFileComboBox( XUPProjectItemHelper::projectSettingsValue( mProject, "MAIN_FILE" ) );
 	veEditor->init( mProject );
 	updateProjectFiles();
 	ceEditor->setCommands( XUPProjectItemHelper::projectCommands( mProject ) );
-	ceEditor->setCurrentType( ceEditor->commandTypes().first() );*/
+	ceEditor->setCurrentType( ceEditor->commandTypes().first() );
 }
 
 void UIXUPEditor::on_tbDynamicFolder_clicked()
@@ -157,8 +155,8 @@ void UIXUPEditor::on_tbDynamicFolder_clicked()
 
 void UIXUPEditor::on_tbAddFile_clicked()
 {
-	#warning FIX ME
-	/*pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window(), false );
+	const DocumentFilterMap filters = mProject->documentFilters();
+	pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window(), false );
 	
 	if ( !result.isEmpty() )
 	{
@@ -198,7 +196,7 @@ void UIXUPEditor::on_tbAddFile_clicked()
 				fn.prepend( '"' ).append( '"' );
 			}
 			
-			QString variable = mProject->projectInfos()->variableNameForFileName( mProject->projectType(), fn );
+			QString variable = filters.fileNameVariables( fn ).value( 0 );
 			
 			if ( !values[ variable ].contains( fn ) )
 			{
@@ -208,13 +206,13 @@ void UIXUPEditor::on_tbAddFile_clicked()
 		}
 		
 		updateProjectFiles();
-	}*/
+	}
 }
 
 void UIXUPEditor::on_tbEditFile_clicked()
 {
-	#warning FIX ME
-	/*QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
+	const DocumentFilterMap filters = mProject->documentFilters();
+	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
 	
 	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
 	{
@@ -224,7 +222,7 @@ void UIXUPEditor::on_tbEditFile_clicked()
 		
 		if ( ok && !fn.isEmpty() )
 		{
-			QString variable = mProject->projectInfos()->variableNameForFileName( mProject->projectType(), fn );
+			QString variable = filters.fileNameVariables( fn ).value( 0 );
 			QMap<QString, QString>& values = veEditor->values();
 			
 			item->setText( 0, fn );
@@ -234,7 +232,7 @@ void UIXUPEditor::on_tbEditFile_clicked()
 			
 			updateProjectFiles();
 		}
-	}*/
+	}
 }
 
 void UIXUPEditor::on_tbRemoveFile_clicked()
@@ -273,8 +271,7 @@ void UIXUPEditor::on_tbRemoveFile_clicked()
 
 void UIXUPEditor::accept()
 {
-	#warning FIX ME
-	/*XUPDynamicFolderSettings folder;
+	XUPDynamicFolderSettings folder;
 	folder.Active = gbDynamicFolder->isChecked();
 	folder.AbsolutePath = leDynamicFolder->text();
 	folder.FilesPatterns = gbDynamicFilesPatterns->values();
@@ -282,10 +279,10 @@ void UIXUPEditor::accept()
 	ceEditor->finalize();
 	veEditor->finalize();
 	mProject->setAttribute( "name", leProjectName->text() );
-	mProject->setProjectSettingsValue( "MAIN_FILE", cbMainFile->currentText() );
+	XUPProjectItemHelper::setProjectSettingsValue( mProject, "MAIN_FILE", cbMainFile->currentText() );
 	XUPProjectItemHelper::setProjectDynamicFolderSettings( mProject, folder );
 	XUPProjectItemHelper::setProjectCommands( mProject, ceEditor->commands() );
 	
 	// close dialog
-	QDialog::accept();*/
+	QDialog::accept();
 }
