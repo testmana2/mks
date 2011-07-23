@@ -6,6 +6,8 @@
 #include "pMonkeyStudio.h"
 #include "UIMain.h"
 #include "XUPPlugin.h"
+#include "XUPProjectItemHelper.h"
+#include "XUPDynamicFolderItem.h"
 
 #include <QTextCodec>
 #include <QDir>
@@ -79,18 +81,16 @@ QStringList XUPProjectItem::sourceFiles() const
 	}
 	
 	// get dynamic files
-	/*XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<XUPProjectItem*>( this ), false );
+	XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<XUPProjectItem*>( this ), false );
 	
-	if ( dynamicFolderItem )
-	{
-		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() )
-		{
-			if ( valueItem->type() == XUPItem::File )
-			{
-				files << valueItem->attribute( "content" );
+	#warning FIX ME: do recursive scanning
+	if ( dynamicFolderItem ) {
+		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() ) {
+			if ( valueItem->type() == XUPItem::File ) {
+				entries << filePath( valueItem->content() );
 			}
 		}
-	}*/
+	}
 	
 	return entries.toList();
 }
@@ -315,7 +315,8 @@ XUPItem* XUPProjectItem::getVariable( const XUPItem* root, const QString& variab
 
 QString XUPProjectItem::toXml() const
 {
-	return mDocument.toString( 4 );
+	return XUPProjectItemHelper::stripDynamicFolderFiles( mDocument ).toString( 4 );
+	//return mDocument.toString( 4 );
 }
 
 QString XUPProjectItem::toNativeString() const
@@ -329,16 +330,14 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	QFile file( fileName );
 
 	// check existence
-	if ( !file.exists() )
-	{
-		topLevelProject()->setLastError( "file not exists" );
+	if ( !file.exists() ) {
+		topLevelProject()->setLastError( tr( "file not exists" ) );
 		return false;
 	}
 
 	// try open it for reading
-	if ( !file.open( QIODevice::ReadOnly ) )
-	{
-		topLevelProject()->setLastError( "can't open file for reading" );
+	if ( !file.open( QIODevice::ReadOnly ) ) {
+		topLevelProject()->setLastError( tr( "can't open file for reading" ) );
 		return false;
 	}
 
@@ -350,24 +349,34 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	QString errorMsg;
 	int errorLine;
 	int errorColumn;
+	
 	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
 	{
-		topLevelProject()->setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
+		topLevelProject()->setLastError(
+			tr( "%1 on line: %2, column: %3" )
+				.arg( errorMsg )
+				.arg( errorLine )
+				.arg( errorColumn )
+		);
 		return false;
 	}
 
 	// check project validity
 	mDomElement = mDocument.firstChildElement( "project" );
-	if ( mDomElement.isNull() )
-	{
-		topLevelProject()->setLastError( "no project node" );
+	
+	if ( mDomElement.isNull() ) {
+		topLevelProject()->setLastError( tr( "no project node" ) );
 		return false;
 	}
 	
 	// check xup version
 	const QString docVersion = mDomElement.attribute( "version" );
+	
 	if ( pVersion( docVersion ) < XUP_VERSION ) {
-		topLevelProject()->setLastError( tr( "The document format is too old, current version is '%1', your document is '%2'" ).arg( XUP_VERSION ).arg( docVersion ) );
+		topLevelProject()->setLastError(
+			tr( "The document format is too old, current version is '%1', your document is '%2'" )
+				.arg( XUP_VERSION ).arg( docVersion )
+		);
 		return false;
 	}
 
@@ -376,9 +385,15 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	mFileName = fileName;
 	topLevelProject()->setLastError( QString::null );
 	file.close();
+	
+	const XUPDynamicFolderSettings dynamicFolderSettings = XUPProjectItemHelper::projectDynamicFolderSettings( this );
+	
+	if ( dynamicFolderSettings.Active && QFile::exists( dynamicFolderSettings.AbsolutePath ) ) {
+		XUPDynamicFolderItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( this, true );
+		dynamicFolderItem->setRootPath( dynamicFolderSettings.AbsolutePath );
+	}
 
 	return true;
-//	return analyze( this );
 }
 
 bool XUPProjectItem::save()
@@ -386,8 +401,7 @@ bool XUPProjectItem::save()
 	// try open file for writing
 	QFile file( mFileName );
 
-	if ( !file.open( QIODevice::WriteOnly ) )
-	{
+	if ( !file.open( QIODevice::WriteOnly ) ) {
 		return false;
 	}
 
@@ -406,12 +420,10 @@ bool XUPProjectItem::save()
 	file.close();
 
 	// set error message if needed
-	if ( result )
-	{
+	if ( result ) {
 		topLevelProject()->setLastError( QString::null );
 	}
-	else
-	{
+	else {
 		topLevelProject()->setLastError( tr( "Can't write content" ) );
 	}
 
@@ -450,15 +462,28 @@ void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
 
 void XUPProjectItem::installCommands()
 {
+	const TypeCommandListMap commands = XUPProjectItemHelper::projectCommands( this );
+	
+	foreach ( const BasePlugin::Type& type, commands.keys() ) {
+		foreach ( pCommand command, commands[ type ] ) {
+			switch ( type ) {
+				case BasePlugin::iCLITool:
+					addCommand( command, "mBuilder" );
+					break;
+				case BasePlugin::iDebugger:
+					addCommand( command, "mDebugger" );
+					break;
+				default:
+					Q_ASSERT( 0 );
+					break;
+			}
+		}
+	}
 }
 
 void XUPProjectItem::uninstallCommands()
 {
-	foreach( QAction* action, mInstalledActions )
-	{
-		delete action;
-	}
-	
+	qDeleteAll( mInstalledActions );
 	mInstalledActions.clear();
 
 	// update menu visibility
@@ -516,7 +541,7 @@ void XUPProjectItem::internal_projectCustomActionTriggered()
 					return;
 				}
 			}
-				
+			
 			MonkeyCore::consoleManager()->addCommand( cmd );
 		
 		}

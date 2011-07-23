@@ -10,6 +10,7 @@
 
 class XUPItem;
 class XUPProjectItem;
+class XUPDynamicFolderItem;
 
 typedef QList<BasePlugin::Type> BasePluginTypeList;
 typedef QMap<BasePlugin::Type, pCommandList> TypeCommandListMap;
@@ -50,17 +51,13 @@ namespace XUPProjectItemHelper
 	Q_MONKEY_EXPORT void addCommandProperty( XUPItem* variableItem, const QString& value );
 	Q_MONKEY_EXPORT void setProjectCommands( XUPProjectItem* project, const TypeCommandListMap& commands );
 	Q_MONKEY_EXPORT TypeCommandListMap projectCommands( XUPProjectItem* project );
-	Q_MONKEY_EXPORT void installProjectCommands( XUPProjectItem* project );
 	
 	Q_MONKEY_EXPORT XUPItem* projectDynamicFolderSettingsItem( XUPProjectItem* project, bool create );
 	Q_MONKEY_EXPORT void addDynamicFolderSettingsProperty( XUPItem* dynamicFolderItem, const QString& value );
 	Q_MONKEY_EXPORT XUPDynamicFolderSettings projectDynamicFolderSettings( XUPProjectItem* project );
 	Q_MONKEY_EXPORT void setProjectDynamicFolderSettings( XUPProjectItem* project, const XUPDynamicFolderSettings& folder );
 	
-	Q_MONKEY_EXPORT XUPItem* projectDynamicFolderItem( XUPProjectItem* project, bool create );
-	Q_MONKEY_EXPORT void addDynamicFolderProperty( XUPItem* dynamicFolderItem, const QString& value );
-	Q_MONKEY_EXPORT void updateDynamicFolder( XUPProjectItem* project, const QString& path );
-	
+	Q_MONKEY_EXPORT XUPDynamicFolderItem* projectDynamicFolderItem( XUPProjectItem* project, bool create );
 	Q_MONKEY_EXPORT QDomDocument stripDynamicFolderFiles( const QDomDocument& document );
 };
 

@@ -1,6 +1,7 @@
 #include "XUPDynamicFolderItem.h"
 #include "XUPProjectItem.h"
 #include "XUPProjectModel.h"
+#include "XUPProjectItemHelper.h"
 
 #include <QFileSystemModel>
 #include <QDebug>
@@ -13,6 +14,7 @@ public:
 	pFileSystemModel( QObject* parent = 0 )
 		: QFileSystemModel( parent )
 	{
+		setNameFilterDisables( false );
 	}
 };
 
@@ -27,7 +29,7 @@ public:
 		if ( mFSModel->hasChildren( mFSIndex ) ) {
 			for ( int row = 0; row < mFSModel->rowCount( mFSIndex ); row++ ) {
 				const QModelIndex index = mFSModel->index( row, 0, mFSIndex );
-				delete mDynamicFolderItem->mFSItems.value( index );
+				delete mDynamicFolderItem->mFSItems.take( index );
 			}
 		}
 		
@@ -75,11 +77,13 @@ public:
 	virtual XUPItemList childrenList() const
 	{
 		XUPItemList children;
+		XUPDynamicFolderChildItem* parent = const_cast<XUPDynamicFolderChildItem*>( this );
 		
 		if ( hasChildren() ) {
 			for ( int row = 0; row < childCount(); row++ ) {
-				const QModelIndex index = mFSModel->index( row, 0, mFSIndex );
-				XUPItem* item = mDynamicFolderItem->mFSItems.value( index );
+				XUPItem* item = parent->child( row );
+				
+				Q_ASSERT( item );
 				
 				if ( item ) {
 					children << item;
@@ -109,23 +113,10 @@ public:
 		return mFSIndex.data( Qt::DecorationRole ).value<QIcon>();
 	}
 	
-	virtual QString attribute( const QString& name, const QString& defaultValue = QString::null ) const
-	{
-		if ( name.compare( "name", Qt::CaseInsensitive ) == 0 ) {
-			switch ( type() ) {
-				case XUPItem::Folder:
-					return mFSModel->filePath( mFSIndex );
-				default:
-					break;
-			}
-		}
-		
-		return XUPItem::attribute( name, defaultValue );
-	}
-	
 	virtual QString content() const
 	{
 		switch ( type() ) {
+			case XUPItem::Folder:
 			case XUPItem::File:
 				return mFSModel->filePath( mFSIndex );
 			default:
@@ -181,8 +172,7 @@ XUPDynamicFolderItem::XUPDynamicFolderItem( const QDomElement& node, XUPItem* pa
 	connect( mFSModel, SIGNAL( rowsMoved( const QModelIndex&, int, int, const QModelIndex&, int ) ), this, SLOT( rowsMoved( const QModelIndex&, int, int, const QModelIndex&, int ) ) );
 	connect( mFSModel, SIGNAL( rowsRemoved( const QModelIndex&, int, int ) ), this, SLOT( rowsRemoved( const QModelIndex&, int, int ) ) );
 	connect( mFSModel, SIGNAL( rootPathChanged( const QString& ) ), this, SLOT( rootPathChanged( const QString& ) ) );
-	
-	mFSRootIndex = mFSModel->setRootPath( node.attribute( "root" ) );
+	connect( mFSModel, SIGNAL( directoryLoaded( const QString& ) ), this, SLOT( directoryLoaded( const QString& ) ) );
 }
 
 XUPDynamicFolderItem::~XUPDynamicFolderItem()
@@ -213,7 +203,7 @@ XUPItem* XUPDynamicFolderItem::child( int row )
 {
 	const QPersistentModelIndex index = mFSModel->index( row, 0, mFSRootIndex );
 	XUPItem* item = mFSItems.value( index );
-
+	
 	if ( !item && index.isValid() ) {
 		item = new XUPDynamicFolderChildItem( this, index, this );
 	}
@@ -224,11 +214,13 @@ XUPItem* XUPDynamicFolderItem::child( int row )
 XUPItemList XUPDynamicFolderItem::childrenList() const
 {
 	XUPItemList children;
+	XUPDynamicFolderItem* parent = const_cast<XUPDynamicFolderItem*>( this );
 	
 	if ( hasChildren() ) {
 		for ( int row = 0; row < childCount(); row++ ) {
-			const QModelIndex index = mFSModel->index( row, 0, mFSRootIndex );
-			XUPItem* item = mFSItems.value( index );
+			XUPItem* item = parent->child( row );
+			
+			Q_ASSERT( item );
 			
 			if ( item ) {
 				children << item;
@@ -241,12 +233,26 @@ XUPItemList XUPDynamicFolderItem::childrenList() const
 
 QString XUPDynamicFolderItem::displayText() const
 {
-	return QString( "%1 (%2)" ).arg( attribute( "name" ) ).arg( mFSRootIndex.data( Qt::DisplayRole ).toString() );
+	return QString( "%1 (%2)" ).arg( XUPItem::displayText() ).arg( mFSRootIndex.data( Qt::DisplayRole ).toString() );
 }
 
 QIcon XUPDynamicFolderItem::displayIcon() const
 {
 	return mFSRootIndex.data( Qt::DecorationRole ).value<QIcon>();
+}
+
+void XUPDynamicFolderItem::setRootPath( const QString& path )
+{
+	if ( mFSModel->rootPath() == path ) {
+		/*const int count = mFSModel->rowCount( mFSRootIndex );
+		
+		if ( count > 0 ) {
+			rowsInserted( mFSRootIndex, 0, count -1 );
+		}*/
+	}
+	else {
+		mFSRootIndex = mFSModel->setRootPath( path );
+	}
 }
 
 void XUPDynamicFolderItem::columnsAboutToBeInserted( const QModelIndex& parent, int start, int end )
@@ -281,7 +287,7 @@ void XUPDynamicFolderItem::columnsRemoved( const QModelIndex& parent, int start,
 
 void XUPDynamicFolderItem::dataChanged( const QModelIndex& topLeft, const QModelIndex& bottomRight )
 {
-	qWarning() << Q_FUNC_INFO;
+	//qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::headerDataChanged( Qt::Orientation orientation, int first, int last )
@@ -291,6 +297,8 @@ void XUPDynamicFolderItem::headerDataChanged( Qt::Orientation orientation, int f
 
 void XUPDynamicFolderItem::layoutAboutToBeChanged()
 {
+	//qWarning() << Q_FUNC_INFO;
+	
 	XUPProjectModel* model = this->model();
 	
 	if ( model ) {
@@ -300,6 +308,8 @@ void XUPDynamicFolderItem::layoutAboutToBeChanged()
 
 void XUPDynamicFolderItem::layoutChanged()
 {
+	//qWarning() << Q_FUNC_INFO;
+	
 	XUPProjectModel* model = this->model();
 	
 	if ( model ) {
@@ -329,6 +339,8 @@ void XUPDynamicFolderItem::rowsAboutToBeMoved( const QModelIndex& sourceParent, 
 
 void XUPDynamicFolderItem::rowsAboutToBeRemoved( const QModelIndex& parent, int start, int end )
 {
+	//qWarning() << Q_FUNC_INFO;
+	
 	XUPItem* item = mFSItems.value( parent, this );
 	XUPProjectModel* model = this->model();
 	
@@ -365,7 +377,7 @@ void XUPDynamicFolderItem::rowsInserted( const QModelIndex& parent, int start, i
 	
 	if ( model ) {
 		model->beginInsertRows( item->index(), start, end );
-		// nothing special to do as we do direct mapping
+		// nothing special to do as we do direct mapping in child( int row )
 		model->endInsertRows();
 	}
 }
@@ -377,6 +389,8 @@ void XUPDynamicFolderItem::rowsMoved( const QModelIndex& sourceParent, int sourc
 
 void XUPDynamicFolderItem::rowsRemoved( const QModelIndex& parent, int start, int end )
 {
+	//qWarning() << Q_FUNC_INFO;
+	
 	XUPProjectModel* model = this->model();
 	
 	if ( model ) {
@@ -386,5 +400,13 @@ void XUPDynamicFolderItem::rowsRemoved( const QModelIndex& parent, int start, in
 
 void XUPDynamicFolderItem::rootPathChanged( const QString& newPath )
 {
-	qWarning() << Q_FUNC_INFO;
+	//qWarning() << Q_FUNC_INFO << newPath;
+}
+
+void XUPDynamicFolderItem::directoryLoaded( const QString& path )
+{
+	if ( QDir( path ) == QDir( mFSModel->filePath( mFSRootIndex ) ) ) {
+		//qWarning() << Q_FUNC_INFO << path;
+		//project()->directoryChanged( path );
+	}
 }

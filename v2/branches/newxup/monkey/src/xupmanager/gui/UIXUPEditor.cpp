@@ -1,6 +1,7 @@
 #include "UIXUPEditor.h"
 
 #include <xupmanager/core/XUPProjectItem.h>
+#include "XUPDynamicFolderItem.h"
 #include <shared/MkSFileDialog.h>
 #include <pMonkeyStudio.h>
 #include <coremanager/MonkeyCore.h>
@@ -271,10 +272,15 @@ void UIXUPEditor::on_tbRemoveFile_clicked()
 
 void UIXUPEditor::accept()
 {
+	XUPItem* itemFolder = XUPProjectItemHelper::projectDynamicFolderItem( mProject, false );
 	XUPDynamicFolderSettings folder;
 	folder.Active = gbDynamicFolder->isChecked();
 	folder.AbsolutePath = leDynamicFolder->text();
 	folder.FilesPatterns = gbDynamicFilesPatterns->values();
+	
+	if ( itemFolder ) {
+		itemFolder->parent()->removeChild( itemFolder );
+	}
 	
 	ceEditor->finalize();
 	veEditor->finalize();
@@ -282,6 +288,11 @@ void UIXUPEditor::accept()
 	XUPProjectItemHelper::setProjectSettingsValue( mProject, "MAIN_FILE", cbMainFile->currentText() );
 	XUPProjectItemHelper::setProjectDynamicFolderSettings( mProject, folder );
 	XUPProjectItemHelper::setProjectCommands( mProject, ceEditor->commands() );
+	
+	if ( folder.Active && !folder.AbsolutePath.isEmpty() && QFile::exists( folder.AbsolutePath ) ) {
+		XUPDynamicFolderItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( mProject, true );
+		dynamicFolderItem->setRootPath( folder.AbsolutePath );
+	}
 	
 	// close dialog
 	QDialog::accept();

@@ -23,6 +23,8 @@ public:
 	virtual XUPItemList childrenList() const;
 	virtual QString displayText() const;
 	virtual QIcon displayIcon() const;
+	
+	void setRootPath( const QString& path );
 
 protected:
 	pFileSystemModel* mFSModel;
@@ -49,6 +51,7 @@ protected slots:
 	void rowsMoved( const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow );
 	void rowsRemoved( const QModelIndex& parent, int start, int end );
 	void rootPathChanged( const QString& newPath );
+	void directoryLoaded( const QString& path );
 };
 
 #endif // XUPDYNAMICFOLDERITEM_H

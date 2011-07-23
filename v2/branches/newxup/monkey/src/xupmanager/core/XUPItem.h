@@ -85,7 +85,7 @@ public:
 	virtual QIcon displayIcon() const;
 	
 	virtual QString content() const;
-	void setContent(const QString&);
+	void setContent( const QString& content );
 	
 	// return the stored cache value for key or defaultValue
 	QString cacheValue( const QString& key, const QString& defaultValue = QString::null ) const;
