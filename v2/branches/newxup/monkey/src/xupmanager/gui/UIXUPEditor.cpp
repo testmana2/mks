@@ -272,26 +272,30 @@ void UIXUPEditor::on_tbRemoveFile_clicked()
 
 void UIXUPEditor::accept()
 {
-	XUPItem* itemFolder = XUPProjectItemHelper::projectDynamicFolderItem( mProject, false );
-	XUPDynamicFolderSettings folder;
-	folder.Active = gbDynamicFolder->isChecked();
-	folder.AbsolutePath = leDynamicFolder->text();
-	folder.FilesPatterns = gbDynamicFilesPatterns->values();
+	const XUPDynamicFolderSettings oldSettings = XUPProjectItemHelper::projectDynamicFolderSettings( mProject );
+	XUPDynamicFolderSettings settings;
+	settings.Active = gbDynamicFolder->isChecked();
+	settings.AbsolutePath = leDynamicFolder->text();
+	settings.FilesPatterns = gbDynamicFilesPatterns->values();
 	
-	if ( itemFolder ) {
-		itemFolder->parent()->removeChild( itemFolder );
+	if ( oldSettings.AbsolutePath != settings.AbsolutePath ) {
+		XUPItem* itemFolder = XUPProjectItemHelper::projectDynamicFolderItem( mProject, false );
+		
+		if ( itemFolder ) {
+			itemFolder->parent()->removeChild( itemFolder );
+		}
 	}
 	
 	ceEditor->finalize();
 	veEditor->finalize();
 	mProject->setAttribute( "name", leProjectName->text() );
 	XUPProjectItemHelper::setProjectSettingsValue( mProject, "MAIN_FILE", cbMainFile->currentText() );
-	XUPProjectItemHelper::setProjectDynamicFolderSettings( mProject, folder );
+	XUPProjectItemHelper::setProjectDynamicFolderSettings( mProject, settings );
 	XUPProjectItemHelper::setProjectCommands( mProject, ceEditor->commands() );
 	
-	if ( folder.Active && !folder.AbsolutePath.isEmpty() && QFile::exists( folder.AbsolutePath ) ) {
+	if ( settings.Active && !settings.AbsolutePath.isEmpty() && QFile::exists( settings.AbsolutePath ) ) {
 		XUPDynamicFolderItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( mProject, true );
-		dynamicFolderItem->setRootPath( folder.AbsolutePath );
+		dynamicFolderItem->setRootPath( settings.AbsolutePath );
 	}
 	
 	// close dialog
