@@ -428,7 +428,7 @@ QString XUPItem::displayText() const
 		case XUPItem::Variable:
 			return project()->documentFilters().variableDisplayText( attribute( "name" ) );
 		case XUPItem::Value:
-			return content()+"toto";
+			return content();
 		case XUPItem::Function:
 			return QString( "%1( %2 )" ).arg( attribute( "name" ) ).arg( attribute( "parameters" ) );
 		case XUPItem::Scope:
@@ -469,7 +469,7 @@ QString XUPItem::content() const
 	return mDomElement.text();
 }
 
-void XUPItem::setContent(const QString& content)
+void XUPItem::setContent( const QString& content )
 {
 	QDomText textNode = mDomElement.firstChild().toText();
 	

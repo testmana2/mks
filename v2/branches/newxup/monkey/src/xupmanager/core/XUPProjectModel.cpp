@@ -2,7 +2,6 @@
 #include "XUPProjectItem.h"
 #include "MonkeyCore.h"
 
-#include <QFileSystemWatcher>
 #include <QDebug>
 
 XUPProjectModel::XUPProjectModel( QObject* parent )

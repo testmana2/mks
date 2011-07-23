@@ -1,5 +1,6 @@
 #include "XUPProjectItemHelper.h"
 #include "XUPProjectItem.h"
+#include "XUPDynamicFolderItem.h"
 #include "pMonkeyStudio.h"
 
 #include <QDir>
@@ -88,21 +89,17 @@ XUPItem* XUPProjectItemHelper::projectCommandsScope( XUPProjectItem* project, bo
 {
 	XUPItem* settingsScope = projectSettingsScope( project, create );
 	
-	if ( !settingsScope )
-	{
+	if ( !settingsScope ) {
 		return 0;
 	}
 	
-	foreach ( XUPItem* child, settingsScope->childrenList() )
-	{
-		if ( child->type() == XUPItem::Scope && child->attribute( "name" ) == CommandsScopeName )
-		{
+	foreach ( XUPItem* child, settingsScope->childrenList() ) {
+		if ( child->type() == XUPItem::Scope && child->attribute( "name" ) == CommandsScopeName ) {
 			return child;
 		}
 	}
 	
-	if ( !create )
-	{
+	if ( !create ) {
 		return 0;
 	}
 	
@@ -122,10 +119,8 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Ty
 {
 	bool emptyCommands = true;
 	
-	foreach ( const BasePlugin::Type& type, commands.keys() )
-	{
-		if ( commands[ type ].isEmpty() )
-		{
+	foreach ( const BasePlugin::Type& type, commands.keys() ) {
+		if ( commands[ type ].isEmpty() ) {
 			continue;
 		}
 		
@@ -135,29 +130,24 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Ty
 	
 	XUPItem* commandsScope = projectCommandsScope( project, !emptyCommands );
 	
-	if ( !commandsScope )
-	{
+	if ( !commandsScope ) {
 		return;
 	}
 	
 	// delete scope if no commands
-	if ( emptyCommands )
-	{
+	if ( emptyCommands ) {
 		commandsScope->parent()->removeChild( commandsScope );
 		return;
 	}
 	
 	// clear existing commands
-	foreach ( XUPItem* child, commandsScope->childrenList() )
-	{
+	foreach ( XUPItem* child, commandsScope->childrenList() ) {
 		commandsScope->removeChild( child );
 	}
 	
 	// create new ones
-	foreach ( const BasePlugin::Type& type, commands.keys() )
-	{
-		foreach ( const pCommand& command, commands[ type ] )
-		{
+	foreach ( const BasePlugin::Type& type, commands.keys() ) {
+		foreach ( const pCommand& command, commands[ type ] ) {
 			XUPItem* variable = commandsScope->addChild( XUPItem::Variable );
 			variable->setAttribute( "name", CommandScopeName );
 			variable->setAttribute( "operator", "=" );
@@ -180,19 +170,15 @@ TypeCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* projec
 	TypeCommandListMap commands;
 	XUPItem* commandsScope = projectCommandsScope( project, false );
 	
-	if ( commandsScope )
-	{
-		foreach ( XUPItem* commandVariable, commandsScope->childrenList() )
-		{
+	if ( commandsScope ) {
+		foreach ( XUPItem* commandVariable, commandsScope->childrenList() ) {
 			QVariantList values;
 			
-			foreach ( XUPItem* commandValue, commandVariable->childrenList() )
-			{
+			foreach ( XUPItem* commandValue, commandVariable->childrenList() ) {
 				values << commandValue->content();
 			}
 			
-			if ( values.count() != 8 )
-			{
+			if ( values.count() != 8 ) {
 				qWarning() << "Skip reading incomplete command";
 				Q_ASSERT( 0 );
 				continue;
@@ -213,30 +199,6 @@ TypeCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* projec
 	}
 	
 	return commands;
-}
-
-void XUPProjectItemHelper::installProjectCommands( XUPProjectItem* project )
-{
-	const TypeCommandListMap commands = projectCommands( project );
-	
-	foreach ( const BasePlugin::Type& type, commands.keys() )
-	{
-		foreach ( pCommand command, commands[ type ] )
-		{
-			switch ( type )
-			{
-				case BasePlugin::iCLITool:
-					project->addCommand( command, "mBuilder" );
-					break;
-				case BasePlugin::iDebugger:
-					project->addCommand( command, "mDebugger" );
-					break;
-				default:
-					Q_ASSERT( 0 );
-					break;
-			}
-		}
-	}
 }
 
 XUPItem* XUPProjectItemHelper::projectDynamicFolderSettingsItem( XUPProjectItem* project, bool create )
@@ -319,63 +281,21 @@ void XUPProjectItemHelper::setProjectDynamicFolderSettings( XUPProjectItem* proj
 	}
 }
 
-XUPItem* XUPProjectItemHelper::projectDynamicFolderItem( XUPProjectItem* project, bool create )
+XUPDynamicFolderItem* XUPProjectItemHelper::projectDynamicFolderItem( XUPProjectItem* project, bool create )
 {
-	foreach ( XUPItem* child, project->childrenList() )
-	{
-		if ( child->type() == XUPItem::DynamicFolder && child->attribute( "name" ) == DynamicFolderName )
-		{
-			return child;
+	foreach ( XUPItem* child, project->childrenList() ) {
+		if ( child->type() == XUPItem::DynamicFolder ) {
+			return static_cast<XUPDynamicFolderItem*>( child );
 		}
 	}
 	
-	if ( !create )
-	{
+	if ( !create ) {
 		return 0;
 	}
 	
-	XUPItem* dynamicFolderItem = project->addChild( XUPItem::DynamicFolder );
+	XUPDynamicFolderItem* dynamicFolderItem = static_cast<XUPDynamicFolderItem*>( project->addChild( XUPItem::DynamicFolder ) );
 	dynamicFolderItem->setAttribute( "name", DynamicFolderName );
-	dynamicFolderItem->setAttribute( "operator", "=" );
-	dynamicFolderItem->setAttribute( "multiline", "true" );
 	return dynamicFolderItem;
-}
-
-void XUPProjectItemHelper::addDynamicFolderProperty( XUPItem* dynamicFolderItem, const QString& value )
-{
-	XUPItem* valueItem = dynamicFolderItem->addChild( XUPItem::File );
-	valueItem->setContent( value );
-}
-
-void XUPProjectItemHelper::updateDynamicFolder( XUPProjectItem* project, const QString& path )
-{
-	XUPItem* dynamicFolderItem = projectDynamicFolderItem( project, true );
-	const XUPDynamicFolderSettings folder = projectDynamicFolderSettings( project );
-	const bool samePath = QDir::cleanPath( path ) == QDir::cleanPath( folder.AbsolutePath );
-	
-	if ( !dynamicFolderItem || !samePath )
-	{
-		return;
-	}
-	
-	foreach ( XUPItem* child, dynamicFolderItem->childrenList() )
-	{
-		dynamicFolderItem->removeChild( child );
-	}
-	
-	QDir dir( path );
-	QFileInfoList files = pMonkeyStudio::getFiles( dir, folder.FilesPatterns, false );
-	
-	if ( !folder.Active || files.isEmpty() )
-	{
-		project->removeChild( dynamicFolderItem );
-		return;
-	}
-	
-	foreach ( const QFileInfo& file, files )
-	{
-		addDynamicFolderProperty( dynamicFolderItem, file.absoluteFilePath() );
-	}
 }
 
 QDomDocument XUPProjectItemHelper::stripDynamicFolderFiles( const QDomDocument& document )
@@ -383,8 +303,7 @@ QDomDocument XUPProjectItemHelper::stripDynamicFolderFiles( const QDomDocument& 
 	QDomDocument doc = document.cloneNode().toDocument();
 	const QDomNodeList nodesToRemove = doc.elementsByTagName( "dynamicfolder" );
 	
-	for ( int i = 0; i < nodesToRemove.count(); i++ )
-	{
+	for ( int i = 0; i < nodesToRemove.count(); i++ ) {
 		const QDomNode& node = nodesToRemove.at( i );
 		node.parentNode().removeChild( node );
 	}

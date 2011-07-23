@@ -17,6 +17,7 @@
 ****************************************************************************/
 #include "PyQt.h"
 #include "PyQtProjectItem.h"
+#include "XUPProjectItemHelper.h"
 
 #include <MonkeyCore.h>
 
@@ -58,6 +59,13 @@ bool PyQt::install()
 	filters[ "PYTHON_FILES" ].type = DocumentFilter::File;
 	filters[ "PYTHON_FILES" ].filters << "*.py*";
 	filters[ "PYTHON_FILES" ].filtered = true;
+	
+	/*filters[ XUPProjectItemHelper::DynamicFolderName ].weight = weight++;
+	//filters[ XUPProjectItemHelper::DynamicFolderName ].label = "";
+	//filters[ XUPProjectItemHelper::DynamicFolderName ].icon = "";
+	filters[ XUPProjectItemHelper::DynamicFolderName ].type = DocumentFilter::File;
+	//filters[ XUPProjectItemHelper::DynamicFolderName ].filters << "";
+	filters[ XUPProjectItemHelper::DynamicFolderName ].filtered = true;*/
 	
 	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject, filters );
 	return true;

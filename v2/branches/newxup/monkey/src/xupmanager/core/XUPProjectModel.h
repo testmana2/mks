@@ -7,7 +7,6 @@
 
 class XUPProjectItem;
 class XUPItem;
-class QFileSystemWatcher;
 
 class Q_MONKEY_EXPORT XUPProjectModel : public QAbstractItemModel
 {
