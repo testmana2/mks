@@ -90,6 +90,7 @@ public:
 	XUPItemList getFilteredVariables( XUPItem* root );
 	XUPItemList getValues( XUPItem* root );
 	
+	void populateDynamicFolder( XUPItem* folder );
 	void populateVariable( XUPItem* variable );
 	void populateProject( XUPProjectItem* item );
 	

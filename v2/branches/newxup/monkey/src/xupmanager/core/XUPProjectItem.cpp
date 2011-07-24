@@ -81,14 +81,14 @@ QStringList XUPProjectItem::sourceFiles() const
 	}
 	
 	// get dynamic files
-	XUPItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( const_cast<XUPProjectItem*>( this ), false );
+	const XUPDynamicFolderSettings settings = XUPProjectItemHelper::projectDynamicFolderSettings( const_cast<XUPProjectItem*>( this ) );
 	
-	#warning FIX ME: do recursive scanning
-	if ( dynamicFolderItem ) {
-		foreach ( XUPItem* valueItem, dynamicFolderItem->childrenList() ) {
-			if ( valueItem->type() == XUPItem::File ) {
-				entries << filePath( valueItem->content() );
-			}
+	if ( settings.Active && !settings.AbsolutePath.isEmpty() && QFile::exists( settings.AbsolutePath ) ) {
+		QDir dir( settings.AbsolutePath );
+		QFileInfoList files = pMonkeyStudio::getFiles( dir, settings.FilesPatterns, true );
+		
+		foreach ( const QFileInfo& fi, files ) {
+			entries << fi.absoluteFilePath();
 		}
 	}
 	
@@ -97,19 +97,14 @@ QStringList XUPProjectItem::sourceFiles() const
 
 QStringList XUPProjectItem::topLevelProjectSourceFiles() const
 {
-	QSet<QString> files;
+	QStringList files;
 
-	XUPProjectItemList projects = childrenProjects( true );
-
-	foreach ( XUPProjectItem* project, projects ) {
-		const QStringList sources = project->sourceFiles();
-
-		foreach ( const QString& source, sources ) {
-			files << source;
-		}
+	foreach ( XUPProjectItem* project, childrenProjects( true ) ) {
+		files << project->sourceFiles();
 	}
 
-	return files.toList();
+	// remove duplicates
+	return files.toSet().toList();
 }
 
 XUPPlugin* XUPProjectItem::driver() const
@@ -390,7 +385,7 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	
 	if ( dynamicFolderSettings.Active && QFile::exists( dynamicFolderSettings.AbsolutePath ) ) {
 		XUPDynamicFolderItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( this, true );
-		dynamicFolderItem->setRootPath( dynamicFolderSettings.AbsolutePath );
+		dynamicFolderItem->setRootPath( dynamicFolderSettings.AbsolutePath, dynamicFolderSettings.FilesPatterns );
 	}
 
 	return true;

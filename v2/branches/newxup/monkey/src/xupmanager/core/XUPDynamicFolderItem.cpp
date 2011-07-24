@@ -241,18 +241,10 @@ QIcon XUPDynamicFolderItem::displayIcon() const
 	return mFSRootIndex.data( Qt::DecorationRole ).value<QIcon>();
 }
 
-void XUPDynamicFolderItem::setRootPath( const QString& path )
+void XUPDynamicFolderItem::setRootPath( const QString& path, const QStringList& filters )
 {
-	if ( mFSModel->rootPath() == path ) {
-		/*const int count = mFSModel->rowCount( mFSRootIndex );
-		
-		if ( count > 0 ) {
-			rowsInserted( mFSRootIndex, 0, count -1 );
-		}*/
-	}
-	else {
-		mFSRootIndex = mFSModel->setRootPath( path );
-	}
+	mFSModel->setNameFilters( filters );
+	mFSRootIndex = mFSModel->setRootPath( path );
 }
 
 void XUPDynamicFolderItem::columnsAboutToBeInserted( const QModelIndex& parent, int start, int end )

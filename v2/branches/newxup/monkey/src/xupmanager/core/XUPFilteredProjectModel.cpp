@@ -1,5 +1,7 @@
 #include "XUPFilteredProjectModel.h"
 #include "XUPProjectItem.h"
+#include "XUPDynamicFolderItem.h"
+#include "XUPProjectItemHelper.h"
 
 #include <QDebug>
 
@@ -58,6 +60,23 @@ QModelIndex XUPFilteredProjectModel::index( int row, int column, const QModelInd
 {
 	XUPItem* item = mapToSource( parentProxy );
 	XUPItemMappingIterator it = mItemsMapping.constFind( item );
+	
+	// try dinamic mapping
+	/*{
+		qWarning() << "hereeee";
+		XUPItem* parentItem = mSourceModel->itemFromIndex( proxyIndex.parent() );
+		
+		if ( parentItem ) {
+			createMapping( parentItem, parentItem->parent() );
+			
+			XUPItem* item = mSourceModel->itemFromIndex( proxyIndex );
+			
+			if ( item ) {
+				createMapping( item, parentItem );
+				return item;
+			}
+		}
+	}*/
 	
 	if ( it == mItemsMapping.constEnd() )
 	{
@@ -183,6 +202,7 @@ bool XUPFilteredProjectModel::hasChildren( const QModelIndex& proxyParent ) cons
 			switch ( item->type() ) {
 				case XUPItem::DynamicFolder:
 				case XUPItem::Folder:
+					const_cast<XUPFilteredProjectModel*>( this )->populateDynamicFolder( item );
 					return item->hasChildren();
 				default:
 					return !it.value()->mMappedChildren.isEmpty();
@@ -210,11 +230,11 @@ XUPItemMappingIterator XUPFilteredProjectModel::indexToIterator( const QModelInd
 
 XUPItem* XUPFilteredProjectModel::mapToSource( const QModelIndex& proxyIndex ) const
 {
-	if ( proxyIndex.isValid() )
-	{
+	if ( proxyIndex.isValid() ) {
 		XUPItemMappingIterator it = indexToIterator( proxyIndex );
-		if ( it != mItemsMapping.constEnd() )
+		if ( it != mItemsMapping.constEnd() ) {
 			return it.key();
+		}
 	}
 	return 0;
 }
@@ -324,7 +344,6 @@ void XUPFilteredProjectModel::setSourceModel( XUPProjectModel* model )
 		
 		// populate existing indexes
 		if ( mSourceModel->hasChildren() ) {
-			const QModelIndex index = mSourceModel->rootProject()->index();
 			internal_rowsInserted( QModelIndex(), 0, mSourceModel->rowCount() -1 );
 		}
 	}
@@ -355,6 +374,7 @@ XUPItemList XUPFilteredProjectModel::getFilteredVariables( XUPItem* root )
 			case XUPItem::EmptyLine:
 				break;
 			case XUPItem::Variable:
+			case XUPItem::DynamicFolder:
 				if ( filteredVariables.contains( child->attribute( "name" ) ) )
 				{
 					variables << child;
@@ -391,12 +411,35 @@ XUPItemList XUPFilteredProjectModel::getValues( XUPItem* root )
 				values << child;
 				break;
 			case XUPItem::Folder:
+			case XUPItem::DynamicFolder:
 				values << getValues( child );
 			default:
 				break;
 		}
 	}
 	return values;
+}
+
+void XUPFilteredProjectModel::populateDynamicFolder( XUPItem* folder )
+{
+	if ( !folder ) {
+		return;
+	}
+	
+	foreach ( XUPItem* child, folder->childrenList() ) {
+		switch ( child->type() ) {
+			case XUPItem::File:
+			case XUPItem::Folder:
+				createMapping( child, folder );
+				continue;
+			default:
+				break;
+		}
+	}
+	
+	XUPItemMappingIterator parentIterator = createMapping( folder, folder->parent() );
+	XUPItemList& childrenItems = parentIterator.value()->mMappedChildren;
+	qSortItems( childrenItems );
 }
 
 void XUPFilteredProjectModel::populateVariable( XUPItem* variable )
@@ -444,6 +487,8 @@ void XUPFilteredProjectModel::populateProject( XUPProjectItem* project )
 	
 	XUPItemList& projectVariables = projectIterator.value()->mMappedChildren;
 	qSortItems( projectVariables );
+	
+	populateDynamicFolder( XUPProjectItemHelper::projectDynamicFolderItem( project, false ) );
 }
 
 void XUPFilteredProjectModel::internal_rowsInserted( const QModelIndex& parent, int start, int end )
