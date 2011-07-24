@@ -37,7 +37,7 @@ void PyQtProjectItem::installCommands()
 	const pCommand cmdInterpret = cmd;
 	
 	// get qt version
-	QString mainFile = relativeFilePath( attribute( "MAIN_FILE" ) );
+	QString mainFile = relativeFilePath( XUPProjectItemHelper::projectSettingsValue( this, "MAIN_FILE" ) );
 	
 	if ( mainFile.isEmpty() ) {
 		mainFile = relativeFilePath( findFile( "main.py" ).value( 0 ).absoluteFilePath() );
