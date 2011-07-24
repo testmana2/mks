@@ -278,7 +278,7 @@ void UIXUPEditor::accept()
 	settings.AbsolutePath = leDynamicFolder->text();
 	settings.FilesPatterns = gbDynamicFilesPatterns->values();
 	
-	if ( oldSettings.AbsolutePath != settings.AbsolutePath ) {
+	if ( oldSettings.AbsolutePath != settings.AbsolutePath || oldSettings.FilesPatterns != settings.FilesPatterns ) {
 		XUPItem* itemFolder = XUPProjectItemHelper::projectDynamicFolderItem( mProject, false );
 		
 		if ( itemFolder ) {
@@ -295,7 +295,7 @@ void UIXUPEditor::accept()
 	
 	if ( settings.Active && !settings.AbsolutePath.isEmpty() && QFile::exists( settings.AbsolutePath ) ) {
 		XUPDynamicFolderItem* dynamicFolderItem = XUPProjectItemHelper::projectDynamicFolderItem( mProject, true );
-		dynamicFolderItem->setRootPath( settings.AbsolutePath );
+		dynamicFolderItem->setRootPath( settings.AbsolutePath, settings.FilesPatterns );
 	}
 	
 	// close dialog

@@ -17,8 +17,7 @@ class Q_MONKEY_EXPORT XUPProjectModel : public QAbstractItemModel
 	friend class XUPDynamicFolderItem;
 	
 public:
-	enum CustomRole
-	{
+	enum CustomRole {
 		TypeRole = Qt::UserRole
 	};
 	

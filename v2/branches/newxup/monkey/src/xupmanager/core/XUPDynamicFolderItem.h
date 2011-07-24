@@ -24,7 +24,7 @@ public:
 	virtual QString displayText() const;
 	virtual QIcon displayIcon() const;
 	
-	void setRootPath( const QString& path );
+	void setRootPath( const QString& path, const QStringList& filters );
 
 protected:
 	pFileSystemModel* mFSModel;
