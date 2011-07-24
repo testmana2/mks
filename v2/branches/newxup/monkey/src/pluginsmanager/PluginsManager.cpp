@@ -219,6 +219,12 @@ void PluginsManager::manageRequested()
 
 void PluginsManager::clearPlugins()
 {
+	BasePlugin* appDebug = plugin<BasePlugin*>( stAll, "AppDebug" );
+	
+	if ( appDebug ) {
+		mPlugins.move( mPlugins.indexOf( appDebug ), mPlugins.count() -1 );
+	}
+	
 	foreach ( BasePlugin* bp, mPlugins )
 	{
 		qWarning( "Clearing plugin...%s", bp->infos().Name.toLocal8Bit().constData() );
