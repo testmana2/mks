@@ -34,7 +34,7 @@ void MakefileProjectItem::installCommands()
 		}
 	}
 	
-	CLIToolPlugin* make = MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "GNUMake" );
+	CLIToolPlugin* make = MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stEnabled, "GNUMake" );
 	
 	if ( !make ) {
 		QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Makefile Project" ), tr( "Can't build Makefile projects. GNUMake plugin not enabled" ) );
