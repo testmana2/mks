@@ -25,7 +25,7 @@ void AppDebug::fillPluginInfos()
 bool AppDebug::install()
 {
 	mDock = new DebugDockWidget;
-	//qInstallMsgHandler( AppDebug::qtMessageHandler );
+	qInstallMsgHandler( AppDebug::qtMessageHandler );
 	MonkeyCore::mainWindow()->dockToolBar( Qt::LeftToolBarArea )->addDock( mDock.data(), infos().Caption, pIconManager::icon( "AppDebug.png", ":/icons" ) );
 	
 	return true;
@@ -33,7 +33,7 @@ bool AppDebug::install()
 
 bool AppDebug::uninstall()
 {
-	//qInstallMsgHandler( 0 );
+	qInstallMsgHandler( 0 );
 	mDock.data()->deleteLater();
 	
 	return true;
