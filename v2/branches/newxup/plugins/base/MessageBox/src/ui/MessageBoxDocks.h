@@ -68,7 +68,9 @@ public:
 		lvBuildSteps->setAttribute( Qt::WA_MacSmallSize );
 		
 		titleBar()->addAction( MonkeyCore::menuBar()->action( "mView/aShowNextErrorOrWarning" ), 0 );
-		titleBar()->addSeparator( 2 );
+		titleBar()->addAction( MonkeyCore::menuBar()->action( "mView/aShowNextWarning" ), 1 );
+		titleBar()->addAction( MonkeyCore::menuBar()->action( "mView/aShowNextError" ), 2 );
+		titleBar()->addSeparator( 3 );
 	}
 };
 
@@ -120,6 +122,8 @@ public slots:
 	void showBuild();
 	void showOutput();
 	void showNextErrorOrWarning();
+	void showNextWarning();
+	void showNextError();
 
 protected slots:
 	void lvBuildSteps_activated( const QModelIndex& index );
