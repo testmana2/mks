@@ -26,7 +26,7 @@ void MakefileProject::fillPluginInfos()
 {
 	mPluginInfos.Caption = tr( "Makefile Project" );
 	mPluginInfos.Description = tr( "Allows quickly build Makefile based projects" );
-	mPluginInfos.Author = "Andrei Kopats aka hlamer <hlamer@tut.by>";
+	mPluginInfos.Author = "Andrei Kopats aka hlamer <hlamer@tut.by>, Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>";
 	mPluginInfos.Type = BasePlugin::iXUP;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "1.0.0";
