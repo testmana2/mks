@@ -2,6 +2,8 @@
 
 #include <QDebug>
 
+#define pConsoleManagerStepModelColumnCount 1
+
 pConsoleManagerStepModel::pConsoleManagerStepModel( QObject* parent )
 	: QAbstractItemModel( parent )
 {
@@ -15,13 +17,12 @@ pConsoleManagerStepModel::~pConsoleManagerStepModel()
 
 int pConsoleManagerStepModel::columnCount( const QModelIndex& parent ) const
 {
-	return parent.isValid() ? 0 : 1;
+	return parent != QModelIndex() ? 0 : pConsoleManagerStepModelColumnCount;
 }
 
 QVariant pConsoleManagerStepModel::data( const QModelIndex& index, int role ) const
 {
-	if ( !index.isValid() )
-	{
+	if ( !index.isValid() ) {
 		return QVariant();
 	}
 	
@@ -31,8 +32,7 @@ QVariant pConsoleManagerStepModel::data( const QModelIndex& index, int role ) co
 
 QModelIndex pConsoleManagerStepModel::index( int row, int column, const QModelIndex& parent ) const
 {
-	if ( parent.isValid() || row < 0 || row >= rowCount( parent ) || column < 0 || column >= columnCount( parent ) )
-	{
+	if ( parent != QModelIndex() || row < 0 || row >= mSteps.count() || column < 0 || column >= pConsoleManagerStepModelColumnCount ) {
 		return QModelIndex();
 	}
 	
@@ -47,12 +47,12 @@ QModelIndex pConsoleManagerStepModel::parent( const QModelIndex& index ) const
 
 int pConsoleManagerStepModel::rowCount( const QModelIndex& parent ) const
 {
-	return parent.isValid() ? 0 : mSteps.count();
+	return parent != QModelIndex() ? 0 : mSteps.count();
 }
 
 bool pConsoleManagerStepModel::hasChildren( const QModelIndex& parent ) const
 {
-	return parent.isValid() ? false : !mSteps.isEmpty();
+	return parent != QModelIndex() ? false : !mSteps.isEmpty();
 }
 
 QModelIndex pConsoleManagerStepModel::index( const pConsoleManagerStep& step ) const
@@ -70,18 +70,52 @@ QModelIndex pConsoleManagerStepModel::nextErrorOrWarning( const QModelIndex& fro
 {
 	const int row = fromIndex.isValid() ? fromIndex.row() +1 : 0;
 	
-	if ( row >= rowCount() )
-	{
+	if ( row >= rowCount() ) {
 		return QModelIndex();
 	}
 	
-	for ( int i = row; i < rowCount(); i++ )
-	{
+	for ( int i = row; i < rowCount(); i++ ) {
 		pConsoleManagerStep& step = mSteps[ i ];
 		
-		if ( step.type() == pConsoleManagerStep::Warning || 
-			 step.type() == pConsoleManagerStep::Error)
-		{
+		if ( step.type() == pConsoleManagerStep::Warning || step.type() == pConsoleManagerStep::Error ) {
+			return createIndex( i, 0, &step );
+		}
+	}
+	
+	return QModelIndex();
+}
+
+QModelIndex pConsoleManagerStepModel::nextWarning( const QModelIndex& fromIndex ) const
+{
+	const int row = fromIndex.isValid() ? fromIndex.row() +1 : 0;
+	
+	if ( row >= rowCount() ) {
+		return QModelIndex();
+	}
+	
+	for ( int i = row; i < rowCount(); i++ ) {
+		pConsoleManagerStep& step = mSteps[ i ];
+		
+		if ( step.type() == pConsoleManagerStep::Warning ) {
+			return createIndex( i, 0, &step );
+		}
+	}
+	
+	return QModelIndex();
+}
+
+QModelIndex pConsoleManagerStepModel::nextError( const QModelIndex& fromIndex ) const
+{
+	const int row = fromIndex.isValid() ? fromIndex.row() +1 : 0;
+	
+	if ( row >= rowCount() ) {
+		return QModelIndex();
+	}
+	
+	for ( int i = row; i < rowCount(); i++ ) {
+		pConsoleManagerStep& step = mSteps[ i ];
+		
+		if ( step.type() == pConsoleManagerStep::Error ) {
 			return createIndex( i, 0, &step );
 		}
 	}
@@ -93,8 +127,7 @@ void pConsoleManagerStepModel::clear()
 {
 	const int count = rowCount();
 	
-	if ( count == 0 )
-	{
+	if ( count == 0 ) {
 		return;
 	}
 	
@@ -109,11 +142,10 @@ void pConsoleManagerStepModel::appendStep( const pConsoleManagerStep& step )
 {
 	// get last type
 	const pConsoleManagerStep::Type type = mSteps.isEmpty() ? pConsoleManagerStep::Unknown : mSteps.last().type();
-	const int count = rowCount();
+	const int count = mSteps.count();
 	
 	// update warnings/errors
-	switch ( step.type() )
-	{
+	switch ( step.type() ) {
 		case pConsoleManagerStep::Warning:
 			mWarnings++;
 			break;
@@ -125,24 +157,20 @@ void pConsoleManagerStepModel::appendStep( const pConsoleManagerStep& step )
 	}
 
 	// add step
-	switch ( type )
-	{
-		case pConsoleManagerStep::Compiling:
-		{
-			switch ( step.type() )
-			{
-				case pConsoleManagerStep::Warning:
-				case pConsoleManagerStep::Error:
+	switch ( type ) {
+		case pConsoleManagerStep::Compiling: {
+			#warning These parts may need some check, not sure about count -1 according to the comment
+			switch ( step.type() ) {
 				// add to last -1
-				{
+				case pConsoleManagerStep::Warning:
+				case pConsoleManagerStep::Error: {
 					beginInsertRows( QModelIndex(), count -1, count -1 );
 					mSteps.insert( count -1, step );
 					endInsertRows();
 					break;
 				}
 				// replace last
-				default:
-				{
+				default: {
 					mSteps[ count -1 ] = step;
 					const QModelIndex index = this->index( step );
 					emit dataChanged( index, index );
@@ -152,8 +180,7 @@ void pConsoleManagerStepModel::appendStep( const pConsoleManagerStep& step )
 			
 			break;
 		}
-		default:
-		{
+		default: {
 			beginInsertRows( QModelIndex(), count, count );
 			mSteps << step;
 			endInsertRows();
@@ -162,30 +189,26 @@ void pConsoleManagerStepModel::appendStep( const pConsoleManagerStep& step )
 	}
 	
 	// if step is finish, need set error, warning text if needed
-	if ( step.type() == pConsoleManagerStep::Finish )
-	{
+	if ( step.type() == pConsoleManagerStep::Finish ) {
 		pConsoleManagerStep* _step = &mSteps.last();
 		
-		if ( step.roleValue( Qt::DisplayRole ).toString().isEmpty() )
-		{
+		if ( step.roleValue( Qt::DisplayRole ).toString().isEmpty() ) {
 			_step->setRoleValue( pConsoleManagerStep::TypeRole, mErrors ? pConsoleManagerStep::Bad : pConsoleManagerStep::Good );
 			_step->setRoleValue( Qt::DisplayRole, tr( "Command terminated, error(s): %1, warning(s): %2" ).arg( mErrors ).arg( mWarnings ) );
 		}
-		else // own text present
-		{
+		else {
 			_step->setRoleValue( pConsoleManagerStep::TypeRole, pConsoleManagerStep::Bad );
 		}
 		
-		const QModelIndex index = this->index( *_step );
-		emit dataChanged( index, index );
+		const QModelIndex idx = index( *_step );
+		emit dataChanged( idx, idx );
 	}
 }
 
 void pConsoleManagerStepModel::appendSteps( const pConsoleManagerStepList& steps )
 {
 	// do a hacky loop for now as this member is not yet used
-	foreach ( const pConsoleManagerStep& step, steps )
-	{
+	foreach ( const pConsoleManagerStep& step, steps ) {
 		appendStep( step );
 	}
 }
