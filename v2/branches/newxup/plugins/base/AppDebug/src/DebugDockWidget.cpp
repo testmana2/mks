@@ -50,8 +50,10 @@ void DebugDockWidget::qtMessageHandler( QtMsgType type, const char* msg )
 		case QtFatalMsg:
 			pteFatal->appendPlainText( QString::fromLocal8Bit( msg ) );
 			printf( "*** Fatal: %s\n", msg );
-			//abort();
+			abort();
 	}
+	
+	fflush( stdout );
 }
 
 void DebugDockWidget::currentProjectChanged()
