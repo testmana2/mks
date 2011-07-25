@@ -9,6 +9,8 @@
 #include "XUPProjectItemHelper.h"
 #include "XUPDynamicFolderItem.h"
 
+#include <pQueuedMessageToolBar.h>
+
 #include <QTextCodec>
 #include <QDir>
 #include <QRegExp>
@@ -181,9 +183,24 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 void XUPProjectItem::removeItem( XUPItem* item )
 {
 	switch ( item->type() ) {
-		case XUPItem::File:
-			#warning may ask to delete file here
+		case XUPItem::File: {
+			if ( item->type() == XUPItem::File ) {
+				XUPProjectItem* rootIncludeProject = item->project()->rootIncludeProject();
+				const QString fp = rootIncludeProject->filePath( item->content() );
+				QFile file( fp );
+				
+				// ask removing file
+				if ( !fp.isEmpty()
+					&& file.exists()
+					&& QMessageBox::question( 0, QString::null, tr( "Do you want to delete the associate file ?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
+					if ( !file.remove() ) {
+						MonkeyCore::messageManager()->appendMessage( tr( "Can't delete file '%1': %2" ).arg( fp ).arg( file.errorString() ) );
+					}
+				}
+			}
+			
 			break;
+		}
 		case XUPItem::Variable:
 			#warning may ask to delete files here
 			break;

@@ -342,12 +342,10 @@ void XUPProjectManager::editProject()
 void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )
 {
 	XUPProjectItem* project = scope->project();
-	//TODO check if files already added!
-	project->addFiles(files, scope);
-		
-	// save project
-	if ( !project->save() )
-	{
+	
+	project->addFiles( files, scope );
+	
+	if ( !project->save() ) {
 		MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 	}
 }
@@ -394,36 +392,18 @@ void XUPProjectManager::removeFiles()
 	XUPItem* curItem = currentItem();
 	
 	
-	if ( !curItem || !( curItem->type() == XUPItem::Value || curItem->type() == XUPItem::File || curItem->type() == XUPItem::Path ) )
-	{
+	if ( !curItem || !( curItem->type() == XUPItem::Value || curItem->type() == XUPItem::File || curItem->type() == XUPItem::Path ) ) {
 		return;
 	}
 	
-	if ( QMessageBox::question( window(), tr( "Remove Value..." ), tr( "Are you sur you want to remove this value ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::Yes )
-	{
+	#warning May add a chackbox asking for removing theassociate file.
+	if ( QMessageBox::question( window(), tr( "Remove Value..." ), tr( "Are you sur you want to remove this value ?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
 		XUPProjectItem* project = curItem->project();
-		
-		// if file item
-		if ( curItem->type() == XUPItem::File )
-		{
-			XUPProjectItem* rootIncludeProject = project->rootIncludeProject();
-			const QString fp = rootIncludeProject->filePath( curItem->content() );
-			
-			// ask removing file
-			if ( QFile::exists( fp ) && QMessageBox::question( window(), tr( "Delete associations..." ), tr( "Do you want to delete the associate file ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::Yes )
-			{
-				if ( !QFile::remove( fp ) )
-				{
-					QMessageBox::warning( window(), tr( "Error..." ), tr( "Can't delete file: %1" ).arg( fp ) );
-				}
-			}
-		}
 		
 		project->removeItem( curItem );
 		
 		// save project
-		if ( !project->save() )
-		{
+		if ( !project->save() ) {
 			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 		}
 	}
