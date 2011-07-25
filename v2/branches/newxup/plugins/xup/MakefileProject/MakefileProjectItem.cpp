@@ -5,7 +5,6 @@
 #include <UIMain.h>
 #include <pFileManager.h>
 
-#include <QMessageBox>
 #include <QDebug>
 
 MakefileProjectItem::MakefileProjectItem()
@@ -20,10 +19,15 @@ QString MakefileProjectItem::projectType() const
 
 void MakefileProjectItem::installCommands()
 {
-	QStringList targets;
 	QFile file( fileName() );
-	file.open( QIODevice::ReadOnly );
-	QRegExp targetRex( "^([\\w\\-\\d]+):.*" );
+	
+	if ( !file.open( QIODevice::ReadOnly ) ) {
+		setLastError( tr( "Can't open file '%1'" ).arg( fileName() ) );
+		return;
+	}
+	
+	const QRegExp targetRex( "^([\\w\\-\\d]+):.*" );
+	QStringList targets;
 	
 	while ( !file.atEnd() ) {
 		QString line = file.readLine();
@@ -37,7 +41,7 @@ void MakefileProjectItem::installCommands()
 	CLIToolPlugin* make = MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stEnabled, "GNUMake" );
 	
 	if ( !make ) {
-		QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Makefile Project" ), tr( "Can't build Makefile projects. GNUMake plugin not enabled" ) );
+		setLastError( tr( "Can't build Makefile projects. GNUMake plugin not enabled" ) );
 		return;
 	}
 	
@@ -60,8 +64,7 @@ void MakefileProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
 	Q_UNUSED( files );
 	Q_UNUSED( scope );
-	QMessageBox::information( MonkeyCore::mainWindow(), tr( "Makefile project" ),
-		tr( "Adding files to the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
+	setLastError( tr( "Adding files to the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
 }
 
 void MakefileProjectItem::removeItem( XUPItem* scope )
@@ -73,6 +76,12 @@ void MakefileProjectItem::removeItem( XUPItem* scope )
 bool MakefileProjectItem::open( const QString& fileName, const QString& codec )
 {
 	const QFileInfo fileInfo = QFileInfo( fileName );
+	
+	if ( !fileInfo.isReadable() ) {
+		setLastError( tr( "File '%1' is not readable." ).arg( fileName ) );
+		return false;
+	}
+	
 	mFileName = fileName;
 	mCodec = codec;
 	QString parentDirName = QFileInfo( fileInfo.path() ).fileName();
