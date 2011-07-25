@@ -121,7 +121,8 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
 	const DocumentFilterMap filters = documentFilters();
 	QStringList notImported;
-	XUPProjectItem* project = scope->project();
+	XUPProjectItem* project = scope ? scope->project() : this;
+	XUPItem* parent = scope ? scope : this;
 	
 	foreach ( const QString& file, files ) {
 		bool found = false;
@@ -130,7 +131,7 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 			const DocumentFilter& filter = filters[ name ];
 			
 			if ( QDir::match( filter.filters, file ) ) {
-				XUPItem* variable = project->getVariable( scope, name );
+				XUPItem* variable = project->getVariable( parent, name );
 				bool exists = false;
 				
 				if ( variable ) {
@@ -154,7 +155,7 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 				
 				if ( !exists ) {
 					if ( !variable ) {
-						variable = scope->addChild( XUPItem::Variable );
+						variable = parent->addChild( XUPItem::Variable );
 						variable->setAttribute( "name", name );
 					}
 					
