@@ -673,7 +673,7 @@ void UISimpleQMakeEditor::on_tbOthersValuesClear_clicked()
 
 void UISimpleQMakeEditor::accept()
 {
-	const DocumentFilterMap filters = mProject->documentFilters();
+	const DocumentFilterMap& filters = mProject->documentFilters();
 	const QStringList fileVariables = filters.fileVariables();
 	const QStringList pathVariables = filters.pathVariables();
 	QString plugin;

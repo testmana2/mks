@@ -37,24 +37,23 @@ void MakefileProject::fillPluginInfos()
 
 bool MakefileProject::install()
 {
-	// register item
-	DocumentFilterMap filters( ":/makefileitems" );
+	mFilters = DocumentFilterMap( ":/makefileitems" );
 	int weight = 0;
 	
-	filters[ "PROJECT" ].weight = weight++;
-	filters[ "PROJECT" ].label = tr( "Makefile Project" );
-	filters[ "PROJECT" ].icon = "project.png";
-	filters[ "PROJECT" ].type = DocumentFilter::Project;
-	filters[ "PROJECT" ].filters << "*Makefile*";
+	mFilters[ "PROJECT" ].weight = weight++;
+	mFilters[ "PROJECT" ].label = tr( "Makefile Project" );
+	mFilters[ "PROJECT" ].icon = "project.png";
+	mFilters[ "PROJECT" ].type = DocumentFilter::Project;
+	mFilters[ "PROJECT" ].filters << "*Makefile*";
 	
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject, filters );
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &MakefileProjectItem::staticMetaObject, mFilters );
 	return true;
 }
 
 bool MakefileProject::uninstall()
 {
-	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
+	mFilters.clear();
 	return true;
 }
 

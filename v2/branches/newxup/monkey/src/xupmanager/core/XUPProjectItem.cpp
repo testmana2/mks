@@ -121,7 +121,7 @@ QStringList XUPProjectItem::autoActivatePlugins() const
 
 void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
-	const DocumentFilterMap filters = documentFilters();
+	const DocumentFilterMap& filters = documentFilters();
 	QStringList notImported;
 	XUPProjectItem* project = scope ? scope->project() : this;
 	XUPItem* parent = scope ? scope : this;
@@ -511,7 +511,7 @@ QString XUPProjectItem::codec() const
 		return pMonkeyStudio::defaultCodec();
 }
 
-DocumentFilterMap XUPProjectItem::documentFilters() const
+const DocumentFilterMap& XUPProjectItem::documentFilters() const
 {
 	return MonkeyCore::projectTypesIndex()->documentFilters( projectType() );
 }

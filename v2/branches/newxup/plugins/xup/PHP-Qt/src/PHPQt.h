@@ -19,6 +19,7 @@
 #define PHPQT_H
 
 #include <XUPPlugin.h>
+#include <ProjectTypesIndex.h>
 
 class PHPQt : public XUPPlugin
 {
@@ -26,6 +27,8 @@ class PHPQt : public XUPPlugin
 	Q_INTERFACES( BasePlugin XUPPlugin )
 
 protected:
+	DocumentFilterMap mFilters;
+	
 	virtual void fillPluginInfos();
 	virtual bool install();
 	virtual bool uninstall();

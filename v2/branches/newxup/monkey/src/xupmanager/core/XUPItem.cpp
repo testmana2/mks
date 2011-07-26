@@ -34,7 +34,7 @@ bool XUPItem::sameTypeLess( const XUPItem& other ) const
 		case XUPItem::Variable:
 		{
 			const XUPProjectItem* project = this->project();
-			const DocumentFilterMap filters = project->documentFilters();
+			const DocumentFilterMap& filters = project->documentFilters();
 			const QString left = attribute( "name" );
 			const QString right = other.attribute( "name" );
 			const int leftWeight = filters.value( left ).weight;

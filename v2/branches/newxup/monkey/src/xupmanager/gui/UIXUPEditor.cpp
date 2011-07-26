@@ -81,7 +81,7 @@ void UIXUPEditor::updateMainFileComboBox( const QString& selectFile )
 
 void UIXUPEditor::updateProjectFiles()
 {
-	const DocumentFilterMap filters = mProject->documentFilters();
+	const DocumentFilterMap& filters = mProject->documentFilters();
 	QMap<QString, QString>& values = veEditor->values();
 	
 	foreach ( const QString& variable, veEditor->fileVariables() )
@@ -156,7 +156,7 @@ void UIXUPEditor::on_tbDynamicFolder_clicked()
 
 void UIXUPEditor::on_tbAddFile_clicked()
 {
-	const DocumentFilterMap filters = mProject->documentFilters();
+	const DocumentFilterMap& filters = mProject->documentFilters();
 	pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window(), false );
 	
 	if ( !result.isEmpty() )
@@ -212,7 +212,7 @@ void UIXUPEditor::on_tbAddFile_clicked()
 
 void UIXUPEditor::on_tbEditFile_clicked()
 {
-	const DocumentFilterMap filters = mProject->documentFilters();
+	const DocumentFilterMap& filters = mProject->documentFilters();
 	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
 	
 	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )

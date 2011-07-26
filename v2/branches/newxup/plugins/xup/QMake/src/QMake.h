@@ -19,6 +19,7 @@
 #define QMAKE_H
 
 #include <XUPPlugin.h>
+#include <ProjectTypesIndex.h>
 
 #include <QPointer>
 
@@ -35,6 +36,7 @@ public:
 	static QtVersionManager* versionManager();
 
 protected:
+	DocumentFilterMap mFilters;
 	static QPointer<QtVersionManager> mQtVersionManager;
 	
 	virtual void fillPluginInfos();

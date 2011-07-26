@@ -37,7 +37,7 @@ VariablesEditor::~VariablesEditor()
 
 void VariablesEditor::init( XUPProjectItem* project )
 {
-	const DocumentFilterMap filters = project->documentFilters();
+	const DocumentFilterMap& filters = project->documentFilters();
 	mProject = project;
 	mFileVariables = filters.fileVariables();
 	mPathVariables = filters.pathVariables();
@@ -84,7 +84,7 @@ void VariablesEditor::init( XUPProjectItem* project )
 
 void VariablesEditor::finalize()
 {
-	const DocumentFilterMap filters = mProject->documentFilters();
+	const DocumentFilterMap& filters = mProject->documentFilters();
 	QListWidgetItem* curItem = lwOthersVariables->currentItem();
 	on_lwOthersVariables_currentItemChanged( curItem, curItem );
 	
@@ -258,7 +258,7 @@ void VariablesEditor::updateValuesEditorVariables()
 
 void VariablesEditor::updateValuesEditorValues( const QString& variable )
 {
-	const DocumentFilterMap filters = mProject->documentFilters();
+	const DocumentFilterMap& filters = mProject->documentFilters();
 	const QStringList values = filters.splitValue( mValues[ variable ] );
 	
 	lwOthersValues->clear();
@@ -293,8 +293,7 @@ void VariablesEditor::on_lwOthersVariables_currentItemChanged( QListWidgetItem* 
 
 void VariablesEditor::on_tbOthersVariablesAdd_clicked()
 {
-qWarning() << "ici";
-	const DocumentFilterMap filters = mProject->documentFilters();
+	const DocumentFilterMap& filters = mProject->documentFilters();
 	const QStringList variables = filters.knownVariables();
 	bool ok;
 	qWarning() << variables << filters.keys();

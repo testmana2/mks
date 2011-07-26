@@ -170,7 +170,7 @@ ProjectTypesIndex::ProjectTypesIndex( QObject* parent )
 void ProjectTypesIndex::registerType( const QString& projectType, const QMetaObject* projectMetaObject, const DocumentFilterMap& filters )
 {
 	mRegisteredProjectItems[ projectType ] = projectMetaObject;
-	mFilters[ projectType ] = filters;
+	mFilters[ projectType ] = &filters;
 }
 
 void ProjectTypesIndex::unRegisterType( const QString& projectType )
@@ -179,15 +179,15 @@ void ProjectTypesIndex::unRegisterType( const QString& projectType )
 	mFilters.remove( projectType );
 }
 
-DocumentFilterMap ProjectTypesIndex::documentFilters( const QString& projectType ) const
+const DocumentFilterMap& ProjectTypesIndex::documentFilters( const QString& projectType ) const
 {
-	return mFilters.value( projectType );
+	return *( mFilters[ projectType ] );
 }
 
 bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
 {
 	foreach ( const QString& projectType, mFilters.keys() ) {
-		foreach ( const DocumentFilter& filter, mFilters[ projectType ] ) {
+		foreach ( const DocumentFilter& filter, *( mFilters[ projectType ] ) ) {
 			if ( QDir::match( filter.filters, fileName ) ) {
 				return true;
 			}
@@ -200,7 +200,7 @@ bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
 XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) const
 {
 	foreach ( const QString& projectType, mFilters.keys() ) {
-		foreach ( const DocumentFilter& filter, mFilters[ projectType ] ) {
+		foreach ( const DocumentFilter& filter, *( mFilters[ projectType ] ) ) {
 			if ( QDir::match( filter.filters, fileName ) ) {
 				return qobject_cast<XUPProjectItem*>( mRegisteredProjectItems[ projectType ]->newInstance() );
 			}
@@ -215,7 +215,7 @@ QMap<QString, QStringList> ProjectTypesIndex::suffixes() const
 	QMap<QString, QStringList> suffixes;
 	
 	foreach ( const QString& projectType, mFilters.keys() ) {
-		foreach ( const DocumentFilter& filter, mFilters[ projectType ] ) {
+		foreach ( const DocumentFilter& filter, *( mFilters[ projectType ] ) ) {
 			suffixes[ filter.label ] = filter.filters;
 		}
 	}

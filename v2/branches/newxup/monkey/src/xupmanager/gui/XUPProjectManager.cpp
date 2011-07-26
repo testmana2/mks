@@ -308,11 +308,6 @@ void XUPProjectManager::editProject()
 	}
 	
 	XUPProjectItem* topLevelProject = project->topLevelProject();
-	QFileSystemWatcher* watcher = MonkeyCore::workspace()->fileWatcher();
-	XUPProjectModel* model = currentProjectModel();
-	
-	// temporary unregister project file watcher
-	//model->unregisterWithFileWatcher( watcher );
 	
 	// edit project and save it if needed
 	if ( project->edit() )
@@ -334,9 +329,6 @@ void XUPProjectManager::editProject()
 		project->uninstallCommands();
 		project->installCommands();
 	}
-	
-	// register again with file watcher
-	//model->registerWithFileWatcher( watcher );
 }
 
 void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )

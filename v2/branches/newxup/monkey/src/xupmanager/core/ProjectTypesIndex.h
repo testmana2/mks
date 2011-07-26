@@ -51,9 +51,9 @@ public:
 	// return a splited value
 	virtual QStringList splitValue( const QString& value ) const;
 	// return variables that can handle fileName
-	virtual QStringList fileNameVariables( const QString& fileName ) const;
+	QStringList fileNameVariables( const QString& fileName ) const;
 	// return a list of known variables name
-	virtual QStringList knownVariables() const;
+	QStringList knownVariables() const;
 	// return the default icons path
 	QString defaultIconsPath() const;
 	// return the document icons path
@@ -85,7 +85,7 @@ public:
 	void unRegisterType( const QString& projectType );
 	
 	// return the registered filters for project type
-	DocumentFilterMap documentFilters( const QString& projectType ) const;
+	const DocumentFilterMap& documentFilters( const QString& projectType ) const;
 	
 	// check if filename matches to some project type
 	bool fileIsAProject( const QString& fileName ) const;
@@ -98,7 +98,7 @@ public:
 	
 protected:
 	QHash<QString, const QMetaObject*> mRegisteredProjectItems; // project type, project item
-	QHash<QString, DocumentFilterMap> mFilters; // project type, filters
+	QHash<QString, const DocumentFilterMap*> mFilters; // project type, filters
 };
 
 #endif // XUPPROJECTITEMINFOS_H
