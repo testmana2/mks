@@ -36,45 +36,37 @@ void PyQt::fillPluginInfos()
 
 bool PyQt::install()
 {
-	// register item
-	DocumentFilterMap filters( ":/pyqtitems" );
+	mFilters = DocumentFilterMap( ":/pyqtitems" );
 	int weight = 0;
 	
-	filters[ "PROJECT" ].weight = weight++;
-	filters[ "PROJECT" ].label = tr( "PyQt Project" );
-	filters[ "PROJECT" ].icon = "project.png";
-	filters[ "PROJECT" ].type = DocumentFilter::Project;
-	filters[ "PROJECT" ].filters << "*.xpyqt";
+	mFilters[ "PROJECT" ].weight = weight++;
+	mFilters[ "PROJECT" ].label = tr( "PyQt Project" );
+	mFilters[ "PROJECT" ].icon = "project.png";
+	mFilters[ "PROJECT" ].type = DocumentFilter::Project;
+	mFilters[ "PROJECT" ].filters << "*.xpyqt";
 	
-	filters[ "FORMS" ].weight = weight++;
-	filters[ "FORMS" ].label = tr( "Qt Forms" );
-	filters[ "FORMS" ].icon = "forms.png";
-	filters[ "FORMS" ].type = DocumentFilter::File;
-	filters[ "FORMS" ].filters << "*.ui";
-	filters[ "FORMS" ].filtered = true;
+	mFilters[ "FORMS" ].weight = weight++;
+	mFilters[ "FORMS" ].label = tr( "Qt Forms" );
+	mFilters[ "FORMS" ].icon = "forms.png";
+	mFilters[ "FORMS" ].type = DocumentFilter::File;
+	mFilters[ "FORMS" ].filters << "*.ui";
+	mFilters[ "FORMS" ].filtered = true;
 	
-	filters[ "PYTHON_FILES" ].weight = weight++;
-	filters[ "PYTHON_FILES" ].label = tr( "Python Files" );
-	filters[ "PYTHON_FILES" ].icon = "python.png";
-	filters[ "PYTHON_FILES" ].type = DocumentFilter::File;
-	filters[ "PYTHON_FILES" ].filters << "*.py*";
-	filters[ "PYTHON_FILES" ].filtered = true;
+	mFilters[ "PYTHON_FILES" ].weight = weight++;
+	mFilters[ "PYTHON_FILES" ].label = tr( "Python Files" );
+	mFilters[ "PYTHON_FILES" ].icon = "python.png";
+	mFilters[ "PYTHON_FILES" ].type = DocumentFilter::File;
+	mFilters[ "PYTHON_FILES" ].filters << "*.py*";
+	mFilters[ "PYTHON_FILES" ].filtered = true;
 	
-	/*filters[ XUPProjectItemHelper::DynamicFolderName ].weight = weight++;
-	//filters[ XUPProjectItemHelper::DynamicFolderName ].label = "";
-	//filters[ XUPProjectItemHelper::DynamicFolderName ].icon = "";
-	filters[ XUPProjectItemHelper::DynamicFolderName ].type = DocumentFilter::File;
-	//filters[ XUPProjectItemHelper::DynamicFolderName ].filters << "";
-	filters[ XUPProjectItemHelper::DynamicFolderName ].filtered = true;*/
-	
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject, filters );
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PyQtProjectItem::staticMetaObject, mFilters );
 	return true;
 }
 
 bool PyQt::uninstall()
 {
-	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
+	mFilters.clear();
 	return true;
 }
 

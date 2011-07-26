@@ -35,38 +35,37 @@ void PHPQt::fillPluginInfos()
 
 bool PHPQt::install()
 {
-	// register item
-	DocumentFilterMap filters( ":/phpqtitems" );
+	mFilters = DocumentFilterMap( ":/phpqtitems" );
 	int weight = 0;
 	
-	filters[ "PROJECT" ].weight = weight++;
-	filters[ "PROJECT" ].label = tr( "PHP-Qt Project" );
-	filters[ "PROJECT" ].icon = "project.png";
-	filters[ "PROJECT" ].type = DocumentFilter::Project;
-	filters[ "PROJECT" ].filters << "*.xphpqt";
+	mFilters[ "PROJECT" ].weight = weight++;
+	mFilters[ "PROJECT" ].label = tr( "PHP-Qt Project" );
+	mFilters[ "PROJECT" ].icon = "project.png";
+	mFilters[ "PROJECT" ].type = DocumentFilter::Project;
+	mFilters[ "PROJECT" ].filters << "*.xphpqt";
 	
-	filters[ "FORMS" ].weight = weight++;
-	filters[ "FORMS" ].label = tr( "Qt Forms" );
-	filters[ "FORMS" ].icon = "forms.png";
-	filters[ "FORMS" ].type = DocumentFilter::File;
-	filters[ "FORMS" ].filters << "*.ui";
-	filters[ "FORMS" ].filtered = true;
+	mFilters[ "FORMS" ].weight = weight++;
+	mFilters[ "FORMS" ].label = tr( "Qt Forms" );
+	mFilters[ "FORMS" ].icon = "forms.png";
+	mFilters[ "FORMS" ].type = DocumentFilter::File;
+	mFilters[ "FORMS" ].filters << "*.ui";
+	mFilters[ "FORMS" ].filtered = true;
 	
-	filters[ "PHP_FILES" ].weight = weight++;
-	filters[ "PHP_FILES" ].label = tr( "PHP Files" );
-	filters[ "PHP_FILES" ].icon = "php.png";
-	filters[ "PHP_FILES" ].type = DocumentFilter::File;
-	filters[ "PHP_FILES" ].filters << "*.php*";
-	filters[ "PHP_FILES" ].filtered = true;
+	mFilters[ "PHP_FILES" ].weight = weight++;
+	mFilters[ "PHP_FILES" ].label = tr( "PHP Files" );
+	mFilters[ "PHP_FILES" ].icon = "php.png";
+	mFilters[ "PHP_FILES" ].type = DocumentFilter::File;
+	mFilters[ "PHP_FILES" ].filters << "*.php*";
+	mFilters[ "PHP_FILES" ].filtered = true;
 	
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PHPQtProjectItem::staticMetaObject, filters );
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &PHPQtProjectItem::staticMetaObject, mFilters );
 	return true;
 }
 
 bool PHPQt::uninstall()
 {
-	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
+	mFilters.clear();
 	return true;
 }
 

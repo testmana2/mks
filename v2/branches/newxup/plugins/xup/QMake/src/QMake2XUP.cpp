@@ -42,7 +42,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 	if ( !QFile::exists( s ) )
 		return QString();
 	
-	const DocumentFilterMap filters = QMakeProjectItem().documentFilters();
+	const DocumentFilterMap& filters = QMakeProjectItem().documentFilters();
 	const QStringList fileVariables = filters.fileVariables();
 	const QStringList pathVariables = filters.pathVariables();
 	

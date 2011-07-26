@@ -57,12 +57,10 @@ void QMake::fillPluginInfos()
 
 bool QMake::install()
 {
-	// create qt version manager
 	mQtVersionManager = new QtVersionManager( this );
 	
-	// register item
 	const QStringList cf = pMonkeyStudio::availableLanguagesSuffixes().value( "C++" );
-	DocumentFilterMap filters( ":/qmakeitems" );
+	mFilters = DocumentFilterMap( ":/qmakeitems" );
 	QStringList hf; // HEADERS filters
 	QStringList sf; // SOURCES filters
 	QStringList yf; // YACC filters
@@ -92,164 +90,162 @@ bool QMake::install()
 		}
 	}
 	
-	filters[ "PROJECT" ].weight = weight++;
-	filters[ "PROJECT" ].label = tr( "Qt Project" );
-	filters[ "PROJECT" ].icon = "project.png";
-	filters[ "PROJECT" ].type = DocumentFilter::Project;
-	filters[ "PROJECT" ].filters << "*.pro";
+	mFilters[ "PROJECT" ].weight = weight++;
+	mFilters[ "PROJECT" ].label = tr( "Qt Project" );
+	mFilters[ "PROJECT" ].icon = "project.png";
+	mFilters[ "PROJECT" ].type = DocumentFilter::Project;
+	mFilters[ "PROJECT" ].filters << "*.pro";
 	
-	filters[ "INCLUDE_PROJECT" ].weight = weight++;
-	filters[ "INCLUDE_PROJECT" ].label = tr( "Qt Include Project" );
-	filters[ "INCLUDE_PROJECT" ].icon = "project.png";
-	filters[ "INCLUDE_PROJECT" ].type = DocumentFilter::Project;
-	filters[ "INCLUDE_PROJECT" ].filters << "*.pri";
+	mFilters[ "INCLUDE_PROJECT" ].weight = weight++;
+	mFilters[ "INCLUDE_PROJECT" ].label = tr( "Qt Include Project" );
+	mFilters[ "INCLUDE_PROJECT" ].icon = "project.png";
+	mFilters[ "INCLUDE_PROJECT" ].type = DocumentFilter::Project;
+	mFilters[ "INCLUDE_PROJECT" ].filters << "*.pri";
 	
-	filters[ "FORMS3" ].weight = weight++;
-	filters[ "FORMS3" ].label = QMakeProjectItem::tr( "Qt3 Forms" );
-	filters[ "FORMS3" ].icon = "forms3.png";
-	filters[ "FORMS3" ].filters << "*.ui";
-	filters[ "FORMS3" ].type = DocumentFilter::File;
-	filters[ "FORMS3" ].filtered = true;
+	mFilters[ "FORMS3" ].weight = weight++;
+	mFilters[ "FORMS3" ].label = QMakeProjectItem::tr( "Qt3 Forms" );
+	mFilters[ "FORMS3" ].icon = "forms3.png";
+	mFilters[ "FORMS3" ].filters << "*.ui";
+	mFilters[ "FORMS3" ].type = DocumentFilter::File;
+	mFilters[ "FORMS3" ].filtered = true;
 	
-	filters[ "FORMS" ].weight = weight++;
-	filters[ "FORMS" ].label = QMakeProjectItem::tr( "Qt Forms" );
-	filters[ "FORMS" ].icon = "forms.png";
-	filters[ "FORMS" ].filters << "*.ui";
-	filters[ "FORMS" ].type = DocumentFilter::File;
-	filters[ "FORMS" ].filtered = true;
+	mFilters[ "FORMS" ].weight = weight++;
+	mFilters[ "FORMS" ].label = QMakeProjectItem::tr( "Qt Forms" );
+	mFilters[ "FORMS" ].icon = "forms.png";
+	mFilters[ "FORMS" ].filters << "*.ui";
+	mFilters[ "FORMS" ].type = DocumentFilter::File;
+	mFilters[ "FORMS" ].filtered = true;
 	
-	filters[ "HEADERS" ].weight = weight++;
-	filters[ "HEADERS" ].label = QMakeProjectItem::tr( "Headers" );
-	filters[ "HEADERS" ].icon = "headers.png";
-	filters[ "HEADERS" ].filters << hf;
-	filters[ "HEADERS" ].type = DocumentFilter::File;
-	filters[ "HEADERS" ].filtered = true;
+	mFilters[ "HEADERS" ].weight = weight++;
+	mFilters[ "HEADERS" ].label = QMakeProjectItem::tr( "Headers" );
+	mFilters[ "HEADERS" ].icon = "headers.png";
+	mFilters[ "HEADERS" ].filters << hf;
+	mFilters[ "HEADERS" ].type = DocumentFilter::File;
+	mFilters[ "HEADERS" ].filtered = true;
 	
-	filters[ "SOURCES" ].weight = weight++;
-	filters[ "SOURCES" ].label = QMakeProjectItem::tr( "Sources" );
-	filters[ "SOURCES" ].icon = "sources.png";
-	filters[ "SOURCES" ].filters << sf;
-	filters[ "SOURCES" ].type = DocumentFilter::File;
-	filters[ "SOURCES" ].filtered = true;
+	mFilters[ "SOURCES" ].weight = weight++;
+	mFilters[ "SOURCES" ].label = QMakeProjectItem::tr( "Sources" );
+	mFilters[ "SOURCES" ].icon = "sources.png";
+	mFilters[ "SOURCES" ].filters << sf;
+	mFilters[ "SOURCES" ].type = DocumentFilter::File;
+	mFilters[ "SOURCES" ].filtered = true;
 	
-	filters[ "OBJECTIVE_SOURCES" ].weight = weight++;
-	filters[ "OBJECTIVE_SOURCES" ].label = QMakeProjectItem::tr( "Objective Sources" );
-	filters[ "OBJECTIVE_SOURCES" ].icon = "obj_sources.png";
-	filters[ "OBJECTIVE_SOURCES" ].filters << "*.m" << "*.mm";
-	filters[ "OBJECTIVE_SOURCES" ].type = DocumentFilter::File;
-	filters[ "OBJECTIVE_SOURCES" ].filtered = true;
+	mFilters[ "OBJECTIVE_SOURCES" ].weight = weight++;
+	mFilters[ "OBJECTIVE_SOURCES" ].label = QMakeProjectItem::tr( "Objective Sources" );
+	mFilters[ "OBJECTIVE_SOURCES" ].icon = "obj_sources.png";
+	mFilters[ "OBJECTIVE_SOURCES" ].filters << "*.m" << "*.mm";
+	mFilters[ "OBJECTIVE_SOURCES" ].type = DocumentFilter::File;
+	mFilters[ "OBJECTIVE_SOURCES" ].filtered = true;
 	
-	filters[ "YACCSOURCES" ].weight = weight++;
-	filters[ "YACCSOURCES" ].label = QMakeProjectItem::tr( "YACC Sources" );
-	filters[ "YACCSOURCES" ].icon = "yacc_sources.png";
-	filters[ "YACCSOURCES" ].filters << yf;
-	filters[ "YACCSOURCES" ].type = DocumentFilter::File;
-	filters[ "YACCSOURCES" ].filtered = true;
+	mFilters[ "YACCSOURCES" ].weight = weight++;
+	mFilters[ "YACCSOURCES" ].label = QMakeProjectItem::tr( "YACC Sources" );
+	mFilters[ "YACCSOURCES" ].icon = "yacc_sources.png";
+	mFilters[ "YACCSOURCES" ].filters << yf;
+	mFilters[ "YACCSOURCES" ].type = DocumentFilter::File;
+	mFilters[ "YACCSOURCES" ].filtered = true;
 	
-	filters[ "LEXSOURCES" ].weight = weight++;
-	filters[ "LEXSOURCES" ].label = QMakeProjectItem::tr( "LEX Sources" );
-	filters[ "LEXSOURCES" ].icon = "lex_sources.png";
-	filters[ "LEXSOURCES" ].filters << lf;
-	filters[ "LEXSOURCES" ].type = DocumentFilter::File;
-	filters[ "LEXSOURCES" ].filtered = true;
+	mFilters[ "LEXSOURCES" ].weight = weight++;
+	mFilters[ "LEXSOURCES" ].label = QMakeProjectItem::tr( "LEX Sources" );
+	mFilters[ "LEXSOURCES" ].icon = "lex_sources.png";
+	mFilters[ "LEXSOURCES" ].filters << lf;
+	mFilters[ "LEXSOURCES" ].type = DocumentFilter::File;
+	mFilters[ "LEXSOURCES" ].filtered = true;
 	
-	filters[ "TRANSLATIONS" ].weight = weight++;
-	filters[ "TRANSLATIONS" ].label = QMakeProjectItem::tr( "Qt Translations" );
-	filters[ "TRANSLATIONS" ].icon = "translations.png";
-	filters[ "TRANSLATIONS" ].filters << "*.ts";
-	filters[ "TRANSLATIONS" ].type = DocumentFilter::File;
-	filters[ "TRANSLATIONS" ].filtered = true;
+	mFilters[ "TRANSLATIONS" ].weight = weight++;
+	mFilters[ "TRANSLATIONS" ].label = QMakeProjectItem::tr( "Qt Translations" );
+	mFilters[ "TRANSLATIONS" ].icon = "translations.png";
+	mFilters[ "TRANSLATIONS" ].filters << "*.ts";
+	mFilters[ "TRANSLATIONS" ].type = DocumentFilter::File;
+	mFilters[ "TRANSLATIONS" ].filtered = true;
 	
-	filters[ "RESOURCES" ].weight = weight++;
-	filters[ "RESOURCES" ].label = QMakeProjectItem::tr( "Qt Resources" );
-	filters[ "RESOURCES" ].icon = "resources.png";
-	filters[ "RESOURCES" ].filters << "*.qrc";
-	filters[ "RESOURCES" ].type = DocumentFilter::File;
-	filters[ "RESOURCES" ].filtered = true;
+	mFilters[ "RESOURCES" ].weight = weight++;
+	mFilters[ "RESOURCES" ].label = QMakeProjectItem::tr( "Qt Resources" );
+	mFilters[ "RESOURCES" ].icon = "resources.png";
+	mFilters[ "RESOURCES" ].filters << "*.qrc";
+	mFilters[ "RESOURCES" ].type = DocumentFilter::File;
+	mFilters[ "RESOURCES" ].filtered = true;
 	
-	filters[ "DEF_FILE" ].weight = weight++;
-	filters[ "DEF_FILE" ].label = QMakeProjectItem::tr( "Def. Files" );
-	filters[ "DEF_FILE" ].icon = "def_file.png";
-	filters[ "DEF_FILE" ].filters << "*.def";
-	filters[ "DEF_FILE" ].type = DocumentFilter::File;
-	filters[ "DEF_FILE" ].filtered = true;
+	mFilters[ "DEF_FILE" ].weight = weight++;
+	mFilters[ "DEF_FILE" ].label = QMakeProjectItem::tr( "Def. Files" );
+	mFilters[ "DEF_FILE" ].icon = "def_file.png";
+	mFilters[ "DEF_FILE" ].filters << "*.def";
+	mFilters[ "DEF_FILE" ].type = DocumentFilter::File;
+	mFilters[ "DEF_FILE" ].filtered = true;
 	
-	filters[ "RC_FILE" ].weight = weight++;
-	filters[ "RC_FILE" ].label = QMakeProjectItem::tr( "Rc. Files" );
-	filters[ "RC_FILE" ].icon = "rc_file.png";
-	filters[ "RC_FILE" ].filters << "*.rc";
-	filters[ "RC_FILE" ].type = DocumentFilter::File;
-	filters[ "RC_FILE" ].filtered = true;
+	mFilters[ "RC_FILE" ].weight = weight++;
+	mFilters[ "RC_FILE" ].label = QMakeProjectItem::tr( "Rc. Files" );
+	mFilters[ "RC_FILE" ].icon = "rc_file.png";
+	mFilters[ "RC_FILE" ].filters << "*.rc";
+	mFilters[ "RC_FILE" ].type = DocumentFilter::File;
+	mFilters[ "RC_FILE" ].filtered = true;
 	
-	filters[ "RES_FILE" ].weight = weight++;
-	filters[ "RES_FILE" ].label = QMakeProjectItem::tr( "Res. Files" );
-	filters[ "RES_FILE" ].icon = "res_file.png";
-	filters[ "RES_FILE" ].filters << "*.res";
-	filters[ "RES_FILE" ].type = DocumentFilter::File;
-	filters[ "RES_FILE" ].filtered = true;
+	mFilters[ "RES_FILE" ].weight = weight++;
+	mFilters[ "RES_FILE" ].label = QMakeProjectItem::tr( "Res. Files" );
+	mFilters[ "RES_FILE" ].icon = "res_file.png";
+	mFilters[ "RES_FILE" ].filters << "*.res";
+	mFilters[ "RES_FILE" ].type = DocumentFilter::File;
+	mFilters[ "RES_FILE" ].filtered = true;
 	
-	filters[ "SUBDIRS" ].weight = weight++;
-	filters[ "SUBDIRS" ].label = QMakeProjectItem::tr( "Sub Projects" );
-	filters[ "SUBDIRS" ].icon = "project.png";
-	filters[ "SUBDIRS" ].filters << filters[ "PROJECT" ].filters << filters[ "INCLUDE_PROJECT" ].filters;
-	filters[ "SUBDIRS" ].type = DocumentFilter::File;
-	filters[ "SUBDIRS" ].filtered = false;
+	mFilters[ "SUBDIRS" ].weight = weight++;
+	mFilters[ "SUBDIRS" ].label = QMakeProjectItem::tr( "Sub Projects" );
+	mFilters[ "SUBDIRS" ].icon = "project.png";
+	mFilters[ "SUBDIRS" ].filters << mFilters[ "PROJECT" ].filters << mFilters[ "INCLUDE_PROJECT" ].filters;
+	mFilters[ "SUBDIRS" ].type = DocumentFilter::File;
+	mFilters[ "SUBDIRS" ].filtered = false;
 	
-	filters[ "OTHER_FILES" ].weight = weight++;
-	filters[ "OTHER_FILES" ].label = QMakeProjectItem::tr( "Other Files" );
-	filters[ "OTHER_FILES" ].icon = "file.png";
-	filters[ "OTHER_FILES" ].filters << "*.txt" << "*README*" << "*Change*";
-	filters[ "OTHER_FILES" ].type = DocumentFilter::File;
-	filters[ "OTHER_FILES" ].filtered = true;
-	
-	//
-	filters[ "INCLUDEPATH" ].weight = weight++;
-	filters[ "INCLUDEPATH" ].label = QMakeProjectItem::tr( "Includes Paths" );
-	filters[ "INCLUDEPATH" ].icon = "includepath.png";
-	filters[ "INCLUDEPATH" ].filters.clear();
-	filters[ "INCLUDEPATH" ].type = DocumentFilter::Path;
-	filters[ "INCLUDEPATH" ].filtered = true;
-	
-	filters[ "DEPENDPATH" ].weight = weight++;
-	filters[ "DEPENDPATH" ].label = QMakeProjectItem::tr( "Depends Paths" );
-	filters[ "DEPENDPATH" ].icon = "dependpath.png";
-	filters[ "DEPENDPATH" ].filters.clear();
-	filters[ "DEPENDPATH" ].type = DocumentFilter::Path;
-	filters[ "DEPENDPATH" ].filtered = true;
-	
-	filters[ "VPATH" ].weight = weight++;
-	filters[ "VPATH" ].label = QMakeProjectItem::tr( "Virtuals Paths" );
-	filters[ "VPATH" ].icon = "vpath.png";
-	filters[ "VPATH" ].filters.clear();
-	filters[ "VPATH" ].type = DocumentFilter::Path;
-	filters[ "VPATH" ].filtered = true;
+	mFilters[ "OTHER_FILES" ].weight = weight++;
+	mFilters[ "OTHER_FILES" ].label = QMakeProjectItem::tr( "Other Files" );
+	mFilters[ "OTHER_FILES" ].icon = "file.png";
+	mFilters[ "OTHER_FILES" ].filters << "*.txt" << "*README*" << "*Change*";
+	mFilters[ "OTHER_FILES" ].type = DocumentFilter::File;
+	mFilters[ "OTHER_FILES" ].filtered = true;
 	
 	//
-	filters[ "LIBS" ].weight = weight++;
-	filters[ "LIBS" ].label = QMakeProjectItem::tr( "Libraries Files" );
-	filters[ "LIBS" ].icon = "libs.png";
-	filters[ "LIBS" ].filters.clear();
-	filters[ "LIBS" ].type = DocumentFilter::Standard;
-	filters[ "LIBS" ].filtered = true;
+	mFilters[ "INCLUDEPATH" ].weight = weight++;
+	mFilters[ "INCLUDEPATH" ].label = QMakeProjectItem::tr( "Includes Paths" );
+	mFilters[ "INCLUDEPATH" ].icon = "includepath.png";
+	mFilters[ "INCLUDEPATH" ].filters.clear();
+	mFilters[ "INCLUDEPATH" ].type = DocumentFilter::Path;
+	mFilters[ "INCLUDEPATH" ].filtered = true;
 	
-	filters[ "DEFINES" ].weight = weight++;
-	filters[ "DEFINES" ].label = QMakeProjectItem::tr( "Defines" );
-	filters[ "DEFINES" ].icon = "defines.png";
-	filters[ "DEFINES" ].filters.clear();
-	filters[ "DEFINES" ].type = DocumentFilter::Standard;
-	filters[ "DEFINES" ].filtered = true;
+	mFilters[ "DEPENDPATH" ].weight = weight++;
+	mFilters[ "DEPENDPATH" ].label = QMakeProjectItem::tr( "Depends Paths" );
+	mFilters[ "DEPENDPATH" ].icon = "dependpath.png";
+	mFilters[ "DEPENDPATH" ].filters.clear();
+	mFilters[ "DEPENDPATH" ].type = DocumentFilter::Path;
+	mFilters[ "DEPENDPATH" ].filtered = true;
 	
-	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &QMakeProjectItem::staticMetaObject, filters );
+	mFilters[ "VPATH" ].weight = weight++;
+	mFilters[ "VPATH" ].label = QMakeProjectItem::tr( "Virtuals Paths" );
+	mFilters[ "VPATH" ].icon = "vpath.png";
+	mFilters[ "VPATH" ].filters.clear();
+	mFilters[ "VPATH" ].type = DocumentFilter::Path;
+	mFilters[ "VPATH" ].filtered = true;
+	
+	//
+	mFilters[ "LIBS" ].weight = weight++;
+	mFilters[ "LIBS" ].label = QMakeProjectItem::tr( "Libraries Files" );
+	mFilters[ "LIBS" ].icon = "libs.png";
+	mFilters[ "LIBS" ].filters.clear();
+	mFilters[ "LIBS" ].type = DocumentFilter::Standard;
+	mFilters[ "LIBS" ].filtered = true;
+	
+	mFilters[ "DEFINES" ].weight = weight++;
+	mFilters[ "DEFINES" ].label = QMakeProjectItem::tr( "Defines" );
+	mFilters[ "DEFINES" ].icon = "defines.png";
+	mFilters[ "DEFINES" ].filters.clear();
+	mFilters[ "DEFINES" ].type = DocumentFilter::Standard;
+	mFilters[ "DEFINES" ].filtered = true;
+	
+	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &QMakeProjectItem::staticMetaObject, mFilters );
 	return true;
 }
 
 bool QMake::uninstall()
 {
-	// unregister item
 	MonkeyCore::projectTypesIndex()->unRegisterType( PLUGIN_NAME );
-	// delete qt version manager
+	mFilters.clear();
 	delete mQtVersionManager;
-	// return default value
 	return true;
 }
 

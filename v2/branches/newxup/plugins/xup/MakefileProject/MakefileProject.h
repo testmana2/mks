@@ -19,13 +19,16 @@
 #define MAKEFILEPROJECT_H
 
 #include <XUPPlugin.h>
+#include <ProjectTypesIndex.h>
 
 class MakefileProject : public XUPPlugin
 {
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin XUPPlugin )
 
-protected:	
+protected:
+	DocumentFilterMap mFilters;
+	
 	virtual void fillPluginInfos();
 	virtual bool install();
 	virtual bool uninstall();

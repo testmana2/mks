@@ -112,7 +112,7 @@ public:
 	/* Source file name patterns is list of string pairs. ExamplesPath
 		("Python file", "*.py") ("Forms file", "*.ui")
 	 */
-	DocumentFilterMap documentFilters() const;
+	const DocumentFilterMap& documentFilters() const;
 	
 	/** Add pCommand console commands to the main menu. When menu item triggered - console command executed.
 	 * If more than one command set for the menu - commands will be executed one by one
