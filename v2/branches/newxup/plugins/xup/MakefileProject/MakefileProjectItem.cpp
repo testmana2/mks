@@ -67,7 +67,7 @@ void MakefileProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	setLastError( tr( "Adding files to the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
 }
 
-void MakefileProjectItem::removeItem( XUPItem* scope )
+void MakefileProjectItem::removeValue( XUPItem* scope )
 {
 	Q_UNUSED( scope );
 	Q_ASSERT( 0 );

@@ -392,7 +392,7 @@ void XUPProjectManager::removeFiles()
 	if ( QMessageBox::question( window(), tr( "Remove Value..." ), tr( "Are you sur you want to remove this value ?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
 		XUPProjectItem* project = curItem->project();
 		
-		project->removeItem( curItem );
+		project->removeValue( curItem );
 		
 		// save project
 		if ( !project->save() ) {

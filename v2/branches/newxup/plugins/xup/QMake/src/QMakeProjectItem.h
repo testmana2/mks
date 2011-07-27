@@ -22,7 +22,7 @@ public:
 	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget);
 	
 	virtual void addFiles( const QStringList& files, XUPItem* scope = 0 );
-	virtual void removeItem( XUPItem* item );
+	virtual void removeValue( XUPItem* item );
 	
 	virtual void installCommands();
 	

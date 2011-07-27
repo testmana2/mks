@@ -106,6 +106,7 @@ void VariablesEditor::finalize()
 		
 		if ( !isEmpty )
 		{
+		#warning this part has to be rewrite to use XUPProjectItem::addFiles()
 			if ( mFileVariables.contains( variable ) || mPathVariables.contains( variable ) )
 			{
 				// get child type
@@ -296,7 +297,7 @@ void VariablesEditor::on_tbOthersVariablesAdd_clicked()
 	const DocumentFilterMap& filters = mProject->documentFilters();
 	const QStringList variables = filters.knownVariables();
 	bool ok;
-	qWarning() << variables << filters.keys();
+	
 	const QString variable = QInputDialog::getItem( window(), tr( "Add variable..." ), tr( "Select a variable name or enter a new one" ), variables, 0, true, &ok );
 	
 	if ( !variable.isEmpty() && ok )
