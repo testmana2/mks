@@ -486,9 +486,9 @@ void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
 }
 
-void QMakeProjectItem::removeItem( XUPItem* item )
+void QMakeProjectItem::removeValue( XUPItem* item )
 {
-	XUPProjectItem::removeItem( item );
+	XUPProjectItem::removeValue( item );
 	rebuildCache();
 	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
 }

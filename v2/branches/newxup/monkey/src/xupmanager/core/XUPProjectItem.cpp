@@ -180,7 +180,7 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	}
 }
 
-void XUPProjectItem::removeItem( XUPItem* item )
+void XUPProjectItem::removeValue( XUPItem* item )
 {
 	switch ( item->type() ) {
 		case XUPItem::File: {
