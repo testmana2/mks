@@ -7,6 +7,7 @@
 
 class XUPProjectItem;
 class XUPItem;
+class StringItemModel;
 
 class Q_MONKEY_EXPORT VariablesEditor : public QFrame, public Ui::VariablesEditor
 {
@@ -19,8 +20,6 @@ public:
 	inline QStringList& fileVariables() { return mFileVariables; }
 	inline QStringList& pathVariables() { return mPathVariables; }
 	inline QStringList& managedVariables() { return mManagedVariables; }
-	inline QStringList& variablesToRemove() { return mVariablesToRemove; }
-	inline QMap<QString, QString>& values() { return mValues; }
 	
 	void init( XUPProjectItem* project );
 	void finalize();
@@ -37,27 +36,21 @@ protected:
 	QStringList mFileVariables;
 	QStringList mPathVariables;
 	QStringList mManagedVariables;
-	QStringList mVariablesToRemove;
-	QMap<QString, QString> mValues;
+	StringItemModel* mModel;
 	
-	XUPItem* getUniqueVariableItem( const QString& variableName, bool create );
-	void updateValuesEditorVariables();
-	void updateValuesEditorValues( const QString& variable = QString::null );
+	XUPItem* variableItem( const QString& variableName, bool create );
 
 protected slots:
 	// variables
-	void on_lwOthersVariables_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous );
+	void lvVariables_selectionModel_selectionChanged();
 	void on_tbOthersVariablesAdd_clicked();
 	void on_tbOthersVariablesEdit_clicked();
-	void on_tbOthersVariablesRemove_clicked();
 	
 	// values
-	void on_lwOthersValues_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous );
 	void on_tbOthersValuesAdd_clicked();
 	void on_tbOthersValuesAdd_triggered( QAction* action );
 	void on_tbOthersValuesEdit_clicked();
 	void on_tbOthersValuesEdit_triggered( QAction* action );
-	void on_tbOthersValuesRemove_clicked();
 	void on_tbOthersValuesClear_clicked();
 };
 

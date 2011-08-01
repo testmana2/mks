@@ -9,12 +9,212 @@
 #include <QFileDialog>
 #include <QDebug>
 
+struct StringItem
+{
+	typedef QList<StringItem> List;
+	
+	StringItem( const QString& string = QString::null, bool enabled = false, XUPItem* item = 0 )
+	{
+		this->string = string;
+		this->enabled = enabled;
+		this->item = item;
+	}
+	
+	bool operator<( const StringItem& other ) const
+	{
+		return string < other.string;
+	}
+	
+	bool operator==( const StringItem& other ) const
+	{
+		return string == other.string
+			&& enabled == other.enabled
+			&& item == other.item
+			&& children == other.children
+			;
+	}
+	
+	QString string;
+	bool enabled;
+	XUPItem* item;
+	StringItem::List children;
+};
+
+class StringItemModel : public QAbstractItemModel
+{
+	Q_OBJECT
+	
+public:
+	StringItemModel( QObject* parent = 0 )
+		: QAbstractItemModel( parent )
+	{
+	}
+	
+	virtual int columnCount( const QModelIndex& parent = QModelIndex() ) const
+	{
+		StringItem* item = this->item( parent );
+		return item ? 1 : 0;
+	}
+	
+	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const
+	{
+		StringItem* item = this->item( index );
+		
+		if ( item && item != &mRoot ) {
+			switch ( role ) {
+				case Qt::DisplayRole:
+				case Qt::EditRole:
+					return item->string;
+				case Qt::CheckStateRole:
+					return item->enabled ? Qt::Checked : Qt::Unchecked;
+			}
+		}
+		
+		return QVariant();
+	}
+	
+	virtual QModelIndex index( int row, int column, const QModelIndex& parent = QModelIndex() ) const
+	{
+		if ( column != 0 ) {
+			return QModelIndex();
+		}
+		
+		StringItem* item = this->item( parent );
+		return item ? createIndex( row, column, item ) : QModelIndex();
+	}
+	
+	virtual QModelIndex parent( const QModelIndex& index ) const
+	{
+		StringItem* parentItem = static_cast<StringItem*>( index.internalPointer() );
+		StringItem* parentItemParent = mMapping.value( parentItem );
+		return parentItemParent ? createIndex( parentItemParent->children.indexOf( *parentItem ), 0, parentItemParent ) : QModelIndex();
+	}
+	
+	virtual int	rowCount( const QModelIndex& parent = QModelIndex() ) const
+	{
+		StringItem* item = this->item( parent );
+		return item ? item->children.count() : 0;
+	}
+	
+	virtual Qt::ItemFlags flags( const QModelIndex& index ) const
+	{
+		Qt::ItemFlags flags = QAbstractItemModel::flags( index );
+		
+		if ( index.isValid() ) {
+			flags |= Qt::ItemIsUserCheckable;
+		}
+		
+		return flags;
+	}
+	
+	virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole )
+	{
+		if ( !index.isValid() ) {
+			return false;
+		}
+		
+		StringItem* item = this->item( index );
+		
+		switch ( role ) {
+			case Qt::EditRole:
+			case Qt::DisplayRole:
+				item->string = value.toString();
+				break;
+			case Qt::CheckStateRole:
+				item->enabled = value.toInt() == Qt::Checked;
+				break;
+			default:
+				return false;
+		}
+		
+		emit dataChanged( index, index );
+		return true;
+	}
+	
+	StringItem* item( const QModelIndex& index ) const
+	{
+		StringItem* parentItem = static_cast<StringItem*>( index.internalPointer() );
+		StringItem* item = parentItem ? &( parentItem->children[ index.row() ] ) : 0;
+		return index == QModelIndex() ? &mRoot : item;
+	}
+	
+	void clear()
+	{
+		const int count = mRoot.children.count();
+		
+		if ( count > 0 ) {
+			beginRemoveRows( QModelIndex(), 0, count -1 );
+			mRoot = StringItem();
+			mMapping.clear();
+			endRemoveRows();
+		}
+	}
+	
+	void setRootItem( const StringItem& item )
+	{
+		clear();
+		
+		if ( item == StringItem() ) {
+			return;
+		}
+		
+		const int count = item.children.count();
+		
+		beginInsertRows( QModelIndex(), 0, count -1 );
+		mRoot = item;
+		buildParentMapping( mRoot );
+		endInsertRows();
+	}
+	
+	QModelIndex addChild( const QModelIndex& index, const StringItem& child )
+	{
+		StringItem* item = this->item( index );
+		
+		if ( item ) {
+			foreach ( const StringItem& it, item->children ) {
+				if ( it.string == child.string ) {
+					return QModelIndex();
+				}
+			}
+		
+			const int count = item->children.count();
+			beginInsertRows( index, count, count );
+			item->children << child;
+			mMapping[ &( item->children.last() ) ] = item;
+			endInsertRows();
+			return createIndex( item->children.count() -1, 0, item );
+		}
+		
+		return QModelIndex();
+	}
+
+protected:
+	mutable StringItem mRoot;
+	QHash<StringItem*, StringItem*> mMapping;
+	
+	void buildParentMapping( StringItem& item )
+	{
+		if ( item == mRoot ) {
+			mMapping[ &mRoot ] = 0;
+		}
+		
+		for ( int i = 0; i < item.children.count(); i++ ) {
+			StringItem* child = &( item.children[ i ] );
+			mMapping[ child ] = &item;
+			buildParentMapping( *child );
+		}
+	}
+};
+
 VariablesEditor::VariablesEditor( QWidget* parent )
 	: QFrame( parent )
 {
 	mProject = 0;
+	mModel = new StringItemModel( this );
 	
 	setupUi( this );
+	lvVariables->setModel( mModel );
+	lvValues->setModel( mModel );
 	
 	// tbOthersValuesAdd actions
 	QMenu* addMenu = new QMenu( tbOthersValuesAdd );
@@ -29,6 +229,8 @@ VariablesEditor::VariablesEditor( QWidget* parent )
 	aOthersValuesEditFile = editMenu->addAction( tr( "As File..." ) );
 	aOthersValuesEditPath = editMenu->addAction( tr( "As Path..." ) );
 	tbOthersValuesEdit->setMenu( editMenu );
+	
+	connect( lvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvVariables_selectionModel_selectionChanged() ) );
 }
 
 VariablesEditor::~VariablesEditor()
@@ -41,50 +243,44 @@ void VariablesEditor::init( XUPProjectItem* project )
 	mProject = project;
 	mFileVariables = filters.fileVariables();
 	mPathVariables = filters.pathVariables();
-	mManagedVariables = QStringList( mFileVariables ) << XUPProjectItemHelper::DynamicFolderName << XUPProjectItemHelper::DynamicFolderSettingsName;
+	mManagedVariables = QStringList( mFileVariables );
+	StringItem root;
 	
-	// loading datas from variable of root scope having operator =, += or *= only
-	foreach ( XUPItem* child, mProject->childrenList() )
-	{
-		if ( child->type() == XUPItem::Variable )
-		{
-			QString variableName = child->attribute( "name" );
-			QString op = child->attribute( "operator", "=" );
+	// only load values from root variables
+	foreach ( XUPItem* variable, mProject->childrenList() ) {
+		if ( variable->type() == XUPItem::Variable ) {
+			StringItem si( variable->attribute( "name" ), true, variable );
 			
-			if ( op != "=" && op != "+=" && op != "*=" )
-			{
+			if ( si.string.startsWith( XUPProjectItemHelper::SettingsScopeName ) || !mManagedVariables.contains( si.string ) ) {
 				continue;
 			}
 			
-			if ( variableName == XUPProjectItemHelper::DynamicFolderSettingsName ||
-				variableName == XUPProjectItemHelper::DynamicFolderName )
-			{
-				continue;
-			}
-			
-			foreach ( XUPItem* value, child->childrenList() )
-			{
-				XUPItem::Type type = value->type();
-				QString val;
-				
-				if ( type != XUPItem::Value && type != XUPItem::File && type != XUPItem::Path )
-				{
-					continue;
+			foreach ( XUPItem* value, variable->childrenList() ) {
+				switch ( value->type() ) {
+					case XUPItem::Value:
+					case XUPItem::File:
+					case XUPItem::Path:
+						si.children << StringItem( value->content(), true, value );
+						break;
+					default:
+						continue;
 				}
-				
-				val = mValues[ variableName ].trimmed();
-				val += " " +value->content();
-				mValues[ variableName ] = val.trimmed();
 			}
+			
+			root.children << si;
 		}
 	}
 	
-	updateValuesEditorVariables();
+	mModel->setRootItem( root );
+	
+	const QModelIndex index = mModel->index( 0, 0 );
+	lvVariables->setCurrentIndex( index );
+	lvVariables->scrollTo( index );
 }
 
 void VariablesEditor::finalize()
 {
-	const DocumentFilterMap& filters = mProject->documentFilters();
+	/*const DocumentFilterMap& filters = mProject->documentFilters();
 	QListWidgetItem* curItem = lwOthersVariables->currentItem();
 	on_lwOthersVariables_currentItemChanged( curItem, curItem );
 	
@@ -98,7 +294,7 @@ void VariablesEditor::finalize()
 	foreach ( const QString& variable, mValues.keys() )
 	{
 		bool isEmpty = mValues[ variable ].trimmed().isEmpty();
-		XUPItem* variableItem = getUniqueVariableItem( variable, !isEmpty );
+		XUPItem* variableItem = this->variableItem( variable, !isEmpty );
 		if ( !variableItem )
 		{
 			continue;
@@ -113,10 +309,6 @@ void VariablesEditor::finalize()
 				XUPItem::Type type = mFileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
 				// get values
 				QStringList values = filters.splitValue( mValues[ variable ] );
-				
-				// update variable
-				variableItem->setAttribute( "operator", "=" );
-				variableItem->setAttribute( "multiline", "true" );
 				
 				// remove all child
 				foreach ( XUPItem* child, variableItem->childrenList() )
@@ -142,11 +334,10 @@ void VariablesEditor::finalize()
 					value->setContent( v );
 				}
 			}
-			else if ( variable == "CONFIG" )
+			/else if ( variable == "CONFIG" )
 			{
 				// update variable
 				variableItem->setAttribute( "operator", "+=" );
-				variableItem->setAttribute( "multiline", "false" );
 				
 				// remove all child values
 				foreach ( XUPItem* child, variableItem->childrenList() )
@@ -160,13 +351,9 @@ void VariablesEditor::finalize()
 				// add new one
 				XUPItem* value = variableItem->addChild( XUPItem::Value );
 				value->setContent( mValues[ variable ] );
-			}
+			}/
 			else
 			{
-				// update variable
-				variableItem->setAttribute( "operator", "=" );
-				variableItem->setAttribute( "multiline", "false" );
-				
 				// remove all child values
 				foreach ( XUPItem* child, variableItem->childrenList() )
 				{
@@ -198,33 +385,15 @@ void VariablesEditor::finalize()
 		{
 			variableItem->parent()->removeChild( variableItem );
 		}
-	}
+	}*/
 }
 
-XUPItem* VariablesEditor::getUniqueVariableItem( const QString& variableName, bool create )
+XUPItem* VariablesEditor::variableItem( const QString& variableName, bool create )
 {
-	const QStringList mOperators = QStringList() << "=" << "+=" << "*=";
-	XUPItemList variables = mProject->getVariables( mProject, variableName, false, 0 );
-	XUPItem* variableItem = 0;
-	
-	// remove duplicate variables
-	foreach ( XUPItem* variable, variables )
-	{
-		QString op = variable->attribute( "operator", "=" );
-		
-		if ( !variableItem && mOperators.contains( op ) )
-		{
-			variableItem = variable;
-		}
-		else if ( mOperators.contains( op ) )
-		{
-			variable->parent()->removeChild( variable );
-		}
-	}
+	XUPItem* variableItem = mProject->getVariables( mProject, variableName, false, 0 ).value( 0 );
 	
 	// create it if needed
-	if ( !variableItem && create )
-	{
+	if ( !variableItem && create ) {
 		variableItem = mProject->addChild( XUPItem::Variable );
 		variableItem->setAttribute( "name", variableName );
 	}
@@ -233,63 +402,12 @@ XUPItem* VariablesEditor::getUniqueVariableItem( const QString& variableName, bo
 	return variableItem;
 }
 
-void VariablesEditor::updateValuesEditorVariables()
+void VariablesEditor::lvVariables_selectionModel_selectionChanged()
 {
-	QListWidgetItem* curItem = lwOthersVariables->selectedItems().value( 0 );
-	const QString curVariable = curItem ? curItem->text() : QString::null;
-	curItem = 0;
-	
-	lwOthersVariables->clear();
-	lwOthersValues->clear();
-	
-	foreach ( const QString& variable, mValues.keys() )
-	{
-		if ( !mManagedVariables.contains( variable ) )
-		{
-			lwOthersVariables->addItem( variable );
-			
-			if ( variable == curVariable )
-			{
-				curItem = lwOthersVariables->item( lwOthersVariables->count() -1 );
-				curItem->setSelected( true );
-			}
-		}
-	}
-}
-
-void VariablesEditor::updateValuesEditorValues( const QString& variable )
-{
-	const DocumentFilterMap& filters = mProject->documentFilters();
-	const QStringList values = filters.splitValue( mValues[ variable ] );
-	
-	lwOthersValues->clear();
-	lwOthersValues->addItems( values );
-}
-
-void VariablesEditor::on_lwOthersVariables_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous )
-{
-	// enable/disable actions
-	gbOthersValues->setEnabled( current );
-	tbOthersVariablesEdit->setEnabled( current );
-	tbOthersVariablesRemove->setEnabled( current );
-	
-	// save previous variable datas
-	if ( previous )
-	{
-		const QString variable = previous->text();
-		QStringList values;
-		
-		for ( int i = 0; i < lwOthersValues->count(); i++ )
-		{
-			values << lwOthersValues->item( i )->text();
-		}
-		
-		mValues[ variable ] = values.join( " " );;
-	}
-	
-	// update values view
-	const QString variable = current ? current->text() : QString::null;
-	updateValuesEditorValues( variable );
+	const QModelIndex index = lvVariables->selectionModel()->selectedIndexes().value( 0 );
+	tbOthersVariablesEdit->setEnabled( index.isValid() );
+	gbOthersValues->setEnabled( index.isValid() );
+	lvValues->setRootIndex( index );
 }
 
 void VariablesEditor::on_tbOthersVariablesAdd_clicked()
@@ -300,18 +418,14 @@ void VariablesEditor::on_tbOthersVariablesAdd_clicked()
 	
 	const QString variable = QInputDialog::getItem( window(), tr( "Add variable..." ), tr( "Select a variable name or enter a new one" ), variables, 0, true, &ok );
 	
-	if ( !variable.isEmpty() && ok )
-	{
-		if ( !mValues.keys().contains( variable ) && !mManagedVariables.contains( variable ) )
-		{
-			QListWidgetItem* item = new QListWidgetItem( variable, lwOthersVariables );
-			lwOthersVariables->setCurrentItem( item );
-			
-			mValues[ variable ] = QString::null;
-			mVariablesToRemove.removeAll( variable );
+	if ( !variable.isEmpty() && ok ) {
+		const QModelIndex index = mManagedVariables.contains( variable ) ? QModelIndex() : mModel->addChild( QModelIndex(), StringItem( variable, true ) );
+		
+		if ( index.isValid() ) {
+			lvVariables->setCurrentIndex( index );
+			lvVariables->scrollTo( index );
 		}
-		else
-		{
+		else {
 			QMessageBox::information( window(), tr( "Information..." ), tr( "This variable already exists or is filtered out." ) );
 		}
 	}
@@ -319,7 +433,7 @@ void VariablesEditor::on_tbOthersVariablesAdd_clicked()
 
 void VariablesEditor::on_tbOthersVariablesEdit_clicked()
 {
-	QListWidgetItem* item = lwOthersVariables->currentItem();
+	/*QListWidgetItem* item = lwOthersVariables->currentItem();
 	
 	if ( !item )
 	{
@@ -346,40 +460,7 @@ void VariablesEditor::on_tbOthersVariablesEdit_clicked()
 		{
 			QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This variable already exists or is filtered out." ) );
 		}
-	}
-}
-
-void VariablesEditor::on_tbOthersVariablesRemove_clicked()
-{
-	QListWidgetItem* item = lwOthersVariables->currentItem();
-	
-	if ( !item )
-	{
-		return;
-	}
-	
-	// confirm user request
-	if ( QMessageBox::question( QApplication::activeWindow(), tr( "Remove a variable..." ), tr( "A you sure you want to remove this variable and all its content ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::Yes )
-	{
-		QString variable = item->text();
-		
-		lwOthersValues->clear();
-		delete item;
-		
-		mValues.remove( variable );
-		if ( !mVariablesToRemove.contains( variable ) )
-		{
-			mVariablesToRemove << variable;
-		}
-	}
-}
-
-void VariablesEditor::on_lwOthersValues_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous )
-{
-	// enable button according to item validity
-	tbOthersValuesEdit->setEnabled( current );
-	tbOthersValuesRemove->setEnabled( current );
-	Q_UNUSED( previous );
+	}*/
 }
 
 void VariablesEditor::on_tbOthersValuesAdd_clicked()
@@ -389,7 +470,7 @@ void VariablesEditor::on_tbOthersValuesAdd_clicked()
 
 void VariablesEditor::on_tbOthersValuesAdd_triggered( QAction* action )
 {
-	QListWidgetItem* variableItem = lwOthersVariables->currentItem();
+	/*QListWidgetItem* variableItem = lwOthersVariables->currentItem();
 	
 	if ( variableItem )
 	{
@@ -446,7 +527,7 @@ void VariablesEditor::on_tbOthersValuesAdd_triggered( QAction* action )
 			QListWidgetItem* valueItem = new QListWidgetItem( val, lwOthersValues );
 			lwOthersValues->setCurrentItem( valueItem );
 		}
-	}
+	}*/
 }
 
 void VariablesEditor::on_tbOthersValuesEdit_clicked()
@@ -456,7 +537,7 @@ void VariablesEditor::on_tbOthersValuesEdit_clicked()
 
 void VariablesEditor::on_tbOthersValuesEdit_triggered( QAction* action )
 {
-	QListWidgetItem* valueItem = lwOthersValues->currentItem();
+	/*QListWidgetItem* valueItem = lwOthersValues->currentItem();
 	
 	if ( valueItem )
 	{
@@ -513,29 +594,12 @@ void VariablesEditor::on_tbOthersValuesEdit_triggered( QAction* action )
 			// update item
 			valueItem->setText( val );
 		}
-	}
-}
-
-void VariablesEditor::on_tbOthersValuesRemove_clicked()
-{
-	QListWidgetItem* valueItem = lwOthersValues->currentItem();
-	
-	if ( valueItem )
-	{
-		// confirm user request
-		if ( QMessageBox::question( QApplication::activeWindow(), tr( "Remove a value..." ), tr( "A you sure you want to remove this value ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::No )
-		{
-			return;
-		}
-		
-		// remove value
-		delete valueItem;
-	}
+	}*/
 }
 
 void VariablesEditor::on_tbOthersValuesClear_clicked()
 {
-	QListWidgetItem* variableItem = lwOthersVariables->currentItem();
+	/*QListWidgetItem* variableItem = lwOthersVariables->currentItem();
 	
 	if ( variableItem )
 	{
@@ -544,5 +608,7 @@ void VariablesEditor::on_tbOthersValuesClear_clicked()
 		{
 			lwOthersValues->clear();
 		}
-	}
+	}*/
 }
+
+#include "VariablesEditor.moc"

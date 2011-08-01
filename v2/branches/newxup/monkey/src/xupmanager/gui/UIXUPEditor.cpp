@@ -22,14 +22,13 @@ UIXUPEditor::UIXUPEditor( XUPProjectItem* project, QWidget* parent )
 	setWindowTitle( tr( "Project Editor - %2" ).arg( project->displayText() ) );
 	
 	// set size hint for page item ( left panel )
-	for ( int i = 0; i < lwPages->count(); i++ )
-	{
+	for ( int i = 0; i < lwPages->count(); i++ ) {
 		QListWidgetItem* item = lwPages->item( i );
 		item->setSizeHint( QSize( 154, 40 ) );
 	}
 	
 	// does not show variable editor by default
-	setVariableEditorVisible( false );
+	//setVariableEditorVisible( false );
 	
 	// commands
 	const BasePluginTypeList types = BasePluginTypeList() << BasePlugin::iCLITool << BasePlugin::iDebugger;
@@ -81,7 +80,7 @@ void UIXUPEditor::updateMainFileComboBox( const QString& selectFile )
 
 void UIXUPEditor::updateProjectFiles()
 {
-	const DocumentFilterMap& filters = mProject->documentFilters();
+	/*const DocumentFilterMap& filters = mProject->documentFilters();
 	QMap<QString, QString>& values = veEditor->values();
 	
 	foreach ( const QString& variable, veEditor->fileVariables() )
@@ -122,7 +121,7 @@ void UIXUPEditor::updateProjectFiles()
 				item->setIcon( 0, QIcon( filters.variableDisplayIcon( "FILES" ) ) );
 			}
 		}
-	}
+	}*/
 }
 
 void UIXUPEditor::init( XUPProjectItem* project )
@@ -156,7 +155,7 @@ void UIXUPEditor::on_tbDynamicFolder_clicked()
 
 void UIXUPEditor::on_tbAddFile_clicked()
 {
-	const DocumentFilterMap& filters = mProject->documentFilters();
+	/*const DocumentFilterMap& filters = mProject->documentFilters();
 	pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window(), false );
 	
 	if ( !result.isEmpty() )
@@ -207,12 +206,12 @@ void UIXUPEditor::on_tbAddFile_clicked()
 		}
 		
 		updateProjectFiles();
-	}
+	}*/
 }
 
 void UIXUPEditor::on_tbEditFile_clicked()
 {
-	const DocumentFilterMap& filters = mProject->documentFilters();
+	/*const DocumentFilterMap& filters = mProject->documentFilters();
 	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
 	
 	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
@@ -233,12 +232,12 @@ void UIXUPEditor::on_tbEditFile_clicked()
 			
 			updateProjectFiles();
 		}
-	}
+	}*/
 }
 
 void UIXUPEditor::on_tbRemoveFile_clicked()
 {
-	QList<QTreeWidgetItem*> selectedItems = twFiles->selectedItems();
+	/*QList<QTreeWidgetItem*> selectedItems = twFiles->selectedItems();
 	
 	if ( selectedItems.count() > 0 )
 	{
@@ -267,7 +266,7 @@ void UIXUPEditor::on_tbRemoveFile_clicked()
 		{
 			updateProjectFiles();
 		}
-	}
+	}*/
 }
 
 void UIXUPEditor::accept()
