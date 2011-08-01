@@ -150,8 +150,6 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Ty
 		foreach ( const pCommand& command, commands[ type ] ) {
 			XUPItem* variable = commandsScope->addChild( XUPItem::Variable );
 			variable->setAttribute( "name", CommandScopeName );
-			variable->setAttribute( "operator", "=" );
-			variable->setAttribute( "multiline", "true" );
 			
 			addCommandProperty( variable, QString::number( type ) );
 			addCommandProperty( variable, command.text() );
@@ -218,8 +216,6 @@ XUPItem* XUPProjectItemHelper::projectDynamicFolderSettingsItem( XUPProjectItem*
 	
 	XUPItem* dynamicFolderSettingsItem = project->addChild( XUPItem::Variable );
 	dynamicFolderSettingsItem->setAttribute( "name", DynamicFolderSettingsName );
-	dynamicFolderSettingsItem->setAttribute( "operator", "=" );
-	dynamicFolderSettingsItem->setAttribute( "multiline", "true" );
 	return dynamicFolderSettingsItem;
 }
 
