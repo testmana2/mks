@@ -44,6 +44,7 @@ protected slots:
 	void on_tbVariablesEdit_clicked();
 	
 	// values
+	void lvValues_selectionModel_selectionChanged();
 	void on_tbValuesAdd_clicked();
 	void on_tbValuesAdd_triggered( QAction* action );
 	void on_tbValuesEdit_clicked();
