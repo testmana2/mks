@@ -17,41 +17,38 @@ public:
 	VariablesEditor( QWidget* parent = 0 );
 	virtual ~VariablesEditor();
 	
-	inline QStringList& fileVariables() { return mFileVariables; }
-	inline QStringList& pathVariables() { return mPathVariables; }
-	inline QStringList& managedVariables() { return mManagedVariables; }
+	QStringList fileVariables() const;
+	QStringList pathVariables() const;
+	QStringList managedVariables() const;
 	
 	void init( XUPProjectItem* project );
 	void finalize();
 
 protected:
-	QAction* aOthersValuesAddValue;
-	QAction* aOthersValuesAddFile;
-	QAction* aOthersValuesAddPath;
-	QAction* aOthersValuesEditValue;
-	QAction* aOthersValuesEditFile;
-	QAction* aOthersValuesEditPath;
-	
+	QAction* aValuesAddValue;
+	QAction* aValuesAddFile;
+	QAction* aValuesAddPath;
+	QAction* aValuesEditValue;
+	QAction* aValuesEditFile;
+	QAction* aValuesEditPath;
 	XUPProjectItem* mProject;
-	QStringList mFileVariables;
-	QStringList mPathVariables;
-	QStringList mManagedVariables;
 	StringItemModel* mModel;
 	
 	XUPItem* variableItem( const QString& variableName, bool create );
+	QString quotedString( const QString& string ) const;
 
 protected slots:
 	// variables
 	void lvVariables_selectionModel_selectionChanged();
-	void on_tbOthersVariablesAdd_clicked();
-	void on_tbOthersVariablesEdit_clicked();
+	void on_tbVariablesAdd_clicked();
+	void on_tbVariablesEdit_clicked();
 	
 	// values
-	void on_tbOthersValuesAdd_clicked();
-	void on_tbOthersValuesAdd_triggered( QAction* action );
-	void on_tbOthersValuesEdit_clicked();
-	void on_tbOthersValuesEdit_triggered( QAction* action );
-	void on_tbOthersValuesClear_clicked();
+	void on_tbValuesAdd_clicked();
+	void on_tbValuesAdd_triggered( QAction* action );
+	void on_tbValuesEdit_clicked();
+	void on_tbValuesEdit_triggered( QAction* action );
+	void on_tbValuesClear_clicked();
 };
 
 #endif // VARIABLESEDITOR_H
