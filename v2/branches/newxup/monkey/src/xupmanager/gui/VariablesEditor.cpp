@@ -94,7 +94,7 @@ public:
 		}
 		
 		StringItem* item = this->item( parent );
-		return item ? createIndex( row, column, item ) : QModelIndex();
+		return item && row < item->children.count() ? createIndex( row, column, item ) : QModelIndex();
 	}
 	
 	virtual QModelIndex parent( const QModelIndex& index ) const
@@ -313,6 +313,7 @@ VariablesEditor::VariablesEditor( QWidget* parent )
 	tbValuesEdit->setMenu( editMenu );
 	
 	connect( lvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvVariables_selectionModel_selectionChanged() ) );
+	connect( lvValues->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvValues_selectionModel_selectionChanged() ) );
 }
 
 VariablesEditor::~VariablesEditor()
@@ -341,6 +342,7 @@ void VariablesEditor::init( XUPProjectItem* project )
 	const QModelIndex index = mModel->index( 0, 0 );
 	lvVariables->setCurrentIndex( index );
 	lvVariables->scrollTo( index );
+	lvVariables_selectionModel_selectionChanged();
 }
 
 void VariablesEditor::finalize()
@@ -486,6 +488,7 @@ void VariablesEditor::lvVariables_selectionModel_selectionChanged()
 	tbVariablesEdit->setEnabled( index.isValid() );
 	gbValues->setEnabled( index.isValid() );
 	lvValues->setRootIndex( index );
+	lvValues_selectionModel_selectionChanged();
 }
 
 void VariablesEditor::on_tbVariablesAdd_clicked()
@@ -530,6 +533,13 @@ void VariablesEditor::on_tbVariablesEdit_clicked()
 			QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This variable exists or is filtered out." ) );
 		}
 	}
+}
+
+void VariablesEditor::lvValues_selectionModel_selectionChanged()
+{
+	const QModelIndex index = lvValues->selectionModel()->selectedIndexes().value( 0 );
+	tbValuesEdit->setEnabled( index.isValid() );
+	tbValuesClear->setEnabled( index.isValid() );
 }
 
 void VariablesEditor::on_tbValuesAdd_clicked()
