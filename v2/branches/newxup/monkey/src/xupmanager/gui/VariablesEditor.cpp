@@ -48,6 +48,8 @@ public:
 	StringItemModel( QObject* parent = 0 )
 		: QAbstractItemModel( parent )
 	{
+		mRootItem = 0;
+		mDocumentFilterMap = 0;
 	}
 	
 	virtual int columnCount( const QModelIndex& parent = QModelIndex() ) const
@@ -160,8 +162,8 @@ public:
 			beginRemoveRows( QModelIndex(), 0, count -1 );
 			mRoot = StringItem();
 			mMapping.clear();
-			mFileVariables.clear();
-			mPathVariables.clear();
+			mRootItem = 0;
+			mDocumentFilterMap = 0;
 			mManagedVariables.clear();
 			endRemoveRows();
 		}
@@ -169,57 +171,13 @@ public:
 	
 	void setRootItem( const StringItem& item )
 	{
-		clear();
-		
-		if ( item == StringItem() ) {
-			return;
-		}
-		
-		const int count = item.children.count();
-		
-		beginInsertRows( QModelIndex(), 0, count -1 );
-		mRoot = item;
-		mRoot.enabled = true;
-		buildParentMapping( mRoot );
-		endInsertRows();
+		setRootItemInternal( item, true );
 	}
 	
 	void setRootItem( XUPItem* item )
 	{
-		const XUPProjectItem* project = item->project();
-		const DocumentFilterMap& filters = project->documentFilters();
-		mFileVariables = filters.fileVariables();
-		mPathVariables = filters.pathVariables();
-		mKnownVariables = filters.knownVariables();
-		mManagedVariables = mFileVariables;
-		StringItem root;
-		
-		// only retreives values of variables that are direct children of item
-		foreach ( XUPItem* variable, item->childrenList() ) {
-			if ( variable->type() == XUPItem::Variable ) {
-				StringItem si( variable->attribute( "name" ), true, variable );
-				
-				if ( si.string.startsWith( XUPProjectItemHelper::SettingsScopeName ) || mManagedVariables.contains( si.string ) ) {
-					continue;
-				}
-				
-				foreach ( XUPItem* value, variable->childrenList() ) {
-					switch ( value->type() ) {
-						case XUPItem::Value:
-						case XUPItem::File:
-						case XUPItem::Path:
-							si.children << StringItem( value->content(), true, value );
-							break;
-						default:
-							continue;
-					}
-				}
-				
-				root.children << si;
-			}
-		}
-		
-		setRootItem( root );
+		mRootItem = item;
+		revert();
 	}
 	
 	QModelIndex addChild( const QModelIndex& index, const StringItem& child )
@@ -261,17 +219,113 @@ public:
 		return QModelIndex();
 	}
 	
-	QStringList fileVariables() const { return mFileVariables; }
-	QStringList pathVariables() const { return mPathVariables; }
-	QStringList knownVariables() const { return mKnownVariables; }
+	QStringList fileVariables() const { return mDocumentFilterMap ? mDocumentFilterMap->fileVariables() : QStringList(); }
+	QStringList pathVariables() const { return mDocumentFilterMap ? mDocumentFilterMap->pathVariables() : QStringList(); }
+	QStringList knownVariables() const { return mDocumentFilterMap ? mDocumentFilterMap->knownVariables() : QStringList(); }
 	QStringList managedVariables() const { return mManagedVariables; }
 
+public slots:
+	virtual void revert()
+	{
+		XUPItem* item = mRootItem;
+		
+		if ( !mRootItem ) {
+			return;
+		}
+		
+		clear();
+		
+		const XUPProjectItem* project = item->project();
+		mRootItem = item;
+		mDocumentFilterMap = &project->documentFilters();
+		mManagedVariables = mDocumentFilterMap->fileVariables();
+		StringItem root;
+		
+		// only retreives values of variables that are direct children of item
+		foreach ( XUPItem* variable, mRootItem->childrenList() ) {
+			if ( variable->type() == XUPItem::Variable ) {
+				StringItem si( variable->attribute( "name" ), true, variable );
+				
+				if ( si.string.startsWith( XUPProjectItemHelper::SettingsScopeName ) || mManagedVariables.contains( si.string ) ) {
+					continue;
+				}
+				
+				foreach ( XUPItem* value, variable->childrenList() ) {
+					switch ( value->type() ) {
+						case XUPItem::Value:
+						case XUPItem::File:
+						case XUPItem::Path:
+							si.children << StringItem( value->content(), true, value );
+							break;
+						default:
+							continue;
+					}
+				}
+				
+				root.children << si;
+			}
+		}
+		
+		setRootItemInternal( root, false );
+	}
+	
+	virtual bool submit()
+	{
+		if ( !mRootItem ) {
+			return false;
+		}
+		
+		foreach ( const StringItem& variable, mRoot.children ) {
+			const bool isFileVariable = fileVariables().contains( variable.string );
+			const bool isPathVariable = pathVariables().contains( variable.string );
+			XUPItem* variableItem = variable.item;
+			
+			if ( !variable.enabled ) {
+				if ( variableItem ) {
+					variableItem->parent()->removeChild( variableItem );
+				}
+				
+				continue;
+			}
+			
+			if ( !variableItem ) {
+				variableItem = mRootItem->addChild( XUPItem::Variable );
+				variableItem->setAttribute( "name", variable.string );
+			}
+			
+			foreach ( const StringItem& value, variable.children ) {
+				XUPItem* valueItem = value.item;
+				
+				if ( value.enabled ) {
+					if ( !valueItem ) {
+						const XUPItem::Type type = isFileVariable ? XUPItem::File : ( isPathVariable ? XUPItem::Path : XUPItem::Value );
+						valueItem = variableItem->addChild( type );
+					}
+					
+					valueItem->setContent( value.string );
+				}
+				else {
+					if ( valueItem ) {
+						valueItem->parent()->removeChild( valueItem );
+					}
+				}
+			}
+			
+			if ( !variableItem->hasChildren() ) {
+				variableItem->parent()->removeChild( variableItem );
+			}
+		}
+		
+		revert();
+		
+		return true;
+	}
+
 protected:
+	XUPItem* mRootItem;
+	const DocumentFilterMap* mDocumentFilterMap;
 	mutable StringItem mRoot;
 	QHash<StringItem*, StringItem*> mMapping;
-	QStringList mFileVariables;
-	QStringList mPathVariables;
-	QStringList mKnownVariables;
 	QStringList mManagedVariables;
 	
 	void buildParentMapping( StringItem& item )
@@ -285,6 +339,25 @@ protected:
 			mMapping[ &child ] = &item;
 			buildParentMapping( child );
 		}
+	}
+	
+	void setRootItemInternal( const StringItem& item, bool clearModel )
+	{
+		if ( clearModel ) {
+			clear();
+		}
+		
+		if ( item == StringItem() ) {
+			return;
+		}
+		
+		const int count = item.children.count();
+		
+		beginInsertRows( QModelIndex(), 0, count -1 );
+		mRoot = item;
+		mRoot.enabled = true;
+		buildParentMapping( mRoot );
+		endInsertRows();
 	}
 };
 
@@ -347,112 +420,7 @@ void VariablesEditor::init( XUPProjectItem* project )
 
 void VariablesEditor::finalize()
 {
-	/*const DocumentFilterMap& filters = mProject->documentFilters();
-	QListWidgetItem* curItem = lwVariables->currentItem();
-	on_lwVariables_currentItemChanged( curItem, curItem );
-	
-	// tell about variables to remove
-	foreach ( const QString& variable, mVariablesToRemove )
-	{
-		mValues[ variable ] = QString::null;
-	}
-	
-	// update project
-	foreach ( const QString& variable, mValues.keys() )
-	{
-		bool isEmpty = mValues[ variable ].trimmed().isEmpty();
-		XUPItem* variableItem = this->variableItem( variable, !isEmpty );
-		if ( !variableItem )
-		{
-			continue;
-		}
-		
-		if ( !isEmpty )
-		{
-		#warning this part has to be rewrite to use XUPProjectItem::addFiles()
-			if ( mFileVariables.contains( variable ) || mPathVariables.contains( variable ) )
-			{
-				// get child type
-				XUPItem::Type type = mFileVariables.contains( variable ) ? XUPItem::File : XUPItem::Path;
-				// get values
-				QStringList values = filters.splitValue( mValues[ variable ] );
-				
-				// remove all child
-				foreach ( XUPItem* child, variableItem->childrenList() )
-				{
-					if ( child->type() == type )
-					{
-						QString value = child->content();
-						if ( values.contains( value ) )
-						{
-							values.removeAll( value );
-						}
-						else if ( !values.contains( value ) )
-						{
-							variableItem->removeChild( child );
-						}
-					}
-				}
-				
-				// add new ones
-				foreach ( const QString& v, values )
-				{
-					XUPItem* value = variableItem->addChild( type );
-					value->setContent( v );
-				}
-			}
-			/else if ( variable == "CONFIG" )
-			{
-				// update variable
-				variableItem->setAttribute( "operator", "+=" );
-				
-				// remove all child values
-				foreach ( XUPItem* child, variableItem->childrenList() )
-				{
-					if ( child->type() == XUPItem::Value )
-					{
-						variableItem->removeChild( child );
-					}
-				}
-				
-				// add new one
-				XUPItem* value = variableItem->addChild( XUPItem::Value );
-				value->setContent( mValues[ variable ] );
-			}/
-			else
-			{
-				// remove all child values
-				foreach ( XUPItem* child, variableItem->childrenList() )
-				{
-					if ( child->type() == XUPItem::Value )
-					{
-						variableItem->removeChild( child );
-					}
-				}
-				
-				// add new one
-				XUPItem* value = variableItem->addChild( XUPItem::Value );
-				value->setContent( mValues[ variable ] );
-			}
-		}
-		else if ( isEmpty && variableItem && variableItem->childCount() > 0 )
-		{
-			// remove all child values
-			foreach ( XUPItem* child, variableItem->childrenList() )
-			{
-				if ( child->type() == XUPItem::Value || child->type() == XUPItem::File || child->type() == XUPItem::Path )
-				{
-					variableItem->removeChild( child );
-				}
-			}
-		}
-		
-		// remove empty variable
-		if ( variableItem->childCount() == 0 )
-		{
-			variableItem->parent()->removeChild( variableItem );
-		}
-	}*/
+	mModel->submit();
 }
 
 XUPItem* VariablesEditor::variableItem( const QString& variableName, bool create )
