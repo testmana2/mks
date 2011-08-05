@@ -210,6 +210,12 @@ XUPProjectItem* ProjectTypesIndex::newProjectItem( const QString& fileName ) con
 	return 0;
 }
 
+XUPProjectItem* ProjectTypesIndex::newProjectItemByType( const QString& type ) const
+{
+	const QMetaObject* mo = mRegisteredProjectItems.value( type );
+	return mo ? qobject_cast<XUPProjectItem*>( mo->newInstance() ) : 0;
+}
+
 QMap<QString, QStringList> ProjectTypesIndex::suffixes() const
 {
 	QMap<QString, QStringList> suffixes;

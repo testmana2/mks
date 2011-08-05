@@ -71,7 +71,7 @@ protected:
 	QString mIconsPath;
 };
 
-class Q_MONKEY_EXPORT ProjectTypesIndex: public QObject
+class Q_MONKEY_EXPORT ProjectTypesIndex : public QObject
 {
 	Q_OBJECT
 
@@ -92,6 +92,9 @@ public:
 	
 	// return a valid project item for fileName
 	XUPProjectItem* newProjectItem( const QString& fileName ) const;
+	
+	// return a project for project type type
+	XUPProjectItem* newProjectItemByType( const QString& type ) const;
 	
 	// return a map that can be used to create file dialog filter
 	QMap<QString, QStringList> suffixes() const;
