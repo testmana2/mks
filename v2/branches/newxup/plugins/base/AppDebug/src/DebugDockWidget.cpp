@@ -8,7 +8,7 @@
 #include <pChild.h>
 #include <pFileManager.h>
 
-#include <QMakeProjectItem.h>
+#include <ProjectTypesIndex.h>
 
 #include <QTreeView>
 #include <QPlainTextEdit>
@@ -207,7 +207,7 @@ void DebugDockWidget::createScope( XUPItem* parent, bool nested1, bool nested2, 
 
 void DebugDockWidget::generateFakeProject()
 {
-	QMakeProjectItem* project = new QMakeProjectItem;
+	XUPProjectItem* project = MonkeyCore::projectTypesIndex()->newProjectItemByType( "QMake" );
 	XUPItem* item;
 	XUPItem* comment;
 	XUPItem* variable;

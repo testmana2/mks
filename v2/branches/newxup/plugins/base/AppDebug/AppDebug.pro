@@ -17,10 +17,7 @@ TARGET	= AppDebug
 include( ../../plugins.pri )
 DESTDIR	= $$MONKEY_PLUGINS_DIR/base
 
-LIBS	*= -L$${MONKEY_PLUGINS_DIR}/xup -lQMake_debug
-
-INCLUDEPATH	*= src \
-	$$PWD/../../xup/QMake/src
+INCLUDEPATH	*= src
 
 RESOURCES	*= src/resources/AppDebug.qrc
 
