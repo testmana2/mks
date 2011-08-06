@@ -15,14 +15,8 @@ class Q_MONKEY_EXPORT VariablesEditor : public QFrame, public Ui::VariablesEdito
 
 public:
 	VariablesEditor( QWidget* parent = 0 );
-	virtual ~VariablesEditor();
 	
-	QStringList fileVariables() const;
-	QStringList pathVariables() const;
-	QStringList knownVariables() const;
-	QStringList filteredVariables() const;
-	
-	void init( XUPProjectItem* project );
+	void setup( XUPProjectItem* project );
 	void finalize();
 
 protected:
