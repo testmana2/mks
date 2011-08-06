@@ -43,31 +43,7 @@ VariablesEditor::VariablesEditor( QWidget* parent )
 	mModel->setQuoteValues( cbQuoteEnabled->isChecked() );
 }
 
-VariablesEditor::~VariablesEditor()
-{
-}
-
-QStringList VariablesEditor::fileVariables() const
-{
-	return mModel->fileVariables();
-}
-
-QStringList VariablesEditor::pathVariables() const
-{
-	return mModel->pathVariables();
-}
-
-QStringList VariablesEditor::knownVariables() const
-{
-	return mModel->knownVariables();
-}
-
-QStringList VariablesEditor::filteredVariables() const
-{
-	return mModel->filteredVariables();
-}
-
-void VariablesEditor::init( XUPProjectItem* project )
+void VariablesEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
 	mModel->setFilteredVariables( project->documentFilters().fileVariables() );

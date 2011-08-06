@@ -134,7 +134,7 @@ void UIXUPEditor::init( XUPProjectItem* project )
 	leDynamicFolder->setText( folder.AbsolutePath );
 	gbDynamicFilesPatterns->setValues( folder.FilesPatterns );
 	updateMainFileComboBox( XUPProjectItemHelper::projectSettingsValue( mProject, "MAIN_FILE" ) );
-	veEditor->init( mProject );
+	veEditor->setup( mProject );
 	updateProjectFiles();
 	ceEditor->setCommands( XUPProjectItemHelper::projectCommands( mProject ) );
 	ceEditor->setCurrentType( ceEditor->commandTypes().first() );
