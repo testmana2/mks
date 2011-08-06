@@ -1,46 +1,70 @@
 #include "VariablesEditor.h"
-#include "XUPProjectItem.h"
-#include "XUPProjectItemHelper.h"
+#include "ui_VariablesEditor.h"
 #include "XUPItemVariableEditorModel.h"
-#include "pMonkeyStudio.h"
+#include "XUPProjectItem.h"
 
 #include <QMenu>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QDebug>
 
 VariablesEditor::VariablesEditor( QWidget* parent )
 	: QFrame( parent )
 {
+	ui = new Ui_VariablesEditor;
 	mProject = 0;
 	mModel = new XUPItemVariableEditorModel( this );
 	
-	setupUi( this );
-	lvVariables->setModel( mModel );
-	lvValues->setModel( mModel );
+	ui->setupUi( this );
+	ui->lvVariables->setModel( mModel );
+	ui->lvValues->setModel( mModel );
 	
 	// tbValuesAdd actions
-	QMenu* addMenu = new QMenu( tbValuesAdd );
+	QMenu* addMenu = new QMenu( ui->tbValuesAdd );
 	aValuesAddValue = addMenu->addAction( tr( "As Value..." ) );
 	aValuesAddFile = addMenu->addAction( tr( "As File..." ) );
 	aValuesAddPath = addMenu->addAction( tr( "As Path..." ) );
-	tbValuesAdd->setMenu( addMenu );
+	ui->tbValuesAdd->setMenu( addMenu );
 	
 	// tbValuesEdit actions
-	QMenu* editMenu = new QMenu( tbValuesEdit );
+	QMenu* editMenu = new QMenu( ui->tbValuesEdit );
 	aValuesEditValue = editMenu->addAction( tr( "As Value..." ) );
 	aValuesEditFile = editMenu->addAction( tr( "As File..." ) );
 	aValuesEditPath = editMenu->addAction( tr( "As Path..." ) );
-	tbValuesEdit->setMenu( editMenu );
+	ui->tbValuesEdit->setMenu( editMenu );
 	
-	connect( lvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvVariables_selectionModel_selectionChanged() ) );
-	connect( lvValues->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvValues_selectionModel_selectionChanged() ) );
-	connect( cbQuoteEnabled, SIGNAL( clicked( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
-	connect( cbQuote, SIGNAL( editTextChanged( const QString& ) ), mModel, SLOT( setQuoteString( const QString& ) ) );
+	connect( ui->lvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvVariables_selectionModel_selectionChanged() ) );
+	connect( ui->lvValues->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvValues_selectionModel_selectionChanged() ) );
+	connect( ui->cbQuoteEnabled, SIGNAL( clicked( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
+	connect( ui->cbQuote, SIGNAL( editTextChanged( const QString& ) ), mModel, SLOT( setQuoteString( const QString& ) ) );
 	
-	mModel->setQuoteString( cbQuote->currentText() );
-	mModel->setQuoteValues( cbQuoteEnabled->isChecked() );
+	mModel->setQuoteString( ui->cbQuote->currentText() );
+	mModel->setQuoteValues( ui->cbQuoteEnabled->isChecked() );
+}
+
+VariablesEditor::~VariablesEditor()
+{
+	delete ui;
+}
+
+void VariablesEditor::setQuoteSpacedValuesVisible( bool visible )
+{
+	ui->wQuote->setVisible( visible );
+}
+
+bool VariablesEditor::isQuoteSpacedValuesVisible() const
+{
+	return ui->wQuote->isVisible();
+}
+
+void VariablesEditor::setQuoteSpacedValuesEnabled( bool enabled )
+{
+	ui->wQuote->setEnabled( enabled );
+}
+
+bool VariablesEditor::isQuoteSpacedValuesEnabled() const
+{
+	return ui->wQuote->isEnabled();
 }
 
 void VariablesEditor::setup( XUPProjectItem* project )
@@ -49,8 +73,8 @@ void VariablesEditor::setup( XUPProjectItem* project )
 	mModel->setFilteredVariables( project->documentFilters().fileVariables() );
 	mModel->setRootItem( project );
 	const QModelIndex index = mModel->index( 0, 0 );
-	lvVariables->setCurrentIndex( index );
-	lvVariables->scrollTo( index );
+	ui->lvVariables->setCurrentIndex( index );
+	ui->lvVariables->scrollTo( index );
 	lvVariables_selectionModel_selectionChanged();
 }
 
@@ -74,22 +98,22 @@ XUPItem* VariablesEditor::variableItem( const QString& variableName, bool create
 
 QModelIndex VariablesEditor::currentVariable() const
 {
-	const QModelIndex index = lvVariables->selectionModel()->selectedIndexes().value( 0 );
-	return lvVariables->rootIndex() == index.parent() ? index : QModelIndex();
+	const QModelIndex index = ui->lvVariables->selectionModel()->selectedIndexes().value( 0 );
+	return ui->lvVariables->rootIndex() == index.parent() ? index : QModelIndex();
 }
 
 QModelIndex VariablesEditor::currentValue() const
 {
-	const QModelIndex index = lvValues->selectionModel()->selectedIndexes().value( 0 );
-	return lvValues->rootIndex() == index.parent() ? index : QModelIndex();
+	const QModelIndex index = ui->lvValues->selectionModel()->selectedIndexes().value( 0 );
+	return ui->lvValues->rootIndex() == index.parent() ? index : QModelIndex();
 }
 
 void VariablesEditor::lvVariables_selectionModel_selectionChanged()
 {
 	const QModelIndex index = currentVariable();
-	tbVariablesEdit->setEnabled( index.isValid() );
-	gbValues->setEnabled( index.isValid() );
-	lvValues->setRootIndex( index );
+	ui->tbVariablesEdit->setEnabled( index.isValid() );
+	ui->gbValues->setEnabled( index.isValid() );
+	ui->lvValues->setRootIndex( index );
 	lvValues_selectionModel_selectionChanged();
 }
 
@@ -104,8 +128,8 @@ void VariablesEditor::on_tbVariablesAdd_clicked()
 		const QModelIndex index = mModel->addVariable( variable );
 		
 		if ( index.isValid() ) {
-			lvVariables->setCurrentIndex( index );
-			lvVariables->scrollTo( index );
+			ui->lvVariables->setCurrentIndex( index );
+			ui->lvVariables->scrollTo( index );
 		}
 		else {
 			QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This variable is filtered out." ) );
@@ -137,8 +161,8 @@ void VariablesEditor::lvValues_selectionModel_selectionChanged()
 	const QModelIndex variableIndex = currentVariable();
 	const QModelIndex valueIndex = currentValue();
 	const int count = mModel->rowCount( variableIndex );
-	tbValuesEdit->setEnabled( valueIndex.isValid() );
-	tbValuesClear->setEnabled( variableIndex.isValid() && count > 0 );
+	ui->tbValuesEdit->setEnabled( valueIndex.isValid() );
+	ui->tbValuesClear->setEnabled( variableIndex.isValid() && count > 0 );
 }
 
 void VariablesEditor::on_tbValuesAdd_clicked()
@@ -185,8 +209,8 @@ void VariablesEditor::on_tbValuesAdd_triggered( QAction* action )
 	}
 	
 	const QModelIndex index = mModel->addValue( variableIndex, value );
-	lvValues->setCurrentIndex( index );
-	lvValues->scrollTo( index );
+	ui->lvValues->setCurrentIndex( index );
+	ui->lvValues->scrollTo( index );
 }
 
 void VariablesEditor::on_tbValuesEdit_clicked()
