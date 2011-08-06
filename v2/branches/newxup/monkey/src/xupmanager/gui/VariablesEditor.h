@@ -3,23 +3,35 @@
 
 #include "MonkeyExport.h"
 
-#include "ui_VariablesEditor.h"
+#include <QFrame>
+#include <QModelIndex>
+
+class Ui_VariablesEditor;
 
 class XUPProjectItem;
 class XUPItem;
 class XUPItemVariableEditorModel;
 
-class Q_MONKEY_EXPORT VariablesEditor : public QFrame, public Ui::VariablesEditor
+class Q_MONKEY_EXPORT VariablesEditor : public QFrame
 {
 	Q_OBJECT
 
 public:
 	VariablesEditor( QWidget* parent = 0 );
+	virtual ~VariablesEditor();
+	
+	bool isQuoteSpacedValuesVisible() const;
+	bool isQuoteSpacedValuesEnabled() const;
 	
 	void setup( XUPProjectItem* project );
 	void finalize();
 
+public slots:
+	void setQuoteSpacedValuesVisible( bool visible );
+	void setQuoteSpacedValuesEnabled( bool enabled );
+
 protected:
+	Ui_VariablesEditor* ui;
 	QAction* aValuesAddValue;
 	QAction* aValuesAddFile;
 	QAction* aValuesAddPath;
@@ -34,12 +46,10 @@ protected:
 	QModelIndex currentValue() const;
 
 protected slots:
-	// variables
 	void lvVariables_selectionModel_selectionChanged();
 	void on_tbVariablesAdd_clicked();
 	void on_tbVariablesEdit_clicked();
 	
-	// values
 	void lvValues_selectionModel_selectionChanged();
 	void on_tbValuesAdd_clicked();
 	void on_tbValuesAdd_triggered( QAction* action );

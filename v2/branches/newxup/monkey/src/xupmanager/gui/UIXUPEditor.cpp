@@ -30,6 +30,9 @@ UIXUPEditor::UIXUPEditor( XUPProjectItem* project, QWidget* parent )
 	// does not show variable editor by default
 	//setVariableEditorVisible( false );
 	
+	/*veEditor->setQuoteSpacedValuesVisible( false );
+	veEditor->setQuoteSpacedValuesEnabled( false );*/
+	
 	// commands
 	const BasePluginTypeList types = BasePluginTypeList() << BasePlugin::iCLITool << BasePlugin::iDebugger;
 	const QStringList parsers = MonkeyCore::consoleManager()->parsersName();
