@@ -123,7 +123,8 @@ HEADERS	*= src/main.h \
 	src/xupmanager/gui/CommandsEditor.h \
 	src/xupmanager/gui/VariablesEditor.h \
 	src/xupmanager/gui/UIXUPEditor.h \
-	src/xupmanager/core/XUPProjectItemHelper.h
+	src/xupmanager/core/XUPProjectItemHelper.h \
+	src/xupmanager/core/XUPItemVariableEditorModel.h
 
 SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/maininterface/ui/UISettings.cpp \
@@ -178,7 +179,8 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/xupmanager/gui/CommandsEditor.cpp \
 	src/xupmanager/gui/VariablesEditor.cpp \
 	src/xupmanager/gui/UIXUPEditor.cpp \
-	src/xupmanager/core/XUPProjectItemHelper.cpp
+	src/xupmanager/core/XUPProjectItemHelper.cpp \
+	src/xupmanager/core/XUPItemVariableEditorModel.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
 	../datas/translations/monkeystudio_be.ts \

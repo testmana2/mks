@@ -7,7 +7,7 @@
 
 class XUPProjectItem;
 class XUPItem;
-class StringItemModel;
+class XUPItemVariableEditorModel;
 
 class Q_MONKEY_EXPORT VariablesEditor : public QFrame, public Ui::VariablesEditor
 {
@@ -19,7 +19,8 @@ public:
 	
 	QStringList fileVariables() const;
 	QStringList pathVariables() const;
-	QStringList managedVariables() const;
+	QStringList knownVariables() const;
+	QStringList filteredVariables() const;
 	
 	void init( XUPProjectItem* project );
 	void finalize();
@@ -32,10 +33,11 @@ protected:
 	QAction* aValuesEditFile;
 	QAction* aValuesEditPath;
 	XUPProjectItem* mProject;
-	StringItemModel* mModel;
+	XUPItemVariableEditorModel* mModel;
 	
 	XUPItem* variableItem( const QString& variableName, bool create );
-	QString quotedString( const QString& string ) const;
+	QModelIndex currentVariable() const;
+	QModelIndex currentValue() const;
 
 protected slots:
 	// variables
