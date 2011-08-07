@@ -70,7 +70,6 @@ bool VariablesEditor::isQuoteSpacedValuesEnabled() const
 void VariablesEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
-	mModel->setFilterMode( XUPItemVariableEditorModel::Out );
 	mModel->setFilteredVariables( project->documentFilters().fileVariables() );
 	mModel->setRootItem( project );
 	const QModelIndex index = mModel->index( 0, 0 );

@@ -53,6 +53,7 @@ void FilesEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
 	mModel->setFilterMode( XUPItemVariableEditorModel::In );
+	mModel->setFriendlyDisplayText( true );
 	mModel->setFilteredVariables( project->documentFilters().fileVariables() );
 	mModel->setRootItem( project );
 	tvVariables_selectionModel_selectionChanged();
@@ -120,7 +121,6 @@ void FilesEditor::on_tbAdd_clicked()
 			const QModelIndex variableIndex = mModel->addVariable( variableName );
 			
 			if ( !variableIndex.isValid() ) {
-				Q_ASSERT( 0 );
 				unknownFiles << file;
 				continue;
 			}
@@ -132,7 +132,6 @@ void FilesEditor::on_tbAdd_clicked()
 				ui->tvVariables->scrollTo( fileIndex );
 			}
 			else {
-				Q_ASSERT( 0 );
 				unknownFiles << file;
 				continue;
 			}
@@ -146,22 +145,24 @@ void FilesEditor::on_tbAdd_clicked()
 
 void FilesEditor::on_tbEdit_clicked()
 {
-	/*const QModelIndex variableIndex = currentVariable();
 	const QModelIndex valueIndex = currentValue();
 	
-	if ( !variableIndex.isValid() || !valueIndex.isValid() ) {
+	if ( !valueIndex.isValid() ) {
 		return;
 	}
 	
-	const QString title = tr( "Edit a value..." );
-	bool ok = true;
-	QString value = valueIndex.data( Qt::DisplayRole ).toString();
+	const DocumentFilterMap& filters = mProject->documentFilters();
+	const QString filter = filters.sourceFileNameFilter();
+	QString filePath = mProject->filePath( valueIndex.data( Qt::DisplayRole ).toString() );
+	filePath = QFileDialog::getOpenFileName( QApplication::activeWindow(), tr( "Edit a file..." ), filePath, filter, 0, QFileDialog::HideNameFilterDetails );
 	
-	if ( value.isEmpty() || !ok ) {
+	if ( filePath.isEmpty() ) {
 		return;
 	}
 	
-	if ( !mModel->setData( valueIndex, value, Qt::DisplayRole ) ) {
-		QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This value already exists." ) );
-	}*/
+	filePath = mProject->relativeFilePath( filePath );
+	
+	if ( !mModel->setData( valueIndex, filePath, Qt::DisplayRole ) ) {
+		QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This file already exists." ) );
+	}
 }
