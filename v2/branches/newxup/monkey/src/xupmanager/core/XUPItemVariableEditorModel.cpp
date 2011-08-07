@@ -15,6 +15,7 @@ XUPItemVariableEditorModel::XUPItemVariableEditorModel( QObject* parent )
 	mRootItem = 0;
 	mDocumentFilterMap = 0;
 	mQuoteValues = false;
+	mFriendlyDisplayText = false;
 }
 
 int XUPItemVariableEditorModel::columnCount( const QModelIndex& parent ) const
@@ -29,6 +30,7 @@ QVariant XUPItemVariableEditorModel::data( const QModelIndex& index, int role ) 
 	
 	if ( item && item != &mRoot ) {
 		const XUPItemVariableEditorModelItem* parent = mParentMapping.value( item );
+		const bool isVariable = index.isValid() && !index.parent().isValid();
 		bool enabled = parent && parent != &mRoot ? parent->enabled : item->enabled;
 		
 		if ( enabled ) {
@@ -36,9 +38,23 @@ QVariant XUPItemVariableEditorModel::data( const QModelIndex& index, int role ) 
 		}
 		
 		switch ( role ) {
+			case Qt::DecorationRole: {
+				QString iconFilePath;
+				
+				if ( isVariable && mFriendlyDisplayText && mDocumentFilterMap ) {
+					iconFilePath = mDocumentFilterMap->variableDisplayIcon( item->string );
+				}
+				
+				return iconFilePath.isEmpty() ? QVariant() : QIcon( iconFilePath );
+			}
 			case Qt::DisplayRole:
-			case Qt::EditRole:
+			case Qt::EditRole: {
+				if ( isVariable && mFriendlyDisplayText && mDocumentFilterMap ) {
+					return mDocumentFilterMap->variableDisplayText( item->string );
+				}
+				
 				return item->string;
+			}
 			case Qt::CheckStateRole:
 				return enabled ? Qt::Checked : Qt::Unchecked;
 			case Qt::ForegroundRole:
@@ -127,6 +143,11 @@ bool XUPItemVariableEditorModel::setData( const QModelIndex& index, const QVaria
 		}
 		case Qt::CheckStateRole:
 			item->enabled = value.toInt() == Qt::Checked;
+			
+			if ( hasChildren( index ) ) {
+				emit dataChanged( index.child( 0, 0 ), index.child( rowCount( index ) -1, columnCount( index ) -1 ) );
+			}
+			
 			break;
 		default:
 			return false;
@@ -261,6 +282,17 @@ void XUPItemVariableEditorModel::setFilteredVariables( const QStringList& filter
 QStringList XUPItemVariableEditorModel::filteredVariables() const
 {
 	return mFilteredVariables;
+}
+
+void XUPItemVariableEditorModel::setFriendlyDisplayText( bool friendly )
+{
+	mFriendlyDisplayText = friendly;
+	emit dataChanged( index( 0, 0 ), index( rowCount() -1, columnCount() -1 ) );
+}
+
+bool XUPItemVariableEditorModel::friendlyDisplayText() const
+{
+	return mFriendlyDisplayText;
 }
 
 void XUPItemVariableEditorModel::setQuoteString( const QString& string )

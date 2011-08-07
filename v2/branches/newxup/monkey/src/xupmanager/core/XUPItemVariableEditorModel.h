@@ -74,6 +74,9 @@ public:
 	void setFilteredVariables( const QStringList& filters );
 	QStringList filteredVariables() const;
 	
+	void setFriendlyDisplayText( bool friendly );
+	bool friendlyDisplayText() const;
+	
 	QString quoteString() const;
 	bool quoteValues() const;
 	QString quotedValue( const QString& value ) const;
@@ -94,6 +97,7 @@ protected:
 	QStringList mFilteredVariables;
 	QString mQuoteString;
 	bool mQuoteValues;
+	bool mFriendlyDisplayText;
 	
 	void buildParentMapping( XUPItemVariableEditorModelItem& item );
 	void setRootItemInternal( const XUPItemVariableEditorModelItem& item, bool clearModel );
