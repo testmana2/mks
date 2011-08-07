@@ -39,6 +39,11 @@ class XUPItemVariableEditorModel : public QAbstractItemModel {
 	Q_OBJECT
 
 public:
+	enum FilterMode {
+		Out = 0,
+		In
+	};
+	
 	XUPItemVariableEditorModel( QObject* parent = 0 );
 	
 	virtual int columnCount( const QModelIndex& parent = QModelIndex() ) const;
@@ -63,6 +68,9 @@ public:
 	QStringList pathVariables() const;
 	QStringList knownVariables() const;
 	
+	void setFilterMode( XUPItemVariableEditorModel::FilterMode mode );
+	XUPItemVariableEditorModel::FilterMode mode() const;
+	
 	void setFilteredVariables( const QStringList& filters );
 	QStringList filteredVariables() const;
 	
@@ -78,10 +86,11 @@ public slots:
 	void setQuoteValues( bool quote );
 
 protected:
+	XUPItemVariableEditorModel::FilterMode mMode;
 	XUPItem* mRootItem;
 	const DocumentFilterMap* mDocumentFilterMap;
 	mutable XUPItemVariableEditorModelItem mRoot;
-	QHash<XUPItemVariableEditorModelItem*, XUPItemVariableEditorModelItem*> mMapping;
+	QHash<XUPItemVariableEditorModelItem*, XUPItemVariableEditorModelItem*> mParentMapping;
 	QStringList mFilteredVariables;
 	QString mQuoteString;
 	bool mQuoteValues;

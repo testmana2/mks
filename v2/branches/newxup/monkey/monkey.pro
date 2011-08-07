@@ -64,7 +64,8 @@ FORMS	*= src/maininterface/ui/UIAbout.ui \
 	src/workspace/pOpenedFileExplorer.ui \
 	src/xupmanager/gui/CommandsEditor.ui \
 	src/xupmanager/gui/VariablesEditor.ui \
-	src/xupmanager/gui/UIXUPEditor.ui
+	src/xupmanager/gui/UIXUPEditor.ui \
+	src/xupmanager/gui/FilesEditor.ui
 
 HEADERS	*= src/main.h \
 	src/maininterface/ui/UIAbout.h \
@@ -124,7 +125,8 @@ HEADERS	*= src/main.h \
 	src/xupmanager/gui/VariablesEditor.h \
 	src/xupmanager/gui/UIXUPEditor.h \
 	src/xupmanager/core/XUPProjectItemHelper.h \
-	src/xupmanager/core/XUPItemVariableEditorModel.h
+	src/xupmanager/core/XUPItemVariableEditorModel.h \
+	src/xupmanager/gui/FilesEditor.h
 
 SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/maininterface/ui/UISettings.cpp \
@@ -180,7 +182,8 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/xupmanager/gui/VariablesEditor.cpp \
 	src/xupmanager/gui/UIXUPEditor.cpp \
 	src/xupmanager/core/XUPProjectItemHelper.cpp \
-	src/xupmanager/core/XUPItemVariableEditorModel.cpp
+	src/xupmanager/core/XUPItemVariableEditorModel.cpp \
+	src/xupmanager/gui/FilesEditor.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
 	../datas/translations/monkeystudio_be.ts \

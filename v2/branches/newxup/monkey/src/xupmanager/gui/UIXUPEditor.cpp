@@ -81,52 +81,6 @@ void UIXUPEditor::updateMainFileComboBox( const QString& selectFile )
 	cbMainFile->setCurrentIndex( index );
 }
 
-void UIXUPEditor::updateProjectFiles()
-{
-	/*const DocumentFilterMap& filters = mProject->documentFilters();
-	QMap<QString, QString>& values = veEditor->values();
-	
-	foreach ( const QString& variable, veEditor->fileVariables() )
-	{
-		QTreeWidgetItem* topItem = mProjectFilesItems.value( variable );
-		QStringList files = filters.splitValue( values[ variable ] );
-		
-		if ( topItem && files.isEmpty() )
-		{
-			delete mProjectFilesItems.take( variable );
-		}
-		else if ( !files.isEmpty() )
-		{
-			if ( !topItem )
-			{
-				topItem = new QTreeWidgetItem( twFiles, QTreeWidgetItem::UserType +1 );
-				topItem->setText( 0, filters.variableDisplayText( variable ) );
-				topItem->setIcon( 0, QIcon( filters.variableDisplayIcon( variable ) ) );
-				mProjectFilesItems[ variable ] = topItem;
-			}
-			
-			for ( int i = 0; i < topItem->childCount(); i++ )
-			{
-				QTreeWidgetItem* item = topItem->child( i );
-				QString fn = item->data( 0, Qt::UserRole ).toString();
-				
-				if ( files.contains( fn ) )
-				{
-					files.removeAll( fn );
-				}
-			}
-			
-			foreach ( const QString& fn, files )
-			{
-				QTreeWidgetItem* item = new QTreeWidgetItem( topItem, QTreeWidgetItem::UserType );
-				item->setText( 0, fn );
-				item->setData( 0, Qt::UserRole, fn );
-				item->setIcon( 0, QIcon( filters.variableDisplayIcon( "FILES" ) ) );
-			}
-		}
-	}*/
-}
-
 void UIXUPEditor::init( XUPProjectItem* project )
 {
 	mProject = project;
@@ -137,8 +91,8 @@ void UIXUPEditor::init( XUPProjectItem* project )
 	leDynamicFolder->setText( folder.AbsolutePath );
 	gbDynamicFilesPatterns->setValues( folder.FilesPatterns );
 	updateMainFileComboBox( XUPProjectItemHelper::projectSettingsValue( mProject, "MAIN_FILE" ) );
+	feEditor->setup( mProject );
 	veEditor->setup( mProject );
-	updateProjectFiles();
 	ceEditor->setCommands( XUPProjectItemHelper::projectCommands( mProject ) );
 	ceEditor->setCurrentType( ceEditor->commandTypes().first() );
 }
@@ -154,122 +108,6 @@ void UIXUPEditor::on_tbDynamicFolder_clicked()
 	}
 	
 	leDynamicFolder->setText( path );
-}
-
-void UIXUPEditor::on_tbAddFile_clicked()
-{
-	/*const DocumentFilterMap& filters = mProject->documentFilters();
-	pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window(), false );
-	
-	if ( !result.isEmpty() )
-	{
-		QStringList files = result[ "filenames" ].toStringList();
-		QMap<QString, QString>& values = veEditor->values();
-		
-		// import files if needed
-		if ( result[ "import" ].toBool() )
-		{
-			const QString projectPath = mProject->path();
-			const QString importPath = result[ "importpath" ].toString();
-			const QString importRootPath = result[ "directory" ].toString();
-			QDir dir( importRootPath );
-			
-			for ( int i = 0; i < files.count(); i++ )
-			{
-				if ( !files.at( i ).startsWith( projectPath ) )
-				{
-					QString fn = QString( files.at( i ) ).remove( importRootPath ).replace( "\\", "/" );
-					fn = QDir::cleanPath( QString( "%1/%2/%3" ).arg( projectPath ).arg( importPath ).arg( fn ) );
-					
-					if ( dir.mkpath( QFileInfo( fn ).absolutePath() ) && QFile::copy( files.at( i ), fn ) )
-					{
-						files[ i ] = fn;
-					}
-				}
-			}
-		}
-		
-		// add files
-		foreach ( QString fn, files )
-		{
-			fn = mProject->relativeFilePath( fn );
-			
-			if ( fn.contains( " " ) )
-			{
-				fn.prepend( '"' ).append( '"' );
-			}
-			
-			QString variable = filters.fileNameVariables( fn ).value( 0 );
-			
-			if ( !values[ variable ].contains( fn ) )
-			{
-				values[ variable ] += " " +fn;
-			}
-			
-		}
-		
-		updateProjectFiles();
-	}*/
-}
-
-void UIXUPEditor::on_tbEditFile_clicked()
-{
-	/*const DocumentFilterMap& filters = mProject->documentFilters();
-	QTreeWidgetItem* item = twFiles->selectedItems().value( 0 );
-	
-	if ( item && twFiles->indexOfTopLevelItem( item ) == -1 )
-	{
-		bool ok;
-		QString oldValue = item->data( 0, Qt::UserRole ).toString();
-		QString fn = QInputDialog::getText( this, tr( "Edit file name" ), tr( "Type a new name for this file" ), QLineEdit::Normal, oldValue, &ok );
-		
-		if ( ok && !fn.isEmpty() )
-		{
-			QString variable = filters.fileNameVariables( fn ).value( 0 );
-			QMap<QString, QString>& values = veEditor->values();
-			
-			item->setText( 0, fn );
-			item->setData( 0, Qt::UserRole, fn );
-			
-			values[ variable ].remove( oldValue ).append( " " +fn );
-			
-			updateProjectFiles();
-		}
-	}*/
-}
-
-void UIXUPEditor::on_tbRemoveFile_clicked()
-{
-	/*QList<QTreeWidgetItem*> selectedItems = twFiles->selectedItems();
-	
-	if ( selectedItems.count() > 0 )
-	{
-		if ( QMessageBox::question( this, tr( "Remove files" ), tr( "Are you sure you want to remove all the selected files ?" ), QMessageBox::Yes | QMessageBox::No, QMessageBox::No ) == QMessageBox::No )
-		{
-			return;
-		}
-		
-		QMap<QString, QString>& values = veEditor->values();
-		
-		foreach ( QTreeWidgetItem* item, selectedItems )
-		{
-			if ( item->type() == QTreeWidgetItem::UserType +1 )
-			{
-				continue;
-			}
-			
-			const QString variable = mProjectFilesItems.key( item->parent() );
-			const QString fn = item->data( 0, Qt::UserRole ).toString();
-			
-			values[ variable ].remove( fn );
-			delete item;
-		}
-		
-		if ( !selectedItems.isEmpty() )
-		{
-			updateProjectFiles();
-		}
-	}*/
 }
 
 void UIXUPEditor::accept()
@@ -288,6 +126,7 @@ void UIXUPEditor::accept()
 		}
 	}
 	
+	feEditor->finalize();
 	ceEditor->finalize();
 	veEditor->finalize();
 	mProject->setAttribute( "name", leProjectName->text() );

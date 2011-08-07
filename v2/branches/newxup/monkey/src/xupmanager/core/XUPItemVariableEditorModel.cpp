@@ -6,10 +6,12 @@
 #include <QApplication>
 #include <QPalette>
 #include <QFont>
+#include <QDebug>
 
 XUPItemVariableEditorModel::XUPItemVariableEditorModel( QObject* parent )
 	: QAbstractItemModel( parent )
 {
+	mMode = XUPItemVariableEditorModel::Out;
 	mRootItem = 0;
 	mDocumentFilterMap = 0;
 	mQuoteValues = false;
@@ -26,7 +28,7 @@ QVariant XUPItemVariableEditorModel::data( const QModelIndex& index, int role ) 
 	XUPItemVariableEditorModelItem* item = this->item( index );
 	
 	if ( item && item != &mRoot ) {
-		const XUPItemVariableEditorModelItem* parent = mMapping.value( item );
+		const XUPItemVariableEditorModelItem* parent = mParentMapping.value( item );
 		bool enabled = parent && parent != &mRoot ? parent->enabled : item->enabled;
 		
 		if ( enabled ) {
@@ -65,7 +67,7 @@ QModelIndex XUPItemVariableEditorModel::index( int row, int column, const QModel
 QModelIndex XUPItemVariableEditorModel::parent( const QModelIndex& index ) const
 {
 	XUPItemVariableEditorModelItem* parentItem = static_cast<XUPItemVariableEditorModelItem*>( index.internalPointer() );
-	XUPItemVariableEditorModelItem* parentItemParent = mMapping.value( parentItem );
+	XUPItemVariableEditorModelItem* parentItemParent = mParentMapping.value( parentItem );
 	return parentItemParent ? createIndex( parentItemParent->children.indexOf( *parentItem ), 0, parentItemParent ) : QModelIndex();
 }
 
@@ -103,6 +105,21 @@ bool XUPItemVariableEditorModel::setData( const QModelIndex& index, const QVaria
 			
 			if ( cIndex.isValid() && cIndex != index ) {
 				return false;
+			}
+			
+			switch ( mMode ) {
+				case XUPItemVariableEditorModel::Out: {
+					if ( isVariable && mFilteredVariables.contains( string ) ) {
+						return false;
+					}
+					break;
+				}
+				case XUPItemVariableEditorModel::In: {
+					if ( isVariable && !mFilteredVariables.contains( string ) ) {
+						return false;
+					}
+					break;
+				}
 			}
 			
 			item->string = string;
@@ -151,7 +168,7 @@ void XUPItemVariableEditorModel::clear()
 	if ( count > 0 ) {
 		beginRemoveRows( QModelIndex(), 0, count -1 );
 		mRoot = XUPItemVariableEditorModelItem();
-		mMapping.clear();
+		mParentMapping.clear();
 		mRootItem = 0;
 		mDocumentFilterMap = 0;
 		endRemoveRows();
@@ -170,8 +187,19 @@ void XUPItemVariableEditorModel::setRootItem( XUPItem* item )
 
 QModelIndex XUPItemVariableEditorModel::addVariable( const QString& variable )
 {
-	if ( mFilteredVariables.contains( variable ) ) {
-		return QModelIndex();
+	switch ( mMode ) {
+		case XUPItemVariableEditorModel::Out: {
+			if ( mFilteredVariables.contains( variable ) ) {
+				return QModelIndex();
+			}
+			break;
+		}
+		case XUPItemVariableEditorModel::In: {
+			if ( !mFilteredVariables.contains( variable ) ) {
+				return QModelIndex();
+			}
+			break;
+		}
 	}
 	
 	return addValue( QModelIndex(), variable );
@@ -192,7 +220,7 @@ QModelIndex XUPItemVariableEditorModel::addValue( const QModelIndex& variable, c
 		const int count = item->children.count();
 		beginInsertRows( variable, count, count );
 		item->children << XUPItemVariableEditorModelItem( value, true, 0 );
-		mMapping[ &( item->children.last() ) ] = item;
+		mParentMapping[ &( item->children.last() ) ] = item;
 		endInsertRows();
 		return createIndex( item->children.count() -1, 0, item );
 	}
@@ -213,6 +241,16 @@ QStringList XUPItemVariableEditorModel::pathVariables() const
 QStringList XUPItemVariableEditorModel::knownVariables() const
 {
 	return mDocumentFilterMap ? mDocumentFilterMap->knownVariables() : QStringList();
+}
+
+void XUPItemVariableEditorModel::setFilterMode( XUPItemVariableEditorModel::FilterMode mode )
+{
+	mMode = mode;
+}
+
+XUPItemVariableEditorModel::FilterMode XUPItemVariableEditorModel::mode() const
+{
+	return mMode;
 }
 
 void XUPItemVariableEditorModel::setFilteredVariables( const QStringList& filters )
@@ -274,8 +312,19 @@ void XUPItemVariableEditorModel::revert( XUPItem* item )
 		if ( variable->type() == XUPItem::Variable ) {
 			XUPItemVariableEditorModelItem si( variable->attribute( "name" ), true, variable );
 			
-			if ( si.string.startsWith( XUPProjectItemHelper::SettingsScopeName ) || mFilteredVariables.contains( si.string ) ) {
-				continue;
+			switch ( mMode ) {
+				case XUPItemVariableEditorModel::Out: {
+					if ( si.string.startsWith( XUPProjectItemHelper::SettingsScopeName ) || mFilteredVariables.contains( si.string ) ) {
+						continue;
+					}
+					break;
+				}
+				case XUPItemVariableEditorModel::In: {
+					if ( si.string.startsWith( XUPProjectItemHelper::SettingsScopeName ) || !mFilteredVariables.contains( si.string ) ) {
+						continue;
+					}
+					break;
+				}
 			}
 			
 			foreach ( XUPItem* value, variable->childrenList() ) {
@@ -304,7 +353,9 @@ void XUPItemVariableEditorModel::revert()
 
 bool XUPItemVariableEditorModel::submit()
 {
-	if ( !mRootItem ) {
+	const bool senderIsItemSelectionModel = sender() ? sender()->inherits( "QItemSelectionModel" ) : false;
+	
+	if ( !mRootItem || senderIsItemSelectionModel ) {
 		return false;
 	}
 	
@@ -357,12 +408,12 @@ bool XUPItemVariableEditorModel::submit()
 void XUPItemVariableEditorModel::buildParentMapping( XUPItemVariableEditorModelItem& item )
 {
 	if ( item == mRoot ) {
-		mMapping[ &mRoot ] = 0;
+		mParentMapping[ &mRoot ] = 0;
 	}
 	
 	for ( int i = 0; i < item.children.count(); i++ ) {
 		XUPItemVariableEditorModelItem& child = item.children[ i ];
-		mMapping[ &child ] = &item;
+		mParentMapping[ &child ] = &item;
 		buildParentMapping( child );
 	}
 }
