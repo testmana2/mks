@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>466</height>
+    <width>624</width>
+    <height>464</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -77,6 +77,9 @@
    </item>
    <item row="1" column="1">
     <widget class="QStackedWidget" name="swPages">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="wProject">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="margin">
@@ -204,71 +207,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="wProjectFiles">
-      <layout class="QGridLayout" name="gridLayout_5">
-       <property name="margin">
-        <number>0</number>
-       </property>
-       <item row="0" column="0">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="1">
-        <widget class="QToolButton" name="tbAddFile">
-         <property name="icon">
-          <iconset resource="../../resources/resources.qrc">
-           <normaloff>:/listeditor/icons/listeditor/add.png</normaloff>:/listeditor/icons/listeditor/add.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QToolButton" name="tbEditFile">
-         <property name="icon">
-          <iconset resource="../../resources/resources.qrc">
-           <normaloff>:/listeditor/icons/listeditor/edit.png</normaloff>:/listeditor/icons/listeditor/edit.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QToolButton" name="tbRemoveFile">
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../resources/resources.qrc">
-           <normaloff>:/listeditor/icons/listeditor/remove.png</normaloff>:/listeditor/icons/listeditor/remove.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="4">
-        <widget class="QTreeWidget" name="twFiles">
-         <property name="selectionMode">
-          <enum>QAbstractItemView::ExtendedSelection</enum>
-         </property>
-         <property name="allColumnsShowFocus">
-          <bool>true</bool>
-         </property>
-         <property name="headerHidden">
-          <bool>true</bool>
-         </property>
-         <column>
-          <property name="text">
-           <string>1</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <widget class="FilesEditor" name="feEditor"/>
      <widget class="VariablesEditor" name="veEditor"/>
      <widget class="CommandsEditor" name="ceEditor"/>
     </widget>
@@ -403,6 +342,12 @@
    <class>VariablesEditor</class>
    <extends>QFrame</extends>
    <header location="global">xupmanager/gui/VariablesEditor.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FilesEditor</class>
+   <extends>QWidget</extends>
+   <header location="global">FilesEditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

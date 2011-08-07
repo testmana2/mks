@@ -69,19 +69,17 @@ QStringList DocumentFilterMap::splitValue( const QString& value ) const
 	return multivalues;
 }
 
-QStringList DocumentFilterMap::fileNameVariables( const QString& fileName ) const
+QString DocumentFilterMap::fileNameVariable( const QString& fileName ) const
 {
-	QStringList variables;
-	
 	foreach ( const QString& name, keys() ) {
 		const DocumentFilter& filter = (*this)[ name ];
 		
 		if ( QDir::match( filter.filters, fileName ) ) {
-			variables << name;
+			return name;
 		}
 	}
 	
-	return variables;
+	return QString::null;
 }
 
 QStringList DocumentFilterMap::knownVariables() const
