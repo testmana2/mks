@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>VariablesEditor</class>
- <widget class="QFrame" name="VariablesEditor">
+ <widget class="XUPPageEditor" name="VariablesEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,13 @@
     <width>400</width>
     <height>300</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Variables</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../resources/resources.qrc">
+    <normaloff>:/xupeditor/icons/xupeditor/values.png</normaloff>:/xupeditor/icons/xupeditor/values.png</iconset>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="margin">
@@ -45,7 +52,7 @@
          <string>Add...</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../../resources/resources.qrc">
           <normaloff>:/listeditor/icons/listeditor/add.png</normaloff>:/listeditor/icons/listeditor/add.png</iconset>
         </property>
        </widget>
@@ -56,7 +63,7 @@
          <string>Edit...</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../../resources/resources.qrc">
           <normaloff>:/listeditor/icons/listeditor/edit.png</normaloff>:/listeditor/icons/listeditor/edit.png</iconset>
         </property>
        </widget>
@@ -99,7 +106,7 @@
          <string>Add...</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../../resources/resources.qrc">
           <normaloff>:/listeditor/icons/listeditor/add.png</normaloff>:/listeditor/icons/listeditor/add.png</iconset>
         </property>
         <property name="popupMode">
@@ -113,7 +120,7 @@
          <string>Edit...</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../../resources/resources.qrc">
           <normaloff>:/listeditor/icons/listeditor/edit.png</normaloff>:/listeditor/icons/listeditor/edit.png</iconset>
         </property>
         <property name="popupMode">
@@ -127,7 +134,7 @@
          <string>Clear...</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../../resources/resources.qrc">
           <normaloff>:/listeditor/icons/listeditor/clear.png</normaloff>:/listeditor/icons/listeditor/clear.png</iconset>
         </property>
        </widget>
@@ -189,7 +196,17 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>XUPPageEditor</class>
+   <extends>QFrame</extends>
+   <header>XUPPageEditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>cbQuoteEnabled</sender>

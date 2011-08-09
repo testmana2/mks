@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>FilesEditor</class>
- <widget class="QFrame" name="FilesEditor">
+ <widget class="XUPPageEditor" name="FilesEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>298</height>
+    <width>396</width>
+    <height>296</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Files</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../resources/resources.qrc">
+    <normaloff>:/xupeditor/icons/xupeditor/files.png</normaloff>:/xupeditor/icons/xupeditor/files.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="margin">
@@ -33,7 +40,7 @@
       <string>Add...</string>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="../../resources/resources.qrc">
        <normaloff>:/listeditor/icons/listeditor/add.png</normaloff>:/listeditor/icons/listeditor/add.png</iconset>
      </property>
     </widget>
@@ -44,7 +51,7 @@
       <string>Edit...</string>
      </property>
      <property name="icon">
-      <iconset>
+      <iconset resource="../../resources/resources.qrc">
        <normaloff>:/listeditor/icons/listeditor/edit.png</normaloff>:/listeditor/icons/listeditor/edit.png</iconset>
      </property>
     </widget>
@@ -109,7 +116,17 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <customwidgets>
+  <customwidget>
+   <class>XUPPageEditor</class>
+   <extends>QFrame</extends>
+   <header>XUPPageEditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>cbQuoteEnabled</sender>

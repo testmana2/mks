@@ -2,8 +2,8 @@
 #define FILESEDITOR_H
 
 #include "MonkeyExport.h"
+#include "XUPPageEditor.h"
 
-#include <QFrame>
 #include <QModelIndex>
 
 class Ui_FilesEditor;
@@ -12,7 +12,7 @@ class XUPProjectItem;
 class XUPItem;
 class XUPItemVariableEditorModel;
 
-class Q_MONKEY_EXPORT FilesEditor : public QFrame
+class Q_MONKEY_EXPORT FilesEditor : public XUPPageEditor
 {
 	Q_OBJECT
 

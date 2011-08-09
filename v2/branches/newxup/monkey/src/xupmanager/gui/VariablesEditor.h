@@ -2,8 +2,8 @@
 #define VARIABLESEDITOR_H
 
 #include "MonkeyExport.h"
+#include "XUPPageEditor.h"
 
-#include <QFrame>
 #include <QModelIndex>
 
 class Ui_VariablesEditor;
@@ -12,7 +12,7 @@ class XUPProjectItem;
 class XUPItem;
 class XUPItemVariableEditorModel;
 
-class Q_MONKEY_EXPORT VariablesEditor : public QFrame
+class Q_MONKEY_EXPORT VariablesEditor : public XUPPageEditor
 {
 	Q_OBJECT
 
