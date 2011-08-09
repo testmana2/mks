@@ -7,7 +7,7 @@
 #include <QMessageBox>
 
 FilesEditor::FilesEditor( QWidget* parent )
-	: QFrame( parent )
+	: XUPPageEditor( parent )
 {
 	ui = new Ui_FilesEditor;
 	mProject = 0;

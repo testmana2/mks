@@ -1,9 +1,10 @@
 #include "CommandsEditor.h"
+#include "pConsoleManager.h"
 
 #include <QDebug>
 
 CommandsEditor::CommandsEditor( QWidget* parent )
-	: QFrame( parent )
+	: XUPPageEditor( parent )
 {
 	mLastCommandType = BasePlugin::iAll;
 	setupUi( this );
@@ -14,10 +15,23 @@ CommandsEditor::~CommandsEditor()
 {
 }
 
+void CommandsEditor::setup( XUPProjectItem* project )
+{
+	const BasePluginTypeList types = BasePluginTypeList() << BasePlugin::iCLITool << BasePlugin::iDebugger;
+	const QStringList parsers = MonkeyCore::consoleManager()->parsersName();
+	mProject = project;
+	
+	setCommandTypes( types );
+	setParsers( parsers );
+	setCommands( XUPProjectItemHelper::projectCommands( mProject ) );
+	setCurrentType( types.first() );
+}
+
 void CommandsEditor::finalize()
 {
 	// save current command, and global commands
 	on_cbCommandTypes_currentIndexChanged( cbCommandTypes->currentIndex() );
+	XUPProjectItemHelper::setProjectCommands( mProject, commands() );
 }
 
 void CommandsEditor::setCommandTypes( const BasePluginTypeList& types )

@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>CommandsEditor</class>
- <widget class="QFrame" name="CommandsEditor">
+ <widget class="XUPPageEditor" name="CommandsEditor">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>418</height>
+    <width>400</width>
+    <height>362</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Commands</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../resources/resources.qrc">
+    <normaloff>:/xupeditor/icons/xupeditor/compiler.png</normaloff>:/xupeditor/icons/xupeditor/compiler.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="margin">
@@ -272,6 +279,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>XUPPageEditor</class>
+   <extends>QFrame</extends>
+   <header>XUPPageEditor.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../resources/resources.qrc"/>
  </resources>

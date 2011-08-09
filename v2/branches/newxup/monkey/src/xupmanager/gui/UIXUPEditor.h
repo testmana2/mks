@@ -3,10 +3,8 @@
 
 #include "ui_UIXUPEditor.h"
 
-#include <QMap>
-
+class XUPPageEditor;
 class XUPProjectItem;
-class XUPItem;
 
 class UIXUPEditor : public QDialog, public Ui::UIXUPEditor
 {
@@ -16,17 +14,26 @@ public:
 	UIXUPEditor( XUPProjectItem* project, QWidget* parent = 0 );
 	virtual ~UIXUPEditor();
 	
-	void setVariableEditorVisible( bool visible );
-	bool isVariableEditorVisible() const;
+	int insertPage( int index, XUPPageEditor* page );
+	int addPage( XUPPageEditor* page );
+	void addPages( const QList<XUPPageEditor*>& pages );
+	XUPPageEditor* page( int index ) const;
+	void removePage( int index );
+	
+	QList<XUPPageEditor*> pages() const;
+	void setCurrentPage( int index );
+	int currentPage() const;
+	
+	void defaultSetup( XUPProjectItem* project );
 
 protected:
 	XUPProjectItem* mProject;
+	QList<XUPPageEditor*> mPages;
 	
-	void updateMainFileComboBox( const QString& selectFile );
-	void init( XUPProjectItem* project );
+	void setup( XUPProjectItem* project );
+	void finalize();
 
 protected slots:
-	void on_tbDynamicFolder_clicked();
 	void accept();
 };
 

@@ -2,11 +2,12 @@
 #define COMMANDSEDITOR_H
 
 #include "MonkeyExport.h"
+#include "XUPPageEditor.h"
 
 #include "ui_CommandsEditor.h"
 #include "xupmanager/core/XUPProjectItemHelper.h"
 
-class Q_MONKEY_EXPORT CommandsEditor : public QFrame, public Ui::CommandsEditor
+class Q_MONKEY_EXPORT CommandsEditor : public XUPPageEditor, public Ui::CommandsEditor
 {
 	Q_OBJECT
 
@@ -14,6 +15,7 @@ public:
 	CommandsEditor( QWidget* parent = 0 );
 	virtual ~CommandsEditor();
 	
+	void setup( XUPProjectItem* project );
 	void finalize();
 	
 	void setCommandTypes( const BasePluginTypeList& types );
@@ -29,6 +31,7 @@ public:
 	QStringList parsers() const;
 
 protected:
+	XUPProjectItem* mProject;
 	BasePluginTypeList mCommandTypes;
 	QStringList mParsers;
 	TypeCommandListMap mCommands;

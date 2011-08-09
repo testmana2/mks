@@ -9,7 +9,7 @@
 #include <QFileDialog>
 
 VariablesEditor::VariablesEditor( QWidget* parent )
-	: QFrame( parent )
+	: XUPPageEditor( parent )
 {
 	ui = new Ui_VariablesEditor;
 	mProject = 0;
