@@ -48,6 +48,7 @@ QVariant XUPItemVariableEditorModel::data( const QModelIndex& index, int role ) 
 				return iconFilePath.isEmpty() ? QVariant() : QIcon( iconFilePath );
 			}
 			case Qt::DisplayRole:
+			case Qt::ToolTipRole:
 			case Qt::EditRole: {
 				if ( isVariable && mFriendlyDisplayText && mDocumentFilterMap ) {
 					return mDocumentFilterMap->variableDisplayText( item->string );
