@@ -69,9 +69,7 @@ namespace pMonkeyStudio
 	Q_MONKEY_EXPORT QString unTokenizeHome( const QString& string );
 	
 	Q_MONKEY_EXPORT QMap<QString, QStringList> availableLanguagesSuffixes();
-	Q_MONKEY_EXPORT QMap<QString, QStringList> availableFilesSuffixes();
-	Q_MONKEY_EXPORT QString availableLanguagesFilters();
-	Q_MONKEY_EXPORT QString availableFilesFilters();
+	Q_MONKEY_EXPORT QString availableFilesFilter();
 
 	Q_MONKEY_EXPORT QString settingsPath();
 	Q_MONKEY_EXPORT QString scintillaSettingsPath();

@@ -472,7 +472,7 @@ QString pFileManager::currentItemPath() const
 
 void pFileManager::fileOpen_triggered()
 {
-	QString filters = pMonkeyStudio::availableFilesFilters(); // get available filters
+	QString filters = pMonkeyStudio::availableFilesFilter(); // get available filters
 	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
 	
 	if ( path.isEmpty() )
@@ -527,7 +527,7 @@ void pFileManager::fileOpen_triggered()
 
 void pFileManager::fileOpenText_triggered()
 {
-	QString filters = pMonkeyStudio::availableFilesFilters(); // get available filters
+	QString filters = pMonkeyStudio::availableFilesFilter(); // get available filters
 	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
 	
 	if ( path.isEmpty() )

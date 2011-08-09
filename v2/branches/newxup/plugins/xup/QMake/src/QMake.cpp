@@ -117,21 +117,21 @@ bool QMake::install()
 	mFilters[ "FORMS" ].filtered = true;
 	
 	mFilters[ "HEADERS" ].weight = weight++;
-	mFilters[ "HEADERS" ].label = QMakeProjectItem::tr( "Headers" );
+	mFilters[ "HEADERS" ].label = QMakeProjectItem::tr( "C++ Headers" );
 	mFilters[ "HEADERS" ].icon = "headers.png";
 	mFilters[ "HEADERS" ].filters << hf;
 	mFilters[ "HEADERS" ].type = DocumentFilter::File;
 	mFilters[ "HEADERS" ].filtered = true;
 	
 	mFilters[ "SOURCES" ].weight = weight++;
-	mFilters[ "SOURCES" ].label = QMakeProjectItem::tr( "Sources" );
+	mFilters[ "SOURCES" ].label = QMakeProjectItem::tr( "C++ Sources" );
 	mFilters[ "SOURCES" ].icon = "sources.png";
 	mFilters[ "SOURCES" ].filters << sf;
 	mFilters[ "SOURCES" ].type = DocumentFilter::File;
 	mFilters[ "SOURCES" ].filtered = true;
 	
 	mFilters[ "OBJECTIVE_SOURCES" ].weight = weight++;
-	mFilters[ "OBJECTIVE_SOURCES" ].label = QMakeProjectItem::tr( "Objective Sources" );
+	mFilters[ "OBJECTIVE_SOURCES" ].label = QMakeProjectItem::tr( "Objective-C++ Sources" );
 	mFilters[ "OBJECTIVE_SOURCES" ].icon = "obj_sources.png";
 	mFilters[ "OBJECTIVE_SOURCES" ].filters << "*.m" << "*.mm";
 	mFilters[ "OBJECTIVE_SOURCES" ].type = DocumentFilter::File;
@@ -166,28 +166,28 @@ bool QMake::install()
 	mFilters[ "RESOURCES" ].filtered = true;
 	
 	mFilters[ "DEF_FILE" ].weight = weight++;
-	mFilters[ "DEF_FILE" ].label = QMakeProjectItem::tr( "Def. Files" );
+	mFilters[ "DEF_FILE" ].label = QMakeProjectItem::tr( "DEF Files" );
 	mFilters[ "DEF_FILE" ].icon = "def_file.png";
 	mFilters[ "DEF_FILE" ].filters << "*.def";
 	mFilters[ "DEF_FILE" ].type = DocumentFilter::File;
 	mFilters[ "DEF_FILE" ].filtered = true;
 	
 	mFilters[ "RC_FILE" ].weight = weight++;
-	mFilters[ "RC_FILE" ].label = QMakeProjectItem::tr( "Rc. Files" );
+	mFilters[ "RC_FILE" ].label = QMakeProjectItem::tr( "RC Files" );
 	mFilters[ "RC_FILE" ].icon = "rc_file.png";
 	mFilters[ "RC_FILE" ].filters << "*.rc";
 	mFilters[ "RC_FILE" ].type = DocumentFilter::File;
 	mFilters[ "RC_FILE" ].filtered = true;
 	
 	mFilters[ "RES_FILE" ].weight = weight++;
-	mFilters[ "RES_FILE" ].label = QMakeProjectItem::tr( "Res. Files" );
+	mFilters[ "RES_FILE" ].label = QMakeProjectItem::tr( "RES Files" );
 	mFilters[ "RES_FILE" ].icon = "res_file.png";
 	mFilters[ "RES_FILE" ].filters << "*.res";
 	mFilters[ "RES_FILE" ].type = DocumentFilter::File;
 	mFilters[ "RES_FILE" ].filtered = true;
 	
 	mFilters[ "SUBDIRS" ].weight = weight++;
-	mFilters[ "SUBDIRS" ].label = QMakeProjectItem::tr( "Sub Projects" );
+	mFilters[ "SUBDIRS" ].label = QMakeProjectItem::tr( "Qt Sub Projects" );
 	mFilters[ "SUBDIRS" ].icon = "project.png";
 	mFilters[ "SUBDIRS" ].filters << mFilters[ "PROJECT" ].filters << mFilters[ "INCLUDE_PROJECT" ].filters;
 	mFilters[ "SUBDIRS" ].type = DocumentFilter::File;

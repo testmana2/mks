@@ -53,7 +53,7 @@ bool PyQt::install()
 	mFilters[ "FORMS" ].filtered = true;
 	
 	mFilters[ "PYTHON_FILES" ].weight = weight++;
-	mFilters[ "PYTHON_FILES" ].label = tr( "Python Files" );
+	mFilters[ "PYTHON_FILES" ].label = tr( "Python Sources" );
 	mFilters[ "PYTHON_FILES" ].icon = "python.png";
 	mFilters[ "PYTHON_FILES" ].type = DocumentFilter::File;
 	mFilters[ "PYTHON_FILES" ].filters << "*.py*";

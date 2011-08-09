@@ -1,4 +1,5 @@
 #include "PHPQtProjectItem.h"
+#include "XUPProjectItemHelper.h"
 
 #include <UIXUPEditor.h>
 #include <CLIToolPlugin.h>
