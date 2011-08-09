@@ -143,6 +143,9 @@ pFileDialogResult MkSFileDialog::getExistingDirectory( bool useRecents, QWidget*
 	fd.setTextCodec( pMonkeyStudio::defaultCodec() );
 	fd.mAddFiles->setVisible( false );
 	
+	#warning Does we need recents handling here ?
+	Q_UNUSED( useRecents );
+	
 	/*if ( useRecents ) {
 		if ( !filter.isEmpty() ) {
 			fd.setRecentNameFilter( MonkeyCore::settings()->value( "Recents/FileFilter" ).toString() );

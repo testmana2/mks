@@ -249,41 +249,68 @@ void XUPDynamicFolderItem::setRootPath( const QString& path, const QStringList& 
 
 void XUPDynamicFolderItem::columnsAboutToBeInserted( const QModelIndex& parent, int start, int end )
 {
+	Q_UNUSED( parent );
+	Q_UNUSED( start );
+	Q_UNUSED( end );
 	qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::columnsAboutToBeMoved( const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationColumn )
 {
+	Q_UNUSED( sourceParent );
+	Q_UNUSED( sourceStart );
+	Q_UNUSED( sourceEnd );
+	Q_UNUSED( destinationParent );
+	Q_UNUSED( destinationColumn );
 	qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::columnsAboutToBeRemoved( const QModelIndex& parent, int start, int end )
 {
+	Q_UNUSED( parent );
+	Q_UNUSED( start );
+	Q_UNUSED( end );
 	qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::columnsInserted( const QModelIndex& parent, int start, int end )
 {
+	Q_UNUSED( parent );
+	Q_UNUSED( start );
+	Q_UNUSED( end );
 	qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::columnsMoved( const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationColumn )
 {
+	Q_UNUSED( sourceParent );
+	Q_UNUSED( sourceStart );
+	Q_UNUSED( sourceEnd );
+	Q_UNUSED( destinationParent );
+	Q_UNUSED( destinationColumn	);
 	qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::columnsRemoved( const QModelIndex& parent, int start, int end )
 {
+	Q_UNUSED( parent );
+	Q_UNUSED( start );
+	Q_UNUSED( end );
 	qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::dataChanged( const QModelIndex& topLeft, const QModelIndex& bottomRight )
 {
+	Q_UNUSED( topLeft );
+	Q_UNUSED( bottomRight );
 	//qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::headerDataChanged( Qt::Orientation orientation, int first, int last )
 {
+	Q_UNUSED( orientation );
+	Q_UNUSED( first );
+	Q_UNUSED( last );
 	qWarning() << Q_FUNC_INFO;
 }
 
@@ -321,11 +348,19 @@ void XUPDynamicFolderItem::modelReset()
 
 void XUPDynamicFolderItem::rowsAboutToBeInserted( const QModelIndex& parent, int start, int end )
 {
+	Q_UNUSED( parent );
+	Q_UNUSED( start );
+	Q_UNUSED( end );
 	//qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::rowsAboutToBeMoved( const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow )
 {
+	Q_UNUSED( sourceParent );
+	Q_UNUSED( sourceStart );
+	Q_UNUSED( sourceEnd );
+	Q_UNUSED( destinationParent );
+	Q_UNUSED( destinationRow );
 	qWarning() << Q_FUNC_INFO;
 }
 
@@ -376,11 +411,19 @@ void XUPDynamicFolderItem::rowsInserted( const QModelIndex& parent, int start, i
 
 void XUPDynamicFolderItem::rowsMoved( const QModelIndex& sourceParent, int sourceStart, int sourceEnd, const QModelIndex& destinationParent, int destinationRow )
 {
+	Q_UNUSED( sourceParent );
+	Q_UNUSED( sourceStart );
+	Q_UNUSED( sourceEnd );
+	Q_UNUSED( destinationParent );
+	Q_UNUSED( destinationRow );
 	qWarning() << Q_FUNC_INFO;
 }
 
 void XUPDynamicFolderItem::rowsRemoved( const QModelIndex& parent, int start, int end )
 {
+	Q_UNUSED( parent );
+	Q_UNUSED( start );
+	Q_UNUSED( end );
 	//qWarning() << Q_FUNC_INFO;
 	
 	XUPProjectModel* model = this->model();
@@ -392,6 +435,7 @@ void XUPDynamicFolderItem::rowsRemoved( const QModelIndex& parent, int start, in
 
 void XUPDynamicFolderItem::rootPathChanged( const QString& newPath )
 {
+	Q_UNUSED( newPath );
 	//qWarning() << Q_FUNC_INFO << newPath;
 }
 
