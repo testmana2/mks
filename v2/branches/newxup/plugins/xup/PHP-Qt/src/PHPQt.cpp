@@ -52,7 +52,7 @@ bool PHPQt::install()
 	mFilters[ "FORMS" ].filtered = true;
 	
 	mFilters[ "PHP_FILES" ].weight = weight++;
-	mFilters[ "PHP_FILES" ].label = tr( "PHP Files" );
+	mFilters[ "PHP_FILES" ].label = tr( "PHP Sources" );
 	mFilters[ "PHP_FILES" ].icon = "php.png";
 	mFilters[ "PHP_FILES" ].type = DocumentFilter::File;
 	mFilters[ "PHP_FILES" ].filters << "*.php*";

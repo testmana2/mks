@@ -91,7 +91,7 @@ QString pMonkeyStudio::buildFileDialogFilter( const QMap<QString, QStringList>& 
 		const QStringList& suffixes = map[ name ];
 		
 		if ( !suffixes.isEmpty() ) {
-			filters << QObject::tr( "%1 Files (%2)" ).arg( name ).arg( suffixes.join( " " ) );
+			filters << QObject::tr( "%1 (%2)" ).arg( name ).arg( suffixes.join( " " ) );
 			
 			if ( addSupported ) {
 				allSuffixes << suffixes;
@@ -267,7 +267,7 @@ QString pMonkeyStudio::unTokenizeHome( const QString& string )
 { return QString( string ).replace( "$HOME$", QDir::homePath() ); }
 
 /*!
-	\details Return all available languages suffixes
+	\details Returne a map of language suffixes.
 */
 QMap<QString, QStringList> pMonkeyStudio::availableLanguagesSuffixes()
 {
@@ -275,45 +275,34 @@ QMap<QString, QStringList> pMonkeyStudio::availableLanguagesSuffixes()
 }
 
 /*!
-	\details Return all available files suffixes
+	\details Return all files filter
 */
-QMap<QString, QStringList> pMonkeyStudio::availableFilesSuffixes()
+QString pMonkeyStudio::availableFilesFilter()
 {
 	const QMap<QString, QStringList> childrenSuffixes = MonkeyCore::pluginsManager()->childSuffixes();
 	const QMap<QString, QStringList> projectsSuffixes = MonkeyCore::projectTypesIndex()->suffixes();
-	QMap<QString, QStringList> languagesSuffixes = availableLanguagesSuffixes();
+	const QMap<QString, QStringList> languagesSuffixes = availableLanguagesSuffixes();
+	QMap<QString, QStringList> filesSuffixes;
 	
 	foreach ( const QString& childrenName, childrenSuffixes.keys() ) {;
-		languagesSuffixes[ childrenName ] << childrenSuffixes[ childrenName ];
+		filesSuffixes[ childrenName ] << childrenSuffixes[ childrenName ];
 	}
 	
 	foreach ( const QString& projectTypeName, projectsSuffixes.keys() ) {
-		languagesSuffixes[ projectTypeName ] << projectsSuffixes[ projectTypeName ];
+		filesSuffixes[ projectTypeName ] << projectsSuffixes[ projectTypeName ];
 	}
 	
 	foreach ( const QString& languageName, languagesSuffixes.keys() ) {
-		QStringList& suffixes = languagesSuffixes[ languageName ];
+		filesSuffixes[ QObject::tr( "%1 Sources" ).arg( languageName ) ] << languagesSuffixes[ languageName ];
+	}
+	
+	foreach ( const QString& key, filesSuffixes.keys() ) {
+		QStringList& suffixes = filesSuffixes[ key ];
 		suffixes.removeDuplicates();
 		qSort( suffixes.begin(), suffixes.end(), insensitiveStringLesserThan );
 	}
 	
-	return languagesSuffixes;
-}
-
-/*!
-	\details Return all available languages filters
-*/
-QString pMonkeyStudio::availableLanguagesFilters()
-{
-	return buildFileDialogFilter( availableLanguagesSuffixes(), false, false );
-}
-
-/*!
-	\details Return all available files filters
-*/
-QString pMonkeyStudio::availableFilesFilters()
-{
-	return buildFileDialogFilter( availableFilesSuffixes(), true, true );
+	return buildFileDialogFilter( filesSuffixes, true, true );
 }
 
 /*!
