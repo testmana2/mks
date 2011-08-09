@@ -11,6 +11,10 @@ DocumentFilterMap::DocumentFilterMap( const QString& iconsPath )
 	mIconsPath = iconsPath;
 }
 
+DocumentFilterMap::~DocumentFilterMap()
+{
+}
+
 QString DocumentFilterMap::variableDisplayText( const QString& variableName ) const
 {
 	const QString text = value( variableName ).label;

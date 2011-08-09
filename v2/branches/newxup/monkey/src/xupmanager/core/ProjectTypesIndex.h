@@ -44,6 +44,7 @@ class DocumentFilterMap : public QMap<QString, DocumentFilter> // filter name, f
 {
 public:
 	DocumentFilterMap( const QString& iconsPath = QString::null );
+	virtual ~DocumentFilterMap();
 	// return the display text of a project variable name. Used by XUPItem::displayText()
 	virtual QString variableDisplayText( const QString& variableName ) const;
 	// return the display icon name of a project variable name. Used by XUPItem::displayIcon()
