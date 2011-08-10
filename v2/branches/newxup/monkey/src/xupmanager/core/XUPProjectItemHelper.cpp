@@ -115,12 +115,12 @@ void XUPProjectItemHelper::addCommandProperty( XUPItem* variableItem, const QStr
 	valueItem->setContent( value );
 }
 
-void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const TypeCommandListMap& commands )
+void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const MenuCommandListMap& commands )
 {
 	bool emptyCommands = true;
 	
-	foreach ( const BasePlugin::Type& type, commands.keys() ) {
-		if ( commands[ type ].isEmpty() ) {
+	foreach ( const QString& menu, commands.keys() ) {
+		if ( commands[ menu ].isEmpty() ) {
 			continue;
 		}
 		
@@ -146,12 +146,12 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Ty
 	}
 	
 	// create new ones
-	foreach ( const BasePlugin::Type& type, commands.keys() ) {
-		foreach ( const pCommand& command, commands[ type ] ) {
+	foreach ( const QString& menu, commands.keys() ) {
+		foreach ( const pCommand& command, commands[ menu ] ) {
 			XUPItem* variable = commandsScope->addChild( XUPItem::Variable );
 			variable->setAttribute( "name", CommandScopeName );
 			
-			addCommandProperty( variable, QString::number( type ) );
+			addCommandProperty( variable, menu );
 			addCommandProperty( variable, command.text() );
 			addCommandProperty( variable, command.command() );
 			addCommandProperty( variable, command.arguments() );
@@ -163,9 +163,9 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Ty
 	}
 }
 
-TypeCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* project )
+MenuCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* project )
 {
-	TypeCommandListMap commands;
+	MenuCommandListMap commands;
 	XUPItem* commandsScope = projectCommandsScope( project, false );
 	
 	if ( commandsScope ) {
@@ -192,7 +192,7 @@ TypeCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* projec
 			command.setSkipOnError( values.at( 6 ).toBool() );
 			command.setTryAllParsers( values.at( 7 ).toBool() );
 			
-			commands[ (BasePlugin::Type)values.at( 0 ).toInt() ] << command;
+			commands[ values.at( 0 ).toString() ] << command;
 		}
 	}
 	

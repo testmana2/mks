@@ -1,12 +1,15 @@
 #include "CommandsEditor.h"
-#include "pConsoleManager.h"
+#include "MonkeyCore.h"
+
+#include <pConsoleManager.h>
+#include <pMenuBar.h>
 
 #include <QDebug>
 
 CommandsEditor::CommandsEditor( QWidget* parent )
 	: XUPPageEditor( parent )
 {
-	mLastCommandType = BasePlugin::iAll;
+	mLastCommandMenu = "mBuild";
 	setupUi( this );
 	updateGui();
 }
@@ -17,79 +20,39 @@ CommandsEditor::~CommandsEditor()
 
 void CommandsEditor::setup( XUPProjectItem* project )
 {
-	const BasePluginTypeList types = BasePluginTypeList() << BasePlugin::iCLITool << BasePlugin::iDebugger;
-	const QStringList parsers = MonkeyCore::consoleManager()->parsersName();
+	pMenuBar* mb = MonkeyCore::menuBar();
+	pConsoleManager* cm = MonkeyCore::consoleManager();
 	mProject = project;
 	
-	setCommandTypes( types );
-	setParsers( parsers );
+	foreach ( const QString& menu, mb->rootMenusPath() ) {
+		QMenu* m = mb->menu( menu );
+		cbMenus->addItem( m->title(), menu );
+	}
+	
+	foreach ( const QString& parser, cm->parsersName() ) {
+		QListWidgetItem* item = new QListWidgetItem( parser, lwCommandParsers );
+		item->setCheckState( Qt::Unchecked );
+	}
+	
 	setCommands( XUPProjectItemHelper::projectCommands( mProject ) );
-	setCurrentType( types.first() );
+	cbMenus->setCurrentIndex( 0 );
 }
 
 void CommandsEditor::finalize()
 {
 	// save current command, and global commands
-	on_cbCommandTypes_currentIndexChanged( cbCommandTypes->currentIndex() );
+	on_cbMenus_currentIndexChanged( cbMenus->currentIndex() );
 	XUPProjectItemHelper::setProjectCommands( mProject, commands() );
 }
 
-void CommandsEditor::setCommandTypes( const BasePluginTypeList& types )
-{
-	mCommandTypes = types;
-	cbCommandTypes->clear();
-	
-	foreach ( const BasePlugin::Type& type, types )
-	{
-		cbCommandTypes->addItem( BasePlugin::typeToString( type ), type );
-	}
-	
-	cbCommandTypes->setCurrentIndex( -1 );
-}
-
-BasePluginTypeList CommandsEditor::commandTypes() const
-{
-	return mCommandTypes;
-}
-
-void CommandsEditor::setCommands( const TypeCommandListMap& commands )
+void CommandsEditor::setCommands( const MenuCommandListMap& commands )
 {
 	mCommands = commands;
 }
 
-TypeCommandListMap CommandsEditor::commands() const
+MenuCommandListMap CommandsEditor::commands() const
 {
 	return mCommands;
-}
-
-void CommandsEditor::setCurrentType( BasePlugin::Type type )
-{
-	const int index = cbCommandTypes->findData( type );
-	cbCommandTypes->setCurrentIndex( index );
-}
-
-BasePlugin::Type CommandsEditor::currentType() const
-{
-	const int index = cbCommandTypes->currentIndex();
-	return (BasePlugin::Type)cbCommandTypes->itemData( index ).toInt();
-}
-
-void CommandsEditor::setParsers( const QStringList& parsers )
-{
-	mParsers = parsers;
-	
-	lwCommandParsers->clear();
-	
-	foreach ( const QString& parser, parsers )
-	{
-		QListWidgetItem* item = new QListWidgetItem( parser, lwCommandParsers );
-		item->setCheckState( Qt::Unchecked );
-	}
-}
-
-QStringList CommandsEditor::parsers() const
-{
-	return mParsers;
 }
 
 void CommandsEditor::updateGui()
@@ -98,8 +61,7 @@ void CommandsEditor::updateGui()
 	const int index = lwCommands->row( item );
 	const int count = lwCommands->count();
 	
-	if ( item )
-	{
+	if ( item ) {
 		const pCommand command = item->data( Qt::UserRole ).value<pCommand>();
 		const QSet<QString> parsers = command.parsers().toSet();
 		
@@ -110,22 +72,18 @@ void CommandsEditor::updateGui()
 		cbCommandSkipOnError->setChecked( command.skipOnError() );
 		cbCommandTryAll->setChecked( command.tryAllParsers() );
 		
-		for ( int i = 0; i < lwCommandParsers->count(); i++ )
-		{
+		for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
 			QListWidgetItem* item = lwCommandParsers->item( i );
 			
-			if ( parsers.contains( item->text() ) )
-			{
+			if ( parsers.contains( item->text() ) ) {
 				item->setCheckState( Qt::Checked );
 			}
-			else
-			{
+			else {
 				item->setCheckState( Qt::Unchecked );
 			}
 		}
 	}
-	else
-	{
+	else {
 		leCommandText->clear();
 		leCommandCommand->clear();
 		leCommandArguments->clear();
@@ -133,8 +91,7 @@ void CommandsEditor::updateGui()
 		cbCommandSkipOnError->setChecked( false );
 		cbCommandTryAll->setChecked( false );
 		
-		for ( int i = 0; i < lwCommandParsers->count(); i++ )
-		{
+		for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
 			QListWidgetItem* item = lwCommandParsers->item( i );
 			item->setCheckState( Qt::Unchecked );
 		}
@@ -146,34 +103,31 @@ void CommandsEditor::updateGui()
 	gbEditor->setEnabled( item );
 }
 
-void CommandsEditor::on_cbCommandTypes_currentIndexChanged( int index )
+void CommandsEditor::on_cbMenus_currentIndexChanged( int index )
 {
 	Q_UNUSED( index );
 	QListWidgetItem* current = lwCommands->currentItem();
 	
 	on_lwCommands_currentItemChanged( current, current );
 	
-	if ( mCommandTypes.contains( mLastCommandType ) )
-	{
+	if ( !mLastCommandMenu.isEmpty() ) {
 		pCommandList commands;
 		
-		for ( int i = 0; i < lwCommands->count(); i++ )
-		{
+		for ( int i = 0; i < lwCommands->count(); i++ ) {
 			const QListWidgetItem* item = lwCommands->item( i );
 			const pCommand command = item->data( Qt::UserRole ).value<pCommand>();
 			
 			commands << command;
 		}
 		
-		mCommands[ mLastCommandType ] = commands;
+		mCommands[ mLastCommandMenu ] = commands;
 	}
 	
-	mLastCommandType = currentType();
+	mLastCommandMenu = cbMenus->itemData( cbMenus->currentIndex() ).toString();
 	const bool locked = lwCommands->blockSignals( true );
 	lwCommands->clear();
 	
-	foreach ( const pCommand& command, mCommands.value( mLastCommandType ) )
-	{
+	foreach ( const pCommand& command, mCommands.value( mLastCommandMenu ) ) {
 		QListWidgetItem* item = new QListWidgetItem( command.text(), lwCommands );
 		item->setData( Qt::UserRole, QVariant::fromValue( command ) );
 	}
@@ -185,7 +139,7 @@ void CommandsEditor::on_cbCommandTypes_currentIndexChanged( int index )
 
 void CommandsEditor::on_tbCommandAdd_clicked()
 {
-	QListWidgetItem* item = new QListWidgetItem( tr( "" ), lwCommands );
+	QListWidgetItem* item = new QListWidgetItem( tr( "New command" ), lwCommands );
 	lwCommands->setCurrentItem( item );
 }
 
@@ -197,22 +151,26 @@ void CommandsEditor::on_tbCommandRemove_clicked()
 
 void CommandsEditor::on_tbCommandUp_clicked()
 {
-	if ( QListWidgetItem* it = lwCommands->currentItem() )
-	{
+	if ( QListWidgetItem* it = lwCommands->currentItem() ) {
 		int i = lwCommands->row( it );
-		if ( i != 0 )
+		
+		if ( i != 0 ) {
 			lwCommands->insertItem( i -1, lwCommands->takeItem( i ) );
+		}
+		
 		lwCommands->setCurrentItem( it );
 	}
 }
 
 void CommandsEditor::on_tbCommandDown_clicked()
 {
-	if ( QListWidgetItem* it = lwCommands->currentItem() )
-	{
+	if ( QListWidgetItem* it = lwCommands->currentItem() ) {
 		int i = lwCommands->row( it );
-		if ( i != lwCommands->count() -1 )
+		
+		if ( i != lwCommands->count() -1 ) {
 			lwCommands->insertItem( i +1, lwCommands->takeItem( i ) );
+		}
+		
 		lwCommands->setCurrentItem( it );
 	}
 }
@@ -227,17 +185,14 @@ void CommandsEditor::on_lwCommands_currentItemChanged( QListWidgetItem* current,
 {
 	Q_UNUSED( current );
 	
-	if ( previous )
-	{
+	if ( previous ) {
 		pCommand command = previous->data( Qt::UserRole ).value<pCommand>();
 		QStringList parsers;
 		
-		for ( int i = 0; i < lwCommandParsers->count(); i++ )
-		{
+		for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
 			QListWidgetItem* item = lwCommandParsers->item( i );
 			
-			if ( item->checkState() == Qt::Checked )
-			{
+			if ( item->checkState() == Qt::Checked ) {
 				parsers << item->text();
 			}
 		}

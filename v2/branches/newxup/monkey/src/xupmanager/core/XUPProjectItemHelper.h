@@ -3,7 +3,6 @@
 
 #include <objects/MonkeyExport.h>
 
-#include "pluginsmanager/BasePlugin.h"
 #include "consolemanager/pCommand.h"
 
 #include <QDomDocument>
@@ -12,8 +11,7 @@ class XUPItem;
 class XUPProjectItem;
 class XUPDynamicFolderItem;
 
-typedef QList<BasePlugin::Type> BasePluginTypeList;
-typedef QMap<BasePlugin::Type, pCommandList> TypeCommandListMap;
+typedef QMap<QString, pCommandList> MenuCommandListMap;
 
 struct Q_MONKEY_EXPORT XUPDynamicFolderSettings
 {
@@ -49,8 +47,8 @@ namespace XUPProjectItemHelper
 	
 	Q_MONKEY_EXPORT XUPItem* projectCommandsScope( XUPProjectItem* project, bool create );
 	Q_MONKEY_EXPORT void addCommandProperty( XUPItem* variableItem, const QString& value );
-	Q_MONKEY_EXPORT void setProjectCommands( XUPProjectItem* project, const TypeCommandListMap& commands );
-	Q_MONKEY_EXPORT TypeCommandListMap projectCommands( XUPProjectItem* project );
+	Q_MONKEY_EXPORT void setProjectCommands( XUPProjectItem* project, const MenuCommandListMap& commands );
+	Q_MONKEY_EXPORT MenuCommandListMap projectCommands( XUPProjectItem* project );
 	
 	Q_MONKEY_EXPORT XUPItem* projectDynamicFolderSettingsItem( XUPProjectItem* project, bool create );
 	Q_MONKEY_EXPORT void addDynamicFolderSettingsProperty( XUPItem* dynamicFolderItem, const QString& value );

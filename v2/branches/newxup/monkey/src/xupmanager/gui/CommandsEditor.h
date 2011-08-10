@@ -18,28 +18,17 @@ public:
 	void setup( XUPProjectItem* project );
 	void finalize();
 	
-	void setCommandTypes( const BasePluginTypeList& types );
-	BasePluginTypeList commandTypes() const;
-	
-	void setCommands( const TypeCommandListMap& commands );
-	TypeCommandListMap commands() const;
-	
-	void setCurrentType( BasePlugin::Type type );
-	BasePlugin::Type currentType() const;
-	
-	void setParsers( const QStringList& parsers );
-	QStringList parsers() const;
+	void setCommands( const MenuCommandListMap& commands );
+	MenuCommandListMap commands() const;
 
 protected:
 	XUPProjectItem* mProject;
-	BasePluginTypeList mCommandTypes;
-	QStringList mParsers;
-	TypeCommandListMap mCommands;
-	BasePlugin::Type mLastCommandType;
+	MenuCommandListMap mCommands;
+	QString mLastCommandMenu;
 
 protected slots:
 	void updateGui();
-	void on_cbCommandTypes_currentIndexChanged( int index );
+	void on_cbMenus_currentIndexChanged( int index );
 	void on_tbCommandAdd_clicked();
 	void on_tbCommandRemove_clicked();
 	void on_tbCommandUp_clicked();

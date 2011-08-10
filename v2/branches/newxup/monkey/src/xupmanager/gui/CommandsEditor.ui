@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>362</height>
+    <width>398</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -90,13 +90,20 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="0" colspan="6">
+      <item row="1" column="0" colspan="7">
        <widget class="QListWidget" name="lwCommands"/>
       </item>
-      <item row="0" column="5">
-       <widget class="QComboBox" name="cbCommandTypes">
+      <item row="0" column="6">
+       <widget class="QComboBox" name="cbMenus">
         <property name="sizeAdjustPolicy">
          <enum>QComboBox::AdjustToContents</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Menu :</string>
         </property>
        </widget>
       </item>
