@@ -121,7 +121,7 @@ void UIXUPEditor::on_lwPages_currentRowChanged( int row )
 {
 	QListWidgetItem* item = ui->lwPages->item( row );
 	ui->lTitle->setText( item ? item->text() : QString::null );
-	ui->lIcon->setPixmap( item ? item->icon().pixmap( QSize( 16, 16 ) ) : QPixmap() );
+	ui->lIcon->setPixmap( item ? item->icon().pixmap( QSize( 18, 18 ) ) : QPixmap() );
 	ui->swPages->setCurrentIndex( row );
 }
 
