@@ -69,6 +69,8 @@ public:
 	void deleteMenu( const QString& path );
 	void setMenuEnabled( QMenu* menu, bool enabled );
 	
+	QStringList rootMenusPath() const;
+	
 private:
 	pActionsManager* mActionsManager;
 	QHash<QString, QMenu*> mMenus;
