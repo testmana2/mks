@@ -18,9 +18,10 @@ DebugDockWidget::DebugDockWidget( QWidget* parent )
 {
 	setupUi( this );
 
-	titleBar()->addAction( aShowXml );
-	titleBar()->addAction( aShowNativeString );
-	titleBar()->addAction( aGenerateFakeProject );
+	titleBar()->addAction( aShowXml, 0 );
+	titleBar()->addAction( aShowNativeString, 1 );
+	titleBar()->addAction( aGenerateFakeProject, 2 );
+	titleBar()->addSeparator( 3 );
 	
 	connect( MonkeyCore::projectsManager(), SIGNAL( currentProjectChanged( XUPProjectItem* ) ), this, SLOT( currentProjectChanged() ) );
 	connect( aShowXml, SIGNAL( triggered() ), this, SLOT( showXml() ) );

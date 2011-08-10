@@ -6,22 +6,46 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>326</width>
+    <width>342</width>
     <height>403</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>12</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <widget class="QTabWidget" name="twPages">
-      <property name="currentIndex">
-       <number>0</number>
+      <property name="styleSheet">
+       <string notr="true">QTabWidget::pane {
+	border: 0px;
+}</string>
       </property>
       <widget class="QWidget" name="wProjects">
+       <attribute name="icon">
+        <iconset resource="../../../../monkey/src/resources/resources.qrc">
+         <normaloff>:/project/icons/project/open.png</normaloff>:/project/icons/project/open.png</iconset>
+       </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>Unfiltered Projects</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="margin">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QSplitter" name="splitter">
           <property name="orientation">
@@ -34,10 +58,20 @@
        </layout>
       </widget>
       <widget class="QWidget" name="wDebug">
+       <attribute name="icon">
+        <iconset resource="../../../../monkey/src/resources/resources.qrc">
+         <normaloff>:/build/icons/build/misc.png</normaloff>:/build/icons/build/misc.png</iconset>
+       </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>Debug</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="margin">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QPlainTextEdit" name="pteDebug">
           <property name="tabChangesFocus">
@@ -57,10 +91,20 @@
        </layout>
       </widget>
       <widget class="QWidget" name="wWarning">
+       <attribute name="icon">
+        <iconset resource="../../../../monkey/src/resources/resources.qrc">
+         <normaloff>:/messages/messages_infos.png</normaloff>:/messages/messages_infos.png</iconset>
+       </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>Warning</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
+        <property name="margin">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QPlainTextEdit" name="pteWarning">
           <property name="tabChangesFocus">
@@ -80,10 +124,20 @@
        </layout>
       </widget>
       <widget class="QWidget" name="wCritical">
+       <attribute name="icon">
+        <iconset resource="../../../../monkey/src/resources/resources.qrc">
+         <normaloff>:/file/icons/file/close.png</normaloff>:/file/icons/file/close.png</iconset>
+       </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>Critical</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="margin">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QPlainTextEdit" name="pteCritical">
           <property name="tabChangesFocus">
@@ -103,10 +157,20 @@
        </layout>
       </widget>
       <widget class="QWidget" name="wFatal">
+       <attribute name="icon">
+        <iconset resource="../../../../monkey/src/resources/resources.qrc">
+         <normaloff>:/file/icons/file/closeall.png</normaloff>:/file/icons/file/closeall.png</iconset>
+       </attribute>
        <attribute name="title">
+        <string/>
+       </attribute>
+       <attribute name="toolTip">
         <string>Fatal</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_6">
+        <property name="margin">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QPlainTextEdit" name="pteFatal">
           <property name="tabChangesFocus">
@@ -130,16 +194,28 @@
    </layout>
   </widget>
   <action name="aShowXml">
+   <property name="icon">
+    <iconset resource="../../../../monkey/src/resources/resources.qrc">
+     <normaloff>:/templates/icons/templates/empty.png</normaloff>:/templates/icons/templates/empty.png</iconset>
+   </property>
    <property name="text">
     <string>Show Xml</string>
    </property>
   </action>
   <action name="aShowNativeString">
+   <property name="icon">
+    <iconset resource="../../../../monkey/src/resources/resources.qrc">
+     <normaloff>:/file/icons/file/new.png</normaloff>:/file/icons/file/new.png</iconset>
+   </property>
    <property name="text">
     <string>Show Native String</string>
    </property>
   </action>
   <action name="aGenerateFakeProject">
+   <property name="icon">
+    <iconset resource="../../../../monkey/src/resources/resources.qrc">
+     <normaloff>:/project/icons/project/new.png</normaloff>:/project/icons/project/new.png</iconset>
+   </property>
    <property name="text">
     <string>Generate Fake Project</string>
    </property>
@@ -153,6 +229,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../../../../monkey/src/resources/resources.qrc"/>
+  <include location="../../../../fresh/resources/fresh.qrc"/>
+ </resources>
  <connections/>
 </ui>
