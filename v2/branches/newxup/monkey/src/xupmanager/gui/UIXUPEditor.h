@@ -1,12 +1,13 @@
 #ifndef UISIMPLEQMAKEEDITOR_H
 #define UISIMPLEQMAKEEDITOR_H
 
-#include "ui_UIXUPEditor.h"
+#include <QDialog>
 
+class Ui_UIXUPEditor;
 class XUPPageEditor;
 class XUPProjectItem;
 
-class UIXUPEditor : public QDialog, public Ui::UIXUPEditor
+class UIXUPEditor : public QDialog
 {
 	Q_OBJECT
 	
@@ -27,6 +28,7 @@ public:
 	void defaultSetup( XUPProjectItem* project );
 
 protected:
+	Ui_UIXUPEditor* ui;
 	XUPProjectItem* mProject;
 	QList<XUPPageEditor*> mPages;
 	
@@ -34,6 +36,7 @@ protected:
 	void finalize();
 
 protected slots:
+	void on_lwPages_currentRowChanged( int row );
 	void accept();
 };
 
