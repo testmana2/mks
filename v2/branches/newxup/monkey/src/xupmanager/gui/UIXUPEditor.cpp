@@ -1,4 +1,5 @@
 #include "UIXUPEditor.h"
+#include "ui_UIXUPEditor.h"
 #include "XUPProjectItem.h"
 #include "XUPPageEditor.h"
 
@@ -10,13 +11,20 @@
 UIXUPEditor::UIXUPEditor( XUPProjectItem* project, QWidget* parent )
 	: QDialog( parent )
 {
+	ui = new Ui_UIXUPEditor;
 	mProject = 0;
 	
-	setupUi( this );
+	ui->setupUi( this );
+	ui->lwPages->setAttribute( Qt::WA_MacShowFocusRect, false );
 	setWindowIcon( project->displayIcon() );
 	setWindowTitle( tr( "Project Editor - %2" ).arg( project->displayText() ) );
 	
 	defaultSetup( project );
+}
+
+UIXUPEditor::~UIXUPEditor()
+{
+	delete ui;
 }
 
 int UIXUPEditor::insertPage( int _index, XUPPageEditor* page )
@@ -25,13 +33,13 @@ int UIXUPEditor::insertPage( int _index, XUPPageEditor* page )
 	const int index = _index > 0 && _index < count ? _index : count;
 	
 	QListWidgetItem* item = new QListWidgetItem;
-	item->setSizeHint( QSize( lwPages->width() -( lwPages->lineWidth() *2 ), 40 ) );
+	item->setSizeHint( QSize( ui->lwPages->width() -( ui->lwPages->lineWidth() *2 ) -( ui->lwPages->spacing() *2 ), 50 ) );
 	item->setIcon( page->windowIcon() );
 	item->setText( page->windowTitle() );
 	
 	mPages.insert( index, page );
-	lwPages->insertItem( index, item );
-	swPages->insertWidget( index, page );
+	ui->lwPages->insertItem( index, item );
+	ui->swPages->insertWidget( index, page );
 	
 	return index;
 }
@@ -60,8 +68,8 @@ void UIXUPEditor::removePage( int index )
 	}
 	
 	mPages.removeAt( index );
-	delete lwPages->item( index );
-	delete swPages->widget( index );
+	delete ui->lwPages->item( index );
+	delete ui->swPages->widget( index );
 }
 
 QList<XUPPageEditor*> UIXUPEditor::pages() const
@@ -71,12 +79,12 @@ QList<XUPPageEditor*> UIXUPEditor::pages() const
 
 void UIXUPEditor::setCurrentPage( int index )
 {
-	return lwPages->setCurrentRow( index );
+	ui->lwPages->setCurrentRow( index );
 }
 
 int UIXUPEditor::currentPage() const
 {
-	return lwPages->currentRow();
+	return ui->lwPages->currentRow();
 }
 
 void UIXUPEditor::defaultSetup( XUPProjectItem* project )
@@ -93,10 +101,6 @@ void UIXUPEditor::defaultSetup( XUPProjectItem* project )
 	setCurrentPage( 0 );
 }
 
-UIXUPEditor::~UIXUPEditor()
-{
-}
-
 void UIXUPEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
@@ -111,6 +115,14 @@ void UIXUPEditor::finalize()
 	foreach ( XUPPageEditor* editor, mPages ) {
 		editor->finalize();
 	}
+}
+
+void UIXUPEditor::on_lwPages_currentRowChanged( int row )
+{
+	QListWidgetItem* item = ui->lwPages->item( row );
+	ui->lTitle->setText( item ? item->text() : QString::null );
+	ui->lIcon->setPixmap( item ? item->icon().pixmap( QSize( 16, 16 ) ) : QPixmap() );
+	ui->swPages->setCurrentIndex( row );
 }
 
 void UIXUPEditor::accept()
