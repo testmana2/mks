@@ -475,20 +475,12 @@ void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
 
 void XUPProjectItem::installCommands()
 {
-	const TypeCommandListMap commands = XUPProjectItemHelper::projectCommands( this );
+	const MenuCommandListMap commands = XUPProjectItemHelper::projectCommands( this );
 	
-	foreach ( const BasePlugin::Type& type, commands.keys() ) {
-		foreach ( pCommand command, commands[ type ] ) {
-			switch ( type ) {
-				case BasePlugin::iCLITool:
-					addCommand( command, "mBuilder" );
-					break;
-				case BasePlugin::iDebugger:
-					addCommand( command, "mDebugger" );
-					break;
-				default:
-					Q_ASSERT( 0 );
-					break;
+	foreach ( const QString& menu, commands.keys() ) {
+		foreach ( pCommand command, commands[ menu ] ) {
+			if ( !menu.isEmpty() ) {
+				addCommand( command, menu );
 			}
 		}
 	}
