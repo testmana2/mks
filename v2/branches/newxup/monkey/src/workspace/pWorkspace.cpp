@@ -675,38 +675,30 @@ void pWorkspace::setDocumentMode( pWorkspace::ViewMode mode )
 
 pAbstractChild* pWorkspace::createNewTextEditor()
 {
-	pFileDialogResult result = MkSFileDialog::getNewEditorFile( window() );
-
-	// open open file dialog
-	QString fileName = result[ "filename" ].toString();
+	const pFileDialogResult result = MkSFileDialog::getNewEditorFile( window() );
+	const QString fileName = result[ "filename" ].toString();
 	
-	// return 0 if user cancel
-	if ( fileName.isEmpty() )
-	{
+	if ( fileName.isEmpty() ) {
 		return 0;
 	}
 	
-	// close file if already open
-	closeFile( fileName );
+	if ( QFile::exists( fileName ) ) {
+		return 0;
+	}
+	
+	//closeFile( fileName );
 
 	// create/reset file
 	QFile file( fileName );
 	
-	if ( !file.open( QIODevice::WriteOnly ) )
-	{
+	if ( !file.open( QIODevice::WriteOnly ) ) {
 		MonkeyCore::messageManager()->appendMessage( tr( "Can't create new file '%1'" ).arg( QFileInfo( fileName ).fileName() ) );
 		return 0;
 	}
 	
 	// reset file
-	file.resize( 0 );
+	//file.resize( 0 );
 	file.close();
-	
-	if ( result.value( "addtoproject", false ).toBool() )
-	{
-		// add files to scope
-		MonkeyCore::projectsManager()->addFiles( QStringList( fileName ), result[ "scope" ].value<XUPItem*>() );
-	}
 	
 	// open file
 	return MonkeyCore::fileManager()->openFile( fileName, result[ "codec" ].toString() );

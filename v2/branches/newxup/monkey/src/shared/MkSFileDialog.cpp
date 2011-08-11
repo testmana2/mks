@@ -5,6 +5,7 @@
 #include "pTreeComboBox.h"
 #include "XUPAddFiles.h"
 #include "MonkeyCore.h"
+#include "pFileManager.h"
 #include "XUPProjectManager.h"
 #include "Settings.h"
 
@@ -166,7 +167,7 @@ pFileDialogResult MkSFileDialog::getExistingDirectory( bool useRecents, QWidget*
 	return result;
 }
 
-pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allowChooseScope )
+/*pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allowChooseScope )
 {
 	pFileDialogResult result;
 	XUPProjectModel* model = MonkeyCore::projectsManager()->currentProjectModel();
@@ -195,40 +196,27 @@ pFileDialogResult MkSFileDialog::getProjectAddFiles( QWidget* parent, bool allow
 	}
 	
 	return result;
-}
+}*/
 
 pFileDialogResult MkSFileDialog::getNewEditorFile( QWidget* parent )
 {
 	pFileDialogResult result;
 	XUPProjectModel* model = MonkeyCore::projectsManager()->currentProjectModel();
 	XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
-	QString caption = tr( "New File Name..." );
-	QString dir = pMonkeyStudio::defaultProjectsDirectory();
-	QString filter = curProject ? curProject->documentFilters().sourceFileNameFilter() : pMonkeyStudio::availableFilesFilter();
-	bool enabledTextCodec = true;
+	const QString caption = tr( "New File Name..." );
+	const QString filter = pMonkeyStudio::availableFilesFilter();
+	const QString path = MonkeyCore::fileManager()->currentDocumentFile();
+	const bool enabledTextCodec = true;
 	
 	MkSFileDialog fd( parent );
-	setSaveFileNameDialog( &fd, caption, dir, filter, enabledTextCodec, 0, 0 );
+	setSaveFileNameDialog( &fd, caption, path, filter, enabledTextCodec, 0, 0 );
 	fd.setTextCodec( pMonkeyStudio::defaultCodec() );
 	
-	if ( curProject ) {
-		fd.mAddFiles->setModel( model );
-		fd.mAddFiles->setAddToProjectChoice( true );
-		fd.mAddFiles->setAddToProject( false );
-		fd.mAddFiles->setCurrentScope( curProject );
-	}
-	else {
-		fd.mAddFiles->setVisible( false );
-	}
+	fd.mAddFiles->setVisible( false );
 	
 	if ( fd.exec() == QDialog::Accepted ) {
 		result[ "filename" ] = fd.selectedFiles().value( 0 );
 		result[ "codec" ] = fd.textCodec();
-		
-		if ( model ) {
-			result[ "addtoproject" ] = fd.mAddFiles->addToProject();
-			result[ "scope" ] = QVariant::fromValue<XUPItem*>( fd.mAddFiles->currentScope() );
-		}
 	}
 	
 	return result;
