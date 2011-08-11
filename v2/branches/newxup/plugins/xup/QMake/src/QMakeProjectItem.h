@@ -39,6 +39,7 @@ public:
 	virtual void addProjectSettingsValue( const QString& variable, const QString& value );
 	
 	virtual bool edit();
+	virtual bool editProjectFiles();
 	
 protected:
 	QHash <QString, QString> mVariableCache;

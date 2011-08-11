@@ -18,6 +18,7 @@ public:
 	virtual void removeValue( XUPItem* item );
 	virtual bool open( const QString& fileName, const QString& codec );
 	virtual bool edit();
+	virtual bool editProjectFiles();
 };
 
 #endif // MakefileProjectItem_H

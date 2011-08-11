@@ -96,3 +96,8 @@ bool MakefileProjectItem::edit()
 	MonkeyCore::fileManager()->openFile( fileName(), codec() );
 	return false; /* not saved */
 }
+
+bool MakefileProjectItem::editProjectFiles()
+{
+	return false;
+}

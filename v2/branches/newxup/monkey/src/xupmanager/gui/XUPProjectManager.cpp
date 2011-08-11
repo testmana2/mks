@@ -302,26 +302,21 @@ void XUPProjectManager::editProject()
 {
 	XUPProjectItem* project = currentProject();
 	
-	if ( !project )
-	{
+	if ( !project ) {
 		return;
 	}
 	
 	XUPProjectItem* topLevelProject = project->topLevelProject();
 	
 	// edit project and save it if needed
-	if ( project->edit() )
-	{
-		if ( project->save() )
-		{
+	if ( project->edit() ) {
+		if ( project->save() ) {
 			// need save topLevelProject ( for XUPProejctSettings scope  )
-			if ( !topLevelProject->save() )
-			{
+			if ( !topLevelProject->save() ) {
 				MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( topLevelProject->fileName() ).arg( topLevelProject->lastError() ) );
 			}
 		}
-		else
-		{
+		else {
 			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 		}
 		
@@ -344,7 +339,32 @@ void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )
 
 void XUPProjectManager::addFiles()
 {
-	pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window() );
+	XUPProjectItem* project = currentProject();
+	
+	if ( !project ) {
+		return;
+	}
+	
+	XUPProjectItem* topLevelProject = project->topLevelProject();
+	
+	// edit project and save it if needed
+	if ( project->editProjectFiles() ) {
+		if ( project->save() ) {
+			// need save topLevelProject ( for XUPProejctSettings scope  )
+			if ( !topLevelProject->save() ) {
+				MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( topLevelProject->fileName() ).arg( topLevelProject->lastError() ) );
+			}
+		}
+		else {
+			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
+		}
+		
+		// update menu actions
+		project->uninstallCommands();
+		project->installCommands();
+	}
+	
+	/*pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window() );
 	
 	if ( !result.isEmpty() )
 	{
@@ -376,12 +396,13 @@ void XUPProjectManager::addFiles()
 		
 		// add files to scope
 		addFiles( files, scope );
-	}
+	}*/
 }
 
 void XUPProjectManager::removeFiles()
 {
-	XUPItem* curItem = currentItem();
+	addFiles();
+	/*XUPItem* curItem = currentItem();
 	
 	
 	if ( !curItem || !( curItem->type() == XUPItem::Value || curItem->type() == XUPItem::File || curItem->type() == XUPItem::Path ) ) {
@@ -398,7 +419,7 @@ void XUPProjectManager::removeFiles()
 		if ( !project->save() ) {
 			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 		}
-	}
+	}*/
 }
 
 XUPProjectModel* XUPProjectManager::currentProjectModel() const

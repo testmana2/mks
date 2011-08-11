@@ -12,7 +12,7 @@ class UIXUPEditor : public QDialog
 	Q_OBJECT
 	
 public:
-	UIXUPEditor( XUPProjectItem* project, QWidget* parent = 0 );
+	UIXUPEditor( QWidget* parent = 0 );
 	virtual ~UIXUPEditor();
 	
 	int insertPage( int index, XUPPageEditor* page );
@@ -25,7 +25,8 @@ public:
 	void setCurrentPage( int index );
 	int currentPage() const;
 	
-	void defaultSetup( XUPProjectItem* project );
+	virtual void setupProject( XUPProjectItem* project );
+	virtual bool showProjectFilesPage();
 
 protected:
 	Ui_UIXUPEditor* ui;
