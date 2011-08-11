@@ -4,12 +4,15 @@
 #include "MonkeyExport.h"
 #include "XUPPageEditor.h"
 
-#include "ui_CommandsEditor.h"
 #include "xupmanager/core/XUPProjectItemHelper.h"
 
+#include <QModelIndex>
+#include <QItemSelection>
+
+class Ui_CommandsEditor;
 class CommandsEditorModel;
 
-class Q_MONKEY_EXPORT CommandsEditor : public XUPPageEditor, public Ui::CommandsEditor
+class Q_MONKEY_EXPORT CommandsEditor : public XUPPageEditor
 {
 	Q_OBJECT
 
@@ -21,6 +24,7 @@ public:
 	void finalize();
 
 protected:
+	Ui_CommandsEditor* ui;
 	CommandsEditorModel* mModel;
 	XUPProjectItem* mProject;
 	

@@ -1,4 +1,5 @@
 #include "CommandsEditor.h"
+#include "ui_CommandsEditor.h"
 #include "CommandsEditorModel.h"
 #include "MonkeyCore.h"
 
@@ -10,17 +11,19 @@
 CommandsEditor::CommandsEditor( QWidget* parent )
 	: XUPPageEditor( parent )
 {
+	ui = new Ui_CommandsEditor;
 	mModel = new CommandsEditorModel( this );
 	mProject = 0;
 	
-	setupUi( this );
-	tvCommands->setModel( mModel );
+	ui->setupUi( this );
+	ui->tvCommands->setModel( mModel );
 	
-	connect( tvCommands->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( tvCommands_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
+	connect( ui->tvCommands->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( tvCommands_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
 }
 
 CommandsEditor::~CommandsEditor()
 {
+	delete ui;
 }
 
 void CommandsEditor::setup( XUPProjectItem* project )
@@ -28,7 +31,7 @@ void CommandsEditor::setup( XUPProjectItem* project )
 	mProject = project;
 	
 	foreach ( const QString& parser, MonkeyCore::consoleManager()->parsersName() ) {
-		QListWidgetItem* item = new QListWidgetItem( parser, lwCommandParsers );
+		QListWidgetItem* item = new QListWidgetItem( parser, ui->lwCommandParsers );
 		item->setCheckState( Qt::Unchecked );
 	}
 	
@@ -53,21 +56,21 @@ void CommandsEditor::setCommand( const QModelIndex& commandIndex )
 	pCommand command = mModel->command( commandIndex );
 	QStringList parsers;
 	
-	for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
-		QListWidgetItem* item = lwCommandParsers->item( i );
+	for ( int i = 0; i < ui->lwCommandParsers->count(); i++ ) {
+		QListWidgetItem* item = ui->lwCommandParsers->item( i );
 		
 		if ( item->checkState() == Qt::Checked ) {
 			parsers << item->text();
 		}
 	}
 	
-	command.setText( leCommandText->text() );
-	command.setCommand( leCommandCommand->text() );
-	command.setArguments( leCommandArguments->text() );
-	command.setWorkingDirectory( leCommandWorkingDirectory->text() );
+	command.setText( ui->leCommandText->text() );
+	command.setCommand( ui->leCommandCommand->text() );
+	command.setArguments( ui->leCommandArguments->text() );
+	command.setWorkingDirectory( ui->leCommandWorkingDirectory->text() );
 	command.setParsers( parsers );
-	command.setSkipOnError( cbCommandSkipOnError->isChecked() );
-	command.setTryAllParsers( cbCommandTryAll->isChecked() );
+	command.setSkipOnError( ui->cbCommandSkipOnError->isChecked() );
+	command.setTryAllParsers( ui->cbCommandTryAll->isChecked() );
 	
 	mModel->setData( commandIndex, QVariant::fromValue( command ), Qt::EditRole );
 }
@@ -77,29 +80,29 @@ void CommandsEditor::getCommand( const QModelIndex& commandIndex )
 	const pCommand command = mModel->command( commandIndex );
 	const QSet<QString> parsers = command.parsers().toSet();
 	
-	leCommandText->setText( command.text() );
-	leCommandCommand->setText( command.command() );
-	leCommandArguments->setText( command.arguments() );
-	leCommandWorkingDirectory->setText( command.workingDirectory() );
-	cbCommandSkipOnError->setChecked( command.skipOnError() );
-	cbCommandTryAll->setChecked( command.tryAllParsers() );
+	ui->leCommandText->setText( command.text() );
+	ui->leCommandCommand->setText( command.command() );
+	ui->leCommandArguments->setText( command.arguments() );
+	ui->leCommandWorkingDirectory->setText( command.workingDirectory() );
+	ui->cbCommandSkipOnError->setChecked( command.skipOnError() );
+	ui->cbCommandTryAll->setChecked( command.tryAllParsers() );
 	
-	for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
-		QListWidgetItem* item = lwCommandParsers->item( i );
+	for ( int i = 0; i < ui->lwCommandParsers->count(); i++ ) {
+		QListWidgetItem* item = ui->lwCommandParsers->item( i );
 		item->setCheckState( parsers.contains( item->text() ) ? Qt::Checked : Qt::Unchecked );
 	}
 }
 
 void CommandsEditor::updateState()
 {
-	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	const bool isAction = index.isValid() && index.parent() != QModelIndex();
 	const int count = mModel->rowCount( index.parent() );
 	
-	tbCommandAdd->setEnabled( index.isValid() );
-	tbCommandUp->setEnabled( isAction && index.row() > 0 && count > 1 );
-	tbCommandDown->setEnabled( isAction && index.row() < count -1 && count > 1 );
-	fEditor->setEnabled( isAction );
+	ui->tbCommandAdd->setEnabled( index.isValid() );
+	ui->tbCommandUp->setEnabled( isAction && index.row() > 0 && count > 1 );
+	ui->tbCommandDown->setEnabled( isAction && index.row() < count -1 && count > 1 );
+	ui->fEditor->setEnabled( isAction );
 }
 
 void CommandsEditor::tvCommands_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
@@ -114,27 +117,27 @@ void CommandsEditor::tvCommands_selectionModel_selectionChanged( const QItemSele
 
 void CommandsEditor::on_tbCommandAdd_clicked()
 {
-	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	const bool isAction = index.isValid() && index.parent() != QModelIndex();
 	const QModelIndex menuIndex = isAction ? index.parent() : index;
 	const QModelIndex commandIndex = mModel->addCommand( menuIndex, pCommand( tr( "New command" ) ) );
 	
 	if ( commandIndex.isValid() ) {
-		tvCommands->setCurrentIndex( commandIndex );
-		tvCommands->scrollTo( commandIndex, QAbstractItemView::EnsureVisible );
+		ui->tvCommands->setCurrentIndex( commandIndex );
+		ui->tvCommands->scrollTo( commandIndex, QAbstractItemView::EnsureVisible );
 	}
 }
 
 void CommandsEditor::on_tbCommandUp_clicked()
 {
-	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	mModel->swapCommand( index.parent(), index.row(), index.row() -1 );
 	updateState();
 }
 
 void CommandsEditor::on_tbCommandDown_clicked()
 {
-	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	mModel->swapCommand( index.parent(), index.row(), index.row() +1 );
 	updateState();
 }
