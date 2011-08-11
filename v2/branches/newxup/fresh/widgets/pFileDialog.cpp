@@ -93,6 +93,7 @@ void pFileDialog::setOpenReadOnlyEnabled( bool enabled )
 {
 	mOpenReadOnlyEnabled = enabled;
 	cbOpenReadOnly->setEnabled( enabled );
+	cbOpenReadOnly->setVisible( enabled );
 }
 
 QDir::Filters pFileDialog::filterForMode() const

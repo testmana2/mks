@@ -21,7 +21,7 @@ public:
 	static pFileDialogResult getSaveFileName( bool useRecents, QWidget* parent = 0, const QString& caption = QString(), const QString& dir = QString(), const QString& filter = QString(), bool enabledTextCodec = true, QString* selectedFilter = 0, Options options = 0 );
 	static pFileDialogResult getExistingDirectory( bool useRecents, QWidget* parent = 0, const QString& caption = QString(), const QString& dir = QString(), bool enabledTextCodec = true, Options options = ShowDirsOnly );
 	
-	static pFileDialogResult getProjectAddFiles( QWidget* parent = 0, bool allowChooseScope = true );
+	//static pFileDialogResult getProjectAddFiles( QWidget* parent = 0, bool allowChooseScope = true );
 	static pFileDialogResult getNewEditorFile( QWidget* parent = 0 );
 
 protected:
