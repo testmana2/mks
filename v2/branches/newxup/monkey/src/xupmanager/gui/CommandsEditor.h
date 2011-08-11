@@ -7,6 +7,8 @@
 #include "ui_CommandsEditor.h"
 #include "xupmanager/core/XUPProjectItemHelper.h"
 
+class CommandsEditorModel;
+
 class Q_MONKEY_EXPORT CommandsEditor : public XUPPageEditor, public Ui::CommandsEditor
 {
 	Q_OBJECT
@@ -17,24 +19,19 @@ public:
 	
 	void setup( XUPProjectItem* project );
 	void finalize();
-	
-	void setCommands( const MenuCommandListMap& commands );
-	MenuCommandListMap commands() const;
 
 protected:
+	CommandsEditorModel* mModel;
 	XUPProjectItem* mProject;
-	MenuCommandListMap mCommands;
-	QString mLastCommandMenu;
+	
+	void setCommand( const QModelIndex& commandIndex );
+	void getCommand( const QModelIndex& commandIndex );
 
 protected slots:
-	void updateGui();
-	void on_cbMenus_currentIndexChanged( int index );
+	void tvCommands_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected );
 	void on_tbCommandAdd_clicked();
-	void on_tbCommandRemove_clicked();
 	void on_tbCommandUp_clicked();
 	void on_tbCommandDown_clicked();
-	void on_lwCommands_itemSelectionChanged();
-	void on_lwCommands_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous );
 };
 
 #endif // COMMANDSEDITOR_H

@@ -1,4 +1,5 @@
 #include "CommandsEditor.h"
+#include "CommandsEditorModel.h"
 #include "MonkeyCore.h"
 
 #include <pConsoleManager.h>
@@ -9,9 +10,13 @@
 CommandsEditor::CommandsEditor( QWidget* parent )
 	: XUPPageEditor( parent )
 {
-	mLastCommandMenu = "mBuild";
+	mModel = new CommandsEditorModel( this );
+	mProject = 0;
+	
 	setupUi( this );
-	updateGui();
+	tvCommands->setModel( mModel );
+	
+	connect( tvCommands->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( tvCommands_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
 }
 
 CommandsEditor::~CommandsEditor()
@@ -20,194 +25,108 @@ CommandsEditor::~CommandsEditor()
 
 void CommandsEditor::setup( XUPProjectItem* project )
 {
-	pMenuBar* mb = MonkeyCore::menuBar();
-	pConsoleManager* cm = MonkeyCore::consoleManager();
 	mProject = project;
 	
-	foreach ( const QString& menu, mb->rootMenusPath() ) {
-		QMenu* m = mb->menu( menu );
-		cbMenus->addItem( m->title(), menu );
-	}
-	
-	foreach ( const QString& parser, cm->parsersName() ) {
+	foreach ( const QString& parser, MonkeyCore::consoleManager()->parsersName() ) {
 		QListWidgetItem* item = new QListWidgetItem( parser, lwCommandParsers );
 		item->setCheckState( Qt::Unchecked );
 	}
 	
-	setCommands( XUPProjectItemHelper::projectCommands( mProject ) );
-	cbMenus->setCurrentIndex( 0 );
+	mModel->setCommands( XUPProjectItemHelper::projectCommands( mProject ), MonkeyCore::menuBar() );
+	tvCommands_selectionModel_selectionChanged( QItemSelection(), QItemSelection() );
 }
 
 void CommandsEditor::finalize()
 {
-	// save current command, and global commands
-	on_cbMenus_currentIndexChanged( cbMenus->currentIndex() );
-	XUPProjectItemHelper::setProjectCommands( mProject, commands() );
+	mModel->submit();
+	XUPProjectItemHelper::setProjectCommands( mProject, mModel->commands() );
 }
 
-void CommandsEditor::setCommands( const MenuCommandListMap& commands )
+void CommandsEditor::setCommand( const QModelIndex& commandIndex )
 {
-	mCommands = commands;
-}
-
-MenuCommandListMap CommandsEditor::commands() const
-{
-	return mCommands;
-}
-
-void CommandsEditor::updateGui()
-{
-	QListWidgetItem* item = lwCommands->currentItem();
-	const int index = lwCommands->row( item );
-	const int count = lwCommands->count();
+	const bool isAction = commandIndex.isValid() && commandIndex.parent() != QModelIndex();
 	
-	if ( item ) {
-		const pCommand command = item->data( Qt::UserRole ).value<pCommand>();
-		const QSet<QString> parsers = command.parsers().toSet();
-		
-		leCommandText->setText( command.text() );
-		leCommandCommand->setText( command.command() );
-		leCommandArguments->setText( command.arguments() );
-		leCommandWorkingDirectory->setText( command.workingDirectory() );
-		cbCommandSkipOnError->setChecked( command.skipOnError() );
-		cbCommandTryAll->setChecked( command.tryAllParsers() );
-		
-		for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
-			QListWidgetItem* item = lwCommandParsers->item( i );
-			
-			if ( parsers.contains( item->text() ) ) {
-				item->setCheckState( Qt::Checked );
-			}
-			else {
-				item->setCheckState( Qt::Unchecked );
-			}
-		}
+	if ( !isAction ) {
+		return;
 	}
-	else {
-		leCommandText->clear();
-		leCommandCommand->clear();
-		leCommandArguments->clear();
-		leCommandWorkingDirectory->clear();
-		cbCommandSkipOnError->setChecked( false );
-		cbCommandTryAll->setChecked( false );
+	
+	pCommand command = mModel->command( commandIndex );
+	QStringList parsers;
+	
+	for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
+		QListWidgetItem* item = lwCommandParsers->item( i );
 		
-		for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
-			QListWidgetItem* item = lwCommandParsers->item( i );
-			item->setCheckState( Qt::Unchecked );
+		if ( item->checkState() == Qt::Checked ) {
+			parsers << item->text();
 		}
 	}
 	
-	tbCommandRemove->setEnabled( item );
-	tbCommandUp->setEnabled( item && index > 0 );
-	tbCommandDown->setEnabled( item && count > 1 && index < count -1 );
-	gbEditor->setEnabled( item );
+	command.setText( leCommandText->text() );
+	command.setCommand( leCommandCommand->text() );
+	command.setArguments( leCommandArguments->text() );
+	command.setWorkingDirectory( leCommandWorkingDirectory->text() );
+	command.setParsers( parsers );
+	command.setSkipOnError( cbCommandSkipOnError->isChecked() );
+	command.setTryAllParsers( cbCommandTryAll->isChecked() );
+	
+	mModel->setData( commandIndex, QVariant::fromValue( command ), Qt::EditRole );
 }
 
-void CommandsEditor::on_cbMenus_currentIndexChanged( int index )
+void CommandsEditor::getCommand( const QModelIndex& commandIndex )
 {
-	Q_UNUSED( index );
-	QListWidgetItem* current = lwCommands->currentItem();
+	const pCommand command = mModel->command( commandIndex );
+	const QSet<QString> parsers = command.parsers().toSet();
 	
-	on_lwCommands_currentItemChanged( current, current );
+	leCommandText->setText( command.text() );
+	leCommandCommand->setText( command.command() );
+	leCommandArguments->setText( command.arguments() );
+	leCommandWorkingDirectory->setText( command.workingDirectory() );
+	cbCommandSkipOnError->setChecked( command.skipOnError() );
+	cbCommandTryAll->setChecked( command.tryAllParsers() );
 	
-	if ( !mLastCommandMenu.isEmpty() ) {
-		pCommandList commands;
-		
-		for ( int i = 0; i < lwCommands->count(); i++ ) {
-			const QListWidgetItem* item = lwCommands->item( i );
-			const pCommand command = item->data( Qt::UserRole ).value<pCommand>();
-			
-			commands << command;
-		}
-		
-		mCommands[ mLastCommandMenu ] = commands;
+	for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
+		QListWidgetItem* item = lwCommandParsers->item( i );
+		item->setCheckState( parsers.contains( item->text() ) ? Qt::Checked : Qt::Unchecked );
 	}
+}
+
+void CommandsEditor::tvCommands_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
+{
+	const QModelIndex oldIndex = deselected.indexes().value( 0 );
+	const QModelIndex newIndex = selected.indexes().value( 0 );
+	const bool isAction = newIndex.isValid() && newIndex.parent() != QModelIndex();
+	const int count = mModel->rowCount( newIndex.parent() );
 	
-	mLastCommandMenu = cbMenus->itemData( cbMenus->currentIndex() ).toString();
-	const bool locked = lwCommands->blockSignals( true );
-	lwCommands->clear();
+	setCommand( oldIndex );
+	getCommand( newIndex );
 	
-	foreach ( const pCommand& command, mCommands.value( mLastCommandMenu ) ) {
-		QListWidgetItem* item = new QListWidgetItem( command.text(), lwCommands );
-		item->setData( Qt::UserRole, QVariant::fromValue( command ) );
-	}
-	
-	lwCommands->blockSignals( locked );
-	
-	updateGui();
+	tbCommandAdd->setEnabled( newIndex.isValid() );
+	tbCommandUp->setEnabled( isAction && newIndex.row() > 0 && count > 1 );
+	tbCommandDown->setEnabled( isAction && newIndex.row() < count -1 && count > 1 );
+	fEditor->setEnabled( isAction );
 }
 
 void CommandsEditor::on_tbCommandAdd_clicked()
 {
-	QListWidgetItem* item = new QListWidgetItem( tr( "New command" ), lwCommands );
-	lwCommands->setCurrentItem( item );
-}
-
-void CommandsEditor::on_tbCommandRemove_clicked()
-{
-	delete lwCommands->currentItem();
-	updateGui();
+	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	const bool isAction = index.isValid() && index.parent() != QModelIndex();
+	const QModelIndex menuIndex = isAction ? index.parent() : index;
+	const QModelIndex commandIndex = mModel->addCommand( menuIndex, pCommand( tr( "New command" ) ) );
+	
+	if ( commandIndex.isValid() ) {
+		tvCommands->setCurrentIndex( commandIndex );
+		tvCommands->scrollTo( commandIndex, QAbstractItemView::EnsureVisible );
+	}
 }
 
 void CommandsEditor::on_tbCommandUp_clicked()
 {
-	if ( QListWidgetItem* it = lwCommands->currentItem() ) {
-		int i = lwCommands->row( it );
-		
-		if ( i != 0 ) {
-			lwCommands->insertItem( i -1, lwCommands->takeItem( i ) );
-		}
-		
-		lwCommands->setCurrentItem( it );
-	}
+	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	mModel->swapCommand( index.parent(), index.row(), index.row() -1 );
 }
 
 void CommandsEditor::on_tbCommandDown_clicked()
 {
-	if ( QListWidgetItem* it = lwCommands->currentItem() ) {
-		int i = lwCommands->row( it );
-		
-		if ( i != lwCommands->count() -1 ) {
-			lwCommands->insertItem( i +1, lwCommands->takeItem( i ) );
-		}
-		
-		lwCommands->setCurrentItem( it );
-	}
-}
-
-void CommandsEditor::on_lwCommands_itemSelectionChanged()
-{
-	QListWidgetItem* item = lwCommands->selectedItems().value( 0 );
-	lwCommands->setCurrentItem( item );
-}
-
-void CommandsEditor::on_lwCommands_currentItemChanged( QListWidgetItem* current, QListWidgetItem* previous )
-{
-	Q_UNUSED( current );
-	
-	if ( previous ) {
-		pCommand command = previous->data( Qt::UserRole ).value<pCommand>();
-		QStringList parsers;
-		
-		for ( int i = 0; i < lwCommandParsers->count(); i++ ) {
-			QListWidgetItem* item = lwCommandParsers->item( i );
-			
-			if ( item->checkState() == Qt::Checked ) {
-				parsers << item->text();
-			}
-		}
-		
-		command.setText( leCommandText->text() );
-		command.setCommand( leCommandCommand->text() );
-		command.setArguments( leCommandArguments->text() );
-		command.setWorkingDirectory( leCommandWorkingDirectory->text() );
-		command.setParsers( parsers );
-		command.setSkipOnError( cbCommandSkipOnError->isChecked() );
-		command.setTryAllParsers( cbCommandTryAll->isChecked() );
-		
-		previous->setData( Qt::UserRole, QVariant::fromValue( command ) );
-		previous->setText( command.text() );
-	}
-	
-	updateGui();
+	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	mModel->swapCommand( index.parent(), index.row(), index.row() +1 );
 }
