@@ -46,6 +46,7 @@ QVariant CommandsEditorModel::data( const QModelIndex& index, int role ) const
 			return !isMenu && !enabled ? QApplication::palette().brush( QPalette::Disabled, QPalette::WindowText ) : QVariant();
 		case Qt::FontRole: {
 			QFont font;
+			font.setBold( isMenu );
 			font.setStrikeOut( !isMenu && !enabled );
 			return font;
 		}
@@ -76,12 +77,12 @@ QModelIndex CommandsEditorModel::index( int row, int column, const QModelIndex& 
 		return QModelIndex();
 	}
 	
-	return createIndex( row, column, mCommands.keys().indexOf( menu ) );
+	return createIndex( row, column, mMenusOrder[ menu ] );
 }
 
 QModelIndex CommandsEditorModel::parent( const QModelIndex& index ) const
 {
-	return index.internalId() == -1 ? QModelIndex() : this->index( mCommands.keys().value( index.internalId() ) );
+	return index.internalId() == -1 ? QModelIndex() : this->index( mMenusOrder.key( index.internalId() ) );
 }
 
 int	CommandsEditorModel::rowCount( const QModelIndex& parent ) const
@@ -133,7 +134,7 @@ QModelIndex CommandsEditorModel::index( const QString& menu ) const
 		return QModelIndex();
 	}
 	
-	return index( mCommands.keys().indexOf( menu ), 0 );
+	return index( mMenusOrder[ menu ], 0 );
 }
 
 QModelIndex CommandsEditorModel::index( const pCommand& command, const QString& menu ) const
@@ -144,7 +145,7 @@ QModelIndex CommandsEditorModel::index( const pCommand& command, const QString& 
 
 QString CommandsEditorModel::menu( const QModelIndex& index ) const
 {
-	return index.parent() == QModelIndex() ? mCommands.keys().value( index.row() ) : QString::null;
+	return index.parent() == QModelIndex() ? mMenusOrder.key( index.row() ) : QString::null;
 }
 
 pCommand CommandsEditorModel::command( const QModelIndex& index ) const
@@ -206,8 +207,11 @@ void CommandsEditorModel::setCommands( const MenuCommandListMap& commands, pMenu
 		
 		if ( count > 0 ) {
 			beginInsertRows( QModelIndex(), 0, count -1 );
+			int i = 0;
 			foreach ( const QString& menu, menus ) {
 				mCommands[ menu ] = pCommandList();
+				mMenusOrder[ menu ] = i;
+				i++;
 			}
 			endInsertRows();
 		}

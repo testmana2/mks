@@ -44,6 +44,7 @@ public slots:
 
 protected:
 	pMenuBar* mMenuBar;
+	QHash<QString, int> mMenusOrder;
 	MenuCommandListMap mCommands;
 	
 	void addCommands( const QString& menu, const pCommandList& commands );
