@@ -90,20 +90,26 @@ void CommandsEditor::getCommand( const QModelIndex& commandIndex )
 	}
 }
 
+void CommandsEditor::updateState()
+{
+	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
+	const bool isAction = index.isValid() && index.parent() != QModelIndex();
+	const int count = mModel->rowCount( index.parent() );
+	
+	tbCommandAdd->setEnabled( index.isValid() );
+	tbCommandUp->setEnabled( isAction && index.row() > 0 && count > 1 );
+	tbCommandDown->setEnabled( isAction && index.row() < count -1 && count > 1 );
+	fEditor->setEnabled( isAction );
+}
+
 void CommandsEditor::tvCommands_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
 {
 	const QModelIndex oldIndex = deselected.indexes().value( 0 );
 	const QModelIndex newIndex = selected.indexes().value( 0 );
-	const bool isAction = newIndex.isValid() && newIndex.parent() != QModelIndex();
-	const int count = mModel->rowCount( newIndex.parent() );
 	
 	setCommand( oldIndex );
 	getCommand( newIndex );
-	
-	tbCommandAdd->setEnabled( newIndex.isValid() );
-	tbCommandUp->setEnabled( isAction && newIndex.row() > 0 && count > 1 );
-	tbCommandDown->setEnabled( isAction && newIndex.row() < count -1 && count > 1 );
-	fEditor->setEnabled( isAction );
+	updateState();
 }
 
 void CommandsEditor::on_tbCommandAdd_clicked()
@@ -123,10 +129,12 @@ void CommandsEditor::on_tbCommandUp_clicked()
 {
 	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	mModel->swapCommand( index.parent(), index.row(), index.row() -1 );
+	updateState();
 }
 
 void CommandsEditor::on_tbCommandDown_clicked()
 {
 	const QModelIndex index = tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	mModel->swapCommand( index.parent(), index.row(), index.row() +1 );
+	updateState();
 }

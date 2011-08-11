@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>398</width>
+    <height>298</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,8 +73,8 @@
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectRows</enum>
+        <property name="uniformItemSizes">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -144,8 +144,8 @@
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectRows</enum>
+        <property name="uniformItemSizes">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
