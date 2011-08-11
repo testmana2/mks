@@ -108,6 +108,7 @@ public:
 	QString codec() const;
 	
 	virtual bool edit() = 0;
+	virtual bool editProjectFiles() = 0;
 	
 	/* Source file name patterns is list of string pairs. ExamplesPath
 		("Python file", "*.py") ("Forms file", "*.ui")

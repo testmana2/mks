@@ -8,7 +8,7 @@
 #include "VariablesEditor.h"
 #include "CommandsEditor.h"
 
-UIXUPEditor::UIXUPEditor( XUPProjectItem* project, QWidget* parent )
+UIXUPEditor::UIXUPEditor( QWidget* parent )
 	: QDialog( parent )
 {
 	ui = new Ui_UIXUPEditor;
@@ -16,10 +16,6 @@ UIXUPEditor::UIXUPEditor( XUPProjectItem* project, QWidget* parent )
 	
 	ui->setupUi( this );
 	ui->lwPages->setAttribute( Qt::WA_MacShowFocusRect, false );
-	setWindowIcon( project->displayIcon() );
-	setWindowTitle( tr( "Project Editor - %2" ).arg( project->displayText() ) );
-	
-	defaultSetup( project );
 }
 
 UIXUPEditor::~UIXUPEditor()
@@ -87,7 +83,7 @@ int UIXUPEditor::currentPage() const
 	return ui->lwPages->currentRow();
 }
 
-void UIXUPEditor::defaultSetup( XUPProjectItem* project )
+void UIXUPEditor::setupProject( XUPProjectItem* project )
 {
 	QList<XUPPageEditor*> pages = QList<XUPPageEditor*>()
 		<< new MainEditor
@@ -98,16 +94,34 @@ void UIXUPEditor::defaultSetup( XUPProjectItem* project )
 	
 	addPages( pages );
 	setup( project );
-	setCurrentPage( 0 );
+}
+
+bool UIXUPEditor::showProjectFilesPage()
+{
+	for ( int i = 0; i < mPages.count(); i++ ) {
+		const XUPPageEditor* page = mPages.at( i );
+		
+		if ( page->inherits( "FilesEditor" ) ) {
+			setCurrentPage( i );
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 void UIXUPEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
 	
+	setWindowIcon( project->displayIcon() );
+	setWindowTitle( tr( "Project Editor - %2" ).arg( project->displayText() ) );
+	
 	foreach ( XUPPageEditor* editor, mPages ) {
 		editor->setup( project );
 	}
+	
+	setCurrentPage( 0 );
 }
 
 void UIXUPEditor::finalize()

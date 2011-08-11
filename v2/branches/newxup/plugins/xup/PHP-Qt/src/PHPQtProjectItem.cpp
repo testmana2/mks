@@ -94,7 +94,17 @@ void PHPQtProjectItem::installCommands()
 
 bool PHPQtProjectItem::edit()
 {
-	return UIXUPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
+	UIXUPEditor dlg( MonkeyCore::mainWindow() );
+	dlg.setupProject( this );
+	return dlg.exec() == QDialog::Accepted;
+}
+
+bool PHPQtProjectItem::editProjectFiles()
+{
+	UIXUPEditor dlg( MonkeyCore::mainWindow() );
+	dlg.setupProject( this );
+	dlg.showProjectFilesPage();
+	return dlg.exec() == QDialog::Accepted;
 }
 
 CLIToolPlugin* PHPQtProjectItem::interpreter() const

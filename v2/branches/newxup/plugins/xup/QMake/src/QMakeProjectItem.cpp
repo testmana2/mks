@@ -1052,6 +1052,14 @@ bool QMakeProjectItem::edit()
 	return ret;
 }
 
+bool QMakeProjectItem::editProjectFiles()
+{
+	/*UIXUPEditor dlg( MonkeyCore::mainWindow() );
+	dlg.setupProject( this );
+	return dlg.exec() == QDialog::Accepted;*/
+	return edit();
+}
+
 CLIToolPlugin* QMakeProjectItem::builder() const
 {
 	QString name;

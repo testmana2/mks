@@ -94,7 +94,17 @@ void PyQtProjectItem::installCommands()
 
 bool PyQtProjectItem::edit()
 {
-	return UIXUPEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
+	UIXUPEditor dlg( MonkeyCore::mainWindow() );
+	dlg.setupProject( this );
+	return dlg.exec() == QDialog::Accepted;
+}
+
+bool PyQtProjectItem::editProjectFiles()
+{
+	UIXUPEditor dlg( MonkeyCore::mainWindow() );
+	dlg.setupProject( this );
+	dlg.showProjectFilesPage();
+	return dlg.exec() == QDialog::Accepted;
 }
 
 CLIToolPlugin* PyQtProjectItem::interpreter() const
