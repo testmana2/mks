@@ -4,6 +4,7 @@
 #include <pMenuBar.h>
 
 #include <QApplication>
+#include <QStyle>
 #include <QDebug>
 
 #define CommandsEditorModelColumnCount 1
@@ -50,6 +51,10 @@ QVariant CommandsEditorModel::data( const QModelIndex& index, int role ) const
 		}
 		case Qt::EditRole:
 			return QVariant::fromValue( command );
+		case Qt::SizeHintRole: {
+			const int height = QApplication::style()->pixelMetric( QStyle::PM_IndicatorHeight );
+			return QSize( -1, height );
+		}
 	}
 	
 	return QVariant();
@@ -238,7 +243,41 @@ QModelIndex CommandsEditorModel::addCommand( const QModelIndex& menuIndex, const
 
 void CommandsEditorModel::swapCommand( const QModelIndex& menuIndex, int fromCommand, int toCommand )
 {
-	#warning FIX ME ASAP
+	const QString menu = this->menu( menuIndex );
+	
+	if ( menu.isEmpty() || fromCommand < 0 || toCommand < 0 || fromCommand == toCommand ) {
+		return;
+	}
+	
+	pCommandList& commands = mCommands[ menu ];
+	const int count = commands.count();
+	
+	if ( fromCommand >= count || toCommand >= count ) {
+		return;
+	}
+	
+	emit layoutAboutToBeChanged();
+	
+	const QModelIndex from = index( fromCommand, 0, menuIndex );
+	const QModelIndex to = index( toCommand, 0, menuIndex );
+	const QModelIndexList oldIndexes = persistentIndexList();
+	QModelIndexList newIndexes = persistentIndexList();
+	const int fromIndex = oldIndexes.indexOf( from );
+	const int toIndex = oldIndexes.indexOf( to );
+	
+	if ( fromIndex != -1 ) {
+		newIndexes[ fromIndex ] = to;
+	}
+	
+	if ( toIndex != -1 ) {
+		newIndexes[ toIndex ] = from;
+	}
+	
+	commands.swap( fromCommand, toCommand );
+	
+	changePersistentIndexList( oldIndexes, newIndexes );
+	
+	emit layoutChanged();
 }
 
 void CommandsEditorModel::revert()

@@ -26,6 +26,7 @@ protected:
 	
 	void setCommand( const QModelIndex& commandIndex );
 	void getCommand( const QModelIndex& commandIndex );
+	void updateState();
 
 protected slots:
 	void tvCommands_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected );

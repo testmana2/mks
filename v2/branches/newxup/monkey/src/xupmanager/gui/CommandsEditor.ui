@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>426</height>
+    <width>398</width>
+    <height>424</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -138,6 +138,12 @@
              <height>16777215</height>
             </size>
            </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="uniformItemSizes">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="2" column="0" colspan="2">
@@ -241,6 +247,9 @@
       </item>
       <item row="0" column="0" rowspan="4">
        <widget class="QTreeView" name="tvCommands">
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
         <property name="uniformRowHeights">
          <bool>true</bool>
         </property>
