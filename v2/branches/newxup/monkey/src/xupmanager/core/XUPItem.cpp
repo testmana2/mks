@@ -12,12 +12,10 @@ XUPItem::XUPItem( const QDomElement& node, XUPItem* parent )
 	mDomElement = node;
 	mParentItem = parent;
 	
-	{ /* FIX old format projects */
-		if (!mDomElement.attribute("content").isEmpty())
-		{
-			setContent(mDomElement.attribute("content"));
-			mDomElement.removeAttribute("content");
-		}
+	// FIX old format projects
+	if ( !mDomElement.attribute( "content" ).isEmpty() ) {
+		setContent( mDomElement.attribute( "content" ) );
+		mDomElement.removeAttribute( "content" );
 	}
 }
 
