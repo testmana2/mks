@@ -1108,7 +1108,7 @@ void pMonkeyStudio::setAutoEolConversion( bool convert )
 	\details Return true if eol are convert, else false
 */
 bool pMonkeyStudio::autoEolConversion()
-{ return MonkeyCore::settings()->value( settingsPath() +"/AutoEolConversion", true ).toBool(); }
+{ return MonkeyCore::settings()->value( settingsPath() +"/AutoEolConversion", false ).toBool(); }
 
 /*!
 	\details Set the default used codec for opening/saving files

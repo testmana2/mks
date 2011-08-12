@@ -79,6 +79,7 @@ public:
 	pCommand processCommand( pCommand );
 	
 	static QString errorToString( QProcess::ProcessError error );
+	static QString variablesHelp();
 
 protected:
 	int mTimerId;
