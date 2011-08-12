@@ -466,6 +466,14 @@ void XUPProjectItem::addCommands( const QString& mnu, const QString& text, pComm
 	mInstalledActions << action;
 }
 
+void XUPProjectItem::addSeparator( const QString& mnu )
+{
+	static int i = 0;
+	QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( QString( "*separator%1*" ).arg( i++ ) ) );
+	action->setSeparator( true );
+	mInstalledActions << action;
+}
+
 void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
 {
 	pCommandList cmds;

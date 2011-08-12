@@ -120,6 +120,7 @@ public:
 	 * XUPProjectItem remembers create QAction's and deletes it by uninstallCommands()
 	 */
 	virtual void addCommand( pCommand& cmd, const QString& mnu );
+	void addSeparator( const QString& mnu );
 	void addCommands( const QString& mnu, const QString& text, pCommandList& cmds );
 	
 protected:

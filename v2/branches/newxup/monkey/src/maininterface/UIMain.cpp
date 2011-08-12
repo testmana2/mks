@@ -243,14 +243,6 @@ void UIMain::initMenuBar()
 	mb->endGroup();
 	mb->menu( "mBuilder", tr( "Build" ) )->menuAction()->setEnabled( false );
 	mb->menu( "mBuilder" )->menuAction()->setVisible( false );
-	mb->beginGroup( "mBuilder" );
-		mb->menu( "mBuild", tr( "&Build" ), QIcon( ":/build/icons/build/build.png" ) );
-		mb->menu( "mRebuild", tr( "&Rebuild" ), QIcon( ":/build/icons/build/rebuild.png" ) );
-		mb->menu( "mClean", tr( "&Clean" ), QIcon( ":/build/icons/build/clean.png" ) );
-		mb->menu( "mExecute", tr( "&Execute" ), QIcon( ":/build/icons/build/execute.png" ) );
-		mb->menu( "mUserCommands", tr( "&User Commands" ), QIcon( ":/build/icons/build/misc.png" ) );
-		mb->action( "aSeparator1" );
-	mb->endGroup();
 	mb->menu( "mDebugger", tr( "Debugger" ) )->menuAction()->setEnabled( false );
 	mb->menu( "mDebugger" )->menuAction()->setVisible( false );
 	mb->menu( "mInterpreter", tr( "Interpreter" ) )->menuAction()->setEnabled( false );
