@@ -243,8 +243,8 @@ void pOpenedFileExplorer::selectionModel_selectionChanged( const QItemSelection&
 void pOpenedFileExplorer::on_tvFiles_customContextMenuRequested( const QPoint& pos )
 {
 	QMenu menu;
-	menu.addAction( MonkeyCore::menuBar()->action( "mFile/mClose/aCurrent" ) );
-	menu.addAction( MonkeyCore::menuBar()->action( "mFile/mSave/aCurrent" ) );
+	menu.addAction( MonkeyCore::menuBar()->action( "mFile/aCloseCurrent" ) );
+	menu.addAction( MonkeyCore::menuBar()->action( "mFile/aSaveCurrent" ) );
 	menu.addAction( MonkeyCore::menuBar()->action( "mFile/aReload" ) );
 	menu.addSeparator();
 	menu.addAction( mSortMenu->menuAction() );

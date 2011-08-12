@@ -233,12 +233,12 @@ void pWorkspace::updateGuiState( pAbstractChild* document )
 	multitoolbar_notifyChanges();
 
 	// update file menu
-	MonkeyCore::menuBar()->action( "mFile/mSave/aCurrent" )->setEnabled( modified );
-	MonkeyCore::menuBar()->action( "mFile/mSave/aAll" )->setEnabled( hasDocument );
-	MonkeyCore::menuBar()->action( "mFile/mClose/aCurrent" )->setEnabled( hasDocument );
-	MonkeyCore::menuBar()->action( "mFile/mClose/aAll" )->setEnabled( hasDocument );
-	MonkeyCore::menuBar()->action( "mFile/aReload" )->setEnabled( hasDocument );
+	MonkeyCore::menuBar()->action( "mFile/aSaveCurrent" )->setEnabled( modified );
+	MonkeyCore::menuBar()->action( "mFile/aSaveAll" )->setEnabled( hasDocument );
 	MonkeyCore::menuBar()->action( "mFile/aSaveAsBackup" )->setEnabled( hasDocument );
+	MonkeyCore::menuBar()->action( "mFile/aCloseCurrent" )->setEnabled( hasDocument );
+	MonkeyCore::menuBar()->action( "mFile/aCloseAll" )->setEnabled( hasDocument );
+	MonkeyCore::menuBar()->action( "mFile/aReload" )->setEnabled( hasDocument );
 	MonkeyCore::menuBar()->action( "mFile/aQuickPrint" )->setEnabled( print );
 	MonkeyCore::menuBar()->action( "mFile/aPrint" )->setEnabled( print );
 
@@ -425,7 +425,7 @@ void pWorkspace::handleDocument( pAbstractChild* document )
 	connect( document, SIGNAL( fileClosed() ), this, SLOT( document_fileClosed() ) );
 	connect( document, SIGNAL( fileReloaded() ), this, SLOT( document_fileReloaded() ) );
 	// update file menu
-	connect( document, SIGNAL( modifiedChanged( bool ) ), MonkeyCore::menuBar()->action( "mFile/mSave/aCurrent" ), SLOT( setEnabled( bool ) ) );
+	connect( document, SIGNAL( modifiedChanged( bool ) ), MonkeyCore::menuBar()->action( "mFile/aSaveCurrent" ), SLOT( setEnabled( bool ) ) );
 	// update edit menu
 	connect( document, SIGNAL( undoAvailableChanged( bool ) ), MonkeyCore::menuBar()->action( "mEdit/aUndo" ), SLOT( setEnabled( bool ) ) );
 	connect( document, SIGNAL( redoAvailableChanged( bool ) ), MonkeyCore::menuBar()->action( "mEdit/aRedo" ), SLOT( setEnabled( bool ) ) );
@@ -454,7 +454,7 @@ void pWorkspace::unhandleDocument( pAbstractChild* document )
 	disconnect( document, SIGNAL( fileClosed() ), this, SLOT( document_fileClosed() ) );
 	disconnect( document, SIGNAL( fileReloaded() ), this, SLOT( document_fileReloaded() ) );
 	// update file menu
-	disconnect( document, SIGNAL( modifiedChanged( bool ) ), MonkeyCore::menuBar()->action( "mFile/mSave/aCurrent" ), SLOT( setEnabled( bool ) ) );
+	disconnect( document, SIGNAL( modifiedChanged( bool ) ), MonkeyCore::menuBar()->action( "mFile/aSaveCurrent" ), SLOT( setEnabled( bool ) ) );
 	// update edit menu
 	disconnect( document, SIGNAL( undoAvailableChanged( bool ) ), MonkeyCore::menuBar()->action( "mEdit/aUndo" ), SLOT( setEnabled( bool ) ) );
 	disconnect( document, SIGNAL( redoAvailableChanged( bool ) ), MonkeyCore::menuBar()->action( "mEdit/aRedo" ), SLOT( setEnabled( bool ) ) );
