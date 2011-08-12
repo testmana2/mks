@@ -26,6 +26,7 @@
 
 #include <QDir>
 
+// Q_GLOBAL_STATIC( Type, accessorMemberName )
 QPointer<QtVersionManager> QMake::mQtVersionManager = 0;
 
 QWidget* QMake::settingsWidget()
@@ -206,21 +207,21 @@ bool QMake::install()
 	mFilters[ "INCLUDEPATH" ].icon = "includepath.png";
 	mFilters[ "INCLUDEPATH" ].filters.clear();
 	mFilters[ "INCLUDEPATH" ].type = DocumentFilter::Path;
-	mFilters[ "INCLUDEPATH" ].filtered = true;
+	mFilters[ "INCLUDEPATH" ].filtered = false; // was true
 	
 	mFilters[ "DEPENDPATH" ].weight = weight++;
 	mFilters[ "DEPENDPATH" ].label = QMakeProjectItem::tr( "Depends Paths" );
 	mFilters[ "DEPENDPATH" ].icon = "dependpath.png";
 	mFilters[ "DEPENDPATH" ].filters.clear();
 	mFilters[ "DEPENDPATH" ].type = DocumentFilter::Path;
-	mFilters[ "DEPENDPATH" ].filtered = true;
+	mFilters[ "DEPENDPATH" ].filtered = false; // was true
 	
 	mFilters[ "VPATH" ].weight = weight++;
 	mFilters[ "VPATH" ].label = QMakeProjectItem::tr( "Virtuals Paths" );
 	mFilters[ "VPATH" ].icon = "vpath.png";
 	mFilters[ "VPATH" ].filters.clear();
 	mFilters[ "VPATH" ].type = DocumentFilter::Path;
-	mFilters[ "VPATH" ].filtered = true;
+	mFilters[ "VPATH" ].filtered = false; // was true
 	
 	//
 	mFilters[ "LIBS" ].weight = weight++;
@@ -228,14 +229,14 @@ bool QMake::install()
 	mFilters[ "LIBS" ].icon = "libs.png";
 	mFilters[ "LIBS" ].filters.clear();
 	mFilters[ "LIBS" ].type = DocumentFilter::Standard;
-	mFilters[ "LIBS" ].filtered = true;
+	mFilters[ "LIBS" ].filtered = false; // was true
 	
 	mFilters[ "DEFINES" ].weight = weight++;
 	mFilters[ "DEFINES" ].label = QMakeProjectItem::tr( "Defines" );
 	mFilters[ "DEFINES" ].icon = "defines.png";
 	mFilters[ "DEFINES" ].filters.clear();
 	mFilters[ "DEFINES" ].type = DocumentFilter::Standard;
-	mFilters[ "DEFINES" ].filtered = true;
+	mFilters[ "DEFINES" ].filtered = false; // was true
 	
 	MonkeyCore::projectTypesIndex()->registerType( PLUGIN_NAME, &QMakeProjectItem::staticMetaObject, mFilters );
 	return true;
