@@ -568,7 +568,7 @@ void QMakeProjectItem::installCommands()
 			{
 				cmd.setArguments( "debug" );
 			}
-			addCommand( cmd, "mBuilder/mBuild" );
+			addCommand( cmd, "mBuilder" );
 			cmdBuildDebug = cmd;
 		}
 		
@@ -581,7 +581,7 @@ void QMakeProjectItem::installCommands()
 			{
 				cmd.setArguments( "release" );
 			}
-			addCommand( cmd, "mBuilder/mBuild" );
+			addCommand( cmd, "mBuilder" );
 			cmdBuildRelease = cmd;
 		}
 		
@@ -591,8 +591,10 @@ void QMakeProjectItem::installCommands()
 			cmd = cmdBuild;
 			cmd.setText( tr( "Build All" ) );
 			cmd.setArguments( "all" );
-			addCommand( cmd, "mBuilder/mBuild" );
+			addCommand( cmd, "mBuilder" );
 		}
+		
+		addSeparator(  "mBuilder" );
 		
 		// clean debug
 		if ( haveDebug || haveDebugRelease )
@@ -607,7 +609,7 @@ void QMakeProjectItem::installCommands()
 			{
 				cmd.setArguments( "clean" );
 			}
-			addCommand( cmd, "mBuilder/mClean" );
+			addCommand( cmd, "mBuilder" );
 		}
 		
 		// clean release
@@ -623,7 +625,7 @@ void QMakeProjectItem::installCommands()
 			{
 				cmd.setArguments( "clean" );
 			}
-			addCommand( cmd, "mBuilder/mClean" );
+			addCommand( cmd, "mBuilder" );
 		}
 		
 		// clean all
@@ -632,12 +634,13 @@ void QMakeProjectItem::installCommands()
 			cmd = cmdBuild;
 			cmd.setText( tr( "Clean All" ) );
 			cmd.setArguments( "clean" );
-			addCommand( cmd, "mBuilder/mClean" );
+			addCommand( cmd, "mBuilder" );
 		}
 
 		pCommand cmdDistcleanRelease;
 		pCommand cmdDistcleanDebug;
 		pCommand cmdDistclean;
+		pCommand cmdQmake;
 		
 		// distclean debug
 		if ( haveDebug || haveDebugRelease )
@@ -652,7 +655,7 @@ void QMakeProjectItem::installCommands()
 			{
 				cmd.setArguments( "distclean" );
 			}
-			addCommand( cmd, "mBuilder/mClean" );
+			addCommand( cmd, "mBuilder" );
 			cmdDistcleanDebug = cmd;
 		}
 		
@@ -669,7 +672,7 @@ void QMakeProjectItem::installCommands()
 			{
 				cmd.setArguments( "distclean" );
 			}
-			addCommand( cmd, "mBuilder/mClean" );
+			addCommand( cmd, "mBuilder" );
 			cmdDistcleanRelease = cmd;
 		}
 		
@@ -679,13 +682,12 @@ void QMakeProjectItem::installCommands()
 			cmd = cmdBuild;
 			cmd.setText( tr( "Distclean All" ) );
 			cmd.setArguments( "distclean" );
-			addCommand( cmd, "mBuilder/mClean" );
+			addCommand( cmd, "mBuilder" );
 			cmdDistclean = cmd;
 		}
 		
-		pCommand cmdQmake;
+		addSeparator(  "mBuilder" );
 		
-		// add qt commands only if possible
 		if ( version.isValid() )
 		{
 			// qmake command
@@ -696,8 +698,89 @@ void QMakeProjectItem::installCommands()
 			cmd.setWorkingDirectory( "$cpp$" );
 			cmd.setProject( this );
 			cmd.setSkipOnError( false );
-			addCommand( cmd, "mBuilder" );
 			cmdQmake = cmd;
+			
+			// rebuild debug
+			if ( haveDebug || haveDebugRelease )
+			{
+				pCommandList cmds;
+				cmds << cmdDistcleanDebug << cmdQmake << cmdBuildDebug;
+				addCommands( "mBuilder", tr( "Rebuild Debug" ), cmds );
+			}
+			
+			// rebuild release
+			if ( haveRelease || haveDebugRelease )
+			{
+				pCommandList cmds;
+				cmds << cmdDistcleanRelease << cmdQmake << cmdBuildRelease;
+				addCommands( "mBuilder", tr( "Rebuild Release" ), cmds );
+			}
+			
+			// rebuild all
+			if ( haveDebugRelease )
+			{
+				pCommandList cmds;
+				cmds << cmdDistclean << cmdQmake << cmdBuild;
+				addCommands( "mBuilder", tr( "Rebuild All" ), cmds );
+			}
+		}
+		
+		addSeparator(  "mBuilder" );
+		
+		// execute debug
+		if ( haveDebug || haveDebugRelease )
+		{
+			const QString debugTarget = targetFilePath( false, XUPProjectItem::DebugTarget );
+			
+			cmd = cmdBuild;
+			cmd.setText( tr( "Execute Debug" ) );
+			cmd.setCommand( debugTarget );
+			cmd.setArguments( QString() );
+			cmd.setWorkingDirectory( QFileInfo( debugTarget ).absolutePath() );
+			cmd.setParsers( QStringList() );
+			cmd.setTryAllParsers( false );
+			cmd.setExecutableCheckingEnabled( true );
+			addCommand( cmd, "mBuilder" );
+		}
+		
+		// execute release
+		if ( haveRelease || haveDebugRelease )
+		{
+			const QString releaseTarget = targetFilePath( false, XUPProjectItem::ReleaseTarget );
+			
+			cmd = cmdBuild;
+			cmd.setText( tr( "Execute Release" ) );
+			cmd.setCommand( releaseTarget );
+			cmd.setArguments( QString() );
+			cmd.setWorkingDirectory( QFileInfo( releaseTarget ).absolutePath() );
+			cmd.setParsers( QStringList() );
+			cmd.setTryAllParsers( false );
+			cmd.setExecutableCheckingEnabled( true );
+			addCommand( cmd, "mBuilder" );
+		}
+		
+		if ( !( haveDebug || haveDebugRelease ) && !( haveRelease || haveDebugRelease ) )
+		{
+			const QString defaultTarget = targetFilePath( false, XUPProjectItem::DefaultTarget);
+			
+			cmd = cmdBuild;
+			cmd.setText( tr( "Execute" ) );
+			cmd.setCommand( defaultTarget );
+			cmd.setArguments( QString() );
+			cmd.setWorkingDirectory( QFileInfo( defaultTarget ).absolutePath() );
+			cmd.setParsers( QStringList() );
+			cmd.setTryAllParsers( false );
+			cmd.setExecutableCheckingEnabled( true );
+			addCommand( cmd, "mBuilder" );
+		}
+		
+		addSeparator(  "mBuilder" );
+		
+		// add qt commands only if possible
+		if ( version.isValid() )
+		{
+			// qmake command
+			addCommand( cmdQmake, "mBuilder" );
 			
 			// lupdate command
 			cmd = pCommand();
@@ -718,83 +801,14 @@ void QMakeProjectItem::installCommands()
 			cmd.setProject( this );
 			cmd.setSkipOnError( false );
 			addCommand( cmd, "mBuilder" );
-		
-			// rebuild debug
-			if ( haveDebug || haveDebugRelease )
-			{
-				pCommandList cmds;
-				cmds << cmdDistcleanDebug << cmdQmake << cmdBuildDebug;
-				addCommands( "mBuilder/mRebuild", tr( "Rebuild Debug" ), cmds );
-			}
 			
-			// rebuild release
-			if ( haveRelease || haveDebugRelease )
-			{
-				pCommandList cmds;
-				cmds << cmdDistcleanRelease << cmdQmake << cmdBuildRelease;
-				addCommands( "mBuilder/mRebuild", tr( "Rebuild Release" ), cmds );
-			}
-			
-			// rebuild all
-			if ( haveDebugRelease )
-			{
-				pCommandList cmds;
-				cmds << cmdDistclean << cmdQmake << cmdBuild;
-				addCommands( "mBuilder/mRebuild", tr( "Rebuild All" ), cmds );
-			}
+			addSeparator(  "mBuilder" );
 		}
 		else if ( projectSettingsValue( "SHOW_QT_VERSION_WARNING", "1" ) == "1" )
 		{
 			setProjectSettingsValue( "SHOW_QT_VERSION_WARNING", "0" );
 			topLevelProject()->save();
 			MonkeyCore::messageManager()->appendMessage( tr( "Some actions can't be created, because there is no default Qt version setted, please go in your project settings ( %1 ) to fix this." ).arg( displayText() ) );
-		}
-		
-		// execute debug
-		if ( haveDebug || haveDebugRelease )
-		{
-			const QString debugTarget = targetFilePath( false, XUPProjectItem::DebugTarget );
-			
-			cmd = cmdBuild;
-			cmd.setText( tr( "Execute Debug" ) );
-			cmd.setCommand( debugTarget );
-			cmd.setArguments( QString() );
-			cmd.setWorkingDirectory( QFileInfo( debugTarget ).absolutePath() );
-			cmd.setParsers( QStringList() );
-			cmd.setTryAllParsers( false );
-			cmd.setExecutableCheckingEnabled( true );
-			addCommand( cmd, "mBuilder/mExecute" );
-		}
-		
-		// execute release
-		if ( haveRelease || haveDebugRelease )
-		{
-			const QString releaseTarget = targetFilePath( false, XUPProjectItem::ReleaseTarget );
-			
-			cmd = cmdBuild;
-			cmd.setText( tr( "Execute Release" ) );
-			cmd.setCommand( releaseTarget );
-			cmd.setArguments( QString() );
-			cmd.setWorkingDirectory( QFileInfo( releaseTarget ).absolutePath() );
-			cmd.setParsers( QStringList() );
-			cmd.setTryAllParsers( false );
-			cmd.setExecutableCheckingEnabled( true );
-			addCommand( cmd, "mBuilder/mExecute" );
-		}
-		
-		if ( !( haveDebug || haveDebugRelease ) && !( haveRelease || haveDebugRelease ) )
-		{
-			const QString defaultTarget = targetFilePath( false, XUPProjectItem::DefaultTarget);
-			
-			cmd = cmdBuild;
-			cmd.setText( tr( "Execute" ) );
-			cmd.setCommand( defaultTarget );
-			cmd.setArguments( QString() );
-			cmd.setWorkingDirectory( QFileInfo( defaultTarget ).absolutePath() );
-			cmd.setParsers( QStringList() );
-			cmd.setTryAllParsers( false );
-			cmd.setExecutableCheckingEnabled( true );
-			addCommand( cmd, "mBuilder/mExecute" );
 		}
 	}
 	
