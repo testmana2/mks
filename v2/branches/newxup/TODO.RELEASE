@@ -1,5 +1,3 @@
 - Check / Repair QMake plugin
 - Update templates.
-- Fix desktop tools ( linux )
-- Revoir dialog a propos des plugins.
 - Fix execute target (qmake, generic project)
