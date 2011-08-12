@@ -160,7 +160,7 @@ void pConsoleManagerStepModel::appendStep( const pConsoleManagerStep& step )
 	switch ( type ) {
 		case pConsoleManagerStep::Compiling: {
 			switch ( step.type() ) {
-				// add before last item ( count -1 -1 )
+				// add before last item (count -1 -1)
 				case pConsoleManagerStep::Warning:
 				case pConsoleManagerStep::Error: {
 					beginInsertRows( QModelIndex(), count -2, count -2 );
@@ -168,7 +168,7 @@ void pConsoleManagerStepModel::appendStep( const pConsoleManagerStep& step )
 					endInsertRows();
 					break;
 				}
-				// replace last (count -1 )
+				// replace last (count -1)
 				default: {
 					mSteps[ count -1 ] = step;
 					const QModelIndex index = this->index( step );
