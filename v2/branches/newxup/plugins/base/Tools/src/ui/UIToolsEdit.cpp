@@ -226,15 +226,7 @@ void UIToolsEdit::on_aDown_triggered()
 
 void UIToolsEdit::helpRequested()
 {
-	QString help = tr( "<b>Tools Editor</b> give you the possibility to use variables<br><br>"
-		"<b>$cpp$</b> : Current project path<br>"
-		"<b>$cp$</b> : Current project filepath<br>"
-		"<b>$cfp$</b> : Current tab path<br>"
-		"<b>$cf$</b> : Current tab filepath<br>"
-		"<b>$cip$</b> : Current item path<br>"
-		"<b>$ci$</b> : Current item filepath" );
-	
-	QWhatsThis::showText( mapToGlobal( rect().center() ), help );
+	QWhatsThis::showText( mapToGlobal( rect().center() ), pConsoleManager::variablesHelp() );
 }
 
 void UIToolsEdit::on_leCaption_editingFinished()

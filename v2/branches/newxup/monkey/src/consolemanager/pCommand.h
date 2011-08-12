@@ -53,10 +53,11 @@ class XUPProjectItem;
 class Q_MONKEY_EXPORT pCommand
 {
 public:
-	pCommand( const QString& t = QString::null )
+	pCommand( const QString& t = QString::null, const QString& p = QString::null )
 	{
 		mText = t;
 		mSkipOnError = false;
+		mWorkingDirectory = p;
 		mTryAllParsers = false;
 		mProject = 0;
 		mExecutableCheckingEnabled = false;

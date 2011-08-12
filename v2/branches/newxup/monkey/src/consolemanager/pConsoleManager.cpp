@@ -217,6 +217,22 @@ QString pConsoleManager::errorToString( QProcess::ProcessError error )
 }
 
 /*!
+	Return the help for variables.
+*/
+QString pConsoleManager::variablesHelp()
+{
+	return pConsoleManager::tr(
+		"<b>Console Manager Variables</b><br><br>"
+		"<b>$cpp$</b> : Current project path<br>"
+		"<b>$cp$</b> : Current project filepath<br>"
+		"<b>$cfp$</b> : Current tab path<br>"
+		"<b>$cf$</b> : Current tab filepath<br>"
+		"<b>$cip$</b> : Current item path<br>"
+		"<b>$ci$</b> : Current item filepath"
+	);
+}
+
+/*!
 	Handler of timer event
 
 	Exucutes next command, if there is available in the list, and no currently running commands

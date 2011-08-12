@@ -6,6 +6,7 @@
 #include <pConsoleManager.h>
 #include <pMenuBar.h>
 
+#include <QWhatsThis>
 #include <QDebug>
 
 CommandsEditor::CommandsEditor( QWidget* parent )
@@ -120,7 +121,7 @@ void CommandsEditor::on_tbCommandAdd_clicked()
 	const QModelIndex index = ui->tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	const bool isAction = index.isValid() && index.parent() != QModelIndex();
 	const QModelIndex menuIndex = isAction ? index.parent() : index;
-	const QModelIndex commandIndex = mModel->addCommand( menuIndex, pCommand( tr( "New command" ) ) );
+	const QModelIndex commandIndex = mModel->addCommand( menuIndex, pCommand( tr( "New command" ), "$cpp$" ) );
 	
 	if ( commandIndex.isValid() ) {
 		ui->tvCommands->setCurrentIndex( commandIndex );
@@ -140,4 +141,9 @@ void CommandsEditor::on_tbCommandDown_clicked()
 	const QModelIndex index = ui->tvCommands->selectionModel()->selectedIndexes().value( 0 );
 	mModel->swapCommand( index.parent(), index.row(), index.row() +1 );
 	updateState();
+}
+
+void CommandsEditor::on_tbHelp_clicked()
+{
+	QWhatsThis::showText( ui->tbHelp->mapToGlobal( ui->tbHelp->rect().bottomLeft() ), pConsoleManager::variablesHelp() );
 }
