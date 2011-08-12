@@ -99,5 +99,5 @@ bool MakefileProjectItem::edit()
 
 bool MakefileProjectItem::editProjectFiles()
 {
-	return false;
+	return edit();
 }
