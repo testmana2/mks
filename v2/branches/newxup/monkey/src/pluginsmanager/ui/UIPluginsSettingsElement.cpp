@@ -70,9 +70,7 @@ void UIPluginsSettingsElement::on_pbSettings_clicked()
 
 void UIPluginsSettingsElement::on_pbAbout_clicked()
 {
-	UIPluginsSettingsAbout psa( mPlugin, window() );
-	psa.adjustSize();
-	psa.exec();
+	UIPluginsSettingsAbout( mPlugin, qApp->activeWindow() ).exec();
 }
 
 void UIPluginsSettingsElement::on_cbNeverEnable_toggled( bool checked )
