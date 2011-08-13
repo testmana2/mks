@@ -1,11 +1,13 @@
 #ifndef XUPPAGEEDITOR_H
 #define XUPPAGEEDITOR_H
 
+#include "MonkeyExport.h"
+
 #include <QFrame>
 
 class XUPProjectItem;
 
-class XUPPageEditor : public QFrame
+class Q_MONKEY_EXPORT XUPPageEditor : public QFrame
 {
 	Q_OBJECT
 	

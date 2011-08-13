@@ -1,13 +1,14 @@
 #ifndef CommandsEDITORMODEL_H
 #define CommandsEDITORMODEL_H
 
-#include <QAbstractItemModel>
-
+#include "MonkeyExport.h"
 #include "xupmanager/core/XUPProjectItemHelper.h"
+
+#include <QAbstractItemModel>
 
 class pMenuBar;
 
-class CommandsEditorModel : public QAbstractItemModel
+class Q_MONKEY_EXPORT CommandsEditorModel : public QAbstractItemModel
 {
 	Q_OBJECT
 	

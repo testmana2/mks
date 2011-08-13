@@ -1,13 +1,15 @@
 #ifndef UISIMPLEQMAKEEDITOR_H
 #define UISIMPLEQMAKEEDITOR_H
 
+#include "MonkeyExport.h"
+
 #include <QDialog>
 
 class Ui_UIXUPEditor;
 class XUPPageEditor;
 class XUPProjectItem;
 
-class UIXUPEditor : public QDialog
+class Q_MONKEY_EXPORT UIXUPEditor : public QDialog
 {
 	Q_OBJECT
 	

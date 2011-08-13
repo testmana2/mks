@@ -1,6 +1,8 @@
 #ifndef XUPITEMVARIABLEEDITORMODEL_H
 #define XUPITEMVARIABLEEDITORMODEL_H
 
+#include "MonkeyExport.h"
+
 #include <QAbstractItemModel>
 #include <QHash>
 #include <QStringList>
@@ -8,7 +10,7 @@
 class XUPItem;
 class DocumentFilterMap;
 
-struct XUPItemVariableEditorModelItem {
+struct Q_MONKEY_EXPORT XUPItemVariableEditorModelItem {
 	typedef QList<XUPItemVariableEditorModelItem> List;
 	
 	XUPItemVariableEditorModelItem( const QString& string = QString::null, bool enabled = false, XUPItem* item = 0 ) {
@@ -35,7 +37,7 @@ struct XUPItemVariableEditorModelItem {
 	XUPItemVariableEditorModelItem::List children;
 };
 
-class XUPItemVariableEditorModel : public QAbstractItemModel {
+class Q_MONKEY_EXPORT XUPItemVariableEditorModel : public QAbstractItemModel {
 	Q_OBJECT
 
 public:

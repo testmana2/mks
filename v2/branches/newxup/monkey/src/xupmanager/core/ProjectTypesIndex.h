@@ -16,7 +16,7 @@ typedef QList<Pair_String_String> Pair_String_String_List;
 
 class XUPProjectItem;
 
-struct DocumentFilter
+struct Q_MONKEY_EXPORT DocumentFilter
 {
 	enum Type {
 		Standard = 0,
@@ -40,7 +40,7 @@ struct DocumentFilter
 	QStringList filters;
 };
 
-class DocumentFilterMap : public QMap<QString, DocumentFilter> // filter name, filter
+class Q_MONKEY_EXPORT DocumentFilterMap : public QMap<QString, DocumentFilter> // filter name, filter
 {
 public:
 	DocumentFilterMap( const QString& iconsPath = QString::null );
