@@ -1,13 +1,15 @@
 #ifndef XUPDYNAMICFOLDERITEM_H
 #define XUPDYNAMICFOLDERITEM_H
 
+#include "MonkeyExport.h"
+
 #include <QObject>
 
 #include "XUPItem.h"
 
-class pFileSystemModel;
+class QFileSystemModel;
 
-class XUPDynamicFolderItem : public QObject, public XUPItem
+class Q_MONKEY_EXPORT XUPDynamicFolderItem : public QObject, public XUPItem
 {
 	Q_OBJECT
 	friend class XUPDynamicFolderChildItem;
@@ -27,7 +29,7 @@ public:
 	void setRootPath( const QString& path, const QStringList& filters );
 
 protected:
-	pFileSystemModel* mFSModel;
+	QFileSystemModel* mFSModel;
 	QPersistentModelIndex mFSRootIndex;
 	QHash<QPersistentModelIndex, XUPItem*> mFSItems; // fs persistent index, item
 

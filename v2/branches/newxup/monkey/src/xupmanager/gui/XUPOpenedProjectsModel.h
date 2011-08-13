@@ -1,11 +1,13 @@
 #ifndef XUPOPENEDPROJECTSMODEL_H
 #define XUPOPENEDPROJECTSMODEL_H
 
+#include "MonkeyExport.h"
+
 #include <QAbstractListModel>
 
 class XUPProjectModel;
 
-class XUPOpenedProjectsModel : public QAbstractListModel
+class Q_MONKEY_EXPORT XUPOpenedProjectsModel : public QAbstractListModel
 {
 	Q_OBJECT
 	

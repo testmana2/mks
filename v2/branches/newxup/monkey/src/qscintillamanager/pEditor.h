@@ -70,7 +70,7 @@ public:
 	void autoDetectEol();
 
 protected:
-	struct SearchState
+	struct Q_MONKEY_EXPORT SearchState
     {
         SearchState() : inProgress(0) {}
 

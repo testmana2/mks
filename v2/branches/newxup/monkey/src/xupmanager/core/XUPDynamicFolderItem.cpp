@@ -6,18 +6,6 @@
 #include <QFileSystemModel>
 #include <QDebug>
 
-class pFileSystemModel : public QFileSystemModel
-{
-	friend class XUPDynamicFolderItem;
-	
-public:
-	pFileSystemModel( QObject* parent = 0 )
-		: QFileSystemModel( parent )
-	{
-		setNameFilterDisables( false );
-	}
-};
-
 class XUPDynamicFolderChildItem : public XUPItem
 {
 	friend class XUPDynamicFolderItem;
@@ -128,7 +116,7 @@ public:
 
 protected:
 	XUPDynamicFolderItem* mDynamicFolderItem;
-	pFileSystemModel* mFSModel;
+	QFileSystemModel* mFSModel;
 	QPersistentModelIndex mFSIndex;
 	
 	XUPDynamicFolderChildItem( XUPDynamicFolderItem* dynamicFolderItem, const QPersistentModelIndex& fsIndex, XUPItem* parent )
@@ -151,7 +139,8 @@ protected:
 XUPDynamicFolderItem::XUPDynamicFolderItem( const QDomElement& node, XUPItem* parent )
 	: QObject( parent->project() ), XUPItem( node, parent )
 {
-	mFSModel = new pFileSystemModel( this );
+	mFSModel = new QFileSystemModel( this );
+	mFSModel->setNameFilterDisables( false );
 	
 	connect( mFSModel, SIGNAL( columnsAboutToBeInserted( const QModelIndex&, int, int ) ), this, SLOT( columnsAboutToBeInserted( const QModelIndex&, int, int ) ) );
 	connect( mFSModel, SIGNAL( columnsAboutToBeMoved( const QModelIndex&, int, int, const QModelIndex&, int ) ), this, SLOT( columnsAboutToBeMoved( const QModelIndex&, int, int, const QModelIndex&, int ) ) );

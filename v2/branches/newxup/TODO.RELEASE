@@ -1,3 +1,5 @@
 - Check / Repair QMake plugin
 - Update templates.
 - Fix execute target (qmake, generic project)
+- create QMake parser
+- Fix launchpad bugs
