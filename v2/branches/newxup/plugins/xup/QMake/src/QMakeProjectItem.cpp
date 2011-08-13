@@ -9,6 +9,7 @@
 #include <CLIToolPlugin.h>
 #include <PluginsManager.h>
 #include <UIMain.h>
+#include <XUPProjectItemHelper.h>
 
 #include <pVersion.h>
 
@@ -42,6 +43,20 @@ QMakeProjectItem::~QMakeProjectItem()
 {
 }
 
+void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
+{
+	XUPProjectItem::addFiles( files, scope );
+	rebuildCache();
+	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
+}
+
+void QMakeProjectItem::removeValue( XUPItem* item )
+{
+	XUPProjectItem::removeValue( item );
+	rebuildCache();
+	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
+}
+
 QString QMakeProjectItem::toNativeString() const
 {
 	return QMake2XUP::convertToPro( mDocument );
@@ -51,6 +66,114 @@ QString QMakeProjectItem::projectType() const
 {
 	return PLUGIN_NAME;
 }
+
+bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
+{
+	QString buffer = QMake2XUP::convertFromPro( fileName, codec );
+	// parse content
+	QString errorMsg;
+	int errorLine;
+	int errorColumn;
+	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
+	{
+		topLevelProject()->setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
+		return false;
+	}
+	
+	// check project validity
+	mDomElement = mDocument.firstChildElement( "project" );
+	if ( mDomElement.isNull() )
+	{
+		topLevelProject()->setLastError("no project node" );
+		return false;
+	}
+	
+	// check xup version
+	const QString docVersion = mDomElement.attribute( "version" );
+	if ( pVersion( docVersion ) < XUP_VERSION ) {
+		topLevelProject()->setLastError( tr( "The document format is too old, current version is '%1', your document is '%2'" ).arg( XUP_VERSION ).arg( docVersion ) );
+		return false;
+	}
+	
+	// all is ok
+	mCodec = codec;
+	mFileName = fileName;
+	topLevelProject()->setLastError( QString::null );
+	
+	//qWarning() << mDocument.toString( 4 );
+	return analyze( this );
+}
+
+bool QMakeProjectItem::save()
+{
+	return XUPProjectItem::save();
+}
+
+QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType targetType)
+{
+	QString targetTypeString;
+	
+	switch ( targetType )
+	{
+		case XUPProjectItem::DefaultTarget:
+			targetTypeString = QLatin1String( "TARGET_DEFAULT" );
+			break;
+		case XUPProjectItem::DebugTarget:
+			targetTypeString = QLatin1String( "TARGET_DEBUG" );
+			break;
+		case XUPProjectItem::ReleaseTarget:
+			targetTypeString = QLatin1String( "TARGET_RELEASE" );
+			break;
+	}
+
+	XUPProjectItem* tlProject = topLevelProject();
+	const QString key = QString( "%1_%2" ).arg( PLATFORM_TYPE_STRING ).arg( targetTypeString );
+	QString target = tlProject->filePath( interpretContent( XUPProjectItemHelper::projectSettingsValue( this, key ) ) );
+	QFileInfo targetInfo( target );
+	
+	if ( !targetInfo.exists() || ( !targetInfo.isExecutable() && !QLibrary::isLibrary( target ) ) )
+	{
+		if ( allowToAskUser )
+		{
+			QString type;
+			
+			switch ( targetType )
+			{
+				case XUPProjectItem::DebugTarget:
+					type = tr( "debug" ) +" ";
+					break;
+				case XUPProjectItem::ReleaseTarget:
+					type = tr( "release" ) +" ";
+					break;
+				default:
+					break;
+			}
+			
+			const QString userTarget = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Point please project %1 target" ).arg( type ), tlProject->path() );
+			targetInfo.setFile( userTarget );
+			
+			if ( !userTarget.isEmpty() )
+			{
+				target = userTarget;
+			}
+			
+			if ( targetInfo.exists() )
+			{
+				XUPProjectItemHelper::setProjectSettingsValue( this, key, tlProject->relativeFilePath( userTarget ) );
+				save();
+			}
+		}
+	}
+	
+	return target;
+}
+
+
+
+
+
+
+
 
 bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 {
@@ -164,7 +287,7 @@ QString QMakeProjectItem::getVariableContent( const QString& variableName )
 		
 		QString result;
 		QtVersionManager* manager = QMake::versionManager();
-		const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
+		const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( this, "QT_VERSION" ) );
 		
 		if ( version.isValid() )
 		{
@@ -377,127 +500,11 @@ bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 	return true;
 }
 
-bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
-{
-	QString buffer = QMake2XUP::convertFromPro( fileName, codec );
-	// parse content
-	QString errorMsg;
-	int errorLine;
-	int errorColumn;
-	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
-	{
-		topLevelProject()->setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
-		return false;
-	}
-	
-	// check project validity
-	mDomElement = mDocument.firstChildElement( "project" );
-	if ( mDomElement.isNull() )
-	{
-		topLevelProject()->setLastError("no project node" );
-		return false;
-	}
-	
-	// check xup version
-	const QString docVersion = mDomElement.attribute( "version" );
-	if ( pVersion( docVersion ) < XUP_VERSION ) {
-		topLevelProject()->setLastError( tr( "The document format is too old, current version is '%1', your document is '%2'" ).arg( XUP_VERSION ).arg( docVersion ) );
-		return false;
-	}
-	
-	// all is ok
-	mCodec = codec;
-	mFileName = fileName;
-	topLevelProject()->setLastError( QString::null );
-	
-	//qWarning() << mDocument.toString( 4 );
-	
-	return analyze( this );
-}
-
-bool QMakeProjectItem::save()
-{
-	return XUPProjectItem::save();
-}
-
-QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType targetType)
-{
-	QString targetTypeString;
-	
-	switch ( targetType )
-	{
-		case XUPProjectItem::DefaultTarget:
-			targetTypeString = QLatin1String( "TARGET_DEFAULT" );
-			break;
-		case XUPProjectItem::DebugTarget:
-			targetTypeString = QLatin1String( "TARGET_DEBUG" );
-			break;
-		case XUPProjectItem::ReleaseTarget:
-			targetTypeString = QLatin1String( "TARGET_RELEASE" );
-			break;
-	}
-
-	XUPProjectItem* tlProject = topLevelProject();
-	const QString key = QString( "%1_%2" ).arg( PLATFORM_TYPE_STRING ).arg( targetTypeString );
-	QString target = tlProject->filePath( interpretContent( projectSettingsValue( key ) ) );
-	QFileInfo targetInfo( target );
-	
-	if ( !targetInfo.exists() || ( !targetInfo.isExecutable() && !QLibrary::isLibrary( target ) ) )
-	{
-		if ( allowToAskUser )
-		{
-			QString type;
-			
-			switch ( targetType )
-			{
-				case XUPProjectItem::DebugTarget:
-					type = tr( "debug" ) +" ";
-					break;
-				case XUPProjectItem::ReleaseTarget:
-					type = tr( "release" ) +" ";
-					break;
-				default:
-					break;
-			}
-			
-			const QString userTarget = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Point please project %1target" ).arg( type ), tlProject->path() );
-			targetInfo.setFile( userTarget );
-			
-			if ( !userTarget.isEmpty() )
-			{
-				target = userTarget;
-			}
-			
-			if ( targetInfo.exists() )
-			{
-				setProjectSettingsValue( key, tlProject->relativeFilePath( userTarget ) );
-				save();
-			}
-		}
-	}
-	
-	return target;
-}
-
-void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
-{
-	XUPProjectItem::addFiles( files, scope );
-	rebuildCache();
-	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
-}
-
-void QMakeProjectItem::removeValue( XUPItem* item )
-{
-	XUPProjectItem::removeValue( item );
-	rebuildCache();
-	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
-}
-
 void QMakeProjectItem::installCommands()
 {
 	// get plugins
 	CLIToolPlugin* bp = builder();
-		
+    
 	// config variable
 	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
 	QStringList config = documentFilters().splitValue( riProject->mVariableCache.value( "CONFIG" ) );
@@ -522,7 +529,7 @@ void QMakeProjectItem::installCommands()
 	
 	// get qt version
 	QtVersionManager* manager = QMake::versionManager();
-	const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
+	const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( this, "QT_VERSION" ) );
 	
 	// evaluate some variables
 	QString s;
@@ -804,9 +811,9 @@ void QMakeProjectItem::installCommands()
 			
 			addSeparator(  "mBuilder" );
 		}
-		else if ( projectSettingsValue( "SHOW_QT_VERSION_WARNING", "1" ) == "1" )
+		else if ( XUPProjectItemHelper::projectSettingsValue( this, "SHOW_QT_VERSION_WARNING", "1" ) == "1" )
 		{
-			setProjectSettingsValue( "SHOW_QT_VERSION_WARNING", "0" );
+			XUPProjectItemHelper::setProjectSettingsValue( this, "SHOW_QT_VERSION_WARNING", "0" );
 			topLevelProject()->save();
 			MonkeyCore::messageManager()->appendMessage( tr( "Some actions can't be created, because there is no default Qt version setted, please go in your project settings ( %1 ) to fix this." ).arg( displayText() ) );
 		}
@@ -815,243 +822,6 @@ void QMakeProjectItem::installCommands()
 	// install defaults commands
 	XUPProjectItem::installCommands();
 }
-
-XUPItem* QMakeProjectItem::projectSettingsScope( bool create ) const
-{
-	XUPProjectItem* project = topLevelProject();
-
-	if ( project )
-	{
-		const QString mScopeName = "XUPProjectSettings";
-		XUPItemList items = project->childrenList();
-
-		foreach ( XUPItem* child, items )
-		{
-			if ( child->type() == XUPItem::Scope && child->attribute( "name" ) == mScopeName )
-			{
-				return child;
-			}
-		}
-
-		if ( create )
-		{
-			XUPItem* scope = project->addChild( XUPItem::Scope, 0 );
-			scope->setAttribute( "name", mScopeName );
-
-			XUPItem* emptyline = project->addChild( XUPItem::EmptyLine, 1 );
-			emptyline->setAttribute( "count", "1" );
-
-			return scope;
-		}
-	}
-
-	return 0;
-}
-
-QStringList QMakeProjectItem::projectSettingsValues( const QString& variableName, const QStringList& defaultValues ) const
-{
-	QStringList values;
-	XUPProjectItem* project = topLevelProject();
-
-	if ( project )
-	{
-		XUPItem* scope = projectSettingsScope( false );
-
-		if ( scope )
-		{
-			XUPItemList variables = getVariables( scope, variableName, false );
-
-			foreach ( const XUPItem* variable, variables )
-			{
-				foreach ( const XUPItem* child, variable->childrenList() )
-				{
-					if ( child->type() == XUPItem::Value )
-					{
-						values << child->content();
-					}
-				}
-			}
-		}
-	}
-
-	if ( values.isEmpty() )
-	{
-		// a hack that allow xupproejct settings variable to be added to project node
-		if ( defaultValues.isEmpty() )
-		{
-			values = QStringList( attribute( variableName.toLower() ) );
-		}
-		else
-		{
-			values = defaultValues;
-		}
-	}
-
-	return values;
-}
-
-QString QMakeProjectItem::projectSettingsValue( const QString& variableName, const QString& defaultValue ) const 
-{
-	const QStringList dvalue = defaultValue.isEmpty() ? QStringList() : QStringList( defaultValue );
-	return projectSettingsValues(variableName, dvalue ).join( " " );
-}
-
-void QMakeProjectItem::setProjectSettingsValues( const QString& variableName, const QStringList& values )
-{
-	XUPProjectItem* project = topLevelProject();
-
-	if ( project )
-	{
-		XUPItem* scope = projectSettingsScope( !values.isEmpty() );
-
-		if ( !scope )
-		{
-			return;
-		}
-
-		XUPItemList variables = getVariables( scope, variableName, false );
-		XUPItem* variable = variables.value( 0 );
-		bool haveVariable = variable;
-
-		if ( !haveVariable && values.isEmpty() )
-		{
-			return;
-		}
-
-		if ( haveVariable && values.isEmpty() )
-		{
-			scope->removeChild( variable );
-			return;
-		}
-
-		if ( !haveVariable )
-		{
-			variable = scope->addChild( XUPItem::Variable );
-			variable->setAttribute( "name", variableName );
-			variable->setAttribute( "multiline", "true" );
-		}
-
-		QStringList cleanValues = values;
-		foreach ( XUPItem* child, variable->childrenList() )
-		{
-			if ( child->type() == XUPItem::Value )
-			{
-				QString value = child->content();
-				if ( cleanValues.contains( value ) )
-				{
-					cleanValues.removeAll( value );
-				}
-				else if ( !cleanValues.contains( value ) )
-				{
-					variable->removeChild( child );
-				}
-			}
-		}
-
-		foreach ( const QString& value, cleanValues )
-		{
-			XUPItem* valueItem = variable->addChild( XUPItem::Value );
-			valueItem->setContent( value );
-		}
-	}
-}
-
-void QMakeProjectItem::setProjectSettingsValue( const QString& variable, const QString& value ) 
-{
-	setProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) );
-}
-
-void QMakeProjectItem::addProjectSettingsValues( const QString& variableName, const QStringList& values )
-{
-	XUPProjectItem* project = topLevelProject();
-
-	if ( project )
-	{
-		XUPItem* scope = projectSettingsScope( !values.isEmpty() );
-
-		if ( !scope )
-		{
-			return;
-		}
-
-		XUPItemList variables = getVariables( scope, variableName, false );
-		XUPItem* variable = variables.value( 0 );
-		bool haveVariable = variable;
-
-		if ( !haveVariable && values.isEmpty() )
-		{
-			return;
-		}
-
-		if ( haveVariable && values.isEmpty() )
-		{
-			return;
-		}
-
-		if ( !haveVariable )
-		{
-			variable = scope->addChild( XUPItem::Variable );
-			variable->setAttribute( "name", variableName );
-			variable->setAttribute( "multiline", "true" );
-		}
-
-		QStringList cleanValues = values;
-		foreach ( XUPItem* child, variable->childrenList() )
-		{
-			if ( child->type() == XUPItem::Value )
-			{
-				QString value = child->content();
-				if ( cleanValues.contains( value ) )
-				{
-					cleanValues.removeAll( value );
-				}
-			}
-		}
-
-		foreach ( const QString& value, cleanValues )
-		{
-			XUPItem* valueItem = variable->addChild( XUPItem::Value );
-			valueItem->setContent( value );
-		}
-	}
-}
-
-void QMakeProjectItem::addProjectSettingsValue( const QString& variable, const QString& value )
-{
-	addProjectSettingsValues( variable, value.isEmpty() ? QStringList() : QStringList( value ) );
-}
-
-/*QStringList QMakeProjectItem::splitMultiLineValue( const QString& value )
-{
-	QStringList tmpValues = value.split( " ", QString::SkipEmptyParts );
-	bool inStr = false;
-	QStringList multivalues;
-	QString ajout;
-
-	for(int ku = 0;ku < tmpValues.size();ku++)
-	{
-		if(tmpValues.value(ku).startsWith('"') )
-				inStr = true;
-		if(inStr)
-		{
-			if(ajout != "")
-					ajout += " ";
-			ajout += tmpValues.value(ku);
-			if(tmpValues.value(ku).endsWith('"') )
-			{
-					multivalues += ajout;
-					ajout = "";
-					inStr = false;
-			}
-		}
-		else
-		{
-			multivalues += tmpValues.value(ku);
-		}
-	}
-
-	return multivalues;
-}*/
 
 bool QMakeProjectItem::edit()
 {
@@ -1079,9 +849,8 @@ CLIToolPlugin* QMakeProjectItem::builder() const
 	QString name;
 	
 	QtVersionManager* manager = QMake::versionManager();
-	const QtVersion version = manager->version( projectSettingsValue( "QT_VERSION" ) );
-	if ( version.isValid() &&
-		 version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ))
+	const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( const_cast<QMakeProjectItem*>( this ), "QT_VERSION" ) );
+	if ( version.isValid() && version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ) )
 	{
 		name = "MSVCMake";
 	}

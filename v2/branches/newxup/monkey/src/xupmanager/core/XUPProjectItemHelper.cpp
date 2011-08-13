@@ -59,7 +59,7 @@ void XUPProjectItemHelper::setProjectSettingsValues( XUPProjectItem* project, co
 	}
 }
 
-QStringList XUPProjectItemHelper::projectSettingsValues( XUPProjectItem* project, const QString& key )
+QStringList XUPProjectItemHelper::projectSettingsValues( XUPProjectItem* project, const QString& key, const QStringList& defaultValues )
 {
 	XUPItem* variable = project->getVariable( project, settingsKey( key ) );
 	QStringList values;
@@ -72,7 +72,7 @@ QStringList XUPProjectItemHelper::projectSettingsValues( XUPProjectItem* project
 		}
 	}
 	
-	return values;
+	return values.isEmpty() ? defaultValues : values;
 }
 
 void XUPProjectItemHelper::setProjectSettingsValue( XUPProjectItem* project, const QString& key, const QString& value )
@@ -80,9 +80,10 @@ void XUPProjectItemHelper::setProjectSettingsValue( XUPProjectItem* project, con
 	XUPProjectItemHelper::setProjectSettingsValues( project, key, QStringList( value ) );
 }
 
-QString XUPProjectItemHelper::projectSettingsValue( XUPProjectItem* project, const QString& key )
+QString XUPProjectItemHelper::projectSettingsValue( XUPProjectItem* project, const QString& key, const QString& defaultValue )
 {
-	return XUPProjectItemHelper::projectSettingsValues( project, key ).join( " " );
+    const QStringList values = XUPProjectItemHelper::projectSettingsValues( project, key );
+	return values.isEmpty() ? defaultValue : values.join( " " );
 }
 
 XUPItem* XUPProjectItemHelper::projectCommandsScope( XUPProjectItem* project, bool create )

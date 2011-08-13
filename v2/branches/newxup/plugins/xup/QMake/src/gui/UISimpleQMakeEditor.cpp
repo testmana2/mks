@@ -7,6 +7,7 @@
 #include <pMonkeyStudio.h>
 #include <MonkeyCore.h>
 #include <PluginsManager.h>
+#include <XUPProjectItemHelper.h>
 
 #include <QInputDialog>
 #include <QMessageBox>
@@ -123,7 +124,7 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	lwQtModules->clear();
 	lwModules->clear();
 	
-	mQtVersion = manager->version( mProject->projectSettingsValue( "QT_VERSION" ) );
+	mQtVersion = manager->version( XUPProjectItemHelper::projectSettingsValue( mProject, "QT_VERSION" ) );
 	
 	// qt versions
 	foreach ( const QtVersion& qv, manager->versions() )
@@ -918,7 +919,7 @@ void UISimpleQMakeEditor::accept()
 		mQtVersion = qtVersionItem->data( Qt::UserRole ).value<QtVersion>();
 	}
 
-	mProject->setProjectSettingsValue( "QT_VERSION", mQtVersion.Version );
+	XUPProjectItemHelper::setProjectSettingsValue( mProject, "QT_VERSION", mQtVersion.Version );
 	
 	// close dialog
 	QDialog::accept();
