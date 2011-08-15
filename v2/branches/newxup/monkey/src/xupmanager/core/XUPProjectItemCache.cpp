@@ -2,8 +2,6 @@
 #include "XUPProjectItem.h"
 #include "XUPProjectItemHelper.h"
 
-#include <QStringList>
-#include <QProcess>
 #include <QDebug>
 
 uint qHash( const XUPProjectItemCache::ProjectPointer& pointer )
@@ -132,20 +130,16 @@ bool XUPProjectItemCacheBackend::cacheRecursiveScanHook( XUPProjectItem* project
 
 // XUPProjectItemCache
 
-XUPProjectItemCache::XUPProjectItemCache()
-{
-}
-
 XUPProjectItemCache::ProjectCache& XUPProjectItemCache::cachedData() const
 {
 	return mCache;
 }
 
-void XUPProjectItemCache::build( XUPProjectItem* project, XUPItem* root )
+void XUPProjectItemCache::build( XUPProjectItem* project )
 {
 //qWarning() << "*** BUILD" << project->fileName() << ( root ? root->displayText() : "" );
 	clear( project );
-	update( project, root );
+	update( project, project );
 }
 
 void XUPProjectItemCache::update( XUPProjectItem* project, XUPItem* root )
@@ -161,6 +155,7 @@ void XUPProjectItemCache::clear( XUPProjectItem* project )
 	mCache.remove( project );
 }
 
+#ifndef QT_NO_DEBUG
 void XUPProjectItemCache::debug( bool full ) const
 {
 	int indent = 0;
@@ -187,6 +182,7 @@ void XUPProjectItemCache::debug( bool full ) const
 		}
 	}
 }
+#endif
 
 QString XUPProjectItemCache::value( XUPProjectItem* project, const QString& variable ) const
 {
@@ -194,7 +190,7 @@ QString XUPProjectItemCache::value( XUPProjectItem* project, const QString& vari
 		const_cast<XUPProjectItemCache*>( this )->build( project );
 	}
 	
-	return mCache[ project ][ variable ];
+	return mCache.value( project ).value( variable );
 }
 
 QStringList XUPProjectItemCache::values( XUPProjectItem* project, const QString& variable ) const

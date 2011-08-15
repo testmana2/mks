@@ -1,29 +1,20 @@
 #include "QMakeProjectItem.h"
-#include "QMake2XUP.h"
-#include "QMake.h"
 #include "QtVersionManager.h"
+#include "QMake.h"
+#include "QMake2XUP.h"
 #include "UISimpleQMakeEditor.h"
-#include "XUPProjectItemCache.h"
 
-#include <pMonkeyStudio.h>
-#include <pQueuedMessageToolBar.h>
-#include <CLIToolPlugin.h>
-#include <PluginsManager.h>
-#include <UIMain.h>
 #include <XUPProjectItemHelper.h>
+#include <UIMain.h>
+#include <CLIToolPlugin.h>
+#include <pQueuedMessageToolBar.h>
+#include <PluginsManager.h>
 
 #include <pVersion.h>
 
-#include <QObject>
-#include <QApplication>
-#include <QTextCodec>
-#include <QFile>
-#include <QDir>
-#include <QFileInfo>
 #include <QProcess>
 #include <QLibrary>
 #include <QFileDialog>
-
 #include <QDebug>
 
 #if defined( Q_OS_WIN )
