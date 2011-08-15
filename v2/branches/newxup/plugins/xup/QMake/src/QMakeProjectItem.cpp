@@ -3,6 +3,7 @@
 #include "QMake.h"
 #include "QtVersionManager.h"
 #include "UISimpleQMakeEditor.h"
+#include "XUPProjectItemCache.h"
 
 #include <pMonkeyStudio.h>
 #include <pQueuedMessageToolBar.h>
@@ -33,6 +34,178 @@
 	#define PLATFORM_TYPE_STRING "OTHERS_PLATFORM"
 #endif
 
+QMakeProjectItemCacheBackend QMakeProjectItem::mCacheBackend = QMakeProjectItemCacheBackend( QMakeProjectItem::cache() );
+
+// QMakeProjectItemCacheBackend
+
+QMakeProjectItemCacheBackend::QMakeProjectItemCacheBackend( XUPProjectItemCache* cache )
+	: XUPProjectItemCacheBackend( cache )
+{
+}
+
+QString QMakeProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const
+{
+	/*
+		$$[QT_INSTALL_HEADERS] : read content from qt conf
+		$${QT_INSTALL_HEADERS} or $$QT_INSTALL_HEADERS : read content from var
+		$$(QT_INSTALL_HEADERS) : read content from environment variable when qmake run
+		$(QTDIR) : read from generated makefile - Hmm what does that mean ?!
+	*/
+	
+	if ( !mCache ) {
+		return QString::null;
+	}
+	
+	XUPProjectItemCache::ProjectCache& cachedData = mCache->cachedData();
+	
+	const QString name = QString( variable ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
+	
+	// environment variable
+	if ( variable.startsWith( "$$(" ) || variable.startsWith( "$(" ) ) {
+		if ( name == "PWD" ) {
+			return project->path();
+		}
+		else {
+			return QString::fromLocal8Bit( qgetenv( name.toLocal8Bit().constData() ) );
+		}
+	}
+	// qmake variable
+	else if ( variable.startsWith( "$$[" ) ) {
+		// caching result for now, we may disable if needed as user can change qmake variable outside
+		if ( cachedData.value( project ).contains( name ) ) {
+			return cachedData[ project ][ name ];
+		}
+		
+		const QtVersion version = QMake::versionManager()->version( XUPProjectItemHelper::projectSettingsValue( project, "QT_VERSION" ) );
+		QString output;
+		
+		if ( version.isValid() ) {
+			QProcess query;
+			query.start( QString( "%1 -query %2" ).arg( version.qmake() ).arg( name ) );
+			query.waitForFinished();
+			output = QString::fromLocal8Bit( query.readAll() ).trimmed();
+			
+			if ( output == "**Unknown**" ) {
+				output.clear();
+			}
+		}
+		
+		// caching result for now, we may disable if needed as user can change qmake variable outside
+		cachedData[ project ][ name ] = output;
+		return output;
+	}
+	// project variable
+	else {
+		if ( name == "PWD" ) {
+			return variableProject->path();
+		}
+		else if ( name == "_PRO_FILE_" ) {
+			return project->fileName();
+		}
+		else if ( name == "_PRO_FILE_PWD_" ) {
+			return project->path();
+		}
+		else {
+			return cachedData.value( project ).value( name );
+		}
+	}
+	
+	return QString::null;
+}
+
+QString QMakeProjectItemCacheBackend::guessedValue( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const
+{
+	//QRegExp rx( "\\$\\$?[\\{\\(\\[]?([\\w\\.]+(?!\\w*\\s*\\{\\[\\(\\)\\]\\}))[\\]\\)\\}]?" );
+	QRegExp rx( "(?:[^$]|^)(\\${1,2}(?!\\$+)[{(\\[]?[\\w._]+[})\\]]?)" );
+	QString guessed = value;
+	int pos = 0;
+
+	while ( ( pos = rx.indexIn( value, pos ) ) != -1 ) {
+		guessed.replace( rx.cap( 1 ), guessedVariable( project, valueProject, rx.cap( 1 ) ) );
+		pos += rx.matchedLength();
+	}
+	
+#ifndef QT_NO_DEBUG
+	if ( guessed.contains( "$" ) ) {
+		qWarning() << value;
+		qWarning() << guessed;
+	}
+#endif
+
+	return guessed;
+}
+
+void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QString& op, const QString& value )
+{
+	if ( !mCache ) {
+		return;
+	}
+	
+	XUPProjectItemCache::ProjectCache& cachedData = mCache->cachedData();
+	
+	if ( op == "=" || op.isEmpty() ) {
+		cachedData[ project ][ variable ] = value;
+	}
+	else if ( op == "-=" ) {
+		const DocumentFilterMap& filter = project->documentFilters();
+		const QStringList values = filter.splitValue( value ).toSet().toList();
+		
+		foreach ( const QString& value, values ) {
+			cachedData[ project ][ variable ].replace( QRegExp( QString( "\\b%1\\b" ).arg( value ) ), QString::null );
+		}
+	}
+	else if ( op == "+=" ) {
+		cachedData[ project ][ variable ] += " " +value;
+	}
+	else if ( op == "*=" ) {
+		const DocumentFilterMap& filter = project->documentFilters();
+		const QSet<QString> currentValues = filter.splitValue( cachedData[ project ][ variable ] ).toSet();
+		const QStringList values = filter.splitValue( value ).toSet().toList();
+		
+		foreach ( const QString& value, values ) {
+			if ( !currentValues.contains( value ) ) {
+				cachedData[ project ][ variable ] += " " +value;
+			}
+		}
+	}
+	else if ( op == "~=" ) {
+		project->topLevelProject()->setLastError( XUPProjectItem::tr( "Don't know how to interpret ~= operator" ) );
+	}
+}
+
+void QMakeProjectItemCacheBackend::recursiveScan( XUPProjectItem* project, XUPItem* root )
+{
+	return XUPProjectItemCacheBackend::recursiveScan( project, root );
+}
+
+bool QMakeProjectItemCacheBackend::cacheRecursiveScanHook( XUPProjectItem* _project, XUPItem* item )
+{
+	QMakeProjectItem* project = qobject_cast<QMakeProjectItem*>( _project );
+	
+	if ( !project ) {
+		return false;
+	}
+	
+    bool changed = false;
+    
+    // handle include projects
+	if ( item->type() == XUPItem::Function && item->attribute( "name" ).toLower() == "include" ) {
+		if ( project->handleIncludeFile( item ) ) {
+            changed = true;
+        }
+	}
+	
+	// handle sub projects
+	if ( item->type() == XUPItem::Variable && item->attribute( "name" ) == "SUBDIRS" ) {
+		if ( project->handleSubdirs( item ) ) {
+            changed = true;
+        }
+	}
+    
+    return changed;
+}
+
+// QMakeProjectItem
 
 QMakeProjectItem::QMakeProjectItem()
 	: XUPProjectItem()
@@ -41,20 +214,6 @@ QMakeProjectItem::QMakeProjectItem()
 
 QMakeProjectItem::~QMakeProjectItem()
 {
-}
-
-void QMakeProjectItem::addFiles( const QStringList& files, XUPItem* scope )
-{
-	XUPProjectItem::addFiles( files, scope );
-	rebuildCache();
-	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
-}
-
-void QMakeProjectItem::removeValue( XUPItem* item )
-{
-	XUPProjectItem::removeValue( item );
-	rebuildCache();
-	qobject_cast<QMakeProjectItem*>( topLevelProject() )->rebuildCache();
 }
 
 QString QMakeProjectItem::toNativeString() const
@@ -70,27 +229,29 @@ QString QMakeProjectItem::projectType() const
 bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 {
 	QString buffer = QMake2XUP::convertFromPro( fileName, codec );
+    
 	// parse content
 	QString errorMsg;
 	int errorLine;
 	int errorColumn;
-	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
-	{
+    
+	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) ) {
 		topLevelProject()->setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
 		return false;
 	}
 	
 	// check project validity
 	mDomElement = mDocument.firstChildElement( "project" );
-	if ( mDomElement.isNull() )
-	{
+    
+	if ( mDomElement.isNull() ) {
 		topLevelProject()->setLastError("no project node" );
 		return false;
 	}
 	
 	// check xup version
 	const QString docVersion = mDomElement.attribute( "version" );
-	if ( pVersion( docVersion ) < XUP_VERSION ) {
+    
+	if ( pVersion( docVersion ) < XUP_VERSION ) { 
 		topLevelProject()->setLastError( tr( "The document format is too old, current version is '%1', your document is '%2'" ).arg( XUP_VERSION ).arg( docVersion ) );
 		return false;
 	}
@@ -100,21 +261,24 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	mFileName = fileName;
 	topLevelProject()->setLastError( QString::null );
 	
-	//qWarning() << mDocument.toString( 4 );
-	return analyze( this );
-}
-
-bool QMakeProjectItem::save()
-{
-	return XUPProjectItem::save();
+	const XUPItem* parent = XUPItem::parent();
+	const bool isIncludeProject = parent && parent->type() == XUPItem::Function && parent->attribute( "name" ) == "include";
+	
+	if ( isIncludeProject ) {
+		XUPProjectItem::cache()->update( parent->project()->rootIncludeProject(), this );
+	}
+	else {
+		XUPProjectItem::cache()->build( this );
+	}
+	
+    return true;
 }
 
 QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType targetType)
 {
 	QString targetTypeString;
 	
-	switch ( targetType )
-	{
+	switch ( targetType ) {
 		case XUPProjectItem::DefaultTarget:
 			targetTypeString = QLatin1String( "TARGET_DEFAULT" );
 			break;
@@ -128,17 +292,14 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 
 	XUPProjectItem* tlProject = topLevelProject();
 	const QString key = QString( "%1_%2" ).arg( PLATFORM_TYPE_STRING ).arg( targetTypeString );
-	QString target = tlProject->filePath( interpretContent( XUPProjectItemHelper::projectSettingsValue( this, key ) ) );
+	QString target = tlProject->filePath( XUPProjectItemHelper::projectSettingsValue( this, key ) );
 	QFileInfo targetInfo( target );
 	
-	if ( !targetInfo.exists() || ( !targetInfo.isExecutable() && !QLibrary::isLibrary( target ) ) )
-	{
-		if ( allowToAskUser )
-		{
+	if ( !targetInfo.exists() || ( !targetInfo.isExecutable() && !QLibrary::isLibrary( target ) ) ) {
+		if ( allowToAskUser ) {
 			QString type;
 			
-			switch ( targetType )
-			{
+			switch ( targetType ) {
 				case XUPProjectItem::DebugTarget:
 					type = tr( "debug" ) +" ";
 					break;
@@ -152,13 +313,11 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 			const QString userTarget = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Point please project %1 target" ).arg( type ), tlProject->path() );
 			targetInfo.setFile( userTarget );
 			
-			if ( !userTarget.isEmpty() )
-			{
+			if ( !userTarget.isEmpty() ) {
 				target = userTarget;
 			}
 			
-			if ( targetInfo.exists() )
-			{
+			if ( targetInfo.exists() ) {
 				XUPProjectItemHelper::setProjectSettingsValue( this, key, tlProject->relativeFilePath( userTarget ) );
 				save();
 			}
@@ -168,336 +327,99 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 	return target;
 }
 
-
-
-
-
-
-
-
-bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
-{
-	QStringList projects;
-	XUPProjectItem* proj = subdirs->project();
-	
-	foreach ( XUPItem* cit, subdirs->childrenList() )
-	{
-		if ( cit->type() == XUPItem::File )
-		{
-			QStringList cacheFns = documentFilters().splitValue( interpretContent( cit->content() ) );
-			
-			foreach ( QString cacheFn, cacheFns )
-			{
-				if ( cacheFn.isEmpty() )
-				{
-					continue;
-				}
-				
-				QString fn = filePath( cacheFn ); // content interpreted some lines above
-				QFileInfo fi( fn );
-				
-				if ( cacheFn.endsWith( "/" ) )
-				{
-					cacheFn.chop( 1 );
-				}
-				
-				int sepPos = cacheFn.lastIndexOf( "/" );
-				
-				if ( sepPos != -1 )
-				{
-					cacheFn = cacheFn.mid( sepPos +1 );
-				}
-				
-				if ( fi.isDir() )
-				{
-					fi.setFile( fn, QString( "%1.pro" ).arg( cacheFn ) );
-				}
-				
-				fn = fi.absoluteFilePath();
-				
-				if ( !projects.contains( fn ) )
-				{
-					projects << fn;
-				}
-			}
-		}
-	}
-	
-	foreach ( XUPItem* cit, proj->childrenList() )
-	{
-		if ( cit->type() == XUPItem::Project )
-		{
-			if ( projects.contains( cit->project()->fileName() ) )
-			{
-				projects.removeAll( cit->project()->fileName() );
-			}
-		}
-	}
-	
-	foreach ( const QString& fn, projects )
-	{
-		// open project
-		XUPProjectItem* project = new QMakeProjectItem();
-		proj->addChild( project );
-		
-		// remove and delete project if can't open
-		if ( !project->open( fn, codec() ) )
-		{
-			proj->removeChild( project );
-			topLevelProject()->setLastError( tr( "Failed to handle subdirs file %1" ).arg( fn ) );
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-QString QMakeProjectItem::getVariableContent( const QString& variableName )
-{
-	/*
-		$$[QT_INSTALL_HEADERS] : read content from qt conf
-		$${QT_INSTALL_HEADERS} or $$QT_INSTALL_HEADERS : read content from var
-		$$(QT_INSTALL_HEADERS) : read from environment when qmake run
-		$(QTDIR) : read from generated makefile
-	*/
-	
-	QString name = QString( variableName ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
-	
-	// environment var
-	if ( variableName.startsWith( "$$(" ) || variableName.startsWith( "$(" ) )
-	{
-		if ( name == "PWD" )
-		{
-			return rootIncludeProject()->path();
-		}
-		else
-		{
-			return QString::fromLocal8Bit( qgetenv( name.toLocal8Bit().constData() ) );
-		}
-	}
-	// qmake value
-	else if ( variableName.startsWith( "$$[" ) )
-	{
-		QMakeProjectItem* proj = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
-		
-		if ( proj->mVariableCache.contains( name ) )
-		{
-			return proj->mVariableCache.value( name );
-		}
-		
-		QString result;
-		QtVersionManager* manager = QMake::versionManager();
-		const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( this, "QT_VERSION" ) );
-		
-		if ( version.isValid() )
-		{
-			QProcess query;
-			query.start( QString( "%1 -query %2" ).arg( version.qmake() ).arg( name ) );
-			query.waitForFinished();
-			QString result = QString::fromLocal8Bit( query.readAll() ).trimmed();
-			
-			if ( result == "**Unknown**" )
-			{
-				result.clear();
-			}
-		}
-		
-		//proj->mVariableCache[ name ] = result;
-		return result;
-	}
-	// variable value
-	else
-	{
-		if ( name == "PWD" )
-		{
-			return project()->path();
-		}
-		else if ( name == "_PRO_FILE_" )
-		{
-			return rootIncludeProject()->fileName();
-		}
-		else if ( name == "_PRO_FILE_PWD_" )
-		{
-			return rootIncludeProject()->path();
-		}
-		else
-		{
-			return qobject_cast<QMakeProjectItem*>( rootIncludeProject() )->mVariableCache.value( name );
-			Q_ASSERT( 0 );
-		}
-	}
-	
-	return QString::null;
-}
-
-bool QMakeProjectItem::analyze( XUPItem* item )
-{
-	QStringList values;
-	XUPProjectItem* project = item->project();
-	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>( rootIncludeProject() );
-	
-	foreach ( XUPItem* cItem, item->childrenList() )
-	{
-		switch ( cItem->type() )
-		{
-			case XUPItem::Value:
-			case XUPItem::File:
-			case XUPItem::Path:
-			{
-				QString content = interpretContent( cItem->content() );
-				
-				if ( cItem->type() != XUPItem::Value )
-				{
-					QString fn = project->filePath( content );
-					
-					if ( QFile::exists( fn ) )
-					{
-						fn = riProject->relativeFilePath( fn );
-					}
-					
-					content = fn;
-				}
-				
-				values << content;
-				
-				cItem->setCacheValue( "content", content );
-				break;
-			}
-			case XUPItem::Function:
-			{
-				QString parameters = interpretContent( cItem->attribute( "parameters" ) );
-				
-				cItem->setCacheValue( "parameters", parameters );
-				break;
-			}
-			case XUPItem::Project:
-			case XUPItem::Comment:
-			case XUPItem::EmptyLine:
-			case XUPItem::Variable:
-			case XUPItem::Scope:
-			case XUPItem::Folder:
-			default:
-				break;
-		}
-		
-		if ( !analyze( cItem ) )
-		{
-			return false;
-		}
-	}
-	
-	if ( item->type() == XUPItem::Variable )
-	{
-		QString name = item->attribute( "name" );
-		QString op = item->attribute( "operator", "=" );
-		
-		if ( op == "=" )
-		{
-			riProject->mVariableCache[ name ] = values.join( " " );
-		}
-		else if ( op == "-=" )
-		{
-			foreach ( const QString& value, values )
-			{
-				riProject->mVariableCache[ name ].replace( QRegExp( QString( "\\b%1\\b" ).arg( value ) ), QString::null );
-			}
-		}
-		else if ( op == "+=" )
-		{
-			riProject->mVariableCache[ name ] += " " +values.join( " " );
-		}
-		else if ( op == "*=" )
-		{
-			//if ( !riProject->mVariableCache[ name ].contains( content ) )
-			{
-				riProject->mVariableCache[ name ] += " " +values.join( " " );
-			}
-		}
-		else if ( op == "~=" )
-		{
-			topLevelProject()->setLastError( tr( "Don't know how to interpret ~= operator" ) );
-		}
-	}
-	
-	// handle include projects
-	if ( item->attribute( "name" ).toLower() == "include" )
-	{
-		if ( !handleIncludeFile( item ) )
-		{
-			return false;
-		}
-	}
-	
-	// handle sub projects
-	if ( item->attribute( "name" ) == "SUBDIRS" )
-	{
-		if ( !handleSubdirs( item ) )
-		{
-			return false;
-		}
-	}
-	
-	return true;
-}
-
-void QMakeProjectItem::rebuildCache()
-{
-	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
-	riProject->mVariableCache.clear();
-	analyze( riProject );
-}
-
-QString QMakeProjectItem::interpretContent( const QString& content )
-{
-	QRegExp rx( "\\$\\$?[\\{\\(\\[]?([\\w\\.]+(?!\\w*\\s*\\{\\[\\(\\)\\]\\}))[\\]\\)\\}]?" );
-	QString value = content;
-	int pos = 0;
-
-	while ( ( pos = rx.indexIn( content, pos ) ) != -1 )
-	{
-		value.replace( rx.cap( 0 ), getVariableContent( rx.cap( 0 ) ) );
-		pos += rx.matchedLength();
-	}
-
-	return value;
-}
-
 bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 {
-	const QString parameters = function->attribute( "parameters" );
-	const QString fn = filePath( interpretContent( parameters ) );
+	XUPProjectItem* project = function->project();
+	const QString filePath = project->filePath( function->cacheValue( "parameters" ) );
 	QStringList projects;
-
-	foreach ( XUPItem* cit, function->childrenList() )
-	{
-		if ( cit->type() == XUPItem::Project )
-		{
-			projects << cit->project()->fileName();
+	
+	// search already handled include project
+	foreach ( XUPItem* child, function->childrenList() ) {
+		if ( child->type() == XUPItem::Project ) {
+			projects << child->project()->fileName();
 		}
 	}
 	
-	/*qWarning() << "---" << projects << parameters << fn << function->xmlContent();
-	qWarning() << "BOOM";*/
-
 	// check if project is already handled
-	if ( projects.contains( fn ) )
-	{
-		return true;
-	}
-
-	// open project
-	XUPProjectItem* project = new QMakeProjectItem();
-	function->addChild( project );
-
-	// remove and delete project if can't open
-	if ( !project->open( fn, codec() ) )
-	{
-		function->removeChild( project );
-		topLevelProject()->setLastError( tr( "Failed to handle include file %1" ).arg( fn ) );
+	if ( projects.contains( filePath ) ) {
 		return false;
 	}
 
-	return true;
+	// open project
+	XUPProjectItem* includeProject = new QMakeProjectItem();
+	function->addChild( includeProject );
+
+	// remove and delete project if can't open
+	if ( !includeProject->open( filePath, project->codec() ) ) {
+		function->removeChild( includeProject );
+		topLevelProject()->setLastError( tr( "Failed to handle include file %1" ).arg( filePath ) );
+        return false;
+	}
+    
+    return true;
+}
+
+bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
+{
+	XUPProjectItem* project = subdirs->project();
+	const DocumentFilterMap& filter = project->documentFilters();
+	QStringList projects;
+	bool created = false;
+	
+	// search all sub project to handle
+	foreach ( XUPItem* child, subdirs->childrenList() ) {
+		if ( child->type() == XUPItem::File ) {
+			QStringList cacheFns = filter.splitValue( XUPProjectItem::cache()->evaluatedContent( project->rootIncludeProject(), project, child->content() ) );
+			
+			foreach ( const QString& cacheFn, cacheFns ) {
+				if ( cacheFn.isEmpty() ) {
+					continue;
+				}
+				
+				QFileInfo file( filePath( cacheFn ) );
+				
+				if ( file.isDir() ) {
+					file.setFile( QString( "%1/%2.pro" ).arg( file.absoluteFilePath() ).arg( file.fileName() ) );
+				}
+				
+				const QString filePath = QDir::cleanPath( QDir::toNativeSeparators( file.absoluteFilePath() ) );
+				
+				if ( !projects.contains( filePath ) ) {
+					projects << filePath;
+				}
+			}
+		}
+	}
+	
+	// remove already handled sub projects
+	foreach ( XUPItem* child, project->childrenList() ) {
+		if ( child->type() == XUPItem::Project ) {
+			const QString filePath = QDir::cleanPath( QDir::toNativeSeparators( child->project()->fileName() ) );
+			
+			if ( projects.contains( filePath ) ) {
+				projects.removeAll( filePath );
+			}
+		}
+	}
+	
+	// open missing sub projects
+	foreach ( const QString& filePath, projects ) {
+		// open project
+		XUPProjectItem* subProject = new QMakeProjectItem();
+		project->addChild( subProject );
+		
+		// remove and delete project if can't open
+		if ( subProject->open( filePath, project->codec() ) ) {
+			created = true;
+		}
+		else {
+			project->removeChild( subProject );
+			topLevelProject()->setLastError( tr( "Failed to handle subdirs file %1" ).arg( filePath ) );
+			continue;
+		}
+	}
+	
+	return created;
 }
 
 void QMakeProjectItem::installCommands()
@@ -506,8 +428,8 @@ void QMakeProjectItem::installCommands()
 	CLIToolPlugin* bp = builder();
     
 	// config variable
-	QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>(rootIncludeProject());
-	QStringList config = documentFilters().splitValue( riProject->mVariableCache.value( "CONFIG" ) );
+	//QMakeProjectItem* riProject = qobject_cast<QMakeProjectItem*>( rootIncludeProject() );
+	QStringList config = documentFilters().splitValue( cachedVariableValue( "CONFIG" ) );
 	bool haveDebug = config.contains( "debug" );
 	bool haveRelease = config.contains( "release" );
 	bool haveDebugRelease = config.contains( "debug_and_release" );
@@ -533,7 +455,7 @@ void QMakeProjectItem::installCommands()
 	
 	// evaluate some variables
 	QString s;
-	s = riProject->mVariableCache.value( "TARGET" );
+	s = cachedVariableValue( "TARGET" );
 	
 	if ( s.isEmpty() )
 	{
@@ -541,11 +463,11 @@ void QMakeProjectItem::installCommands()
 	}
 	
 	const QString target = s;
-	s = riProject->mVariableCache.value( "DESTDIR" );
+	s = cachedVariableValue( "DESTDIR" );
 	
 	if ( s.isEmpty() )
 	{
-		s = riProject->mVariableCache.value( "DLLDESTDIR" );
+		s = cachedVariableValue( "DLLDESTDIR" );
 	}
 	
 	if ( QDir( s ).isRelative() )
@@ -738,12 +660,13 @@ void QMakeProjectItem::installCommands()
 		if ( haveDebug || haveDebugRelease )
 		{
 			const QString debugTarget = targetFilePath( false, XUPProjectItem::DebugTarget );
+			const QString debugPath = debugTarget.isEmpty() ? path() : QFileInfo( debugTarget ).absolutePath();
 			
 			cmd = cmdBuild;
 			cmd.setText( tr( "Execute Debug" ) );
 			cmd.setCommand( debugTarget );
 			cmd.setArguments( QString() );
-			cmd.setWorkingDirectory( QFileInfo( debugTarget ).absolutePath() );
+			cmd.setWorkingDirectory( debugPath );
 			cmd.setParsers( QStringList() );
 			cmd.setTryAllParsers( false );
 			cmd.setExecutableCheckingEnabled( true );
@@ -754,12 +677,13 @@ void QMakeProjectItem::installCommands()
 		if ( haveRelease || haveDebugRelease )
 		{
 			const QString releaseTarget = targetFilePath( false, XUPProjectItem::ReleaseTarget );
+			const QString releasePath = releaseTarget.isEmpty() ? path() : QFileInfo( releaseTarget ).absolutePath();
 			
 			cmd = cmdBuild;
 			cmd.setText( tr( "Execute Release" ) );
 			cmd.setCommand( releaseTarget );
 			cmd.setArguments( QString() );
-			cmd.setWorkingDirectory( QFileInfo( releaseTarget ).absolutePath() );
+			cmd.setWorkingDirectory( releasePath );
 			cmd.setParsers( QStringList() );
 			cmd.setTryAllParsers( false );
 			cmd.setExecutableCheckingEnabled( true );
@@ -768,13 +692,14 @@ void QMakeProjectItem::installCommands()
 		
 		if ( !( haveDebug || haveDebugRelease ) && !( haveRelease || haveDebugRelease ) )
 		{
-			const QString defaultTarget = targetFilePath( false, XUPProjectItem::DefaultTarget);
+			const QString defaultTarget = targetFilePath( false, XUPProjectItem::DefaultTarget );
+			const QString defaultPath = defaultTarget.isEmpty() ? path() : QFileInfo( defaultTarget ).absolutePath();
 			
 			cmd = cmdBuild;
 			cmd.setText( tr( "Execute" ) );
 			cmd.setCommand( defaultTarget );
 			cmd.setArguments( QString() );
-			cmd.setWorkingDirectory( QFileInfo( defaultTarget ).absolutePath() );
+			cmd.setWorkingDirectory( defaultPath );
 			cmd.setParsers( QStringList() );
 			cmd.setTryAllParsers( false );
 			cmd.setExecutableCheckingEnabled( true );
@@ -823,17 +748,19 @@ void QMakeProjectItem::installCommands()
 	XUPProjectItem::installCommands();
 }
 
+XUPProjectItemCacheBackend* QMakeProjectItem::cacheBackend() const
+{
+	return &QMakeProjectItem::mCacheBackend;
+}
+
 bool QMakeProjectItem::edit()
 {
-	bool ret = UISimpleQMakeEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted;
-	
-	if ( ret )
-	{
-		// rebuild cache
-		rebuildCache();
-		qobject_cast<QMakeProjectItem*>(topLevelProject())->rebuildCache();
+	if ( UISimpleQMakeEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted ) {
+        XUPProjectItem::cache()->build( rootIncludeProject() );
+        return true;
 	}
-	return ret;
+    
+	return false;
 }
 
 bool QMakeProjectItem::editProjectFiles()
@@ -846,18 +773,8 @@ bool QMakeProjectItem::editProjectFiles()
 
 CLIToolPlugin* QMakeProjectItem::builder() const
 {
-	QString name;
-	
-	QtVersionManager* manager = QMake::versionManager();
-	const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( const_cast<QMakeProjectItem*>( this ), "QT_VERSION" ) );
-	if ( version.isValid() && version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ) )
-	{
-		name = "MSVCMake";
-	}
-	else
-	{
-		name = "GNUMake";
-	}
-	
+    const QtVersionManager* manager = QMake::versionManager();
+    const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( const_cast<QMakeProjectItem*>( this ), "QT_VERSION" ) );
+	const QString name = version.isValid() && version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ) ? "MSVCMake" : "GNUMake";
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, name );
 }

@@ -13,6 +13,8 @@
 class QAction;
 
 class XUPPlugin;
+class XUPProjectItemCacheBackend;
+class XUPProjectItemCache;
 
 typedef QList<class XUPProjectItem*> XUPProjectItemList;
 
@@ -21,6 +23,7 @@ typedef QList<class XUPProjectItem*> XUPProjectItemList;
 class Q_MONKEY_EXPORT XUPProjectItem : public QObject, public XUPItem
 {
 	Q_OBJECT
+    friend class XUPProjectItemCache;
 	friend class DebugDockWidget;
 	
 public:
@@ -75,7 +78,6 @@ public:
 	// return the most toplevel project ( ie: the model root project )
 	XUPProjectItem* topLevelProject() const;
 	// return the parent project for include project ( recursive parent project for include project, else return project itself )
-	/* FIXME hlamer: this method must be killed from XUP, it is QMake specific. But, I don't know, how to remove */
 	XUPProjectItem* rootIncludeProject() const;
 	// return children project recursively according to bool
 	XUPProjectItemList childrenProjects( bool recursive ) const;
@@ -123,6 +125,12 @@ public:
 	void addSeparator( const QString& mnu );
 	void addCommands( const QString& mnu, const QString& text, pCommandList& cmds );
 	
+	// return the cache backend used by  cache()
+	virtual XUPProjectItemCacheBackend* cacheBackend() const;
+	// return the variable value
+	QString cachedVariableValue( const QString& variableName ) const;
+	static XUPProjectItemCache* cache();
+	
 protected:
 	QDomDocument mDocument;
 	QString mCodec;
@@ -130,6 +138,7 @@ protected:
 	QString mLastError;
 	// Action pointers stored here for delete it, when current project changed
 	QList<QAction*> mInstalledActions;
+	static XUPProjectItemCache mProjectsCache;
 	
 protected slots:
 	// Common handler for actions, which execute pCommand. Does few checks, then executes pCommand

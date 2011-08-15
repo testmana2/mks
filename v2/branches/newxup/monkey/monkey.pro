@@ -128,7 +128,8 @@ HEADERS	*= src/main.h \
 	src/xupmanager/gui/FilesEditor.h \
 	src/xupmanager/gui/MainEditor.h \
 	src/xupmanager/gui/XUPPageEditor.h \
-	src/xupmanager/gui/CommandsEditorModel.h
+	src/xupmanager/gui/CommandsEditorModel.h \
+	src/xupmanager/core/XUPProjectItemCache.h
 
 SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/maininterface/ui/UISettings.cpp \
@@ -187,7 +188,8 @@ SOURCES	*= src/maininterface/ui/UIAbout.cpp \
 	src/xupmanager/gui/FilesEditor.cpp \
 	src/xupmanager/gui/MainEditor.cpp \
 	src/xupmanager/gui/XUPPageEditor.cpp \
-	src/xupmanager/gui/CommandsEditorModel.cpp
+	src/xupmanager/gui/CommandsEditorModel.cpp \
+	src/xupmanager/core/XUPProjectItemCache.cpp
 
 TRANSLATIONS	*= ../datas/translations/monkeystudio_fr.ts \
 	../datas/translations/monkeystudio_be.ts \
