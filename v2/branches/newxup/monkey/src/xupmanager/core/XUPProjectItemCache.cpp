@@ -63,7 +63,7 @@ QString XUPProjectItemCacheBackend::guessedValue( XUPProjectItem* project, XUPPr
 	return guessed;
 }
 
-void XUPProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QString& op, const QString& value )
+void XUPProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QString& value, const QString& op )
 {
 	Q_UNUSED( op );
 	
@@ -113,7 +113,7 @@ void XUPProjectItemCacheBackend::recursiveScan( XUPProjectItem* project, XUPItem
 	}
 	
 	if ( root->type() == XUPItem::Variable ) {
-		updateVariable( project, root->attribute( "name" ), root->attribute( "operator" ), values.join( " " ) );
+		updateVariable( project, root->attribute( "name" ), values.join( " " ), root->attribute( "operator" ) );
 	}
 	
 	if ( root->type() != XUPItem::DynamicFolder ) {
