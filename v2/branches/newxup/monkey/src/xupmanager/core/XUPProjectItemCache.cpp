@@ -11,9 +11,15 @@ uint qHash( const XUPProjectItemCache::ProjectPointer& pointer )
 
 // XUPProjectItemCacheBackend
 
-XUPProjectItemCacheBackend::XUPProjectItemCacheBackend( XUPProjectItemCache* cache )
+XUPProjectItemCacheBackend::XUPProjectItemCacheBackend( XUPProjectItemCache* cache, const QString& separator )
 {
 	mCache = cache;
+	mMultiLineSeparator = separator;
+}
+
+QString XUPProjectItemCacheBackend::multiLineSeparator() const
+{
+	return mMultiLineSeparator;
 }
 
 QString XUPProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const
@@ -42,7 +48,7 @@ QString XUPProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XU
 			return variableProject->path();
 		}
 		else {
-			return cachedData.value( project ).value( name );
+			return QString( cachedData.value( project ).value( name ) ).replace( mMultiLineSeparator, " " );
 		}
 	}
 	
@@ -51,12 +57,12 @@ QString XUPProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XU
 
 QString XUPProjectItemCacheBackend::guessedValue( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const
 {
-	QRegExp rx( "[^$]\\$[(\\[][\\w._ ]+[)\\]]" );
+	QRegExp rx( "(?:[^$]|^)(\\$[(\\[][\\w._ ]+[)\\]])" );
 	QString guessed = value;
 	int pos = 0;
 
 	while ( ( pos = rx.indexIn( value, pos ) ) != -1 ) {
-		guessed.replace( rx.cap( 0 ), guessedVariable( project, valueProject, rx.cap( 0 ) ) );
+		guessed.replace( rx.cap( 1 ), guessedVariable( project, valueProject, rx.cap( 1 ) ) );
 		pos += rx.matchedLength();
 	}
 
@@ -113,7 +119,7 @@ void XUPProjectItemCacheBackend::recursiveScan( XUPProjectItem* project, XUPItem
 	}
 	
 	if ( root->type() == XUPItem::Variable ) {
-		updateVariable( project, root->attribute( "name" ), values.join( " " ), root->attribute( "operator" ) );
+		updateVariable( project, root->attribute( "name" ), values.join( mMultiLineSeparator ), root->attribute( "operator" ) );
 	}
 	
 	if ( root->type() != XUPItem::DynamicFolder ) {
@@ -186,16 +192,32 @@ void XUPProjectItemCache::debug( bool full ) const
 
 QString XUPProjectItemCache::value( XUPProjectItem* project, const QString& variable ) const
 {
+	const XUPProjectItemCacheBackend* backend = project->cacheBackend();
+	
+	if ( !backend ) {
+		return QString::null;
+	}
+	
 	if ( !mCache.value( project ).contains( variable ) ) {
 		const_cast<XUPProjectItemCache*>( this )->build( project );
 	}
 	
-	return mCache.value( project ).value( variable );
+	return QString( mCache.value( project ).value( variable ) ).replace( backend->multiLineSeparator(), " " );
 }
 
 QStringList XUPProjectItemCache::values( XUPProjectItem* project, const QString& variable ) const
 {
-	return project->documentFilters().splitValue( value( project, variable ) );
+	const XUPProjectItemCacheBackend* backend = project->cacheBackend();
+	
+	if ( !backend ) {
+		return QStringList();
+	}
+	
+	if ( !mCache.value( project ).contains( variable ) ) {
+		const_cast<XUPProjectItemCache*>( this )->build( project );
+	}
+	
+	return mCache.value( project ).value( variable ).split( backend->multiLineSeparator() );
 }
 
 QString XUPProjectItemCache::evaluatedContent( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const

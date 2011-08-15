@@ -137,6 +137,7 @@ protected:
 	// Action pointers stored here for delete it, when current project changed
 	QList<QAction*> mInstalledActions;
 	static XUPProjectItemCache mProjectsCache;
+	static XUPProjectItemCacheBackend mProjectsCacheBackend;
 	
 protected slots:
 	// Common handler for actions, which execute pCommand. Does few checks, then executes pCommand

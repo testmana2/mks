@@ -25,6 +25,7 @@
 #include <QDebug>
 
 XUPProjectItemCache XUPProjectItem::mProjectsCache;
+XUPProjectItemCacheBackend XUPProjectItem::mProjectsCacheBackend = XUPProjectItemCacheBackend( &XUPProjectItem::mProjectsCache );
 
 XUPProjectItem::XUPProjectItem()
 	: XUPItem( QDomElement(), 0 )
@@ -529,7 +530,7 @@ const DocumentFilterMap& XUPProjectItem::documentFilters() const
 
 XUPProjectItemCacheBackend* XUPProjectItem::cacheBackend() const
 {
-	return 0;
+	return &XUPProjectItem::mProjectsCacheBackend;
 }
 
 QString XUPProjectItem::cachedVariableValue( const QString& variableName ) const

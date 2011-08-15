@@ -14,7 +14,6 @@ public:
 	virtual QString guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const;
 	virtual QString guessedValue( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const;
 	virtual void updateVariable( XUPProjectItem* project, const QString& variable, const QString& value, const QString& op );
-	virtual void recursiveScan( XUPProjectItem* project, XUPItem* root );
     virtual bool cacheRecursiveScanHook( XUPProjectItem* project, XUPItem* item );
 };
 

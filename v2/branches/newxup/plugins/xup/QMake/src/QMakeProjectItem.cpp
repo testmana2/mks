@@ -97,7 +97,7 @@ QString QMakeProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, 
 			return project->path();
 		}
 		else {
-			return cachedData.value( project ).value( name );
+			return QString( cachedData.value( project ).value( name ) ).replace( mMultiLineSeparator, " " );
 		}
 	}
 	
@@ -139,34 +139,29 @@ void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, cons
 	}
 	else if ( op == "-=" ) {
 		const DocumentFilterMap& filter = project->documentFilters();
-		const QStringList values = filter.splitValue( value ).toSet().toList();
+		const QStringList values = filter.splitValue( QString( value ).replace( mMultiLineSeparator, " " ) ).toSet().toList();
 		
 		foreach ( const QString& value, values ) {
 			cachedData[ project ][ variable ].replace( QRegExp( QString( "\\b%1\\b" ).arg( value ) ), QString::null );
 		}
 	}
 	else if ( op == "+=" ) {
-		cachedData[ project ][ variable ] += " " +value;
+		cachedData[ project ][ variable ] += mMultiLineSeparator +value;
 	}
 	else if ( op == "*=" ) {
 		const DocumentFilterMap& filter = project->documentFilters();
-		const QSet<QString> currentValues = filter.splitValue( cachedData[ project ][ variable ] ).toSet();
-		const QStringList values = filter.splitValue( value ).toSet().toList();
+		const QSet<QString> currentValues = filter.splitValue( QString( cachedData[ project ][ variable ] ).replace( mMultiLineSeparator, " " ) ).toSet();
+		const QStringList values = filter.splitValue( QString( value ).replace( mMultiLineSeparator, " " ) ).toSet().toList();
 		
 		foreach ( const QString& value, values ) {
 			if ( !currentValues.contains( value ) ) {
-				cachedData[ project ][ variable ] += " " +value;
+				cachedData[ project ][ variable ] += mMultiLineSeparator +value;
 			}
 		}
 	}
 	else if ( op == "~=" ) {
 		project->topLevelProject()->setLastError( XUPProjectItem::tr( "Don't know how to interpret ~= operator" ) );
 	}
-}
-
-void QMakeProjectItemCacheBackend::recursiveScan( XUPProjectItem* project, XUPItem* root )
-{
-	return XUPProjectItemCacheBackend::recursiveScan( project, root );
 }
 
 bool QMakeProjectItemCacheBackend::cacheRecursiveScanHook( XUPProjectItem* _project, XUPItem* item )
