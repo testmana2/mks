@@ -13,7 +13,9 @@ class XUPProjectItemCache;
 class Q_MONKEY_EXPORT XUPProjectItemCacheBackend
 {
 public:
-	XUPProjectItemCacheBackend( XUPProjectItemCache* cache = 0 );
+	XUPProjectItemCacheBackend( XUPProjectItemCache* cache = 0, const QString& separator = QChar( 11 ) ); // use unvisible char as separator
+	
+	QString multiLineSeparator() const;
 	
 	// return the content of a variable
 	virtual QString guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const;
@@ -29,6 +31,7 @@ public:
 
 protected: // for performance raeson
 	XUPProjectItemCache* mCache;
+	QString mMultiLineSeparator;
 };
 
 class Q_MONKEY_EXPORT XUPProjectItemCache
