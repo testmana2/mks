@@ -8,6 +8,7 @@
 #include "XUPPlugin.h"
 #include "XUPProjectItemHelper.h"
 #include "XUPDynamicFolderItem.h"
+#include "XUPProjectItemCache.h"
 
 #include <pQueuedMessageToolBar.h>
 
@@ -23,6 +24,8 @@
 
 #include <QDebug>
 
+XUPProjectItemCache XUPProjectItem::mProjectsCache;
+
 XUPProjectItem::XUPProjectItem()
 	: XUPItem( QDomElement(), 0 )
 {
@@ -30,11 +33,16 @@ XUPProjectItem::XUPProjectItem()
 
 XUPProjectItem::~XUPProjectItem()
 {
+	XUPProjectItem::cache()->clear( this );
 }
 
 void XUPProjectItem::setLastError( const QString& error )
 {
 	mLastError = error;
+	
+	if ( !error.trimmed().isEmpty() ) {
+		MonkeyCore::messageManager()->appendMessage( error );
+	}
 }
 
 QString XUPProjectItem::lastError() const
@@ -178,6 +186,8 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	if ( !notImported.isEmpty() ) {
 		setLastError( tr( "Don't know how to add files:\n" ).arg( notImported.join( "\n" ) ) );
 	}
+	
+	XUPProjectItem::cache()->build( this );
 }
 
 void XUPProjectItem::removeValue( XUPItem* item )
@@ -212,6 +222,7 @@ void XUPProjectItem::removeValue( XUPItem* item )
 	}
 	
 	item->parent()->removeChild( item );
+	XUPProjectItem::cache()->build( this );
 }
 
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
@@ -514,6 +525,21 @@ QString XUPProjectItem::codec() const
 const DocumentFilterMap& XUPProjectItem::documentFilters() const
 {
 	return MonkeyCore::projectTypesIndex()->documentFilters( projectType() );
+}
+
+XUPProjectItemCacheBackend* XUPProjectItem::cacheBackend() const
+{
+	return 0;
+}
+
+QString XUPProjectItem::cachedVariableValue( const QString& variableName ) const
+{
+    return XUPProjectItem::cache()->value( rootIncludeProject(), variableName );
+}
+
+XUPProjectItemCache* XUPProjectItem::cache()
+{
+	return &XUPProjectItem::mProjectsCache;
 }
 
 void XUPProjectItem::internal_projectCustomActionTriggered()

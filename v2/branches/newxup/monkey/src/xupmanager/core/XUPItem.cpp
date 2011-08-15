@@ -27,10 +27,8 @@ XUPItem::~XUPItem()
 
 bool XUPItem::sameTypeLess( const XUPItem& other ) const
 {	
-	switch ( other.type() )
-	{
-		case XUPItem::Variable:
-		{
+	switch ( other.type() ) {
+		case XUPItem::Variable: {
 			const XUPProjectItem* project = this->project();
 			const DocumentFilterMap& filters = project->documentFilters();
 			const QString left = attribute( "name" );
@@ -63,14 +61,11 @@ bool XUPItem::sameTypeLess( const XUPItem& other ) const
 
 bool XUPItem::operator<( const XUPItem& other ) const
 {
-	if ( type() == other.type() )
-	{
+	if ( type() == other.type() ) {
 		return sameTypeLess( other );
 	}
-	else
-	{
-		switch ( type() )
-		{
+	else {
+		switch ( type() ) {
 			case XUPItem::Project:
 				return false;
 			default:
@@ -88,10 +83,12 @@ QDomElement XUPItem::node() const
 
 XUPProjectItem* XUPItem::project() const
 {
-	if ( type() == XUPItem::Project )
+	if ( type() == XUPItem::Project ) {
 		return static_cast<XUPProjectItem*>( const_cast<XUPItem*>( this ) );
-	else
-		return mParentItem->project();
+	}
+	else {
+		return mParentItem ? mParentItem->project() : 0;
+	}
 }
 
 XUPItem* XUPItem::parent() const
@@ -106,11 +103,11 @@ void XUPItem::setParent( XUPItem* parentItem )
 
 XUPItem* XUPItem::child( int i )
 {
-	if ( mChildItems.contains( i ) )
+	if ( mChildItems.contains( i ) ) {
 		return mChildItems[ i ];
+	}
 
-	if ( i >= 0 && i < mDomElement.childNodes().count() )
-	{
+	if ( i >= 0 && i < mDomElement.childNodes().count() ) {
 		QDomElement childElement = mDomElement.childNodes().item( i ).toElement();
 		XUPItem* childItem = childElement.tagName().toLower() == "dynamicfolder"
 			? new XUPDynamicFolderItem( childElement, const_cast<XUPItem*>( this ) )
@@ -118,14 +115,14 @@ XUPItem* XUPItem::child( int i )
 		mChildItems[ i ] = childItem;
 		return childItem;
 	}
+	
 	return 0;
 }
 
 XUPItemList XUPItem::childrenList() const
 {
 	// create all child if needed before returning list
-	for ( int i = 0; i < childCount(); i++ )
-	{
+	for ( int i = 0; i < childCount(); i++ ) {
 		const_cast<XUPItem*>( this )->child( i );
 	}
 	
@@ -144,8 +141,7 @@ void XUPItem::addChild( XUPItem* item )
 	XUPProjectModel* m = model();
 	
 	// inform begin insert
-	if ( m )
-	{
+	if ( m ) {
 		m->beginInsertRows( index(), row, row );
 	}
 	
@@ -153,20 +149,17 @@ void XUPItem::addChild( XUPItem* item )
 	item->setParent( this );
 	
 	// inform end insert
-	if ( m )
-	{
+	if ( m ) {
 		m->endInsertRows();
 	}
 }
 
 int XUPItem::row() const
 {
-	if ( mParentItem )
-	{
+	if ( mParentItem ) {
 		return mParentItem->childIndex( const_cast<XUPItem*>( this ) );
 	}
-	else
-	{
+	else {
 		return 0;
 	}
 }
@@ -175,8 +168,8 @@ int XUPItem::childCount() const
 {
 	int count = mDomElement.childNodes().count();
 	
-	if ( !mChildItems.isEmpty() ) // TODO ask PasNox, why we need this code
-	{
+	// include/sub project are not node children, so have to take them in account
+	if ( !mChildItems.isEmpty() ) {
 		count = qMax( count, mChildItems.keys().last() +1 );
 	}
 	
@@ -194,61 +187,46 @@ int XUPItem::childCount() const
 
 bool XUPItem::hasChildren() const
 {
-	switch ( type() ) {
-		case XUPItem::Comment:
-		case XUPItem::EmptyLine:
-		case XUPItem::Path:
-		case XUPItem::File:
-		case XUPItem::Value:
-			return 0;
-		default:
-			return !mDomElement.childNodes().isEmpty();
-	}
+	return childCount() > 0;
 }
 
 void XUPItem::removeChild( XUPItem* item )
 {
 	int id = childIndex( item );
-	if ( id != -1 )
-	{
+	
+	if ( id != -1 ) {
 		// inform model of remove
 		XUPProjectModel* m = model();
-		if ( m )
-		{
+		
+		if ( m ) {
 			// begin remove
 			m->beginRemoveRows( index(), id, id );
 			
 			// remove
 			bool isDirectChild = item->mDomElement.parentNode() == mDomElement;
 			
-			if ( isDirectChild )
-			{
-				foreach ( const int& key, mChildItems.keys() )
-				{
-					if ( key == id )
-					{
+			if ( isDirectChild ) {
+				foreach ( const int& key, mChildItems.keys() ) {
+					if ( key == id ) {
 						QDomNode node = item->mDomElement;
 						mDomElement.removeChild( node );
 						mChildItems.remove( key );
 						delete item;
 					}
-					else if ( key > id )
-					{
+					else if ( key > id ) {
 						mChildItems[ key -1 ] = mChildItems[ key ];
 						mChildItems.remove( key );
 					}
 				}
 			}
-			else
-			{
+			else {
 				delete mChildItems.take( id );
 			}
 			
 			// end remove
 			m->endRemoveRows();
 		}
-		else
-		{
+		else {
 			delete mChildItems.take( id );
 		}
 	}
@@ -257,15 +235,13 @@ void XUPItem::removeChild( XUPItem* item )
 QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSignals )
 {
 	// calculate row if needed
-	if ( row == -1 )
-	{
+	if ( row == -1 ) {
 		row = mDomElement.childNodes().count();
 	}
 	
 	QString stringType;
 	
-	switch ( type )
-	{
+	switch ( type ) {
 		case XUPItem::Project:
 			stringType = "project";
 			break;
@@ -308,8 +284,7 @@ QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSig
 	
 	const int count = childCount();
 	
-	if ( !stringType.isEmpty() && row <= count )
-	{
+	if ( !stringType.isEmpty() && row <= count ) {
 		// begin insert
 		if ( m && emitSignals ) {
 			m->beginInsertRows( index(), row, row );
@@ -318,10 +293,9 @@ QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSig
 		// re inde existing items
 		QList<int> rows = mChildItems.keys();
 		qSort( rows.begin(), rows.end(), qGreater<int>() );
-		foreach ( const int& key, rows )
-		{
-			if ( key >= row )
-			{
+		
+		foreach ( const int& key, rows ) {
+			if ( key >= row ) {
 				mChildItems[ key +1 ] = mChildItems[ key ];
 			}
 		}
@@ -330,19 +304,15 @@ QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSig
 		//mChildItems.remove( row );
 		QDomElement element = mDomElement.ownerDocument().createElement( stringType );
 		
-		if ( count == 0 )
-		{
+		if ( count == 0 ) {
 			mDomElement.appendChild( element );
 		}
-		else
-		{
-			if ( row == 0 )
-			{
+		else {
+			if ( row == 0 ) {
 				const QDomElement childElement = mDomElement.childNodes().at( 1 ).toElement();
 				mDomElement.insertBefore( element, childElement );
 			}
-			else
-			{
+			else {
 				const QDomElement childElement = mDomElement.childNodes().at( row -1 ).toElement();
 				mDomElement.insertAfter( element, childElement );
 			}
@@ -367,21 +337,13 @@ XUPItem* XUPItem::addChild( XUPItem::Type type, int row )
 
 XUPProjectModel* XUPItem::model() const
 {
-	if ( mParentItem )
-	{
-		return mParentItem->model();
-	}
-	return mModel;
+	return mParentItem ? mParentItem->model() : mModel;
 }
 
 QModelIndex XUPItem::index() const
 {
 	XUPProjectModel* m = model();
-	if ( m )
-	{
-		return m->indexFromItem( const_cast<XUPItem*>( this ) );
-	}
-	return QModelIndex();
+	return m ? m->indexFromItem( const_cast<XUPItem*>( this ) ) : QModelIndex();
 }
 
 XUPItem::Type XUPItem::type() const
@@ -415,8 +377,7 @@ XUPItem::Type XUPItem::type() const
 
 QString XUPItem::displayText() const
 {
-	switch ( type() )
-	{
+	switch ( type() ) {
 		case XUPItem::Project:
 			return attribute( "name" );
 		case XUPItem::Comment:
@@ -495,12 +456,12 @@ QString XUPItem::attribute( const QString& name, const QString& defaultValue ) c
 
 void XUPItem::setAttribute( const QString& name, const QString& value )
 {
-	if ( mDomElement.attribute( name ) == value )
-	{
+	if ( mDomElement.attribute( name ) == value ) {
 		return;
 	}
 	
 	mDomElement.setAttribute( name, value );
+	mCacheValues.remove( name );
 	
 	// update model if needed
 	XUPProjectModel* m = model();
@@ -513,7 +474,7 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 
 QString XUPItem::cacheValue( const QString& key, const QString& defaultValue ) const
 {
-	return mCacheValues.value( key, defaultValue );
+	return mCacheValues.value( key, attribute( key, defaultValue ) );
 }
 
 void XUPItem::setCacheValue( const QString& key, const QString& value )

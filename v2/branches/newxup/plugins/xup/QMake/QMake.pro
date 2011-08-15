@@ -10,7 +10,7 @@ RESOURCES	= src/resources/QMake.qrc
 FORMS	= src/gui/UISimpleQMakeEditor.ui \
 	src/gui/UISettingsQMake.ui
 
-HEADERS = src/QMake.h \
+HEADERS	= src/QMake.h \
 	src/QMake2XUP.h \
 	src/QMakeProjectItem.h \
 	src/gui/UISimpleQMakeEditor.h \
