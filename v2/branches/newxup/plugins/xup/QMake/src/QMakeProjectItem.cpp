@@ -126,7 +126,7 @@ QString QMakeProjectItemCacheBackend::guessedValue( XUPProjectItem* project, XUP
 	return guessed;
 }
 
-void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QString& op, const QString& value )
+void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QString& value, const QString& op )
 {
 	if ( !mCache ) {
 		return;
