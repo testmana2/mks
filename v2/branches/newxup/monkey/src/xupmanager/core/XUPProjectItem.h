@@ -106,15 +106,13 @@ public:
 	virtual void installCommands();
 	// uninstall custom project actions in menus
 	virtual void uninstallCommands();
-	
+	// return the text codec used by this project
 	QString codec() const;
 	
 	virtual bool edit() = 0;
 	virtual bool editProjectFiles() = 0;
 	
-	/* Source file name patterns is list of string pairs. ExamplesPath
-		("Python file", "*.py") ("Forms file", "*.ui")
-	 */
+	// return project document filters
 	const DocumentFilterMap& documentFilters() const;
 	
 	/** Add pCommand console commands to the main menu. When menu item triggered - console command executed.
