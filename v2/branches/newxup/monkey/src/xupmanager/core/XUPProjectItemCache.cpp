@@ -11,22 +11,15 @@ uint qHash( const XUPProjectItemCache::ProjectPointer& pointer )
 
 // XUPProjectItemCacheBackend
 
-XUPProjectItemCacheBackend::XUPProjectItemCacheBackend( XUPProjectItemCache* cache, const QString& separator )
+XUPProjectItemCacheBackend::XUPProjectItemCacheBackend( XUPProjectItemCache* cache/*, const QString& separator*/ )
 {
 	mCache = cache;
-	mMultiLineSeparator = separator;
 }
 
-QString XUPProjectItemCacheBackend::multiLineSeparator() const
+QStringList XUPProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const
 {
-	return mMultiLineSeparator;
-}
-
-QString XUPProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const
-{
-	
 	if ( !mCache ) {
-		return QString::null;
+		return QStringList();
 	}
 	
 	XUPProjectItemCache::ProjectCache& cachedData = mCache->cachedData();
@@ -36,40 +29,53 @@ QString XUPProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XU
 	// environment variable
 	if ( variable.startsWith( "$(" ) ) {
 		if ( name == "PWD" ) {
-			return project->path();
+			const QString path = project->path();
+			return path.isEmpty() ? QStringList() : QStringList( path );
 		}
 		else {
-			return QString::fromLocal8Bit( qgetenv( name.toLocal8Bit().constData() ) );
+			const QString value = QString::fromLocal8Bit( qgetenv( name.toLocal8Bit().constData() ) );
+			return value.isEmpty() ? QStringList() : QStringList( value );
 		}
 	}
 	// cache variable
 	else if ( variable.startsWith( "$$[" ) ) {
 		if ( name == "PWD" ) {
-			return variableProject->path();
+			const QString path = variableProject->path();
+			return path.isEmpty() ? QStringList() : QStringList( path );
 		}
 		else {
-			return QString( cachedData.value( project ).value( name ) ).replace( mMultiLineSeparator, " " );
+			return cachedData.value( project ).value( name );
 		}
 	}
 	
-	return QString::null;
+	return QStringList();
 }
 
-QString XUPProjectItemCacheBackend::guessedValue( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const
+QStringList XUPProjectItemCacheBackend::guessedContent( XUPProjectItem* project, XUPProjectItem* valueProject, const QStringList& content ) const
 {
-	QRegExp rx( "(?:[^$]|^)(\\$[(\\[][\\w._ ]+[)\\]])" );
-	QString guessed = value;
+	const QRegExp rx( "(?:[^$]|^)(\\$[(\\[][\\w._ ]+[)\\]])" );
+	QString loopContent = content.join( " " );
+	QStringList guessed = content;
 	int pos = 0;
 
-	while ( ( pos = rx.indexIn( value, pos ) ) != -1 ) {
-		guessed.replace( rx.cap( 1 ), guessedVariable( project, valueProject, rx.cap( 1 ) ) );
+	while ( ( pos = rx.indexIn( loopContent, pos ) ) != -1 ) {
+		const QString guessedVariableContent = guessedVariable( project, valueProject, rx.cap( 1 ) ).join( " " );
+		loopContent.replace( rx.cap( 1 ), guessedVariableContent );
+		guessed.replaceInStrings( rx.cap( 1 ), guessedVariableContent );
 		pos += rx.matchedLength();
 	}
+
+#ifndef QT_NO_DEBUG
+	if ( guessed.join( " " ).contains( "$" ) ) {
+		qWarning() << content;
+		qWarning() << guessed;
+	}
+#endif
 
 	return guessed;
 }
 
-void XUPProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QString& value, const QString& op )
+void XUPProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QStringList& values, const QString& op )
 {
 	Q_UNUSED( op );
 	
@@ -78,7 +84,7 @@ void XUPProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const 
 	}
 	
 	XUPProjectItemCache::ProjectCache& cachedData = mCache->cachedData();
-	cachedData[ project ][ variable ] = value;
+	cachedData[ project ][ variable ] = values;
 }
 
 void XUPProjectItemCacheBackend::recursiveScan( XUPProjectItem* project, XUPItem* _root )
@@ -94,20 +100,21 @@ void XUPProjectItemCacheBackend::recursiveScan( XUPProjectItem* project, XUPItem
 			case XUPItem::Value:
 			case XUPItem::File:
 			case XUPItem::Path: {
-				const QString content = guessedValue( project, child->project(), child->content() );
+				const QString content = guessedContent( project, child->project(), QStringList( child->content() ) ).join( " " );
 				child->setCacheValue( "content", content );
 				values << content;
 				break;
 			}
 			case XUPItem::DynamicFolder:
 				continue;
-			case XUPItem::Project:
+			case XUPItem::Project: {
 				if ( project != child->project()->rootIncludeProject() ) {
 					continue;
 				}
 				break;
+			}
 			case XUPItem::Function: {
-				const QString parameters = guessedValue( project, child->project(), child->attribute( "parameters" ) );
+				const QString parameters = guessedContent( project, child->project(), QStringList( child->attribute( "parameters" ) ) ).join( " " );
 				child->setCacheValue( "parameters", parameters );
 				break;
 			}
@@ -119,7 +126,7 @@ void XUPProjectItemCacheBackend::recursiveScan( XUPProjectItem* project, XUPItem
 	}
 	
 	if ( root->type() == XUPItem::Variable ) {
-		updateVariable( project, root->attribute( "name" ), values.join( mMultiLineSeparator ), root->attribute( "operator" ) );
+		updateVariable( project, root->attribute( "name" ), values, root->attribute( "operator" ) );
 	}
 	
 	if ( root->type() != XUPItem::DynamicFolder ) {
@@ -167,18 +174,18 @@ void XUPProjectItemCache::debug( bool full ) const
 	int indent = 0;
 	
 	foreach ( XUPProjectItem* project, mCache.keys() ) {
-		qWarning() << QString( "%1Project cache - %2" ).arg( indentString( indent ) ).arg( project->fileName() ).toLocal8Bit();
+		qWarning() << QString( "%1Project cache - %2" ).arg( QString( indent, '\t' ) ).arg( project->fileName() ).toLocal8Bit();
 		
 		if ( full ) {
 			indent++;
 			
 			foreach ( const QString& variable, mCache[ project ].keys() ) {
-				qWarning() << QString( "%1%2" ).arg( indentString( indent ) ).arg( variable ).toLocal8Bit();
+				qWarning() << QString( "%1%2" ).arg( QString( indent, '\t' ) ).arg( variable ).toLocal8Bit();
 				
 				indent++;
 				
-				foreach ( const QString& value, project->documentFilters().splitValue( mCache[ project ][ variable ] ) ) {
-					qWarning() << QString( "%1%2" ).arg( indentString( indent ) ).arg( value ).toLocal8Bit();
+				foreach ( const QString& value, mCache[ project ][ variable ] ) {
+					qWarning() << QString( "%1%2" ).arg( QString( indent, '\t' ) ).arg( value ).toLocal8Bit();
 				}
 				
 				indent--;
@@ -189,21 +196,6 @@ void XUPProjectItemCache::debug( bool full ) const
 	}
 }
 #endif
-
-QString XUPProjectItemCache::value( XUPProjectItem* project, const QString& variable ) const
-{
-	const XUPProjectItemCacheBackend* backend = project->cacheBackend();
-	
-	if ( !backend ) {
-		return QString::null;
-	}
-	
-	if ( !mCache.value( project ).contains( variable ) ) {
-		const_cast<XUPProjectItemCache*>( this )->build( project );
-	}
-	
-	return QString( mCache.value( project ).value( variable ) ).replace( backend->multiLineSeparator(), " " );
-}
 
 QStringList XUPProjectItemCache::values( XUPProjectItem* project, const QString& variable ) const
 {
@@ -217,19 +209,5 @@ QStringList XUPProjectItemCache::values( XUPProjectItem* project, const QString&
 		const_cast<XUPProjectItemCache*>( this )->build( project );
 	}
 	
-	return mCache.value( project ).value( variable ).split( backend->multiLineSeparator() );
-}
-
-QString XUPProjectItemCache::evaluatedContent( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const
-{
-	if ( project->cacheBackend() ) {
-		return project->cacheBackend()->guessedValue( project, valueProject, value );
-	}
-	
-	return QString::null;
-}
-
-QString XUPProjectItemCache::indentString( int indent ) const
-{
-	return QString( indent, '\t' );
+	return mCache.value( project ).value( variable );
 }

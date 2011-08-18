@@ -126,6 +126,7 @@ public:
 	// return the cache backend used by  cache()
 	virtual XUPProjectItemCacheBackend* cacheBackend() const;
 	// return the variable value
+	QStringList cachedVariableValues( const QString& variableName ) const;
 	QString cachedVariableValue( const QString& variableName ) const;
 	static XUPProjectItemCache* cache();
 	
