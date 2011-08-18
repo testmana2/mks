@@ -85,7 +85,7 @@ QStringList XUPProjectItem::sourceFiles() const
 		foreach ( XUPItem* variable, variables ) {
 			foreach( XUPItem* item, variable->childrenList() ) {
 				if ( item->type() == XUPItem::File ) {
-					entries << filePath( item->content() );
+					entries << filePath( item->cacheValue( "content" ) );
 				}
 			}
 		}
@@ -228,16 +228,15 @@ void XUPProjectItem::removeValue( XUPItem* item )
 
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
 {
+	const QString searchFileName = QFileInfo( partialFilePath ).fileName();
 	QFileInfoList files;
-	QString searchFileName = QFileInfo( partialFilePath ).fileName();
 	
-	foreach(XUPProjectItem* project, childrenProjects(true))
-	{
-		foreach(QString file, project->sourceFiles())
-		{
-			if (QFileInfo( file ).fileName() == searchFileName)
-			{
-				files << QFileInfo(project->filePath(file)); // absolute path
+	foreach( XUPProjectItem* project, childrenProjects( true ) ) {
+		foreach( const QString& file, project->sourceFiles() ) {
+			const QFileInfo fileInfo( project->filePath( file ) );
+			
+			if ( fileInfo.exists() && fileInfo.fileName() == searchFileName ) {
+				files << fileInfo;
 			}
 		}
 	}

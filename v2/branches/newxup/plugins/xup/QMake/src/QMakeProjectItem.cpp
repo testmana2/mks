@@ -173,7 +173,7 @@ QStringList QMakeProjectItemCacheBackend::guessedContent( XUPProjectItem* projec
 		qWarning() << loopContent;
 		qWarning() << guessed;
 		qWarning() << cachedData.value( project );
-		//Q_ASSERT( 0 );
+		Q_ASSERT( 0 );
 	}
 #endif
 

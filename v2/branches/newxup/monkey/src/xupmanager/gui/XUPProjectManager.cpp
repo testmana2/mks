@@ -81,48 +81,52 @@ void XUPProjectManager::tvFiltered_currentChanged( const QModelIndex& current, c
 void XUPProjectManager::on_tvFiltered_activated( const QModelIndex& index )
 {
 	XUPItem* item = mFilteredModel->mapToSource( index );
-	if ( item )
-	{
-		if ( item->type() == XUPItem::Project )
-		{
+	
+	if ( item ) {
+		if ( item->type() == XUPItem::Project ) {
 			emit projectDoubleClicked( item->project() );
 		}
-		else if ( item->type() == XUPItem::File )
-		{
+		else if ( item->type() == XUPItem::File ) {
 			XUPProjectItem* project = item->project();
-			XUPProjectItem* rootIncludeProject = project->rootIncludeProject();
-			QString fn = rootIncludeProject->filePath( item->content() );
+			const QString content = item->cacheValue( "content" );
+			QString filePath = project->filePath( content );
 			
-			if ( !QFile::exists( fn ) )
-			{
-				QString findFile = item->content().remove( '"' );
-				QFileInfoList files = rootIncludeProject->findFile( findFile );
-				switch ( files.count() )
-				{
+			if ( !QFile::exists( filePath ) ) {
+				const XUPProjectItem* rootIncludeProject = project->rootIncludeProject();
+				const QString findFile = QFileInfo( content ).fileName();
+				QFileInfoList files = project->findFile( findFile );
+				
+				if ( files.isEmpty() ) {
+					files = rootIncludeProject->findFile( findFile );
+				}
+				
+				switch ( files.count() ) {
 					case 0:
-						fn.clear();
+						filePath.clear();
 						break;
 					case 1:
-						fn = files.at( 0 ).absoluteFilePath();
+						filePath = files.at( 0 ).absoluteFilePath();
 						break;
-					default:
-					{
+					default: {
 						UIXUPFindFiles dlg( findFile, this );
 						dlg.setFiles( files, rootIncludeProject->path() );
-						fn.clear();
-						if ( dlg.exec() == QDialog::Accepted )
-						{
-							fn = dlg.selectedFile();
+						filePath.clear();
+						
+						if ( dlg.exec() == QDialog::Accepted ) {
+							filePath = dlg.selectedFile();
 						}
+						
 						break;
 					}
 				}
 			}
 			
-			if ( QFile::exists( fn ) )
-			{
-				emit fileDoubleClicked( project, fn, project->codec() );
-				emit fileDoubleClicked( fn, project->codec() );
+			if ( QFile::exists( filePath ) ) {
+				emit fileDoubleClicked( project, filePath, project->codec() );
+				emit fileDoubleClicked( filePath, project->codec() );
+			}
+			else {
+				MonkeyCore::messageManager()->appendMessage( tr( "Can't find file to open '%1'" ).arg( QFileInfo( content ).fileName() ) );
 			}
 		}
 	}
