@@ -11,10 +11,10 @@ class QMakeProjectItemCacheBackend : public XUPProjectItemCacheBackend
 public:
 	QMakeProjectItemCacheBackend( XUPProjectItemCache* cache );
 	
-	virtual QString guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const;
-	virtual QString guessedValue( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const;
-	virtual void updateVariable( XUPProjectItem* project, const QString& variable, const QString& value, const QString& op );
-    virtual bool cacheRecursiveScanHook( XUPProjectItem* project, XUPItem* item );
+	virtual QStringList guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const;
+	virtual QStringList guessedContent( XUPProjectItem* project, XUPProjectItem* valueProject, const QStringList& content ) const;
+	virtual void updateVariable( XUPProjectItem* project, const QString& variable, const QStringList& values, const QString& op = QString::null );
+	virtual bool cacheRecursiveScanHook( XUPProjectItem* project, XUPItem* item );
 };
 
 class QMakeProjectItem : public XUPProjectItem
