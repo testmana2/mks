@@ -25,6 +25,32 @@
 	#define PLATFORM_TYPE_STRING "OTHERS_PLATFORM"
 #endif
 
+static QSet<QString> QMakeNativeFunctions = QSet<QString>() // set better for contains test
+	<< "basename"
+	<< "CONFIG"
+	<< "contains"
+	<< "count"
+	<< "dirname"
+	<< "error"
+	<< "eval"
+	<< "exists"
+	<< "find"
+	<< "for"
+	<< "include"
+	<< "infile"
+	<< "isEmpty"
+	<< "join"
+	<< "member"
+	<< "message"
+	<< "prompt"
+	<< "quote"
+	<< "replace"
+	<< "sprintf"
+	<< "system"
+	<< "unique"
+	<< "warning"
+	;
+
 QMakeProjectItemCacheBackend QMakeProjectItem::mCacheBackend = QMakeProjectItemCacheBackend( QMakeProjectItem::cache() );
 
 // QMakeProjectItemCacheBackend
@@ -34,7 +60,7 @@ QMakeProjectItemCacheBackend::QMakeProjectItemCacheBackend( XUPProjectItemCache*
 {
 }
 
-QString QMakeProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const
+QStringList QMakeProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const
 {
 	/*
 		$$[QT_INSTALL_HEADERS] : read content from qt conf
@@ -43,21 +69,27 @@ QString QMakeProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, 
 		$(QTDIR) : read from generated makefile - Hmm what does that mean ?!
 	*/
 	
+	const QString name = QString( variable ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
+	
+	if ( QMakeNativeFunctions.contains( name ) ) {
+		return QStringList( variable );
+	}
+	
 	if ( !mCache ) {
-		return QString::null;
+		return QStringList();
 	}
 	
 	XUPProjectItemCache::ProjectCache& cachedData = mCache->cachedData();
 	
-	const QString name = QString( variable ).replace( '$', "" ).replace( '{', "" ).replace( '}', "" ).replace( '[', "" ).replace( ']', "" ).replace( '(', "" ).replace( ')', "" );
-	
 	// environment variable
 	if ( variable.startsWith( "$$(" ) || variable.startsWith( "$(" ) ) {
 		if ( name == "PWD" ) {
-			return project->path();
+			const QString path = project->path();
+			return path.isEmpty() ? QStringList() : QStringList( path );
 		}
 		else {
-			return QString::fromLocal8Bit( qgetenv( name.toLocal8Bit().constData() ) );
+			const QString value = QString::fromLocal8Bit( qgetenv( name.toLocal8Bit().constData() ) );
+			return value.isEmpty() ? QStringList() : QStringList( value );
 		}
 	}
 	// qmake variable
@@ -82,51 +114,73 @@ QString QMakeProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, 
 		}
 		
 		// caching result for now, we may disable if needed as user can change qmake variable outside
-		cachedData[ project ][ name ] = output;
-		return output;
+		cachedData[ project ][ name ] = QStringList( output );
+		return QStringList( output );
 	}
 	// project variable
 	else {
 		if ( name == "PWD" ) {
-			return variableProject->path();
+			const QString path = variableProject->path();
+			return path.isEmpty() ? QStringList() : QStringList( path );
 		}
 		else if ( name == "_PRO_FILE_" ) {
-			return project->fileName();
+			const QString fileName = project->fileName();
+			return fileName.isEmpty() ? QStringList() : QStringList( fileName );
 		}
 		else if ( name == "_PRO_FILE_PWD_" ) {
-			return project->path();
+			const QString path = project->path();
+			return path.isEmpty() ? QStringList() : QStringList( path );
 		}
 		else {
-			return QString( cachedData.value( project ).value( name ) ).replace( mMultiLineSeparator, " " );
+			return cachedData.value( project ).value( name );
 		}
 	}
 	
-	return QString::null;
+	return QStringList();
 }
 
-QString QMakeProjectItemCacheBackend::guessedValue( XUPProjectItem* project, XUPProjectItem* valueProject, const QString& value ) const
+QStringList QMakeProjectItemCacheBackend::guessedContent( XUPProjectItem* project, XUPProjectItem* valueProject, const QStringList& content ) const
 {
-	//QRegExp rx( "\\$\\$?[\\{\\(\\[]?([\\w\\.]+(?!\\w*\\s*\\{\\[\\(\\)\\]\\}))[\\]\\)\\}]?" );
-	QRegExp rx( "(?:[^$]|^)(\\${1,2}(?!\\$+)[{(\\[]?[\\w._]+[})\\]]?)" );
-	QString guessed = value;
+	if ( !mCache ) {
+		return QStringList();
+	}
+	
+	//const QRegExp rx( "\\$\\$?[\\{\\(\\[]?([\\w\\.]+(?!\\w*\\s*\\{\\[\\(\\)\\]\\}))[\\]\\)\\}]?" );
+	const QRegExp rx( "(?:[^$]|^)(\\${1,2}(?!\\$+)[{(\\[]?[\\w._]+[})\\]]?)" );
+	XUPProjectItemCache::ProjectCache& cachedData = mCache->cachedData();
+	QString loopContent = content.join( " " );
+	QStringList guessed = content;
 	int pos = 0;
 
-	while ( ( pos = rx.indexIn( value, pos ) ) != -1 ) {
-		guessed.replace( rx.cap( 1 ), guessedVariable( project, valueProject, rx.cap( 1 ) ) );
-		pos += rx.matchedLength();
+	while ( ( pos = rx.indexIn( loopContent, pos ) ) != -1 ) {
+		const QString capture = rx.cap( 1 );
+		const QString guessedVariableContent = guessedVariable( project, valueProject, capture ).join( " " );
+		loopContent.replace( capture, guessedVariableContent );
+		guessed.replaceInStrings( capture, guessedVariableContent );
+		pos += guessedVariableContent.length();
 	}
 	
 #ifndef QT_NO_DEBUG
-	if ( guessed.contains( "$" ) ) {
-		qWarning() << value;
+	QString s = guessed.join( " " );
+	
+	foreach ( const QString& f, QMakeNativeFunctions ) {
+		s.replace( QString( "$$%1" ).arg( f ), QString::null );
+	}
+	
+	if ( s.contains( "$" ) ) {
+		qWarning() << "Failed guessing";
+		qWarning() << content;
+		qWarning() << loopContent;
 		qWarning() << guessed;
+		qWarning() << cachedData.value( project );
+		//Q_ASSERT( 0 );
 	}
 #endif
 
 	return guessed;
 }
 
-void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QString& value, const QString& op )
+void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, const QString& variable, const QStringList& values, const QString& op )
 {
 	if ( !mCache ) {
 		return;
@@ -135,27 +189,36 @@ void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, cons
 	XUPProjectItemCache::ProjectCache& cachedData = mCache->cachedData();
 	
 	if ( op == "=" || op.isEmpty() ) {
-		cachedData[ project ][ variable ] = value;
+		cachedData[ project ][ variable ] = values;
 	}
 	else if ( op == "-=" ) {
 		const DocumentFilterMap& filter = project->documentFilters();
-		const QStringList values = filter.splitValue( QString( value ).replace( mMultiLineSeparator, " " ) ).toSet().toList();
+		const QStringList opValue = filter.splitValue( values.join( " " ) ).toSet().toList();
 		
-		foreach ( const QString& value, values ) {
-			cachedData[ project ][ variable ].replace( QRegExp( QString( "\\b%1\\b" ).arg( value ) ), QString::null );
+		foreach ( const QString& value, opValue ) {
+			cachedData[ project ][ variable ].replaceInStrings( QRegExp( QString( "\\b%1\\b" ).arg( value ) ), QString::null );
 		}
 	}
 	else if ( op == "+=" ) {
-		cachedData[ project ][ variable ] += mMultiLineSeparator +value;
+		cachedData[ project ][ variable ] << values;
 	}
 	else if ( op == "*=" ) {
 		const DocumentFilterMap& filter = project->documentFilters();
-		const QSet<QString> currentValues = filter.splitValue( QString( cachedData[ project ][ variable ] ).replace( mMultiLineSeparator, " " ) ).toSet();
-		const QStringList values = filter.splitValue( QString( value ).replace( mMultiLineSeparator, " " ) ).toSet().toList();
+		QSet<QString> currentValues = filter.splitValue( cachedData[ project ][ variable ].join( " " ) ).toSet();
 		
 		foreach ( const QString& value, values ) {
-			if ( !currentValues.contains( value ) ) {
-				cachedData[ project ][ variable ] += mMultiLineSeparator +value;
+			const QStringList newValues = filter.splitValue( value ).toSet().toList();
+			QStringList parts;
+			
+			foreach ( const QString& value, newValues ) {
+				if ( !currentValues.contains( value ) ) {
+					currentValues << value;
+					parts << value;
+				}
+			}
+			
+			if ( !parts.isEmpty() ) {
+				cachedData[ project ][ variable ] << parts.join( " " );
 			}
 		}
 	}
@@ -355,7 +418,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 	// search all sub project to handle
 	foreach ( XUPItem* child, subdirs->childrenList() ) {
 		if ( child->type() == XUPItem::File ) {
-			QStringList cacheFns = filter.splitValue( XUPProjectItem::cache()->evaluatedContent( project->rootIncludeProject(), project, child->content() ) );
+			QStringList cacheFns = filter.splitValue( child->cacheValue( "content" ) );
 			
 			foreach ( const QString& cacheFn, cacheFns ) {
 				if ( cacheFn.isEmpty() ) {
