@@ -533,9 +533,14 @@ XUPProjectItemCacheBackend* XUPProjectItem::cacheBackend() const
 	return &XUPProjectItem::mProjectsCacheBackend;
 }
 
+QStringList XUPProjectItem::cachedVariableValues( const QString& variableName ) const
+{
+    return XUPProjectItem::cache()->values( rootIncludeProject(), variableName );
+}
+
 QString XUPProjectItem::cachedVariableValue( const QString& variableName ) const
 {
-    return XUPProjectItem::cache()->value( rootIncludeProject(), variableName );
+    return cachedVariableValues( variableName ).join( " " );
 }
 
 XUPProjectItemCache* XUPProjectItem::cache()
