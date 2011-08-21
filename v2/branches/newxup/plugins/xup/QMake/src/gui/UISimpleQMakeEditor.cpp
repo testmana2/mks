@@ -49,10 +49,6 @@ UISimpleQMakeEditor::UISimpleQMakeEditor( XUPProjectItem* project, QWidget* pare
 	// connections
 	connect( lwQtModules, SIGNAL( itemSelectionChanged() ), this, SLOT( modules_itemSelectionChanged() ) );
 	connect( lwModules, SIGNAL( itemSelectionChanged() ), this, SLOT( modules_itemSelectionChanged() ) );
-	foreach ( QRadioButton* rb, gbProjectType->findChildren<QRadioButton*>() )
-	{
-		connect( rb, SIGNAL( toggled( bool ) ), this, SLOT( projectTypeChanged() ) );
-	}
 	
 	// init proejct settings dialog
 	init( project );
@@ -119,25 +115,9 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 	mConfigGui << "app_bundle" << "lib_bundle" << "embed_manifest_exe" << "embed_manifest_dll"
 		/*<< "designer"*/ << "plugin" << "shared" << "dll" << "static" << "staticlib";
 	
-	QtVersionManager* manager = QMake::versionManager();
 	lwQtVersion->clear();
 	lwQtModules->clear();
 	lwModules->clear();
-	
-	mQtVersion = manager->version( XUPProjectItemHelper::projectSettingsValue( mProject, "QT_VERSION" ) );
-	
-	// qt versions
-	foreach ( const QtVersion& qv, manager->versions() )
-	{
-		QListWidgetItem* it = new QListWidgetItem( qv.Version, lwQtVersion );
-		it->setData( Qt::UserRole, QVariant::fromValue( qv ) );
-		
-		if ( qv.Default )
-			it->setBackground( QBrush( Qt::green ) );
-		
-		if ( qv == mQtVersion )
-			it->setSelected( true );
-	}
 	
 	// qt modules
 	foreach ( const QtItem& mi, manager->modules() )
@@ -171,93 +151,8 @@ void UISimpleQMakeEditor::init( XUPProjectItem* project )
 			}
 		}
 	}
-
-	// loading datas from variable of root scope having operator =, += or *= only
-	foreach ( XUPItem* child, mProject->childrenList() )
-	{
-		if ( child->type() == XUPItem::Variable )
-		{
-			QString variableName = child->attribute( "name" );
-			QString op = child->attribute( "operator", "=" );
-			
-			if ( op != "=" && op != "+=" && op != "*=" )
-			{
-				continue;
-			}
-			
-			foreach ( XUPItem* value, child->childrenList() )
-			{
-				XUPItem::Type type = value->type();
-				QString val;
-				
-				if ( type != XUPItem::Value && type != XUPItem::File && type != XUPItem::Path )
-				{
-					continue;
-				}
-				
-				if ( !mValues.keys().contains( "QT" ) && variableName == "QT" && ( op == "+=" || op == "*=" ) )
-				{
-					val += "core gui ";
-				}
-				
-				val += mValues[ variableName ].trimmed();
-				val += " " +value->content();
-				mValues[ variableName ] = val.trimmed();
-			}
-		}
-	}
 	
 	// update gui
-	config = project->documentFilters().splitValue( mValues[ "CONFIG" ] );
-	
-	// project
-	value = mValues[ "TEMPLATE" ];
-	if ( value == "app" )
-	{
-		rbApplication->setChecked( true );
-	}
-	else if ( value == "subdirs" )
-	{
-		rbSubdirs->setChecked( true );
-	}
-	else if ( value == "lib" )
-	{
-		if ( config.contains( "designer" ) )
-		{
-			rbQtDesignerPlugin->setChecked( true );
-			config.removeAll( "designer" );
-		}
-		else if ( config.contains( "plugin" ) )
-		{
-			rbQtPlugin->setChecked( true );
-			config.removeAll( "plugin" );
-		}
-		else if ( config.contains( "shared" ) || config.contains( "dll" ) )
-		{
-			rbSharedLib->setChecked( true );
-			config.removeAll( "shared" );
-			config.removeAll( "dll" );
-		}
-		else if ( config.contains( "static" ) || config.contains( "staticlib" ) )
-		{
-			rbStaticLib->setChecked( true );
-			config.removeAll( "static" );
-			config.removeAll( "staticlib" );
-		}
-	}
-	
-	if ( !rbSubdirs->isChecked() )
-	{
-		leProjectName->setText( mValues[ "TARGET" ] );
-		if ( rbApplication->isChecked() || rbStaticLib->isChecked() )
-		{
-			leProjectTarget->setText( mValues[ "DESTDIR" ] );
-		}
-		else
-		{
-			leProjectTarget->setText( mValues[ "DLLDESTDIR" ] );
-		}
-	}
 	
 	// modules
 	values = project->documentFilters().splitValue( mValues[ "QT" ] );
@@ -359,25 +254,6 @@ XUPItem* UISimpleQMakeEditor::getUniqueVariableItem( const QString& variableName
 	
 	// return item
 	return variableItem;
-}
-
-void UISimpleQMakeEditor::projectTypeChanged()
-{
-	bool isSubdirs = rbSubdirs->isChecked();
-	leProjectName->setDisabled( isSubdirs );
-	leProjectTarget->setDisabled( isSubdirs );
-	tbProjectTarget->setDisabled( isSubdirs );
-}
-
-void UISimpleQMakeEditor::on_tbProjectTarget_clicked()
-{
-	QString path = leProjectTarget->text().isEmpty() ? mProject->path() : mProject->filePath( leProjectTarget->text() );
-	path = QFileDialog::getExistingDirectory( this, tr( "Choose a target path for your project" ), path );
-	
-	if ( !path.isEmpty() )
-	{
-		leProjectTarget->setText( mProject->relativeFilePath( path ) );
-	}
 }
 
 void UISimpleQMakeEditor::modules_itemSelectionChanged()

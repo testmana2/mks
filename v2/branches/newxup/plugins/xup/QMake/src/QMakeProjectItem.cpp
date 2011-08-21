@@ -2,7 +2,8 @@
 #include "QtVersionManager.h"
 #include "QMake.h"
 #include "QMake2XUP.h"
-#include "UISimpleQMakeEditor.h"
+//#include "UISimpleQMakeEditor.h"
+#include "editor/UIQMakeEditor.h"
 
 #include <XUPProjectItemHelper.h>
 #include <UIMain.h>
@@ -804,18 +805,23 @@ XUPProjectItemCacheBackend* QMakeProjectItem::cacheBackend() const
 
 bool QMakeProjectItem::edit()
 {
-	if ( UISimpleQMakeEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted ) {
+	/*if ( UISimpleQMakeEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted ) {
         XUPProjectItem::cache()->build( rootIncludeProject() );
         return true;
 	}
     
-	return false;
+	return false;*/
+	
+	UIQMakeEditor dlg( MonkeyCore::mainWindow() );
+	dlg.setupProject( this );
+	return dlg.exec() == QDialog::Accepted;
 }
 
 bool QMakeProjectItem::editProjectFiles()
 {
-	/*UIXUPEditor dlg( MonkeyCore::mainWindow() );
+	/*UIQMakeEditor dlg( MonkeyCore::mainWindow() );
 	dlg.setupProject( this );
+	dlg.showProjectFilesPage();
 	return dlg.exec() == QDialog::Accepted;*/
 	return edit();
 }
