@@ -85,7 +85,7 @@ int UIXUPEditor::currentPage() const
 
 void UIXUPEditor::setupProject( XUPProjectItem* project )
 {
-	QList<XUPPageEditor*> pages = QList<XUPPageEditor*>()
+	const QList<XUPPageEditor*> pages = QList<XUPPageEditor*>()
 		<< new MainEditor
 		<< new FilesEditor
 		<< new VariablesEditor

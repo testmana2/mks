@@ -22,6 +22,12 @@ public:
 	
 	bool isQuoteSpacedValuesVisible() const;
 	bool isQuoteSpacedValuesEnabled() const;
+	bool isQuoteSpacedValuesChecked() const;
+	QString quoteSpacedValuesString() const;
+	
+	bool isDeleteRemovedFilesVisible() const;
+	bool isDeleteRemovedFilesEnabled() const;
+	bool isDeleteRemovedFilesChecked() const;
 	
 	void setup( XUPProjectItem* project );
 	void finalize();
@@ -29,6 +35,12 @@ public:
 public slots:
 	void setQuoteSpacedValuesVisible( bool visible );
 	void setQuoteSpacedValuesEnabled( bool enabled );
+	void setQuoteSpacedValuesChecked( bool checked );
+	void setQuoteSpacedValuesString( const QString& string );
+	
+	void setDeleteRemovedFilesVisible( bool visible );
+	void setDeleteRemovedFilesEnabled( bool enabled );
+	void setDeleteRemovedFilesChecked( bool checked );
 
 protected:
 	Ui_FilesEditor* ui;
