@@ -10,7 +10,7 @@ TEMPLATE	= lib
 CONFIG	*= staticlib
 DESTDIR	= $${PACKAGE_BUILD_PATH}
 
-FRESH_SOURCES_PATHS = $$getFolders( ./objects ./widgets )
+FRESH_SOURCES_PATHS	= $$getFolders( ./objects ./widgets )
 INCLUDEPATH	*= $${FRESH_SOURCES_PATHS}
 DEPENDPATH	*= $${FRESH_SOURCES_PATHS}
 
@@ -66,7 +66,8 @@ HEADERS	*= objects/GetOpt.h \
 	widgets/pEnvironmentVariablesModel.h \
 	widgets/pEnvironmentVariablesManager.h \
 	objects/TranslationManager.h \
-	widgets/TranslationDialog.h
+	widgets/TranslationDialog.h \
+	objects/pGenericTableModel.h
 
 SOURCES	*= objects/GetOpt.cpp \
 	objects/pIconManager.cpp \
@@ -110,4 +111,5 @@ SOURCES	*= objects/GetOpt.cpp \
 	widgets/pEnvironmentVariablesModel.cpp \
 	widgets/pEnvironmentVariablesManager.cpp \
 	objects/TranslationManager.cpp \
-	widgets/TranslationDialog.cpp
+	widgets/TranslationDialog.cpp \
+	objects/pGenericTableModel.cpp
