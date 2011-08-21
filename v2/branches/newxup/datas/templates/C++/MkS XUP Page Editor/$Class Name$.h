@@ -18,6 +18,7 @@ public:
 
 protected:
 	Ui_$Class Name$* ui;
+	XUPProjectItem* mProject;
 };
 
 #endif // $Class Name.upper$_H
