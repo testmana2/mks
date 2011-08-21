@@ -40,8 +40,6 @@ protected:
 	XUPItem* getUniqueVariableItem( const QString& variableName, bool create );
 
 protected slots:
-	void projectTypeChanged();
-	void on_tbProjectTarget_clicked();
 	void modules_itemSelectionChanged();
 	
 	// variables
