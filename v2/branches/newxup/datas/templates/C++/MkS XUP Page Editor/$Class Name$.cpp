@@ -11,6 +11,7 @@ $Class Name$::$Class Name$( QWidget* parent )
 
 $Class Name$::~$Class Name$()
 {
+	delete ui;
 }
 
 void $Class Name$::setup( XUPProjectItem* project )
