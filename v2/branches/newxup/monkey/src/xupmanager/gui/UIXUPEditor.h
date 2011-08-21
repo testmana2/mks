@@ -1,5 +1,5 @@
-#ifndef UISIMPLEQMAKEEDITOR_H
-#define UISIMPLEQMAKEEDITOR_H
+#ifndef UIXUPEDITOR_H
+#define UIXUPEDITOR_H
 
 #include "MonkeyExport.h"
 
@@ -35,12 +35,12 @@ protected:
 	XUPProjectItem* mProject;
 	QList<XUPPageEditor*> mPages;
 	
-	void setup( XUPProjectItem* project );
-	void finalize();
+	virtual void setup( XUPProjectItem* project );
+	virtual void finalize();
 
 protected slots:
 	void on_lwPages_currentRowChanged( int row );
 	void accept();
 };
 
-#endif // UISIMPLEQMAKEEDITOR_H
+#endif // UIXUPEDITOR_H

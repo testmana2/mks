@@ -22,6 +22,8 @@ public:
 	
 	bool isQuoteSpacedValuesVisible() const;
 	bool isQuoteSpacedValuesEnabled() const;
+	bool isQuoteSpacedValuesChecked() const;
+	QString quoteSpacedValuesString() const;
 	
 	void setup( XUPProjectItem* project );
 	void finalize();
@@ -29,6 +31,8 @@ public:
 public slots:
 	void setQuoteSpacedValuesVisible( bool visible );
 	void setQuoteSpacedValuesEnabled( bool enabled );
+	void setQuoteSpacedValuesChecked( bool checked );
+	void setQuoteSpacedValuesString( const QString& string );
 
 protected:
 	Ui_VariablesEditor* ui;

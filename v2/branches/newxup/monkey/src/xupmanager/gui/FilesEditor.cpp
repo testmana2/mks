@@ -49,6 +49,56 @@ bool FilesEditor::isQuoteSpacedValuesEnabled() const
 	return ui->wQuote->isEnabled();
 }
 
+void FilesEditor::setQuoteSpacedValuesChecked( bool checked )
+{
+	ui->cbQuoteEnabled->setChecked( checked );
+}
+
+bool FilesEditor::isQuoteSpacedValuesChecked() const
+{
+	return ui->cbQuoteEnabled->isChecked();
+}
+
+void FilesEditor::setQuoteSpacedValuesString( const QString& string )
+{
+	ui->cbQuote->setEditText( string );
+}
+
+QString FilesEditor::quoteSpacedValuesString() const
+{
+	return ui->cbQuote->currentText();
+}
+
+void FilesEditor::setDeleteRemovedFilesVisible( bool visible )
+{
+	ui->cbDeleteEnabled->setVisible( visible );
+}
+
+bool FilesEditor::isDeleteRemovedFilesVisible() const
+{
+	return ui->cbDeleteEnabled->isVisible();
+}
+
+void FilesEditor::setDeleteRemovedFilesEnabled( bool enabled )
+{
+	ui->cbDeleteEnabled->setEnabled( enabled );
+}
+
+bool FilesEditor::isDeleteRemovedFilesEnabled() const
+{
+	return ui->cbDeleteEnabled->isEnabled();
+}
+
+void FilesEditor::setDeleteRemovedFilesChecked( bool checked )
+{
+	ui->cbDeleteEnabled->setChecked( checked );
+}
+
+bool FilesEditor::isDeleteRemovedFilesChecked() const
+{
+	return ui->cbDeleteEnabled->isChecked();
+}
+
 void FilesEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;

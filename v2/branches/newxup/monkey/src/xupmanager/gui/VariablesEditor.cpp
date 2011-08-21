@@ -67,6 +67,26 @@ bool VariablesEditor::isQuoteSpacedValuesEnabled() const
 	return ui->wQuote->isEnabled();
 }
 
+void VariablesEditor::setQuoteSpacedValuesChecked( bool checked )
+{
+	ui->cbQuoteEnabled->setChecked( checked );
+}
+
+bool VariablesEditor::isQuoteSpacedValuesChecked() const
+{
+	return ui->cbQuoteEnabled->isChecked();
+}
+
+void VariablesEditor::setQuoteSpacedValuesString( const QString& string )
+{
+	ui->cbQuote->setEditText( string );
+}
+
+QString VariablesEditor::quoteSpacedValuesString() const
+{
+	return ui->cbQuote->currentText();
+}
+
 void VariablesEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
