@@ -12,6 +12,10 @@ class QMakeVariablesEditor : public VariablesEditor
 public:
 	QMakeVariablesEditor( UIQMakeEditor::ProjectValues& positive, UIQMakeEditor::ProjectValues& negative, QWidget* parent = 0 );
 	virtual ~QMakeVariablesEditor();
+	
+	virtual XUPItemVariableEditorModel::FilterMode filterMode() const;
+	virtual bool isFriendlyDisplayText() const;
+	virtual QStringList filteredVariables() const;
 
 protected:
 	UIQMakeEditor::ProjectValues& mPositiveValues;
