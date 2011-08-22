@@ -3,6 +3,7 @@
 
 #include "MonkeyExport.h"
 #include "XUPPageEditor.h"
+#include "XUPItemVariableEditorModel.h"
 
 #include <QModelIndex>
 
@@ -25,8 +26,12 @@ public:
 	bool isQuoteSpacedValuesChecked() const;
 	QString quoteSpacedValuesString() const;
 	
-	void setup( XUPProjectItem* project );
-	void finalize();
+	virtual XUPItemVariableEditorModel::FilterMode filterMode() const;
+	virtual bool isFriendlyDisplayText() const;
+	virtual QStringList filteredVariables() const;
+	
+	virtual void setup( XUPProjectItem* project );
+	virtual void finalize();
 
 public slots:
 	void setQuoteSpacedValuesVisible( bool visible );

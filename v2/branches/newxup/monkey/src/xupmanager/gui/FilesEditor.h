@@ -29,8 +29,8 @@ public:
 	bool isDeleteRemovedFilesEnabled() const;
 	bool isDeleteRemovedFilesChecked() const;
 	
-	void setup( XUPProjectItem* project );
-	void finalize();
+	virtual void setup( XUPProjectItem* project );
+	virtual void finalize();
 
 public slots:
 	void setQuoteSpacedValuesVisible( bool visible );

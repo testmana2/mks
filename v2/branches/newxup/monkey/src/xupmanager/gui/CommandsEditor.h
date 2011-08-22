@@ -20,8 +20,8 @@ public:
 	CommandsEditor( QWidget* parent = 0 );
 	virtual ~CommandsEditor();
 	
-	void setup( XUPProjectItem* project );
-	void finalize();
+	virtual void setup( XUPProjectItem* project );
+	virtual void finalize();
 
 protected:
 	Ui_CommandsEditor* ui;
