@@ -20,10 +20,10 @@
   <layout class="QGridLayout" name="gridLayout_4">
    <item row="1" column="0">
     <widget class="QFrame" name="fHelp">
-     <property name="minimumSize">
+     <property name="maximumSize">
       <size>
-       <width>0</width>
-       <height>100</height>
+       <width>16777215</width>
+       <height>70</height>
       </size>
      </property>
      <property name="frameShape">
@@ -65,12 +65,61 @@
        </widget>
       </item>
       <item row="0" column="1" rowspan="2">
-       <widget class="QLabel" name="lHelp">
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       <widget class="QPlainTextEdit" name="pteHelp">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="Base">
+            <brush brushstyle="SolidPattern">
+             <color alpha="0">
+              <red>0</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
         </property>
-        <property name="wordWrap">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="tabChangesFocus">
          <bool>true</bool>
+        </property>
+        <property name="undoRedoEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+        <property name="tabStopWidth">
+         <number>40</number>
         </property>
        </widget>
       </item>
@@ -85,7 +134,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="wPositive" native="true">
+     <widget class="QWidget" name="wPositive">
       <attribute name="title">
        <string>Positive</string>
       </attribute>
@@ -372,7 +421,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="wNegative" native="true">
+     <widget class="QWidget" name="wNegative">
       <attribute name="title">
        <string>Negative</string>
       </attribute>

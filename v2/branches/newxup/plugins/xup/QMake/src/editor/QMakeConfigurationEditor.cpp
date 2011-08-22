@@ -180,5 +180,5 @@ void QMakeConfigurationEditor::finalize()
 void QMakeConfigurationEditor::showIndexHelp( const QModelIndex& index )
 {
 	const QtItem item = index.data( pGenericTableModel::ExtendedUserRole ).value<QtItem>();
-	ui->lHelp->setText( item.Help );
+	ui->pteHelp->setPlainText( item.Help );
 }
