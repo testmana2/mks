@@ -17,7 +17,7 @@ FilesEditor::FilesEditor( QWidget* parent )
 	ui->tvVariables->setModel( mModel );
 	
 	connect( ui->tvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( tvVariables_selectionModel_selectionChanged() ) );
-	connect( ui->cbQuoteEnabled, SIGNAL( clicked( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
+	connect( ui->cbQuoteEnabled, SIGNAL( toggled( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
 	connect( ui->cbQuote, SIGNAL( editTextChanged( const QString& ) ), mModel, SLOT( setQuoteString( const QString& ) ) );
 	
 	mModel->setQuoteString( ui->cbQuote->currentText() );

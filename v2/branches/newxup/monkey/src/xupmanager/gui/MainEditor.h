@@ -20,8 +20,8 @@ public:
 	MainEditor( QWidget* parent = 0 );
 	virtual ~MainEditor();
 	
-	void setup( XUPProjectItem* project );
-	void finalize();
+	virtual void setup( XUPProjectItem* project );
+	virtual void finalize();
 
 protected:
 	Ui_MainEditor* ui;

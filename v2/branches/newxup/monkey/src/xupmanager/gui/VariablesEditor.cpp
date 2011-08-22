@@ -1,6 +1,5 @@
 #include "VariablesEditor.h"
 #include "ui_VariablesEditor.h"
-#include "XUPItemVariableEditorModel.h"
 #include "XUPProjectItem.h"
 
 #include <QMenu>
@@ -35,11 +34,13 @@ VariablesEditor::VariablesEditor( QWidget* parent )
 	
 	connect( ui->lvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvVariables_selectionModel_selectionChanged() ) );
 	connect( ui->lvValues->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvValues_selectionModel_selectionChanged() ) );
-	connect( ui->cbQuoteEnabled, SIGNAL( clicked( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
+	connect( ui->cbQuoteEnabled, SIGNAL( toggled( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
 	connect( ui->cbQuote, SIGNAL( editTextChanged( const QString& ) ), mModel, SLOT( setQuoteString( const QString& ) ) );
 	
 	mModel->setQuoteString( ui->cbQuote->currentText() );
 	mModel->setQuoteValues( ui->cbQuoteEnabled->isChecked() );
+	
+	lvVariables_selectionModel_selectionChanged();
 }
 
 VariablesEditor::~VariablesEditor()
@@ -87,15 +88,31 @@ QString VariablesEditor::quoteSpacedValuesString() const
 	return ui->cbQuote->currentText();
 }
 
+XUPItemVariableEditorModel::FilterMode VariablesEditor::filterMode() const
+{
+	return XUPItemVariableEditorModel::Out;
+}
+
+bool VariablesEditor::isFriendlyDisplayText() const
+{
+	return false;
+}
+
+QStringList VariablesEditor::filteredVariables() const
+{
+	return mProject ? mProject->documentFilters().fileVariables() : QStringList();
+}
+
 void VariablesEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
-	mModel->setFilteredVariables( project->documentFilters().fileVariables() );
+	mModel->setFilterMode( filterMode() );
+	mModel->setFriendlyDisplayText( isFriendlyDisplayText() );
+	mModel->setFilteredVariables( filteredVariables() );
 	mModel->setRootItem( project );
 	const QModelIndex index = mModel->index( 0, 0 );
 	ui->lvVariables->setCurrentIndex( index );
 	ui->lvVariables->scrollTo( index );
-	lvVariables_selectionModel_selectionChanged();
 }
 
 void VariablesEditor::finalize()
