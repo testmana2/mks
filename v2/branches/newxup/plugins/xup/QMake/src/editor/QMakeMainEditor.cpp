@@ -126,15 +126,21 @@ void QMakeMainEditor::finalize()
 	}
 	
 	if ( !isSolution() ) {
-		mPositiveValues[ "TARGET" ] << ui->leProjectName->text();
+		if ( !ui->leProjectName->text().isEmpty() ) {
+			mPositiveValues[ "TARGET" ] << ui->leProjectName->text();
+		}
 		
 		switch ( ui->bgType->checkedId() ) {
 			case QMakeMainEditor::Application:
 			case QMakeMainEditor::StaticLibrary:
-				mPositiveValues[ "DESTDIR" ] << ui->leProjectTarget->text();
+				if ( !ui->leProjectTarget->text().isEmpty() ) {
+					mPositiveValues[ "DESTDIR" ] << ui->leProjectTarget->text();
+				}
 				break;
 			case QMakeMainEditor::SharedLibrary:
-				mPositiveValues[ "DLLDESTDIR" ] << ui->leProjectTarget->text();
+				if ( !ui->leProjectTarget->text().isEmpty() ) {
+					mPositiveValues[ "DLLDESTDIR" ] << ui->leProjectTarget->text();
+				}
 				break;
 			default:
 				break;
