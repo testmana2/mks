@@ -106,7 +106,7 @@ QString pMonkeyStudio::buildFileDialogFilter( const QMap<QString, QStringList>& 
 		
 		if ( addSupported ) {
 			qSort( allSuffixes.begin(), allSuffixes.end(), insensitiveStringLesserThan );
-			filters.prepend( QObject::tr( "All Supported Files (%1)" ).arg( allSuffixes.join( " " ) ) );
+			filters.prepend( QObject::tr( "All Supported Files (%1)" ).arg( QStringList( allSuffixes.toSet().toList() ).join( " " ) ) );
 		}
 	}
 	
