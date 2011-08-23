@@ -83,11 +83,11 @@ bool QMake::install()
 		const QString l = QString( s ).replace( "c", "l", Qt::CaseInsensitive );
 		
 		if ( !yf.contains( y ) ) {
-			yf << s;
+			yf << y;
 		}
 		
 		if ( s.startsWith( "*.c", Qt::CaseInsensitive ) && !lf.contains( l ) ) {
-			lf << s;
+			lf << l;
 		}
 	}
 	
