@@ -3,6 +3,8 @@
 #include "../QMake.h"
 #include "../QtVersionManager.h"
 
+#include <XUPProjectItem.h>
+
 #include <pGenericTableModel.h>
 
 #include <QDebug>
@@ -175,6 +177,39 @@ void QMakeConfigurationEditor::setup( XUPProjectItem* project )
 
 void QMakeConfigurationEditor::finalize()
 {
+	const DocumentFilterMap& filters = mProject->documentFilters();
+	const QStringList positiveCustomConfiguration = filters.splitValue( ui->lePositiveCustomConfiguration->text() );
+	const QStringList negativeCustomConfiguration = filters.splitValue( ui->leNegativeCustomConfiguration->text() );
+	
+	// generate positive values
+	foreach ( const QModelIndex& index, mPositiveQtModulesModel->checkedIndexes() ) {
+		const QtItem item = index.data( pGenericTableModel::ExtendedUserRole ).value<QtItem>();
+		mPositiveValues[ item.Variable ] << item.Value;
+	}
+	
+	foreach ( const QModelIndex& index, mPositiveConfigurationModel->checkedIndexes() ) {
+		const QtItem item = index.data( pGenericTableModel::ExtendedUserRole ).value<QtItem>();
+		mPositiveValues[ item.Variable ] << item.Value;
+	}
+	
+	if ( !positiveCustomConfiguration.isEmpty() ) {
+		mPositiveValues[ "CONFIG" ] << positiveCustomConfiguration;
+	}
+	
+	// generate negative values
+	foreach ( const QModelIndex& index, mNegativeQtModulesModel->checkedIndexes() ) {
+		const QtItem item = index.data( pGenericTableModel::ExtendedUserRole ).value<QtItem>();
+		mNegativeValues[ item.Variable ] << item.Value;
+	}
+	
+	foreach ( const QModelIndex& index, mNegativeConfigurationModel->checkedIndexes() ) {
+		const QtItem item = index.data( pGenericTableModel::ExtendedUserRole ).value<QtItem>();
+		mNegativeValues[ item.Variable ] << item.Value;
+	}
+	
+	if ( !negativeCustomConfiguration.isEmpty() ) {
+		mNegativeValues[ "CONFIG" ] << negativeCustomConfiguration;
+	}
 }
 
 void QMakeConfigurationEditor::showIndexHelp( const QModelIndex& index )
