@@ -107,7 +107,7 @@ QtItemList QtVersionManager::defaultModules() const
 		<< QtItem( "QtMultimedia", "multimedia", "QT", "Classes for low-level multimedia functionality" )
 		<< QtItem( "QtNetwork", "network", "QT", "Classes for network programming" )
 		<< QtItem( "QtOpenGL", "opengl", "QT", "OpenGL support classes" )
-		<< QtItem( "QtOpenVG", " ", " ", "OpenVG support classes" )
+		//<< QtItem( "QtOpenVG", "", "", "OpenVG support classes" )
 		<< QtItem( "QtScript", "script", "QT", "Classes for evaluating Qt Scripts" )
 		<< QtItem( "QtScriptTools", "scripttools", "QT", "Additional Qt Script components" )
 		<< QtItem( "QtSql", "sql", "QT", "Classes for database integration using SQL" )
