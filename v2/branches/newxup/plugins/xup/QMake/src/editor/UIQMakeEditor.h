@@ -5,6 +5,8 @@
 
 #include <QHash>
 
+class XUPItem;
+
 class UIQMakeEditor : public UIXUPEditor
 {
 	Q_OBJECT
@@ -24,6 +26,9 @@ protected:
 	virtual void finalize();
 	
 	void initializeVariables( XUPProjectItem* project );
+	
+	XUPItem* uniqueVariable( XUPItem* scope, const QString& variableName, bool positive, bool create );
+	void updateVariable( XUPItem* scope, const QString& variableName, bool positive, const QStringList& values );
 };
 
 #endif // UIQMAKEEDITOR_H
