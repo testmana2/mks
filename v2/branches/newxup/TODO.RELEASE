@@ -4,3 +4,4 @@
 - create QMake parser
 - Fix launchpad bugs
 - fix qmake parsing bug (see bodeasy.pro after edition)
+- check qmake project template and remove xup scope
