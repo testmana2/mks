@@ -27,8 +27,8 @@ void UIQMakeEditor::setupProject( XUPProjectItem* project )
 		<< new QMakeMainEditor( mPositiveValues, mNegativeValues )
 		<< new QMakeConfigurationEditor( mPositiveValues, mNegativeValues )
 		<< new QMakeFilesEditor( mPositiveValues, mNegativeValues )
-		<< new QMakeVariablesEditor( mPositiveValues, mNegativeValues )
-		<< new CommandsEditor
+		/*<< new QMakeVariablesEditor( mPositiveValues, mNegativeValues )
+		<< new CommandsEditor*/
 		;
 	
 	addPages( pages );
@@ -51,16 +51,33 @@ bool UIQMakeEditor::showProjectFilesPage()
 
 void UIQMakeEditor::finalize()
 {
-	// clear values, it will be update by page finalize
+	qWarning() << "*** BEFORE";
 	qWarning() << mPositiveValues;
 	qWarning() << mNegativeValues;
 	
-	mPositiveValues.clear();
-	mNegativeValues.clear();
+	// clear values, it will be update by pages finalize
+	foreach ( const QString& variableName, mPositiveValues.keys() ) {
+		mPositiveValues[ variableName ].clear();
+	}
+	
+	foreach ( const QString& variableName, mNegativeValues.keys() ) {
+		mNegativeValues[ variableName ].clear();
+	}
 	
 	UIXUPEditor::finalize();
 	
+	// write positive values
+	foreach ( const QString& variableName, mPositiveValues.keys() ) {
+		updateVariable( mProject, variableName, true, mPositiveValues[ variableName ] );
+	}
+	
+	// write negative values
+	foreach ( const QString& variableName, mNegativeValues.keys() ) {
+		updateVariable( mProject, variableName, false, mNegativeValues[ variableName ] );
+	}
+	
 	// update proejct items
+	qWarning() << "*** AFTER";
 	qWarning() << mPositiveValues;
 	qWarning() << mNegativeValues;
 }
@@ -69,7 +86,7 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 {
 	/*
 		Loading datas from variable of root scope having operator =, += or *= only
-		and not being FILE or PATH based.
+		and not being FILE or PATH based and not being custom xup variables
 	*/
 	
 	const DocumentFilterMap& filters = project->documentFilters();
@@ -89,7 +106,7 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 			const bool isNegative = negativeOperators.contains( op );
 			QStringList values;
 			
-			if ( blackList.contains( variableName ) ) {
+			if ( blackList.contains( variableName ) || variableName.startsWith( XUPProjectItemHelper::SettingsScopeName ) ) {
 				continue;
 			}
 			
@@ -115,32 +132,76 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 		}
 	}
 	
-	/*if ( mValues.value( "CONFIG" ).isEmpty() ) {
-		mValues[ "CONFIG" ]
-			<< "lex"
-			<< "yacc"
-			<< "uic"
-			<< "resources"
-			<< "qt"
-			<< "warn_on"
-			<< "incremental"
-			<< "link_prl"
-			<< "def_files_disabled"
-			<< "exceptions"
-			<< "no_mocdepend"
-			<< "stl"
-			<< "qt_no_framework"
-			;
-	}
-	
-	if ( mValues.value( "CONFIG" ).contains( "qt" )
-		&& mValues.value( "QT" ).isEmpty() ) {
-		mValues[ "QT" ]
-			<< "core"
-			<< "gui"
-			;
-	}*/
-	
+	qWarning() << "*** INITIALIZE";
 	qWarning() << mPositiveValues;
 	qWarning() << mNegativeValues;
+}
+
+XUPItem* UIQMakeEditor::uniqueVariable( XUPItem* scope, const QString& variableName, bool positive, bool create )
+{
+	const QStringList operators = positive ? QStringList() << "=" << "*=" << "+=" : QStringList( "-=" );
+	const XUPItemList variables = scope->project()->getVariables( scope, variableName, false );
+	XUPItem* variableItem = 0;
+	
+	// remove duplicate variables
+	foreach ( XUPItem* variable, variables ) {
+		const QString op = variable->attribute( "operator", "=" );
+		
+		if ( !variableItem && operators.contains( op ) ) {
+			variableItem = variable;
+		}
+		else if ( operators.contains( op ) ) {
+			variable->parent()->removeChild( variable );
+		}
+	}
+	
+	// create it if needed
+	if ( !variableItem && create ) {
+		variableItem = scope->addChild( XUPItem::Variable );
+		variableItem->setAttribute( "name", variableName );
+	}
+	
+	// set / update operator
+	if ( variableItem ) {
+		QString op = variableItem->attribute( "operator", "=" );
+		
+		if ( positive ) {
+			op = op == "*=" ? op : ( variableName == "CONFIG" ? "*=" : "=" );
+		}
+		else {
+			op = "-=";
+		}
+		
+		variableItem->setAttribute( "operator", op );
+	}
+	
+	// return item
+	return variableItem;
+}
+
+void UIQMakeEditor::updateVariable( XUPItem* scope, const QString& variableName, bool positive, const QStringList& values )
+{
+	XUPItem* variableItem = uniqueVariable( scope, variableName, positive, !values.isEmpty() );
+	
+	if ( !variableItem ) {
+		return;
+	}
+	
+	// remove all child values
+	foreach ( XUPItem* child, variableItem->childrenList() ) {
+		if ( child->type() == XUPItem::Value ) {
+			variableItem->removeChild( child );
+		}
+	}
+	
+	// add new one
+	foreach ( const QString& value, values ) {
+		XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
+		valueItem->setContent( value );
+	}
+	
+	// remove variable if it's empty
+	if( !variableItem->hasChildren() ) {
+		variableItem->parent()->removeChild( variableItem );
+	}
 }
