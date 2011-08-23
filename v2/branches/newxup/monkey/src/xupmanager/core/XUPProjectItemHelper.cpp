@@ -18,12 +18,6 @@ QString settingsKey( const QString& key )
 	return k;
 }
 
-XUPItem* XUPProjectItemHelper::projectSettingsScope( XUPProjectItem* project, bool create )
-{
-	Q_UNUSED( create );
-	return project;
-}
-
 void XUPProjectItemHelper::setProjectSettingsValues( XUPProjectItem* project, const QString& key, const QStringList& _values )
 {
 	XUPItem* variable = project->getVariable( project, settingsKey( key ) );
@@ -34,7 +28,7 @@ void XUPProjectItemHelper::setProjectSettingsValues( XUPProjectItem* project, co
 	}
 	
 	if ( !variable ) {
-		variable = XUPProjectItemHelper::projectSettingsScope( project, true )->addChild( XUPItem::Variable );
+		variable = project->addChild( XUPItem::Variable );
 		variable->setAttribute( "name", settingsKey( key ) );
 	}
 	
@@ -86,30 +80,6 @@ QString XUPProjectItemHelper::projectSettingsValue( XUPProjectItem* project, con
 	return values.isEmpty() ? defaultValue : values.join( " " );
 }
 
-XUPItem* XUPProjectItemHelper::projectCommandsScope( XUPProjectItem* project, bool create )
-{
-	XUPItem* settingsScope = projectSettingsScope( project, create );
-	
-	if ( !settingsScope ) {
-		return 0;
-	}
-	
-	foreach ( XUPItem* child, settingsScope->childrenList() ) {
-		if ( child->type() == XUPItem::Scope && child->attribute( "name" ) == CommandsScopeName ) {
-			return child;
-		}
-	}
-	
-	if ( !create ) {
-		return 0;
-	}
-	
-	XUPItem* commandsScope = settingsScope->addChild( XUPItem::Scope );
-	commandsScope->setAttribute( "name", CommandsScopeName );
-	commandsScope->setAttribute( "nested", "false" );
-	return commandsScope;
-}
-
 void XUPProjectItemHelper::addCommandProperty( XUPItem* variableItem, const QString& value )
 {
 	XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
@@ -129,7 +99,7 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Me
 		break;
 	}
 	
-	XUPItem* commandsScope = projectCommandsScope( project, !emptyCommands );
+	XUPItem* commandsScope = project;
 	
 	if ( !commandsScope ) {
 		return;
@@ -167,10 +137,14 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Me
 MenuCommandListMap XUPProjectItemHelper::projectCommands( XUPProjectItem* project )
 {
 	MenuCommandListMap commands;
-	XUPItem* commandsScope = projectCommandsScope( project, false );
+	XUPItem* commandsScope = project;
 	
 	if ( commandsScope ) {
 		foreach ( XUPItem* commandVariable, commandsScope->childrenList() ) {
+			if ( commandVariable->attribute( "name" ) != XUPProjectItemHelper::CommandScopeName ) {
+				continue;
+			}
+			
 			QVariantList values;
 			
 			foreach ( XUPItem* commandValue, commandVariable->childrenList() ) {
