@@ -2,10 +2,13 @@
 #include "ProjectTypesIndex.h"
 #include "XUPProjectItem.h"
 #include "XUPProjectItemHelper.h"
+#include "MonkeyCore.h"
+#include "pFileManager.h"
 
 #include <QApplication>
 #include <QPalette>
 #include <QFont>
+#include <QMessageBox>
 #include <QDebug>
 
 XUPItemVariableEditorModel::XUPItemVariableEditorModel( QObject* parent )
@@ -16,6 +19,7 @@ XUPItemVariableEditorModel::XUPItemVariableEditorModel( QObject* parent )
 	mDocumentFilterMap = 0;
 	mQuoteValues = false;
 	mFriendlyDisplayText = false;
+	mDeleteRemovedFiles = false;
 }
 
 int XUPItemVariableEditorModel::columnCount( const QModelIndex& parent ) const
@@ -316,6 +320,16 @@ bool XUPItemVariableEditorModel::quoteValues() const
 	return mQuoteValues;
 }
 
+void XUPItemVariableEditorModel::setDeleteRemovedFiles( bool del )
+{
+	mDeleteRemovedFiles = del;
+}
+
+bool XUPItemVariableEditorModel::deleteRemovedFiles() const
+{
+	return mDeleteRemovedFiles;
+}
+
 QString XUPItemVariableEditorModel::quotedValue( const QString& value ) const
 {
 	if ( mQuoteValues ) {
@@ -384,12 +398,55 @@ void XUPItemVariableEditorModel::revert()
 	revert( mRootItem );
 }
 
+void XUPItemVariableEditorModel::removeItem( XUPItem* item, bool deleteFiles )
+{
+	XUPProjectItem* project = item->project();
+	
+	switch ( item->type() ) {
+		case XUPItem::Variable: {
+			if ( deleteFiles ) {
+				foreach ( XUPItem* value, item->childrenList() ) {
+					removeItem( value, deleteFiles );
+				}
+			}
+			
+			break;
+		}
+		case XUPItem::File: {
+			if ( deleteFiles ) {
+				const QString content = item->cacheValue( "content" );
+				const QString filePath = project->filePath( content );
+				
+				if ( QFile::exists( filePath ) ) {
+					MonkeyCore::fileManager()->closeFile( filePath );
+					QFile::remove( filePath );
+				}
+			}
+			
+			break;
+		}
+		default:
+			Q_ASSERT( 0 );
+			break;
+	}
+	
+	item->parent()->removeChild( item );
+}
+
 bool XUPItemVariableEditorModel::submit()
 {
 	const bool senderIsItemSelectionModel = sender() ? sender()->inherits( "QItemSelectionModel" ) : false;
 	
 	if ( !mRootItem || senderIsItemSelectionModel ) {
 		return false;
+	}
+	
+	bool deleteFiles = deleteRemovedFiles();
+	
+	if ( deleteFiles ) {
+		if ( QMessageBox::question( QApplication::activeWindow(), QString::null, tr( "Are you sure you want to delete the removed files?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No ) {
+			deleteFiles = false;
+		}
 	}
 	
 	foreach ( const XUPItemVariableEditorModelItem& variable, mRoot.children ) {
@@ -399,7 +456,7 @@ bool XUPItemVariableEditorModel::submit()
 		
 		if ( !variable.enabled ) {
 			if ( variableItem ) {
-				variableItem->parent()->removeChild( variableItem );
+				removeItem( variableItem, deleteFiles );
 			}
 			
 			continue;
@@ -423,13 +480,13 @@ bool XUPItemVariableEditorModel::submit()
 			}
 			else {
 				if ( valueItem ) {
-					valueItem->parent()->removeChild( valueItem );
+					removeItem( valueItem, deleteFiles );
 				}
 			}
 		}
 		
 		if ( !variableItem->hasChildren() ) {
-			variableItem->parent()->removeChild( variableItem );
+			removeItem( variableItem, deleteFiles );
 		}
 	}
 	

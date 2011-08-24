@@ -19,6 +19,7 @@ FilesEditor::FilesEditor( QWidget* parent )
 	connect( ui->tvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( tvVariables_selectionModel_selectionChanged() ) );
 	connect( ui->cbQuoteEnabled, SIGNAL( toggled( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
 	connect( ui->cbQuote, SIGNAL( editTextChanged( const QString& ) ), mModel, SLOT( setQuoteString( const QString& ) ) );
+	connect( ui->cbDeleteEnabled, SIGNAL( toggled( bool ) ), mModel, SLOT( setDeleteRemovedFiles( bool ) ) );
 	
 	mModel->setQuoteString( ui->cbQuote->currentText() );
 	mModel->setQuoteValues( ui->cbQuoteEnabled->isChecked() );
