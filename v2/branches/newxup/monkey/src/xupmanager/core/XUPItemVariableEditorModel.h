@@ -81,6 +81,8 @@ public:
 	
 	QString quoteString() const;
 	bool quoteValues() const;
+	bool deleteRemovedFiles() const;
+	
 	QString quotedValue( const QString& value ) const;
 
 public slots:
@@ -89,6 +91,7 @@ public slots:
 	
 	void setQuoteString( const QString& string );
 	void setQuoteValues( bool quote );
+	void setDeleteRemovedFiles( bool del );
 
 protected:
 	XUPItemVariableEditorModel::FilterMode mMode;
@@ -100,10 +103,12 @@ protected:
 	QString mQuoteString;
 	bool mQuoteValues;
 	bool mFriendlyDisplayText;
+	bool mDeleteRemovedFiles;
 	
 	void buildParentMapping( XUPItemVariableEditorModelItem& item );
 	void setRootItemInternal( const XUPItemVariableEditorModelItem& item, bool clearModel );
 	void revert( XUPItem* item );
+	void removeItem( XUPItem* item, bool deleteFiles );
 };
 
 #endif // XUPITEMVARIABLEEDITORMODEL_H
