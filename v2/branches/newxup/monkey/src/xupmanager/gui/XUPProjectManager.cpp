@@ -2,6 +2,7 @@
 #include "UIXUPFindFiles.h"
 #include "pIconManager.h"
 #include "XUPProjectModel.h"
+#include "XUPProjectItemCache.h"
 #include "XUPFilteredProjectModel.h"
 #include "XUPOpenedProjectsModel.h"
 #include "MkSFileDialog.h"
@@ -310,21 +311,14 @@ void XUPProjectManager::editProject()
 		return;
 	}
 	
-	XUPProjectItem* topLevelProject = project->topLevelProject();
-	
 	// edit project and save it if needed
 	if ( project->edit() ) {
-		if ( project->save() ) {
-			// need save topLevelProject ( for XUPProejctSettings scope  )
-			if ( !topLevelProject->save() ) {
-				MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( topLevelProject->fileName() ).arg( topLevelProject->lastError() ) );
-			}
-		}
-		else {
+		if ( !project->save() ) {
 			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 		}
 		
 		// update menu actions
+		project->cache()->build( project );
 		project->uninstallCommands();
 		project->installCommands();
 	}
@@ -339,6 +333,8 @@ void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )
 	if ( !project->save() ) {
 		MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 	}
+	
+	project->cache()->build( project );
 }
 
 void XUPProjectManager::addFiles()
@@ -349,21 +345,14 @@ void XUPProjectManager::addFiles()
 		return;
 	}
 	
-	XUPProjectItem* topLevelProject = project->topLevelProject();
-	
 	// edit project and save it if needed
 	if ( project->editProjectFiles() ) {
 		if ( project->save() ) {
-			// need save topLevelProject ( for XUPProejctSettings scope  )
-			if ( !topLevelProject->save() ) {
-				MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( topLevelProject->fileName() ).arg( topLevelProject->lastError() ) );
-			}
-		}
-		else {
 			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
 		}
 		
 		// update menu actions
+		project->cache()->build( project );
 		project->uninstallCommands();
 		project->installCommands();
 	}
