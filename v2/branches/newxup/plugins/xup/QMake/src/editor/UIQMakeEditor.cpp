@@ -37,20 +37,6 @@ void UIQMakeEditor::setupProject( XUPProjectItem* project )
 	setup( project );
 }
 
-bool UIQMakeEditor::showProjectFilesPage()
-{
-	/*for ( int i = 0; i < mPages.count(); i++ ) {
-		const XUPPageEditor* page = mPages.at( i );
-		
-		if ( page->inherits( "FilesEditor" ) ) {
-			setCurrentPage( i );
-			return true;
-		}
-	}*/
-	
-	return false;
-}
-
 QStringList UIQMakeEditor::handledVariables()
 {
 	return QStringList()

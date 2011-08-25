@@ -798,13 +798,6 @@ XUPProjectItemCacheBackend* QMakeProjectItem::cacheBackend() const
 
 bool QMakeProjectItem::edit()
 {
-	/*if ( UISimpleQMakeEditor( this, MonkeyCore::mainWindow() ).exec() == QDialog::Accepted ) {
-        XUPProjectItem::cache()->build( rootIncludeProject() );
-        return true;
-	}
-    
-	return false;*/
-	
 	UIQMakeEditor dlg( MonkeyCore::mainWindow() );
 	dlg.setupProject( this );
 	return dlg.exec() == QDialog::Accepted;
@@ -812,17 +805,17 @@ bool QMakeProjectItem::edit()
 
 bool QMakeProjectItem::editProjectFiles()
 {
-	/*UIQMakeEditor dlg( MonkeyCore::mainWindow() );
+	UIQMakeEditor dlg( MonkeyCore::mainWindow() );
 	dlg.setupProject( this );
 	dlg.showProjectFilesPage();
-	return dlg.exec() == QDialog::Accepted;*/
-	return edit();
+	return dlg.exec() == QDialog::Accepted;
 }
 
 CLIToolPlugin* QMakeProjectItem::builder() const
 {
+	XUPProjectItem* tlProject = topLevelProject();
     const QtVersionManager* manager = QMake::versionManager();
-    const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( const_cast<QMakeProjectItem*>( this ), "QT_VERSION" ) );
-	const QString name = version.isValid() && version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ) ? "MSVCMake" : "GNUMake";
+    const QtVersion version = manager->version( XUPProjectItemHelper::projectSettingsValue( tlProject, "QT_VERSION" ) );
+	const QString name = version.QMakeSpec.contains( "msvc", Qt::CaseInsensitive ) ? "MSVCMake" : "GNUMake";
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, name );
 }
