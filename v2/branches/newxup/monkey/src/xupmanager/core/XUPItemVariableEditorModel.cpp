@@ -414,7 +414,7 @@ void XUPItemVariableEditorModel::removeItem( XUPItem* item, bool deleteFiles )
 		}
 		case XUPItem::File: {
 			if ( deleteFiles ) {
-				const QString content = item->cacheValue( "content" );
+				const QString content = item->cacheValue( "content" ).remove( mQuoteString );
 				const QString filePath = project->filePath( content );
 				
 				if ( QFile::exists( filePath ) ) {
