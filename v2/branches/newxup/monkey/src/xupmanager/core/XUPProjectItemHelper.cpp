@@ -105,14 +105,12 @@ void XUPProjectItemHelper::setProjectCommands( XUPProjectItem* project, const Me
 		return;
 	}
 	
-	// delete scope if no commands
-	if ( emptyCommands ) {
-		commandsScope->parent()->removeChild( commandsScope );
-		return;
-	}
-	
 	// clear existing commands
 	foreach ( XUPItem* child, commandsScope->childrenList() ) {
+		if ( child->type() != XUPItem::Variable || child->attribute( "name" ) != XUPProjectItemHelper::CommandScopeName ) {
+			continue;
+		}
+		
 		commandsScope->removeChild( child );
 	}
 	
