@@ -18,6 +18,8 @@ public:
 	
 	virtual void setupProject( XUPProjectItem* project );
 	virtual bool showProjectFilesPage();
+	
+	static QStringList handledVariables();
 
 protected:
 	UIQMakeEditor::ProjectValues mPositiveValues;
