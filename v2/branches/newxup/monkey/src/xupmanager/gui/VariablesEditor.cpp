@@ -89,6 +89,16 @@ QString VariablesEditor::quoteSpacedValuesString() const
 	return ui->cbQuote->currentText();
 }
 
+QString VariablesEditor::defaultOperator() const
+{
+	return mModel->defaultOperator();
+}
+
+void VariablesEditor::setDefaultOperator( const QString& op )
+{
+	mModel->setDefaultOperator( op );
+}
+
 XUPItemVariableEditorModel::FilterMode VariablesEditor::filterMode() const
 {
 	return XUPItemVariableEditorModel::Out;

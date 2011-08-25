@@ -29,6 +29,8 @@ public:
 	bool isDeleteRemovedFilesEnabled() const;
 	bool isDeleteRemovedFilesChecked() const;
 	
+	QString defaultOperator() const;
+	
 	virtual void setup( XUPProjectItem* project );
 	virtual void finalize();
 
@@ -41,13 +43,14 @@ public slots:
 	void setDeleteRemovedFilesVisible( bool visible );
 	void setDeleteRemovedFilesEnabled( bool enabled );
 	void setDeleteRemovedFilesChecked( bool checked );
+	
+	void setDefaultOperator( const QString& op );
 
 protected:
 	Ui_FilesEditor* ui;
 	XUPProjectItem* mProject;
 	XUPItemVariableEditorModel* mModel;
 	
-	XUPItem* variableItem( const QString& variableName, bool create );
 	QModelIndex currentVariable() const;
 	QModelIndex currentValue() const;
 

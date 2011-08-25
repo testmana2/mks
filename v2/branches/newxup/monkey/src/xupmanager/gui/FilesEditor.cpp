@@ -100,6 +100,16 @@ bool FilesEditor::isDeleteRemovedFilesChecked() const
 	return ui->cbDeleteEnabled->isChecked();
 }
 
+QString FilesEditor::defaultOperator() const
+{
+	return mModel->defaultOperator();
+}
+
+void FilesEditor::setDefaultOperator( const QString& op )
+{
+	mModel->setDefaultOperator( op );
+}
+
 void FilesEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
@@ -107,25 +117,13 @@ void FilesEditor::setup( XUPProjectItem* project )
 	mModel->setFriendlyDisplayText( true );
 	mModel->setFilteredVariables( project->documentFilters().fileVariables() );
 	mModel->setRootItem( project );
+	ui->tvVariables->expandAll();
 	tvVariables_selectionModel_selectionChanged();
 }
 
 void FilesEditor::finalize()
 {
 	mModel->submit();
-}
-
-XUPItem* FilesEditor::variableItem( const QString& variableName, bool create )
-{
-	XUPItem* variableItem = mProject->getVariables( mProject, variableName, false, 0 ).value( 0 );
-	
-	// create it if needed
-	if ( !variableItem && create ) {
-		variableItem = mProject->addChild( XUPItem::Variable );
-		variableItem->setAttribute( "name", variableName );
-	}
-	
-	return variableItem;
 }
 
 QModelIndex FilesEditor::currentVariable() const

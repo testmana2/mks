@@ -26,6 +26,8 @@ public:
 	bool isQuoteSpacedValuesChecked() const;
 	QString quoteSpacedValuesString() const;
 	
+	QString defaultOperator() const;
+	
 	virtual XUPItemVariableEditorModel::FilterMode filterMode() const;
 	virtual bool isFriendlyDisplayText() const;
 	virtual QStringList filteredVariables() const;
@@ -38,6 +40,8 @@ public slots:
 	void setQuoteSpacedValuesEnabled( bool enabled );
 	void setQuoteSpacedValuesChecked( bool checked );
 	void setQuoteSpacedValuesString( const QString& string );
+	
+	void setDefaultOperator( const QString& op );
 
 protected:
 	Ui_VariablesEditor* ui;
