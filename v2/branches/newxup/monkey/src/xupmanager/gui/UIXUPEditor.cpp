@@ -33,6 +33,11 @@ int UIXUPEditor::insertPage( int _index, XUPPageEditor* page )
 	item->setIcon( page->windowIcon() );
 	item->setText( page->windowTitle() );
 	
+	foreach ( QWidget* w, page->findChildren<QWidget*>() ) {
+		w->setAttribute( Qt::WA_MacSmallSize );
+		w->setAttribute( Qt::WA_MacShowFocusRect, false );
+	}
+	
 	mPages.insert( index, page );
 	ui->lwPages->insertItem( index, item );
 	ui->swPages->insertWidget( index, page );
