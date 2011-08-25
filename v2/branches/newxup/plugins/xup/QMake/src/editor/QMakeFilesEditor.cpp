@@ -8,6 +8,7 @@ QMakeFilesEditor::QMakeFilesEditor( UIQMakeEditor::ProjectValues& positive, UIQM
 	setQuoteSpacedValuesVisible( false );
 	//setDeleteRemovedFilesChecked( true );
 	//setDeleteRemovedFilesVisible( false );
+	setDefaultOperator( "*=" );
 }
 
 QMakeFilesEditor::~QMakeFilesEditor()
