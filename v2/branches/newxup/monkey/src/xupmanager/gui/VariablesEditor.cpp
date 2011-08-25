@@ -6,6 +6,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDebug>
 
 VariablesEditor::VariablesEditor( QWidget* parent )
 	: XUPPageEditor( parent )
@@ -275,18 +276,29 @@ void VariablesEditor::on_tbValuesEdit_triggered( QAction* action )
 			value.clear();
 		}
 	}
-	else if ( action == aValuesEditFile ) {
-		value = QFileDialog::getOpenFileName( QApplication::activeWindow(), tr( "Choose a file" ), value );
+	else {
+		const QString quoteString = quoteSpacedValuesString();
 		
-		if ( !value.isEmpty() ) {
-			value = mProject->relativeFilePath( value );
+		if ( value.startsWith( quoteString ) && value.endsWith( quoteString ) ) {
+			value.chop( 1 );
+			value.remove( 0, 1 );
 		}
-	}
-	else if ( action == aValuesEditPath ) {
-		value = QFileDialog::getExistingDirectory( QApplication::activeWindow(), tr( "Choose a path" ), value );
 		
-		if ( !value.isEmpty() ) {
-			value = mProject->relativeFilePath( value );
+		value = mProject->filePath( value );
+		
+		if ( action == aValuesEditFile ) {
+			value = QFileDialog::getOpenFileName( QApplication::activeWindow(), tr( "Choose a file" ), value );
+			
+			if ( !value.isEmpty() ) {
+				value = mProject->relativeFilePath( value );
+			}
+		}
+		else if ( action == aValuesEditPath ) {
+			value = QFileDialog::getExistingDirectory( QApplication::activeWindow(), tr( "Choose a path" ), value );
+			
+			if ( !value.isEmpty() ) {
+				value = mProject->relativeFilePath( value );
+			}
 		}
 	}
 	
