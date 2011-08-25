@@ -27,8 +27,10 @@ void UIQMakeEditor::setupProject( XUPProjectItem* project )
 		<< new QMakeMainEditor( mPositiveValues, mNegativeValues )
 		<< new QMakeConfigurationEditor( mPositiveValues, mNegativeValues )
 		<< new QMakeFilesEditor( mPositiveValues, mNegativeValues )
-		/*<< new QMakeVariablesEditor( mPositiveValues, mNegativeValues )
-		<< new CommandsEditor*/
+		<< new QMakeVariablesEditor( mPositiveValues, mNegativeValues )
+		#warning fix me
+		/*fixer multiline editeur variable.*/
+		/*<< new CommandsEditor*/
 		;
 	
 	addPages( pages );
@@ -47,6 +49,18 @@ bool UIQMakeEditor::showProjectFilesPage()
 	}*/
 	
 	return false;
+}
+
+QStringList UIQMakeEditor::handledVariables()
+{
+	return QStringList()
+		<< "TEMPLATE"
+		<< "TARGET"
+		<< "DESTDIR"
+		<< "DLLDESTDIR"
+		<< "CONFIG"
+		<< "QT"
+		;
 }
 
 void UIQMakeEditor::finalize()
@@ -86,17 +100,13 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 {
 	/*
 		Loading datas from variable of root scope having operator =, += or *= only
-		and not being FILE or PATH based and not being custom xup variables
+		and being in handled variables.
 	*/
 	
 	const DocumentFilterMap& filters = project->documentFilters();
 	const QSet<QString> positiveOperators = QSet<QString>() << "=" << "+=" << "*=";
 	const QSet<QString> negativeOperators = QSet<QString>() << "-=";
-	const QSet<QString> blackList = (
-			QStringList()
-				<< filters.fileVariables()
-				<< filters.pathVariables()
-		).toSet();
+	const QSet<QString> whiteList = UIQMakeEditor::handledVariables().toSet();
 	
 	foreach ( XUPItem* child, project->childrenList() ) {
 		if ( child->type() == XUPItem::Variable ) {
@@ -106,7 +116,7 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 			const bool isNegative = negativeOperators.contains( op );
 			QStringList values;
 			
-			if ( blackList.contains( variableName ) || variableName.startsWith( XUPProjectItemHelper::SettingsScopeName ) ) {
+			if ( !whiteList.contains( variableName ) ) {
 				continue;
 			}
 			
