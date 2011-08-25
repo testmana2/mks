@@ -5,9 +5,9 @@
 QMakeVariablesEditor::QMakeVariablesEditor( UIQMakeEditor::ProjectValues& positive, UIQMakeEditor::ProjectValues& negative, QWidget* parent )
 	: VariablesEditor( parent ), mPositiveValues( positive ), mNegativeValues( negative )
 {
-	setQuoteSpacedValuesString( "\"" );
-	setQuoteSpacedValuesChecked( true );
-	setQuoteSpacedValuesVisible( false );
+	/*setQuoteSpacedValuesString( "\"" );
+	setQuoteSpacedValuesChecked( false );
+	setQuoteSpacedValuesVisible( false );*/
 }
 
 QMakeVariablesEditor::~QMakeVariablesEditor()
