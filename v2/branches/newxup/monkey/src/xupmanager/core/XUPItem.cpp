@@ -393,9 +393,9 @@ QString XUPItem::displayText() const
 		case XUPItem::Scope:
 			return attribute( "name" );
 		case XUPItem::Folder:
-			return QFileInfo( attribute( "name" ) ).fileName();
+			return QFileInfo( attribute( "name" ) ).fileName().remove( "'" ).remove( '"' );
 		case XUPItem::File:
-			return QFileInfo( content() ).fileName();
+			return QFileInfo( content() ).fileName().remove( "'" ).remove( '"' );
 		case XUPItem::Path:
 			return content();
 		case XUPItem::DynamicFolder:
