@@ -8,6 +8,7 @@ QMakeVariablesEditor::QMakeVariablesEditor( UIQMakeEditor::ProjectValues& positi
 	/*setQuoteSpacedValuesString( "\"" );
 	setQuoteSpacedValuesChecked( false );
 	setQuoteSpacedValuesVisible( false );*/
+	setDefaultOperator( "*=" );
 }
 
 QMakeVariablesEditor::~QMakeVariablesEditor()
@@ -27,16 +28,7 @@ bool QMakeVariablesEditor::isFriendlyDisplayText() const
 
 QStringList QMakeVariablesEditor::filteredVariables() const
 {
-	QStringList variables;
-	
-	variables
-		<< "TEMPLATE"
-		<< "TARGET"
-		<< "DESTDIR"
-		<< "DLLDESTDIR"
-		<< "CONFIG"
-		<< "QT"
-		;
+	QStringList variables = UIQMakeEditor::handledVariables();
 	
 	if ( mProject ) {
 		variables << mProject->documentFilters().fileVariables();
