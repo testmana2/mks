@@ -451,7 +451,7 @@ void XUPItem::setContent( const QString& content )
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
 {
-	return mDomElement.attribute( name, defaultValue );
+	return name == "content" ? content() : mDomElement.attribute( name, defaultValue );
 }
 
 void XUPItem::setAttribute( const QString& name, const QString& value )
@@ -460,7 +460,13 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 		return;
 	}
 	
-	mDomElement.setAttribute( name, value );
+	if ( name == "content" ) {
+		setContent( value );
+	}
+	else {
+		mDomElement.setAttribute( name, value );
+	}
+	
 	mCacheValues.remove( name );
 	
 	// update model if needed
