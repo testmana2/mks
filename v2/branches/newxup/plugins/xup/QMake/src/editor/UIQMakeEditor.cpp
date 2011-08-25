@@ -27,10 +27,8 @@ void UIQMakeEditor::setupProject( XUPProjectItem* project )
 		<< new QMakeMainEditor( mPositiveValues, mNegativeValues )
 		<< new QMakeConfigurationEditor( mPositiveValues, mNegativeValues )
 		<< new QMakeFilesEditor( mPositiveValues, mNegativeValues )
-		<< new QMakeVariablesEditor( mPositiveValues, mNegativeValues )
-		#warning fix me
-		/*fixer multiline editeur variable.*/
-		/*<< new CommandsEditor*/
+		<< new QMakeVariablesEditor( mPositiveValues, mNegativeValues ) /*fixer multiline editeur variable.*/
+		<< new CommandsEditor
 		;
 	
 	addPages( pages );
