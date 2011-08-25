@@ -330,6 +330,16 @@ bool XUPItemVariableEditorModel::deleteRemovedFiles() const
 	return mDeleteRemovedFiles;
 }
 
+void XUPItemVariableEditorModel::setDefaultOperator( const QString& op )
+{
+	mDefaultOperator = op;
+}
+
+QString XUPItemVariableEditorModel::defaultOperator() const
+{
+	return mDefaultOperator;
+}
+
 QString XUPItemVariableEditorModel::quotedValue( const QString& value ) const
 {
 	if ( mQuoteValues ) {
@@ -441,7 +451,7 @@ bool XUPItemVariableEditorModel::submit()
 		return false;
 	}
 	
-	bool deleteFiles = deleteRemovedFiles();
+	bool deleteFiles = mDeleteRemovedFiles;
 	
 	if ( deleteFiles ) {
 		if ( QMessageBox::question( QApplication::activeWindow(), QString::null, tr( "Are you sure you want to delete the removed files?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No ) {
@@ -465,6 +475,10 @@ bool XUPItemVariableEditorModel::submit()
 		if ( !variableItem ) {
 			variableItem = mRootItem->addChild( XUPItem::Variable );
 			variableItem->setAttribute( "name", variable.string );
+			
+			if ( !mDefaultOperator.isEmpty() ) {
+				variableItem->setAttribute( "operator", mDefaultOperator );
+			}
 		}
 		
 		foreach ( const XUPItemVariableEditorModelItem& value, variable.children ) {
