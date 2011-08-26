@@ -114,13 +114,13 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 			
 			if ( !values.isEmpty() ) {
 				// some magic to remove duplicate entries
-				const QSet<QString> entries = filters.splitValue( values.join( " " ) ).toSet();
+				const QStringList entries = filters.splitValue( values.join( " " ) ).toSet().toList();
 				
 				if ( isPositive ) {
-					mPositiveValues[ variableName ] = entries.toList();
+					mPositiveValues[ variableName ] = entries;
 				}
 				else if ( isNegative ) {
-					mNegativeValues[ variableName ] = entries.toList();
+					mNegativeValues[ variableName ] = entries;
 				}
 			}
 		}
@@ -157,10 +157,12 @@ XUPItem* UIQMakeEditor::uniqueVariable( XUPItem* scope, const QString& variableN
 	
 	// set / update operator
 	if ( variableItem ) {
-		QString op = variableItem->attribute( "operator", "=" );
+		QString op = variableItem->attribute( "operator" );
 		
 		if ( positive ) {
-			op = op == "*=" ? op : ( variableName == "CONFIG" ? "*=" : "=" );
+			if ( op.isEmpty() ) {
+				op = variableName == "CONFIG" ? "*=" : "=";
+			}
 		}
 		else {
 			op = "-=";
@@ -189,10 +191,14 @@ void UIQMakeEditor::updateVariable( XUPItem* scope, const QString& variableName,
 	}
 	
 	// add new one
-	foreach ( const QString& value, values ) {
+	const QString content = values.join( " " );
+	XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
+	valueItem->setContent( content );
+	
+	/*foreach ( const QString& value, values ) {
 		XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
 		valueItem->setContent( value );
-	}
+	}*/
 	
 	// remove variable if it's empty
 	if( !variableItem->hasChildren() ) {
