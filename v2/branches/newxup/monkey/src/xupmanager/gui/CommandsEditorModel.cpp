@@ -30,7 +30,7 @@ QVariant CommandsEditorModel::data( const QModelIndex& index, int role ) const
 	const bool isMenu = index.parent() == QModelIndex();
 	const QString menu = this->menu( index );
 	const pCommand command = this->command( index );
-	const bool enabled = command.userData() != Qt::Checked;
+	const bool enabled = command.userData() == Qt::Checked;
 	
 	switch ( role ) {
 		case Qt::CheckStateRole:
@@ -240,6 +240,7 @@ QModelIndex CommandsEditorModel::addCommand( const QModelIndex& menuIndex, const
 	
 	beginInsertRows( menuIndex, count, count );
 	mCommands[ menu( menuIndex ) ] << command;
+	mCommands[ menu( menuIndex ) ].last().setUserData( Qt::Checked );
 	endInsertRows();
 	
 	return index( count, 0, menuIndex );
@@ -305,7 +306,7 @@ bool CommandsEditorModel::submit()
 		for ( int i = commands.count() -1; i >= 0; i-- ) {
 			pCommand& command = commands[ i ];
 			
-			if ( command.userData().toInt() == Qt::Checked ) {
+			if ( command.userData().toInt() != Qt::Checked ) {
 				commands.removeAt( i );
 			}
 		}
