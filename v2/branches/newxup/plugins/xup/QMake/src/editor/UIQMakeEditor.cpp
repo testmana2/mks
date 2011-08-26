@@ -26,8 +26,8 @@ void UIQMakeEditor::setupProject( XUPProjectItem* project )
 	const QList<XUPPageEditor*> pages = QList<XUPPageEditor*>()
 		<< new QMakeMainEditor( mPositiveValues, mNegativeValues )
 		<< new QMakeConfigurationEditor( mPositiveValues, mNegativeValues )
-		<< new QMakeFilesEditor( mPositiveValues, mNegativeValues )
-		<< new QMakeVariablesEditor( mPositiveValues, mNegativeValues ) /*fixer multiline editeur variable.*/
+		<< new QMakeFilesEditor
+		<< new QMakeVariablesEditor
 		<< new CommandsEditor
 		;
 	

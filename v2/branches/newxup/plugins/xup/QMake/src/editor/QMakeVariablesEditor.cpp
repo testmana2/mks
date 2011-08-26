@@ -1,9 +1,10 @@
 #include "QMakeVariablesEditor.h"
+#include "UIQMakeEditor.h"
 
 #include <XUPProjectItem.h>
 
-QMakeVariablesEditor::QMakeVariablesEditor( UIQMakeEditor::ProjectValues& positive, UIQMakeEditor::ProjectValues& negative, QWidget* parent )
-	: VariablesEditor( parent ), mPositiveValues( positive ), mNegativeValues( negative )
+QMakeVariablesEditor::QMakeVariablesEditor( QWidget* parent )
+	: VariablesEditor( parent )
 {
 	/*setQuoteSpacedValuesString( "\"" );
 	setQuoteSpacedValuesChecked( false );
