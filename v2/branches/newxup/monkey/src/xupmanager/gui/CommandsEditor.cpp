@@ -42,6 +42,7 @@ void CommandsEditor::setup( XUPProjectItem* project )
 
 void CommandsEditor::finalize()
 {
+	setCommand( ui->tvCommands->selectionModel()->selectedIndexes().value( 0 ) );
 	mModel->submit();
 	XUPProjectItemHelper::setProjectCommands( mProject, mModel->commands() );
 }
