@@ -422,7 +422,8 @@ void XUPItemVariableEditorModel::removeItem( XUPItem* item, bool deleteFiles )
 			
 			break;
 		}
-		case XUPItem::File: {
+		case XUPItem::File:
+		case XUPItem::Path: {
 			if ( deleteFiles ) {
 				const QString content = item->cacheValue( "content" ).remove( mQuoteString );
 				const QString filePath = project->filePath( content );
@@ -435,7 +436,11 @@ void XUPItemVariableEditorModel::removeItem( XUPItem* item, bool deleteFiles )
 			
 			break;
 		}
+		case XUPItem::Value: {
+			break;
+		}
 		default:
+			qWarning() << Q_FUNC_INFO << "Ask to remove bad item" << item->type() << item->displayText();
 			Q_ASSERT( 0 );
 			break;
 	}
