@@ -78,6 +78,10 @@ QString DocumentFilterMap::fileNameVariable( const QString& fileName ) const
 	foreach ( const QString& name, keys() ) {
 		const DocumentFilter& filter = (*this)[ name ];
 		
+		if ( filter.type != DocumentFilter::File ) {
+			continue;
+		}
+		
 		if ( QDir::match( filter.filters, fileName ) ) {
 			return name;
 		}
