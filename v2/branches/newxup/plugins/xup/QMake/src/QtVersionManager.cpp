@@ -1,6 +1,7 @@
 #include "QtVersionManager.h"
 
 #include <MonkeyCore.h>
+#include <pMonkeyStudio.h>
 #include <MkSShellInterpreter.h>
 
 #include <QProcess>
@@ -224,10 +225,13 @@ QtItemList QtVersionManager::defaultConfigurations() const
 		<< QtItem( "embed_manifest_dll", "embed_manifest_dll", "CONFIG", "Embeds a manifest file in the DLL created as part of a library project" )
 		<< QtItem( "embed_manifest_exe", "embed_manifest_exe", "CONFIG", "Embeds a manifest file in the DLL created as part of an application project" )
 		<< QtItem( "incremental", "incremental", "CONFIG", "Used to enable or disable incremental linking in Visual C++, depending on whether this feature is enabled or disabled by default" )
+		<< QtItem( "qaxserver_no_postlink", "qaxserver_no_postlink", "CONFIG", QString::null )
 		
 		<< QtItem( "Mac", QString::null, QString::null, "Mac OS X specific configuration" )
 		<< QtItem( "ppc", "ppc", "CONFIG", "Builds a PowerPC binary" )
 		<< QtItem( "x86", "x86", "CONFIG", "Builds an i386 compatible binary" )
+		<< QtItem( "ppc64", "ppc64", "CONFIG", "Builds a 64 bits PowerPC binary." )
+		<< QtItem( "x86_64", "x86_64", "CONFIG", "Builds a x86 64 bits compatible binary." )
 		<< QtItem( "app_bundle", "app_bundle", "CONFIG", "Puts the executable into a bundle (this is the default)" )
 		<< QtItem( "lib_bundle", "lib_bundle", "CONFIG", "Puts the library into a library bundle" )
 		
@@ -240,38 +244,6 @@ QtItemList QtVersionManager::defaultConfigurations() const
 		<< QtItem( "no_icon", "no_icon", "CONFIG", "Doesn't generate resources needed for displaying an icon for executable in application menu (app only)" )
 		<< QtItem( "symbian_test", "symbian_test", "CONFIG", "Places mmp files and extension makefiles under test sections in generated bld.inf instead of their regular sections. Note that this only affects automatically generated bld.inf content; the content added via BLD_INF_RULES variable is not affected" )
 		<< QtItem( "localize_deployment", "localize_deployment", "CONFIG", "Makes lupdate tool add fields for application captions and package file names into generated .ts files. Qmake generates properly localized .loc and .pkg files based on available translations. Translation file name bodies must end with underscore and the language code for deployment localization to work. E.g. myapp_en.ts. Note: All languages supported by Qt are not supported by Symbian, so some .ts files may be ignored by qmake" )
-		
-		/*<< QtItem( "rtti", "rtti", "CONFIG", "RTTI support is enabled." )
-		<< QtItem( "stl", "stl", "CONFIG", "STL support is enabled." )
-		<< QtItem( "exceptions", "exceptions", "CONFIG", "Exception support is enabled." )
-		<< QtItem( "thread", "thread", "CONFIG", "The target is a multi-threaded application or library. The proper defines and compiler flags will automatically be added to the project." )
-		<< QtItem( "no_lflags_merge", "no_lflags_merge", "CONFIG", "Ensures that the list of libraries stored in the LIBS variable is not reduced to a list of unique values before it is used." )
-		<< QtItem( "LIB ONLY", QString::null, QString::null, "Options for LIB template only" )
-		<< QtItem( "dll", "dll", "CONFIG", "The target is a shared object/DLL.The proper include paths, compiler flags and libraries will automatically be added to the project." )
-		<< QtItem( "staticlib", "staticlib", "CONFIG", "The target is a static library (lib only). The proper compiler flags will automatically be added to the project." )
-		<< QtItem( "plugin", "plugin", "CONFIG", "The target is a plugin (lib only). This enables dll as well." )
-		<< QtItem( "X11 ONLY", QString::null, QString::null, "Options for X11 only" )
-		<< QtItem( "x11", "x11", "CONFIG", "The target is a X11 application or library. The proper include paths and libraries will automatically be added to the project." )
-		<< QtItem( "MAC OS X ONLY", QString::null, QString::null, "Options for Mac OS X only" )
-		<< QtItem( "ppc", "ppc", "CONFIG", "Builds a PowerPC binary." )
-		<< QtItem( "ppc64", "ppc64", "CONFIG", "Builds a 64 bits PowerPC binary." )
-		<< QtItem( "x86", "x86", "CONFIG", "Builds an i386 compatible binary." )
-		<< QtItem( "x86_64", "x86_64", "CONFIG", "Builds an x86 64 bits compatible binary." )
-		<< QtItem( "app_bundle", "app_bundle", "CONFIG", "Puts the executable into a bundle (this is the default)." )
-		<< QtItem( "lib_bundle", "lib_bundle", "CONFIG", "Puts the library into a library bundle." )
-		<< QtItem( "WINDOWS ONLY", QString::null, QString::null, "Options for Windows only" )
-		<< QtItem( "windows", "windows", "CONFIG", "The target is a Win32 window application (app only). The proper include paths,compiler flags and libraries will automatically be added to the project." )
-		<< QtItem( "console", "console", "CONFIG", "The target is a Win32 console application (app only). The proper include paths, compiler flags and libraries will automatically be added to the project." )
-		<< QtItem( "flat", "flat", "CONFIG", "When using the vcapp template this will put all the source files into the source group and the header files into the header group regardless of what directory they reside in. Turning this option off will group the files within the source/header group depending on the directory they reside. This is turned on by default." )
-		<< QtItem( "embed_manifest_exe", "embed_manifest_dll", "CONFIG", "Embeds a manifest file in the DLL created as part of an application project." )
-		<< QtItem( "embed_manifest_dll", "embed_manifest_dll", "CONFIG", "Embeds a manifest file in the DLL created as part of an library project." )
-		<< QtItem( "ACTIVEQT ONLY", QString::null, QString::null, "Option for Windows/Active Qt only" )
-		<< QtItem( "qaxserver_no_postlink", "qaxserver_no_postlink", "CONFIG", "No help available" )
-		<< QtItem( "Qt ONLY", QString::null, QString::null, "Options for Qt only" )
-		<< QtItem( "ordered", "ordered", "CONFIG", "Sub project are built in defined order." )
-		<< QtItem( "qt", "qt", "CONFIG", "The target is a Qt application/library and requires the Qt library and header files. The proper include and library paths for the Qt library will automatically be added to the project. This is defined by default, and can be fine-tuned with the QT variable." )
-		<< QtItem( "resources", "resources", "CONFIG", "Configures qmake to run rcc on the content of RESOURCES if defined." )
-		<< QtItem( "uic3", "uic3", "CONFIG", "Configures qmake to run uic3 on the content of FORMS3 if defined; otherwise the contents of FORMS will be processed instead." )*/
 		;
 }
 
@@ -326,16 +298,16 @@ QStringList QtVersionManager::possibleQtPaths() const
 	paths << QString::null; // for qmake available in PATH
 
 	// get users uninstall
-	QSettings* settings = new QSettings( QSettings::UserScope, "Microsoft", "Windows" );
-	settings->beginGroup( "CurrentVersion/Uninstall" );
+	QSettings settings( QSettings::UserScope, "Microsoft", "Windows" );
+	settings.beginGroup( "CurrentVersion/Uninstall" );
 
-	foreach ( const QString& key, settings->childGroups() )
+	foreach ( const QString& key, settings.childGroups() )
 	{
-		QString path = settings->value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
+		QString path = settings.value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
 
 		if ( path.isEmpty() )
 		{
-			path = settings->value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
+			path = settings.value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
 
 			if ( !path.isEmpty() )
 			{
@@ -350,17 +322,16 @@ QStringList QtVersionManager::possibleQtPaths() const
 	}
 
 	// get system uninstalls
-	delete settings;
-	settings = new QSettings( QSettings::SystemScope, "Microsoft", "Windows" );
-	settings->beginGroup( "CurrentVersion/Uninstall" );
+	settings = QSettings( QSettings::SystemScope, "Microsoft", "Windows" );
+	settings.beginGroup( "CurrentVersion/Uninstall" );
 
-	foreach ( const QString& key, settings->childGroups() )
+	foreach ( const QString& key, settings.childGroups() )
 	{
-		QString path = settings->value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
+		QString path = settings.value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
 
 		if ( path.isEmpty() )
 		{
-			path = settings->value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
+			path = settings.value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
 
 			if ( !path.isEmpty() )
 			{
@@ -374,18 +345,22 @@ QStringList QtVersionManager::possibleQtPaths() const
 		}
 	}
 
-	delete settings;
 	return paths.toList();
-}
-#elif defined( Q_OS_MAC )
-QStringList QtVersionManager::possibleQtPaths() const
-{
-	return QStringList() << QString::null; // for qmake available in PATH
 }
 #else
 QStringList QtVersionManager::possibleQtPaths() const
 {
-	return QStringList() << QString::null; // for qmake available in PATH
+	QDir dir( "/usr/local/Trolltech" );
+	const QFileInfoList files = pMonkeyStudio::getFolders( dir, QStringList( "Qt*" ), false );
+	QStringList paths;
+	
+	paths << QString::null; // for qmake available in PATH
+	
+	foreach ( const QFileInfo& file, files ) {
+		paths << file.absoluteFilePath();
+	}
+	
+	return paths;
 }
 #endif
 
