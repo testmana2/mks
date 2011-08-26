@@ -6,7 +6,6 @@
 /**************************
 WARNING :
 if "operator" does not exists it imply "="
-if "multiline" does not exists it imply "false"
 if "nested" does not exists it imply "false"
 **************************/
 
@@ -171,16 +170,16 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 					}
 				}
 				
-				QString isMulti;
+				bool isMulti = false;
 				if(liste[4].trimmed().endsWith("\\") || liste[4].trimmed() == "\\")
 				{
-					isMulti = " multiline=\"true\"";
+					isMulti = true;
 					QString tmppp = liste[4].trimmed();
 					tmppp.chop(1);
 					liste[4] = tmppp;
 				}
 				QString theOp = (liste[3].trimmed() == "=" ? "" : " operator=\""+liste[3].trimmed()+"\"");
-				file.append("<variable name=\""+escape(liste[2].trimmed())+"\""+theOp+isMulti+">\n");
+				file.append("<variable name=\""+escape(liste[2].trimmed())+"\""+theOp+">\n");
 				bool isFile = fileVariables.contains(liste[2].trimmed());
 				bool isPath = pathVariables.contains(liste[2].trimmed());
 				if ( isFile || isPath )
@@ -237,7 +236,7 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 				}
 				else
 					file.append("<value"+(liste[5].trimmed() != "" ? " comment=\""+escape(liste[5].trimmed())+"\"" : "")+">"+escape(liste[4].trimmed())+"</value>\n");
-				if(isMulti == " multiline=\"true\"")
+				if(isMulti)
 				{
 					i++;
 					while(varLine.exactMatch(v[i]))
@@ -412,14 +411,14 @@ QString QMake2XUP::convertFromPro( const QString& s, const QString& codec )
 					pile += "</scope>\n";
 					isNested.push(true);
 				}
-				QString isMulti = (liste[6].trimmed() == "\\" ? " multiline=\"true\"" : "");
+				bool isMulti = (liste[6].trimmed() == "\\" ? true : false);
 				QString theOp = (liste[4].trimmed() == "=" ? "" : " operator=\""+liste[4].trimmed()+"\"");
 				file.append("<variable name=\""+escape(liste[3].trimmed())+"\""+theOp+">\n");
 				if ( liste[7].trimmed().startsWith( "#" ) )
 					file.append( QString( "<comment value=\"%1\" />\n" ).arg( QString( liste[7].trimmed() ) ) );
 				else
 					file.append("<value"+(liste[7].trimmed() != "" ? " comment=\""+escape(liste[7].trimmed())+"\"" : "")+">"+escape(liste[5].trimmed())+"</value>\n");
-				if(isMulti == " multiline=\"true\"")
+				if(isMulti)
 				{
 					i++;
 					while(varLine.exactMatch(v[i]))
@@ -807,13 +806,7 @@ QString QMake2XUP::nodeAttribute( const QDomNode& node, const QString& attribute
 
 bool QMake2XUP::isMultiline( const QDomNode& node )
 {
-	QString string = node.attributes().namedItem( "multiline" ).nodeValue();
-	
-	if ( string.isEmpty() ) {
-		string = "false";
-	}
-	
-	return QVariant( string ).toBool();
+	return node.childNodes().count() > 1;
 }
 
 bool QMake2XUP::isNested( const QDomNode& node )

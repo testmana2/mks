@@ -47,6 +47,7 @@ QMakeConfigurationEditor::~QMakeConfigurationEditor()
 void QMakeConfigurationEditor::setup( XUPProjectItem* project )
 {
 	mProject = project;
+	
 	const QtVersionManager* qmanager = QMake::versionManager();
 	const QtItemList qtItems = qmanager->modules();
 	const QtItemList configurationItems = qmanager->configurations();
