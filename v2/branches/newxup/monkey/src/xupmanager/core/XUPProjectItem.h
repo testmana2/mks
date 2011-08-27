@@ -45,9 +45,9 @@ public:
 	// return the project absolute path
 	QString path() const;
 	// return an absolute file name according to project path
-	QString filePath( const QString& fileName ) const;
+	QString filePath( const QString& filePath ) const;
 	// return a filepath relative to project path
-	QString relativeFilePath( const QString& fileName ) const;
+	QString relativeFilePath( const QString& filePath ) const;
 	
 	/* return the list of all source files for this project
 	 * Defautl implementation returns empty list

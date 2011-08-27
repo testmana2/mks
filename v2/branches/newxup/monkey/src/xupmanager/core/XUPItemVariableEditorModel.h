@@ -81,8 +81,6 @@ public:
 	
 	bool quoteValues() const;
 	bool deleteRemovedFiles() const;
-	
-	QString quotedValue( const QString& value ) const;
 
 public slots:
 	virtual void revert();
@@ -102,6 +100,7 @@ protected:
 	bool mFriendlyDisplayText;
 	bool mDeleteRemovedFiles;
 	
+	QString normalizedValue( const QString& value ) const;
 	void buildParentMapping( XUPItemVariableEditorModelItem& item );
 	void setRootItemInternal( const XUPItemVariableEditorModelItem& item, bool clearModel );
 	void revert( XUPItem* item );
