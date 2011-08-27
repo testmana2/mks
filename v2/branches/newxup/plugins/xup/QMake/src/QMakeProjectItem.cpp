@@ -266,6 +266,16 @@ QMakeProjectItem::~QMakeProjectItem()
 {
 }
 
+QString QMakeProjectItem::quoteString() const
+{
+	return "\"";
+}
+
+QString QMakeProjectItem::defaultOperator() const
+{
+	return "*=";
+}
+
 QString QMakeProjectItem::toNativeString() const
 {
 	return QMake2XUP::convertToPro( mDocument );

@@ -6,10 +6,8 @@
 QMakeVariablesEditor::QMakeVariablesEditor( QWidget* parent )
 	: VariablesEditor( parent )
 {
-	/*setQuoteSpacedValuesString( "\"" );
-	setQuoteSpacedValuesChecked( false );
+	/*setQuoteSpacedValuesChecked( false );
 	setQuoteSpacedValuesVisible( false );*/
-	setDefaultOperator( "*=" );
 }
 
 QMakeVariablesEditor::~QMakeVariablesEditor()
