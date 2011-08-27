@@ -408,46 +408,6 @@ void XUPItemVariableEditorModel::revert()
 	revert( mRootItem );
 }
 
-void XUPItemVariableEditorModel::removeItem( XUPItem* item, bool deleteFiles )
-{
-	XUPProjectItem* project = item->project();
-	
-	switch ( item->type() ) {
-		case XUPItem::Variable: {
-			if ( deleteFiles ) {
-				foreach ( XUPItem* value, item->childrenList() ) {
-					removeItem( value, deleteFiles );
-				}
-			}
-			
-			break;
-		}
-		case XUPItem::File:
-		case XUPItem::Path: {
-			if ( deleteFiles ) {
-				const QString content = item->cacheValue( "content" ).remove( mQuoteString );
-				const QString filePath = project->filePath( content );
-				
-				if ( QFile::exists( filePath ) ) {
-					MonkeyCore::fileManager()->closeFile( filePath );
-					QFile::remove( filePath );
-				}
-			}
-			
-			break;
-		}
-		case XUPItem::Value: {
-			break;
-		}
-		default:
-			qWarning() << Q_FUNC_INFO << "Ask to remove bad item" << item->type() << item->displayText();
-			Q_ASSERT( 0 );
-			break;
-	}
-	
-	item->parent()->removeChild( item );
-}
-
 bool XUPItemVariableEditorModel::submit()
 {
 	const bool senderIsItemSelectionModel = sender() ? sender()->inherits( "QItemSelectionModel" ) : false;
@@ -456,7 +416,10 @@ bool XUPItemVariableEditorModel::submit()
 		return false;
 	}
 	
+	const QSet<QString> fileVariables = this->fileVariables().toSet();
+	const QSet<QString> pathVariables = this->pathVariables().toSet();
 	bool deleteFiles = mDeleteRemovedFiles;
+	XUPProjectItem* project = mRootItem->project();
 	
 	if ( deleteFiles ) {
 		if ( QMessageBox::question( QApplication::activeWindow(), QString::null, tr( "Are you sure you want to delete the removed files?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::No ) {
@@ -465,13 +428,13 @@ bool XUPItemVariableEditorModel::submit()
 	}
 	
 	foreach ( const XUPItemVariableEditorModelItem& variable, mRoot.children ) {
-		const bool isFileVariable = fileVariables().contains( variable.string );
-		const bool isPathVariable = pathVariables().contains( variable.string );
+		const bool isFileVariable = fileVariables.contains( variable.string );
+		const bool isPathVariable = pathVariables.contains( variable.string );
 		XUPItem* variableItem = variable.item;
 		
 		if ( !variable.enabled ) {
 			if ( variableItem ) {
-				removeItem( variableItem, deleteFiles );
+				project->removeValue( variableItem, deleteFiles, mQuoteString );
 			}
 			
 			continue;
@@ -499,13 +462,13 @@ bool XUPItemVariableEditorModel::submit()
 			}
 			else {
 				if ( valueItem ) {
-					removeItem( valueItem, deleteFiles );
+					project->removeValue( valueItem, deleteFiles, mQuoteString );
 				}
 			}
 		}
 		
 		if ( !variableItem->hasChildren() ) {
-			removeItem( variableItem, deleteFiles );
+			project->removeValue( variableItem, deleteFiles, mQuoteString );
 		}
 	}
 	

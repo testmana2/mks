@@ -111,7 +111,6 @@ protected:
 	void buildParentMapping( XUPItemVariableEditorModelItem& item );
 	void setRootItemInternal( const XUPItemVariableEditorModelItem& item, bool clearModel );
 	void revert( XUPItem* item );
-	void removeItem( XUPItem* item, bool deleteFiles );
 };
 
 #endif // XUPITEMVARIABLEEDITORMODEL_H

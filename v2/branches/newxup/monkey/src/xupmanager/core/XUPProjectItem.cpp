@@ -9,6 +9,7 @@
 #include "XUPProjectItemHelper.h"
 #include "XUPDynamicFolderItem.h"
 #include "XUPProjectItemCache.h"
+#include "pFileManager.h"
 
 #include <pQueuedMessageToolBar.h>
 
@@ -191,39 +192,46 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	XUPProjectItem::cache()->build( this );
 }
 
-void XUPProjectItem::removeValue( XUPItem* item )
+void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles, const QString& quoteString )
 {
 	switch ( item->type() ) {
+		case XUPItem::Variable: {
+			if ( deleteFiles ) {
+				foreach ( XUPItem* value, item->childrenList() ) {
+					removeValue( value, deleteFiles, quoteString );
+				}
+			}
+			
+			break;
+		}
 		case XUPItem::File: {
-			if ( item->type() == XUPItem::File ) {
-				XUPProjectItem* rootIncludeProject = item->project()->rootIncludeProject();
-				const QString fp = rootIncludeProject->filePath( item->content() );
-				QFile file( fp );
+			if ( deleteFiles ) {
+				const QString content = item->cacheValue( "content" ).remove( quoteString );
+				const QString filePath = this->filePath( content );
+				QFile file( filePath );
 				
-				// ask removing file
-				if ( !fp.isEmpty()
-					&& file.exists()
-					&& QMessageBox::question( 0, QString::null, tr( "Do you want to delete the associate file ?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
+				if ( file.exists() ) {
+					MonkeyCore::fileManager()->closeFile( filePath );
+					
 					if ( !file.remove() ) {
-						MonkeyCore::messageManager()->appendMessage( tr( "Can't delete file '%1': %2" ).arg( fp ).arg( file.errorString() ) );
+						MonkeyCore::messageManager()->appendMessage( tr( "Can't delete file '%1': %2" ).arg( filePath ).arg( file.errorString() ) );
 					}
 				}
 			}
 			
 			break;
 		}
-		case XUPItem::Variable:
-			#warning may ask to delete files here
-			break;
 		case XUPItem::Path:
-		case XUPItem::Value:
+		case XUPItem::Value: {
 			break;
+		}
 		default:
-			return;
+			qWarning() << Q_FUNC_INFO << "Ask to remove bad item" << item->type() << item->displayText();
+			Q_ASSERT( 0 );
+			break;
 	}
 	
 	item->parent()->removeChild( item );
-	XUPProjectItem::cache()->build( this );
 }
 
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const
@@ -446,6 +454,7 @@ bool XUPProjectItem::save()
 	// set error message if needed
 	if ( result ) {
 		topLevelProject()->setLastError( QString::null );
+		XUPProjectItem::cache()->build( rootIncludeProject() );
 	}
 	else {
 		topLevelProject()->setLastError( tr( "Can't write content" ) );
