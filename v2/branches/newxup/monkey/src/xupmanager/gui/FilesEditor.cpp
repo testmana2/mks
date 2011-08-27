@@ -18,10 +18,8 @@ FilesEditor::FilesEditor( QWidget* parent )
 	
 	connect( ui->tvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( tvVariables_selectionModel_selectionChanged() ) );
 	connect( ui->cbQuoteEnabled, SIGNAL( toggled( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
-	connect( ui->cbQuote, SIGNAL( editTextChanged( const QString& ) ), mModel, SLOT( setQuoteString( const QString& ) ) );
 	connect( ui->cbDeleteEnabled, SIGNAL( toggled( bool ) ), mModel, SLOT( setDeleteRemovedFiles( bool ) ) );
 	
-	mModel->setQuoteString( ui->cbQuote->currentText() );
 	mModel->setQuoteValues( ui->cbQuoteEnabled->isChecked() );
 }
 
@@ -32,22 +30,12 @@ FilesEditor::~FilesEditor()
 
 void FilesEditor::setQuoteSpacedValuesVisible( bool visible )
 {
-	ui->wQuote->setVisible( visible );
+	ui->cbQuoteEnabled->setVisible( visible );
 }
 
 bool FilesEditor::isQuoteSpacedValuesVisible() const
 {
-	return ui->wQuote->isVisible();
-}
-
-void FilesEditor::setQuoteSpacedValuesEnabled( bool enabled )
-{
-	ui->wQuote->setEnabled( enabled );
-}
-
-bool FilesEditor::isQuoteSpacedValuesEnabled() const
-{
-	return ui->wQuote->isEnabled();
+	return ui->cbQuoteEnabled->isVisible();
 }
 
 void FilesEditor::setQuoteSpacedValuesChecked( bool checked )
@@ -60,16 +48,6 @@ bool FilesEditor::isQuoteSpacedValuesChecked() const
 	return ui->cbQuoteEnabled->isChecked();
 }
 
-void FilesEditor::setQuoteSpacedValuesString( const QString& string )
-{
-	ui->cbQuote->setEditText( string );
-}
-
-QString FilesEditor::quoteSpacedValuesString() const
-{
-	return ui->cbQuote->currentText();
-}
-
 void FilesEditor::setDeleteRemovedFilesVisible( bool visible )
 {
 	ui->cbDeleteEnabled->setVisible( visible );
@@ -80,16 +58,6 @@ bool FilesEditor::isDeleteRemovedFilesVisible() const
 	return ui->cbDeleteEnabled->isVisible();
 }
 
-void FilesEditor::setDeleteRemovedFilesEnabled( bool enabled )
-{
-	ui->cbDeleteEnabled->setEnabled( enabled );
-}
-
-bool FilesEditor::isDeleteRemovedFilesEnabled() const
-{
-	return ui->cbDeleteEnabled->isEnabled();
-}
-
 void FilesEditor::setDeleteRemovedFilesChecked( bool checked )
 {
 	ui->cbDeleteEnabled->setChecked( checked );
@@ -98,16 +66,6 @@ void FilesEditor::setDeleteRemovedFilesChecked( bool checked )
 bool FilesEditor::isDeleteRemovedFilesChecked() const
 {
 	return ui->cbDeleteEnabled->isChecked();
-}
-
-QString FilesEditor::defaultOperator() const
-{
-	return mModel->defaultOperator();
-}
-
-void FilesEditor::setDefaultOperator( const QString& op )
-{
-	mModel->setDefaultOperator( op );
 }
 
 void FilesEditor::setup( XUPProjectItem* project )

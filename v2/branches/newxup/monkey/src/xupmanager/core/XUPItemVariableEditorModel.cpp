@@ -300,16 +300,7 @@ bool XUPItemVariableEditorModel::friendlyDisplayText() const
 	return mFriendlyDisplayText;
 }
 
-void XUPItemVariableEditorModel::setQuoteString( const QString& string )
-{
-	mQuoteString = string;
-}
-
-QString XUPItemVariableEditorModel::quoteString() const
-{
-	return mQuoteString;
-}
-
+#warning REMOVE ME OBSOLETE
 void XUPItemVariableEditorModel::setQuoteValues( bool quote )
 {
 	mQuoteValues = quote;
@@ -330,21 +321,13 @@ bool XUPItemVariableEditorModel::deleteRemovedFiles() const
 	return mDeleteRemovedFiles;
 }
 
-void XUPItemVariableEditorModel::setDefaultOperator( const QString& op )
-{
-	mDefaultOperator = op;
-}
-
-QString XUPItemVariableEditorModel::defaultOperator() const
-{
-	return mDefaultOperator;
-}
-
 QString XUPItemVariableEditorModel::quotedValue( const QString& value ) const
 {
 	if ( mQuoteValues ) {
-		if ( value.contains( " " ) && ( !value.startsWith( mQuoteString ) && !value.endsWith( mQuoteString ) ) ) {
-			return QString( value ).prepend( mQuoteString ).append( mQuoteString );
+		const QString quote = mRootItem->project()->quoteString();
+		
+		if ( !quote.isEmpty() && value.contains( " " ) && ( !value.startsWith( quote ) && !value.endsWith( quote ) ) ) {
+			return QString( value ).prepend( quote ).append( quote );
 		}
 	}
 	
@@ -418,6 +401,7 @@ bool XUPItemVariableEditorModel::submit()
 	
 	const QSet<QString> fileVariables = this->fileVariables().toSet();
 	const QSet<QString> pathVariables = this->pathVariables().toSet();
+	const QString op = mRootItem->project()->defaultOperator();
 	bool deleteFiles = mDeleteRemovedFiles;
 	XUPProjectItem* project = mRootItem->project();
 	
@@ -434,7 +418,7 @@ bool XUPItemVariableEditorModel::submit()
 		
 		if ( !variable.enabled ) {
 			if ( variableItem ) {
-				project->removeValue( variableItem, deleteFiles, mQuoteString );
+				project->removeValue( variableItem, deleteFiles );
 			}
 			
 			continue;
@@ -444,8 +428,8 @@ bool XUPItemVariableEditorModel::submit()
 			variableItem = mRootItem->addChild( XUPItem::Variable );
 			variableItem->setAttribute( "name", variable.string );
 			
-			if ( !mDefaultOperator.isEmpty() ) {
-				variableItem->setAttribute( "operator", mDefaultOperator );
+			if ( !op.isEmpty() ) {
+				variableItem->setAttribute( "operator", op );
 			}
 		}
 		
@@ -462,13 +446,13 @@ bool XUPItemVariableEditorModel::submit()
 			}
 			else {
 				if ( valueItem ) {
-					project->removeValue( valueItem, deleteFiles, mQuoteString );
+					project->removeValue( valueItem, deleteFiles );
 				}
 			}
 		}
 		
 		if ( !variableItem->hasChildren() ) {
-			project->removeValue( variableItem, deleteFiles, mQuoteString );
+			project->removeValue( variableItem, deleteFiles );
 		}
 	}
 	

@@ -36,9 +36,7 @@ VariablesEditor::VariablesEditor( QWidget* parent )
 	connect( ui->lvVariables->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvVariables_selectionModel_selectionChanged() ) );
 	connect( ui->lvValues->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvValues_selectionModel_selectionChanged() ) );
 	connect( ui->cbQuoteEnabled, SIGNAL( toggled( bool ) ), mModel, SLOT( setQuoteValues( bool ) ) );
-	connect( ui->cbQuote, SIGNAL( editTextChanged( const QString& ) ), mModel, SLOT( setQuoteString( const QString& ) ) );
 	
-	mModel->setQuoteString( ui->cbQuote->currentText() );
 	mModel->setQuoteValues( ui->cbQuoteEnabled->isChecked() );
 	
 	lvVariables_selectionModel_selectionChanged();
@@ -51,22 +49,12 @@ VariablesEditor::~VariablesEditor()
 
 void VariablesEditor::setQuoteSpacedValuesVisible( bool visible )
 {
-	ui->wQuote->setVisible( visible );
+	ui->cbQuoteEnabled->setVisible( visible );
 }
 
 bool VariablesEditor::isQuoteSpacedValuesVisible() const
 {
-	return ui->wQuote->isVisible();
-}
-
-void VariablesEditor::setQuoteSpacedValuesEnabled( bool enabled )
-{
-	ui->wQuote->setEnabled( enabled );
-}
-
-bool VariablesEditor::isQuoteSpacedValuesEnabled() const
-{
-	return ui->wQuote->isEnabled();
+	return ui->cbQuoteEnabled->isVisible();
 }
 
 void VariablesEditor::setQuoteSpacedValuesChecked( bool checked )
@@ -77,26 +65,6 @@ void VariablesEditor::setQuoteSpacedValuesChecked( bool checked )
 bool VariablesEditor::isQuoteSpacedValuesChecked() const
 {
 	return ui->cbQuoteEnabled->isChecked();
-}
-
-void VariablesEditor::setQuoteSpacedValuesString( const QString& string )
-{
-	ui->cbQuote->setEditText( string );
-}
-
-QString VariablesEditor::quoteSpacedValuesString() const
-{
-	return ui->cbQuote->currentText();
-}
-
-QString VariablesEditor::defaultOperator() const
-{
-	return mModel->defaultOperator();
-}
-
-void VariablesEditor::setDefaultOperator( const QString& op )
-{
-	mModel->setDefaultOperator( op );
 }
 
 XUPItemVariableEditorModel::FilterMode VariablesEditor::filterMode() const
@@ -129,19 +97,6 @@ void VariablesEditor::setup( XUPProjectItem* project )
 void VariablesEditor::finalize()
 {
 	mModel->submit();
-}
-
-XUPItem* VariablesEditor::variableItem( const QString& variableName, bool create )
-{
-	XUPItem* variableItem = mProject->getVariables( mProject, variableName, false, 0 ).value( 0 );
-	
-	// create it if needed
-	if ( !variableItem && create ) {
-		variableItem = mProject->addChild( XUPItem::Variable );
-		variableItem->setAttribute( "name", variableName );
-	}
-	
-	return variableItem;
 }
 
 QModelIndex VariablesEditor::currentVariable() const
@@ -180,7 +135,7 @@ void VariablesEditor::on_tbVariablesAdd_clicked()
 			ui->lvVariables->scrollTo( index );
 		}
 		else {
-			QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This variable is filtered out." ) );
+			QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This variable is filtered." ) );
 		}
 	}
 }
@@ -199,7 +154,7 @@ void VariablesEditor::on_tbVariablesEdit_clicked()
 	
 	if ( !variable.isEmpty() && ok ) {
 		if ( !mModel->setData( index, variable, Qt::DisplayRole ) ) {
-			QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This variable exists or is filtered out." ) );
+			QMessageBox::information( QApplication::activeWindow(), tr( "Information..." ), tr( "This variable exists or is filtered." ) );
 		}
 	}
 }
@@ -287,28 +242,17 @@ void VariablesEditor::on_tbValuesEdit_triggered( QAction* action )
 		}
 	}
 	else {
-		const QString quoteString = quoteSpacedValuesString();
-		
-		if ( value.startsWith( quoteString ) && value.endsWith( quoteString ) ) {
-			value.chop( 1 );
-			value.remove( 0, 1 );
-		}
-		
 		value = mProject->filePath( value );
 		
 		if ( action == aValuesEditFile ) {
 			value = QFileDialog::getOpenFileName( QApplication::activeWindow(), tr( "Choose a file" ), value );
-			
-			if ( !value.isEmpty() ) {
-				value = mProject->relativeFilePath( value );
-			}
 		}
 		else if ( action == aValuesEditPath ) {
 			value = QFileDialog::getExistingDirectory( QApplication::activeWindow(), tr( "Choose a path" ), value );
-			
-			if ( !value.isEmpty() ) {
-				value = mProject->relativeFilePath( value );
-			}
+		}
+		
+		if ( !value.isEmpty() ) {
+			value = mProject->relativeFilePath( value );
 		}
 	}
 	

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>398</width>
+    <height>298</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -75,52 +75,26 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="3">
-       <widget class="QWidget" name="wQuote" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QCheckBox" name="cbQuoteEnabled">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Quote spaced values.</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbQuote">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="editable">
-            <bool>true</bool>
-           </property>
-           <item>
-            <property name="text">
-             <string notr="true">&quot;</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">'</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item row="3" column="0" colspan="3">
        <widget class="QCheckBox" name="cbDeleteEnabled">
         <property name="text">
          <string>Delete removed files</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="3">
+       <widget class="QCheckBox" name="cbQuoteEnabled">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Quote spaced values.</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -140,22 +114,5 @@
  <resources>
   <include location="../../resources/resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>cbQuoteEnabled</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>cbQuote</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>257</x>
-     <y>266</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>329</x>
-     <y>269</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

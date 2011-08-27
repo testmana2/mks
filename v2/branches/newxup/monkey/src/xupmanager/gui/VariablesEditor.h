@@ -22,11 +22,7 @@ public:
 	virtual ~VariablesEditor();
 	
 	bool isQuoteSpacedValuesVisible() const;
-	bool isQuoteSpacedValuesEnabled() const;
 	bool isQuoteSpacedValuesChecked() const;
-	QString quoteSpacedValuesString() const;
-	
-	QString defaultOperator() const;
 	
 	virtual XUPItemVariableEditorModel::FilterMode filterMode() const;
 	virtual bool isFriendlyDisplayText() const;
@@ -37,11 +33,7 @@ public:
 
 public slots:
 	void setQuoteSpacedValuesVisible( bool visible );
-	void setQuoteSpacedValuesEnabled( bool enabled );
 	void setQuoteSpacedValuesChecked( bool checked );
-	void setQuoteSpacedValuesString( const QString& string );
-	
-	void setDefaultOperator( const QString& op );
 
 protected:
 	Ui_VariablesEditor* ui;
@@ -54,7 +46,6 @@ protected:
 	XUPProjectItem* mProject;
 	XUPItemVariableEditorModel* mModel;
 	
-	XUPItem* variableItem( const QString& variableName, bool create );
 	QModelIndex currentVariable() const;
 	QModelIndex currentValue() const;
 
