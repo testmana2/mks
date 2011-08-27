@@ -79,10 +79,8 @@ public:
 	void setFriendlyDisplayText( bool friendly );
 	bool friendlyDisplayText() const;
 	
-	QString quoteString() const;
 	bool quoteValues() const;
 	bool deleteRemovedFiles() const;
-	QString defaultOperator() const;
 	
 	QString quotedValue( const QString& value ) const;
 
@@ -90,10 +88,8 @@ public slots:
 	virtual void revert();
 	virtual bool submit();
 	
-	void setQuoteString( const QString& string );
 	void setQuoteValues( bool quote );
 	void setDeleteRemovedFiles( bool del );
-	void setDefaultOperator( const QString& op );
 
 protected:
 	XUPItemVariableEditorModel::FilterMode mMode;
@@ -102,11 +98,9 @@ protected:
 	mutable XUPItemVariableEditorModelItem mRoot;
 	QHash<XUPItemVariableEditorModelItem*, XUPItemVariableEditorModelItem*> mParentMapping;
 	QStringList mFilteredVariables;
-	QString mQuoteString;
 	bool mQuoteValues;
 	bool mFriendlyDisplayText;
 	bool mDeleteRemovedFiles;
-	QString mDefaultOperator;
 	
 	void buildParentMapping( XUPItemVariableEditorModelItem& item );
 	void setRootItemInternal( const XUPItemVariableEditorModelItem& item, bool clearModel );

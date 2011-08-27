@@ -62,12 +62,25 @@ QString XUPProjectItem::path() const
 	return QFileInfo( fileName() ).path();
 }
 
-QString XUPProjectItem::filePath( const QString& fn ) const
+QString XUPProjectItem::filePath( const QString& _fn ) const
 {
-	if ( fn.isEmpty() )
+	if ( _fn.isEmpty() ) {
 		return QString::null;
-	QString fname = QFileInfo( fn ).isRelative() ? path().append( "/" ).append( fn ) : fn;
-	return QDir::cleanPath( fname );
+	}
+	
+	const QString quote = quoteString();
+	QString fn = _fn;
+	
+	if ( fn.startsWith( quote ) && fn.endsWith( quote ) ) {
+		fn.chop( 1 );
+		fn.remove( 0, 1 );
+	}
+	
+	return QDir::cleanPath(
+		QFileInfo( fn ).isRelative()
+			? QString( "%1/%2" ).arg( path() ).arg( fn )
+			: fn
+	);
 }
 
 QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
@@ -192,13 +205,13 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	XUPProjectItem::cache()->build( this );
 }
 
-void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles, const QString& quoteString )
+void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles )
 {
 	switch ( item->type() ) {
 		case XUPItem::Variable: {
 			if ( deleteFiles ) {
 				foreach ( XUPItem* value, item->childrenList() ) {
-					removeValue( value, deleteFiles, quoteString );
+					removeValue( value, deleteFiles );
 				}
 			}
 			
@@ -206,7 +219,7 @@ void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles, const QString
 		}
 		case XUPItem::File: {
 			if ( deleteFiles ) {
-				const QString content = item->cacheValue( "content" ).remove( quoteString );
+				const QString content = item->cacheValue( "content" ).remove( quoteString() );
 				const QString filePath = this->filePath( content );
 				QFile file( filePath );
 				
@@ -232,6 +245,16 @@ void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles, const QString
 	}
 	
 	item->parent()->removeChild( item );
+}
+
+QString XUPProjectItem::quoteString() const
+{
+	return QString::null;
+}
+
+QString XUPProjectItem::defaultOperator() const
+{
+	return QString::null;
 }
 
 QFileInfoList XUPProjectItem::findFile( const QString& partialFilePath ) const

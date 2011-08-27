@@ -21,30 +21,18 @@ public:
 	virtual ~FilesEditor();
 	
 	bool isQuoteSpacedValuesVisible() const;
-	bool isQuoteSpacedValuesEnabled() const;
 	bool isQuoteSpacedValuesChecked() const;
-	QString quoteSpacedValuesString() const;
-	
 	bool isDeleteRemovedFilesVisible() const;
-	bool isDeleteRemovedFilesEnabled() const;
 	bool isDeleteRemovedFilesChecked() const;
-	
-	QString defaultOperator() const;
 	
 	virtual void setup( XUPProjectItem* project );
 	virtual void finalize();
 
 public slots:
 	void setQuoteSpacedValuesVisible( bool visible );
-	void setQuoteSpacedValuesEnabled( bool enabled );
 	void setQuoteSpacedValuesChecked( bool checked );
-	void setQuoteSpacedValuesString( const QString& string );
-	
 	void setDeleteRemovedFilesVisible( bool visible );
-	void setDeleteRemovedFilesEnabled( bool enabled );
 	void setDeleteRemovedFilesChecked( bool checked );
-	
-	void setDefaultOperator( const QString& op );
 
 protected:
 	Ui_FilesEditor* ui;
