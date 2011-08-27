@@ -72,7 +72,7 @@ public:
 	 */
 	virtual void addFiles( const QStringList& files, XUPItem* scope = 0 );
 	// Remove file, subproject, or other item
-	virtual void removeValue( XUPItem* item );
+	virtual void removeValue( XUPItem* item, bool deleteFiles, const QString& quoteString = QString::null );
 	// return the direct parent proejct if one, else return itself
 	XUPProjectItem* parentProject() const;
 	// return the most toplevel project ( ie: the model root project )
