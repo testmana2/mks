@@ -121,7 +121,7 @@ bool XUPItemVariableEditorModel::setData( const QModelIndex& index, const QVaria
 		case Qt::EditRole:
 		case Qt::DisplayRole: {
 			const bool isVariable = index.parent() == QModelIndex();
-			const QString string = isVariable ? value.toString() : quotedValue( value.toString() );
+			const QString string = isVariable ? value.toString() : normalizedValue( value.toString() );
 			const QModelIndex cIndex = childIndex( index.parent(), string );
 			
 			if ( cIndex.isValid() && cIndex != index ) {
@@ -171,7 +171,7 @@ XUPItemVariableEditorModelItem* XUPItemVariableEditorModel::item( const QModelIn
 
 QModelIndex XUPItemVariableEditorModel::childIndex( const QModelIndex& index, const QString& _string ) const
 {
-	const QString string = index.parent() == QModelIndex() ? _string : quotedValue( string );
+	const QString string = index.parent() == QModelIndex() ? _string : normalizedValue( string );
 	XUPItemVariableEditorModelItem* item = this->item( index );
 	
 	if ( item ) {
@@ -233,7 +233,7 @@ QModelIndex XUPItemVariableEditorModel::addVariable( const QString& variable )
 
 QModelIndex XUPItemVariableEditorModel::addValue( const QModelIndex& variable, const QString& _value )
 {
-	const QString value = variable == QModelIndex() ? _value : quotedValue( _value );
+	const QString value = variable == QModelIndex() ? _value : normalizedValue( _value );
 	const QModelIndex childIndex = this->childIndex( variable, value );
 	
 	if ( childIndex.isValid() || value.isEmpty() ) {
@@ -300,7 +300,6 @@ bool XUPItemVariableEditorModel::friendlyDisplayText() const
 	return mFriendlyDisplayText;
 }
 
-#warning REMOVE ME OBSOLETE
 void XUPItemVariableEditorModel::setQuoteValues( bool quote )
 {
 	mQuoteValues = quote;
@@ -319,19 +318,6 @@ void XUPItemVariableEditorModel::setDeleteRemovedFiles( bool del )
 bool XUPItemVariableEditorModel::deleteRemovedFiles() const
 {
 	return mDeleteRemovedFiles;
-}
-
-QString XUPItemVariableEditorModel::quotedValue( const QString& value ) const
-{
-	if ( mQuoteValues ) {
-		const QString quote = mRootItem->project()->quoteString();
-		
-		if ( !quote.isEmpty() && value.contains( " " ) && ( !value.startsWith( quote ) && !value.endsWith( quote ) ) ) {
-			return QString( value ).prepend( quote ).append( quote );
-		}
-	}
-	
-	return value;
 }
 
 void XUPItemVariableEditorModel::revert( XUPItem* item )
@@ -415,6 +401,7 @@ bool XUPItemVariableEditorModel::submit()
 		const bool isFileVariable = fileVariables.contains( variable.string );
 		const bool isPathVariable = pathVariables.contains( variable.string );
 		XUPItem* variableItem = variable.item;
+		QStringList files;
 		
 		if ( !variable.enabled ) {
 			if ( variableItem ) {
@@ -425,11 +412,13 @@ bool XUPItemVariableEditorModel::submit()
 		}
 		
 		if ( !variableItem ) {
-			variableItem = mRootItem->addChild( XUPItem::Variable );
-			variableItem->setAttribute( "name", variable.string );
-			
-			if ( !op.isEmpty() ) {
-				variableItem->setAttribute( "operator", op );
+			if ( !isFileVariable ) {
+				variableItem = mRootItem->addChild( XUPItem::Variable );
+				variableItem->setAttribute( "name", variable.string );
+				
+				if ( !op.isEmpty() ) {
+					variableItem->setAttribute( "operator", op );
+				}
 			}
 		}
 		
@@ -437,12 +426,17 @@ bool XUPItemVariableEditorModel::submit()
 			XUPItem* valueItem = value.item;
 			
 			if ( value.enabled ) {
-				if ( !valueItem ) {
-					const XUPItem::Type type = isFileVariable ? XUPItem::File : ( isPathVariable ? XUPItem::Path : XUPItem::Value );
-					valueItem = variableItem->addChild( type );
+				if ( !isFileVariable ) {
+					if ( !valueItem ) {
+						const XUPItem::Type type = isPathVariable ? XUPItem::Path : XUPItem::Value;
+						valueItem = variableItem->addChild( type );
+					}
+					
+					valueItem->setContent( value.string );
 				}
-				
-				valueItem->setContent( value.string );
+				else {
+					files << value.string;
+				}
 			}
 			else {
 				if ( valueItem ) {
@@ -451,7 +445,11 @@ bool XUPItemVariableEditorModel::submit()
 			}
 		}
 		
-		if ( !variableItem->hasChildren() ) {
+		if ( isFileVariable && !files.isEmpty() ) {
+			project->addFiles( files, mRootItem );
+		}
+		
+		if ( !isFileVariable && !variableItem->hasChildren() ) {
 			project->removeValue( variableItem, deleteFiles );
 		}
 	}
@@ -459,6 +457,20 @@ bool XUPItemVariableEditorModel::submit()
 	revert();
 	
 	return true;
+}
+
+QString XUPItemVariableEditorModel::normalizedValue( const QString& value ) const
+{
+	if ( mQuoteValues ) {
+		const QString quote = mRootItem->project()->quoteString();
+		
+		if ( !quote.isEmpty() && value.contains( " " )
+			&& !value.startsWith( quote ) && !value.endsWith( quote ) ) {
+			return QString( value ).prepend( quote ).append( quote );
+		}
+	}
+	
+	return value;
 }
 
 void XUPItemVariableEditorModel::buildParentMapping( XUPItemVariableEditorModelItem& item )

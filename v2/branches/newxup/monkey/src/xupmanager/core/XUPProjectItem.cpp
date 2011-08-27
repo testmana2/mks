@@ -83,10 +83,25 @@ QString XUPProjectItem::filePath( const QString& _fn ) const
 	);
 }
 
-QString XUPProjectItem::relativeFilePath( const QString& fileName ) const
+QString XUPProjectItem::relativeFilePath( const QString& _fn ) const
 {
+	if ( _fn.isEmpty() ) {
+		return QString::null;
+	}
+	
+	const QString quote = quoteString();
+	QString fn = _fn;
+	
+	if ( fn.startsWith( quote ) && fn.endsWith( quote ) ) {
+		fn.chop( 1 );
+		fn.remove( 0, 1 );
+	}
+	
 	QDir dir( path() );
-	return dir.relativeFilePath( fileName );
+	
+	return QDir::cleanPath(
+		dir.relativeFilePath( fn )
+	);
 }
 
 QStringList XUPProjectItem::sourceFiles() const
@@ -142,67 +157,68 @@ QStringList XUPProjectItem::autoActivatePlugins() const
 	return driver()->infos().dependencies;
 }
 
-void XUPProjectItem::addFiles( const QStringList& files, XUPItem* scope )
+void XUPProjectItem::addFiles( const QStringList& files, XUPItem* _scope )
 {
 	const DocumentFilterMap& filters = documentFilters();
-	QStringList notImported;
+	const QString quote = quoteString();
+	const QString op = defaultOperator();
+	XUPItem* scope = _scope ? _scope : this;
 	XUPProjectItem* project = scope ? scope->project() : this;
-	XUPItem* parent = scope ? scope : this;
+	QStringList notImported;
 	
 	foreach ( const QString& file, files ) {
-		bool found = false;
+		const QString variableName = filters.fileNameVariable( QString( file ).remove( quoteString() ) );
 		
-		foreach ( const QString& name, filters.keys() ) {
-			const DocumentFilter& filter = filters[ name ];
-			
-			if ( QDir::match( filter.filters, file ) ) {
-				XUPItem* variable = project->getVariable( parent, name );
-				bool exists = false;
-				
-				if ( variable ) {
-					foreach ( XUPItem* item, variable->childrenList() ) {
-						switch ( item->type() ) {
-							case XUPItem::Value:
-							case XUPItem::File:
-							case XUPItem::Path:
-								exists = pMonkeyStudio::isSameFile( file, filePath( item->content() ) );
-								break;
-							
-							default:
-								break;
-						}
-						
-						if ( exists ) {
-							break;
-						}
-					}
+		if ( variableName.isEmpty() ) {
+			notImported << file;
+		}
+		
+		XUPItem* variableItem = project->getVariable( scope, variableName );
+		QString filePath = project->filePath( file );
+		bool fileExists = false;
+		
+		if ( variableItem ) {
+			foreach ( XUPItem* item, variableItem->childrenList() ) {
+				switch ( item->type() ) {
+					case XUPItem::Value:
+					case XUPItem::File:
+					case XUPItem::Path:
+						fileExists = pMonkeyStudio::isSameFile( filePath, project->filePath( item->cacheValue( "content" ) ) );
+						break;
+					default:
+						break;
 				}
 				
-				if ( !exists ) {
-					if ( !variable ) {
-						variable = parent->addChild( XUPItem::Variable );
-						variable->setAttribute( "name", name );
-					}
-					
-					XUPItem* value = variable->addChild( XUPItem::File );
-					value->setContent( project->relativeFilePath( file ) );
+				if ( fileExists ) {
+					break;
 				}
-				
-				found = true;
-				break;
 			}
 		}
 		
-		if ( !found ) {
-			notImported << file;
+		if ( !fileExists ) {
+			if ( !variableItem ) {
+				variableItem = scope->addChild( XUPItem::Variable );
+				variableItem->setAttribute( "name", variableName );
+				
+				if ( !op.isEmpty() ) {
+					variableItem->setAttribute( "operator", op );
+				}
+			}
+			
+			filePath = project->relativeFilePath( file );
+			
+			if ( !quote.isEmpty() && filePath.contains( " " ) && !filePath.startsWith( quote ) && !filePath.endsWith( quote ) ) {
+				filePath = QString( "%1%2%1" ).arg( quote ).arg( filePath );
+			}
+			
+			XUPItem* valueItem = variableItem->addChild( XUPItem::File );
+			valueItem->setContent( filePath );
 		}
 	}
 	
 	if ( !notImported.isEmpty() ) {
 		setLastError( tr( "Don't know how to add files:\n" ).arg( notImported.join( "\n" ) ) );
 	}
-	
-	XUPProjectItem::cache()->build( this );
 }
 
 void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles )
@@ -219,7 +235,7 @@ void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles )
 		}
 		case XUPItem::File: {
 			if ( deleteFiles ) {
-				const QString content = item->cacheValue( "content" ).remove( quoteString() );
+				const QString content = item->cacheValue( "content" );
 				const QString filePath = this->filePath( content );
 				QFile file( filePath );
 				
