@@ -21,8 +21,9 @@ MainEditor::~MainEditor()
 
 void MainEditor::setup( XUPProjectItem* project )
 {
-	const XUPDynamicFolderSettings folder = XUPProjectItemHelper::projectDynamicFolderSettings( project );
 	mProject = project;
+	
+	const XUPDynamicFolderSettings folder = XUPProjectItemHelper::projectDynamicFolderSettings( project );
 
 	ui->leProjectName->setText( mProject->attribute( "name" ) );
 	ui->gbDynamicFolder->setChecked( folder.Active );

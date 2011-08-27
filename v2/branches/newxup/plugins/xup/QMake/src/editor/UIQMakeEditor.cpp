@@ -53,7 +53,7 @@ void UIQMakeEditor::finalize()
 	qWarning() << mPositiveValues;
 	qWarning() << mNegativeValues;
 	
-	// clear values, it will be update by pages finalize
+	// clear values, it will be updated by pages finalize
 	foreach ( const QString& variableName, mPositiveValues.keys() ) {
 		mPositiveValues[ variableName ].clear();
 	}
@@ -113,8 +113,7 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 			}
 			
 			if ( !values.isEmpty() ) {
-				// some magic to remove duplicate entries
-				const QStringList entries = filters.splitValue( values.join( " " ) ).toSet().toList();
+				const QStringList entries = filters.splitValue( values.join( " " ) );
 				
 				if ( isPositive ) {
 					mPositiveValues[ variableName ] = entries;
@@ -191,9 +190,11 @@ void UIQMakeEditor::updateVariable( XUPItem* scope, const QString& variableName,
 	}
 	
 	// add new one
-	const QString content = values.join( " " );
-	XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
-	valueItem->setContent( content );
+	if ( !values.isEmpty() ) {
+		const QString content = values.join( " " );
+		XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
+		valueItem->setContent( content );
+	}
 	
 	/*foreach ( const QString& value, values ) {
 		XUPItem* valueItem = variableItem->addChild( XUPItem::Value );

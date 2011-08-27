@@ -60,7 +60,7 @@ void QMakeMainEditor::setup( XUPProjectItem* project )
 		}
 	}
 	
-	if ( !isSolution() ) {
+	//if ( !isSolution() ) {
 		ui->leProjectName->setText( mPositiveValues.value( "TARGET" ).join( " " ) );
 		
 		switch ( ui->bgType->checkedId() ) {
@@ -74,7 +74,7 @@ void QMakeMainEditor::setup( XUPProjectItem* project )
 			default:
 				break;
 		}
-	}
+	//}
 	
 	foreach ( const QtVersion& qv, qmanager->versions() ) {
 		QListWidgetItem* it = new QListWidgetItem( qv.Version, ui->lwQtVersion );
@@ -125,7 +125,7 @@ void QMakeMainEditor::finalize()
 			break;
 	}
 	
-	if ( !isSolution() ) {
+	//if ( !isSolution() ) {
 		if ( !ui->leProjectName->text().isEmpty() ) {
 			mPositiveValues[ "TARGET" ] << ui->leProjectName->text();
 		}
@@ -145,7 +145,7 @@ void QMakeMainEditor::finalize()
 			default:
 				break;
 		}
-	}
+	//}
 	
 	if ( ui->gbQtVersion->isEnabled() && qversionItem ) {
 		const QtVersion qversion = qversionItem->data( Qt::UserRole ).value<QtVersion>();
