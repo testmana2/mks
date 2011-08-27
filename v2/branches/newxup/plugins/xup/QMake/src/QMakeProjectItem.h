@@ -26,6 +26,8 @@ public:
 	Q_INVOKABLE QMakeProjectItem();
 	virtual ~QMakeProjectItem();
     
+	virtual QString quoteString() const;
+	virtual QString defaultOperator() const;
 	virtual QString toNativeString() const;
 	virtual QString projectType() const;
 	virtual bool open( const QString& fileName, const QString& codec );
