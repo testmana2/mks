@@ -243,9 +243,9 @@ void pOpenedFileExplorer::selectionModel_selectionChanged( const QItemSelection&
 void pOpenedFileExplorer::on_tvFiles_customContextMenuRequested( const QPoint& pos )
 {
 	QMenu menu;
-	menu.addAction( MonkeyCore::menuBar()->action( "mFile/aCloseCurrent" ) );
 	menu.addAction( MonkeyCore::menuBar()->action( "mFile/aSaveCurrent" ) );
 	menu.addAction( MonkeyCore::menuBar()->action( "mFile/aReload" ) );
+	menu.addAction( MonkeyCore::menuBar()->action( "mFile/aCloseCurrent" ) );
 	menu.addSeparator();
 	menu.addAction( mSortMenu->menuAction() );
 	menu.exec( tvFiles->mapToGlobal( pos ) );
