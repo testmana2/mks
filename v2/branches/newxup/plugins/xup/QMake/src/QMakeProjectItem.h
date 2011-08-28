@@ -31,14 +31,14 @@ public:
 	virtual QString toNativeString() const;
 	virtual QString projectType() const;
 	virtual bool open( const QString& fileName, const QString& codec );
-	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget);
+	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
 	virtual void installCommands();
 	virtual XUPProjectItemCacheBackend* cacheBackend() const;
-    virtual bool edit();
-	virtual bool editProjectFiles();
 	
 protected:
 	static QMakeProjectItemCacheBackend mCacheBackend;
+	
+	virtual UIXUPEditor* newEditDialog() const;
 	
 	// handle the inclusion of include files
 	bool handleIncludeFile( XUPItem* function );

@@ -224,7 +224,7 @@ void QMakeProjectItemCacheBackend::updateVariable( XUPProjectItem* project, cons
 		}
 	}
 	else if ( op == "~=" ) {
-		project->topLevelProject()->setLastError( XUPProjectItem::tr( "Don't know how to interpret ~= operator" ) );
+		project->showError( QMakeProjectItem::tr( "Don't know how to interpret ~= operator" ) );
 	}
 }
 
@@ -296,7 +296,12 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	int errorColumn;
     
 	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) ) {
-		topLevelProject()->setLastError( QString( "%1 on line: %2, column: %3" ).arg( errorMsg ).arg( errorLine ).arg( errorColumn ) );
+		showError( tr( "Xml error in '%1':\n%2 on line %3, column %4" )
+			.arg( fileName )
+			.arg( errorMsg )
+			.arg( errorLine )
+			.arg( errorColumn )
+		);
 		return false;
 	}
 	
@@ -304,7 +309,7 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	mDomElement = mDocument.firstChildElement( "project" );
     
 	if ( mDomElement.isNull() ) {
-		topLevelProject()->setLastError("no project node" );
+		showError( tr( "Invalid project: no project node in '%1'" ).arg( fileName ) );
 		return false;
 	}
 	
@@ -312,14 +317,17 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 	const QString docVersion = mDomElement.attribute( "version" );
     
 	if ( pVersion( docVersion ) < XUP_VERSION ) { 
-		topLevelProject()->setLastError( tr( "The document format is too old, current version is '%1', your document is '%2'" ).arg( XUP_VERSION ).arg( docVersion ) );
+		showError( tr( "The document format is too old, current version is '%1', your document is '%2' in '%3'" )
+			.arg( XUP_VERSION )
+			.arg( docVersion )
+			.arg( fileName )
+		);
 		return false;
 	}
 	
 	// all is ok
 	mCodec = codec;
 	mFileName = fileName;
-	topLevelProject()->setLastError( QString::null );
 	
 	const XUPItem* parent = XUPItem::parent();
 	const bool isIncludeProject = parent && parent->type() == XUPItem::Function && parent->attribute( "name" ) == "include";
@@ -334,7 +342,7 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
     return true;
 }
 
-QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType targetType)
+QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType targetType )
 {
 	QString targetTypeString;
 	
@@ -412,7 +420,7 @@ bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 	// remove and delete project if can't open
 	if ( !includeProject->open( filePath, project->codec() ) ) {
 		function->removeChild( includeProject );
-		topLevelProject()->setLastError( tr( "Failed to handle include file %1" ).arg( filePath ) );
+		showError( tr( "Failed to handle include file '%1'" ).arg( filePath ) );
         return false;
 	}
     
@@ -474,7 +482,7 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 		}
 		else {
 			project->removeChild( subProject );
-			topLevelProject()->setLastError( tr( "Failed to handle subdirs file %1" ).arg( filePath ) );
+			showError( tr( "Failed to handle subdirs file '%1'" ).arg( filePath ) );
 			continue;
 		}
 	}
@@ -806,19 +814,9 @@ XUPProjectItemCacheBackend* QMakeProjectItem::cacheBackend() const
 	return &QMakeProjectItem::mCacheBackend;
 }
 
-bool QMakeProjectItem::edit()
+UIXUPEditor* QMakeProjectItem::newEditDialog() const
 {
-	UIQMakeEditor dlg( MonkeyCore::mainWindow() );
-	dlg.setupProject( this );
-	return dlg.exec() == QDialog::Accepted;
-}
-
-bool QMakeProjectItem::editProjectFiles()
-{
-	UIQMakeEditor dlg( MonkeyCore::mainWindow() );
-	dlg.setupProject( this );
-	dlg.showProjectFilesPage();
-	return dlg.exec() == QDialog::Accepted;
+	return new UIQMakeEditor( MonkeyCore::mainWindow() );
 }
 
 CLIToolPlugin* QMakeProjectItem::builder() const
