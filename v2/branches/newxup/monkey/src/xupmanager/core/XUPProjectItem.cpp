@@ -202,6 +202,8 @@ void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles )
 	switch ( item->type() ) {
 		case XUPItem::Variable: {
 			if ( deleteFiles ) {
+				item->setCacheValue( "markDeleted", "1" );
+				
 				foreach ( XUPItem* value, item->childrenList() ) {
 					removeValue( value, deleteFiles );
 				}
@@ -236,7 +238,14 @@ void XUPProjectItem::removeValue( XUPItem* item, bool deleteFiles )
 			break;
 	}
 	
-	item->parent()->removeChild( item );
+	XUPItem* parentItem = item->parent();
+	parentItem->removeChild( item );
+	
+	if ( parentItem->type() == XUPItem::Variable && parentItem->cacheValue( "markDeleted" ) != "1" ) {
+		if ( !parentItem->hasChildren() ) {
+			parentItem->parent()->removeChild( parentItem );
+		}
+	}
 }
 
 QString XUPProjectItem::quoteString() const
@@ -442,6 +451,7 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 		dynamicFolderItem->setRootPath( dynamicFolderSettings.AbsolutePath, dynamicFolderSettings.FilesPatterns );
 	}
 
+	emitDataChanged();
 	return true;
 }
 
