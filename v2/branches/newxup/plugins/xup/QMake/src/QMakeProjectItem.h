@@ -26,6 +26,7 @@ public:
 	Q_INVOKABLE QMakeProjectItem();
 	virtual ~QMakeProjectItem();
     
+	virtual void removeValue( XUPItem* item, bool deleteFiles );
 	virtual QString quoteString() const;
 	virtual QString defaultOperator() const;
 	virtual QString toNativeString() const;
@@ -40,6 +41,8 @@ protected:
 	
 	virtual UIXUPEditor* newEditDialog() const;
 	
+	// guess subdirs project fileChanged
+	QString guessSubProjectFilePath( const QString& subdirsValue ) const;
 	// handle the inclusion of include files
 	bool handleIncludeFile( XUPItem* function );
 	// handle inclusion of subdirs projects
