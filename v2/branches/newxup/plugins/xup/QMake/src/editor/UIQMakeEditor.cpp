@@ -49,9 +49,9 @@ QStringList UIQMakeEditor::handledVariables()
 
 void UIQMakeEditor::finalize()
 {
-	qWarning() << "*** BEFORE";
+	/*qWarning() << "*** BEFORE";
 	qWarning() << mPositiveValues;
-	qWarning() << mNegativeValues;
+	qWarning() << mNegativeValues;*/
 	
 	// clear values, it will be updated by pages finalize
 	foreach ( const QString& variableName, mPositiveValues.keys() ) {
@@ -75,9 +75,9 @@ void UIQMakeEditor::finalize()
 	}
 	
 	// update proejct items
-	qWarning() << "*** AFTER";
+	/*qWarning() << "*** AFTER";
 	qWarning() << mPositiveValues;
-	qWarning() << mNegativeValues;
+	qWarning() << mNegativeValues;*/
 }
 
 void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
@@ -125,9 +125,9 @@ void UIQMakeEditor::initializeVariables( XUPProjectItem* project )
 		}
 	}
 	
-	qWarning() << "*** INITIALIZE";
+	/*qWarning() << "*** INITIALIZE";
 	qWarning() << mPositiveValues;
-	qWarning() << mNegativeValues;
+	qWarning() << mNegativeValues;*/
 }
 
 XUPItem* UIQMakeEditor::uniqueVariable( XUPItem* scope, const QString& variableName, bool positive, bool create )

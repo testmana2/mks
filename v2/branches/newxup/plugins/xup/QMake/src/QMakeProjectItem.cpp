@@ -271,6 +271,8 @@ void QMakeProjectItem::removeValue( XUPItem* item, bool deleteFiles )
 	switch ( item->type() ) {
 		case XUPItem::Variable: {
 			if ( item->attribute( "name" ) == "SUBDIRS" ) {
+				item->setCacheValue( "markDeleted", "1" ); // see XUPProjectItem::removeValue
+				
 				foreach ( XUPItem* value, item->childrenList() ) {
 					removeValue( value, false );
 				}
@@ -389,6 +391,7 @@ bool QMakeProjectItem::open( const QString& fileName, const QString& codec )
 		XUPProjectItem::cache()->build( this );
 	}
 	
+	emitDataChanged();
     return true;
 }
 
