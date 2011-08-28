@@ -136,6 +136,9 @@ public:
 	QString cachedVariableValue( const QString& variableName ) const;
 	static XUPProjectItemCache* cache();
 	
+	QString quotedValue( const QString& value ) const;
+	QString unquotedValue( const QString& value ) const;
+	
 protected:
 	QDomDocument mDocument;
 	QString mCodec;
@@ -146,9 +149,6 @@ protected:
 	static XUPProjectItemCacheBackend mProjectsCacheBackend;
 	
 	virtual UIXUPEditor* newEditDialog() const;
-	
-	QString quotedFilePath( const QString& filePath ) const;
-	QString unquotedFilePath( const QString& filePath ) const;
 	
 protected slots:
 	// Common handler for actions, which execute pCommand. Does few checks, then executes pCommand
