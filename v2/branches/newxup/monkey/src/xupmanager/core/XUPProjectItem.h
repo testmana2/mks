@@ -15,6 +15,7 @@ class QAction;
 class XUPPlugin;
 class XUPProjectItemCacheBackend;
 class XUPProjectItemCache;
+class UIXUPEditor;
 
 typedef QList<class XUPProjectItem*> XUPProjectItemList;
 
@@ -36,9 +37,7 @@ public:
 	virtual ~XUPProjectItem();
 	
 	// set last encounter error
-	void setLastError( const QString& error );
-	// return the last encounter error
-	QString lastError() const;
+	void showError( const QString& error );
 	
 	// return the project absolute filename
 	QString fileName() const;
@@ -113,8 +112,11 @@ public:
 	// return the text codec used by this project
 	QString codec() const;
 	
-	virtual bool edit() = 0;
-	virtual bool editProjectFiles() = 0;
+	// show project settings dialog
+	bool edit();
+	
+	// show project settings files editor dialog
+	bool editProjectFiles();
 	
 	// return project document filters
 	const DocumentFilterMap& documentFilters() const;
@@ -138,11 +140,15 @@ protected:
 	QDomDocument mDocument;
 	QString mCodec;
 	QString mFileName;
-	QString mLastError;
 	// Action pointers stored here for delete it, when current project changed
 	QList<QAction*> mInstalledActions;
 	static XUPProjectItemCache mProjectsCache;
 	static XUPProjectItemCacheBackend mProjectsCacheBackend;
+	
+	virtual UIXUPEditor* newEditDialog() const;
+	
+	QString quotedFilePath( const QString& filePath ) const;
+	QString unquotedFilePath( const QString& filePath ) const;
 	
 protected slots:
 	// Common handler for actions, which execute pCommand. Does few checks, then executes pCommand

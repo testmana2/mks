@@ -238,9 +238,7 @@ bool XUPProjectManager::openProject( const QString& fileName, const QString& cod
 		XUPProjectModel* model = new XUPProjectModel( this );
 		if ( model->open( fileName, codec ) )
 		{
-			// append file to recents project
 			MonkeyCore::recentsManager()->addRecentProject( fileName );
-			
 			mOpenedProjectsModel->addProject( model );
 			setCurrentProject( model->rootProject(), currentProject() );
 			emit projectOpened( currentProject() );
@@ -248,11 +246,7 @@ bool XUPProjectManager::openProject( const QString& fileName, const QString& cod
 		}
 		else
 		{
-			// remove from recents
 			MonkeyCore::recentsManager()->removeRecentProject( fileName );
-			// inform user about error
-			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while opening project '%1': %2" ).arg( fileName ).arg( model->lastError() ) );
-			// free
 			delete model;
 		}
 	}
@@ -313,28 +307,12 @@ void XUPProjectManager::editProject()
 	
 	// edit project and save it if needed
 	if ( project->edit() ) {
-		if ( !project->save() ) {
-			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
-		}
+		project->save();
 		
 		// update menu actions
-		project->cache()->build( project );
 		project->uninstallCommands();
 		project->installCommands();
 	}
-}
-
-void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )
-{
-	XUPProjectItem* project = scope->project();
-	
-	project->addFiles( files, scope );
-	
-	if ( !project->save() ) {
-		MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
-	}
-	
-	project->cache()->build( project );
 }
 
 void XUPProjectManager::addFiles()
@@ -347,72 +325,24 @@ void XUPProjectManager::addFiles()
 	
 	// edit project and save it if needed
 	if ( project->editProjectFiles() ) {
-		if ( project->save() ) {
-			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
-		}
+		project->save();
 		
 		// update menu actions
-		project->cache()->build( project );
 		project->uninstallCommands();
 		project->installCommands();
 	}
-	
-	/*pFileDialogResult result = MkSFileDialog::getProjectAddFiles( window() );
-	
-	if ( !result.isEmpty() )
-	{
-		QStringList files = result[ "filenames" ].toStringList();
-		XUPItem* scope = result[ "scope" ].value<XUPItem*>();
-		
-		// import files if needed
-		if ( result[ "import" ].toBool() )
-		{
-			const QString projectPath = scope->project()->path();
-			const QString importPath = result[ "importpath" ].toString();
-			const QString importRootPath = result[ "directory" ].toString();
-			QDir dir( importRootPath );
-			
-			for ( int i = 0; i < files.count(); i++ )
-			{
-				if ( !files.at( i ).startsWith( projectPath ) )
-				{
-					QString fn = QString( files.at( i ) ).remove( importRootPath ).replace( "\\", "/" );
-					fn = QDir::cleanPath( QString( "%1/%2/%3" ).arg( projectPath ).arg( importPath ).arg( fn ) );
-					
-					if ( dir.mkpath( QFileInfo( fn ).absolutePath() ) && QFile::copy( files.at( i ), fn ) )
-					{
-						files[ i ] = fn;
-					}
-				}
-			}
-		}
-		
-		// add files to scope
-		addFiles( files, scope );
-	}*/
 }
 
 void XUPProjectManager::removeFiles()
 {
 	addFiles();
-	/*XUPItem* curItem = currentItem();
-	
-	
-	if ( !curItem || !( curItem->type() == XUPItem::Value || curItem->type() == XUPItem::File || curItem->type() == XUPItem::Path ) ) {
-		return;
-	}
-	
-	#warning May add a chackbox asking for removing theassociate file.
-	if ( QMessageBox::question( window(), tr( "Remove Value..." ), tr( "Are you sur you want to remove this value ?" ), QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes ) {
-		XUPProjectItem* project = curItem->project();
-		
-		project->removeValue( curItem );
-		
-		// save project
-		if ( !project->save() ) {
-			MonkeyCore::messageManager()->appendMessage( tr( "An error occur while saving project '%1': %2" ).arg( project->fileName() ).arg( project->lastError() ) );
-		}
-	}*/
+}
+
+void XUPProjectManager::addFiles( const QStringList& files, XUPItem* scope )
+{
+	XUPProjectItem* project = scope->project();
+	project->addFiles( files, scope );
+	project->save();
 }
 
 XUPProjectModel* XUPProjectManager::currentProjectModel() const

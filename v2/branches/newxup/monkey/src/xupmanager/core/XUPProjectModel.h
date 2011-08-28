@@ -40,8 +40,7 @@ public:
 	XUPProjectItem* rootProject() const;
 	
 	// error handler
-	void setLastError( const QString& error );
-	QString lastError() const;
+	void showError( const QString& error );
 	
 	// XUP Project members
 	virtual bool open( const QString& fileName, const QString& codec );
@@ -49,7 +48,6 @@ public:
 
 protected:
 	XUPProjectItem* mRootProject;
-	QString mLastError;
 	
 	void handleProject( XUPProjectItem* project );
 };
