@@ -440,13 +440,7 @@ void XUPItem::setContent( const QString& content )
 		textNode.setData( content );
 	}
 	
-	// update model if needed
-	XUPProjectModel* m = model();
-	
-	if ( m ) {
-		QModelIndex idx = index();
-		emit m->dataChanged( idx, idx );
-	}
+	emitDataChanged();
 }
 
 QString XUPItem::attribute( const QString& name, const QString& defaultValue ) const
@@ -468,14 +462,7 @@ void XUPItem::setAttribute( const QString& name, const QString& value )
 	}
 	
 	mCacheValues.remove( name );
-	
-	// update model if needed
-	XUPProjectModel* m = model();
-	
-	if ( m ) {
-		QModelIndex idx = index();
-		emit m->dataChanged( idx, idx );
-	}
+	emitDataChanged();
 }
 
 QString XUPItem::cacheValue( const QString& key, const QString& defaultValue ) const
@@ -499,4 +486,15 @@ QString XUPItem::xmlContent() const
 	QTextStream stream( &content );
 	stream << mDomElement;
 	return content;
+}
+
+void XUPItem::emitDataChanged()
+{
+	// update model if needed
+	XUPProjectModel* model = this->model();
+	
+	if ( model ) {
+		const QModelIndex index = this->index();
+		emit model->dataChanged( index, index );
+	}
 }

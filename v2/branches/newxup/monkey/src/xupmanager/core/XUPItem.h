@@ -95,6 +95,8 @@ public:
 	void clearCacheValue( const QString& key );
 	// mostly for debugging purpose
 	QString xmlContent() const;
+	// emit dataChanged signal to model
+	void emitDataChanged();
 
 protected:
 	XUPProjectModel* mModel;
