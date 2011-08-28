@@ -92,21 +92,6 @@ void PHPQtProjectItem::installCommands()
 	XUPProjectItem::installCommands();
 }
 
-bool PHPQtProjectItem::edit()
-{
-	UIXUPEditor dlg( MonkeyCore::mainWindow() );
-	dlg.setupProject( this );
-	return dlg.exec() == QDialog::Accepted;
-}
-
-bool PHPQtProjectItem::editProjectFiles()
-{
-	UIXUPEditor dlg( MonkeyCore::mainWindow() );
-	dlg.setupProject( this );
-	dlg.showProjectFilesPage();
-	return dlg.exec() == QDialog::Accepted;
-}
-
 CLIToolPlugin* PHPQtProjectItem::interpreter() const
 {
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "PHP" );
