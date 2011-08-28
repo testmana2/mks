@@ -266,6 +266,56 @@ QMakeProjectItem::~QMakeProjectItem()
 {
 }
 
+void QMakeProjectItem::removeValue( XUPItem* item, bool deleteFiles )
+{
+	switch ( item->type() ) {
+		case XUPItem::Variable: {
+			if ( item->attribute( "name" ) == "SUBDIRS" ) {
+				foreach ( XUPItem* value, item->childrenList() ) {
+					removeValue( value, false );
+				}
+			}
+			
+			break;
+		}
+		case XUPItem::File: {
+			if ( item->parent()->attribute( "name" ) == "SUBDIRS" ) {
+				XUPProjectItem* project = item->project();
+				const DocumentFilterMap& filter = project->documentFilters();
+				QStringList cacheFns = filter.splitValue( item->cacheValue( "content" ) );
+				QSet<QString> projects;
+				
+				foreach ( const QString& cacheFn, cacheFns ) {
+					const QString filePath = guessSubProjectFilePath( cacheFn );
+					
+					if ( cacheFn.isEmpty() ) {
+						continue;
+					}
+					
+					if ( !projects.contains( filePath ) ) {
+						projects << filePath;
+					}
+				}
+				
+				foreach ( XUPProjectItem* proj, project->childrenProjects( false ) ) {
+					const QString projectFilePath = QDir::cleanPath( QDir::toNativeSeparators( proj->fileName() ) );
+					
+					if ( projects.contains( projectFilePath ) ) {
+						projects.remove( projectFilePath );
+						project->removeChild( proj );
+					}
+				}
+			}
+			
+			break;
+		}
+		default:
+			break;
+	}
+	
+	XUPProjectItem::removeValue( item, deleteFiles );
+}
+
 QString QMakeProjectItem::quoteString() const
 {
 	return "\"";
@@ -395,6 +445,24 @@ QString QMakeProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::T
 	return target;
 }
 
+QString QMakeProjectItem::guessSubProjectFilePath( const QString& subdirsValue ) const
+{
+	if ( subdirsValue.isEmpty() ) {
+		return QString::null;
+	}
+	
+	QFileInfo file( filePath( subdirsValue ) );
+	
+	if ( file.isDir() ) {
+		QDir dir( file.absoluteFilePath() );
+		const QString mask = QString( "%1.pro" ).arg( file.fileName() );
+		const QFileInfoList files = pMonkeyStudio::getFiles( dir, QStringList( mask ), false );
+		file.setFile( files.value( 0 ).absoluteFilePath() );
+	}
+	
+	return QDir::cleanPath( QDir::toNativeSeparators( file.absoluteFilePath() ) );
+}
+
 bool QMakeProjectItem::handleIncludeFile( XUPItem* function )
 {
 	XUPProjectItem* project = function->project();
@@ -440,17 +508,11 @@ bool QMakeProjectItem::handleSubdirs( XUPItem* subdirs )
 			QStringList cacheFns = filter.splitValue( child->cacheValue( "content" ) );
 			
 			foreach ( const QString& cacheFn, cacheFns ) {
+				const QString filePath = guessSubProjectFilePath( cacheFn );
+				
 				if ( cacheFn.isEmpty() ) {
 					continue;
 				}
-				
-				QFileInfo file( filePath( cacheFn ) );
-				
-				if ( file.isDir() ) {
-					file.setFile( QString( "%1/%2.pro" ).arg( file.absoluteFilePath() ).arg( file.fileName() ) );
-				}
-				
-				const QString filePath = QDir::cleanPath( QDir::toNativeSeparators( file.absoluteFilePath() ) );
 				
 				if ( !projects.contains( filePath ) ) {
 					projects << filePath;
