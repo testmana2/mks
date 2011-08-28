@@ -10,6 +10,7 @@
 #include "XUPDynamicFolderItem.h"
 #include "XUPProjectItemCache.h"
 #include "pFileManager.h"
+#include "UIXUPEditor.h"
 
 #include <pQueuedMessageToolBar.h>
 
@@ -38,18 +39,11 @@ XUPProjectItem::~XUPProjectItem()
 	XUPProjectItem::cache()->clear( this );
 }
 
-void XUPProjectItem::setLastError( const QString& error )
+void XUPProjectItem::showError( const QString& error )
 {
-	mLastError = error;
-	
 	if ( !error.trimmed().isEmpty() ) {
 		MonkeyCore::messageManager()->appendMessage( error );
 	}
-}
-
-QString XUPProjectItem::lastError() const
-{
-	return mLastError;
 }
 
 QString XUPProjectItem::fileName() const
@@ -64,16 +58,10 @@ QString XUPProjectItem::path() const
 
 QString XUPProjectItem::filePath( const QString& _fn ) const
 {
-	if ( _fn.isEmpty() ) {
+	const QString fn = unquotedFilePath( _fn );
+	
+	if ( fn.isEmpty() ) {
 		return QString::null;
-	}
-	
-	const QString quote = quoteString();
-	QString fn = _fn;
-	
-	if ( fn.startsWith( quote ) && fn.endsWith( quote ) ) {
-		fn.chop( 1 );
-		fn.remove( 0, 1 );
 	}
 	
 	return QDir::cleanPath(
@@ -85,16 +73,10 @@ QString XUPProjectItem::filePath( const QString& _fn ) const
 
 QString XUPProjectItem::relativeFilePath( const QString& _fn ) const
 {
-	if ( _fn.isEmpty() ) {
+	const QString fn = unquotedFilePath( _fn );
+	
+	if ( fn.isEmpty() ) {
 		return QString::null;
-	}
-	
-	const QString quote = quoteString();
-	QString fn = _fn;
-	
-	if ( fn.startsWith( quote ) && fn.endsWith( quote ) ) {
-		fn.chop( 1 );
-		fn.remove( 0, 1 );
 	}
 	
 	QDir dir( path() );
@@ -160,21 +142,20 @@ QStringList XUPProjectItem::autoActivatePlugins() const
 void XUPProjectItem::addFiles( const QStringList& files, XUPItem* _scope )
 {
 	const DocumentFilterMap& filters = documentFilters();
-	const QString quote = quoteString();
 	const QString op = defaultOperator();
 	XUPItem* scope = _scope ? _scope : this;
 	XUPProjectItem* project = scope ? scope->project() : this;
 	QStringList notImported;
 	
 	foreach ( const QString& file, files ) {
-		const QString variableName = filters.fileNameVariable( QString( file ).remove( quoteString() ) );
+		const QString variableName = filters.fileNameVariable( unquotedFilePath( file ) );
+		QString filePath = project->filePath( file );
 		
-		if ( variableName.isEmpty() ) {
+		if ( variableName.isEmpty() || pMonkeyStudio::isSameFile( filePath, project->fileName() ) ) {
 			notImported << file;
 		}
 		
 		XUPItem* variableItem = project->getVariable( scope, variableName );
-		QString filePath = project->filePath( file );
 		bool fileExists = false;
 		
 		if ( variableItem ) {
@@ -205,19 +186,14 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* _scope )
 				}
 			}
 			
-			filePath = project->relativeFilePath( file );
-			
-			if ( !quote.isEmpty() && filePath.contains( " " ) && !filePath.startsWith( quote ) && !filePath.endsWith( quote ) ) {
-				filePath = QString( "%1%2%1" ).arg( quote ).arg( filePath );
-			}
-			
+			filePath = quotedFilePath( project->relativeFilePath( file ) );
 			XUPItem* valueItem = variableItem->addChild( XUPItem::File );
 			valueItem->setContent( filePath );
 		}
 	}
 	
 	if ( !notImported.isEmpty() ) {
-		setLastError( tr( "Don't know how to add files:\n" ).arg( notImported.join( "\n" ) ) );
+		showError( tr( "Don't know how to add files:\n" ).arg( notImported.join( "\n" ) ) );
 	}
 }
 
@@ -402,13 +378,13 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 
 	// check existence
 	if ( !file.exists() ) {
-		topLevelProject()->setLastError( tr( "file not exists" ) );
+		showError( tr( "Can't open project '%1': file not exists" ).arg( fileName ) );
 		return false;
 	}
 
 	// try open it for reading
 	if ( !file.open( QIODevice::ReadOnly ) ) {
-		topLevelProject()->setLastError( tr( "can't open file for reading" ) );
+		showError( tr( "can't open '%1' for reading" ).arg( fileName ) );
 		return false;
 	}
 
@@ -423,8 +399,9 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	
 	if ( !mDocument.setContent( buffer, &errorMsg, &errorLine, &errorColumn ) )
 	{
-		topLevelProject()->setLastError(
-			tr( "%1 on line: %2, column: %3" )
+		showError(
+			tr( "Xml error in '%1':\n%2 on line: %3, column: %4" )
+				.arg( fileName )
 				.arg( errorMsg )
 				.arg( errorLine )
 				.arg( errorColumn )
@@ -436,7 +413,7 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	mDomElement = mDocument.firstChildElement( "project" );
 	
 	if ( mDomElement.isNull() ) {
-		topLevelProject()->setLastError( tr( "no project node" ) );
+		showError( tr( "Invalid project '%1': no project node" ).arg( fileName ) );
 		return false;
 	}
 	
@@ -444,9 +421,11 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	const QString docVersion = mDomElement.attribute( "version" );
 	
 	if ( pVersion( docVersion ) < XUP_VERSION ) {
-		topLevelProject()->setLastError(
-			tr( "The document format is too old, current version is '%1', your document is '%2'" )
-				.arg( XUP_VERSION ).arg( docVersion )
+		showError(
+			tr( "The document format is too old, current version is '%1', your document is '%2' for '%3'" )
+				.arg( XUP_VERSION )
+				.arg( docVersion )
+				.arg( fileName )
 		);
 		return false;
 	}
@@ -454,7 +433,6 @@ bool XUPProjectItem::open( const QString& fileName, const QString& codec )
 	// all is ok
 	mCodec = codec;
 	mFileName = fileName;
-	topLevelProject()->setLastError( QString::null );
 	file.close();
 	
 	const XUPDynamicFolderSettings dynamicFolderSettings = XUPProjectItemHelper::projectDynamicFolderSettings( this );
@@ -491,20 +469,20 @@ bool XUPProjectItem::save()
 	file.close();
 
 	// set error message if needed
-	if ( result ) {
-		topLevelProject()->setLastError( QString::null );
-		XUPProjectItem::cache()->build( rootIncludeProject() );
+	if ( !result ) {
+		showError( tr( "Can't write content in project '%1'" ).arg( fileName() ) );
 	}
-	else {
-		topLevelProject()->setLastError( tr( "Can't write content" ) );
-	}
+	
+	XUPProjectItem::cache()->build( rootIncludeProject() );
 
 	return result;
 }
 
-QString XUPProjectItem::targetFilePath( bool, XUPProjectItem::TargetType )
+QString XUPProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType type )
 {
-	return QString::null;
+	Q_UNUSED( allowToAskUser );
+	Q_UNUSED( type );
+	return XUPProjectItemHelper::projectSettingsValue( this, "MAIN_FILE" );
 }
 
 void XUPProjectItem::addCommands( const QString& mnu, const QString& text, pCommandList& cmds )
@@ -570,6 +548,35 @@ QString XUPProjectItem::codec() const
 		return pMonkeyStudio::defaultCodec();
 }
 
+bool XUPProjectItem::edit()
+{
+	UIXUPEditor* dlg = newEditDialog();
+	
+	if ( !dlg ) {
+		return false;
+	}
+	
+	dlg->setAttribute( Qt::WA_DeleteOnClose );
+	dlg->setupProject( this );
+	
+	return dlg->exec() == QDialog::Accepted;
+}
+
+bool XUPProjectItem::editProjectFiles()
+{
+	UIXUPEditor* dlg = newEditDialog();
+	
+	if ( !dlg ) {
+		return false;
+	}
+	
+	dlg->setAttribute( Qt::WA_DeleteOnClose );
+	dlg->setupProject( this );
+	dlg->showProjectFilesPage();
+	
+	return dlg->exec() == QDialog::Accepted;
+}
+
 const DocumentFilterMap& XUPProjectItem::documentFilters() const
 {
 	return MonkeyCore::projectTypesIndex()->documentFilters( projectType() );
@@ -593,6 +600,39 @@ QString XUPProjectItem::cachedVariableValue( const QString& variableName ) const
 XUPProjectItemCache* XUPProjectItem::cache()
 {
 	return &XUPProjectItem::mProjectsCache;
+}
+
+UIXUPEditor* XUPProjectItem::newEditDialog() const
+{
+	return new UIXUPEditor( MonkeyCore::mainWindow() );
+}
+
+QString XUPProjectItem::quotedFilePath( const QString& filePath ) const
+{
+	const QString quote = quoteString();
+	
+	if ( !quote.isEmpty() && filePath.contains( " " ) && !filePath.startsWith( quote ) && !filePath.endsWith( quote ) ) {
+		return QString( "%1%2%1" ).arg( quote ).arg( filePath );
+	}
+	
+	return filePath;
+}
+
+QString XUPProjectItem::unquotedFilePath( const QString& _filePath ) const
+{
+	if ( _filePath.isEmpty() ) {
+		return QString::null;
+	}
+	
+	const QString quote = quoteString();
+	QString filePath = _filePath;
+	
+	if ( !quote.isEmpty() && filePath.startsWith( quote ) && filePath.endsWith( quote ) ) {
+		filePath.chop( 1 );
+		filePath.remove( 0, 1 );
+	}
+	
+	return filePath;
 }
 
 void XUPProjectItem::internal_projectCustomActionTriggered()

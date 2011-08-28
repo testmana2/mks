@@ -2,6 +2,8 @@
 #include "XUPProjectItem.h"
 #include "MonkeyCore.h"
 
+#include <pQueuedMessageToolBar.h>
+
 #include <QDebug>
 
 XUPProjectModel::XUPProjectModel( QObject* parent )
@@ -215,19 +217,15 @@ bool XUPProjectModel::hasChildren( const QModelIndex& parent ) const
 	return parentItem->hasChildren();
 }
 
-void XUPProjectModel::setLastError( const QString& error )
+void XUPProjectModel::showError( const QString& error )
 {
-	mLastError = error;
-}
-
-QString XUPProjectModel::lastError() const
-{
-	return mLastError;
+	if ( !error.trimmed().isEmpty() ) {
+		MonkeyCore::messageManager()->appendMessage( error );
+	}
 }
 
 void XUPProjectModel::handleProject( XUPProjectItem* project )
 {
-	setLastError( QString::null );
 	mRootProject = project;
 	mRootProject->mModel = this;
 }
@@ -238,7 +236,7 @@ bool XUPProjectModel::open( const QString& fileName, const QString& codec )
 	
 	if ( !tmpProject )
 	{
-		setLastError( tr( "No project handler for this project file" ) );
+		showError( tr( "No project handler for this project file '%1'" ).arg( fileName ) );
 		return false;
 	}
 	
@@ -248,7 +246,7 @@ bool XUPProjectModel::open( const QString& fileName, const QString& codec )
 		return true;
 	}
 	
-	setLastError( tr( "Can't open this project file: " ).append( tmpProject->lastError() ) );
+	showError( tr( "Can't open this project file '%1'" ).arg( fileName ) );
 	delete tmpProject;
 	return false;
 }
@@ -257,7 +255,6 @@ void XUPProjectModel::close()
 {
 	if ( mRootProject )
 	{
-		setLastError( QString::null );
 		delete mRootProject;
 		mRootProject = 0;
 	}
