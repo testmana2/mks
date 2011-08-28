@@ -58,7 +58,7 @@ QString XUPProjectItem::path() const
 
 QString XUPProjectItem::filePath( const QString& _fn ) const
 {
-	const QString fn = unquotedFilePath( _fn );
+	const QString fn = unquotedValue( _fn );
 	
 	if ( fn.isEmpty() ) {
 		return QString::null;
@@ -73,7 +73,7 @@ QString XUPProjectItem::filePath( const QString& _fn ) const
 
 QString XUPProjectItem::relativeFilePath( const QString& _fn ) const
 {
-	const QString fn = unquotedFilePath( _fn );
+	const QString fn = unquotedValue( _fn );
 	
 	if ( fn.isEmpty() ) {
 		return QString::null;
@@ -148,7 +148,7 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* _scope )
 	QStringList notImported;
 	
 	foreach ( const QString& file, files ) {
-		const QString variableName = filters.fileNameVariable( unquotedFilePath( file ) );
+		const QString variableName = filters.fileNameVariable( unquotedValue( file ) );
 		QString filePath = project->filePath( file );
 		
 		if ( variableName.isEmpty() || pMonkeyStudio::isSameFile( filePath, project->fileName() ) ) {
@@ -186,7 +186,7 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* _scope )
 				}
 			}
 			
-			filePath = quotedFilePath( project->relativeFilePath( file ) );
+			filePath = quotedValue( project->relativeFilePath( file ) );
 			XUPItem* valueItem = variableItem->addChild( XUPItem::File );
 			valueItem->setContent( filePath );
 		}
@@ -612,37 +612,37 @@ XUPProjectItemCache* XUPProjectItem::cache()
 	return &XUPProjectItem::mProjectsCache;
 }
 
-UIXUPEditor* XUPProjectItem::newEditDialog() const
-{
-	return new UIXUPEditor( MonkeyCore::mainWindow() );
-}
-
-QString XUPProjectItem::quotedFilePath( const QString& filePath ) const
+QString XUPProjectItem::quotedValue( const QString& value ) const
 {
 	const QString quote = quoteString();
 	
-	if ( !quote.isEmpty() && filePath.contains( " " ) && !filePath.startsWith( quote ) && !filePath.endsWith( quote ) ) {
-		return QString( "%1%2%1" ).arg( quote ).arg( filePath );
+	if ( !quote.isEmpty() && value.contains( " " ) && !value.startsWith( quote ) && !value.endsWith( quote ) ) {
+		return QString( "%1%2%1" ).arg( quote ).arg( value );
 	}
 	
-	return filePath;
+	return value;
 }
 
-QString XUPProjectItem::unquotedFilePath( const QString& _filePath ) const
+QString XUPProjectItem::unquotedValue( const QString& _value ) const
 {
-	if ( _filePath.isEmpty() ) {
+	if ( _value.isEmpty() ) {
 		return QString::null;
 	}
 	
 	const QString quote = quoteString();
-	QString filePath = _filePath;
+	QString value = _value;
 	
-	if ( !quote.isEmpty() && filePath.startsWith( quote ) && filePath.endsWith( quote ) ) {
-		filePath.chop( 1 );
-		filePath.remove( 0, 1 );
+	if ( !quote.isEmpty() && value.startsWith( quote ) && value.endsWith( quote ) ) {
+		value.chop( 1 );
+		value.remove( 0, 1 );
 	}
 	
-	return filePath;
+	return value;
+}
+
+UIXUPEditor* XUPProjectItem::newEditDialog() const
+{
+	return new UIXUPEditor( MonkeyCore::mainWindow() );
 }
 
 void XUPProjectItem::internal_projectCustomActionTriggered()

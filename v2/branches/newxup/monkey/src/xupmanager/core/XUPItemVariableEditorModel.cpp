@@ -461,16 +461,7 @@ bool XUPItemVariableEditorModel::submit()
 
 QString XUPItemVariableEditorModel::normalizedValue( const QString& value ) const
 {
-	if ( mQuoteValues ) {
-		const QString quote = mRootItem->project()->quoteString();
-		
-		if ( !quote.isEmpty() && value.contains( " " )
-			&& !value.startsWith( quote ) && !value.endsWith( quote ) ) {
-			return QString( value ).prepend( quote ).append( quote );
-		}
-	}
-	
-	return value;
+	return mQuoteValues ? mRootItem->project()->quotedValue( value ) : value;
 }
 
 void XUPItemVariableEditorModel::buildParentMapping( XUPItemVariableEditorModelItem& item )
