@@ -17,8 +17,9 @@ public:
 	virtual void addFiles( const QStringList& files, XUPItem* scope = 0 );
 	virtual void removeValue( XUPItem* item );
 	virtual bool open( const QString& fileName, const QString& codec );
-	virtual bool edit();
-	virtual bool editProjectFiles();
+
+protected:
+	virtual UIXUPEditor* newEditDialog() const;
 };
 
 #endif // MakefileProjectItem_H

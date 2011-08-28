@@ -22,7 +22,7 @@ void MakefileProjectItem::installCommands()
 	QFile file( fileName() );
 	
 	if ( !file.open( QIODevice::ReadOnly ) ) {
-		setLastError( tr( "Can't open file '%1'" ).arg( fileName() ) );
+		showError( tr( "Can't open file '%1'" ).arg( fileName() ) );
 		return;
 	}
 	
@@ -41,7 +41,7 @@ void MakefileProjectItem::installCommands()
 	CLIToolPlugin* make = MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stEnabled, "GNUMake" );
 	
 	if ( !make ) {
-		setLastError( tr( "Can't build Makefile projects. GNUMake plugin not enabled" ) );
+		showError( tr( "Can't build Makefile projects. GNUMake plugin not enabled" ) );
 		return;
 	}
 	
@@ -64,7 +64,7 @@ void MakefileProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 {
 	Q_UNUSED( files );
 	Q_UNUSED( scope );
-	setLastError( tr( "Adding files to the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
+	showError( tr( "Adding files to the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
 }
 
 void MakefileProjectItem::removeValue( XUPItem* scope )
@@ -78,7 +78,7 @@ bool MakefileProjectItem::open( const QString& fileName, const QString& codec )
 	const QFileInfo fileInfo = QFileInfo( fileName );
 	
 	if ( !fileInfo.isReadable() ) {
-		setLastError( tr( "File '%1' is not readable." ).arg( fileName ) );
+		showError( tr( "File '%1' is not readable." ).arg( fileName ) );
 		return false;
 	}
 	
@@ -91,13 +91,8 @@ bool MakefileProjectItem::open( const QString& fileName, const QString& codec )
 	return true;
 }
 
-bool MakefileProjectItem::edit()
+UIXUPEditor* MakefileProjectItem::newEditDialog() const
 {
 	MonkeyCore::fileManager()->openFile( fileName(), codec() );
-	return false; /* not saved */
-}
-
-bool MakefileProjectItem::editProjectFiles()
-{
-	return edit();
+	return 0; /* not edited */
 }
