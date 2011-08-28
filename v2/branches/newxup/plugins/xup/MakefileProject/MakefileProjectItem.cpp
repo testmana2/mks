@@ -67,10 +67,11 @@ void MakefileProjectItem::addFiles( const QStringList& files, XUPItem* scope )
 	showError( tr( "Adding files to the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
 }
 
-void MakefileProjectItem::removeValue( XUPItem* scope )
+void MakefileProjectItem::removeValue( XUPItem* scope, bool deleteFiles )
 {
 	Q_UNUSED( scope );
-	Q_ASSERT( 0 );
+	Q_UNUSED( deleteFiles );
+	showError( tr( "Removing values from the Makefile project does not make sense. Press 'Edit current project...' for edit your Makefile" ) );
 }
 
 bool MakefileProjectItem::open( const QString& fileName, const QString& codec )
