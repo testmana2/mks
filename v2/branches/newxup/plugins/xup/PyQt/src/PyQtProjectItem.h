@@ -14,8 +14,6 @@ public:
 	
 	virtual QString projectType() const;
 	virtual void installCommands();
-	virtual bool edit();
-	virtual bool editProjectFiles();
 	
 protected:
 	CLIToolPlugin* interpreter() const;

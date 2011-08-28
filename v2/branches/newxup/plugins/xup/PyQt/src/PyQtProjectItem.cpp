@@ -92,21 +92,6 @@ void PyQtProjectItem::installCommands()
 	XUPProjectItem::installCommands();
 }
 
-bool PyQtProjectItem::edit()
-{
-	UIXUPEditor dlg( MonkeyCore::mainWindow() );
-	dlg.setupProject( this );
-	return dlg.exec() == QDialog::Accepted;
-}
-
-bool PyQtProjectItem::editProjectFiles()
-{
-	UIXUPEditor dlg( MonkeyCore::mainWindow() );
-	dlg.setupProject( this );
-	dlg.showProjectFilesPage();
-	return dlg.exec() == QDialog::Accepted;
-}
-
 CLIToolPlugin* PyQtProjectItem::interpreter() const
 {
 	return MonkeyCore::pluginsManager()->plugin<CLIToolPlugin*>( PluginsManager::stAll, "Python" );
