@@ -10,7 +10,7 @@ class MkSShellInterpreter;
 
 struct QtVersion
 {
-	QtVersion() { Default = false; HasQt4Suffix = false; }
+	QtVersion( const QString& version = QString::null) { Version = version; Default = false; HasQt4Suffix = false; }
 	QtVersion( const QString& version, const QString& path, bool def, const QString& qmakeSpec, const QString& qmakeParams, bool haveSuffixe )
 	{ Version = version; Path = path; Default = def; QMakeSpec = qmakeSpec; QMakeParameters = qmakeParams; HasQt4Suffix = haveSuffixe; }
 

@@ -4,6 +4,7 @@
 #include "MkSFileDialog.h"
 
 #include <pMonkeyStudio.h>
+#include <pGenericTableModel.h>
 
 #include <QPushButton>
 #include <QDir>
@@ -12,6 +13,7 @@
 #include <QDirModel>
 #include <QCompleter>
 #include <QMessageBox>
+#include <QScrollBar>
 #include <QDebug>
 
 UISettingsQMake::UISettingsQMake( QWidget* parent )
@@ -21,8 +23,16 @@ UISettingsQMake::UISettingsQMake( QWidget* parent )
 	setupUi( this );
 	
 	mQtManager = QMake::versionManager();
+	mQtVersionsModel = new pGenericTableModel( this );
 	
-	// completer of paths
+	lvQtVersions->setModel( mQtVersionsModel );
+	
+	connect( lvQtVersions->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvQtVersions_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
+	
+	loadSettings();
+	lwPages->setCurrentRow( 0 );
+	
+	/*// completer of paths
 #ifdef Q_CC_GNU
 	#warning *** USING QDirModel is deprecated but QCompleter does not handle QFileSystemModel... please fix me when possible.
 #endif
@@ -59,12 +69,200 @@ UISettingsQMake::UISettingsQMake( QWidget* parent )
 	connect( leQtVersionPath, SIGNAL( editingFinished() ), this, SLOT( qtVersionChanged() ) );
 	connect( cbQtVersionQMakeSpec->lineEdit(), SIGNAL( editingFinished() ), this, SLOT( qtVersionChanged() ) );
 	connect( leQtVersionQMakeParameters, SIGNAL( editingFinished() ), this, SLOT( qtVersionChanged() ) );
-	connect( cbQtVersionHasSuffix, SIGNAL( toggled( bool ) ), this, SLOT( qtVersionChanged() ) );
+	connect( cbQtVersionHasSuffix, SIGNAL( toggled( bool ) ), this, SLOT( qtVersionChanged() ) );*/
 }
+
+void UISettingsQMake::on_lwPages_currentRowChanged( int row )
+{
+	QListWidgetItem* item = lwPages->item( row );
+	lTitle->setText( item ? item->text() : QString::null );
+	lIcon->setPixmap( item ? item->icon().pixmap( QSize( 18, 18 ) ) : QPixmap() );
+	swPages->setCurrentIndex( row );
+}
+
+void UISettingsQMake::loadSettings()
+{
+	const QBrush backgroundDefault = QColor( 249, 228, 227 );
+	const QBrush background = palette().brush( QPalette::Active, QPalette::Highlight );
+	const QBrush foreground = palette().brush( QPalette::Active, QPalette::HighlightedText );
+	
+	// qt versions
+	const QtVersionList versions = mQtManager->versions();
+	
+	mQtVersionsModel->setColumnCount( 1 );
+	mQtVersionsModel->setRowCount( versions.count() );
+	
+	for ( int i = 0; i < versions.count(); i++ ) {
+		const QtVersion& version = versions[ i ];
+		const QModelIndex index = mQtVersionsModel->index( i, 0 );
+		
+		mQtVersionsModel->setData( index, version.Version, Qt::DisplayRole );
+		mQtVersionsModel->setData( index, QVariant::fromValue( version ), pGenericTableModel::ExtendedUserRole );
+		
+		if ( version.Default ) {
+			mQtVersionsModel->setData( index, backgroundDefault, Qt::BackgroundRole );
+		}
+	}
+	
+	pteQtVersionHelp->appendHtml( 
+		tr( "You can register one or more Qt Version to use in your Qt projects, so you can easily select the one to use in project settings.<br /><br />"
+			"The colored item is the default Qt Version used. if there is no colored item, the default Qt Version used will be the first one available. You can explicitely set the default Qt Version selecting an item and clicking the set default button.<br /><br />"
+			"To add a new Qt version, simply click the <b>Add a new Qt Version</b> button at top and fill needed fields.<br /><br />"
+			"The minimum required fields are:<br />"
+			"- <b>Version</b>: it define a human label across a Qt version.<br />"
+			"- <b>Path</b>: it define the path where is located your Qt installation (the path from where you can see bin/qmake).<br /><br />"
+			"You can get more help about fields reading there tooltips." )
+	);
+	
+	goAtDocumentStart( pteQtVersionHelp );
+	
+	// qt modules
+	foreach ( QtItem i, mQtManager->modules() )
+	{
+		QListWidgetItem* it = new QListWidgetItem( i.Text, lwQtModules );
+		it->setData( Qt::UserRole, QVariant::fromValue( i ) );
+	}
+	
+	// qt configuration
+	foreach ( QtItem i, mQtManager->configurations() )
+	{
+		QListWidgetItem* it = new QListWidgetItem( i.Text, lwQtConfigurations );
+		it->setData( Qt::UserRole, QVariant::fromValue( i ) );
+	}
+}
+
+void UISettingsQMake::goAtDocumentStart( QPlainTextEdit* pte )
+{
+	QTextCursor cursor = pte->textCursor();
+	cursor.movePosition( QTextCursor::Start );
+	pte->setTextCursor( cursor );
+}
+
+void UISettingsQMake::setQtVersion( const QModelIndex& versionIndex )
+{
+	if ( !versionIndex.isValid() ) {
+		return;
+	}
+	
+	QtVersion version = mQtVersionsModel->data( versionIndex, pGenericTableModel::ExtendedUserRole ).value<QtVersion>();
+	
+	version.Version = leQtVersionVersion->text();
+	version.Path = leQtVersionPath->text();
+	version.QMakeSpec = cbQtVersionQMakeSpec->currentText();
+	version.QMakeParameters = leQtVersionQMakeParameters->text();
+	version.HasQt4Suffix = cbQtVersionHasSuffix->isChecked();
+	
+	mQtVersionsModel->setData( versionIndex, version.Version, Qt::DisplayRole );
+	mQtVersionsModel->setData( versionIndex, QVariant::fromValue( version ), pGenericTableModel::ExtendedUserRole );
+}
+
+void UISettingsQMake::getQtVersion( const QModelIndex& versionIndex )
+{
+	const QtVersion version = mQtVersionsModel->data( versionIndex, pGenericTableModel::ExtendedUserRole ).value<QtVersion>();
+	const QDir mkspecsDir( QString( version.Path ).append( "/mkspecs" ) );
+	QSet<QString> mkspecs;
+	
+	if ( mkspecsDir.exists() ) {
+		foreach ( const QFileInfo& fi, mkspecsDir.entryInfoList( QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name ) ) {
+			if ( fi.fileName() != "common" && fi.fileName() != "features" ) {
+				mkspecs << fi.fileName();
+			}
+		}
+	}
+	
+	mkspecs << version.QMakeSpec;
+	
+	cbQtVersionQMakeSpec->clear();
+	
+	leQtVersionVersion->setText( version.Version );
+	leQtVersionPath->setText( version.Path );
+	cbQtVersionQMakeSpec->addItems( mkspecs.toList() );
+	cbQtVersionQMakeSpec->setCurrentIndex( cbQtVersionQMakeSpec->findText( version.QMakeSpec ) );
+	leQtVersionQMakeParameters->setText( version.QMakeParameters );
+	cbQtVersionHasSuffix->setChecked( version.HasQt4Suffix );
+	
+	wQtVersion->setEnabled( versionIndex.isValid() );
+}
+
+void UISettingsQMake::updateQtVersionState()
+{
+	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	const int count = mQtVersionsModel->rowCount( index.parent() );
+	
+	tbRemoveQtVersion->setEnabled( index.isValid() );
+	tbClearQtVersions->setEnabled( index.isValid() );
+	tbUpQtVersion->setEnabled( index.isValid() && index.row() > 0 && count > 1 );
+	tbDownQtVersion->setEnabled( index.isValid() && index.row() < count -1 && count > 1 );
+	tbDefaultQtVersion->setEnabled( index.isValid() );
+}
+
+void UISettingsQMake::lvQtVersions_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
+{
+	const QModelIndex oldIndex = deselected.indexes().value( 0 );
+	const QModelIndex newIndex = selected.indexes().value( 0 );
+	
+	setQtVersion( oldIndex );
+	getQtVersion( newIndex );
+	updateQtVersionState();
+}
+
+void UISettingsQMake::on_tbAddQtVersion_clicked()
+{
+	const int count = mQtVersionsModel->rowCount();
+	mQtVersionsModel->insertRow( count );
+	const QModelIndex index = mQtVersionsModel->index( count, 0 );
+	
+	if ( index.isValid() ) {
+		const QtVersion version( tr( "New Qt version" ) );
+		mQtVersionsModel->setData( index, version.Version, Qt::DisplayRole );
+		mQtVersionsModel->setData( index, QVariant::fromValue( version ), pGenericTableModel::ExtendedUserRole );
+		lvQtVersions->setCurrentIndex( index );
+		lvQtVersions->scrollTo( index, QAbstractItemView::EnsureVisible );
+	}
+}
+
+void UISettingsQMake::on_tbRemoveQtVersion_clicked()
+{
+	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	mQtVersionsModel->removeRow( index.row() );
+}
+
+void UISettingsQMake::on_tbClearQtVersions_clicked()
+{
+	mQtVersionsModel->setRowCount( 0 );
+}
+
+void UISettingsQMake::on_tbUpQtVersion_clicked()
+{
+	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	mQtVersionsModel->swapRows( index.row(), index.row() -1 );
+	updateQtVersionState();
+}
+
+void UISettingsQMake::on_tbDownQtVersion_clicked()
+{
+	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	mQtVersionsModel->swapRows( index.row(), index.row() +1 );
+	updateQtVersionState();
+}
+
+void UISettingsQMake::on_tbDefaultQtVersion_clicked()
+{
+	const QBrush backgroundDefault = QColor( 249, 228, 227 );
+	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	
+	for ( int i = 0; i < mQtVersionsModel->rowCount(); i++ ) {
+		const QModelIndex idx = mQtVersionsModel->index( i, 0 );
+		mQtVersionsModel->setData( idx, idx == index ? backgroundDefault : QVariant(), Qt::BackgroundRole );
+	}
+}
+
+
+
 
 void UISettingsQMake::tbAdd_clicked()
 {
-	QListWidget* lw = 0;
+	/*QListWidget* lw = 0;
 	if ( sender() == tbAddQtVersion )
 		lw = lwQtVersions;
 	else if ( sender() == tbAddQtModule )
@@ -77,32 +275,32 @@ void UISettingsQMake::tbAdd_clicked()
 		lw->setCurrentItem( lw->item( lw->count() -1 ) );
 		lw->scrollToItem( lw->item( lw->count() -1 ) );
 		lw->currentItem()->setFlags( lw->currentItem()->flags() | Qt::ItemIsEditable );
-	}
+	}*/
 }
 
 void UISettingsQMake::tbRemove_clicked()
 {
-	if ( sender() == tbRemoveQtVersion )
+	/*if ( sender() == tbRemoveQtVersion )
 		delete lwQtVersions->selectedItems().value( 0 );
 	else if ( sender() == tbRemoveQtModule )
 		delete lwQtModules->selectedItems().value( 0 );
 	else if ( sender() == tbRemoveQtConfiguration )
-		delete lwQtConfigurations->selectedItems().value( 0 );
+		delete lwQtConfigurations->selectedItems().value( 0 );*/
 }
 
 void UISettingsQMake::tbClear_clicked()
 {
-	if ( sender() == tbClearQtVersions )
+	/*if ( sender() == tbClearQtVersions )
 		lwQtVersions->clear();
 	else if ( sender() == tbClearQtModules )
 		lwQtModules->clear();
 	else if ( sender() == tbClearQtConfiguration )
-		lwQtConfigurations->clear();
+		lwQtConfigurations->clear();*/
 }
 
 void UISettingsQMake::tbUp_clicked()
 {
-	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
+	/*QToolButton* tb = qobject_cast<QToolButton*>( sender() );
 	if ( !tb )
 		return;
 	QListWidget* lw = 0;
@@ -120,12 +318,12 @@ void UISettingsQMake::tbUp_clicked()
 		if ( i != 0 )
 			lw->insertItem( i -1, lw->takeItem( i ) );
 		lw->setCurrentItem( it );
-	}
+	}*/
 }
 
 void UISettingsQMake::tbDown_clicked()
 {
-	QToolButton* tb = qobject_cast<QToolButton*>( sender() );
+	/*QToolButton* tb = qobject_cast<QToolButton*>( sender() );
 	if ( !tb )
 		return;
 	QListWidget* lw = 0;
@@ -143,12 +341,12 @@ void UISettingsQMake::tbDown_clicked()
 		if ( i != lw->count() -1 )
 			lw->insertItem( i +1, lw->takeItem( i ) );
 		lw->setCurrentItem( it );
-	}
+	}*/
 }
 
-void UISettingsQMake::on_tbDefaultQtVersion_clicked()
-{
-	if ( QListWidgetItem* it = lwQtVersions->selectedItems().value( 0 ) )
+/*void UISettingsQMake::on_tbDefaultQtVersion_clicked()
+{*/
+	/*if ( QListWidgetItem* it = lwQtVersions->selectedItems().value( 0 ) )
 	{
 		for ( int i = 0; i < lwQtVersions->count(); i++ )
 		{
@@ -158,25 +356,27 @@ void UISettingsQMake::on_tbDefaultQtVersion_clicked()
 			cit->setData( Qt::UserRole, QVariant::fromValue( v ) );
 			cit->setBackground( QBrush( v.Default ? Qt::green : Qt::transparent ) );
 		}
-	}
-}
+	}*/
+/*}*/
 
 void UISettingsQMake::qtVersionChanged()
-{ lw_currentItemChanged( lwQtVersions->currentItem(), lwQtVersions->currentItem() ); }
+{
+	/*lw_currentItemChanged( lwQtVersions->currentItem(), lwQtVersions->currentItem() );*/
+}
 
 void UISettingsQMake::on_tbQtVersionPath_clicked()
 {
-	const QString s = MkSFileDialog::getExistingDirectory( false, window(), tr( "Locate your qt installation directory" ), leQtVersionPath->text(), false ).value( "filename" ).toString();
+	/*const QString s = MkSFileDialog::getExistingDirectory( false, window(), tr( "Locate your qt installation directory" ), leQtVersionPath->text(), false ).value( "filename" ).toString();
 	
 	if ( !s.isEmpty() ) {
 		leQtVersionPath->setText( s );
 		qtVersionChanged();
-	}
+	}*/
 }
 
 void UISettingsQMake::on_tbQtVersionQMakeSpec_clicked()
 {
-	const QString s = MkSFileDialog::getExistingDirectory( false, window(), tr( "Locate the mk spec folder to use" ), leQtVersionPath->text(), false ).value( "filename" ).toString();
+	/*const QString s = MkSFileDialog::getExistingDirectory( false, window(), tr( "Locate the mk spec folder to use" ), leQtVersionPath->text(), false ).value( "filename" ).toString();
 	
 	if ( !s.isEmpty() ) {
 		if ( cbQtVersionQMakeSpec->findText( s ) == -1 ) {
@@ -185,12 +385,12 @@ void UISettingsQMake::on_tbQtVersionQMakeSpec_clicked()
 		
 		cbQtVersionQMakeSpec->setCurrentIndex( cbQtVersionQMakeSpec->findText( s ) );
 		qtVersionChanged();
-	}
+	}*/
 }
 
 void UISettingsQMake::lw_currentItemChanged( QListWidgetItem* c, QListWidgetItem* p )
 {
-	if ( c != p )
+	/*if ( c != p )
 	{
 		foreach ( QWidget* widget, findChildren<QWidget*>() )
 		{
@@ -305,34 +505,10 @@ void UISettingsQMake::lw_currentItemChanged( QListWidgetItem* c, QListWidgetItem
 		{
 			widget->blockSignals( false );
 		}
-	}
+	}*/
 }
 
-void UISettingsQMake::loadSettings()
-{
-	// general
-	foreach ( const QtVersion& v, mQtManager->versions() )
-	{
-		QListWidgetItem* it = new QListWidgetItem( v.Version, lwQtVersions );
-		it->setData( Qt::UserRole, QVariant::fromValue( v ) );
-		if ( v.Default )
-			it->setBackground( QBrush( Qt::green ) );
-	}
-	
-	// qt modules
-	foreach ( QtItem i, mQtManager->modules() )
-	{
-		QListWidgetItem* it = new QListWidgetItem( i.Text, lwQtModules );
-		it->setData( Qt::UserRole, QVariant::fromValue( i ) );
-	}
-	
-	// configuration
-	foreach ( QtItem i, mQtManager->configurations() )
-	{
-		QListWidgetItem* it = new QListWidgetItem( i.Text, lwQtConfigurations );
-		it->setData( Qt::UserRole, QVariant::fromValue( i ) );
-	}
-}
+
 
 void UISettingsQMake::on_dbbButtons_helpRequested()
 {
@@ -380,7 +556,7 @@ void UISettingsQMake::on_dbbButtons_helpRequested()
 
 void UISettingsQMake::on_dbbButtons_clicked( QAbstractButton* b )
 {
-	// only accept save button
+	/*// only accept save button
 	if ( dbbButtons->standardButton( b )  != QDialogButtonBox::Save )
 	{
 		return;
@@ -429,5 +605,5 @@ void UISettingsQMake::on_dbbButtons_clicked( QAbstractButton* b )
 	mQtManager->setConfigurations( configurations );
 	
 	// save content on disk
-	mQtManager->sync();
+	mQtManager->sync();*/
 }

@@ -31,7 +31,7 @@ QPointer<QtVersionManager> QMake::mQtVersionManager = 0;
 
 QWidget* QMake::settingsWidget()
 {
-	return new UISettingsQMake();
+	return new UISettingsQMake( MonkeyCore::mainWindow() );
 }
 
 QtVersionManager* QMake::versionManager()
