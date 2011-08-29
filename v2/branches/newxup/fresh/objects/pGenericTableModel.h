@@ -26,9 +26,15 @@ public:
 	virtual bool setHeaderData( int section, Qt::Orientation orientation, const QVariant& value, int role = Qt::EditRole );
 	virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
 	virtual void sort( int column, Qt::SortOrder order = Qt::AscendingOrder );
+	virtual bool insertColumns( int column, int count, const QModelIndex& parent = QModelIndex() );
+	virtual bool removeColumns( int column, int count, const QModelIndex& parent = QModelIndex() );
+	virtual bool insertRows( int row, int count, const QModelIndex& parent = QModelIndex() );
+	virtual bool removeRows( int row, int count, const QModelIndex& parent = QModelIndex() );
 	
 	void setColumnCount( int count );
 	void setRowCount( int count );
+	bool swapColumns( int fromColumn, int toColumn );
+	bool swapRows( int fromRow, int toRow );
 	void clear( bool onlyData );
 	
 	QModelIndexList checkedIndexes() const;
@@ -36,8 +42,8 @@ public:
 	
 protected:
 	typedef QMap<int, QVariant> IntVariantMap; // represent an index
-	typedef QPair<int, int> Point; // represent an index position
-	typedef QMap<Point, pGenericTableModel::IntVariantMap> PointIntVariantMap; // represent an index data
+	typedef QPair<int, int> Point; // represent an index position as column, row.
+	typedef QMap<pGenericTableModel::Point, pGenericTableModel::IntVariantMap> PointIntVariantMap; // represent an index data
 	
 	int mColumnCount;
 	int mRowCount;
