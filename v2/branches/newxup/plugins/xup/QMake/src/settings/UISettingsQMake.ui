@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>485</height>
+    <height>480</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -24,6 +24,12 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>30</height>
+      </size>
      </property>
      <property name="palette">
       <palette>
@@ -236,7 +242,7 @@
         <number>0</number>
        </property>
        <item row="0" column="0" colspan="2">
-        <layout class="QHBoxLayout" name="_2">
+        <layout class="QHBoxLayout" name="layout_3">
          <item>
           <widget class="QToolButton" name="tbAddQtVersion">
            <property name="toolTip">
@@ -322,7 +328,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="spacer_3">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -360,9 +366,6 @@
        </item>
        <item row="1" column="1">
         <widget class="QWidget" name="wQtVersion" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
            <horstretch>0</horstretch>
@@ -370,6 +373,9 @@
           </sizepolicy>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
+          <property name="margin">
+           <number>0</number>
+          </property>
           <item row="0" column="0" colspan="2">
            <widget class="QLabel" name="lQtVersionVersion">
             <property name="text">
@@ -481,12 +487,6 @@
        </item>
        <item row="2" column="1">
         <widget class="QFrame" name="frame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -532,7 +532,7 @@
            </widget>
           </item>
           <item row="0" column="1" rowspan="2">
-           <widget class="QPlainTextEdit" name="pteQtVersionHelp">
+           <widget class="QPlainTextEdit" name="pteQtVersionsHelp">
             <property name="palette">
              <palette>
               <active>
@@ -601,10 +601,13 @@
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>8</width>
-           <height>1</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -612,12 +615,12 @@
       </layout>
      </widget>
      <widget class="QWidget" name="wQtModules">
-      <layout class="QGridLayout">
+      <layout class="QGridLayout" name="gridLayout_6">
        <property name="margin">
         <number>0</number>
        </property>
        <item row="0" column="0" colspan="2">
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="layout_2">
          <item>
           <widget class="QToolButton" name="tbAddQtModule">
            <property name="toolTip">
@@ -689,7 +692,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="spacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -703,25 +706,31 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <widget class="QListWidget" name="lwQtModules">
+       <item row="1" column="0" rowspan="2">
+        <widget class="QListView" name="lvQtModules">
+         <property name="minimumSize">
+          <size>
+           <width>180</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>180</width>
            <height>16777215</height>
           </size>
          </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+         <property name="uniformItemSizes">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="QWidget" name="wQtModule" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <property name="margin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QLabel" name="lCaptionQtModule">
             <property name="text">
@@ -757,9 +766,29 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="lVariableQtModule">
+            <property name="text">
+             <string>V&amp;ariable</string>
+            </property>
+            <property name="buddy">
+             <cstring>leVariableQtModule</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="leVariableQtModule">
+            <property name="toolTip">
+             <string>Put here the module value</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="lHelp_2">
             <property name="text">
              <string>&amp;Description :</string>
+            </property>
+            <property name="buddy">
+             <cstring>pteHelpQtModule</cstring>
             </property>
            </widget>
           </item>
@@ -773,15 +802,126 @@
          </layout>
         </widget>
        </item>
+       <item row="2" column="1">
+        <widget class="QFrame" name="frame_2">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="../../../../../monkey/src/resources/resources.qrc">:/xupeditor/icons/xupeditor/about.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" rowspan="2">
+           <widget class="QPlainTextEdit" name="pteQtModulesHelp">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="0">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="0">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="0">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="tabChangesFocus">
+             <bool>true</bool>
+            </property>
+            <property name="undoRedoEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="tabStopWidth">
+             <number>40</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="wQtConfigurations">
-      <layout class="QGridLayout">
+      <layout class="QGridLayout" name="gridLayout_8">
        <property name="margin">
         <number>0</number>
        </property>
        <item row="0" column="0" colspan="2">
-        <layout class="QHBoxLayout">
+        <layout class="QHBoxLayout" name="layout">
          <item>
           <widget class="QToolButton" name="tbAddQtConfiguration">
            <property name="toolTip">
@@ -811,7 +951,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="tbClearQtConfiguration">
+          <widget class="QToolButton" name="tbClearQtConfigurations">
            <property name="toolTip">
             <string>Delete all Qt configurations</string>
            </property>
@@ -853,7 +993,7 @@
           </widget>
          </item>
          <item>
-          <spacer>
+          <spacer name="spacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -867,25 +1007,31 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
-        <widget class="QListWidget" name="lwQtConfigurations">
+       <item row="1" column="0" rowspan="2">
+        <widget class="QListView" name="lvQtConfigurations">
+         <property name="minimumSize">
+          <size>
+           <width>180</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>180</width>
            <height>16777215</height>
           </size>
          </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+         <property name="uniformItemSizes">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="QWidget" name="wQtConfiguration" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <property name="margin">
+           <number>0</number>
+          </property>
           <item>
            <widget class="QLabel" name="lCaptionQtConfiguration">
             <property name="text">
@@ -921,14 +1067,145 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="lVariableQtConfiguration">
+            <property name="text">
+             <string>V&amp;ariable</string>
+            </property>
+            <property name="buddy">
+             <cstring>leVariableQtConfiguration</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="leVariableQtConfiguration">
+            <property name="toolTip">
+             <string>Put here the configuration value</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="lHelp_3">
             <property name="text">
              <string>&amp;Description :</string>
+            </property>
+            <property name="buddy">
+             <cstring>pteHelpQtConfiguration</cstring>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPlainTextEdit" name="pteHelpQtConfiguration">
+            <property name="tabStopWidth">
+             <number>40</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QFrame" name="frame_3">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="../../../../../monkey/src/resources/resources.qrc">:/xupeditor/icons/xupeditor/about.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" rowspan="2">
+           <widget class="QPlainTextEdit" name="pteQtConfigurationHelp">
+            <property name="palette">
+             <palette>
+              <active>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="0">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </active>
+              <inactive>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="0">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </inactive>
+              <disabled>
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="0">
+                  <red>0</red>
+                  <green>0</green>
+                  <blue>0</blue>
+                 </color>
+                </brush>
+               </colorrole>
+              </disabled>
+             </palette>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="tabChangesFocus">
+             <bool>true</bool>
+            </property>
+            <property name="undoRedoEnabled">
+             <bool>false</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
             <property name="tabStopWidth">
              <number>40</number>
             </property>
@@ -947,7 +1224,7 @@
       <cursorShape>PointingHandCursor</cursorShape>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Help|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>

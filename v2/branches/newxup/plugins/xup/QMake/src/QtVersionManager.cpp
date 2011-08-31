@@ -227,7 +227,7 @@ QtItemList QtVersionManager::defaultConfigurations() const
 		<< QtItem( "incremental", "incremental", "CONFIG", "Used to enable or disable incremental linking in Visual C++, depending on whether this feature is enabled or disabled by default" )
 		<< QtItem( "qaxserver_no_postlink", "qaxserver_no_postlink", "CONFIG", QString::null )
 		
-		<< QtItem( "Mac", QString::null, QString::null, "Mac OS X specific configuration" )
+		<< QtItem( "Mac OS X", QString::null, QString::null, "Mac OS X specific configuration" )
 		<< QtItem( "ppc", "ppc", "CONFIG", "Builds a PowerPC binary" )
 		<< QtItem( "x86", "x86", "CONFIG", "Builds an i386 compatible binary" )
 		<< QtItem( "ppc64", "ppc64", "CONFIG", "Builds a 64 bits PowerPC binary." )

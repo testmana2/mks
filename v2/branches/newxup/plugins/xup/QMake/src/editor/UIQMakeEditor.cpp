@@ -195,7 +195,6 @@ void UIQMakeEditor::updateVariable( XUPItem* scope, const QString& variableName,
 		XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
 		valueItem->setContent( content );
 	}
-	
 	/*foreach ( const QString& value, values ) {
 		XUPItem* valueItem = variableItem->addChild( XUPItem::Value );
 		valueItem->setContent( value );
