@@ -91,7 +91,7 @@ struct QtVersion
 
 struct QtItem
 {
-	QtItem() {}
+	QtItem( const QString& t = QString::null ) : Text( t ) {}
 	QtItem( const QString& t, const QString& v, const QString& s, const QString& h = QString::null )
 		: Text( t ), Value( v ), Variable( s ), Help( h ) {}
 
