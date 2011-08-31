@@ -17,7 +17,7 @@
 ****************************************************************************/
 #include "ClassBrowser.h"
 #include "pDockClassBrowser.h"
-#include "ClassBrowserSettings.h"
+#include "UISettingsClassBrowser.h"
 
 #include <MonkeyCore.h>
 #include <UIMain.h>
@@ -89,7 +89,7 @@ bool ClassBrowser::uninstall()
 
 QWidget* ClassBrowser::settingsWidget()
 {
-	return new ClassBrowserSettings( this, qApp->activeWindow() );
+	return new UISettingsClassBrowser( this );
 }
 
 qCtagsSenseProperties ClassBrowser::properties() const
