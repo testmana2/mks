@@ -1,4 +1,5 @@
 #include "UISettingsQMake.h"
+#include "ui_UISettingsQMake.h"
 #include "../QMake.h"
 #include "../QtVersionManager.h"
 
@@ -15,48 +16,79 @@
 #include <QDebug>
 
 UISettingsQMake::UISettingsQMake( QWidget* parent )
-	: QWidget( parent )
+	: QWidget( parent ), ui( new Ui_UISettingsQMake )
 {
 	mBackground = QColor( "#A8DFA8" );
 	mForeground = palette().brush( QPalette::Active, QPalette::Text );
 	
 	// set up dialog
-	setupUi( this );
+	ui->setupUi( this );
 	
 	mQtManager = QMake::versionManager();
 	mQtVersionsModel = new pGenericTableModel( this );
 	mQtModulesModel = new pGenericTableModel( this );
 	mQtConfigurationsModel = new pGenericTableModel( this );
 	
-	lvQtVersions->setModel( mQtVersionsModel );
-	lvQtModules->setModel( mQtModulesModel );
-	lvQtConfigurations->setModel( mQtConfigurationsModel );
+	ui->lvQtVersions->setModel( mQtVersionsModel );
+	ui->lvQtModules->setModel( mQtModulesModel );
+	ui->lvQtConfigurations->setModel( mQtConfigurationsModel );
 	
-	connect( lvQtVersions->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvQtVersions_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
-	connect( lvQtModules->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvQtModules_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
-	connect( lvQtConfigurations->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvQtConfigurations_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
+	connect( ui->lvQtVersions->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvQtVersions_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
+	connect( ui->leQtVersionPath, SIGNAL( editingFinished() ), this, SLOT( updateMkSpecsEntries() ) );
+	connect( ui->lvQtModules->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvQtModules_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
+	connect( ui->lvQtConfigurations->selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( lvQtConfigurations_selectionModel_selectionChanged( const QItemSelection&, const QItemSelection& ) ) );
 	
 	loadSettings();
-	lwPages->setCurrentRow( 0 );
+	ui->lwPages->setCurrentRow( 0 );
 	
 	// completer of paths
 #ifdef Q_CC_GNU
 	#warning *** USING QDirModel is deprecated but QCompleter does not handle QFileSystemModel... please fix me when possible.
 #endif
-	QCompleter* completer = new QCompleter( leQtVersionPath );
+	QCompleter* completer = new QCompleter( ui->leQtVersionPath );
 	QDirModel* model = new QDirModel( completer );
 	
 	model->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::Readable );
 	completer->setModel( model );
-	leQtVersionPath->setCompleter( completer );
+	ui->leQtVersionPath->setCompleter( completer );
+}
+
+UISettingsQMake::~UISettingsQMake()
+{
+	delete ui;
 }
 
 void UISettingsQMake::on_lwPages_currentRowChanged( int row )
 {
-	QListWidgetItem* item = lwPages->item( row );
-	lTitle->setText( item ? item->text() : QString::null );
-	lIcon->setPixmap( item ? item->icon().pixmap( QSize( 18, 18 ) ) : QPixmap() );
-	swPages->setCurrentIndex( row );
+	QListWidgetItem* item = ui->lwPages->item( row );
+	ui->lTitle->setText( item ? item->text() : QString::null );
+	ui->lIcon->setPixmap( item ? item->icon().pixmap( QSize( 18, 18 ) ) : QPixmap() );
+	ui->swPages->setCurrentIndex( row );
+}
+
+void UISettingsQMake::updateMkSpecsEntries( const QString& _currentMkSpec )
+{
+	const QString currentMkSpec = _currentMkSpec == "#null" ? ui->cbQtVersionQMakeSpec->currentText() : _currentMkSpec;
+	const QDir mkspecsDir( QString( ui->leQtVersionPath->text() ).append( "/mkspecs" ) );
+	QStringList mkspecs;
+	
+	if ( mkspecsDir.exists() ) {
+		foreach ( const QFileInfo& fi, mkspecsDir.entryInfoList( QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name ) ) {
+			if ( fi.fileName() != "common" && fi.fileName() != "features" ) {
+				mkspecs << fi.fileName();
+			}
+		}
+	}
+	
+	if ( !currentMkSpec.isEmpty() && !mkspecs.contains( currentMkSpec ) ) {
+		mkspecs << currentMkSpec;
+	}
+	
+	mkspecs.sort();
+	
+	ui->cbQtVersionQMakeSpec->clear();
+	ui->cbQtVersionQMakeSpec->addItems( mkspecs );
+	ui->cbQtVersionQMakeSpec->setCurrentIndex( ui->cbQtVersionQMakeSpec->findText( currentMkSpec ) );
 }
 
 void UISettingsQMake::loadSettings()
@@ -85,7 +117,7 @@ void UISettingsQMake::loadSettings()
 	
 	lvQtVersions_selectionModel_selectionChanged( QItemSelection(), QItemSelection() );
 	
-	pteQtVersionsHelp->appendHtml( 
+	ui->pteQtVersionsHelp->appendHtml( 
 		tr( "You can register one or more Qt Version to use in your Qt projects, so you can easily select the one to use in project settings.<br /><br />"
 			"The colored item is the default Qt Version used. if there is no colored item, the default Qt Version used will be the first one available. You can explicitely set the default Qt Version selecting an item and clicking the set default button.<br /><br />"
 			"To add a new Qt version, simply click the <b>Add a new Qt Version</b> button at top and fill needed fields.<br /><br />"
@@ -95,7 +127,7 @@ void UISettingsQMake::loadSettings()
 			"You can get more help about fields reading there tooltips." )
 	);
 	
-	goAtDocumentStart( pteQtVersionsHelp );
+	goAtDocumentStart( ui->pteQtVersionsHelp );
 	
 	// qt modules
 	const QtItemList modules = mQtManager->modules();
@@ -119,7 +151,7 @@ void UISettingsQMake::loadSettings()
 	
 	lvQtModules_selectionModel_selectionChanged( QItemSelection(), QItemSelection() );
 	
-	pteQtModulesHelp->appendHtml( 
+	ui->pteQtModulesHelp->appendHtml( 
 		tr( "You can register one or more Qt Modules for your Qt projects, so you can easily use them in the project settings dialog.<br />"
 			"Qt Modules are components available by your Qt installation, like QtCore, GtGui...<br />"
 			"This editor allow you to edit the available modules in case of by example a new Qt version is released and MkS did not yet support the new modules in the project settings.<br />"
@@ -129,7 +161,7 @@ void UISettingsQMake::loadSettings()
 			"Typically, the module value goes into the QT variable of your project file." )
 	);
 	
-	goAtDocumentStart( pteQtModulesHelp );
+	goAtDocumentStart( ui->pteQtModulesHelp );
 	
 	// qt configuration
 	const QtItemList configuration = mQtManager->configurations();
@@ -153,12 +185,12 @@ void UISettingsQMake::loadSettings()
 	
 	lvQtConfigurations_selectionModel_selectionChanged( QItemSelection(), QItemSelection() );
 	
-	pteQtConfigurationHelp->appendHtml( 
+	ui->pteQtConfigurationHelp->appendHtml( 
 		tr( "Qt Configuration works like <b>Qt Modules</b> except that the content is shown in the <b>Others Modules</b> list and that values goes into the CONFIG variable of your project.<br /><br />"
 			"Configurations having the word '<b>only</b>' as caption will be considerated as group separators and must have no value associated (they will be ignored)." )
 	);
 	
-	goAtDocumentStart( pteQtConfigurationHelp );
+	goAtDocumentStart( ui->pteQtConfigurationHelp );
 }
 
 void UISettingsQMake::goAtDocumentStart( QPlainTextEdit* pte )
@@ -178,11 +210,11 @@ void UISettingsQMake::setQtVersion( const QModelIndex& index )
 	
 	QtVersion version = mQtVersionsModel->data( index, pGenericTableModel::ExtendedUserRole ).value<QtVersion>();
 	
-	version.Version = leQtVersionVersion->text();
-	version.Path = leQtVersionPath->text();
-	version.QMakeSpec = cbQtVersionQMakeSpec->currentText();
-	version.QMakeParameters = leQtVersionQMakeParameters->text();
-	version.HasQt4Suffix = cbQtVersionHasSuffix->isChecked();
+	version.Version = ui->leQtVersionVersion->text();
+	version.Path = ui->leQtVersionPath->text();
+	version.QMakeSpec = ui->cbQtVersionQMakeSpec->currentText();
+	version.QMakeParameters = ui->leQtVersionQMakeParameters->text();
+	version.HasQt4Suffix = ui->cbQtVersionHasSuffix->isChecked();
 	
 	mQtVersionsModel->setData( index, version.Version, Qt::DisplayRole );
 	mQtVersionsModel->setData( index, QVariant::fromValue( version ), pGenericTableModel::ExtendedUserRole );
@@ -191,41 +223,26 @@ void UISettingsQMake::setQtVersion( const QModelIndex& index )
 void UISettingsQMake::getQtVersion( const QModelIndex& index )
 {
 	const QtVersion version = mQtVersionsModel->data( index, pGenericTableModel::ExtendedUserRole ).value<QtVersion>();
-	const QDir mkspecsDir( QString( version.Path ).append( "/mkspecs" ) );
-	QSet<QString> mkspecs;
 	
-	if ( mkspecsDir.exists() ) {
-		foreach ( const QFileInfo& fi, mkspecsDir.entryInfoList( QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name ) ) {
-			if ( fi.fileName() != "common" && fi.fileName() != "features" ) {
-				mkspecs << fi.fileName();
-			}
-		}
-	}
+	ui->leQtVersionVersion->setText( version.Version );
+	ui->leQtVersionPath->setText( version.Path );
+	updateMkSpecsEntries( version.QMakeSpec );
+	ui->leQtVersionQMakeParameters->setText( version.QMakeParameters );
+	ui->cbQtVersionHasSuffix->setChecked( version.HasQt4Suffix );
 	
-	mkspecs << version.QMakeSpec;
-	
-	cbQtVersionQMakeSpec->clear();
-	
-	leQtVersionVersion->setText( version.Version );
-	leQtVersionPath->setText( version.Path );
-	cbQtVersionQMakeSpec->addItems( mkspecs.toList() );
-	cbQtVersionQMakeSpec->setCurrentIndex( cbQtVersionQMakeSpec->findText( version.QMakeSpec ) );
-	leQtVersionQMakeParameters->setText( version.QMakeParameters );
-	cbQtVersionHasSuffix->setChecked( version.HasQt4Suffix );
-	
-	wQtVersion->setEnabled( index.isValid() );
+	ui->wQtVersion->setEnabled( index.isValid() );
 }
 
 void UISettingsQMake::updateQtVersionState()
 {
-	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
 	const int count = mQtVersionsModel->rowCount( index.parent() );
 	
-	tbRemoveQtVersion->setEnabled( index.isValid() );
-	tbClearQtVersions->setEnabled( count > 0 );
-	tbUpQtVersion->setEnabled( index.isValid() && index.row() > 0 && count > 1 );
-	tbDownQtVersion->setEnabled( index.isValid() && index.row() < count -1 && count > 1 );
-	tbDefaultQtVersion->setEnabled( index.isValid() );
+	ui->tbRemoveQtVersion->setEnabled( index.isValid() );
+	ui->tbClearQtVersions->setEnabled( count > 0 );
+	ui->tbUpQtVersion->setEnabled( index.isValid() && index.row() > 0 && count > 1 );
+	ui->tbDownQtVersion->setEnabled( index.isValid() && index.row() < count -1 && count > 1 );
+	ui->tbDefaultQtVersion->setEnabled( index.isValid() );
 }
 
 void UISettingsQMake::lvQtVersions_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
@@ -248,14 +265,14 @@ void UISettingsQMake::on_tbAddQtVersion_clicked()
 		const QtVersion version( tr( "New Qt version" ) );
 		mQtVersionsModel->setData( index, version.Version, Qt::DisplayRole );
 		mQtVersionsModel->setData( index, QVariant::fromValue( version ), pGenericTableModel::ExtendedUserRole );
-		lvQtVersions->setCurrentIndex( index );
-		lvQtVersions->scrollTo( index, QAbstractItemView::EnsureVisible );
+		ui->lvQtVersions->setCurrentIndex( index );
+		ui->lvQtVersions->scrollTo( index, QAbstractItemView::EnsureVisible );
 	}
 }
 
 void UISettingsQMake::on_tbRemoveQtVersion_clicked()
 {
-	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
 	mQtVersionsModel->removeRow( index.row() );
 }
 
@@ -267,21 +284,21 @@ void UISettingsQMake::on_tbClearQtVersions_clicked()
 
 void UISettingsQMake::on_tbUpQtVersion_clicked()
 {
-	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
 	mQtVersionsModel->swapRows( index.row(), index.row() -1 );
 	updateQtVersionState();
 }
 
 void UISettingsQMake::on_tbDownQtVersion_clicked()
 {
-	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
 	mQtVersionsModel->swapRows( index.row(), index.row() +1 );
 	updateQtVersionState();
 }
 
 void UISettingsQMake::on_tbDefaultQtVersion_clicked()
 {
-	const QModelIndex index = lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtVersions->selectionModel()->selectedIndexes().value( 0 );
 	QFont font( index.data( Qt::FontRole ).value<QFont>() );
 	
 	font.setBold( true );
@@ -295,23 +312,23 @@ void UISettingsQMake::on_tbDefaultQtVersion_clicked()
 
 void UISettingsQMake::on_tbQtVersionPath_clicked()
 {
-	const QString s = QFileDialog::getExistingDirectory( window(), tr( "Locate your qt installation directory" ), leQtVersionPath->text() );
+	const QString s = QFileDialog::getExistingDirectory( window(), tr( "Locate your qt installation directory" ), ui->leQtVersionPath->text() );
 	
 	if ( !s.isEmpty() ) {
-		leQtVersionPath->setText( s );
+		ui->leQtVersionPath->setText( s );
 	}
 }
 
 void UISettingsQMake::on_tbQtVersionQMakeSpec_clicked()
 {
-	const QString s = QFileDialog::getExistingDirectory( window(), tr( "Locate the mk spec folder to use" ), leQtVersionPath->text() );
+	const QString s = QFileDialog::getExistingDirectory( window(), tr( "Locate the mk spec folder to use" ), ui->leQtVersionPath->text() );
 	
 	if ( !s.isEmpty() ) {
-		if ( cbQtVersionQMakeSpec->findText( s ) == -1 ) {
-			cbQtVersionQMakeSpec->addItem( s );
+		if ( ui->cbQtVersionQMakeSpec->findText( s ) == -1 ) {
+			ui->cbQtVersionQMakeSpec->addItem( s );
 		}
 		
-		cbQtVersionQMakeSpec->setCurrentIndex( cbQtVersionQMakeSpec->findText( s ) );
+		ui->cbQtVersionQMakeSpec->setCurrentIndex( ui->cbQtVersionQMakeSpec->findText( s ) );
 	}
 }
 
@@ -326,10 +343,10 @@ void UISettingsQMake::setQtModule( const QModelIndex& index )
 	QtItem item = mQtModulesModel->data( index, pGenericTableModel::ExtendedUserRole ).value<QtItem>();
 	QFont font( index.data( Qt::FontRole ).value<QFont>() );
 	
-	item.Text = leCaptionQtModule->text();
-	item.Value = leValueQtModule->text();
-	item.Variable = leVariableQtModule->text();
-	item.Help = pteHelpQtModule->toPlainText();
+	item.Text = ui->leCaptionQtModule->text();
+	item.Value = ui->leValueQtModule->text();
+	item.Variable = ui->leVariableQtModule->text();
+	item.Help = ui->pteHelpQtModule->toPlainText();
 	
 	font.setBold( item.Value.isEmpty() && item.Variable.isEmpty() );
 	
@@ -344,23 +361,23 @@ void UISettingsQMake::getQtModule( const QModelIndex& index )
 {
 	const QtItem item = mQtModulesModel->data( index, pGenericTableModel::ExtendedUserRole ).value<QtItem>();
 	
-	leCaptionQtModule->setText( item.Text );
-	leValueQtModule->setText( item.Value );
-	leVariableQtModule->setText( item.Variable );
-	pteHelpQtModule->setPlainText( item.Help );
+	ui->leCaptionQtModule->setText( item.Text );
+	ui->leValueQtModule->setText( item.Value );
+	ui->leVariableQtModule->setText( item.Variable );
+	ui->pteHelpQtModule->setPlainText( item.Help );
 	
-	wQtModule->setEnabled( index.isValid() );
+	ui->wQtModule->setEnabled( index.isValid() );
 }
 
 void UISettingsQMake::updateQtModuleState()
 {
-	const QModelIndex index = lvQtModules->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtModules->selectionModel()->selectedIndexes().value( 0 );
 	const int count = mQtModulesModel->rowCount( index.parent() );
 	
-	tbRemoveQtModule->setEnabled( index.isValid() );
-	tbClearQtModules->setEnabled( count > 0 );
-	tbUpQtModule->setEnabled( index.isValid() && index.row() > 0 && count > 1 );
-	tbDownQtModule->setEnabled( index.isValid() && index.row() < count -1 && count > 1 );
+	ui->tbRemoveQtModule->setEnabled( index.isValid() );
+	ui->tbClearQtModules->setEnabled( count > 0 );
+	ui->tbUpQtModule->setEnabled( index.isValid() && index.row() > 0 && count > 1 );
+	ui->tbDownQtModule->setEnabled( index.isValid() && index.row() < count -1 && count > 1 );
 }
 
 void UISettingsQMake::lvQtModules_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
@@ -383,14 +400,14 @@ void UISettingsQMake::on_tbAddQtModule_clicked()
 		const QtItem item( tr( "New Qt module" ) );
 		mQtModulesModel->setData( index, item.Text, Qt::DisplayRole );
 		mQtModulesModel->setData( index, QVariant::fromValue( item ), pGenericTableModel::ExtendedUserRole );
-		lvQtModules->setCurrentIndex( index );
-		lvQtModules->scrollTo( index, QAbstractItemView::EnsureVisible );
+		ui->lvQtModules->setCurrentIndex( index );
+		ui->lvQtModules->scrollTo( index, QAbstractItemView::EnsureVisible );
 	}
 }
 
 void UISettingsQMake::on_tbRemoveQtModule_clicked()
 {
-	const QModelIndex index = lvQtModules->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtModules->selectionModel()->selectedIndexes().value( 0 );
 	mQtModulesModel->removeRow( index.row() );
 }
 
@@ -402,14 +419,14 @@ void UISettingsQMake::on_tbClearQtModules_clicked()
 
 void UISettingsQMake::on_tbUpQtModule_clicked()
 {
-	const QModelIndex index = lvQtModules->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtModules->selectionModel()->selectedIndexes().value( 0 );
 	mQtModulesModel->swapRows( index.row(), index.row() -1 );
 	updateQtModuleState();
 }
 
 void UISettingsQMake::on_tbDownQtModule_clicked()
 {
-	const QModelIndex index = lvQtModules->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtModules->selectionModel()->selectedIndexes().value( 0 );
 	mQtModulesModel->swapRows( index.row(), index.row() +1 );
 	updateQtModuleState();
 }
@@ -425,10 +442,10 @@ void UISettingsQMake::setQtConfiguration( const QModelIndex& index )
 	QtItem item = mQtConfigurationsModel->data( index, pGenericTableModel::ExtendedUserRole ).value<QtItem>();
 	QFont font( index.data( Qt::FontRole ).value<QFont>() );
 	
-	item.Text = leCaptionQtConfiguration->text();
-	item.Value = leValueQtConfiguration->text();
-	item.Variable = leVariableQtConfiguration->text();
-	item.Help = pteHelpQtConfiguration->toPlainText();
+	item.Text = ui->leCaptionQtConfiguration->text();
+	item.Value = ui->leValueQtConfiguration->text();
+	item.Variable = ui->leVariableQtConfiguration->text();
+	item.Help = ui->pteHelpQtConfiguration->toPlainText();
 	
 	font.setBold( item.Value.isEmpty() && item.Variable.isEmpty() );
 	
@@ -443,23 +460,23 @@ void UISettingsQMake::getQtConfiguration( const QModelIndex& index )
 {
 	const QtItem item = mQtConfigurationsModel->data( index, pGenericTableModel::ExtendedUserRole ).value<QtItem>();
 	
-	leCaptionQtConfiguration->setText( item.Text );
-	leValueQtConfiguration->setText( item.Value );
-	leVariableQtConfiguration->setText( item.Variable );
-	pteHelpQtConfiguration->setPlainText( item.Help );
+	ui->leCaptionQtConfiguration->setText( item.Text );
+	ui->leValueQtConfiguration->setText( item.Value );
+	ui->leVariableQtConfiguration->setText( item.Variable );
+	ui->pteHelpQtConfiguration->setPlainText( item.Help );
 	
-	wQtConfiguration->setEnabled( index.isValid() );
+	ui->wQtConfiguration->setEnabled( index.isValid() );
 }
 
 void UISettingsQMake::updateQtConfigurationState()
 {
-	const QModelIndex index = lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
 	const int count = mQtConfigurationsModel->rowCount( index.parent() );
 	
-	tbRemoveQtConfiguration->setEnabled( index.isValid() );
-	tbClearQtConfigurations->setEnabled( count > 0 );
-	tbUpQtConfiguration->setEnabled( index.isValid() && index.row() > 0 && count > 1 );
-	tbDownQtConfiguration->setEnabled( index.isValid() && index.row() < count -1 && count > 1 );
+	ui->tbRemoveQtConfiguration->setEnabled( index.isValid() );
+	ui->tbClearQtConfigurations->setEnabled( count > 0 );
+	ui->tbUpQtConfiguration->setEnabled( index.isValid() && index.row() > 0 && count > 1 );
+	ui->tbDownQtConfiguration->setEnabled( index.isValid() && index.row() < count -1 && count > 1 );
 }
 
 void UISettingsQMake::lvQtConfigurations_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected )
@@ -482,14 +499,14 @@ void UISettingsQMake::on_tbAddQtConfiguration_clicked()
 		const QtItem item( tr( "New Qt configuration" ) );
 		mQtConfigurationsModel->setData( index, item.Text, Qt::DisplayRole );
 		mQtConfigurationsModel->setData( index, QVariant::fromValue( item ), pGenericTableModel::ExtendedUserRole );
-		lvQtConfigurations->setCurrentIndex( index );
-		lvQtConfigurations->scrollTo( index, QAbstractItemView::EnsureVisible );
+		ui->lvQtConfigurations->setCurrentIndex( index );
+		ui->lvQtConfigurations->scrollTo( index, QAbstractItemView::EnsureVisible );
 	}
 }
 
 void UISettingsQMake::on_tbRemoveQtConfiguration_clicked()
 {
-	const QModelIndex index = lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
 	mQtConfigurationsModel->removeRow( index.row() );
 }
 
@@ -501,14 +518,14 @@ void UISettingsQMake::on_tbClearQtConfigurations_clicked()
 
 void UISettingsQMake::on_tbUpQtConfiguration_clicked()
 {
-	const QModelIndex index = lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
 	mQtConfigurationsModel->swapRows( index.row(), index.row() -1 );
 	updateQtConfigurationState();
 }
 
 void UISettingsQMake::on_tbDownQtConfiguration_clicked()
 {
-	const QModelIndex index = lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
+	const QModelIndex index = ui->lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 );
 	mQtConfigurationsModel->swapRows( index.row(), index.row() +1 );
 	updateQtConfigurationState();
 }
@@ -525,10 +542,10 @@ void UISettingsQMake::on_dbbButtons_clicked( QAbstractButton* button )
 		const QtVersion version = index.data( pGenericTableModel::ExtendedUserRole ).value<QtVersion>();
 		
 		if ( !version.isValid() ) {
-			lvQtVersions->setCurrentIndex( index );
+			ui->lvQtVersions->setCurrentIndex( index );
 			QMessageBox::warning( window(), tr( "Error..." ), tr( "A Qt Version is not valid and has been selected, please correct it and save again." ) );
-			lwPages->setCurrentRow( 0 );
-			lvQtVersions->setFocus();
+			ui->lwPages->setCurrentRow( 0 );
+			ui->lvQtVersions->setFocus();
 			return;
 		}
 		
