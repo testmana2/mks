@@ -251,10 +251,6 @@ bool pGenericTableModel::swapRows( int fromRow, int toRow )
 		}
 	}
 	
-	qWarning() << "----";
-	qWarning() << oldIndexes;
-	qWarning() << newIndexes;
-	
 	changePersistentIndexList( oldIndexes, newIndexes );
 	
 	emit layoutChanged();
