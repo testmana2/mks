@@ -1,19 +1,27 @@
 #ifndef UISETTINGSQMAKE_H
 #define UISETTINGSQMAKE_H
 
-#include "ui_UISettingsQMake.h"
+#include <QWidget>
+#include <QModelIndex>
+#include <QItemSelection>
 
+class Ui_UISettingsQMake;
 class QtVersionManager;
 class pGenericTableModel;
 
-class UISettingsQMake : public QWidget, public Ui::UISettingsQMake
+class QPlainTextEdit;
+class QAbstractButton;
+
+class UISettingsQMake : public QWidget
 {
 	Q_OBJECT
 	
 public:
 	UISettingsQMake( QWidget* parent = 0 );
+	~UISettingsQMake();
 
 protected:
+	Ui_UISettingsQMake* ui;
 	QBrush mBackground;
 	QBrush mForeground;
 	QtVersionManager* mQtManager;
@@ -41,6 +49,7 @@ protected:
 
 protected slots:
 	void on_lwPages_currentRowChanged( int row );
+	void updateMkSpecsEntries( const QString& currentMkSpec = QString( "#null" ) );
 	
 	// qt versions
 	void lvQtVersions_selectionModel_selectionChanged( const QItemSelection& selected, const QItemSelection& deselected );
