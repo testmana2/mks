@@ -144,28 +144,23 @@ void PluginsMenu::actionConfigure_triggered()
 {
 	QAction* action = qobject_cast<QAction*>( sender() );
 	BasePlugin* plugin = action->data().value<BasePlugin*>();
+	QWidget* window = qApp->activeWindow();
 	QWidget* widget = plugin->settingsWidget();
 	
 #ifdef Q_OS_MAC
 #if QT_VERSION >= 0x040500
-	widget->setParent( qApp->activeWindow(), Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
+	widget->setParent( window, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint );
 #else
-	widget->setParent( qApp->activeWindow(), Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowSystemMenuHint );
+	widget->setParent( window, Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowSystemMenuHint );
 #endif
 #else
-	widget->setParent( qApp->activeWindow(), Qt::Dialog );
+	widget->setParent( window, Qt::Dialog );
 #endif
 	widget->setWindowModality( Qt::ApplicationModal );
 	widget->setAttribute( Qt::WA_DeleteOnClose );
 	widget->setWindowIcon( plugin->infos().Pixmap );
 	widget->setWindowTitle( tr( "Settings - %1" ).arg( plugin->infos().Caption ) );
-	widget->adjustSize();
 	
-	QRect rect = widget->frameGeometry();
-	QRect drect = qApp->desktop()->availableGeometry( qApp->activeWindow() );
-	rect.moveCenter( drect.center() );
-	
-	widget->move( rect.topLeft() );
 	widget->show();
 }
 
