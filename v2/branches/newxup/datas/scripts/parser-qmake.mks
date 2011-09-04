@@ -1,0 +1,20 @@
+# This command allows to add and remove console output parsing patterns. Usage:
+# parser add <name> <regular expression> <file name> <column> <row> <pattern type> <pattern text> <full text>
+
+# missing file
+# WARNING: Failure to find: test.JKL
+
+parser add "QMake" "WARNING: Failure to find:\s+(.*)" "" "-1" "-1" "error" "File not found \"%1\"" "%0"
+
+# message
+# Project MESSAGE: test de brun
+
+parser add "QMake" "Project MESSAGE:\s+(.*)" "" "-1" "-1" "warning" "%1" "%0"
+
+# reading project file
+# Reading /home/pasnox/Temporaire/qtsol/sub1/sub1.pro
+
+parser add "QMake" "Reading\s+(.*)" "%1" "-1" "-1" "warning" "%0" "%0"
+
+# qrc error
+# src/resources/resources.qrc: Warning: potential duplicate alias detected: 'license.gpl'
