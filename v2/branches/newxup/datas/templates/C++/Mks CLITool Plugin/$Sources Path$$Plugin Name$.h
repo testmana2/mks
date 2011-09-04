@@ -10,7 +10,7 @@ class $Plugin Name$ : public CLIToolPlugin
 
 public:
 	virtual pCommand defaultCommand() const;
-	virtual pCommandList defaultCommands() const;
+	virtual pCommand::List defaultCommands() const;
 
 protected:
 	virtual void fillPluginInfos();
