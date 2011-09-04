@@ -17,34 +17,17 @@
 ****************************************************************************/
 #include "Python.h"
 
-#include <QTabWidget>
-
-Python::Python ()
-{
-#if 0
-	// install parsers
-	foreach ( QString s, availableParsers() )
-	{
-		MonkeyCore::consoleManager()->addParser( getParser( s ) );
-	}
-#endif
-}
-
 void Python::fillPluginInfos()
 {
 	mPluginInfos.Caption = tr( "Python" );
 	mPluginInfos.Description = tr( "This plugin provide Python interpreter and python parser." );
 	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>, Michon Aurelien aka aurelien <aurelien.french@gmail.com>";
-	mPluginInfos.Type = BasePlugin::iCLITool;
+	mPluginInfos.Type = BasePlugin::iBase | BasePlugin::iCLITool;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = true;
 	mPluginInfos.Pixmap = pIconManager::pixmap( "python.png", ":/icons" );
-}
-
-Python::~Python()
-{
 }
 
 bool Python::install()
@@ -55,11 +38,6 @@ bool Python::install()
 bool Python::uninstall()
 {
 	return true;
-}
-
-QStringList Python::availableParsers() const
-{
-	return QStringList();
 }
 
 pCommand Python::defaultCommand() const

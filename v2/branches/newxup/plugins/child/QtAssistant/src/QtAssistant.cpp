@@ -32,7 +32,7 @@ void QtAssistant::fillPluginInfos()
 	mPluginInfos.Caption = tr( "Qt Assistant" );
 	mPluginInfos.Description = tr( "Qt Assistant Integration" );
 	mPluginInfos.Author = "Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>";
-	mPluginInfos.Type = BasePlugin::iChild;
+	mPluginInfos.Type = BasePlugin::iBase | BasePlugin::iChild;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.5.0";
 	mPluginInfos.FirstStartEnabled = true;

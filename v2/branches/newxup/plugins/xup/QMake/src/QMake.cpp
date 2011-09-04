@@ -34,6 +34,16 @@ QWidget* QMake::settingsWidget() const
 	return new UISettingsQMake( MonkeyCore::mainWindow() );
 }
 
+QStringList QMake::availableParsers() const
+{
+	return QStringList( PLUGIN_NAME );
+}
+
+pCommand QMake::defaultCommand() const
+{
+	return pCommand();
+}
+
 QtVersionManager* QMake::versionManager()
 {
 	return mQtVersionManager;
@@ -44,7 +54,7 @@ void QMake::fillPluginInfos()
 	mPluginInfos.Caption = tr( "QMake Project" );
 	mPluginInfos.Description = tr( "QMake Project support for XUPManager" );
 	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>, Roper Alexander aka minirop <minirop@peyj.com>";
-	mPluginInfos.Type = BasePlugin::iXUP;
+	mPluginInfos.Type = BasePlugin::iBase | BasePlugin::iCLITool | BasePlugin::iXUP;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;

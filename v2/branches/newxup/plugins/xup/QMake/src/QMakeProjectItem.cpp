@@ -758,6 +758,7 @@ void QMakeProjectItem::installCommands()
 			cmdQmake.setWorkingDirectory( "$cpp$" );
 			cmdQmake.setProject( this );
 			cmdQmake.setSkipOnError( false );
+			cmdQmake.addParser( "QMake" );
 			
 			// rebuild debug
 			if ( haveDebug || haveDebugRelease ) {

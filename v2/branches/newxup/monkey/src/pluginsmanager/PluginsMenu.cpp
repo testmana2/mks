@@ -43,25 +43,24 @@ void PluginsMenu::setMenu( QMenu* menu )
 void PluginsMenu::initPluginMenusActions( BasePlugin* plugin, BasePlugin::Type type )
 {
 	QMenu* menu = mMenus[ plugin ];
+	QMenu* tmenu = mTypeMenus[ type ];
 	
-	if ( !menu )
-	{
-		QMenu* tmenu = mTypeMenus[ type ];
-		
-		if ( !tmenu )
-		{
-			tmenu = mMenu->addMenu( BasePlugin::typeToString( type ) );
-			mTypeMenus[ type ] = tmenu;
-		}
-		
+	if ( !tmenu ) {
+		tmenu = mMenu->addMenu( BasePlugin::typeToString( type ) );
+		mTypeMenus[ type ] = tmenu;
+	}
+	
+	if ( menu ) {
+		tmenu->addMenu( menu );
+	}
+	else {
 		menu = tmenu->addMenu( plugin->infos().Pixmap, plugin->infos().Caption );
 		mMenus[ plugin ] = menu;
 		
 		menu->addAction( plugin->stateAction() );
 		connect( plugin->stateAction(), SIGNAL( triggered( bool ) ), this, SLOT( actionEnable_triggered( bool ) ) );
 		
-		if ( plugin->infos().HaveSettingsWidget )
-		{
+		if ( plugin->infos().HaveSettingsWidget ) {
 			QAction* action = menu->addAction( tr( "Configure..." ) );
 			action->setData( QVariant::fromValue( plugin ) );
 			connect( action, SIGNAL( triggered() ), this, SLOT( actionConfigure_triggered() ) );
@@ -79,44 +78,27 @@ void PluginsMenu::initPluginMenusActions( BasePlugin* plugin, BasePlugin::Type t
 		actionAbout->setData( QVariant::fromValue( plugin ) );
 		connect( actionAbout, SIGNAL( triggered() ), this, SLOT( actionAbout_triggered() ) );
 	}
-	else
-	{
-		QMenu* tmenu = mTypeMenus[ type ];
-		
-		if ( !tmenu )
-		{
-			tmenu = mMenu->addMenu( BasePlugin::typeToString( type ) );
-			mTypeMenus[ type ] = tmenu;
-		}
-		
-		tmenu->addMenu( menu );
-	}
 }
 
 void PluginsMenu::addPlugin( BasePlugin* plugin )
 {
-	BasePlugin::Types type = plugin->infos().Type;
+	const BasePlugin::Types type = plugin->infos().Type;
 	
-	initPluginMenusActions( plugin, BasePlugin::iAll );
+	initPluginMenusActions( plugin, BasePlugin::iBase );
 	
-	if ( type & BasePlugin::iBase )
-	{
-		initPluginMenusActions( plugin, BasePlugin::iBase );
-	}
-	else if ( type & BasePlugin::iChild )
-	{
+	if ( type & BasePlugin::iChild ) {
 		initPluginMenusActions( plugin, BasePlugin::iChild );
 	}
-	else if ( type & BasePlugin::iCLITool )
-	{
+	
+	if ( type & BasePlugin::iCLITool ) {
 		initPluginMenusActions( plugin, BasePlugin::iCLITool );
 	}
-	else if ( type & BasePlugin::iDebugger )
-	{
+	
+	if ( type & BasePlugin::iDebugger ) {
 		initPluginMenusActions( plugin, BasePlugin::iDebugger );
 	}
-	else if ( type & BasePlugin::iXUP )
-	{
+	
+	if ( type & BasePlugin::iXUP ) {
 		initPluginMenusActions( plugin, BasePlugin::iXUP );
 	}
 }

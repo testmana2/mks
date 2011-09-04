@@ -56,13 +56,12 @@ public:
 	// plugin type enums
 	enum Type
 	{
-		iAll = 0x0,
-		iBase = 0x1,
-		iChild = 0x2,
-		iCLITool = 0x4,
-		iDebugger = 0x20,
-		iXUP = 0x80,
-		iLast = 0x100
+		iBase = 0x0,
+		iChild = 0x1,
+		iCLITool = 0x2,
+		iDebugger = 0x4,
+		iXUP = 0x20,
+		iLast = 0x80
 	};
 	
 	Q_DECLARE_FLAGS( Types, Type )
@@ -72,7 +71,7 @@ public:
 	{
 		PluginInfos()
 		{
-			Type = BasePlugin::iAll;
+			Type = BasePlugin::iBase;
 			FirstStartEnabled = false;
 			HaveSettingsWidget = false;
 			Pixmap = pIconManager::pixmap( "monkey2.png", ":/application" );

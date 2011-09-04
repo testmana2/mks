@@ -29,11 +29,9 @@ protected:
 	void fillPluginInfos();
 	virtual bool install();
 	virtual bool uninstall();
+	
 public:
-	Python();
-	~Python();
 	// CLIToolPlugin
-	virtual QStringList availableParsers() const;
 	virtual pCommand defaultCommand() const;
 };
 

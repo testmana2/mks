@@ -36,13 +36,13 @@ class GNUMake : public CLIToolPlugin
 	Q_OBJECT
 	Q_INTERFACES( BasePlugin CLIToolPlugin )
 
-protected:	
+protected:
+	// BasePlugin
 	void fillPluginInfos();
 	virtual bool install();
 	virtual bool uninstall();
+	
 public:
-	GNUMake();
-	virtual ~GNUMake();
 	// CLIToolPlugin
 	virtual QStringList availableParsers() const;
 	virtual pCommand defaultCommand() const;

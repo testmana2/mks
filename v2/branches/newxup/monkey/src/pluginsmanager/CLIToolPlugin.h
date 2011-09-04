@@ -32,11 +32,11 @@
 #include "BasePlugin.h"
 #include "pCommand.h"
 
-class Q_MONKEY_EXPORT CLIToolPlugin : public BasePlugin
+class Q_MONKEY_EXPORT CLIToolPlugin : virtual public BasePlugin
 {
 public:
-	CLIToolPlugin();
 	virtual QWidget* settingsWidget() const;
+	
 	virtual pCommand command() const;
 	virtual void setCommand( const pCommand& cmd );
 	virtual QStringList availableParsers() const;

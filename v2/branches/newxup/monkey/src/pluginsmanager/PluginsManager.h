@@ -52,29 +52,35 @@ public:
 	
 	QList<BasePlugin*> plugins() const;
 	template <class T>
-	QList<T> plugins( PluginsManager::StateType t, const QString& n = QString::null, const QString& v = QString::null )
+	QList<T> plugins( PluginsManager::StateType state, const QString& name = QString::null, const QString& version = QString::null )
 	{
-		// temporary list
-		QList<T> l;
-		// for each plugin
-		foreach ( BasePlugin* bp, mPlugins )
+		QList<T> plugins;
+		
+		foreach ( BasePlugin* bp, mPlugins ) {
 			// plugin state
-			if ( t == stAll || ( !bp->isEnabled() && t == stDisabled ) || ( bp->isEnabled() && t == stEnabled ) )
+			if ( state == stAll || ( !bp->isEnabled() && state == stDisabled ) || ( bp->isEnabled() && state == stEnabled ) ) {
 				// empty or good name
-				if ( n.isEmpty() || bp->infos().Name == n )
+				if ( name.isEmpty() || bp->infos().Name == name ) {
 					// no version or good version
-					if ( v.isEmpty() || bp->infos().Version == v )
+					if ( version.isEmpty() || bp->infos().Version == version ) {
 						// good cast
-						if ( T p = qobject_cast<T>( bp ) )
-							l << p;
-		// return list
-		return l;
+						if ( T plugin = qobject_cast<T>( bp ) ) {
+							plugins << plugin;
+						}
+					}
+				}
+			}
+		}
+		
+		return plugins;
 	}
 	template <class T>
 	T plugin( PluginsManager::StateType type, const QString& name,  const QString& version = QString::null )
 	{
-		if ( name.isEmpty() )
+		if ( name.isEmpty() ) {
 			return 0;
+		}
+		
 		return plugins<T>( type, name, version ).value( 0 );
 	}
 	
