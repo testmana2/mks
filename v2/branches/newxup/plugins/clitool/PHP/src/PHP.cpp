@@ -17,29 +17,17 @@
 ****************************************************************************/
 #include "PHP.h"
 
-#include <QTabWidget>
-
-#include "pConsoleManager.h"
-
-PHP::PHP ()
-{
-}
-
 void PHP::fillPluginInfos()
 {
 	mPluginInfos.Caption = tr( "PHP" );
 	mPluginInfos.Description = tr( "This plugin provide PHP interpreter and php parser." );
 	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>";
-	mPluginInfos.Type = BasePlugin::iCLITool;
+	mPluginInfos.Type = BasePlugin::iBase | BasePlugin::iCLITool;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;
 	mPluginInfos.HaveSettingsWidget = true;
 	mPluginInfos.Pixmap = pIconManager::pixmap( "php.png", ":/icons" );
-}
-
-PHP::~PHP()
-{
 }
 
 bool PHP::install()
@@ -52,15 +40,10 @@ bool PHP::uninstall()
 	return true;
 }
 
-QStringList PHP::availableParsers() const
-{
-	return QStringList();
-}
-
 pCommand PHP::defaultCommand() const
 {
-	const QString mPHP = "php";
-	return pCommand( "Interpret", mPHP, QString::null, false, availableParsers(), "$cpp$" );
+	const QString php = "php";
+	return pCommand( "Interpret", php, QString::null, false, availableParsers(), "$cpp$" );
 }
 
 Q_EXPORT_PLUGIN2( InterpreterPHP, PHP )

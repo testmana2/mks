@@ -3,9 +3,7 @@
 
 #include "BasePlugin.h"
 
-class XUPProjectItem;
-
-class Q_MONKEY_EXPORT XUPPlugin : public BasePlugin
+class Q_MONKEY_EXPORT XUPPlugin : virtual public BasePlugin
 {
 };
 

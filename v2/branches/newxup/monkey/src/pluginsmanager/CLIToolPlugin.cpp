@@ -12,14 +12,11 @@
 **
 ****************************************************************************/
 #include "CLIToolPlugin.h"
-#include "ui/UICLIToolSettings.h"
+#include "UICLIToolSettings.h"
+#include "MonkeyCore.h"
+#include "Settings.h"
 
 #include <QApplication>
-
-CLIToolPlugin::CLIToolPlugin()
-	: BasePlugin()
-{
-}
 
 QWidget* CLIToolPlugin::settingsWidget() const
 {

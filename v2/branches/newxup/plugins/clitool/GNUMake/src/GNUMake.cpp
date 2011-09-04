@@ -32,24 +32,16 @@
 
 #include "pConsoleManager.h"
 
-GNUMake::GNUMake()
-{
-}
-
 void GNUMake::fillPluginInfos()
 {
 	mPluginInfos.Caption = tr( "GNUMake" );
 	mPluginInfos.Description = tr( "Plugin for execute GNU Make in console and parse it's output" );
 	mPluginInfos.Author = "Kopats Andrei aka hlamer <hlamer@tut.by>, Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>";
-	mPluginInfos.Type = BasePlugin::iCLITool;
+	mPluginInfos.Type = BasePlugin::iBase | BasePlugin::iCLITool;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.5.0";
 	mPluginInfos.FirstStartEnabled = false;
 	mPluginInfos.HaveSettingsWidget = true;
-}
-
-GNUMake::~GNUMake()
-{
 }
 
 bool GNUMake::install()
@@ -64,9 +56,10 @@ bool GNUMake::uninstall()
 
 QStringList GNUMake::availableParsers() const
 {
-	QStringList list;
-	list << "GNU Make" << "GCC";
-	return list;
+	return QStringList()
+		<< "GNU Make"
+		<< "GCC"
+		;
 }
 
 pCommand GNUMake::defaultCommand() const

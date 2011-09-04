@@ -23,8 +23,20 @@ UIPluginsSettingsAbout::UIPluginsSettingsAbout( BasePlugin* plugin, QWidget* p )
 	lLicense->setText( infos.License.isEmpty() ? tr( "GNU General Public License" ) : infos.License );
 	lDescription->setText( infos.Description );
 	
-	lvAuthors->setModel( new QStringListModel( infos.Author.split( "," ) ) );
-	lvTypes->setModel( new QStringListModel( plugin->completeTypeToString( infos.Type ).split( "," ) ) );
+	lvAuthors->setModel( new QStringListModel( trimmedSplitedString( infos.Author ) ) );
+	lvTypes->setModel( new QStringListModel( trimmedSplitedString( plugin->completeTypeToString( infos.Type ) ) ) );
 	lvLanguages->setModel( new QStringListModel( infos.Languages ) );
 	lvDependencies->setModel( new QStringListModel( infos.dependencies ) );
+}
+
+QStringList UIPluginsSettingsAbout::trimmedSplitedString( const QString& string ) const
+{
+	QStringList entries = string.split( "," );
+	
+	for ( int i = 0; i < entries.count(); i++ ) {
+		QString& entry = entries[ i ];
+		entry = entry.trimmed();
+	}
+	
+	return entries;
 }

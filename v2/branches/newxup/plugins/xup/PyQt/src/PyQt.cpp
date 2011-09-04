@@ -26,7 +26,7 @@ void PyQt::fillPluginInfos()
 	mPluginInfos.Caption = tr( "PyQt Project" );
 	mPluginInfos.Description = tr( "PyQt Project support for XUPManager" );
 	mPluginInfos.Author = "Azevedo Filipe aka Nox P@sNox <pasnox@gmail.com>";
-	mPluginInfos.Type = BasePlugin::iXUP;
+	mPluginInfos.Type = BasePlugin::iBase | BasePlugin::iXUP;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.1.0";
 	mPluginInfos.FirstStartEnabled = true;

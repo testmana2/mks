@@ -56,7 +56,7 @@ void BeaverDebugger::fillPluginInfos()
 	mPluginInfos.Caption = tr( "Beaver Debugger" );
 	mPluginInfos.Description = tr( "Plugin for use Beaver Debugger together with MkS" );
 	mPluginInfos.Author = "Andei Kopats aka hlamer <hlamer@tut.by>";
-	mPluginInfos.Type = BasePlugin::iDebugger;
+	mPluginInfos.Type = BasePlugin::iBase | BasePlugin::iDebugger;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "1.0.0";
 	mPluginInfos.FirstStartEnabled = false;
