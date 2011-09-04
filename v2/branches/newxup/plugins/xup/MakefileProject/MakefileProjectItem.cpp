@@ -56,7 +56,7 @@ void MakefileProjectItem::installCommands()
 	foreach( const QString& target, targets ) {
 		baseCmd.setText( target );
 		baseCmd.setArguments( makeFileArg +target );
-		addCommand( baseCmd, "mBuilder" );
+		addCommand( "mBuilder", baseCmd );
 	}
 }
 
