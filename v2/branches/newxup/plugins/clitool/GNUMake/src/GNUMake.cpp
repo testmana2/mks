@@ -62,15 +62,6 @@ bool GNUMake::uninstall()
 	return true;
 }
 
-QWidget* GNUMake::settingsWidget()
-{
-	QTabWidget* tw = new QTabWidget;
-	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( CLIToolPlugin::settingsWidget(), tr( "Build Command" ) );
-	tw->addTab( additionalCommandsSettingsWidget(), tr( "User Commands" ) );
-	return tw;
-}
-
 QStringList GNUMake::availableParsers() const
 {
 	QStringList list;

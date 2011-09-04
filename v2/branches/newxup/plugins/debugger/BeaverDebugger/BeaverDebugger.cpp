@@ -130,9 +130,9 @@ bool BeaverDebugger::uninstall()
 	Get settings widget of plugin
 	\return Pointer to created settings widget for plugin
 */
-QWidget* BeaverDebugger::settingsWidget()
+QWidget* BeaverDebugger::settingsWidget() const
 {
-	return new BeaverDebuggerSettings(this);
+	return new BeaverDebuggerSettings(const_cast<BeaverDebugger*>(this));
 }
 
 QString BeaverDebugger::beaverPath()

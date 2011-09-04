@@ -29,7 +29,7 @@
 // Q_GLOBAL_STATIC( Type, accessorMemberName )
 QPointer<QtVersionManager> QMake::mQtVersionManager = 0;
 
-QWidget* QMake::settingsWidget()
+QWidget* QMake::settingsWidget() const
 {
 	return new UISettingsQMake( MonkeyCore::mainWindow() );
 }

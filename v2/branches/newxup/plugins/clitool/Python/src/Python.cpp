@@ -57,15 +57,6 @@ bool Python::uninstall()
 	return true;
 }
 
-QWidget* Python::settingsWidget()
-{
-	QTabWidget* tw = new QTabWidget;
-	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( CLIToolPlugin::settingsWidget(), tr( "Interpret Command" ) );
-	tw->addTab( additionalCommandsSettingsWidget(), tr( "User Commands" ) );
-	return tw;
-}
-
 QStringList Python::availableParsers() const
 {
 	return QStringList();

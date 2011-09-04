@@ -36,16 +36,12 @@ class Q_MONKEY_EXPORT CLIToolPlugin : public BasePlugin
 {
 public:
 	CLIToolPlugin();
+	virtual QWidget* settingsWidget() const;
 	virtual pCommand command() const;
 	virtual void setCommand( const pCommand& cmd );
-	virtual QWidget* settingsWidget();
-	virtual pCommand defaultCommand() const = 0;
-	
-	virtual pCommand::List defaultCommands() const;
-	virtual pCommand::List userCommands() const;
-	virtual void setUserCommands( const pCommand::List& cmds ) const;
-	virtual QWidget* additionalCommandsSettingsWidget();
 	virtual QStringList availableParsers() const;
+	
+	virtual pCommand defaultCommand() const = 0;
 };
 
 Q_DECLARE_INTERFACE( CLIToolPlugin, "org.monkeystudio.MonkeyStudio.CLIToolPlugin/1.0" )

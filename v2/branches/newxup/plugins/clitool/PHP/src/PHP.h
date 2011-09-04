@@ -32,8 +32,6 @@ protected:
 public:
 	PHP();
 	~PHP();
-	// BasePlugin
-	virtual QWidget* settingsWidget();
 	// CLIToolPlugin
 	virtual QStringList availableParsers() const;
 	virtual pCommand defaultCommand() const;

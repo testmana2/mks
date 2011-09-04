@@ -23,6 +23,8 @@
 #include "UIMain.h"
 #include "MkSFileDialog.h"
 
+#include "ui_UICLIToolSettings.h"
+
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QPushButton>
@@ -30,43 +32,50 @@
 using namespace pMonkeyStudio;
 
 UICLIToolSettings::UICLIToolSettings( CLIToolPlugin* p, QWidget* w )
-	: QWidget( w ), mPlugin( p )
+	: QWidget( w ), ui( new Ui_UICLIToolSettings ), mPlugin( p )
 {
 	Q_ASSERT( mPlugin );
-	setupUi( this );
-	// set button icons
-	dbbButtons->button( QDialogButtonBox::Help )->setIcon( QIcon( ":/help/icons/help/keyword.png" ) );
-	dbbButtons->button( QDialogButtonBox::Reset )->setIcon( QIcon( ":/tools/icons/tools/update.png" ) );
-	dbbButtons->button( QDialogButtonBox::RestoreDefaults )->setIcon( QIcon( ":/file/icons/file/backup.png" ) );
-	dbbButtons->button( QDialogButtonBox::Save )->setIcon( QIcon( ":/file/icons/file/save.png" ) );
+	ui->setupUi( this );
+	
 	// delete widget when close
 	setAttribute( Qt::WA_DeleteOnClose );
+	
 	// memorize defaults and user commands
 	mDefault = mPlugin->defaultCommand();
 	mCommand = mPlugin->command();
 	mReset = mCommand;
+	
 	// add parsers
-	lwBuildCommandParsers->addItems( MonkeyCore::consoleManager()->parsersName() );
+	ui->lwBuildCommandParsers->addItems( MonkeyCore::consoleManager()->parsersName() );
+	
 	// set uncheck state for parser items
-	for ( int i = 0; i < lwBuildCommandParsers->count(); i++ )
-		lwBuildCommandParsers->item( i )->setCheckState( Qt::Unchecked );
+	for ( int i = 0; i < ui->lwBuildCommandParsers->count(); i++ ) {
+		ui->lwBuildCommandParsers->item( i )->setCheckState( Qt::Unchecked );
+	}
+	
 	// load commands
 	updateCommand();
 }
 
+UICLIToolSettings::~UICLIToolSettings()
+{
+	delete ui;
+}
+
 void UICLIToolSettings::updateCommand()
 {
-	leBuildCommandText->setText( mCommand.text() );
-	leBuildCommandCommand->setText( mCommand.command() );
-	leBuildCommandArguments->setText( mCommand.arguments() );
-	leBuildCommandWorkingDirectory->setText( mCommand.workingDirectory() );
-	cbBuildCommandSkipOnError->setChecked( mCommand.skipOnError() );
-	for ( int i = 0; i < lwBuildCommandParsers->count(); i++ )
-	{
-		QListWidgetItem* it = lwBuildCommandParsers->item( i );
+	ui->leBuildCommandText->setText( mCommand.text() );
+	ui->leBuildCommandCommand->setText( mCommand.command() );
+	ui->leBuildCommandArguments->setText( mCommand.arguments() );
+	ui->leBuildCommandWorkingDirectory->setText( mCommand.workingDirectory() );
+	ui->cbBuildCommandSkipOnError->setChecked( mCommand.skipOnError() );
+	
+	for ( int i = 0; i < ui->lwBuildCommandParsers->count(); i++ ) {
+		QListWidgetItem* it = ui->lwBuildCommandParsers->item( i );
 		it->setCheckState( mCommand.parsers().contains( it->text() ) ? Qt::Checked : Qt::Unchecked );
 	}
-	cbBuildCommandTryAll->setChecked( mCommand.tryAllParsers() );
+	
+	ui->cbBuildCommandTryAll->setChecked( mCommand.tryAllParsers() );
 }
 
 void UICLIToolSettings::restoreDefault()
@@ -83,45 +92,55 @@ void UICLIToolSettings::reset()
 
 void UICLIToolSettings::save()
 {
-	mCommand.setText( leBuildCommandText->text() );
-	mCommand.setCommand( leBuildCommandCommand->text() );
-	mCommand.setArguments( leBuildCommandArguments->text() );
-	mCommand.setWorkingDirectory( leBuildCommandWorkingDirectory->text() );
-	mCommand.setSkipOnError( cbBuildCommandSkipOnError->isChecked() );
-	QStringList l;
-	for ( int i = 0; i < lwBuildCommandParsers->count(); i++ )
-	{
-		QListWidgetItem* it = lwBuildCommandParsers->item( i );
-		if ( it->checkState() == Qt::Checked )
-			l << it->text();
+	mCommand.setText( ui->leBuildCommandText->text() );
+	mCommand.setCommand( ui->leBuildCommandCommand->text() );
+	mCommand.setArguments( ui->leBuildCommandArguments->text() );
+	mCommand.setWorkingDirectory( ui->leBuildCommandWorkingDirectory->text() );
+	mCommand.setSkipOnError( ui->cbBuildCommandSkipOnError->isChecked() );
+	QStringList parsers;
+	
+	for ( int i = 0; i < ui->lwBuildCommandParsers->count(); i++ ) {
+		QListWidgetItem* it = ui->lwBuildCommandParsers->item( i );
+		
+		if ( it->checkState() == Qt::Checked ) {
+			parsers << it->text();
+		}
 	}
-	mCommand.setParsers( l );
-	mCommand.setTryAllParsers( cbBuildCommandTryAll->isChecked() );
+	
+	mCommand.setParsers( parsers );
+	mCommand.setTryAllParsers( ui->cbBuildCommandTryAll->isChecked() );
 	mPlugin->setCommand( mCommand );
 }
 
 void UICLIToolSettings::on_tbBuildCommandCommand_clicked()
 {
-	QString s = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Select an executable" ), leBuildCommandCommand->text() );
-	if ( !s.isNull() )
-		leBuildCommandCommand->setText( s );
+	const QString filePath = QFileDialog::getOpenFileName( MonkeyCore::mainWindow(), tr( "Select an executable" ), ui->leBuildCommandCommand->text() );
+	
+	if ( !filePath.isNull() ) {
+		ui->leBuildCommandCommand->setText( filePath );
+	}
 }
 
 void UICLIToolSettings::on_tbBuildCommandWorkingDirectory_clicked()
 {
-	const QString s = MkSFileDialog::getExistingDirectory( false, this, tr( "Select a folder" ), leBuildCommandWorkingDirectory->text(), false ).value( "filename" ).toString();
+	const QString path = QFileDialog::getExistingDirectory( this, tr( "Select a folder" ), ui->leBuildCommandWorkingDirectory->text() );
 	
-	if ( !s.isEmpty() ) {
-		leBuildCommandWorkingDirectory->setText( s );
+	if ( !path.isEmpty() ) {
+		ui->leBuildCommandWorkingDirectory->setText( path );
 	}
 }
 
-void UICLIToolSettings::on_dbbButtons_clicked( QAbstractButton* b )
+void UICLIToolSettings::on_dbbButtons_clicked( QAbstractButton* button )
 {
-	if ( dbbButtons->standardButton( b ) == QDialogButtonBox::Reset )
-		reset();
-	else if ( dbbButtons->standardButton( b ) == QDialogButtonBox::RestoreDefaults )
-		restoreDefault();
-	else if ( dbbButtons->standardButton( b ) == QDialogButtonBox::Save )
-		save();
+	switch ( ui->dbbButtons->standardButton( button ) ) {
+		case QDialogButtonBox::Reset:
+			reset();
+			break;
+		case QDialogButtonBox::RestoreDefaults:
+			restoreDefault();
+			break;
+		case QDialogButtonBox::Save:
+			save();
+			break;
+	}
 }
