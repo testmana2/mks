@@ -21,12 +21,14 @@ DebugDockWidget::DebugDockWidget( QWidget* parent )
 	titleBar()->addAction( aShowXml, 0 );
 	titleBar()->addAction( aShowNativeString, 1 );
 	titleBar()->addAction( aGenerateFakeProject, 2 );
-	titleBar()->addSeparator( 3 );
+	titleBar()->addAction( aChildInfos, 3 );
+	titleBar()->addSeparator( 4 );
 	
 	connect( MonkeyCore::projectsManager(), SIGNAL( currentProjectChanged( XUPProjectItem* ) ), this, SLOT( currentProjectChanged() ) );
 	connect( aShowXml, SIGNAL( triggered() ), this, SLOT( showXml() ) );
 	connect( aShowNativeString, SIGNAL( triggered() ), this, SLOT( showNativeString() ) );
 	connect( aGenerateFakeProject, SIGNAL( triggered() ), this, SLOT( generateFakeProject() ) );
+	connect( aChildInfos, SIGNAL( triggered() ), this, SLOT( childInfos() ) );
 }
 
 DebugDockWidget::~DebugDockWidget()
@@ -258,4 +260,21 @@ void DebugDockWidget::generateFakeProject()
 	project->mFileName = QString( "Fake project %1" ).arg( qrand() % INT_MAX );
 	
 	MonkeyCore::projectsManager()->openProject( project );
+}
+
+void DebugDockWidget::childInfos()
+{
+	const QModelIndex index = tvProjects->selectionModel()->selectedIndexes().value( 0 );
+	XUPItem* item = MonkeyCore::projectsManager()->currentProjectModel()->itemFromIndex( index );
+	XUPProjectItem* project = item ? item->project() : 0;
+	
+	if ( !item ) {
+		return;
+	}
+	
+	XUPItem* variable = item->addChild( XUPItem::Variable );
+	variable->setAttribute( "operator", "*=" );
+	variable->setAttribute( "name", "LIBS" );
+	
+	variable->parent()->removeChild( variable );
 }
