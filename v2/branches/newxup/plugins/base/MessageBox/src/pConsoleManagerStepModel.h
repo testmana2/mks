@@ -7,7 +7,7 @@
 
 #include "pConsoleManagerStep.h"
 
-class Q_MONKEY_EXPORT pConsoleManagerStepModel : public QAbstractItemModel
+class pConsoleManagerStepModel : public QAbstractItemModel
 {
 	Q_OBJECT
 	
