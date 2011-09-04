@@ -6,10 +6,10 @@ pCommand $Plugin Name$::defaultCommand() const
 	return pCommand();
 }
 
-pCommandList $Plugin Name$::defaultCommands() const
+pCommand::List $Plugin Name$::defaultCommands() const
 {
 	// return the defaults user commands
-	return pCommandList();
+	return pCommand::List();
 }
 
 void $Plugin Name$::fillPluginInfos()
