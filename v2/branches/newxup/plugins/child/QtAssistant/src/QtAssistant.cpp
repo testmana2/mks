@@ -10,7 +10,7 @@
 
 #include <QHelpEngine>
 
-QWidget* QtAssistant::settingsWidget()
+QWidget* QtAssistant::settingsWidget() const
 {
 	MkSQtDocInstaller::collectionFileDirectory( true );
 	QHelpEngine* engine = new QHelpEngine( MkSQtDocInstaller::defaultHelpCollectionFileName() );

@@ -133,8 +133,8 @@ bool MessageBox::uninstall()
 	Get settings widget for configuring plugin
 	\return Pointer to widget
 */
-QWidget* MessageBox::settingsWidget()
-{ return new UIMessageBoxSettings( this ); }
+QWidget* MessageBox::settingsWidget() const
+{ return new UIMessageBoxSettings( const_cast<MessageBox*>( this ) ); }
 
 void MessageBox::onConsoleStarted()
 {

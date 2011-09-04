@@ -33,15 +33,6 @@
 #include <QFileSystemWatcher>
 #include <QDebug>
 
-/*!
-	Get settings widget of plugin
-	\return Pointer to created settings widget for plugin
-*/
-QWidget* FileWatcher::settingsWidget()
-{
-	return 0;
-}
-
 void FileWatcher::fillPluginInfos()
 {
 	mPluginInfos.Caption = tr( "File Watcher" );

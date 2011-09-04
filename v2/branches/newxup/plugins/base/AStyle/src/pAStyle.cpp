@@ -51,7 +51,7 @@ void pAStyle::fillPluginInfos()
 	mPluginInfos.Pixmap = pIconManager::pixmap( "astyle.png", ":/icons" );
 }
 
-QWidget* pAStyle::settingsWidget()
+QWidget* pAStyle::settingsWidget() const
 { return new UISettingsAStyle; }
 
 bool pAStyle::install()

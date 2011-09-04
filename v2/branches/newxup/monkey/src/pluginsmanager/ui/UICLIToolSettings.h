@@ -21,31 +21,34 @@
 #include <MonkeyExport.h>
 #include <pCommand.h>
 
-#include "ui_UICLIToolSettings.h"
-
 #include <QWidget>
 
 class CLIToolPlugin;
+class Ui_UICLIToolSettings;
 
-class Q_MONKEY_EXPORT UICLIToolSettings : public QWidget, public Ui::UICLIToolSettings
+class QAbstractButton;
+
+class Q_MONKEY_EXPORT UICLIToolSettings : public QWidget
 {
 	Q_OBJECT
 	
+public:
+	UICLIToolSettings( CLIToolPlugin* plugin, QWidget* parent = 0 );
+	virtual ~UICLIToolSettings();
+	
 protected:
+	Ui_UICLIToolSettings* ui;
+	CLIToolPlugin* mPlugin;
 	pCommand mDefault;
 	pCommand mReset;
 	pCommand mCommand;
-	CLIToolPlugin* mPlugin;
-
-public:
-	UICLIToolSettings( CLIToolPlugin*, QWidget* = 0 );
-
+	
+protected slots:
 	void updateCommand();
 	void restoreDefault();
 	void reset();
 	void save();
-
-protected slots:
+	
 	void on_tbBuildCommandCommand_clicked();
 	void on_tbBuildCommandWorkingDirectory_clicked();
 	void on_dbbButtons_clicked( QAbstractButton* );

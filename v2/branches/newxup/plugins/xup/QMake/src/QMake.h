@@ -31,7 +31,7 @@ class QMake : public XUPPlugin
 	Q_INTERFACES( BasePlugin XUPPlugin )
 
 public:
-	virtual QWidget* settingsWidget();
+	virtual QWidget* settingsWidget() const;
 	
 	static QtVersionManager* versionManager();
 

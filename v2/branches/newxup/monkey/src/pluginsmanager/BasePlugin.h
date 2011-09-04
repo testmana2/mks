@@ -112,7 +112,7 @@ public:
 	void setNeverEnable( bool never )
 	{ return setSettingsValue( "NeverEnable", never ); }
 	
-	virtual QWidget* settingsWidget()
+	virtual QWidget* settingsWidget() const
 	{ return 0; }
 	
 	virtual bool isEnabled() const

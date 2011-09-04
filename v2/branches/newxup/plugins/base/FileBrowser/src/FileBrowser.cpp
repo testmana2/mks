@@ -98,8 +98,8 @@ bool FileBrowser::uninstall()
 	Get settings widget of plugin
 	\return Pointer to created settings widget for plugin
 */
-QWidget* FileBrowser::settingsWidget()
-{ return new FileBrowserSettings( this ); }
+QWidget* FileBrowser::settingsWidget() const
+{ return new FileBrowserSettings( const_cast<FileBrowser*>( this ) ); }
 
 /*!
 	Get filter wildcards, which using for filtering out some files, which should be removed

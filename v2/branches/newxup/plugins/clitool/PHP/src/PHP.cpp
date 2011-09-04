@@ -52,15 +52,6 @@ bool PHP::uninstall()
 	return true;
 }
 
-QWidget* PHP::settingsWidget()
-{
-	QTabWidget* tw = new QTabWidget;
-	tw->setAttribute( Qt::WA_DeleteOnClose );
-	tw->addTab( CLIToolPlugin::settingsWidget(), tr( "Interpret Command" ) );
-	tw->addTab( additionalCommandsSettingsWidget(), tr( "User Commands" ) );
-	return tw;
-}
-
 QStringList PHP::availableParsers() const
 {
 	return QStringList();

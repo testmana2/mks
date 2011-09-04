@@ -87,9 +87,9 @@ bool ClassBrowser::uninstall()
 	return true;
 }
 
-QWidget* ClassBrowser::settingsWidget()
+QWidget* ClassBrowser::settingsWidget() const
 {
-	return new UISettingsClassBrowser( this );
+	return new UISettingsClassBrowser( const_cast<ClassBrowser*>( this ) );
 }
 
 qCtagsSenseProperties ClassBrowser::properties() const
