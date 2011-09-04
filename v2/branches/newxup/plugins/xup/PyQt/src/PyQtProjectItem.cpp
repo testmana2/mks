@@ -52,7 +52,7 @@ void PyQtProjectItem::installCommands()
 		cmd.setArguments( mainFile );
 		cmd.setParsers( QStringList() );
 		cmd.setTryAllParsers( false );
-		addCommand( cmd, "mInterpreter" );
+		addCommand( "mInterpreter", cmd );
 	}
 	
 	// pyuic4 on current file
@@ -64,7 +64,7 @@ void PyQtProjectItem::installCommands()
 	cmd.setParsers( QStringList() );
 	cmd.setSkipOnError( false );
 	cmd.setTryAllParsers( false );
-	addCommand( cmd, "mInterpreter" );
+	addCommand( "mInterpreter", cmd );
 	
 	// pyrcc4 on current file
 	cmd = cmdInterpret;
@@ -75,7 +75,7 @@ void PyQtProjectItem::installCommands()
 	cmd.setParsers( QStringList() );
 	cmd.setSkipOnError( false );
 	cmd.setTryAllParsers( false );
-	addCommand( cmd, "mInterpreter" );
+	addCommand( "mInterpreter", cmd );
 	
 	// pylupdate4 on current file
 	cmd = cmdInterpret;
@@ -86,7 +86,7 @@ void PyQtProjectItem::installCommands()
 	cmd.setParsers( QStringList() );
 	cmd.setSkipOnError( false );
 	cmd.setTryAllParsers( false );
-	addCommand( cmd, "mInterpreter" );
+	addCommand( "mInterpreter", cmd );
 	
 	// install defaults commands
 	XUPProjectItem::installCommands();
