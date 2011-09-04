@@ -86,7 +86,7 @@ protected:
 	QBuffer mBuffer; //All output comming to this buffer
 	QString mStringBuffer; //... then by portions to this buffer
 	int mLinesInStringBuffer;
-	pCommandList mCommands;
+	pCommand::List mCommands;
 	QStringList mCurrentParsers;
 	QHash<QString, AbstractCommandParser*> mParsers;
 	QAction* mStopAction;
@@ -107,9 +107,9 @@ public slots:
 	void sendRawData( const QByteArray& );
 	void stopCurrentCommand();
 	void addCommand( const pCommand& );
-	void addCommands( const pCommandList& );
+	void addCommands( const pCommand::List& );
 	void removeCommand( const pCommand& );
-	void removeCommands( const pCommandList& );
+	void removeCommands( const pCommand::List& );
 
 private slots:
 	void executeProcess();

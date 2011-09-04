@@ -43,14 +43,14 @@ class Q_MONKEY_EXPORT UIAdditionalCommandsSettings : public QWidget, public Ui::
 	Q_OBJECT
 	
 protected:
-	pCommandList mDefaults;
-	pCommandList mReset;
-	pCommandList mCommands;
+	pCommand::List mDefaults;
+	pCommand::List mReset;
+	pCommand::List mCommands;
 	BasePlugin* mPlugin;
 	bool mUpdating;
 
 public:
-	UIAdditionalCommandsSettings( BasePlugin*, const pCommandList&, const pCommandList&, QWidget* = 0 );
+	UIAdditionalCommandsSettings( BasePlugin*, const pCommand::List&, const pCommand::List&, QWidget* = 0 );
 
 	void updateCommands();
 	void restoreDefaults();

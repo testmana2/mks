@@ -209,7 +209,7 @@ void CommandsEditorModel::setCommands( const MenuCommandListMap& commands, pMenu
 			beginInsertRows( QModelIndex(), 0, count -1 );
 			int i = 0;
 			foreach ( const QString& menu, menus ) {
-				mCommands[ menu ] = pCommandList();
+				mCommands[ menu ] = pCommand::List();
 				mMenusOrder[ menu ] = i;
 				i++;
 			}
@@ -254,7 +254,7 @@ void CommandsEditorModel::swapCommand( const QModelIndex& menuIndex, int fromCom
 		return;
 	}
 	
-	pCommandList& commands = mCommands[ menu ];
+	pCommand::List& commands = mCommands[ menu ];
 	const int count = commands.count();
 	
 	if ( fromCommand >= count || toCommand >= count ) {
@@ -301,7 +301,7 @@ bool CommandsEditorModel::submit()
 	emit layoutAboutToBeChanged();
 	
 	foreach ( const QString& menu, mCommands.keys() ) {
-		pCommandList& commands = mCommands[ menu ];
+		pCommand::List& commands = mCommands[ menu ];
 		
 		for ( int i = commands.count() -1; i >= 0; i-- ) {
 			pCommand& command = commands[ i ];
@@ -317,7 +317,7 @@ bool CommandsEditorModel::submit()
 	return true;
 }
 
-void CommandsEditorModel::addCommands( const QString& menu, const pCommandList& commands )
+void CommandsEditorModel::addCommands( const QString& menu, const pCommand::List& commands )
 {
 	if ( commands.isEmpty() ) {
 		return;
