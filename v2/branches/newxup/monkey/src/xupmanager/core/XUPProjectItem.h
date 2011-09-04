@@ -8,7 +8,6 @@
 
 #include "XUPItem.h"
 #include "ProjectTypesIndex.h"
-#include "pCommand.h"
 
 class QAction;
 
@@ -16,6 +15,7 @@ class XUPPlugin;
 class XUPProjectItemCacheBackend;
 class XUPProjectItemCache;
 class UIXUPEditor;
+class pCommand;
 
 typedef QList<class XUPProjectItem*> XUPProjectItemList;
 
@@ -29,7 +29,7 @@ class Q_MONKEY_EXPORT XUPProjectItem : public QObject, public XUPItem
 	
 public:
 	// target type
-	enum TargetType { DefaultTarget = 0, DebugTarget, ReleaseTarget };
+	enum TargetType { NoTarget = 0, DefaultTarget, DebugTarget, ReleaseTarget };
 	
 	// ctor
 	XUPProjectItem();
@@ -102,8 +102,8 @@ public:
 	virtual bool open( const QString& fileName, const QString& codec );
 	// save the project
 	virtual bool save();
-	// return the project target file, ie the binary / library file path, if allowToAskUser is set to true - user might be asked for it via doalog
-	virtual QString targetFilePath( bool allowToAskUser = false, XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
+	// return the project target file, ie the binary / library / file path, user might be asked for it via dialog
+	virtual QString targetFilePath( XUPProjectItem::TargetType type = XUPProjectItem::DefaultTarget );
 	
 	// install custom project actions in menus
 	virtual void installCommands();
@@ -125,9 +125,9 @@ public:
 	 * If more than one command set for the menu - commands will be executed one by one
 	 * XUPProjectItem remembers create QAction's and deletes it by uninstallCommands()
 	 */
-	virtual void addCommand( pCommand& cmd, const QString& mnu );
 	void addSeparator( const QString& mnu );
-	void addCommands( const QString& mnu, const QString& text, pCommandList& cmds );
+	void addCommands( const QString& mnu, const QList<pCommand>& cmds );
+	virtual void addCommand( const QString& mnu, const pCommand& cmd );
 	
 	// return the cache backend used by  cache()
 	virtual XUPProjectItemCacheBackend* cacheBackend() const;
@@ -152,7 +152,8 @@ protected:
 	
 protected slots:
 	// Common handler for actions, which execute pCommand. Does few checks, then executes pCommand
-	void internal_projectCustomActionTriggered();
+	// Can be overrided if needed.
+	virtual void projectCustomActionTriggered();
 };
 
 #endif // XUPPROJECTITEM_H

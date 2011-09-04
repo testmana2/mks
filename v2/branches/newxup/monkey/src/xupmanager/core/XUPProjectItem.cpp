@@ -11,6 +11,7 @@
 #include "XUPProjectItemCache.h"
 #include "pFileManager.h"
 #include "UIXUPEditor.h"
+#include "pCommand.h"
 
 #include <pQueuedMessageToolBar.h>
 
@@ -488,29 +489,10 @@ bool XUPProjectItem::save()
 	return result;
 }
 
-QString XUPProjectItem::targetFilePath( bool allowToAskUser, XUPProjectItem::TargetType type )
+QString XUPProjectItem::targetFilePath( XUPProjectItem::TargetType type )
 {
-	Q_UNUSED( allowToAskUser );
 	Q_UNUSED( type );
 	return XUPProjectItemHelper::projectSettingsValue( this, "MAIN_FILE" );
-}
-
-void XUPProjectItem::addCommands( const QString& mnu, const QString& text, pCommandList& cmds )
-{
-	// create action
-	QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( text ) , text );
-	action->setStatusTip( text );
-	
-	// set action custom data contain the command to execute
-	action->setData( QVariant::fromValue( cmds ) );
-	
-	// connect to signal
-	connect( action, SIGNAL( triggered() ), this, SLOT( internal_projectCustomActionTriggered() ) );
-	
-	// update menu visibility
-	MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
-	
-	mInstalledActions << action;
 }
 
 void XUPProjectItem::addSeparator( const QString& mnu )
@@ -521,11 +503,26 @@ void XUPProjectItem::addSeparator( const QString& mnu )
 	mInstalledActions << action;
 }
 
-void XUPProjectItem::addCommand( pCommand& cmd, const QString& mnu )
+void XUPProjectItem::addCommands( const QString& mnu, const QList<pCommand>& cmds )
 {
-	pCommandList cmds;
-	cmds << cmd;
-	return addCommands( mnu, cmd.text(), cmds);
+	foreach ( const pCommand& cmd, cmds ) {
+		addCommand( mnu, cmd );
+	}
+}
+
+void XUPProjectItem::addCommand( const QString& mnu, const pCommand& cmd )
+{
+	QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( cmd.text() ), cmd.text() );
+	
+	action->setStatusTip( cmd.text() );
+	action->setData( QVariant::fromValue( cmd ) );
+	
+	mInstalledActions << action;
+	
+	connect( action, SIGNAL( triggered() ), this, SLOT( projectCustomActionTriggered() ) );
+	
+	// update menu visibility
+	MonkeyCore::mainWindow()->menu_CustomAction_aboutToShow();
 }
 
 void XUPProjectItem::installCommands()
@@ -533,11 +530,7 @@ void XUPProjectItem::installCommands()
 	const MenuCommandListMap commands = XUPProjectItemHelper::projectCommands( this );
 	
 	foreach ( const QString& menu, commands.keys() ) {
-		foreach ( pCommand command, commands[ menu ] ) {
-			if ( !menu.isEmpty() ) {
-				addCommand( command, menu );
-			}
-		}
+		addCommands( menu, commands[ menu ] );
 	}
 }
 
@@ -645,47 +638,33 @@ UIXUPEditor* XUPProjectItem::newEditDialog() const
 	return new UIXUPEditor( MonkeyCore::mainWindow() );
 }
 
-void XUPProjectItem::internal_projectCustomActionTriggered()
+void XUPProjectItem::projectCustomActionTriggered()
 {
 	QAction* action = qobject_cast<QAction*>( sender() );
-	Q_ASSERT(action);
 	
-	if ( action )
-	{
-		// save project files
-		if ( pMonkeyStudio::saveFilesOnCustomAction() )
-		{
-			MonkeyCore::workspace()->fileSaveAll_triggered();
-		}
-		
-		pCommandList cmds = action->data().value<pCommandList>();
-		
-		foreach ( pCommand cmd, cmds )
-		{
-			cmd = MonkeyCore::consoleManager()->processCommand( cmd );
-			
-			if (cmd.executableCheckingEnabled())
-			{
-				QString fileName = cmd.project()->filePath( cmd.command() );
-				QString workDir = cmd.workingDirectory();
-				const QFileInfo fileInfo( fileName );
-				
-				// if not exists ask user to select one
-				if ( !fileInfo.exists() )
-				{
-					QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Executable file not found" ), tr( "Target '%1' does not exists" ).arg( fileName ) );
-					return;
-				}
-				
-				if ( !fileInfo.isExecutable() )
-				{
-					QMessageBox::critical( MonkeyCore::mainWindow(), tr( "Can't execute target" ), tr( "Target '%1' is not an executable" ).arg( fileName ) );
-					return;
-				}
-			}
-			
-			MonkeyCore::consoleManager()->addCommand( cmd );
-		
-		}
+	if ( !action ) {
+		return;
+	}
+	
+	// save opened files
+	if ( pMonkeyStudio::saveFilesOnCustomAction() ) {
+		MonkeyCore::workspace()->fileSaveAll_triggered();
+	}
+	
+	const pCommand acmd = action->data().value<pCommand>();
+	
+	if ( !acmd.isValid() ) {
+		return;
+	}
+	
+	pCommand::List cmds = acmd.childCommands();
+	
+	if ( acmd.childCommands().isEmpty() ) {
+		cmds << acmd;
+	}
+	
+	foreach ( pCommand cmd, cmds ) {
+		cmd = MonkeyCore::consoleManager()->processCommand( cmd );
+		MonkeyCore::consoleManager()->addCommand( cmd );
 	}
 }

@@ -39,7 +39,7 @@
 
 using namespace pMonkeyStudio;
 
-UIAdditionalCommandsSettings::UIAdditionalCommandsSettings( BasePlugin* p, const pCommandList& d, const pCommandList& c, QWidget* w )
+UIAdditionalCommandsSettings::UIAdditionalCommandsSettings( BasePlugin* p, const pCommand::List& d, const pCommand::List& c, QWidget* w )
 	: QWidget( w ), mPlugin( p ), mUpdating( false )
 {
 	Q_ASSERT( mPlugin );

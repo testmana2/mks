@@ -48,7 +48,7 @@ protected:
 	QHash<QString, int> mMenusOrder;
 	MenuCommandListMap mCommands;
 	
-	void addCommands( const QString& menu, const pCommandList& commands );
+	void addCommands( const QString& menu, const pCommand::List& commands );
 };
 
 #endif // CommandsEDITORMODEL_H

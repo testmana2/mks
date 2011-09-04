@@ -11,7 +11,7 @@ class XUPItem;
 class XUPProjectItem;
 class XUPDynamicFolderItem;
 
-typedef QMap<QString, pCommandList> MenuCommandListMap;
+typedef QMap<QString, pCommand::List> MenuCommandListMap;
 
 struct Q_MONKEY_EXPORT XUPDynamicFolderSettings
 {

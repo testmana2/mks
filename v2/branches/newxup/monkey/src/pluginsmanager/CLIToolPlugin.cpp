@@ -62,15 +62,15 @@ QWidget* CLIToolPlugin::settingsWidget()
 }
 
 
-pCommandList CLIToolPlugin::defaultCommands() const
+pCommand::List CLIToolPlugin::defaultCommands() const
 {
-	return pCommandList();
+	return pCommand::List();
 }
 
-pCommandList CLIToolPlugin::userCommands() const
+pCommand::List CLIToolPlugin::userCommands() const
 {
 	// commands list
-	pCommandList cmds;
+	pCommand::List cmds;
 	// get settings object
 	pSettings* settings = MonkeyCore::settings();
 	
@@ -103,7 +103,7 @@ pCommandList CLIToolPlugin::userCommands() const
 	return cmds;
 }
 
-void CLIToolPlugin::setUserCommands( const pCommandList& cmds ) const
+void CLIToolPlugin::setUserCommands( const pCommand::List& cmds ) const
 {
 	// get settings object
 	pSettings* settings = MonkeyCore::settings();

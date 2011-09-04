@@ -155,7 +155,7 @@ AbstractCommandParser* pConsoleManager::getParser(const QString& name)
 */
 QString pConsoleManager::quotedString( const QString& s )
 {
-	if ( s.contains( " " ) && !s.startsWith( '"' ) /*&& !s.endsWith( '"' )*/ )
+	if ( s.contains( " " ) && !s.startsWith( '"' ) && !s.endsWith( '"' ) )
 	{
 		return QString( s ).prepend( '"' ).append( '"' );
 	}
@@ -225,6 +225,7 @@ QString pConsoleManager::variablesHelp()
 		"<b>Console Manager Variables</b><br><br>"
 		"<b>$cpp$</b> : Current project path<br>"
 		"<b>$cp$</b> : Current project filepath<br>"
+		"<b>$target$</b> : Current project target"
 		"<b>$cfp$</b> : Current tab path<br>"
 		"<b>$cf$</b> : Current tab filepath<br>"
 		"<b>$cip$</b> : Current item path<br>"
@@ -400,9 +401,9 @@ void pConsoleManager::addCommand( const pCommand& c )
 	Add list of command for executing
 	\param l List of commands
 */
-void pConsoleManager::addCommands( const pCommandList& l )
+void pConsoleManager::addCommands( const pCommand::List& l )
 {
-	foreach ( pCommand c, l )
+	foreach ( const pCommand& c, l )
 		addCommand( c );
 }
 
@@ -421,7 +422,7 @@ void pConsoleManager::removeCommand( const pCommand& c )
 	Remove list of commands from list for executing
 	\param l List of commands
 */
-void pConsoleManager::removeCommands( const pCommandList& l )
+void pConsoleManager::removeCommands( const pCommand::List& l )
 {
 	foreach ( pCommand c, l )
 		removeCommand( c );
@@ -437,12 +438,34 @@ void pConsoleManager::executeProcess()
 		// if last was error, cancel this one if it want to
 		if ( c.skipOnError() && QProcess::error() != QProcess::UnknownError )
 		{
-			// emit command skipped
 			emit commandSkipped( c );
-			// remove command from command to execute
 			removeCommand( c );
-			// execute next
 			continue;
+		}
+		
+		// some check to taget file path if needed
+		if ( c.executableCheckingType() != XUPProjectItem::NoTarget ) {
+			if ( !c.project() && !c.command().contains( "$target$" ) ) {
+				emit commandSkipped( c );
+				removeCommand( c );
+				continue;
+			}
+			
+			if ( c.command().contains( "$target$" ) ) {
+				const QString filePath = c.project()->targetFilePath( XUPProjectItem::TargetType( c.executableCheckingType() ) );
+				
+				if ( filePath.isEmpty() ) {
+					emit commandSkipped( c );
+					removeCommand( c );
+					continue;
+				}
+				
+				c.setCommand( c.command().replace( "$target$", quotedString( filePath ) ) );
+				
+				if ( c.workingDirectory().isEmpty() ) {
+					c.setWorkingDirectory( QFileInfo( filePath ).absolutePath() );
+				}
+			}
 		}
 
 		// set current parsers list
@@ -450,17 +473,21 @@ void pConsoleManager::executeProcess()
 		mCurrentParsers = c.parsers();
 		
 		// check if need tryall, and had all other parsers if needed at end
-		if ( c.tryAllParsers() )
-			foreach ( QString s, parsersName() )
-				if ( !mCurrentParsers.contains( s ) )
+		if ( c.tryAllParsers() ) {
+			foreach ( const QString& s, parsersName() ) {
+				if ( !mCurrentParsers.contains( s ) ) {
 					mCurrentParsers << s;
+				}
+			}
+		}
+		
 		// execute command
 		mStopAttempt = 0;
 		setWorkingDirectory( c.workingDirectory() );
 		
 		QStringList variables = mEnvironmentVariablesManager.variables( false );
 		
-		// unset some variables environments when no parsers is defined
+		// unset some variables environments when parsers is defined
 		if ( !mCurrentParsers.isEmpty() )
 		{
 			const int index = variables.indexOf( QRegExp( "^LANG=.*$" ) );

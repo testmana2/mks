@@ -41,9 +41,9 @@ public:
 	virtual QWidget* settingsWidget();
 	virtual pCommand defaultCommand() const = 0;
 	
-	virtual pCommandList defaultCommands() const;
-	virtual pCommandList userCommands() const;
-	virtual void setUserCommands( const pCommandList& cmds ) const;
+	virtual pCommand::List defaultCommands() const;
+	virtual pCommand::List userCommands() const;
+	virtual void setUserCommands( const pCommand::List& cmds ) const;
 	virtual QWidget* additionalCommandsSettingsWidget();
 	virtual QStringList availableParsers() const;
 };
