@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>342</width>
-    <height>403</height>
+    <width>340</width>
+    <height>401</height>
    </rect>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -218,6 +218,15 @@
    </property>
    <property name="text">
     <string>Generate Fake Project</string>
+   </property>
+  </action>
+  <action name="aChildInfos">
+   <property name="icon">
+    <iconset resource="../../../../monkey/src/resources/resources.qrc">
+     <normaloff>:/xupeditor/icons/xupeditor/about.png</normaloff>:/xupeditor/icons/xupeditor/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>Child Infos</string>
    </property>
   </action>
  </widget>
