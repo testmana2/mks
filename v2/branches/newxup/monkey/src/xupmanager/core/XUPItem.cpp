@@ -282,7 +282,7 @@ QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSig
 	// inform model of add
 	XUPProjectModel* m = model();
 	
-	const int count = childCount();
+	const int count = mDomElement.childNodes().count();
 	
 	if ( !stringType.isEmpty() && row <= count ) {
 		// begin insert
@@ -296,7 +296,7 @@ QDomElement XUPItem::addChildElement( XUPItem::Type type, int& row, bool emitSig
 		
 		foreach ( const int& key, rows ) {
 			if ( key >= row ) {
-				mChildItems[ key +1 ] = mChildItems[ key ];
+				mChildItems[ key +1 ] = mChildItems.take( key );
 			}
 		}
 		
