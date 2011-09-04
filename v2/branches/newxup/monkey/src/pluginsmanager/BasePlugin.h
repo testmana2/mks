@@ -75,6 +75,7 @@ public:
 			Type = BasePlugin::iAll;
 			FirstStartEnabled = false;
 			HaveSettingsWidget = false;
+			Pixmap = pIconManager::pixmap( "monkey2.png", ":/application" );
 			ApplicationVersionRequired = PACKAGE_VERSION;
 		}
 		
