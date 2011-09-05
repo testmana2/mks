@@ -17,7 +17,7 @@ void AppDebug::fillPluginInfos()
 	mPluginInfos.Type = BasePlugin::iBase;
 	mPluginInfos.Name = PLUGIN_NAME;
 	mPluginInfos.Version = "0.5.0";
-	mPluginInfos.FirstStartEnabled = true;
+	mPluginInfos.FirstStartEnabled = false;
 	mPluginInfos.HaveSettingsWidget = false;
 	mPluginInfos.Pixmap = pIconManager::pixmap( "AppDebug.png", ":/icons" );
 }
