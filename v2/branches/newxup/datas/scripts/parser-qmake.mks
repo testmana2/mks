@@ -1,20 +1,14 @@
-# This command allows to add and remove console output parsing patterns. Usage:
-# parser add <name> <regular expression> <file name> <column> <row> <pattern type> <pattern text> <full text>
+# It is a machine generated file. Do not edit it manualy!
 
-# missing file
-# WARNING: Failure to find: test.JKL
-
-parser add "QMake" "WARNING: Failure to find:\s+(.*)" "" "-1" "-1" "error" "File not found \"%1\"" "%0"
-
-# message
-# Project MESSAGE: test de brun
-
-parser add "QMake" "Project MESSAGE:\s+(.*)" "" "-1" "-1" "warning" "%1" "%0"
-
-# reading project file
-# Reading /home/pasnox/Temporaire/qtsol/sub1/sub1.pro
-
-parser add "QMake" "Reading\s+(.*)" "%1" "-1" "-1" "warning" "%0" "%0"
-
-# qrc error
-# src/resources/resources.qrc: Warning: potential duplicate alias detected: 'license.gpl'
+# WARNING: Failure to find file
+parser add "QMake" "^WARNING:\s+(Failure to find:\s+([^\n]+))" "%2" "-1" "-1" "error" "%1" "%0"
+		
+# Project MESSAGE
+parser add "QMake" "^Project MESSAGE:\s+([^\n]+)" "" "-1" "-1" "warning" "%1" "%0"
+		
+# Reading
+parser add "QMake" "^\s*Reading\s+([^\n]+)" "%1" "-1" "-1" "warning" "%0" "%0"
+		
+# Warning: potential duplicate alias detected
+parser add "QMake" "^([^\n]+):\s+Warning:\s+(potential duplicate alias detected:\s+'[^\n]+')" "%1" "-1" "-1" "warning" "%2" "%0"
+		
