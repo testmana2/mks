@@ -99,13 +99,13 @@ public slots:
 	pAbstractChild* openFile( const QString& fileName, const QString& codec, bool asText = false );
 	void closeFile( const QString& fileName );
 	void goToLine( const QString& fileName, const QPoint& position, const QString& codec, int selectionLength = 0 );
-	void openProject( const QString& fileName, const QString& codec );
+	bool openProject( const QString& fileName, const QString& codec );
 	/** Open source file or project in the MkS.
 	 * If file name is a project - it is opened as a project, otherwise - as source file
 	 * \param fileName File name
 	 * \param codec File codec
 	 */	
-	void open( const QString& fileName, const QString& codec );
+	bool open( const QString& fileName, const QString& codec );
 
 signals:
 	// files
