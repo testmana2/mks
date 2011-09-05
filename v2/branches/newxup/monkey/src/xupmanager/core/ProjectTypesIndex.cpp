@@ -194,6 +194,10 @@ bool ProjectTypesIndex::fileIsAProject( const QString& fileName ) const
 {
 	foreach ( const QString& projectType, mFilters.keys() ) {
 		foreach ( const DocumentFilter& filter, *( mFilters[ projectType ] ) ) {
+			if ( filter.type != DocumentFilter::Project ) {
+				continue;
+			}
+			
 			if ( QDir::match( filter.filters, fileName ) ) {
 				return true;
 			}

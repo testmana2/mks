@@ -472,92 +472,59 @@ QString pFileManager::currentItemPath() const
 
 void pFileManager::fileOpen_triggered()
 {
-	QString filter = pMonkeyStudio::availableFilesFilter(); // get available filters
+	const QString filter = pMonkeyStudio::availableFilesFilter(); // get available filters
 	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
 	
-	if ( path.isEmpty() )
-	{
+	if ( path.isEmpty() ) {
 		XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
 		path = curProject ? curProject->path() : pMonkeyStudio::defaultProjectsDirectory();
 	}
 	
 	// show filedialog to user
-	pFileDialogResult result = MkSFileDialog::getOpenFileNames( true, MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, filter, true );
+	const pFileDialogResult result = MkSFileDialog::getOpenFileNames( true, MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, filter, true );
 
 	// open open file dialog
 	const QStringList fileNames = result[ "filenames" ].toStringList();
 	
 	// return 0 if user cancel
-	if ( fileNames.isEmpty() )
-	{
+	if ( fileNames.isEmpty() ) {
 		return;
 	}
 
 	// for each entry, open file
-	foreach ( const QString& file, fileNames )
-	{
-		if (MonkeyCore::projectTypesIndex()->fileIsAProject( file ))
-		{
-			if (MonkeyCore::projectsManager()->openProject( file, result[ "codec" ].toString() ))
-			{
-				// append file to recents
-				MonkeyCore::recentsManager()->addRecentProject( file );
-			}
-			else
-			{
-				// remove it from recents files
-				MonkeyCore::recentsManager()->removeRecentProject( file );
-			}
-		}
-		else
-		{
-			if ( openFile( file, result[ "codec" ].toString() ) )
-			{
-				// append file to recents
-				MonkeyCore::recentsManager()->addRecentFile( file );
-			}
-			else
-			{
-				// remove it from recents files
-				MonkeyCore::recentsManager()->removeRecentFile( file );
-			}
-		}
+	foreach ( const QString& file, fileNames ) {
+		open( file, result[ "codec" ].toString() );
 	}
 }
 
 void pFileManager::fileOpenText_triggered()
 {
-	QString filter = pMonkeyStudio::availableFilesFilter(); // get available filters
+	const QString filter = pMonkeyStudio::availableFilesFilter(); // get available filters
 	QString path = MonkeyCore::fileManager()->currentDocumentFile(); // path to show
 	
-	if ( path.isEmpty() )
-	{
+	if ( path.isEmpty() ) {
 		XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
 		path = curProject ? curProject->path() : pMonkeyStudio::defaultProjectsDirectory();
 	}
 	
 	// show filedialog to user
-	pFileDialogResult result = MkSFileDialog::getOpenFileNames( true, MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, filter, true );
+	const pFileDialogResult result = MkSFileDialog::getOpenFileNames( true, MonkeyCore::mainWindow(), tr( "Choose the file(s) to open" ), path, filter, true );
 
 	// open open file dialog
 	const QStringList fileNames = result[ "filenames" ].toStringList();
 	
 	// return 0 if user cancel
-	if ( fileNames.isEmpty() )
-	{
+	if ( fileNames.isEmpty() ) {
 		return;
 	}
 
 	// for each entry, open file
-	foreach ( const QString& file, fileNames )
-	{
-		if ( openFile( file, result[ "codec" ].toString(), true ) )
-		{
+	foreach ( const QString& file, fileNames ) {
+		if ( openFile( file, result[ "codec" ].toString(), true ) ) {
 			// append file to recents
 			MonkeyCore::recentsManager()->addRecentFile( file );
 		}
-		else
-		{
+		else {
 			// remove it from recents files
 			MonkeyCore::recentsManager()->removeRecentFile( file );
 		}
@@ -567,16 +534,13 @@ void pFileManager::fileOpenText_triggered()
 pAbstractChild* pFileManager::openFile( const QString& fileName, const QString& codec, bool asText )
 {
 	// if it not exists
-	if ( !QFile::exists( fileName ) || !QFileInfo( fileName ).isFile() )
-	{
+	if ( !QFile::exists( fileName ) || !QFileInfo( fileName ).isFile() ) {
 		return 0;
 	}
 	
 	// check if file is already opened
-	foreach ( pAbstractChild* document, MonkeyCore::workspace()->documents())
-	{
-		if ( pMonkeyStudio::isSameFile( document->filePath(), fileName ) )
-		{
+	foreach ( pAbstractChild* document, MonkeyCore::workspace()->documents() ) {
+		if ( pMonkeyStudio::isSameFile( document->filePath(), fileName ) ) {
 			MonkeyCore::workspace()->setCurrentDocument( document );
 			return document;
 		}
@@ -584,14 +548,13 @@ pAbstractChild* pFileManager::openFile( const QString& fileName, const QString& 
 	
 	pAbstractChild* document = NULL;
 	
-	if ( ! asText ) // get a document interface that can handle the file
-	{
+	// get a document interface that can handle the file
+	if ( !asText ) {
 		document = MonkeyCore::pluginsManager()->documentForFileName( fileName );
 	}
 	
 	// open it with pChild (text editor) instance
-	if ( !document )
-	{
+	if ( !document ) {
 		document = new pChild;
 	}
 	
@@ -599,11 +562,9 @@ pAbstractChild* pFileManager::openFile( const QString& fileName, const QString& 
 	MonkeyCore::workspace()->handleDocument( document );
 	
 	// open file
-	if ( !document->openFile( fileName, codec ) )
-	{
+	if ( !document->openFile( fileName, codec ) ) {
 		MonkeyCore::messageManager()->appendMessage( tr( "An error occur while opening this file: '%1'" ).arg( QFileInfo( fileName ).fileName() ) );
 		MonkeyCore::workspace()->closeDocument( document );
-		
 		return 0;
 	}
 	
@@ -624,19 +585,29 @@ void pFileManager::goToLine( const QString& fileName, const QPoint& pos, const Q
 	MonkeyCore::workspace()->goToLine( fileName, pos, codec, selectionLength );
 }
 
-void pFileManager::openProject( const QString& fileName, const QString& codec )
+bool pFileManager::openProject( const QString& fileName, const QString& codec )
 {
-	MonkeyCore::projectsManager()->openProject( fileName, codec );
+	return MonkeyCore::projectsManager()->openProject( fileName, codec );
 }
 
-void pFileManager::open( const QString& fileName, const QString& codec )
+bool pFileManager::open( const QString& fileName, const QString& codec )
 {
-	if (MonkeyCore::projectTypesIndex()->fileIsAProject( fileName ))
-	{
-		MonkeyCore::projectsManager()->openProject( fileName, codec );
+	if ( MonkeyCore::projectTypesIndex()->fileIsAProject( fileName ) ) {
+		// recents projects are handled by project manager
+		return openProject( fileName, codec );
 	}
-	else
-	{
-		openFile( fileName, codec );
+	else {
+		if ( openFile( fileName, codec ) ) {
+			// append file to recents
+			MonkeyCore::recentsManager()->addRecentFile( fileName );
+			return true;
+		}
+		else {
+			// remove it from recents files
+			MonkeyCore::recentsManager()->removeRecentFile( fileName );
+			return false;
+		}
 	}
+	
+	return false;
 }
