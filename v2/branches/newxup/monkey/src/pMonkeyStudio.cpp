@@ -1396,7 +1396,7 @@ void pMonkeyStudio::setIndentationsUseTabs( bool tabs )
 	\details Return true if indentation use tabs, else false
 */
 bool pMonkeyStudio::indentationsUseTabs()
-{ return MonkeyCore::settings()->value( settingsPath() +"/IndentationsUseTabs", true ).toBool(); }
+{ return MonkeyCore::settings()->value( settingsPath() +"/IndentationsUseTabs", false ).toBool(); }
 
 /*!
 	\details Set if indent is auto detected
@@ -1409,7 +1409,7 @@ void pMonkeyStudio::setAutoDetectIndent( bool detect )
 	\details Return true if indent is auto detected, else false
 */
 bool pMonkeyStudio::autoDetectIndent()
-{ return MonkeyCore::settings()->value( settingsPath() +"/AutoDetectIndent", false ).toBool(); }
+{ return MonkeyCore::settings()->value( settingsPath() +"/AutoDetectIndent", true ).toBool(); }
 
 /*!
 	\details Set indentation width
@@ -1684,7 +1684,7 @@ void pMonkeyStudio::setAutoDetectEol( bool detect )
 { MonkeyCore::settings()->setValue( settingsPath() +"/AutoDetectEol", detect ); }
 
 bool pMonkeyStudio::autoDetectEol()
-{ return MonkeyCore::settings()->value( settingsPath() +"/AutoDetectEol", false ).toBool(); }
+{ return MonkeyCore::settings()->value( settingsPath() +"/AutoDetectEol", true ).toBool(); }
 
 void pMonkeyStudio::setWhitespaceVisibility( QsciScintilla::WhitespaceVisibility w )
 { MonkeyCore::settings()->setValue( settingsPath() +"/WhitespaceVisibility", w ); }
