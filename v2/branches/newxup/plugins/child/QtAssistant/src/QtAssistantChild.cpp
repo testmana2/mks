@@ -107,6 +107,11 @@ QtAssistantChild::~QtAssistantChild()
 	saveSession();
 }
 
+QString QtAssistantChild::fileBuffer() const
+{
+	return QString::null;
+}
+
 QString QtAssistantChild::context() const
 {
 	return PLUGIN_NAME;
@@ -368,6 +373,11 @@ void QtAssistantChild::closeFile()
 void QtAssistantChild::reload()
 {
 	emit fileReloaded();
+}
+
+void QtAssistantChild::setFileBuffer( const QString& content )
+{
+	Q_UNUSED( content );
 }
 
 void QtAssistantChild::printFile()
