@@ -153,17 +153,21 @@ pFileDialogResult MkSFileDialog::getExistingDirectory( bool useRecents, QWidget*
 
 pFileDialogResult MkSFileDialog::getNewEditorFile( QWidget* parent )
 {
-	pFileDialogResult result;
-	XUPProjectModel* model = MonkeyCore::projectsManager()->currentProjectModel();
-	XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
+	const XUPProjectItem* curProject = MonkeyCore::projectsManager()->currentProject();
 	const QString caption = tr( "New File Name..." );
 	const QString filter = pMonkeyStudio::availableFilesFilter();
-	const QString path = MonkeyCore::fileManager()->currentDocumentFile();
 	const bool enabledTextCodec = true;
+	const QString codec = curProject ? curProject->codec() : pMonkeyStudio::defaultCodec();
+	QString path = MonkeyCore::fileManager()->currentDocumentFile();
+	pFileDialogResult result;
+	
+	if ( path.isEmpty() && curProject ) {
+		path = curProject->path();
+	}
 	
 	MkSFileDialog fd( parent );
 	setSaveFileNameDialog( &fd, caption, path, filter, enabledTextCodec, 0, 0 );
-	fd.setTextCodec( pMonkeyStudio::defaultCodec() );
+	fd.setTextCodec( codec );
 	
 	if ( fd.exec() == QDialog::Accepted ) {
 		result[ "filename" ] = fd.selectedFiles().value( 0 );
