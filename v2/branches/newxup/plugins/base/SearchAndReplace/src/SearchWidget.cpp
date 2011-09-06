@@ -836,15 +836,7 @@ void SearchWidget::replaceThread_stateChanged()
 void SearchWidget::replaceThread_openedFileHandled( const QString& fileName, const QString& content, const QString& codec )
 {
 	pAbstractChild* document = MonkeyCore::fileManager()->openFile( fileName, codec );
-	pEditor* editor = document->editor();
-
-	Q_ASSERT( editor );
-
-	editor->beginUndoAction();
-	editor->selectAll();
-	editor->removeSelectedText();
-	editor->insert( content );
-	editor->endUndoAction();
+	document->setFileBuffer( content );
 }
 
 void SearchWidget::replaceThread_error( const QString& error )
