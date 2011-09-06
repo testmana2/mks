@@ -242,6 +242,15 @@ void pChild::reload()
 	emit fileReloaded();
 }
 
+void pChild::setFileBuffer( const QString& content )
+{
+	mEditor->beginUndoAction();
+	mEditor->selectAll();
+	mEditor->removeSelectedText();
+	mEditor->insert( content );
+	mEditor->endUndoAction();
+}
+
 void pChild::printFile()
 {
 	mEditor->print();
