@@ -162,8 +162,11 @@ void FormResizer::resizeEvent(QResizeEvent *event)
 
 QSize FormResizer::decorationSize() const
 {
-    const int margin = 2 * SELECTION_MARGIN + 2 * m_frame->lineWidth();
-    return QSize(margin, margin);
+    const QMargins frameMargins = m_frame->contentsMargins();
+    const int margin = 2 * SELECTION_MARGIN /*+ 2 * m_frame->lineWidth()*/;
+    QSize size = QSize( margin, margin );
+    size += QSize( frameMargins.left() +frameMargins.right(), frameMargins.top() +frameMargins.bottom() );
+    return size;
 }
 
 QWidget *FormResizer::mainContainer()
