@@ -16,6 +16,10 @@ XUPProjectItemCacheBackend::XUPProjectItemCacheBackend( XUPProjectItemCache* cac
 	mCache = cache;
 }
 
+XUPProjectItemCacheBackend::~XUPProjectItemCacheBackend()
+{
+}
+
 QStringList XUPProjectItemCacheBackend::guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const
 {
 	if ( !mCache ) {

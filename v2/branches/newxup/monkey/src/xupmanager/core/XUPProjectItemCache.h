@@ -14,6 +14,7 @@ class Q_MONKEY_EXPORT XUPProjectItemCacheBackend
 {
 public:
 	XUPProjectItemCacheBackend( XUPProjectItemCache* cache = 0 );
+	virtual ~XUPProjectItemCacheBackend();
 	
 	// return the content of a variable
 	virtual QStringList guessedVariable( XUPProjectItem* project, XUPProjectItem* variableProject, const QString& variable ) const;
