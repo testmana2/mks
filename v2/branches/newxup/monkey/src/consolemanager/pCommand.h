@@ -64,6 +64,7 @@ public:
 		mTryAllParsers = false;
 		mProject = 0;
 		mExecutableCheckingType = XUPProjectItem::NoTarget;
+		mId = -1;
 	}
 	
 	pCommand( const QString& t, const QString& c, const QString& a, bool b = false, const QStringList& p = QStringList(), const QString& d = QString::null, bool bb = false )
@@ -77,6 +78,7 @@ public:
 		mTryAllParsers = bb;
 		mProject = 0;
 		mExecutableCheckingType = XUPProjectItem::NoTarget;
+		mId = -1;
 	}
 	~pCommand() {}
 	
@@ -101,7 +103,7 @@ public:
 	{ return mText == t.mText && mCommand == t.mCommand && mArguments == t.mArguments &&
 			mWorkingDirectory == t.mWorkingDirectory && mParsers == t.mParsers && mSkipOnError == t.mSkipOnError &&
 			mTryAllParsers == t.mTryAllParsers && mUserData == t.mUserData && mProject == t.mProject &&
-			mExecutableCheckingType == t.mExecutableCheckingType
+			mExecutableCheckingType == t.mExecutableCheckingType && mId == t.mId
 		;
 	}
 
@@ -119,7 +121,8 @@ public:
 	   File searched in the working dirrectory.
 	   This parameter could be usable for execute project targets
 	 */
-	int executableCheckingType() { return mExecutableCheckingType; };
+	int executableCheckingType() { return mExecutableCheckingType; }
+	int id() const { return mId; }
 
 	void setText( const QString& s ) { mText = s; }
 	void setCommand( const QString& s ) { mCommand = s; }
@@ -138,7 +141,8 @@ public:
 	   File searched in the working dirrectory.
 	   This parameter could be usable for execute project targets
 	 */
-	void setExecutableCheckingType( int type ) { mExecutableCheckingType = type; };
+	void setExecutableCheckingType( int type ) { mExecutableCheckingType = type; }
+	void setId( int id ) { mId = id; }
 	
 	QString toString() const
 	{
@@ -153,6 +157,7 @@ public:
 		s += QString( "mUserData: %1\n" ).arg( mUserData.toString() );
 		s += QString( "mProject: %1\n" ).arg( (quintptr)mProject.data() );
 		s += QString( "mExecutableCheckingType: %1" ).arg( mExecutableCheckingType );
+		s += QString( "mId: %1" ).arg( mId );
 		return s;
 	}
 	
@@ -171,6 +176,7 @@ protected:
 	pCommand::List mChildCommands;				/**< This command is a fake command executing the child commands */
 	QVariant mUserData;							/**< User custom placeholder to stock customdata, currently it's internally used to store commands map */
 	int mExecutableCheckingType;				/**< Warn user, if executable file does not exist and propose to select a file */
+	int mId;									/**< An id for the command */
 };
 
 Q_DECLARE_METATYPE( pCommand );
