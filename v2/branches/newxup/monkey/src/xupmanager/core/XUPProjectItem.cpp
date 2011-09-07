@@ -500,7 +500,7 @@ void XUPProjectItem::addSeparator( const QString& mnu )
 	static int i = 0;
 	QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( QString( "*separator%1*" ).arg( i++ ) ) );
 	action->setSeparator( true );
-	mInstalledActions << action;
+	mInstalledActions[ -i ] = action;
 }
 
 void XUPProjectItem::addCommands( const QString& mnu, const QList<pCommand>& cmds )
@@ -510,14 +510,35 @@ void XUPProjectItem::addCommands( const QString& mnu, const QList<pCommand>& cmd
 	}
 }
 
+pCommand XUPProjectItem::command( int id ) const
+{
+	return mCommands.value( id );
+}
+
+pCommand XUPProjectItem::command( QAction* action ) const
+{
+	return action->data().value<pCommand>();
+}
+
 void XUPProjectItem::addCommand( const QString& mnu, const pCommand& cmd )
 {
+	if ( ( mCommands.contains( cmd.id() ) && cmd.id() != -1 ) || !cmd.isValid() ) {
+		return;
+	}
+	
+	static int i = 0;
 	QAction* action = MonkeyCore::menuBar()->action( QString( "%1/%2" ).arg( mnu ).arg( cmd.text() ), cmd.text() );
+	pCommand c = cmd;
 	
-	action->setStatusTip( cmd.text() );
-	action->setData( QVariant::fromValue( cmd ) );
+	if ( c.id() == -1 ) {
+		c.setId( i++ );
+	}
 	
-	mInstalledActions << action;
+	action->setStatusTip( c.text() );
+	action->setData( QVariant::fromValue( c ) );
+	
+	mCommands[ c.id() ] = c;
+	mInstalledActions[ c.id() ] = action;
 	
 	connect( action, SIGNAL( triggered() ), this, SLOT( projectCustomActionTriggered() ) );
 	
@@ -536,6 +557,7 @@ void XUPProjectItem::installCommands()
 
 void XUPProjectItem::uninstallCommands()
 {
+	mCommands.clear();
 	qDeleteAll( mInstalledActions );
 	mInstalledActions.clear();
 
@@ -638,20 +660,21 @@ UIXUPEditor* XUPProjectItem::newEditDialog() const
 	return new UIXUPEditor( MonkeyCore::mainWindow() );
 }
 
+void XUPProjectItem::executeCommand( int id )
+{
+	mInstalledActions.value( id )->trigger();
+}
+
 void XUPProjectItem::projectCustomActionTriggered()
 {
 	QAction* action = qobject_cast<QAction*>( sender() );
-	
-	if ( !action ) {
-		return;
-	}
 	
 	// save opened files
 	if ( pMonkeyStudio::saveFilesOnCustomAction() ) {
 		MonkeyCore::workspace()->fileSaveAll_triggered();
 	}
 	
-	const pCommand acmd = action->data().value<pCommand>();
+	const pCommand acmd = command( action );
 	
 	if ( !acmd.isValid() ) {
 		return;

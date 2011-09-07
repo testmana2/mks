@@ -127,6 +127,9 @@ public:
 	 */
 	void addSeparator( const QString& mnu );
 	void addCommands( const QString& mnu, const QList<pCommand>& cmds );
+	pCommand command( int id ) const;
+	pCommand command( QAction* action ) const;
+	void executeCommand( int id );
 	virtual void addCommand( const QString& mnu, const pCommand& cmd );
 	
 	// return the cache backend used by  cache()
@@ -144,7 +147,8 @@ protected:
 	QString mCodec;
 	QString mFileName;
 	// Action pointers stored here for delete it, when current project changed
-	QList<QAction*> mInstalledActions;
+	QHash<int, QAction*> mInstalledActions;
+	QHash<int, pCommand> mCommands; // project installed commands by id pCommand::id()
 	static XUPProjectItemCache mProjectsCache;
 	static XUPProjectItemCacheBackend mProjectsCacheBackend;
 	
