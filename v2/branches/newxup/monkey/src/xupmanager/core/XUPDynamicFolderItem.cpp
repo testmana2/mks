@@ -2,8 +2,8 @@
 #include "XUPProjectItem.h"
 #include "XUPProjectModel.h"
 #include "XUPProjectItemHelper.h"
+#include "FileSystemModel.h"
 
-#include <QFileSystemModel>
 #include <QDebug>
 
 class XUPDynamicFolderChildItem : public XUPItem
@@ -116,7 +116,7 @@ public:
 
 protected:
 	XUPDynamicFolderItem* mDynamicFolderItem;
-	QFileSystemModel* mFSModel;
+	FileSystemModel* mFSModel;
 	QPersistentModelIndex mFSIndex;
 	
 	XUPDynamicFolderChildItem( XUPDynamicFolderItem* dynamicFolderItem, const QPersistentModelIndex& fsIndex, XUPItem* parent )
@@ -139,7 +139,7 @@ protected:
 XUPDynamicFolderItem::XUPDynamicFolderItem( const QDomElement& node, XUPItem* parent )
 	: QObject( parent->project() ), XUPItem( node, parent )
 {
-	mFSModel = new QFileSystemModel( this );
+	mFSModel = new FileSystemModel( this );
 	mFSModel->setNameFilterDisables( false );
 	
 	connect( mFSModel, SIGNAL( columnsAboutToBeInserted( const QModelIndex&, int, int ) ), this, SLOT( columnsAboutToBeInserted( const QModelIndex&, int, int ) ) );

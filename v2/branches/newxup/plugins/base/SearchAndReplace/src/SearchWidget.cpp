@@ -15,11 +15,11 @@
 #include <pEditor.h>
 #include <pQueuedMessageToolBar.h>
 #include <pMenuBar.h>
+#include <FileSystemModel.h>
 
 #include <QTextCodec>
 #include <QFileDialog>
 #include <QCompleter>
-#include <QDirModel>
 #include <QPainter>
 #include <QStatusBar>
 #include <QProgressBar>
@@ -36,10 +36,10 @@ SearchWidget::SearchWidget( SearchAndReplace* plugin, QWidget* parent )
 	setupUi( this );
 	cbSearch->completer()->setCaseSensitivity( Qt::CaseSensitive );
 	cbReplace->completer()->setCaseSensitivity( Qt::CaseSensitive );
-	QDirModel* fsModel = new QDirModel( this );
-	fsModel->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
+	FileSystemModel* fsModel = new FileSystemModel( this );
+	fsModel->setFilter( QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot );
+	fsModel->setRootPath( QString::null );
 	cbPath->lineEdit()->setCompleter( new QCompleter( fsModel ) );
-#warning QDirModel is deprecated but QCompleter does not yet handle QFileSystemModel - please update when possible.
 	cbMask->completer()->setCaseSensitivity( Qt::CaseSensitive );
 	pbSearchStop->setVisible( false );
 	pbReplaceCheckedStop->setVisible( false );

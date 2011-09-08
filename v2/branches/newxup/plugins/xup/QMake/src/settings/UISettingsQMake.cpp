@@ -4,10 +4,10 @@
 #include "../QtVersionManager.h"
 
 #include <pGenericTableModel.h>
+#include <FileSystemModel.h>
 
 #include <QPushButton>
 #include <QDir>
-#include <QFileSystemModel>
 #include <QDirModel>
 #include <QCompleter>
 #include <QMessageBox>
@@ -42,13 +42,11 @@ UISettingsQMake::UISettingsQMake( QWidget* parent )
 	ui->lwPages->setCurrentRow( 0 );
 	
 	// completer of paths
-#ifdef Q_CC_GNU
-	#warning *** USING QDirModel is deprecated but QCompleter does not handle QFileSystemModel... please fix me when possible.
-#endif
 	QCompleter* completer = new QCompleter( ui->leQtVersionPath );
-	QDirModel* model = new QDirModel( completer );
-	
-	model->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::Readable );
+	FileSystemModel* model = new FileSystemModel( completer );
+	model->setRootPath( QString::null );
+	model->setShowHiddenFiles( true );
+	model->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden );
 	completer->setModel( model );
 	ui->leQtVersionPath->setCompleter( completer );
 }
