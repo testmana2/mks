@@ -194,7 +194,7 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* _scope )
 	}
 	
 	if ( !notImported.isEmpty() ) {
-		showError( tr( "Don't know how to add files:\n" ).arg( notImported.join( "\n" ) ) );
+		showError( tr( "Don't know how to add files:\n%1" ).arg( notImported.join( "\n" ) ) );
 	}
 }
 
