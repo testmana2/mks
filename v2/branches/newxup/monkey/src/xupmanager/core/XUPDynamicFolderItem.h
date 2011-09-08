@@ -7,7 +7,7 @@
 
 #include "XUPItem.h"
 
-class QFileSystemModel;
+class FileSystemModel;
 
 class Q_MONKEY_EXPORT XUPDynamicFolderItem : public QObject, public XUPItem
 {
@@ -29,7 +29,7 @@ public:
 	void setRootPath( const QString& path, const QStringList& filters );
 
 protected:
-	QFileSystemModel* mFSModel;
+	FileSystemModel* mFSModel;
 	QPersistentModelIndex mFSRootIndex;
 	QHash<QPersistentModelIndex, XUPItem*> mFSItems; // fs persistent index, item
 

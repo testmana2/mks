@@ -40,6 +40,7 @@
 #include <pMonkeyStudio.h>
 #include <pDockWidgetTitleBar.h>
 #include <pIconManager.h>
+#include <FileSystemModel.h>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -47,7 +48,6 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QListView>
-#include <QFileSystemModel>
 #include <QScrollArea>
 #include <QTabWidget>
 #include <QTreeView>
@@ -134,9 +134,10 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	vl->addWidget( hline );
 	
 	// dir model
-	mDirsModel = new QFileSystemModel( this );
+	mDirsModel = new FileSystemModel( this );
 	mDirsModel->setNameFilterDisables( false );
-	mDirsModel->setFilter( QDir::AllDirs | QDir::AllEntries | QDir::CaseSensitive | QDir::NoDotAndDotDot );
+	mDirsModel->setRootPath( QString::null );
+	mDirsModel->setFilter( QDir::AllDirs | QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot );
 	
 	// create proxy model
 	mFilteredModel = new FileBrowserFilteredModel( this );
@@ -324,7 +325,7 @@ QString pDockFileBrowser::currentPath() const
 void pDockFileBrowser::setCurrentPath( const QString& s )
 {
 	// get index
-	QModelIndex index = mDirsModel->index( s );
+	QModelIndex index = mDirsModel->QFileSystemModel::index( s );
 	// set current path
 	mFilteredModel->invalidate();
 	mTree->setRootIndex( mFilteredModel->mapFromSource( index ) );
@@ -351,7 +352,7 @@ QString pDockFileBrowser::currentFilePath() const
 void pDockFileBrowser::setCurrentFilePath( const QString& s )
 {
 	// get index
-	QModelIndex index = mDirsModel->index( s );
+	QModelIndex index = mDirsModel->QFileSystemModel::index( s );
 	index = mFilteredModel->mapFromSource( index );
 	mTree->setCurrentIndex( index );
 }
