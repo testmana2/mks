@@ -137,7 +137,7 @@ pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	mDirsModel = new FileSystemModel( this );
 	mDirsModel->setNameFilterDisables( false );
 	mDirsModel->setRootPath( QString::null );
-	mDirsModel->setFilter( QDir::AllDirs | QDir::AllEntries | QDir::Hidden | QDir::NoDotAndDotDot );
+	mDirsModel->setFilter( QDir::AllDirs | QDir::AllEntries | QDir::NoDotAndDotDot );
 	
 	// create proxy model
 	mFilteredModel = new FileBrowserFilteredModel( this );

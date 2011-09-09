@@ -45,8 +45,7 @@ UISettingsQMake::UISettingsQMake( QWidget* parent )
 	QCompleter* completer = new QCompleter( ui->leQtVersionPath );
 	FileSystemModel* model = new FileSystemModel( completer );
 	model->setRootPath( QString::null );
-	model->setShowHiddenFiles( true );
-	model->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden );
+	model->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
 	completer->setModel( model );
 	ui->leQtVersionPath->setCompleter( completer );
 }
