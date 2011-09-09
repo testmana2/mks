@@ -11,18 +11,14 @@ class Q_MONKEY_EXPORT FileSystemModel : public QFileSystemModel
 	
 public:
 	FileSystemModel( QObject* parent = 0 );
-	
+#ifdef Q_OS_MAC
 	virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const;
-	virtual QModelIndex index( int row, int column, const QModelIndex& parent = QModelIndex() ) const;
-	
-	bool showHiddenFiles() const;
-
-public slots:
-	void setShowHiddenFiles( bool show );
+#endif
 
 protected:
+#ifdef Q_OS_MAC
 	static QString MacOSXVolumes;
-	bool mShowHiddenFiles;
+#endif
 };
 
 #endif // FILESYSTEMMODEL_H

@@ -37,7 +37,7 @@ SearchWidget::SearchWidget( SearchAndReplace* plugin, QWidget* parent )
 	cbSearch->completer()->setCaseSensitivity( Qt::CaseSensitive );
 	cbReplace->completer()->setCaseSensitivity( Qt::CaseSensitive );
 	FileSystemModel* fsModel = new FileSystemModel( this );
-	fsModel->setFilter( QDir::AllDirs | QDir::Hidden | QDir::NoDotAndDotDot );
+	fsModel->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
 	fsModel->setRootPath( QString::null );
 	cbPath->lineEdit()->setCompleter( new QCompleter( fsModel ) );
 	cbMask->completer()->setCaseSensitivity( Qt::CaseSensitive );
