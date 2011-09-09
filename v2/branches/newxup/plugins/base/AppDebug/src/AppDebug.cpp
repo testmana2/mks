@@ -5,8 +5,6 @@
 #include <UIMain.h>
 #include <pDockToolBar.h>
 
-#include <stdio.h>
-
 QWeakPointer<DebugDockWidget> AppDebug::mDock;
 
 void AppDebug::fillPluginInfos()
