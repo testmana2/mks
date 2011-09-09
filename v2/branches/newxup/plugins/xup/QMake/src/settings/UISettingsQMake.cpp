@@ -48,6 +48,12 @@ UISettingsQMake::UISettingsQMake( QWidget* parent )
 	model->setFilter( QDir::AllDirs | QDir::NoDotAndDotDot );
 	completer->setModel( model );
 	ui->leQtVersionPath->setCompleter( completer );
+	
+#ifdef Q_OS_MAC
+	foreach ( QWidget* widget, findChildren<QWidget*>() ) {
+		widget->setAttribute( Qt::WA_MacSmallSize );
+	}
+#endif
 }
 
 UISettingsQMake::~UISettingsQMake()
@@ -530,6 +536,11 @@ void UISettingsQMake::on_tbDownQtConfiguration_clicked()
 void UISettingsQMake::on_dbbButtons_clicked( QAbstractButton* button )
 {
 	Q_UNUSED( button );
+	
+	// valid current data
+	setQtVersion( ui->lvQtVersions->selectionModel()->selectedIndexes().value( 0 ) );
+	setQtModule( ui->lvQtModules->selectionModel()->selectedIndexes().value( 0 ) );
+	setQtConfiguration( ui->lvQtConfigurations->selectionModel()->selectedIndexes().value( 0 ) );
 	
 	// save qt versions
 	QtVersionList versions;
