@@ -394,11 +394,11 @@ QtVersionList QtVersionManager::getQtVersions( const QStringList& paths ) const
 		// if matching output add version
 		if ( mQtQMakeRegExp.exactMatch( datas ) )
 		{
-			const QString version = mQtQMakeRegExp.cap( 1 );
-			const QString path = QDir::toNativeSeparators( mQtQMakeRegExp.cap( 2 ).replace( "\\", "/" ).section( '/', 0, -2 ) );
+			const QString qversion = mQtQMakeRegExp.cap( 1 );
+			const QString qpath = QDir::toNativeSeparators( mQtQMakeRegExp.cap( 2 ).replace( "\\", "/" ).section( '/', 0, -2 ) );
 
-			sysQt.Version = QString( "Qt System (%1)" ).arg( version );
-			sysQt.Path = path;
+			sysQt.Version = QString( "Qt System (%1)" ).arg( path.isEmpty() ? qversion : QFileInfo( qpath ).fileName() );
+			sysQt.Path = qpath;
 			sysQt.Default = hasDefaultVersion ? false : true;
 			sysQt.QMakeSpec = QString::null;
 			sysQt.QMakeParameters = "\"$cp$\"";
@@ -445,6 +445,15 @@ void QtVersionManager::synchronizeVersions()
 		}
 
 		items[ newVersion.hash() ] = newVersion;
+	}
+	
+	// remove dead ones
+	foreach ( const quint32& key, items.keys() ) {
+		const QtVersion& v = items[ key ];
+		
+		if ( !QFile::exists( v.Path ) ) {
+			items.remove( key );
+		}
 	}
 
 	// update qt versions
