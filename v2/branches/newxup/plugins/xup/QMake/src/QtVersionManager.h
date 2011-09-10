@@ -95,8 +95,8 @@ struct QtItem
 	QtItem( const QString& t, const QString& v, const QString& s, const QString& h = QString::null )
 		: Text( t ), Value( v ), Variable( s ), Help( h ) {}
 
-	bool operator==( const QtItem& o ) { return Text == o.Text && Value == o.Value && Variable == o.Variable && Help == o.Help; }
-	bool operator!=( const QtItem& o ) { return !operator==( o ); }
+	bool operator==( const QtItem& o ) const { return Text == o.Text && Value == o.Value && Variable == o.Variable && Help == o.Help; }
+	bool operator!=( const QtItem& o ) const { return !operator==( o ); }
 
 	QString Text;
 	QString Value;

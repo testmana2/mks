@@ -1,4 +1,5 @@
 #include "QtVersionManager.h"
+#include "main.h"
 
 #include <MonkeyCore.h>
 #include <pMonkeyStudio.h>
@@ -16,7 +17,7 @@ const QRegExp QtVersionManager::mQtQMakeRegExp( QString( "QMake version (?:[\\d\
 const QRegExp QtVersionManager::mQtUninstallRegExp( "Qt (?:OpenSource|SDK|Commercial) .*" );
 
 QtVersionManager::QtVersionManager( QObject* owner )
-	: pSettings( owner, "QtVersions", "1.0.0" )
+	: pSettings( owner, "QtVersions", PACKAGE_VERSION )
 {
 	synchronizeVersions();
 	initializeInterpreterCommands( true );
@@ -139,7 +140,7 @@ QtItemList QtVersionManager::defaultModules() const
 QtItemList QtVersionManager::modules() const
 {
 	QtVersionManager* _this = const_cast<QtVersionManager*>( this );
-	QtItemList modules = defaultModules();
+	QtItemList modules;
 	const int count = _this->beginReadArray( mQtModuleKey );
 
 	for ( int i = 0; i < count; i++ )
@@ -158,11 +159,24 @@ QtItemList QtVersionManager::modules() const
 	}
 
 	_this->endArray();
+	
+	if ( modules.isEmpty() ) {
+		modules = defaultModules();
+	}
+	
 	return modules;
 }
 
 void QtVersionManager::setModules( const QtItemList& modules )
 {
+	const bool isDefault = modules == defaultModules();
+	
+	remove( mQtModuleKey );
+	
+	if ( isDefault ) {
+		return;
+	}
+	
 	beginWriteArray( mQtModuleKey );
 
 	for ( int i = 0; i < modules.count(); i++ )
@@ -250,7 +264,7 @@ QtItemList QtVersionManager::defaultConfigurations() const
 QtItemList QtVersionManager::configurations() const
 {
 	QtVersionManager* _this = const_cast<QtVersionManager*>( this );
-	QtItemList configurations = defaultConfigurations();
+	QtItemList configurations;
 	const int count = _this->beginReadArray( mQtConfigurationKey );
 
 	for ( int i = 0; i < count; i++ )
@@ -269,11 +283,24 @@ QtItemList QtVersionManager::configurations() const
 	}
 
 	_this->endArray();
+	
+	if ( configurations.isEmpty() ) {
+		configurations = defaultConfigurations();
+	}
+	
 	return configurations;
 }
 
 void QtVersionManager::setConfigurations( const QtItemList& configurations )
 {
+	const bool isDefault = configurations == defaultConfigurations();
+	
+	remove( mQtConfigurationKey );
+	
+	if ( isDefault ) {
+		return;
+	}
+	
 	beginWriteArray( mQtConfigurationKey );
 
 	for ( int i = 0; i < configurations.count(); i++ )
