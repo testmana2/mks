@@ -63,6 +63,7 @@
 pDockFileBrowser::pDockFileBrowser( QWidget* w )
 	: pDockWidget( w )
 {
+	setObjectName( metaObject()->className() );
 	// restrict areas
 	setAllowedAreas( Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea );
 	

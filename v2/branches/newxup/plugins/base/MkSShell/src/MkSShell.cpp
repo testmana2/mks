@@ -13,6 +13,7 @@ public:
 	MkSShellDock( QWidget* parent = 0 )
 		: pDockWidget( parent )
 	{
+		setObjectName( metaObject()->className() );
 		setWidget( new MkSShellConsole( this ) );
 	}
 };

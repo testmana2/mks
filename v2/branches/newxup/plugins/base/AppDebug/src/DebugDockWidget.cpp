@@ -16,6 +16,7 @@
 DebugDockWidget::DebugDockWidget( QWidget* parent )
 	: pDockWidget( parent )
 {
+	setObjectName( metaObject()->className() );
 	setupUi( this );
 
 	titleBar()->addAction( aShowXml, 0 );

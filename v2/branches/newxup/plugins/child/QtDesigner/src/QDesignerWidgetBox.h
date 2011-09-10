@@ -25,6 +25,8 @@ class QDesignerWidgetBoxInterface;
 
 class QDesignerWidgetBox : public pDockWidget
 {
+	Q_OBJECT
+	
 public:
 	QDesignerWidgetBox( QDesignerFormEditorInterface* core ) ;
 	~QDesignerWidgetBox();
