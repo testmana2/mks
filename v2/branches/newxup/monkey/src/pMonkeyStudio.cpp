@@ -913,7 +913,7 @@ void pMonkeyStudio::setSaveFilesOnCustomAction( bool save )
 	\details Return true if files are saved on custom actions triggered, else false
 */
 bool pMonkeyStudio::saveFilesOnCustomAction()
-{ return MonkeyCore::settings()->value( settingsPath() +"/SaveFilesOnCustomAction", false ).toBool(); }
+{ return MonkeyCore::settings()->value( settingsPath() +"/SaveFilesOnCustomAction", true ).toBool(); }
 
 /*!
 	\details Set the default project path
