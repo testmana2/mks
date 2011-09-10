@@ -89,6 +89,7 @@ signals:
 pOpenedFileExplorer::pOpenedFileExplorer( pWorkspace* workspace )
 	: pDockWidget( workspace )
 {
+	setObjectName( metaObject()->className() );
 	Q_ASSERT( workspace );
 	mWorkspace = workspace;
 	mModel = new pOpenedFileModel( workspace );

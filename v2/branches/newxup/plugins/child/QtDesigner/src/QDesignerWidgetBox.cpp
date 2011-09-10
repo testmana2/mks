@@ -36,7 +36,7 @@ QDesignerWidgetBox::QDesignerWidgetBox( QDesignerFormEditorInterface* core )
 	setWindowIcon( pIconManager::icon( "widget.png", ":/icons" ) );
 
 	// object name
-	setObjectName( "x-designer/widgetbox" );
+	setObjectName( metaObject()->className() );
 
 	// create widget box interface
 	mInterface = QDesignerComponents::createWidgetBox( core, this );

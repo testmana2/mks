@@ -25,6 +25,8 @@ class QDesignerObjectInspectorInterface;
 
 class QDesignerObjectInspector : public pDockWidget
 {
+	Q_OBJECT
+	
 public:
 	QDesignerObjectInspector( QDesignerFormEditorInterface* core );
 	inline QDesignerObjectInspectorInterface* interface() const { return mInterface; }

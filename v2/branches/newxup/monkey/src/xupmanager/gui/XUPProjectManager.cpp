@@ -28,6 +28,7 @@
 XUPProjectManager::XUPProjectManager( QWidget* parent )
 	: pDockWidget( parent )
 {
+	setObjectName( metaObject()->className() );
 	setupUi( this );
 	setActionsManager( MonkeyCore::actionsManager() );
 	

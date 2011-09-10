@@ -24,6 +24,8 @@ class QDesignerFormEditorInterface;
 
 class QDesignerSignalSlotEditor : public pDockWidget
 {
+	Q_OBJECT
+	
 public:
 	QDesignerSignalSlotEditor( QDesignerFormEditorInterface* core );
 	inline QWidget* interface() const { return mInterface; }

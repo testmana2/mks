@@ -32,7 +32,7 @@
 QtAssistantDock::QtAssistantDock( QWidget* parent )
 	: pDockWidget( parent )
 {
-	setObjectName( "QtAssistantDock" );
+	setObjectName( metaObject()->className() );
 	setWindowTitle( "Qt Assistant" );
 	setWindowIcon( pIconManager::icon( "QtAssistant.png", ":/assistant-icons" ) );
 	

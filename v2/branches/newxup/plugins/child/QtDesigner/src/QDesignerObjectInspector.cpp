@@ -34,7 +34,7 @@ QDesignerObjectInspector::QDesignerObjectInspector( QDesignerFormEditorInterface
 	setWindowIcon( pIconManager::icon( "inspector.png", ":/icons" ) );
 
 	// object name
-	setObjectName( "x-designer/objectinspector" );
+	setObjectName( metaObject()->className() );
 
 	// create interface
 	mInterface = QDesignerComponents::createObjectInspector( core, this );

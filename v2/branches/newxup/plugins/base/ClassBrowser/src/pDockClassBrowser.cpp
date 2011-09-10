@@ -26,6 +26,7 @@
 pDockClassBrowser::pDockClassBrowser( ClassBrowser* plugin, QWidget* w )
 	: pDockWidget( w )
 {
+	setObjectName( metaObject()->className() );
 	Q_ASSERT( plugin );
 	mPlugin = plugin;
 	

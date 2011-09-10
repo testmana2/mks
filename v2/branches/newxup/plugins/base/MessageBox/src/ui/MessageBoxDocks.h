@@ -57,6 +57,8 @@ class pConsoleManagerStepModel;
 */
 class UIBuildStep : public pDockWidget, public Ui::UIBuildStep
 {
+	Q_OBJECT
+	
 public:
 	UIBuildStep( QWidget* parent = 0 )
 		: pDockWidget( parent )
@@ -79,11 +81,14 @@ public:
 */
 class UIOutput : public pDockWidget, public Ui::UIOutput
 {
+	Q_OBJECT
+	
 public:
 	UIOutput( QWidget* parent = 0 )
 		: pDockWidget( parent )
 	{
 		setObjectName( metaObject()->className() );
+		
 		setupUi( this );
 		tbOutput->setAttribute( Qt::WA_MacShowFocusRect, false );
 		tbOutput->setAttribute( Qt::WA_MacSmallSize );
