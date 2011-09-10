@@ -207,7 +207,7 @@ bool QMake::install()
 	mFilters[ "OTHER_FILES" ].weight = weight++;
 	mFilters[ "OTHER_FILES" ].label = QMakeProjectItem::tr( "Other Files" );
 	mFilters[ "OTHER_FILES" ].icon = "file.png";
-	mFilters[ "OTHER_FILES" ].filters << "*.txt" << "*README*" << "*Change*";
+	mFilters[ "OTHER_FILES" ].filters << "*.txt" << "*README*" << "*Change*" << "*.sh" << "*.bat" << "*.html" << "*.xml" << "*.ini" << "*Makefile*";
 	mFilters[ "OTHER_FILES" ].type = DocumentFilter::File;
 	mFilters[ "OTHER_FILES" ].filtered = true;
 	
