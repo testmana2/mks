@@ -152,8 +152,13 @@ void XUPProjectItem::addFiles( const QStringList& files, XUPItem* _scope )
 		const QString variableName = filters.fileNameVariable( unquotedValue( file ) );
 		QString filePath = project->filePath( file );
 		
+		if ( filePath.isEmpty() ) {
+			continue;
+		}
+		
 		if ( variableName.isEmpty() || pMonkeyStudio::isSameFile( filePath, project->fileName() ) ) {
 			notImported << file;
+			continue;
 		}
 		
 		XUPItem* variableItem = project->getVariable( scope, variableName );
