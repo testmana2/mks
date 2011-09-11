@@ -325,50 +325,54 @@ QStringList QtVersionManager::possibleQtPaths() const
 	paths << QString::null; // for qmake available in PATH
 
 	// get users uninstall
-	QSettings settings( QSettings::UserScope, "Microsoft", "Windows" );
-	settings.beginGroup( "CurrentVersion/Uninstall" );
-
-	foreach ( const QString& key, settings.childGroups() )
 	{
-		QString path = settings.value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
+		QSettings settings( QSettings::UserScope, "Microsoft", "Windows" );
+		settings.beginGroup( "CurrentVersion/Uninstall" );
 
-		if ( path.isEmpty() )
+		foreach ( const QString& key, settings.childGroups() )
 		{
-			path = settings.value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
+			QString path = settings.value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
+
+			if ( path.isEmpty() )
+			{
+				path = settings.value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
+
+				if ( !path.isEmpty() )
+				{
+					path.append( "/qt" );
+				}
+			}
 
 			if ( !path.isEmpty() )
 			{
-				path.append( "/qt" );
+				paths << path;
 			}
-		}
-
-		if ( !path.isEmpty() )
-		{
-			paths << path;
 		}
 	}
 
 	// get system uninstalls
-	settings = QSettings( QSettings::SystemScope, "Microsoft", "Windows" );
-	settings.beginGroup( "CurrentVersion/Uninstall" );
-
-	foreach ( const QString& key, settings.childGroups() )
 	{
-		QString path = settings.value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
+		QSettings settings = QSettings( QSettings::SystemScope, "Microsoft", "Windows" );
+		settings.beginGroup( "CurrentVersion/Uninstall" );
 
-		if ( path.isEmpty() )
+		foreach ( const QString& key, settings.childGroups() )
 		{
-			path = settings.value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
+			QString path = settings.value( QString( "%1/MINGW_INSTDIR" ).arg( key ) ).toString();
 
-			if ( !path.isEmpty() )
+			if ( path.isEmpty() )
 			{
-				path.append( "/qt" );
-			}
-		}
+				path = settings.value( QString( "%1/QTSDK_INSTDIR" ).arg( key ) ).toString();
 
-		if ( !path.isEmpty() && !paths.contains( path ) )
-		{
-			paths << path;
+				if ( !path.isEmpty() )
+				{
+					path.append( "/qt" );
+				}
+			}
+
+			if ( !path.isEmpty() && !paths.contains( path ) )
+			{
+				paths << path;
+			}
 		}
 	}
 
