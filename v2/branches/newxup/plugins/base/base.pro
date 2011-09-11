@@ -11,4 +11,4 @@ SUBDIRS	= FileBrowser \
 	UpdateChecker \
 	FileWatcher \
 	Tools \
-	AppDebug/AppDebug.pro
+	AppDebug
