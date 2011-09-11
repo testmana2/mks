@@ -4,7 +4,6 @@
 #include "xupmanager/core/XUPProjectItemCache.h"
 #include "xupmanager/core/XUPFilteredProjectModel.h"
 #include "XUPOpenedProjectsModel.h"
-#include "shared/MkSFileDialog.h"
 #include "pMonkeyStudio.h"
 #include "coremanager/MonkeyCore.h"
 #include "pluginsmanager/PluginsManager.h"
