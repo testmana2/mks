@@ -1,6 +1,0 @@
-- Check / Repair QMake plugin
-- Fix execute target (qmake, generic project)
-- create QMake parser
-- Fix launchpad bugs
-- fix qmake parsing bug (see bodeasy.pro after edition)
-- Update templates / check qmake project template and remove xup scope
