@@ -21,7 +21,6 @@
 #include "pMonkeyStudio.h"
 #include "coremanager/MonkeyCore.h"
 #include "maininterface/UIMain.h"
-#include "shared/MkSFileDialog.h"
 
 #include "ui_UICLIToolSettings.h"
 
