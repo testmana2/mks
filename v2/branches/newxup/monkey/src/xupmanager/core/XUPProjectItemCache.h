@@ -63,6 +63,6 @@ protected:
 };
 
 // a way to hash a project
-uint qHash( const XUPProjectItemCache::ProjectPointer& pointer );
+Q_MONKEY_EXPORT uint qHash( const XUPProjectItemCache::ProjectPointer& pointer );
 
 #endif // XUPPROJECTITEMCACHE_H

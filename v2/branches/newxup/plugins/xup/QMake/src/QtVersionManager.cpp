@@ -352,7 +352,7 @@ QStringList QtVersionManager::possibleQtPaths() const
 
 	// get system uninstalls
 	{
-		QSettings settings = QSettings( QSettings::SystemScope, "Microsoft", "Windows" );
+		QSettings settings( QSettings::SystemScope, "Microsoft", "Windows" );
 		settings.beginGroup( "CurrentVersion/Uninstall" );
 
 		foreach ( const QString& key, settings.childGroups() )
