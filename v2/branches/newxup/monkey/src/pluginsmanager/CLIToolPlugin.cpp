@@ -12,9 +12,9 @@
 **
 ****************************************************************************/
 #include "CLIToolPlugin.h"
-#include "UICLIToolSettings.h"
-#include "MonkeyCore.h"
-#include "Settings.h"
+#include "pluginsmanager/ui/UICLIToolSettings.h"
+#include "coremanager/MonkeyCore.h"
+#include "settingsmanager/Settings.h"
 
 #include <QApplication>
 

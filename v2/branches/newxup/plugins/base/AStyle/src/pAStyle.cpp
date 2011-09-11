@@ -32,10 +32,10 @@
 #include "pFormatterSettings.h"
 
 #include <pMonkeyStudio.h>
-#include <MonkeyCore.h>
-#include <pWorkspace.h>
-#include <pAbstractChild.h>
-#include <pEditor.h>
+#include <coremanager/MonkeyCore.h>
+#include <workspace/pWorkspace.h>
+#include <workspace/pAbstractChild.h>
+#include <qscintillamanager/pEditor.h>
 #include <pMenuBar.h>
 
 void pAStyle::fillPluginInfos()

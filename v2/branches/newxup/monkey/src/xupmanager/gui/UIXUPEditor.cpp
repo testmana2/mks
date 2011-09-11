@@ -1,6 +1,6 @@
-#include "UIXUPEditor.h"
+#include "xupmanager/gui/UIXUPEditor.h"
 #include "ui_UIXUPEditor.h"
-#include "XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
 #include "XUPPageEditor.h"
 #include "MainEditor.h"
 #include "FilesEditor.h"

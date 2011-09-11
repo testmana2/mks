@@ -27,12 +27,12 @@
 #include <QScrollBar>
 #include <QLineEdit>
 
-#include <MonkeyCore.h>
-#include <pWorkspace.h>
-#include <pAbstractChild.h>
-#include <pFileManager.h>
-#include <XUPProjectItem.h>
-#include <UIXUPFindFiles.h>
+#include <coremanager/MonkeyCore.h>
+#include <workspace/pWorkspace.h>
+#include <workspace/pAbstractChild.h>
+#include <workspace/pFileManager.h>
+#include <xupmanager/core/XUPProjectItem.h>
+#include <xupmanager/gui/UIXUPFindFiles.h>
 #include "../pConsoleManagerStepModel.h"
 
 #include <QDebug>

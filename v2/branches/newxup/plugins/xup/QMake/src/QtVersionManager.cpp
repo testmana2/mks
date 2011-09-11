@@ -1,9 +1,9 @@
 #include "QtVersionManager.h"
 #include "main.h"
 
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 #include <pMonkeyStudio.h>
-#include <MkSShellInterpreter.h>
+#include <shellmanager/MkSShellInterpreter.h>
 
 #include <QProcess>
 #include <QDir>

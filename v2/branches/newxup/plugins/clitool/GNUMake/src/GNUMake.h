@@ -29,7 +29,7 @@
 #ifndef GNUMAKE_H
 #define GNUMAKE_H
 
-#include <CLIToolPlugin.h>
+#include <pluginsmanager/CLIToolPlugin.h>
 
 class GNUMake : public CLIToolPlugin
 {

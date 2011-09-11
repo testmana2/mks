@@ -3,9 +3,9 @@
 #include "QMakeConfigurationEditor.h"
 #include "QMakeFilesEditor.h"
 #include "QMakeVariablesEditor.h"
-#include "CommandsEditor.h"
 
-#include <XUPProjectItem.h>
+#include <xupmanager/gui/CommandsEditor.h>
+#include <xupmanager/core/XUPProjectItem.h>
 
 #include <QSet>
 #include <QDebug>

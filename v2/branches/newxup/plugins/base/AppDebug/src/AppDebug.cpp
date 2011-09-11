@@ -1,8 +1,8 @@
 #include "AppDebug.h"
 #include "DebugDockWidget.h"
 
-#include <MonkeyCore.h>
-#include <UIMain.h>
+#include <coremanager/MonkeyCore.h>
+#include <maininterface/UIMain.h>
 #include <pDockToolBar.h>
 
 QWeakPointer<DebugDockWidget> AppDebug::mDock;

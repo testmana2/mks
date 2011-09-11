@@ -4,7 +4,7 @@
 #include "../QtVersionManager.h"
 
 #include <pGenericTableModel.h>
-#include <FileSystemModel.h>
+#include <shared/FileSystemModel.h>
 
 #include <QPushButton>
 #include <QDir>

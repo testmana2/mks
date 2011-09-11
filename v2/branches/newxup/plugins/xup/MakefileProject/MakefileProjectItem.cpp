@@ -1,9 +1,9 @@
 #include "MakefileProjectItem.h"
 
-#include <MonkeyCore.h>
-#include <PluginsManager.h>
-#include <UIMain.h>
-#include <pFileManager.h>
+#include <coremanager/MonkeyCore.h>
+#include <pluginsmanager/PluginsManager.h>
+#include <maininterface/UIMain.h>
+#include <workspace/pFileManager.h>
 
 #include <QDebug>
 

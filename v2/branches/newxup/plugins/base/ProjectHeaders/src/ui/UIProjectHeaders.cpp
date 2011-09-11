@@ -14,7 +14,6 @@
 ****************************************************************************/
 #include "UIProjectHeaders.h"
 #include "../ProjectHeaders.h"
-#include "MkSFileDialog.h"
 
 #include <QDir>
 #include <QFileInfoList>
@@ -27,7 +26,8 @@
 #include <QDebug>
 
 #include <pMonkeyStudio.h>
-#include <VariablesManager.h>
+#include <variablesmanager/VariablesManager.h>
+#include <shared/MkSFileDialog.h>
 
 UIProjectHeaders::UIProjectHeaders( QWidget* parent, ProjectHeaders* plugin )
 	: QDialog( parent ), mPlugin( plugin )

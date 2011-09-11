@@ -1,7 +1,7 @@
 #ifndef UIQMAKEEDITOR_H
 #define UIQMAKEEDITOR_H
 
-#include <UIXUPEditor.h>
+#include <xupmanager/gui/UIXUPEditor.h>
 
 #include <QHash>
 

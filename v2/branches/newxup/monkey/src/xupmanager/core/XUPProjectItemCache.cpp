@@ -1,6 +1,6 @@
-#include "XUPProjectItemCache.h"
-#include "XUPProjectItem.h"
-#include "XUPProjectItemHelper.h"
+#include "xupmanager/core/XUPProjectItemCache.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItemHelper.h"
 
 #include <QDebug>
 

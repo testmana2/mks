@@ -26,7 +26,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#include "PluginsManager.h"
+#include "pluginsmanager/PluginsManager.h"
 #include "PluginsMenu.h"
 #include "../pMonkeyStudio.h"
 #include "ui/UIPluginsSettings.h"

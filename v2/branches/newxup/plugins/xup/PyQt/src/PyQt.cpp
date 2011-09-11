@@ -17,9 +17,9 @@
 ****************************************************************************/
 #include "PyQt.h"
 #include "PyQtProjectItem.h"
-#include "XUPProjectItemHelper.h"
+#include <xupmanager/core/XUPProjectItemHelper.h>
 
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 
 void PyQt::fillPluginInfos()
 {

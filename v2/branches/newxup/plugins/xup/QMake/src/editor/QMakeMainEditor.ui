@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>335</height>
+    <height>320</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -234,7 +234,7 @@ The Qt versions can be managed in the QMake plugin configuration.</string>
   <customwidget>
    <class>XUPPageEditor</class>
    <extends>QFrame</extends>
-   <header>XUPPageEditor.h</header>
+   <header>xupmanager/gui/XUPPageEditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

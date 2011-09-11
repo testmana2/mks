@@ -1,7 +1,7 @@
 #include "QMakeVariablesEditor.h"
 #include "UIQMakeEditor.h"
 
-#include <XUPProjectItem.h>
+#include <xupmanager/core/XUPProjectItem.h>
 
 QMakeVariablesEditor::QMakeVariablesEditor( QWidget* parent )
 	: VariablesEditor( parent )

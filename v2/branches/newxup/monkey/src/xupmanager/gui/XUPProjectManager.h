@@ -3,7 +3,7 @@
 
 #include "MonkeyExport.h"
 #include "ui_XUPProjectManager.h"
-#include "XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
 
 #include <QMap>
 

@@ -11,7 +11,8 @@ CONFIG	*= staticlib
 DESTDIR	= $${PACKAGE_BUILD_PATH}
 
 FRESH_SOURCES_PATHS	= $$getFolders( ./objects ./widgets )
-INCLUDEPATH	*= $${FRESH_SOURCES_PATHS}
+INCLUDEPATH	*= ./objects ./widgets
+#INCLUDEPATH	*= $${FRESH_SOURCES_PATHS}
 DEPENDPATH	*= $${FRESH_SOURCES_PATHS}
 
 # make library exportable

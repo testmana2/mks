@@ -1,6 +1,6 @@
-#include "XUPProjectItemHelper.h"
-#include "XUPProjectItem.h"
-#include "XUPDynamicFolderItem.h"
+#include "xupmanager/core/XUPProjectItemHelper.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPDynamicFolderItem.h"
 #include "pMonkeyStudio.h"
 
 #include <QDir>

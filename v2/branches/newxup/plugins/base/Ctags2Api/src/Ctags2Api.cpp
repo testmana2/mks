@@ -29,7 +29,7 @@
 #include "Ctags2Api.h"
 #include "UICtags2Api.h"
 
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 #include <pMenuBar.h>
 
 void Ctags2Api::fillPluginInfos()

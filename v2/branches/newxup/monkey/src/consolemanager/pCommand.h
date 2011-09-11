@@ -37,7 +37,7 @@
 
 #include <MonkeyExport.h>
 
-#include "XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
 
 #include <QStringList>
 #include <QVariant>

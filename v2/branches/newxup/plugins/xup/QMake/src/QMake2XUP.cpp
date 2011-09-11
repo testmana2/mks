@@ -1,7 +1,7 @@
 #include "QMake2XUP.h"
 #include "QMakeProjectItem.h"
 
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 
 /**************************
 WARNING :

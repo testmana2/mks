@@ -26,7 +26,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#include "pRecentsManager.h"
+#include "recentsmanager/pRecentsManager.h"
 #include "../coremanager/MonkeyCore.h"
 #include "../settingsmanager/Settings.h"
 #include "pMonkeyStudio.h"

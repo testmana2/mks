@@ -2,14 +2,13 @@
 #include "QtVersionManager.h"
 #include "QMake.h"
 #include "QMake2XUP.h"
-//#include "UISimpleQMakeEditor.h"
 #include "editor/UIQMakeEditor.h"
 
-#include <XUPProjectItemHelper.h>
-#include <UIMain.h>
-#include <CLIToolPlugin.h>
+#include <xupmanager/core/XUPProjectItemHelper.h>
+#include <maininterface/UIMain.h>
+#include <pluginsmanager/CLIToolPlugin.h>
 #include <pQueuedMessageToolBar.h>
-#include <PluginsManager.h>
+#include <pluginsmanager/PluginsManager.h>
 
 #include <pVersion.h>
 

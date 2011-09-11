@@ -33,8 +33,8 @@
 #include <pIconManager.h>
 
 #include "main.h"
-#include "MonkeyCore.h"
-#include "Settings.h"
+#include "coremanager/MonkeyCore.h"
+#include "settingsmanager/Settings.h"
 
 #include <QtPlugin>
 #include <QPointer>

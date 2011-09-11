@@ -7,7 +7,7 @@
 #include "MonkeyExport.h"
 
 #include "XUPItem.h"
-#include "ProjectTypesIndex.h"
+#include "xupmanager/core/ProjectTypesIndex.h"
 
 class QAction;
 

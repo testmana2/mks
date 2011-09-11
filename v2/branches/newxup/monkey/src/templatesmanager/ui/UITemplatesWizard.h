@@ -30,7 +30,7 @@
 #define UITEMPLATESWIZARD
 
 #include <MonkeyExport.h>
-#include <pTemplatesManager.h>
+#include "templatesmanager/pTemplatesManager.h"
 
 #include "ui_UITemplatesWizard.h"
 

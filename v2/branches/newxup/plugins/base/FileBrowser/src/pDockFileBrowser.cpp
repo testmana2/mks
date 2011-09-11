@@ -34,13 +34,13 @@
 */
 #include "pDockFileBrowser.h"
 
-#include <pWorkspace.h>
-#include <MonkeyCore.h>
-#include <pFileManager.h>
+#include <workspace/pWorkspace.h>
+#include <coremanager/MonkeyCore.h>
+#include <workspace/pFileManager.h>
 #include <pMonkeyStudio.h>
 #include <pDockWidgetTitleBar.h>
 #include <pIconManager.h>
-#include <FileSystemModel.h>
+#include <shared/FileSystemModel.h>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>

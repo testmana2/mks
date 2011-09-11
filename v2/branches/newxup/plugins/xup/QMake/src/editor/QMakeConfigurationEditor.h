@@ -1,7 +1,7 @@
 #ifndef QMAKECONFIGURATIONEDITOR_H
 #define QMAKECONFIGURATIONEDITOR_H
 
-#include "XUPPageEditor.h"
+#include <xupmanager/gui/XUPPageEditor.h>
 #include "UIQMakeEditor.h"
 
 class Ui_QMakeConfigurationEditor;

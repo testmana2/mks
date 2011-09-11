@@ -26,8 +26,8 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#include "pFileManager.h"
-#include "pWorkspace.h"
+#include "workspace/pFileManager.h"
+#include "workspace/pWorkspace.h"
 #include "../xupmanager/gui/XUPProjectManager.h"
 #include "../xupmanager/core/XUPProjectItem.h"
 #include "../recentsmanager/pRecentsManager.h"
@@ -37,8 +37,8 @@
 #include "../settingsmanager/Settings.h"
 #include "../shellmanager/MkSShellInterpreter.h"
 #include "../pluginsmanager/PluginsManager.h"
-#include "UIMain.h"
-#include "MkSFileDialog.h"
+#include "maininterface/UIMain.h"
+#include "shared/MkSFileDialog.h"
 #include "pChild.h"
 
 #include <pQueuedMessageToolBar.h>

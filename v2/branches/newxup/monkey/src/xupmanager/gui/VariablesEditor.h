@@ -3,7 +3,7 @@
 
 #include "MonkeyExport.h"
 #include "XUPPageEditor.h"
-#include "XUPItemVariableEditorModel.h"
+#include "xupmanager/core/XUPItemVariableEditorModel.h"
 
 #include <QModelIndex>
 

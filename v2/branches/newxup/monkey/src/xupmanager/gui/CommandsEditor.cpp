@@ -1,9 +1,9 @@
 #include "CommandsEditor.h"
 #include "ui_CommandsEditor.h"
 #include "CommandsEditorModel.h"
-#include "MonkeyCore.h"
+#include "coremanager/MonkeyCore.h"
 
-#include <pConsoleManager.h>
+#include "consolemanager/pConsoleManager.h"
 #include <pMenuBar.h>
 
 #include <QWhatsThis>

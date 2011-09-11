@@ -3,10 +3,10 @@
 #include "SearchWidget.h"
 #include "SearchResultsDock.h"
 
-#include <MonkeyCore.h>
-#include <pWorkspace.h>
-#include <pAbstractChild.h>
-#include <UIMain.h>
+#include <coremanager/MonkeyCore.h>
+#include <workspace/pWorkspace.h>
+#include <workspace/pAbstractChild.h>
+#include <maininterface/UIMain.h>
 #include <pIconManager.h>
 #include <pDockToolBar.h>
 #include <pMenuBar.h>

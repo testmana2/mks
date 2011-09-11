@@ -9,8 +9,8 @@
 #include <pDockWidgetTitleBar.h>
 #include <pQueuedMessageToolBar.h>
 
-#include <MonkeyCore.h>
-#include <pEditor.h>
+#include <coremanager/MonkeyCore.h>
+#include <qscintillamanager/pEditor.h>
 #include <pMenuBar.h>
 
 #include <QHelpEngine>

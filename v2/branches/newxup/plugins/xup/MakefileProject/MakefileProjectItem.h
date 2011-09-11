@@ -1,7 +1,7 @@
 #ifndef MakefileProjectItem_H
 #define MakefileProjectItem_H
 
-#include "XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
 
 class CLIToolPlugin;
 

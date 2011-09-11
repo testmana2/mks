@@ -2,7 +2,7 @@
 #define XUPFILTEREDPROJECTMODEL_H
 
 #include "MonkeyExport.h"
-#include "XUPProjectModel.h"
+#include "xupmanager/core/XUPProjectModel.h"
 #include "XUPItem.h"
 
 #include <QMap>

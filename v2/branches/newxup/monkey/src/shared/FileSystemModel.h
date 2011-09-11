@@ -1,7 +1,7 @@
 #ifndef FILESYSTEMMODEL_H
 #define FILESYSTEMMODEL_H
 
-#include "MonkeyCore.h"
+#include "coremanager/MonkeyCore.h"
 
 #include <QFileSystemModel>
 

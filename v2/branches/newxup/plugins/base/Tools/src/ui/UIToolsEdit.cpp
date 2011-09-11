@@ -17,11 +17,11 @@
 ****************************************************************************/
 #include "UIToolsEdit.h"
 #include "../ToolsManager.h"
-#include "MkSFileDialog.h"
 
 #include <pMonkeyStudio.h>
-#include <MonkeyCore.h>
-#include <UIMain.h>
+#include <coremanager/MonkeyCore.h>
+#include <maininterface/UIMain.h>
+#include <shared/MkSFileDialog.h>
 
 #include <QFileDialog>
 #include <QMessageBox>

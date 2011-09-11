@@ -1,22 +1,22 @@
-#include "XUPProjectManager.h"
+#include "xupmanager/gui/XUPProjectManager.h"
 #include "UIXUPFindFiles.h"
-#include "pIconManager.h"
-#include "XUPProjectModel.h"
-#include "XUPProjectItemCache.h"
-#include "XUPFilteredProjectModel.h"
+#include "xupmanager/core/XUPProjectModel.h"
+#include "xupmanager/core/XUPProjectItemCache.h"
+#include "xupmanager/core/XUPFilteredProjectModel.h"
 #include "XUPOpenedProjectsModel.h"
-#include "MkSFileDialog.h"
+#include "shared/MkSFileDialog.h"
 #include "pMonkeyStudio.h"
-#include "MonkeyCore.h"
-#include "PluginsManager.h"
-#include "pWorkspace.h"
-#include "XUPPlugin.h"
-#include "UITemplatesWizard.h"
-#include "pRecentsManager.h"
+#include "coremanager/MonkeyCore.h"
+#include "pluginsmanager/PluginsManager.h"
+#include "workspace/pWorkspace.h"
+#include "pluginsmanager/XUPPlugin.h"
+#include "templatesmanager/ui/UITemplatesWizard.h"
+#include "recentsmanager/pRecentsManager.h"
 
 #include <pDockWidgetTitleBar.h>
 #include <pQueuedMessageToolBar.h>
 #include <pMenuBar.h>
+#include <pIconManager.h>
 
 #include <QTextCodec>
 #include <QMenu>

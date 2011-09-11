@@ -1,7 +1,7 @@
-#include "XUPFilteredProjectModel.h"
-#include "XUPProjectItem.h"
-#include "XUPDynamicFolderItem.h"
-#include "XUPProjectItemHelper.h"
+#include "xupmanager/core/XUPFilteredProjectModel.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPDynamicFolderItem.h"
+#include "xupmanager/core/XUPProjectItemHelper.h"
 
 #include <QDebug>
 

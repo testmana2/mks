@@ -26,7 +26,7 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 **
 ****************************************************************************/
-#include "MonkeyCore.h"
+#include "coremanager/MonkeyCore.h"
 #include "main.h"
 #include "../pMonkeyStudio.h"
 #include "../settingsmanager/Settings.h"

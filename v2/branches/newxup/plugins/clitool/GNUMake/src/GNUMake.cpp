@@ -30,7 +30,7 @@
 
 #include <QTabWidget>
 
-#include "pConsoleManager.h"
+#include <consolemanager/pConsoleManager.h>
 
 void GNUMake::fillPluginInfos()
 {

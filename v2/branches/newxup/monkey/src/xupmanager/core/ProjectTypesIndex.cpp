@@ -1,5 +1,5 @@
-#include "ProjectTypesIndex.h"
-#include "XUPProjectItem.h"
+#include "xupmanager/core/ProjectTypesIndex.h"
+#include "xupmanager/core/XUPProjectItem.h"
 #include "pIconManager.h"
 #include "pMonkeyStudio.h"
 

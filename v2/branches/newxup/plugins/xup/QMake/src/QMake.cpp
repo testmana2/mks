@@ -20,8 +20,8 @@
 #include "QMakeProjectItem.h"
 #include "UISettingsQMake.h"
 
-#include <MonkeyCore.h>
-#include <UIMain.h>
+#include <coremanager/MonkeyCore.h>
+#include <maininterface/UIMain.h>
 #include <pMonkeyStudio.h>
 
 #include <QDir>

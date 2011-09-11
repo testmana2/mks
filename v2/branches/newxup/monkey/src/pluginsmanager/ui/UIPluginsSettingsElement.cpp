@@ -1,5 +1,5 @@
 #include "UIPluginsSettingsElement.h"
-#include "UIPluginsSettingsAbout.h"
+#include "pluginsmanager/ui/UIPluginsSettingsAbout.h"
 #include "../BasePlugin.h"
 #include "../../coremanager/MonkeyCore.h"
 #include "../../settingsmanager/Settings.h"
