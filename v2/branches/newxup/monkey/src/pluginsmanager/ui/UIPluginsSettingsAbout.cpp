@@ -1,5 +1,5 @@
 #include "pluginsmanager/ui/UIPluginsSettingsAbout.h"
-#include "../BasePlugin.h"
+#include "pluginsmanager/BasePlugin.h"
 
 #include <QStringListModel>
 

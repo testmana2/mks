@@ -16,10 +16,10 @@
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ****************************************************************************/
 #include "pluginsmanager/ui/UICLIToolSettings.h"
-#include "../CLIToolPlugin.h"
-#include  "../../consolemanager/pConsoleManager.h"
-#include "../../pMonkeyStudio.h"
-#include "../../coremanager/MonkeyCore.h"
+#include "pluginsmanager/CLIToolPlugin.h"
+#include "consolemanager/pConsoleManager.h"
+#include "pMonkeyStudio.h"
+#include "coremanager/MonkeyCore.h"
 #include "maininterface/UIMain.h"
 #include "shared/MkSFileDialog.h"
 

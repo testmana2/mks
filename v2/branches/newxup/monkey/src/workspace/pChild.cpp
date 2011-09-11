@@ -27,8 +27,8 @@
 **
 ****************************************************************************/
 #include "pChild.h"
-#include "../qscintillamanager/pEditor.h"
-#include "../coremanager/MonkeyCore.h"
+#include "qscintillamanager/pEditor.h"
+#include "coremanager/MonkeyCore.h"
 
 #include <pIconManager.h>
 #include <qscilexer.h>

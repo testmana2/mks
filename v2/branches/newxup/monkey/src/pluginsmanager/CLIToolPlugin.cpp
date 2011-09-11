@@ -11,7 +11,7 @@
 **
 **
 ****************************************************************************/
-#include "CLIToolPlugin.h"
+#include "pluginsmanager/CLIToolPlugin.h"
 #include "pluginsmanager/ui/UICLIToolSettings.h"
 #include "coremanager/MonkeyCore.h"
 #include "settingsmanager/Settings.h"
