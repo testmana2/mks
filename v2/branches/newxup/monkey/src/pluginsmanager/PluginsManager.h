@@ -31,10 +31,10 @@
 
 #include <MonkeyExport.h>
 
-#include "BasePlugin.h"
+#include "pluginsmanager/BasePlugin.h"
 #include "ChildPlugin.h"
 #include "DebuggerPlugin.h"
-#include "CLIToolPlugin.h"
+#include "pluginsmanager/CLIToolPlugin.h"
 
 class XUPItem;
 class pAbstractChild;

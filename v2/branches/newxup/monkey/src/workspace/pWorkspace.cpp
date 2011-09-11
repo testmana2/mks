@@ -41,24 +41,24 @@
 #include "workspace/pWorkspace.h"
 #include "pOpenedFileExplorer.h"
 #include "pAbstractChild.h"
-#include "../recentsmanager/pRecentsManager.h" // FIXME remove
+#include "recentsmanager/pRecentsManager.h" // FIXME remove
 #include "workspace/pFileManager.h"
-#include "../maininterface/ui/UISettings.h"
+#include "maininterface/ui/UISettings.h"
 #include "UISaveFiles.h"
-#include "../maininterface/ui/UIAbout.h"
-#include "../templatesmanager/ui/UITemplatesWizard.h"
-#include "../abbreviationsmanager/pAbbreviationsManager.h"
-#include "../pMonkeyStudio.h"
-#include "../templatesmanager/pTemplatesManager.h"
-#include "../xupmanager/gui/XUPProjectManager.h"
-#include "../xupmanager/core/XUPProjectItem.h"
-#include "../coremanager/MonkeyCore.h"
-#include "../maininterface/UIMain.h"
-#include "../statusbar/StatusBar.h"
-#include "../pluginsmanager/PluginsManager.h"
+#include "maininterface/ui/UIAbout.h"
+#include "templatesmanager/ui/UITemplatesWizard.h"
+#include "abbreviationsmanager/pAbbreviationsManager.h"
+#include "pMonkeyStudio.h"
+#include "templatesmanager/pTemplatesManager.h"
+#include "xupmanager/gui/XUPProjectManager.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "coremanager/MonkeyCore.h"
+#include "maininterface/UIMain.h"
+#include "statusbar/StatusBar.h"
+#include "pluginsmanager/PluginsManager.h"
 #include "shared/MkSFileDialog.h" // FIXME remove
 
-#include "../qscintillamanager/pEditor.h"
+#include "qscintillamanager/pEditor.h"
 
 #include <pQueuedMessageToolBar.h>
 #include <pMenuBar.h>

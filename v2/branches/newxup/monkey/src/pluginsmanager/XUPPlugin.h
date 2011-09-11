@@ -1,7 +1,7 @@
 #ifndef XUPPLUGIN_H
 #define XUPPLUGIN_H
 
-#include "BasePlugin.h"
+#include "pluginsmanager/BasePlugin.h"
 
 class Q_MONKEY_EXPORT XUPPlugin : virtual public BasePlugin
 {

@@ -27,9 +27,9 @@
 **
 ****************************************************************************/
 #include "pEditor.h"
-#include "../pMonkeyStudio.h"
-#include "../qscintillamanager/qSciShortcutsManager.h"
-#include "../coremanager/MonkeyCore.h"
+#include "pMonkeyStudio.h"
+#include "qscintillamanager/qSciShortcutsManager.h"
+#include "coremanager/MonkeyCore.h"
 
 #include <pQueuedMessageToolBar.h>
 #include <qsciprinter.h>

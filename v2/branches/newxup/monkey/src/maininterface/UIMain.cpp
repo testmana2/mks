@@ -28,16 +28,16 @@
 ****************************************************************************/
 #include "maininterface/UIMain.h"
 #include "main.h"
-#include "../coremanager/MonkeyCore.h"
-#include "../pMonkeyStudio.h"
-#include "../xupmanager/gui/XUPProjectManager.h"
-#include "../recentsmanager/pRecentsManager.h"
-#include "../consolemanager/pConsoleManager.h"
-#include "../workspace/pFileManager.h"
-#include "../pluginsmanager/PluginsManager.h"
-#include "../pluginsmanager/PluginsMenu.h"
-#include "../statusbar/StatusBar.h"
-#include "../workspace/pOpenedFileExplorer.h"
+#include "coremanager/MonkeyCore.h"
+#include "pMonkeyStudio.h"
+#include "xupmanager/gui/XUPProjectManager.h"
+#include "recentsmanager/pRecentsManager.h"
+#include "consolemanager/pConsoleManager.h"
+#include "workspace/pFileManager.h"
+#include "pluginsmanager/PluginsManager.h"
+#include "pluginsmanager/PluginsMenu.h"
+#include "statusbar/StatusBar.h"
+#include "workspace/pOpenedFileExplorer.h"
 
 #include <pQueuedMessageToolBar.h>
 #include <pDockToolBar.h>

@@ -31,7 +31,7 @@
 
 #include <MonkeyExport.h>
 
-#include "../consolemanager/pConsoleManager.h"
+#include "consolemanager/pConsoleManager.h"
 
 #include <QFrame>
 #include <QMdiArea>

@@ -1,6 +1,6 @@
 #include "shellmanager/MkSShellInterpreter.h"
-#include "../coremanager/MonkeyCore.h"
-#include "../settingsmanager/Settings.h"
+#include "coremanager/MonkeyCore.h"
+#include "settingsmanager/Settings.h"
 
 #include <pQueuedMessageToolBar.h>
 

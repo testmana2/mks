@@ -29,7 +29,7 @@
 #ifndef CHILDPLUGIN_H
 #define CHILDPLUGIN_H
 
-#include "BasePlugin.h"
+#include "pluginsmanager/BasePlugin.h"
 
 #include <QHash>
 #include <QStringList>

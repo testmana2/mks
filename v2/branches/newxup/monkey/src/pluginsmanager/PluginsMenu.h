@@ -5,7 +5,7 @@
 
 #include <QMenu>
 
-#include "BasePlugin.h"
+#include "pluginsmanager/BasePlugin.h"
 
 class PluginsManager;
 

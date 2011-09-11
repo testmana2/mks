@@ -28,20 +28,20 @@
 ****************************************************************************/
 #include "coremanager/MonkeyCore.h"
 #include "main.h"
-#include "../pMonkeyStudio.h"
-#include "../settingsmanager/Settings.h"
-#include "../pluginsmanager/PluginsManager.h"
-#include "../maininterface/UIMain.h"
-#include "../recentsmanager/pRecentsManager.h"
-#include "../xupmanager/gui/XUPProjectManager.h"
-#include "../workspace/pFileManager.h"
-#include "../workspace/pWorkspace.h"
-#include "../consolemanager/pConsoleManager.h"
-#include "../statusbar/StatusBar.h"
-#include "../shellmanager/MkSShellInterpreter.h"
-#include "../abbreviationsmanager/pAbbreviationsManager.h"
+#include "pMonkeyStudio.h"
+#include "settingsmanager/Settings.h"
+#include "pluginsmanager/PluginsManager.h"
+#include "maininterface/UIMain.h"
+#include "recentsmanager/pRecentsManager.h"
+#include "xupmanager/gui/XUPProjectManager.h"
+#include "workspace/pFileManager.h"
+#include "workspace/pWorkspace.h"
+#include "consolemanager/pConsoleManager.h"
+#include "statusbar/StatusBar.h"
+#include "shellmanager/MkSShellInterpreter.h"
+#include "abbreviationsmanager/pAbbreviationsManager.h"
 
-#include "../maininterface/ui/UISettings.h"
+#include "maininterface/ui/UISettings.h"
 
 #include <pIconManager.h>
 #include <pMultiToolBar.h>

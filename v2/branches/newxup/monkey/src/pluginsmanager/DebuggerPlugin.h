@@ -29,7 +29,7 @@
 #ifndef DEBUGGERPLUGIN_H
 #define DEBUGGERPLUGIN_H
 
-#include "BasePlugin.h"
+#include "pluginsmanager/BasePlugin.h"
 
 class Q_MONKEY_EXPORT DebuggerPlugin : virtual public BasePlugin
 {
