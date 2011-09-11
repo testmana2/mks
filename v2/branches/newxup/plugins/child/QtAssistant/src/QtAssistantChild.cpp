@@ -3,7 +3,7 @@
 #include "QtAssistantInlineSearch.h"
 
 #include <pIconManager.h>
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 #include <pQueuedMessageToolBar.h>
 
 #include <QVBoxLayout>

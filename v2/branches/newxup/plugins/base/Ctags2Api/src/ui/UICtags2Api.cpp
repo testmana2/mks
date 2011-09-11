@@ -29,8 +29,8 @@
 #include "UICtags2Api.h"
 
 #include <pMonkeyStudio.h>
-#include <MonkeyCore.h>
-#include <UIMain.h>
+#include <coremanager/MonkeyCore.h>
+#include <maininterface/UIMain.h>
 
 #include <QFileDialog>
 #include <QPushButton>

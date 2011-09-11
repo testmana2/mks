@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>298</height>
+    <width>399</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -171,7 +171,7 @@
   <customwidget>
    <class>XUPPageEditor</class>
    <extends>QFrame</extends>
-   <header>XUPPageEditor.h</header>
+   <header>xupmanager/gui/XUPPageEditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

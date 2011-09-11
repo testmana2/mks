@@ -19,7 +19,7 @@
 #define UICLIToolSettings_H
 
 #include <MonkeyExport.h>
-#include <pCommand.h>
+#include "consolemanager/pCommand.h"
 
 #include <QWidget>
 

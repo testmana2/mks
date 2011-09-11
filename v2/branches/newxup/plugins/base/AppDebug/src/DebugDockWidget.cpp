@@ -1,14 +1,14 @@
 #include "DebugDockWidget.h"
 
-#include <MonkeyCore.h>
-#include <XUPProjectManager.h>
-#include <XUPFilteredProjectModel.h>
-#include <pDockWidgetTitleBar.h>
-#include <pEditor.h>
-#include <pChild.h>
-#include <pFileManager.h>
+#include <coremanager/MonkeyCore.h>
+#include <xupmanager/gui/XUPProjectManager.h>
+#include <xupmanager/core/XUPFilteredProjectModel.h>
+#include <qscintillamanager/pEditor.h>
+#include <workspace/pChild.h>
+#include <workspace/pFileManager.h>
+#include <xupmanager/core/ProjectTypesIndex.h>
 
-#include <ProjectTypesIndex.h>
+#include <pDockWidgetTitleBar.h>
 
 #include <QTreeView>
 #include <QPlainTextEdit>

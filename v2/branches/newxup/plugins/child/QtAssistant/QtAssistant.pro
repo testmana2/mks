@@ -18,7 +18,7 @@ DESTDIR	= $$MONKEY_PLUGINS_DIR/child
 CONFIG	*= help
 QT	*= network webkit
 
-INCLUDEPATH	+= src \
+INCLUDEPATH	*= src \
 	src/3rdparty
 
 RESOURCES	+= src/resources/QtAssistant.qrc

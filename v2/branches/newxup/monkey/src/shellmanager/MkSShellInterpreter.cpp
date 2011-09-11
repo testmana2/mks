@@ -1,4 +1,4 @@
-#include "MkSShellInterpreter.h"
+#include "shellmanager/MkSShellInterpreter.h"
 #include "../coremanager/MonkeyCore.h"
 #include "../settingsmanager/Settings.h"
 

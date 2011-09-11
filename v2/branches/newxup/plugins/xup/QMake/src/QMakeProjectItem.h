@@ -1,8 +1,8 @@
 #ifndef QMAKEPROJECTITEM_H
 #define QMAKEPROJECTITEM_H
 
-#include "XUPProjectItem.h"
-#include "XUPProjectItemCache.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include <xupmanager/core/XUPProjectItemCache.h>
 
 class CLIToolPlugin;
 

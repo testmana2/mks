@@ -1,5 +1,5 @@
 #include "CommandsEditorModel.h"
-#include "pCommand.h"
+#include "consolemanager/pCommand.h"
 
 #include <pMenuBar.h>
 

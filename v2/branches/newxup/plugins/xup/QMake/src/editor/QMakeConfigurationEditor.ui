@@ -716,7 +716,7 @@
   <customwidget>
    <class>XUPPageEditor</class>
    <extends>QFrame</extends>
-   <header>XUPPageEditor.h</header>
+   <header>xupmanager/gui/XUPPageEditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,11 +1,11 @@
-#include "MkSFileDialog.h"
-#include "XUPProjectItem.h"
-#include "ProjectTypesIndex.h"
+#include "shared/MkSFileDialog.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/ProjectTypesIndex.h"
 #include "pMonkeyStudio.h"
-#include "MonkeyCore.h"
-#include "pFileManager.h"
-#include "XUPProjectManager.h"
-#include "Settings.h"
+#include "coremanager/MonkeyCore.h"
+#include "workspace/pFileManager.h"
+#include "xupmanager/gui/XUPProjectManager.h"
+#include "settingsmanager/Settings.h"
 
 #include <QComboBox>
 #include <QDebug>

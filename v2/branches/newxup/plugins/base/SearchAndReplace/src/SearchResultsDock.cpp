@@ -4,8 +4,8 @@
 
 #include <pIconManager.h>
 #include <pMonkeyStudio.h>
-#include <MonkeyCore.h>
-#include <pFileManager.h>
+#include <coremanager/MonkeyCore.h>
+#include <workspace/pFileManager.h>
 #include <pDockWidgetTitleBar.h>
 
 #include <QHBoxLayout>

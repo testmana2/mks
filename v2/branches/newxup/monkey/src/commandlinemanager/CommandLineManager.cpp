@@ -1,9 +1,9 @@
 #include "CommandLineManager.h"
 
 #include <main.h>
-#include <MonkeyCore.h>
-#include <pFileManager.h>
-#include <pMonkeyStudio.h>
+#include "coremanager/MonkeyCore.h"
+#include "workspace/pFileManager.h"
+#include "pMonkeyStudio.h"
 
 #include <QStringList>
 #include <QCoreApplication>

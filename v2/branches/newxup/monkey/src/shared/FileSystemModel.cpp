@@ -1,4 +1,4 @@
-#include "FileSystemModel.h"
+#include "shared/FileSystemModel.h"
 
 #ifdef Q_OS_MAC
 #include <QProcess>

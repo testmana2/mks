@@ -18,7 +18,7 @@
 #ifndef PHP_H
 #define PHP_H
 
-#include <CLIToolPlugin.h>
+#include <pluginsmanager/CLIToolPlugin.h>
 
 class PHP : public CLIToolPlugin
 {

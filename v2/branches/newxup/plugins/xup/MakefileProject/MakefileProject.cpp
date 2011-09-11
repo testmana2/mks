@@ -18,7 +18,7 @@
 #include "MakefileProject.h"
 #include "MakefileProjectItem.h"
 
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 
 #include <QDir>
 

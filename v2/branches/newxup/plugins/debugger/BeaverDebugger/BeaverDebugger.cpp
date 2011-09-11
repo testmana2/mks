@@ -38,10 +38,10 @@
 #include <QLabel>
 #include <QMessageBox>
 
-#include <StatusBar.h>
+#include <statusbar/StatusBar.h>
 #include <pMonkeyStudio.h>
-#include <pFileManager.h>
-#include <XUPProjectItem.h>
+#include <workspace/pFileManager.h>
+#include <xupmanager/core/XUPProjectItem.h>
 #include <pMenuBar.h>
 
 #include "BeaverDebugger.h"

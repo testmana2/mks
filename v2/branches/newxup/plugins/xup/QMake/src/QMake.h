@@ -18,9 +18,9 @@
 #ifndef QMAKE_H
 #define QMAKE_H
 
-#include <CLIToolPlugin.h>
-#include <XUPPlugin.h>
-#include <ProjectTypesIndex.h>
+#include <pluginsmanager/CLIToolPlugin.h>
+#include <pluginsmanager/XUPPlugin.h>
+#include <xupmanager/core/ProjectTypesIndex.h>
 
 #include <QPointer>
 

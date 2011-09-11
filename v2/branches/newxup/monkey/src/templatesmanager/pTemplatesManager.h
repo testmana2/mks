@@ -25,7 +25,7 @@
 #define PTEMPLATESMANAGER_H
 
 #include <MonkeyExport.h>
-#include <VariablesManager.h>
+#include "variablesmanager/VariablesManager.h"
 
 #include <QApplication>
 #include <QStringList>

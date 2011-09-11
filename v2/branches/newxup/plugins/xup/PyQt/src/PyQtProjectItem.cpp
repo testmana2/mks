@@ -1,10 +1,10 @@
 #include "PyQtProjectItem.h"
-#include "XUPProjectItemHelper.h"
+#include <xupmanager/core/XUPProjectItemHelper.h>
 
-#include <UIXUPEditor.h>
-#include <CLIToolPlugin.h>
-#include <UIMain.h>
-#include <PluginsManager.h>
+#include <xupmanager/gui/XUPPageEditor.h>
+#include <pluginsmanager/CLIToolPlugin.h>
+#include <maininterface/UIMain.h>
+#include <pluginsmanager/PluginsManager.h>
 
 #include <QDir>
 #include <QDebug>

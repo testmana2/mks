@@ -1,7 +1,7 @@
 #ifndef QMAKEFILESEDITOR_H
 #define QMAKEFILESEDITOR_H
 
-#include <FilesEditor.h>
+#include <xupmanager/gui/FilesEditor.h>
 
 class QMakeFilesEditor : public FilesEditor
 {

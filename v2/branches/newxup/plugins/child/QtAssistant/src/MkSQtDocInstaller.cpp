@@ -2,7 +2,7 @@
 #include "main.h"
 #include "3rdparty/qtdocinstaller.h"
 
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 #include <pQueuedMessageToolBar.h>
 
 #include <QDesktopServices>

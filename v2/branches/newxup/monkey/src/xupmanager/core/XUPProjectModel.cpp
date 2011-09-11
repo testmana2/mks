@@ -1,6 +1,6 @@
-#include "XUPProjectModel.h"
-#include "XUPProjectItem.h"
-#include "MonkeyCore.h"
+#include "xupmanager/core/XUPProjectModel.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "coremanager/MonkeyCore.h"
 
 #include <pQueuedMessageToolBar.h>
 

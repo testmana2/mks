@@ -1,6 +1,6 @@
 #include "XUPOpenedProjectsModel.h"
-#include "XUPProjectModel.h"
-#include "XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectModel.h"
+#include "xupmanager/core/XUPProjectItem.h"
 
 XUPOpenedProjectsModel::XUPOpenedProjectsModel( QObject* parent )
 	: QAbstractListModel( parent )

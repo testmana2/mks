@@ -18,8 +18,8 @@
 #ifndef PYQT_H
 #define PYQT_H
 
-#include <XUPPlugin.h>
-#include <ProjectTypesIndex.h>
+#include <pluginsmanager/XUPPlugin.h>
+#include <xupmanager/core/ProjectTypesIndex.h>
 
 class PyQt : public XUPPlugin
 {

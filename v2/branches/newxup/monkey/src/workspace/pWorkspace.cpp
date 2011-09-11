@@ -38,11 +38,11 @@
 
 #include <QDebug>
 
-#include "pWorkspace.h"
+#include "workspace/pWorkspace.h"
 #include "pOpenedFileExplorer.h"
 #include "pAbstractChild.h"
 #include "../recentsmanager/pRecentsManager.h" // FIXME remove
-#include "pFileManager.h"
+#include "workspace/pFileManager.h"
 #include "../maininterface/ui/UISettings.h"
 #include "UISaveFiles.h"
 #include "../maininterface/ui/UIAbout.h"
@@ -56,7 +56,7 @@
 #include "../maininterface/UIMain.h"
 #include "../statusbar/StatusBar.h"
 #include "../pluginsmanager/PluginsManager.h"
-#include "MkSFileDialog.h" // FIXME remove
+#include "shared/MkSFileDialog.h" // FIXME remove
 
 #include "../qscintillamanager/pEditor.h"
 

@@ -1,7 +1,7 @@
 #ifndef APPDEBUG_H
 #define APPDEBUG_H
 
-#include <BasePlugin.h>
+#include <pluginsmanager/BasePlugin.h>
 
 class DebugDockWidget;
 

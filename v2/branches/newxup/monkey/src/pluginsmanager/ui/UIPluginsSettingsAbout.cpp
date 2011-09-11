@@ -1,4 +1,4 @@
-#include "UIPluginsSettingsAbout.h"
+#include "pluginsmanager/ui/UIPluginsSettingsAbout.h"
 #include "../BasePlugin.h"
 
 #include <QStringListModel>

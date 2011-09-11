@@ -1,8 +1,8 @@
 #include "pOpenedFileExplorer.h"
-#include "pWorkspace.h"
+#include "workspace/pWorkspace.h"
 
-#include <MonkeyCore.h>
-#include <UIMain.h>
+#include "coremanager/MonkeyCore.h"
+#include "maininterface/UIMain.h"
 #include <pIconManager.h>
 #include <pDockWidgetTitleBar.h>
 #include <pMenuBar.h>

@@ -1,7 +1,7 @@
 #include "XUPItem.h"
-#include "XUPDynamicFolderItem.h"
-#include "XUPProjectItem.h"
-#include "XUPProjectModel.h"
+#include "xupmanager/core/XUPDynamicFolderItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectModel.h"
 #include "pIconManager.h"
 
 #include <QDebug>

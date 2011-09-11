@@ -41,9 +41,9 @@
 #include "CommandParser.h"
 #include "AbstractCommandParser.h"
 
-#include <MonkeyCore.h>
+#include "coremanager/MonkeyCore.h"
 #include <pActionsManager.h>
-#include <VariablesManager.h>
+#include "variablesmanager/VariablesManager.h"
 
 /*!
 	Defines maximum count of lines, which are storing in the buffer for parsing

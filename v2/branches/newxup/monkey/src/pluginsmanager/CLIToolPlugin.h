@@ -30,7 +30,7 @@
 #define CLITOOLPLUGIN_H
 
 #include "BasePlugin.h"
-#include "pCommand.h"
+#include "consolemanager/pCommand.h"
 
 class Q_MONKEY_EXPORT CLIToolPlugin : virtual public BasePlugin
 {

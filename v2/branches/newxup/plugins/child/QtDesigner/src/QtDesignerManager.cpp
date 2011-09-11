@@ -24,9 +24,9 @@
 #include "QDesignerSignalSlotEditor.h"
 #include "QDesignerResourcesEditor.h"
 
-#include <MonkeyCore.h>
-#include <UIMain.h>
-#include <pWorkspace.h>
+#include <coremanager/MonkeyCore.h>
+#include <maininterface/UIMain.h>
+#include <workspace/pWorkspace.h>
 #include <pQueuedMessageToolBar.h>
 #include <pStylesToolButton.h>
 #include <pMenuBar.h>

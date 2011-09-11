@@ -29,8 +29,8 @@
 #include "UpdateChecker.h"
 #include "UIUpdateChecker.h"
 
-#include <MonkeyCore.h>
-#include <UIMain.h>
+#include <coremanager/MonkeyCore.h>
+#include <maininterface/UIMain.h>
 #include <pMenuBar.h>
 
 #include <QTimer>

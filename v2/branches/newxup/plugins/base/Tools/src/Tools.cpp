@@ -3,8 +3,8 @@
 #include "ui/UIToolsEdit.h"
 #include "ui/UIDesktopTools.h"
 
-#include <MonkeyCore.h>
-#include <MkSShellInterpreter.h>
+#include <coremanager/MonkeyCore.h>
+#include <shellmanager/MkSShellInterpreter.h>
 #include <pQueuedMessageToolBar.h>
 #include <pMenuBar.h>
 

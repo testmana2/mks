@@ -1,7 +1,7 @@
 #include "FilesEditor.h"
 #include "ui_FilesEditor.h"
-#include "XUPItemVariableEditorModel.h"
-#include "XUPProjectItem.h"
+#include "xupmanager/core/XUPItemVariableEditorModel.h"
+#include "xupmanager/core/XUPProjectItem.h"
 
 #include <QFileDialog>
 #include <QMessageBox>

@@ -20,8 +20,8 @@
 #include "../DesktopApplications.h"
 
 #include <pMonkeyStudio.h>
-#include <MonkeyCore.h>
-#include <Settings.h>
+#include <coremanager/MonkeyCore.h>
+#include <settingsmanager/Settings.h>
 
 #include <QTimer>
 #include <QCloseEvent>

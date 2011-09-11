@@ -5,7 +5,7 @@
 
 #include <MonkeyExport.h>
 
-#include "pConsoleManagerStep.h"
+#include <consolemanager/pConsoleManagerStep.h>
 
 class pConsoleManagerStepModel : public QAbstractItemModel
 {

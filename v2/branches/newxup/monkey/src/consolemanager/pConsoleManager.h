@@ -38,7 +38,7 @@
 
 #include <MonkeyExport.h>
 
-#include "pCommand.h"
+#include "consolemanager/pCommand.h"
 #include "pConsoleManagerStep.h"
 #include "EnvironmentVariablesManager.h"
 

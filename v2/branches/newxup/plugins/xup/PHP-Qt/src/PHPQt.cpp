@@ -18,7 +18,7 @@
 #include "PHPQt.h"
 #include "PHPQtProjectItem.h"
 
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 
 void PHPQt::fillPluginInfos()
 {

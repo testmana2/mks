@@ -20,7 +20,7 @@
 
 #include <qCtagsSenseBrowser.h>
 #include <pDockWidgetTitleBar.h>
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 #include <pActionsManager.h>
 
 pDockClassBrowser::pDockClassBrowser( ClassBrowser* plugin, QWidget* w )

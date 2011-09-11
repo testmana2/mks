@@ -3,7 +3,7 @@
 #include "../QMake.h"
 #include "../QtVersionManager.h"
 
-#include <XUPProjectItem.h>
+#include <xupmanager/core/XUPProjectItem.h>
 
 #include <pGenericTableModel.h>
 

@@ -1,8 +1,8 @@
-#include "XUPDynamicFolderItem.h"
-#include "XUPProjectItem.h"
-#include "XUPProjectModel.h"
-#include "XUPProjectItemHelper.h"
-#include "FileSystemModel.h"
+#include "xupmanager/core/XUPDynamicFolderItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectModel.h"
+#include "xupmanager/core/XUPProjectItemHelper.h"
+#include "shared/FileSystemModel.h"
 
 #include <QDebug>
 

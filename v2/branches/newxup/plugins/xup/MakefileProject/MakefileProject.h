@@ -18,8 +18,8 @@
 #ifndef MAKEFILEPROJECT_H
 #define MAKEFILEPROJECT_H
 
-#include <XUPPlugin.h>
-#include <ProjectTypesIndex.h>
+#include <pluginsmanager/XUPPlugin.h>
+#include <xupmanager/core/ProjectTypesIndex.h>
 
 class MakefileProject : public XUPPlugin
 {

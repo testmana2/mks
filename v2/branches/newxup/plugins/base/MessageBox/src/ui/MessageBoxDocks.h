@@ -45,9 +45,9 @@
 #include "ui_UIOutput.h"
 
 #include <pIconManager.h>
-#include <pConsoleManager.h>
+#include <consolemanager/pConsoleManager.h>
 #include <pDockWidgetTitleBar.h>
-#include <MonkeyCore.h>
+#include <coremanager/MonkeyCore.h>
 #include <pMenuBar.h>
 
 class pConsoleManagerStepModel;

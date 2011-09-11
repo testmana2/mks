@@ -1,9 +1,9 @@
-#include "XUPItemVariableEditorModel.h"
-#include "ProjectTypesIndex.h"
-#include "XUPProjectItem.h"
-#include "XUPProjectItemHelper.h"
-#include "MonkeyCore.h"
-#include "pFileManager.h"
+#include "xupmanager/core/XUPItemVariableEditorModel.h"
+#include "xupmanager/core/ProjectTypesIndex.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItemHelper.h"
+#include "coremanager/MonkeyCore.h"
+#include "workspace/pFileManager.h"
 
 #include <QApplication>
 #include <QPalette>

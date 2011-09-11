@@ -1,7 +1,7 @@
 #ifndef QMAKEVARIABLESEDITOR_H
 #define QMAKEVARIABLESEDITOR_H
 
-#include <VariablesEditor.h>
+#include <xupmanager/gui/VariablesEditor.h>
 
 class QMakeVariablesEditor : public VariablesEditor
 {

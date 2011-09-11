@@ -36,9 +36,9 @@
 #include "ui/MessageBoxDocks.h"
 #include "ui/UIMessageBoxSettings.h"
 
-#include <MonkeyCore.h>
-#include <UIMain.h>
-#include <pConsoleManager.h>
+#include <coremanager/MonkeyCore.h>
+#include <maininterface/UIMain.h>
+#include <consolemanager/pConsoleManager.h>
 #include <pDockToolBar.h>
 
 #include <QIcon>

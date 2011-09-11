@@ -1,6 +1,6 @@
 #include "VariablesEditor.h"
 #include "ui_VariablesEditor.h"
-#include "XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
 
 #include <QMenu>
 #include <QInputDialog>

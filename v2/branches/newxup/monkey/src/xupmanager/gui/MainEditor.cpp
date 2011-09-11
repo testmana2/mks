@@ -1,8 +1,8 @@
 #include "MainEditor.h"
 #include "ui_MainEditor.h"
-#include "XUPProjectItem.h"
-#include "XUPProjectItemHelper.h"
-#include "XUPDynamicFolderItem.h"
+#include "xupmanager/core/XUPProjectItem.h"
+#include "xupmanager/core/XUPProjectItemHelper.h"
+#include "xupmanager/core/XUPDynamicFolderItem.h"
 
 #include <QFileDialog>
 
