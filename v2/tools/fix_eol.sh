@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# this script convert tab indentation to space indentation with a tab width of 4 spaces.
+# this script convert eol to unix eol.
 
 if [ -z "$1" ]; then
     echo "Please give the folder to check as first parameter."
@@ -13,7 +13,7 @@ cd "$1"
 
 find . -type f -name "*.h*" -o -name "*.c*" -o -name "*.ini" -o -name "*.txt" -o -name "*.rc" -o -name "*.conf" -o -name "*.iss" -o -name "*.py" -o -name "*.sh" -o -name "*.mks" -o -name "*.pri" -o -name "*.pro" -o -name "*.xup" | grep -v .svn | while read line
 do
-    expand --tabs=4 "$line" > "$line.new"
+    dos2unix --newfile "$line" "$line.new"
     mv "$line.new" "$line"
 done
 
