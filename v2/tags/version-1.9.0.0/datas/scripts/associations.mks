@@ -1,0 +1,52 @@
+# Monkey Studio IDE Associations
+# reset associations
+association clear
+# introduce new ones per language
+# association add   language/type   Suffixes
+# association set   language/type   Suffixes
+# Bash
+association set "Bash" "*.sh"
+# Batch
+association set "Batch" "*.cmd, *.bat"
+# C#
+association set "C#" "*.cs"
+# C++
+association set "C++" "*.hxx, *.hpp, *.hh, *.h++, *.h, *.cxx, *.cpp, *.cc, *.c++, *.c"
+# CMake
+association set "CMake" "CMake.txt, *.cmake"
+# CSS
+association set "CSS" "*.css"
+# D
+association set "D" "*.d"
+# Diff
+association set "Diff" "*.patch, *.diff"
+# HTML
+association set "HTML" "*.xslt, *.xsl, *.xsd, *.xml, *.svg, *.shtm*, *.rdf, *.phtm*, *.php*, *.htm*, *.dtd, *.docbook, *.asp"
+# IDL
+association set "IDL" "*.idl"
+# Java
+association set "Java" "*.java"
+# JavaScript
+association set "JavaScript" "*.js"
+# Lua
+association set "Lua" "*.lua"
+# Makefile
+association set "Makefile" "Makefile*, *makefile, *.mak"
+# POV
+association set "POV" "*.pov"
+# Perl
+association set "Perl" "*.pm, *.pl, *.ph"
+# Properties
+association set "Properties" "*.reg, *.rc, *.properties, *.ini, *.inf, *.cnf, *.cfg"
+# Python
+association set "Python" "*.pyx, *.pyw, *.py, *.ptl"
+# Ruby
+association set "Ruby" "*.rbw, *.rb"
+# SQL
+association set "SQL" "*.sql"
+# TCL
+association set "TCL" "*.tcl"
+# TeX
+association set "TeX" "*.toc, *.sty, *.idx, *.aux"
+# VHDL
+association set "VHDL" "*.vhdl"
