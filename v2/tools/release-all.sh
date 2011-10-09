@@ -20,7 +20,7 @@ if [ -z "$VERSION" ]; then
 	#SOURCE_FOLDER=../trunk
 fi
 
-SVN_REVISION=`export LANG=C && [ -f /usr/bin/svnversion ] && svnversion $SOURCE_FOLDER`
+SVN_REVISION=`export LANG=C && [ -f /usr/bin/svnversion ] && svnversion -c "$SOURCE_FOLDER" | sed "s/[^:]*:\([0-9]*\)[a-zA-Z]*/\1/"`
 
 # if empty version
 if [ -z "$VERSION" ]; then
