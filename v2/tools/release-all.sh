@@ -21,8 +21,6 @@ if [ -z "$VERSION" ]; then
 fi
 
 SVN_REVISION=`export LANG=C && [ -f /usr/bin/svnversion ] && svnversion $SOURCE_FOLDER`
-#SVN_REVISION=`echo "$SVN_REVISION" | egrep -o '[0-9]+'`
-SVN_REVISION=`echo "$SVN_REVISION" | egrep -o '[0-9]+' | xargs -n 2 printf '%s.%s\n'`
 
 # if empty version
 if [ -z "$VERSION" ]; then
