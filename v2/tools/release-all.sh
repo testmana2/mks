@@ -8,10 +8,11 @@ DEFAULT_DARWIN_QT_VERSION="4.7.0-lgpl"
 DEFAULT_DARWIN_WIN32_QT_VERSION="4.7.4"
 
 WINDOWS_INSTALL_FOLDER_NAME="Monkey Studio IDE"
+DARWIN_BUNDLE_NAME="Monkey Studio"
 
 VERSION=$1
 OS=`uname -s`
-PARALLEL_BUILD=6
+PARALLEL_BUILD=4
 SOURCE_FOLDER=../tags/version-$VERSION
 
 # if empty version
@@ -48,8 +49,9 @@ if [ $OS = "Linux" ]; then
 fi
 
 if [ $OS = "Darwin" ]; then
+	export WINEPREFIX="$HOME/Wine Files"
 	WINE="/Applications/Wine.app/Contents/Resources/bin/wine"
-	WINE_DRIVE="$HOME/Wine Files/drive_c"
+	WINE_DRIVE="$WINEPREFIX/drive_c"
 	WINE_PROGRAM_FILES="$WINE_DRIVE/Program Files"
 fi
 
@@ -57,6 +59,7 @@ export OS
 export VERSION
 export VERSION_STR
 export SVN_REVISION
+export MAC_PACKAGE
 
 # execute command and stop if fails
 startCommand()
@@ -202,12 +205,35 @@ macPackage()
 {
 	echo "*** Create Mac OS X package"
 
-	QT_VERSION="4.7.0-lgpl"
-	BUNDLE_NAME="QWBFSManager"
 	BUNDLE_PATH="./bin"
-	BUNDLE_APP_PATH="$BUNDLE_PATH/$BUNDLE_NAME.app"
-	QT_PATH="/usr/local/Trolltech/$QT_VERSION"
-	QMAKE_FLAGS="\"CONFIG *= universal no_fresh_install\""
+	BUNDLE_APP_PATH="$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.app"
+	QT_PATH="/usr/local/Trolltech/$DEFAULT_DARWIN_QT_VERSION"
+	QMAKE="$QT_PATH/bin/qmake"
+	#QMAKE_FLAGS="\"CONFIG *= universal no_fresh_install\""
+
+	startCommand "cd \"./$FOLDER_NAME\""
+	startCommand "make distclean > /dev/null 2>&1" 0
+	startCommand "\"$QMAKE\" $QMAKE_FLAGS -r > /dev/null 2>&1"
+	startCommand "make distclean > /dev/null 2>&1" 0
+	startCommand "\"$QMAKE\" $QMAKE_FLAGS -r > /dev/null 2>&1"
+	startCommand "make -j$PARALLEL_BUILD > \"$CUR_PATH/log/macbuild.log\" 2>&1"
+	startCommand "make install > /dev/null 2>&1"
+	startCommand "\"../release-osx.sh\" \"$BUNDLE_APP_PATH\" \"$QMAKE\" > \"$CUR_PATH/log/macpackage.log\" 2>&1"
+	startCommand "make distclean > /dev/null 2>&1" 0
+	startCommand "cd \"$CUR_PATH\""
+
+	#if [ -f "./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg" ]; then
+	#	startCommand "mv \"./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg\" \"./$MAC_PACKAGE\""
+	#fi
+}
+macPackage2()
+{
+	echo "*** Create Mac OS X package"
+
+	BUNDLE_PATH="./bin"
+	BUNDLE_APP_PATH="$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.app"
+	QT_PATH="/usr/local/Trolltech/$DEFAULT_DARWIN_QT_VERSION"
+	#QMAKE_FLAGS="\"CONFIG *= universal no_fresh_install\""
 
 	startCommand "cd \"./$FOLDER_NAME\""
 	startCommand "make distclean > /dev/null 2>&1" 0
@@ -220,8 +246,8 @@ macPackage()
 	startCommand "make distclean > /dev/null 2>&1" 0
 	startCommand "cd \"$CUR_PATH\""
 
-	if [ -f "./$FOLDER_NAME/$BUNDLE_PATH/$BUNDLE_NAME.dmg" ]; then
-		startCommand "mv \"./$FOLDER_NAME/$BUNDLE_PATH/$BUNDLE_NAME.dmg\" \"./$MAC_PACKAGE\""
+	if [ -f "./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg" ]; then
+		startCommand "mv \"./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg\" \"./$MAC_PACKAGE\""
 	fi
 }
 
