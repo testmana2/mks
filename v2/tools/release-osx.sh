@@ -215,7 +215,7 @@ relinkBinary()
 createTmpDmg()
 {
     echo "Creating temporary dmg..."
-    hdiutil create -megabytes 300 tmp.dmg -layout NONE -fs HFS+ -volname "$APP_BASENAME" -ov
+    hdiutil create -megabytes 500 tmp.dmg -layout NONE -fs HFS+ -volname "$APP_BASENAME" -ov
     tmp=`hdid tmp.dmg`
     disk=`echo $tmp | cut -f 1 -d\ `
 }
