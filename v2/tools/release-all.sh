@@ -1,132 +1,84 @@
 #!/bin/sh
 
-# default qt linux
-DEFAULT_LINUX_QT_VERSION="4.7.2"
-DEFAULT_LINUX_WIN32_QT_VERSION="4.7.4"
-# default qt darwin
-DEFAULT_DARWIN_QT_VERSION="4.7.4-lgpl"
-DEFAULT_DARWIN_WIN32_QT_VERSION="4.7.4"
+# load usefull functions
+. ./functions.sh
 
-WINDOWS_INSTALL_FOLDER_NAME="Monkey Studio IDE"
-DARWIN_BUNDLE_NAME="Monkey Studio"
+# define usefull variables
+export PROJECT_NAME="Monkey Studio IDE"
+export PROJECT_COPYRIGHTS="2005 - 2011 Azevedo Filipe & The Monkey Studio Team"
+export PROJECT_COMPANY="Monkey Studio Team"
+export PROJECT_DESCRIPTION="Free, Fast and Flexible cross-platform IDE"
+export PROJECT_URL="http://monkeystudio.org"
+export PROJECT_FORUMS_URL="http://monkeystudio.org/forum"
+export PROJECT_ISSUES_URL="https://bugs.launchpad.net/monkeystudio/+filebug"
 
-VERSION=$1
-OS=`uname -s`
-PARALLEL_BUILD=4
-SOURCE_FOLDER=../tags/version-$VERSION
+export QT_WIN32_MINGW_DOWNLOAD="http://get.qt.nokia.com/qt/source/qt-win-opensource-4.7.4-mingw.exe"
+export WIN32_MINGW_DOWNLOAD="http://get.qt.nokia.com/misc/MinGW-gcc440_1.zip"
+export QT_DOWNLOAD="http://qt.nokia.com/downloads"
+
+export QT_WIN32_PATH="$WINE_DRIVE/Development/Qt/$QT_WIN32_VERSION"
+export WIN32_DLLS_PATH="$HOME/Win32-Libraries/bin"
+
+# helper variables
+APPLICATION_NAME="Monkey Studio"
+MAC_BUNDLE_NAME="Monkey Studio"
+
+PROJECT_VERSION="$1"
+SOURCE_FOLDER="$START_PWD/../tags/version-$PROJECT_VERSION"
 
 # if empty version
-if [ -z "$VERSION" ]; then
-	SOURCE_FOLDER=../branches/dev
-	#SOURCE_FOLDER=../trunk
+if [ -z "$PROJECT_VERSION" ]; then
+	#SOURCE_FOLDER=../branches/dev
+	SOURCE_FOLDER="$START_PWD/../trunk"
+	
+	PROJECT_VERSION="trunk"
 fi
 
-SVN_REVISION=`export LANG=C && [ -f /usr/bin/svnversion ] && svnversion -c "$SOURCE_FOLDER" | sed "s/[^:]*:\([0-9]*\)[a-zA-Z]*/\1/"`
+PROJECT_REVISION=`svnRevision "$SOURCE_FOLDER"`
 
 # if empty version
-if [ -z "$VERSION" ]; then
-	VERSION_STR="trunk-svn$SVN_REVISION"
+if [ -z "$PROJECT_VERSION" ]; then
+	PROJECT_VERSION_STR="trunk-svn$PROJECT_REVISION"
 # if not empty version
 else
-	VERSION_STR="$VERSION-svn$SVN_REVISION"
+	PROJECT_VERSION_STR="$PROJECT_VERSION-svn$PROJECT_REVISION"
 fi
 
-BASE_NAME=mks_$VERSION_STR
+BASE_NAME=mks_$PROJECT_VERSION_STR
 FOLDER_NAME=$BASE_NAME-src
 TAR_GZ_FILE=$FOLDER_NAME.tar.gz
 ZIP_FILE=$FOLDER_NAME.zip
-WIN_SETUP=setup_$BASE_NAME-win32.exe
 WIN_FOLDER=$BASE_NAME-win32
-WIN_PACKAGE=$WIN_FOLDER.zip
+WIN_PACKAGE="$START_PWD/$WIN_FOLDER.zip"
 MAC_PACKAGE=$BASE_NAME.dmg
 CUR_PATH=$PWD
 LOG_FOLDER=$CUR_PATH/log
 
-if [ $OS = "Linux" ]; then
-	WINE="wine"
-	WINE_DRIVE="$HOME/.wine/drive_c"
-	WINE_PROGRAM_FILES="$WINE_DRIVE/Program Files"
-fi
+export SETUP_ICON="$WINE_ROOT_DRIVE/$START_PWD/data_windows/setup.ico"
+export SETUP_LEFT_BANNER="$WINE_ROOT_DRIVE/$START_PWD/data_windows/left-banner.bmp"
+export SETUP_TOP_BANNER="$WINE_ROOT_DRIVE/$START_PWD/data_windows/top-banner.bmp"
+export SETUP_SOURCE_DIRECTORY="$WINE_ROOT_DRIVE/$START_PWD/$FOLDER_NAME"
+export SETUP_OUTPUT_DIRECTORY="$WINE_ROOT_DRIVE/$START_PWD"
+export SETUP_OUTPUT_NAME="mks_$PROJECT_VERSION_STR-win32"
 
-if [ $OS = "Darwin" ]; then
-	export WINEPREFIX="$HOME/Wine Files"
-	WINE="/Applications/Wine.app/Contents/Resources/bin/wine"
-	WINE_DRIVE="$WINEPREFIX/drive_c"
-	WINE_PROGRAM_FILES="$WINE_DRIVE/Program Files"
-fi
+export WIN_SETUP="$START_PWD/$SETUP_OUTPUT_NAME.exe"
 
 export OS
-export VERSION
-export VERSION_STR
-export SVN_REVISION
+export PROJECT_VERSION
+export PROJECT_VERSION_STR
+export PROJECT_REVISION
 export MAC_PACKAGE
 
-# execute command and stop if fails
-startCommand()
-{
-	echo "    -Starting command: $1"
-	error=0
-	eval "$1" || error=1
-	
-	if [ $error = 1 -a -z "$2" ]; then
-		echo "***************************************************"
-		echo "***  Error when evaluing command: $1"
-		echo "***************************************************"
-		finish 1
-	fi
-}
-
-# delete existing file/folder $1
-deleteIfExists()
-{
-	if [ -d "$1" ]; then
-		echo "*** Deleting folder: $1"
-		startCommand "rm -fr \"$1\""
-	elif [ -f "$1" ]; then
-		echo "*** Deleting file: $1"
-		startCommand "rm -f \"$1\""
-	fi
-}
-
-# export a svn path from source $1 to target $2
-svnExport()
-{
-	echo "*** Exporting repository: $1 to $2"
-	startCommand "svn export \"$1\" \"$2\" > /dev/null 2>&1"
-	#startCommand "git --git-dir=\"../fresh/.git\" checkout-index -a -f --prefix=\"$2/fresh/\" > /dev/null 2>&1"
-}
-
-# create a tar.gz file $1 from path $2
-createTarGz()
-{
-	echo "*** Creating tar.gz package: $1"
-	startCommand "tar czf \"$1\" \"$2\""
-}
-
-# create a zip file $1 from path $2 and extra parameters $3 and ending parameters $4
-createZip()
-{
-	echo "*** Creating zip package: $1"
-	
-	params=
-	
-	if [ '!' -z "$3" ]; then
-		params="$params \"$3\""
-	fi
-	
-	if [ '!' -z "$1" ]; then
-		params="$params \"$1\""
-	fi
-	
-	if [ '!' -z "$2" ]; then
-		params="$params \"$2\""
-	fi
-	
-	if [ '!' -z "$4" ]; then
-		params="$params $4"
-	fi
-	
-	startCommand "zip -q -r -9 $params"
+crossbuildMac() {
+	echo "*** Crossbuilding mac port..."
+	startCommand "cd \"./$FOLDER_NAME\""
+	startCommand "makeHost distclean > /dev/null 2>&1" 0
+	startCommand "qmakeMac \"./build.pro\" > /dev/null 2>&1"
+	startCommand "makeHost distclean > /dev/null 2>&1" 0
+	startCommand "qmakeMac > /dev/null 2>&1"
+	startCommand "makeHost > \"$START_PWD/log/macBuild.log\" 2>&1"
+	#startCommand "makeHost distclean > /dev/null 2>&1" 0
+	startCommand "cd \"$START_PWD\""
 }
 
 # crossbuild & setup for windows
@@ -136,7 +88,7 @@ crossBuild()
 	
 	QMAKE="qmake"
 
-	if [ $OS = "Linux" ]; then
+	if [ $OS_LINUX = 1 ]; then
 		QMAKE="qmake-qt4"
 		QT_VERSION="$DEFAULT_LINUX_QT_VERSION"
 		QT_WIN32_VERSION="$DEFAULT_LINUX_WIN32_QT_VERSION"
@@ -147,9 +99,9 @@ crossBuild()
 		DLLS_PATH="$WINE_DRIVE/Development/OpenSSL"
 	fi
 
-	if [ $OS = "Darwin" ]; then
-		QT_VERSION="$DEFAULT_DARWIN_QT_VERSION"
-		QT_WIN32_VERSION="$DEFAULT_DARWIN_WIN32_QT_VERSION"
+	if [ $OS_MAC = 1 ]; then
+		QT_VERSION="$DEFAULT_MAC_QT_VERSION"
+		QT_WIN32_VERSION="$DEFAULT_MAC_WIN32_QT_VERSION"
 		QT_PATH="/usr/local/Trolltech/$QT_VERSION"
 		MKSPEC="$HOME/mkspecs/4.6.x/win32-osx-g++"
 		QT_WIN32_PATH="/usr/local/Trolltech/win32/$QT_WIN32_VERSION"
@@ -180,34 +132,14 @@ crossBuild()
 	fi
 }
 
-# create windows zip package
-windowsZipPackage()
-{
-	echo "*** Creating windows zip package"
-
-	# uninstall previous package
-	startCommand "find \"$WINE_PROGRAM_FILES/$WINDOWS_INSTALL_FOLDER_NAME\" -name \"unins*.exe\" -print0 | xargs -0 -I {} \"$WINE\" {} /silent > /dev/null 2>&1"
-
-	# install the current one
-	startCommand "\"$WINE\" \"./$WIN_SETUP\" /silent > /dev/null 2>&1"
-
-	# create zip
-	startCommand "cp -fr \"$WINE_PROGRAM_FILES/$WINDOWS_INSTALL_FOLDER_NAME\" \"./$WIN_FOLDER\""
-	startCommand "createZip \"./$WIN_PACKAGE\" \"./$WIN_FOLDER\" \"\" \"-x *unins*.exe -x *unins*.dat\""
-	startCommand "deleteIfExists \"./$WIN_FOLDER\""
-
-	# uninstall installed package
-	startCommand "find \"$WINE_PROGRAM_FILES/$WINDOWS_INSTALL_FOLDER_NAME\" -name \"unins*.exe\" -print0 | xargs -0 -I {} \"$WINE\" {} /silent > /dev/null 2>&1"
-}
-
 # create mac os x package
 macPackage()
 {
 	echo "*** Create Mac OS X package"
 
 	BUNDLE_PATH="./bin"
-	BUNDLE_APP_PATH="$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.app"
-	QT_PATH="/usr/local/Trolltech/$DEFAULT_DARWIN_QT_VERSION"
+	BUNDLE_APP_PATH="$BUNDLE_PATH/$MAC_BUNDLE_NAME.app"
+	QT_PATH="/usr/local/Trolltech/$DEFAULT_MAC_QT_VERSION"
 	QMAKE="$QT_PATH/bin/qmake"
 	#QMAKE_FLAGS="\"CONFIG *= universal no_fresh_install\""
 
@@ -222,8 +154,8 @@ macPackage()
 	startCommand "make distclean > /dev/null 2>&1" 0
 	startCommand "cd \"$CUR_PATH\""
 
-	#if [ -f "./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg" ]; then
-	#	startCommand "mv \"./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg\" \"./$MAC_PACKAGE\""
+	#if [ -f "./$FOLDER_NAME/$BUNDLE_PATH/$MAC_BUNDLE_NAME.dmg" ]; then
+	#	startCommand "mv \"./$FOLDER_NAME/$BUNDLE_PATH/$MAC_BUNDLE_NAME.dmg\" \"./$MAC_PACKAGE\""
 	#fi
 }
 macPackage2()
@@ -231,8 +163,8 @@ macPackage2()
 	echo "*** Create Mac OS X package"
 
 	BUNDLE_PATH="./bin"
-	BUNDLE_APP_PATH="$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.app"
-	QT_PATH="/usr/local/Trolltech/$DEFAULT_DARWIN_QT_VERSION"
+	BUNDLE_APP_PATH="$BUNDLE_PATH/$MAC_BUNDLE_NAME.app"
+	QT_PATH="/usr/local/Trolltech/$DEFAULT_MAC_QT_VERSION"
 	#QMAKE_FLAGS="\"CONFIG *= universal no_fresh_install\""
 
 	startCommand "cd \"./$FOLDER_NAME\""
@@ -246,17 +178,8 @@ macPackage2()
 	startCommand "make distclean > /dev/null 2>&1" 0
 	startCommand "cd \"$CUR_PATH\""
 
-	if [ -f "./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg" ]; then
-		startCommand "mv \"./$FOLDER_NAME/$BUNDLE_PATH/$DARWIN_BUNDLE_NAME.dmg\" \"./$MAC_PACKAGE\""
-	fi
-}
-
-# startup function
-startup()
-{
-	if [ '!' -d "$LOG_FOLDER" ]; then
-		echo "*** Create log folder"
-		startCommand "mkdir -p \"$LOG_FOLDER\""
+	if [ -f "./$FOLDER_NAME/$BUNDLE_PATH/$MAC_BUNDLE_NAME.dmg" ]; then
+		startCommand "mv \"./$FOLDER_NAME/$BUNDLE_PATH/$MAC_BUNDLE_NAME.dmg\" \"./$MAC_PACKAGE\""
 	fi
 }
 
@@ -264,7 +187,7 @@ startup()
 finish()
 {
 	# close wine, WineBottler & X11
-	if [ $OS = "Darwin" ]; then
+	if [ $OS_MAC = 1 ]; then
 		startCommand "killall wine > /dev/null 2>&1" 0
 		startCommand "killall WineBottler > /dev/null 2>&1" 0
 		startCommand "killall X11.bin > /dev/null 2>&1" 0
@@ -274,47 +197,89 @@ finish()
 	startCommand "cd \"$CUR_PATH\"" 0
 	
 	# delete exported repository
-	startCommand "rm -fr \"./$FOLDER_NAME\"" 0
+	#startCommand "rm -fr \"./$FOLDER_NAME\"" 0
 
 	echo "********** Processing release finished - Exit code: $1 **********"
 	
 	exit $1
 }
 
-# small infos
-echo "Using version $VERSION at revision $SVN_REVISION..."
-# startup call
-startup
-# delete source folder
-deleteIfExists "./$FOLDER_NAME"
-# delete tar.gz source
-deleteIfExists "./$TAR_GZ_FILE"
-# delete zip source
-deleteIfExists "./$ZIP_FILE"
-# delete win setup
-deleteIfExists "./$WIN_SETUP"
-# delete win package
-deleteIfExists "./$WIN_PACKAGE"
-# delete mac package
-deleteIfExists "./$MAC_PACKAGE"
-# export the taggued version to release
-svnExport "./$SOURCE_FOLDER" "./$FOLDER_NAME"
-# create tar.gz source
-createTarGz "./$TAR_GZ_FILE" "./$FOLDER_NAME"
-# create zip source
-createZip "./$ZIP_FILE" "./$FOLDER_NAME"
-# create win setup
-crossBuild
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # create windows zip package
+windowsZipPackage()
+{
+	install_directory="$WINE_PROGRAM_FILES/$PROJECT_NAME"
+	
+	isUninstall "$install_directory"
+	isInstall "$WIN_SETUP"
+	
+	createSymlink "$install_directory" "$WIN_FOLDER"
+	
+	createZip \
+		"$WIN_PACKAGE" \
+		"$WIN_FOLDER" \
+		"" \
+		"-x *unins*.exe -x *unins*.dat"
+	
+	deleteIfExists "$WIN_FOLDER"
+
+	isUninstall "$install_directory"
+}
+
+banner "Releasing '$APPLICATION_NAME' $PROJECT_VERSION/r$PROJECT_REVISION..."
+deleteIfExists "$LOG_FOLDER"
+createLogFolder "$LOG_FOLDER"
+
+banner "deleting old stuff..."
+#deleteIfExists "./$FOLDER_NAME"
+deleteIfExists "./$TAR_GZ_FILE"
+deleteIfExists "./$ZIP_FILE"
+#deleteIfExists "./$WIN_SETUP"
+deleteIfExists "./$WIN_PACKAGE"
+deleteIfExists "./$MAC_PACKAGE"
+
+banner "Getting sources..."
+#svnExport "./$SOURCE_FOLDER" "./$FOLDER_NAME"
+
+banner "Creating sources packages..."
+#createTarGz "./$TAR_GZ_FILE" "./$FOLDER_NAME"
+#createZip "./$ZIP_FILE" "./$FOLDER_NAME"
+
+banner "Crossbuilding windows port..."
+#crossbuildWindows "./$FOLDER_NAME/build.pro"
+
+banner "Creating windows setup..."
+#isccHost "\"./data_windows/monkeystudio.iss\""
+
+banner "Creating windows package..."
 windowsZipPackage
-# darwin specific
-if [ $OS = "Darwin" ]; then
-	echo "*** Mac"
-	macPackage
+
+exit 0
+
+if [ $OS_LINUX = 1 ]; then
+	# create mac build
+	echo "lol"
+	#crossbuildMac
 fi
-# linux specific
-if [ $OS = "Linux" ]; then
-	echo "*** Linux"
-fi
+
+# create win setup
+#crossBuild
+# create windows zip package
+
 # finish call
-finish 0
+#finish 0
