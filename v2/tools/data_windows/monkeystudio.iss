@@ -4,26 +4,26 @@
 #define PROJECT_COPYRIGHTS GetEnv("PROJECT_COPYRIGHTS")
 #define PROJECT_COMPANY GetEnv("PROJECT_COMPANY")
 #define PROJECT_DESCRIPTION GetEnv("PROJECT_DESCRIPTION")
-#define PROJECT_URL GetEnv("PROJECT_URL")
+#define PROJECT_URL_HOMEPAGE GetEnv("PROJECT_URL_HOMEPAGE")
 #define PROJECT_FORUMS_URL GetEnv("PROJECT_FORUMS_URL")
 #define PROJECT_ISSUES_URL GetEnv("PROJECT_ISSUES_URL")
 #define PROJECT_VERSION GetEnv("PROJECT_VERSION")
 #define PROJECT_VERSION_STR GetEnv("PROJECT_VERSION_STR")
 #define PROJECT_REVISION GetEnv( "PROJECT_REVISION" )
 
-#define QT_WIN32_MINGW_DOWNLOAD GetEnv("QT_WIN32_MINGW_DOWNLOAD")
-#define WIN32_MINGW_DOWNLOAD GetEnv("WIN32_MINGW_DOWNLOAD")
+#define QT_WINDOWS_MINGW_DOWNLOAD GetEnv("QT_WINDOWS_MINGW_DOWNLOAD")
+#define WINDOWS_MINGW_DOWNLOAD GetEnv("WINDOWS_MINGW_DOWNLOAD")
 #define QT_DOWNLOAD GetEnv("QT_DOWNLOAD")
 
 #define WINE_ROOT_DRIVE GetEnv("WINE_ROOT_DRIVE")
-#define QT_WIN32_PATH WINE_ROOT_DRIVE +GetEnv("QT_WIN32_PATH")
-#define WIN32_DLLS_PATH WINE_ROOT_DRIVE +GetEnv("WIN32_DLLS_PATH")
+#define QT_WINDOWS_PATH WINE_ROOT_DRIVE +GetEnv("QT_WINDOWS_PATH")
+#define WINDOWS_DLLS_PATH WINE_ROOT_DRIVE +GetEnv("WINDOWS_DLLS_PATH")
 
-#define SETUP_ICON GetEnv("SETUP_ICON")
-#define SETUP_LEFT_BANNER GetEnv("SETUP_LEFT_BANNER")
-#define SETUP_TOP_BANNER GetEnv("SETUP_TOP_BANNER")
-#define SETUP_SOURCE_DIRECTORY GetEnv("SETUP_SOURCE_DIRECTORY")
-#define SETUP_OUTPUT_DIRECTORY GetEnv("SETUP_OUTPUT_DIRECTORY")
+#define SETUP_ICON WINE_ROOT_DRIVE +GetEnv("SETUP_ICON")
+#define SETUP_LEFT_BANNER WINE_ROOT_DRIVE +GetEnv("SETUP_LEFT_BANNER")
+#define SETUP_TOP_BANNER WINE_ROOT_DRIVE +GetEnv("SETUP_TOP_BANNER")
+#define SETUP_SOURCE_DIRECTORY WINE_ROOT_DRIVE +GetEnv("SETUP_SOURCE_DIRECTORY")
+#define SETUP_OUTPUT_DIRECTORY WINE_ROOT_DRIVE +GetEnv("SETUP_OUTPUT_DIRECTORY")
 #define SETUP_OUTPUT_NAME GetEnv("SETUP_OUTPUT_NAME")
 
 [InnoIDE_Settings]
@@ -59,9 +59,9 @@ AllowNoIcons=true
 DefaultGroupName={#PROJECT_NAME}
 AlwaysUsePersonalGroup=true
 AppPublisher={#PROJECT_COMPANY}
-AppPublisherURL={#PROJECT_URL}
+AppPublisherURL={#PROJECT_URL_HOMEPAGE}
 AppSupportURL={#PROJECT_FORUMS_URL}
-AppUpdatesURL={#PROJECT_URL}
+AppUpdatesURL={#PROJECT_URL_HOMEPAGE}
 AppVersion={#PROJECT_VERSION}
 AppComments=Thanks using {#PROJECT_NAME}
 AppContact={#PROJECT_FORUMS_URL}
@@ -91,17 +91,17 @@ Source: datas\translations\*.*; DestDir: {app}\translations; Flags: promptifolde
 Source: datas\templates\*.*; DestDir: {app}\templates; Flags: promptifolder recursesubdirs createallsubdirs
 Source: datas\apis\*.*; DestDir: {app}\apis; Flags: promptifolder recursesubdirs createallsubdirs
 ; Qt related files
-Source: {#QT_WIN32_PATH}\bin\*.dll; DestDir: {app}; Flags: promptifolder; Excludes: *d4.dll
-Source: {#QT_WIN32_PATH}\doc\qch\*.qch; DestDir: {app}\qt\doc\qch; Flags: promptifolder recursesubdirs
-Source: {#QT_WIN32_PATH}\plugins\*.dll; DestDir: {app}\qt\plugins; Flags: promptifolder recursesubdirs; Excludes: *d4.dll
-Source: {#QT_WIN32_PATH}\translations\*.*; DestDir: {app}\qt\translations; Flags: promptifolder recursesubdirs; Excludes: *.pri *.pro *.qph *.pl *.xq README
+Source: {#QT_WINDOWS_PATH}\bin\*.dll; DestDir: {app}; Flags: promptifolder; Excludes: *d4.dll
+Source: {#QT_WINDOWS_PATH}\doc\qch\*.qch; DestDir: {app}\qt\doc\qch; Flags: promptifolder recursesubdirs
+Source: {#QT_WINDOWS_PATH}\plugins\*.dll; DestDir: {app}\qt\plugins; Flags: promptifolder recursesubdirs; Excludes: *d4.dll
+Source: {#QT_WINDOWS_PATH}\translations\*.*; DestDir: {app}\qt\translations; Flags: promptifolder recursesubdirs; Excludes: *.pri *.pro *.qph *.pl *.xq README
 ; Others related files
-Source: {#WIN32_DLLS_PATH}\mingwm10.dll; DestDir: {app}; Flags: promptifolder
-Source: {#WIN32_DLLS_PATH}\libgcc_s_dw2-1.dll; DestDir: {app}; Flags: promptifolder skipifsourcedoesntexist
-Source: {#WIN32_DLLS_PATH}\libstdc++-6.dll; DestDir: {app}; Flags: promptifolder skipifsourcedoesntexist
-Source: {#WIN32_DLLS_PATH}\libeay32.dll; DestDir: {app}; Flags: promptifolder
-Source: {#WIN32_DLLS_PATH}\libssl32.dll; DestDir: {app}; Flags: promptifolder
-Source: {#WIN32_DLLS_PATH}\ssleay32.dll; DestDir: {app}; Flags: promptifolder
+Source: {#WINDOWS_DLLS_PATH}\mingwm10.dll; DestDir: {app}; Flags: promptifolder
+Source: {#WINDOWS_DLLS_PATH}\libgcc_s_dw2-1.dll; DestDir: {app}; Flags: promptifolder skipifsourcedoesntexist
+Source: {#WINDOWS_DLLS_PATH}\libstdc++-6.dll; DestDir: {app}; Flags: promptifolder skipifsourcedoesntexist
+Source: {#WINDOWS_DLLS_PATH}\libeay32.dll; DestDir: {app}; Flags: promptifolder
+Source: {#WINDOWS_DLLS_PATH}\libssl32.dll; DestDir: {app}; Flags: promptifolder
+Source: {#WINDOWS_DLLS_PATH}\ssleay32.dll; DestDir: {app}; Flags: promptifolder
 
 [Icons]
 Name: {group}\{#PROJECT_NAME}; Filename: {app}\monkeystudio.exe; WorkingDir: {app}; IconFilename: {app}\monkeystudio.exe; IconIndex: 0
@@ -115,11 +115,11 @@ Name: {group}\Downloads MinGW; Filename: {app}\Downloads MinGW.url; WorkingDir: 
 Name: {group}\Qt downloads page; Filename: {app}\Qt downloads page.url; WorkingDir: {app}
 
 [INI]
-Filename: {app}\Home page.url; Section: InternetShortcut; Key: URL; String: {#PROJECT_URL}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty
+Filename: {app}\Home page.url; Section: InternetShortcut; Key: URL; String: {#PROJECT_URL_HOMEPAGE}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty
 Filename: {app}\Forums.url; Section: InternetShortcut; Key: URL; String: {#PROJECT_FORUMS_URL}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty
 Filename: {app}\Issues tracker.url; Section: InternetShortcut; Key: URL; String: {#PROJECT_ISSUES_URL}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty
-Filename: {app}\Downloads Qt Libraries.url; Section: InternetShortcut; Key: URL; String: {#QT_WIN32_MINGW_DOWNLOAD}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty; Languages: 
-Filename: {app}\Downloads MinGW.url; Section: InternetShortcut; Key: URL; String: {#WIN32_MINGW_DOWNLOAD}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty
+Filename: {app}\Downloads Qt Libraries.url; Section: InternetShortcut; Key: URL; String: {#QT_WINDOWS_MINGW_DOWNLOAD}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty; Languages: 
+Filename: {app}\Downloads MinGW.url; Section: InternetShortcut; Key: URL; String: {#WINDOWS_MINGW_DOWNLOAD}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty
 Filename: {app}\Qt downloads page.url; Section: InternetShortcut; Key: URL; String: {#QT_DOWNLOAD}; Flags: createkeyifdoesntexist uninsdeleteentry uninsdeletesectionifempty
 
 [UninstallDelete]

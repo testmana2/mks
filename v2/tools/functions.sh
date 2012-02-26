@@ -251,6 +251,51 @@ crossbuildWindows() {
 		"cd \"$current\""
 }
 
+# make a mac os x crossbuild
+# $1 the qmake project file to build
+crossbuildMac() {
+	directory=`dirname "$1"`
+	filename=`basename "$1"`
+	
+	if [ ! -d "$directory" ]; then
+		return 1
+	fi
+	
+	current="$PWD"
+	
+	bannerCommand \
+		"Going into sources directory" \
+		"cd \"$directory\""
+		
+	makeHost \
+		"Cleaning" \
+		"distclean" \
+		"/dev/null"
+	
+	
+	qmakeMac \
+		"\"$filename\"" \
+		"/dev/null"
+	
+	makeHost \
+		"Cleaning" \
+		"distclean" \
+		"/dev/null"
+	
+	qmakeMac \
+		"\"$filename\"" \
+		"/dev/null"
+	
+	makeHost \
+		"Building" \
+		"" \
+		"$START_PWD/log/macBuild.log"
+	
+	bannerCommand \
+		"Coming back to original directory" \
+		"cd \"$current\""
+}
+
 # get svn revision from working copy directory
 # $1 = directory to get revision from
 svnRevision() {
@@ -308,3 +353,58 @@ createZip() {
 		"Creating zip package" \
 		"zip -q -r -9 $params"
 }
+
+# MAC OS X SPECIFIC
+
+# The mac deployment tool also deploys the Qt plugins, according to the following rules:
+#	* Debug versions of the plugins are not deployed.
+#	* The designer plugins are not deployed.
+#	* The Image format plugins are always deployed.
+#	* SQL driver plugins are deployed if the application uses the QtSql module.
+#	* Script plugins are deployed if the application uses the QtScript module.
+#	* The Phonon backend plugin is deployed if the application uses the Phonon module.
+#	* The svg icon plugin is deployed if the application uses the QtSvg module.
+#	* The accessibility plugin is always deployed.
+#	* Accessibility for Qt3Support is deployed if the application uses the Qt3Support module.
+
+macRelinkBinary()
+{
+    #echo "Striping `basename \"$1\"` binary..."
+    # strip libs (-x is max allowable for shared libs)
+    #strip -x "${1}"
+    
+    # set id in target
+    if [ ! "x$2" = "x" ] ; then
+        setId "${2}" "${1}"
+    fi
+    
+    # get dependencies
+    frameworks_path=`getBinaryDependencies "$1"`
+    
+    # update framework/library paths
+    changeBinaryPaths "$1" "$frameworks_path"
+    
+    # copy dependencies frameworks/libraries
+    for framework_path in $frameworks_path ; do
+        # get framework
+        framework=$(basename "$framework_path")
+        
+        # get filenames
+        source=`getSourceFramework "$framework"`
+        target=`getTargetFramework "$framework"`
+        
+        # copy file if needed
+        if [ -e "${source}" ] ; then
+            if [ ! -e "${target}" ] ; then
+                #echo "Copying & striping `basename \"${source}\"` framework/library..."
+                path=`dirname "${target}"`
+                mkdir -p "${path}"
+                cp -f "${source}" "${target}"
+                
+                echo
+                relinkBinary "${target}" "${framework}"
+            fi
+        fi
+    done
+}
+

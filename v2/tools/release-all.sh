@@ -69,7 +69,7 @@ export PROJECT_VERSION_STR
 export PROJECT_REVISION
 export MAC_PACKAGE
 
-crossbuildMac() {
+crossbuildMac2() {
 	echo "*** Crossbuilding mac port..."
 	startCommand "cd \"./$FOLDER_NAME\""
 	startCommand "makeHost distclean > /dev/null 2>&1" 0
@@ -221,8 +221,7 @@ finish()
 
 
 # create windows zip package
-windowsZipPackage()
-{
+windowsZipPackage() {
 	install_directory="$WINE_PROGRAM_FILES/$PROJECT_NAME"
 	
 	isUninstall "$install_directory"
@@ -241,6 +240,20 @@ windowsZipPackage()
 	isUninstall "$install_directory"
 }
 
+# create mac os x bundle
+macBundle() {
+	oldPwd="$PWD"
+	
+	cd "$FOLDER_NAME"
+	
+	makeHost \
+		"Installing stuff" \
+		"install" \
+		"/dev/null"
+	
+	cd "$oldPwd"
+}
+
 banner "Releasing '$APPLICATION_NAME' $PROJECT_VERSION/r$PROJECT_REVISION..."
 deleteIfExists "$LOG_FOLDER"
 createLogFolder "$LOG_FOLDER"
@@ -249,7 +262,7 @@ banner "deleting old stuff..."
 #deleteIfExists "./$FOLDER_NAME"
 deleteIfExists "./$TAR_GZ_FILE"
 deleteIfExists "./$ZIP_FILE"
-#deleteIfExists "./$WIN_SETUP"
+deleteIfExists "./$WIN_SETUP"
 deleteIfExists "./$WIN_PACKAGE"
 deleteIfExists "./$MAC_PACKAGE"
 
@@ -267,7 +280,13 @@ banner "Creating windows setup..."
 #isccHost "\"./data_windows/monkeystudio.iss\""
 
 banner "Creating windows package..."
-windowsZipPackage
+#windowsZipPackage
+
+banner "Crossbuilding mac os x port..."
+#crossbuildMac "./$FOLDER_NAME/build.pro"
+
+banner "Creating mac os x bundle..."
+macBundle
 
 exit 0
 
