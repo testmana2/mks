@@ -12,7 +12,8 @@ class MkSProject(Project):
         
         self.shortName = 'mks'
         self.name = 'Monkey Studio IDE'
-        self.version = '1.9.0.0'
+        #self.version = '1.9.0.0'
+        self.version = 'dev'
         self.company = 'The Monkey Studio Team'
         self.copyrights = '2005 - 2012 Azevedo Filipe & The Monkey Studio Team'
         self.description = 'Free, Fast and Flexible cross-platform IDE'
@@ -141,7 +142,13 @@ class MkSProject(Project):
         createDirectory( self.packagesFolder )
         
         banner( 'Exporting sources...' )
-        if not self.svnList[ 'mks' ].export( 'v2/tags/version-%s' % ( self.version ), self.sourcesFolder, True ):
+        if self.version == 'dev':
+            copy = 'v2/branches/dev'
+        elif self.version == 'trunk':
+            copy = 'v2/trunk'
+        else:
+            copy = 'v2/tags/version-%s' % ( self.version )
+        if not self.svnList[ 'mks' ].export( copy, self.sourcesFolder, True ):
             print 'Can\'t export sources'
             return
         
@@ -168,6 +175,11 @@ class MkSProject(Project):
             print 'Can\'t create windows zip'
             return False
         
+        banner( 'Crossbuilding for mac os x...' )
+        if not buildQtProject( self.projectFile, self.qt, self.qt.macosMkSpec ):
+            print 'Can\'t build for mac os x'
+            return
+        
         '''
         -extract svn
         -create source tgz
@@ -175,7 +187,7 @@ class MkSProject(Project):
         -windows cross build
         -windows setup
         -windows zip package
-        mac cross build
+        -mac cross build
         mac dmg
         mac zip package
         '''
