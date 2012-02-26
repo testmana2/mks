@@ -171,47 +171,6 @@ relinkPlugins()
     done
 }
 
-relinkBinary()
-{
-    echo "Striping `basename \"${1}\"` binary..."
-    # strip libs (-x is max allowable for shared libs)
-    #strip -x "${1}"
-    
-    # set id in target
-    if [ ! "x${2}" = "x" ] ; then
-        setId "${2}" "${1}"
-    fi
-    
-    # get dependencies
-    frameworks_path=`getBinaryDependencies "$1"`
-    
-    # update framework/library paths
-    changeBinaryPaths "$1" "$frameworks_path"
-    
-    # copy dependencies frameworks/libraries
-    for framework_path in $frameworks_path ; do
-        # get framework
-        framework=$(basename "$framework_path")
-        
-        # get filenames
-        source=`getSourceFramework "$framework"`
-        target=`getTargetFramework "$framework"`
-        
-        # copy file if needed
-        if [ -e "${source}" ] ; then
-            if [ ! -e "${target}" ] ; then
-                #echo "Copying & striping `basename \"${source}\"` framework/library..."
-                path=`dirname "${target}"`
-                mkdir -p "${path}"
-                cp -f "${source}" "${target}"
-                
-                echo
-                relinkBinary "${target}" "${framework}"
-            fi
-        fi
-    done
-}
-
 createTmpDmg()
 {
     echo "Creating temporary dmg..."
