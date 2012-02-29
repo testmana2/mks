@@ -66,6 +66,8 @@ def copy(source, target):
     targetFilePath = target
     if not targetFilePath.endswith( fileName ):
         targetFilePath = '%s/%s' % ( target, fileName )
+    if os.path.exists( targetFilePath ):
+        return True
     shutil.copy2( source, target )
     return os.path.exists( targetFilePath )
 
