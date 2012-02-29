@@ -10,12 +10,13 @@ import Wine
 class MacOSBundle:
     suffixedBinaries = [ 'ld', 'otool' ]
     
-    def __init__(self, qtHost, bundlePath):
+    def __init__(self, qtHost, bundlePath, plugins = None):
         self.qt = qtHost
         self.bundlePath = bundlePath
         self.binariesPath = '/opt/mac/bin' if Tools.isLinuxOS() else '/usr/bin'
         self.binariesPrefix = 'x86_64-apple-darwin10-' if Tools.isLinuxOS() else ''
         self.use64BitsBinaries = True if Tools.isLinuxOS() else False
+        self.plugins = plugins
     
     def suffix(self, command):
         return '64' if self.use64BitsBinaries and command in MacOSBundle.suffixedBinaries else ''
@@ -40,15 +41,13 @@ class MacOSBundle:
         command = '"%s" -LX "%s"' % ( self.bin( 'otool' ), binary )
         ok, output = Tools.executeAndGetOutput( command )
         items = []
-        
         for line in output.splitlines():
             line = line.strip();
             tmp = line.lower()
-            if tmp.startswith( '/usr/lib' ) and not 'qt' in tmp and not 'phonon' in tmp:
+            if tmp.startswith( '/usr/lib' ) or tmp.startswith( '/system/library' ):
                 continue
             index = line.rfind( '(compatibility' )
             items.append( line[ :index ].strip() )
-        
         return items;
     
     def copyDependencies(self, binary, target):
@@ -65,7 +64,11 @@ class MacOSBundle:
         return True
     
     def deploy(self):
-        frameworksPath = self.frameworksFilePath()
-        if not self.copyDependencies( self.binaryFilePath(), frameworksPath ):
+        frameworkFilePath = self.frameworksFilePath()
+        if not self.copyDependencies( self.binaryFilePath(), frameworkFilePath ):
             return False
+        for framework in os.listdir( frameworkFilePath ):
+            framework = '%s/%s' % ( frameworkFilePath, framework )
+            if not self.copyDependencies( framework, frameworkFilePath ):
+                return False
         return True
