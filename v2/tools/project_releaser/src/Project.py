@@ -1,4 +1,10 @@
-from Tools import *
+import os
+
+import Tools
+import Qt
+import Git
+import Svn
+import Wine
 
 class Project:
     def __init__(self):
@@ -28,6 +34,9 @@ class Project:
         self.wine = None
         self.svnList = {}
         self.gitList = {}
+
+    def __del__(self):
+        '''Cleanup'''
     
     def expandVariables(self):
         os.environ[ 'PROJECT_SHORT_NAME' ] = self.shortName
@@ -49,4 +58,4 @@ class Project:
             self.wine.expandVariables()
     
     def run(self):
-        banner( 'Reimplement your own Project::run() function' )
+        Tools.banner( 'Reimplement your own Project::run() function' )

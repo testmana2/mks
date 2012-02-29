@@ -1,12 +1,18 @@
 import tempfile
 import shutil
+import os
 
-from Project import *
-from Tools import *
+import Project
+import Tools
+import Qt
+import Git
+import Svn
+import Wine
+import MacOSBundle
 
-class MkSProject(Project):
+class MkSProject(Project.Project):
     def __init__(self):
-        Project.__init__(self)
+        Project.Project.__init__(self)
         
         self.success = False
         
@@ -24,26 +30,25 @@ class MkSProject(Project):
         
         self.makeJobs = 4
         
-        self.qtLinux = QtTriplet(
+        self.qtLinux = Qt.QtTriplet(
             '/usr', # linux
             '%s/Developpement/OS/OSX-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ), # mac
             '%s/Developpement/OS/Win32-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ) # windows
         )
         
-        self.qt = QtHost( self )
+        self.qt = Qt.QtHost( self )
         
-        self.wine = Wine()
+        self.wine = Wine.Wine()
         
-        self.svnList[ 'mks' ] = Svn( 'svn://svn.tuxfamily.org/svnroot/monkeystudio/mks' )
+        self.svnList[ 'mks' ] = Svn.Svn( 'svn://svn.tuxfamily.org/svnroot/monkeystudio/mks' )
         self.svnList[ 'mks' ].workingCopy = '%s/Developpement/C++/Qt4/mks' % ( os.environ[ 'HOME' ] )
         
-        self.gitList[ 'fresh' ] = Git( 'git://github.com/pasnox/fresh.git' )
+        self.gitList[ 'fresh' ] = Git.Git( 'git://github.com/pasnox/fresh.git' )
         
         # Custom variables
         self.baseName = '%s_%s' % ( self.shortName, self.version )
         self.sourceName = '%s-src' % ( self.baseName )
         self.tmpFolder = tempfile.mkdtemp()
-        #self.tmpFolder = '/tmp/tmpqKUvr3'
         self.logFolder = '%s/log' % ( self.tmpFolder )
         self.packagesFolder = '%s/packages' % ( self.tmpFolder )
         self.sourcesFolder = '%s/%s' % ( self.tmpFolder, self.sourceName )
@@ -85,20 +90,21 @@ class MkSProject(Project):
         '''
     
     def __del__(self):
+        Project.Project.__del__(self)
         if self.success:
-            deleteIfExists( self.target )
-            createDirectory( self.target )
+            Tools.deleteIfExists( self.target )
+            Tools.createDirectory( self.target )
             for fileName in os.listdir( self.packagesFolder ):
                 sourceFilePath = '%s/%s' % ( self.packagesFolder, fileName )
                 targetFilePath = '%s/%s' % ( self.target, fileName )
                 if not os.path.isdir( sourceFilePath ):
-                    if deleteIfExists( targetFilePath ):
+                    if Tools.deleteIfExists( targetFilePath ):
                         shutil.move( sourceFilePath, targetFilePath )
-        deleteIfExists( self.tmpFolder )
-        banner( 'Releasing finished (%s)' % ( 'Ok' if self.success else 'Fails' ) )
+        #Tools.deleteIfExists( self.tmpFolder )
+        Tools.banner( 'Releasing finished (%s)' % ( 'Ok' if self.success else 'Fails' ) )
     
     def expandVariables(self):
-        Project.expandVariables(self)
+        Project.Project.expandVariables(self)
         os.environ[ 'PROJECT_BASE_NAME' ] = self.baseName
         os.environ[ 'PROJECT_SOURCE_NAME' ] = self.sourceName
         os.environ[ 'PROJECT_TMP_FOLDER' ] = self.tmpFolder
@@ -123,25 +129,26 @@ class MkSProject(Project):
         os.environ[ 'SETUP_SOURCE_DIRECTORY' ] = self.sourcesFolder
         os.environ[ 'SETUP_OUTPUT_DIRECTORY' ] = self.packagesFolder
         os.environ[ 'SETUP_OUTPUT_NAME' ] = os.path.splitext( os.path.basename( self.winSetup ) )[ 0 ]
+        os.environ[ 'SCRIPT_PATH' ] = '%s/v2/tools/data_windows' % ( self.svnList[ 'mks' ].workingCopy )
     
     def run(self):
         #Project.run(self)
         self.success = False
         
-        banner( 'Releasing "%s" using tmp folder "%s"' % ( self.name, self.tmpFolder ) )
+        Tools.banner( 'Releasing "%s" using tmp folder "%s"' % ( self.name, self.tmpFolder ) )
         
-        banner( 'Expanding variables...' )
+        Tools.banner( 'Expanding variables...' )
         self.expandVariables()
         
-        banner( 'Creating directories...' )
+        Tools.banner( 'Creating directories...' )
         if os.path.exists( self.target ):
             print 'Target exists and it should not, delete it first.'
             #return False
-        createDirectory( self.target )
-        createDirectory( self.logFolder )
-        createDirectory( self.packagesFolder )
+        Tools.createDirectory( self.target )
+        Tools.createDirectory( self.logFolder )
+        Tools.createDirectory( self.packagesFolder )
         
-        banner( 'Exporting sources...' )
+        Tools.banner( 'Exporting sources...' )
         if self.version == 'dev':
             copy = 'v2/branches/dev'
         elif self.version == 'trunk':
@@ -152,33 +159,44 @@ class MkSProject(Project):
             print 'Can\'t export sources'
             return
         
-        banner( 'Creating sources packages...' )
-        if not tarGzFolder( self.sourcesFolder, self.tgzFile ):
+        '''Tools.banner( 'Creating sources packages...' )
+        if not Tools.tarGzFolder( self.sourcesFolder, self.tgzFile ):
             print 'Can\'t create tgz file'
             return
-        if not zipFolder( self.sourcesFolder, self.zipFile ):
+        if not Tools.zipFolder( self.sourcesFolder, self.zipFile ):
             print 'Can\'t create zip file'
             return
         
-        banner( 'Crossbuilding for windows...' )
-        if not buildQtProject( self.projectFile, self.qt, self.qt.windowsMkSpec ):
+        Tools.banner( 'Crossbuilding for windows...' )
+        if not Tools.buildQtProject( self.projectFile, self.qt, self.qt.windowsMkSpec ):
             print 'Can\'t build for windows'
             return
         
-        banner( 'Creating windows setup...' )
+        Tools.banner( 'Creating windows setup...' )
         if not self.wine.iscc( '%s%s/v2/tools/data_windows/monkeystudio.iss' % ( self.wine.rootDrive, self.svnList[ 'mks' ].workingCopy ) ):
             print 'Can\'t create windows setup'
             return
         
-        banner( 'Creating windows zip...' )
+        Tools.banner( 'Creating windows zip...' )
         if not self.wine.isccSetupToZip( self.winSetup, self.winZip, self.name ):
             print 'Can\'t create windows zip'
-            return False
-        
-        banner( 'Crossbuilding for mac os x...' )
-        if not buildQtProject( self.projectFile, self.qt, self.qt.macosMkSpec ):
-            print 'Can\'t build for mac os x'
             return
+        
+        Tools.banner( 'Crossbuilding for mac os x...' )
+        if not Tools.buildQtProject( self.projectFile, self.qt, self.qt.macosMkSpec ):
+            print 'Can\'t build for mac os x'
+            return'''
+        
+        Tools.banner( 'Relinking the mac os x bundle' )
+        bundle = MacOSBundle.MacOSBundle( self.qt, '/media/ramdisk/Monkey Studio.app' )
+        if not bundle.deploy():
+            print 'Can\'t deploy'
+            return
+        '''if not Tools.relinkMacOSBundle( '%s/bin/Monkey Studio_debug.app' % ( self.sourcesFolder ) ):
+            print 'Can\'t relink the mac os x bundle'
+            return'''
+        
+        # /opt/mac/bin/i686-apple-darwin10-lipo ./Monkey\ Studio_debug -extract i386 -output ./Monkey\ Studio_debug.i386
         
         '''
         -extract svn

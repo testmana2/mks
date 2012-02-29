@@ -26,6 +26,8 @@
 #define SETUP_OUTPUT_DIRECTORY WINE_ROOT_DRIVE +GetEnv("SETUP_OUTPUT_DIRECTORY")
 #define SETUP_OUTPUT_NAME GetEnv("SETUP_OUTPUT_NAME")
 
+#define SCRIPT_PATH WINE_ROOT_DRIVE +GetEnv("SCRIPT_PATH")
+
 [InnoIDE_Settings]
 LogFileOverwrite=false
 
@@ -79,7 +81,7 @@ WizardSmallImageFile={#SETUP_TOP_BANNER}
 [Files]
 ; Project related files
 Source: bin\monkeystudio.exe; DestDir: {app}; Flags: promptifolder
-Source: setups\windows\qt.conf; DestDir: {app}; Flags: promptifolder
+Source: {#SCRIPT_PATH}\qt.conf; DestDir: {app}; Flags: promptifolder
 Source: GPL-2; DestDir: {app}; Flags: promptifolder
 Source: GPL-3; DestDir: {app}; Flags: promptifolder
 Source: LGPL-3; DestDir: {app}; Flags: promptifolder

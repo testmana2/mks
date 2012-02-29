@@ -2,12 +2,12 @@
 import sys
 import argparse
 
-from MkS import MkSProject
+import MkS
 
 if __name__ == '__main__':
     _version = '0.5.0'
     
-    project = MkSProject()
+    project = MkS.MkSProject()
     
     '''
     parser = argparse.ArgumentParser( description = 'A project source and package releaser.' )
