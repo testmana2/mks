@@ -38,6 +38,16 @@ class QtHost:
         os.environ[ 'QT_MACOS_PATH' ] = self.qt.macos
         os.environ[ 'QT_WINDOWS_PATH' ] = self.qt.windows
     
+    def pluginsFilePath(self, name = None, os = None):
+        if os == 'linux':
+            return '%s/plugins/%s' % ( self.qt.linux, name if name else '' )
+        elif os == 'macos':
+            return '%s/plugins/%s' % ( self.qt.macos, name if name else '' )
+        elif os == 'windows':
+            return '%s/plugins/%s' % ( self.qt.windows, name if name else '' )
+        return '%s/plugins/%s' % ( self.qtHost, name if name else '' )
+        
+    
     def suffix(self, command):
         return '-qt4' if self.useQtSuffix and command in QtHost.suffixedBinaries else ''
     
