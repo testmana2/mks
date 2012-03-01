@@ -9,6 +9,28 @@ import Wine
 
 class MacOSBundle:
     suffixedBinaries = [ 'ld', 'otool' ]
+    pluginsMapping = {
+        'Qt3Support': [  ],
+        'QtCore': [ 'codecs', 'sqldrivers' ],
+        'QtGui': [ 'accessible', 'graphicssystems', 'iconengines', 'imageformats', 'inputmethods', 'menubar', 'styles' ],
+        'QtXml': [  ],
+        'QtNetwork': [ 'bearer' ],
+        'QtSql': [  ],
+        'QtWebKit': [  ],
+        'QtOpenGL': [  ],
+        'QtDeclarative': [ 'qmltooling' ],
+        'QtDesigner': [ 'designer' ],
+        'QtDesignerComponents': [  ],
+        'QtHelp': [  ],
+        'QtXmlPatterns': [  ],
+        'QtScript': [ 'script' ],
+        'QtScriptTools': [  ],
+        'QtDBus': [  ],
+        'QtSvg': [  ],
+        'QtCLucene': [  ],
+        'QtTest': [  ],
+        'phonon': [ 'phonon_backend' ]
+    }
     
     def __init__(self, qtHost, bundlePath, plugins = None):
         self.qt = qtHost
@@ -31,7 +53,7 @@ class MacOSBundle:
         return '%s/Contents/Resources' % ( self.bundlePath )
     
     def qtPluginsFilePath(self, name = None):
-        return '%s/Contents/Resources/qt/plugins/%s' % ( self.bundlePath, name if name else '' )
+        return '%s/qt/plugins/%s' % ( self.resourcesFilePath(), name if name else '' )
     
     def binaryFilePath(self):
         fileName = os.path.splitext( os.path.basename( self.bundlePath ) )[ 0 ]
@@ -63,6 +85,22 @@ class MacOSBundle:
                 return False
         return True
     
+    def deployPlugins(self):
+        # copy plugins
+        for framework in os.listdir( self.frameworksFilePath() ):
+            for plugin in MacOSBundle.pluginsMapping[ framework ]:
+                pluginsSource = self.qt.pluginsFilePath( plugin, 'macos' )
+                if os.path.exists( pluginsSource ):
+                    for file in os.listdir( pluginsSource ):
+                        # handle debug / release plugins according to framework name
+                        if ( '_debug' in file and '_debug' in framework ) or ( not '_debug' in file and not '_debug' in framework ):
+                            file = '%s/%s' % ( pluginsSource, file )
+                            if not Tools.copy( file, self.qtPluginsFilePath( plugin ) ):
+                                return False
+        # copy required frameworks by plugins
+        
+        return True
+    
     def deploy(self):
         frameworkFilePath = self.frameworksFilePath()
         if not self.copyDependencies( self.binaryFilePath(), frameworkFilePath ):
@@ -71,4 +109,4 @@ class MacOSBundle:
             framework = '%s/%s' % ( frameworkFilePath, framework )
             if not self.copyDependencies( framework, frameworkFilePath ):
                 return False
-        return True
+        return self.deployPlugins()

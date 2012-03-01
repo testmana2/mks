@@ -68,7 +68,13 @@ def copy(source, target):
         targetFilePath = '%s/%s' % ( target, fileName )
     if os.path.exists( targetFilePath ):
         return True
-    shutil.copy2( source, target )
+    if not os.path.exists( target ):
+        if not createDirectory( target ):
+            return False
+    if os.path.isdir( source ):
+        shutil.copytree( source, target, True )
+    else:
+        shutil.copy2( source, target )
     return os.path.exists( targetFilePath )
 
 def execute(command, workingDirectory = None, showError = True):
