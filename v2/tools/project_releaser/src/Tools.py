@@ -6,6 +6,7 @@ import subprocess
 import commands
 import glob
 import re
+import fnmatch
 
 import Project
 import Qt
@@ -77,6 +78,16 @@ def copy(source, target):
         shutil.copy2( source, target )
     return os.path.exists( targetFilePath )
 
+def getFilesList(path, pattern = None, recursive = False):
+    files = []
+    for file in os.listdir( path ):
+        file = '%s/%s' % ( path, file )
+        if os.path.isfile( file ) and ( not pattern or fnmatch.fnmatch( file, pattern ) ):
+            files.append( file )
+        elif os.path.isdir( file ):
+            files.extend( getFilesList( file, pattern, recursive ) )
+    return files
+
 def execute(command, workingDirectory = None, showError = True):
     if workingDirectory:
         print ' - From: %s' % ( workingDirectory )
@@ -91,7 +102,7 @@ def execute(command, workingDirectory = None, showError = True):
         return False
     return True
 
-def executeAndGetOutput(command, workingDirectory = None):
+def executeAndGetOutput(command, workingDirectory = None, showError = False):
     if workingDirectory:
         print ' - From: %s' % ( workingDirectory )
     print ' - Executing: %s' % command
