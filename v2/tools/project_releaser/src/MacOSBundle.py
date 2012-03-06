@@ -10,7 +10,7 @@ import Wine
 class MacOSBundle:
     suffixedBinaries = [ 'ld', 'otool' ]
     pluginsMapping = {
-        'Qt3Support': [  ],
+        'Qt3Support': [ 'accessible' ],
         'QtCore': [ 'codecs', 'sqldrivers' ],
         'QtGui': [ 'accessible', 'graphicssystems', 'iconengines', 'imageformats', 'inputmethods', 'menubar', 'styles' ],
         'QtXml': [  ],
@@ -32,13 +32,13 @@ class MacOSBundle:
         'phonon': [ 'phonon_backend' ]
     }
     
-    def __init__(self, qtHost, bundlePath, plugins = None):
+    def __init__(self, qtHost, bundlePath, dropPlugins = True):
         self.qt = qtHost
         self.bundlePath = bundlePath
         self.binariesPath = '/opt/mac/bin' if Tools.isLinuxOS() else '/usr/bin'
         self.binariesPrefix = 'x86_64-apple-darwin10-' if Tools.isLinuxOS() else ''
         self.use64BitsBinaries = True if Tools.isLinuxOS() else False
-        self.plugins = plugins
+        self.dropPlugins = dropPlugins
     
     def suffix(self, command):
         return '64' if self.use64BitsBinaries and command in MacOSBundle.suffixedBinaries else ''
@@ -60,23 +60,32 @@ class MacOSBundle:
         return '%s/Contents/MacOS/%s' % ( self.bundlePath, fileName )
     
     def getDependencies(self, binary):
+        binaryFilePath = os.path.basename( binary )
         command = '"%s" -LX "%s"' % ( self.bin( 'otool' ), binary )
         ok, output = Tools.executeAndGetOutput( command )
         items = []
-        for line in output.splitlines():
+        for line in set( output.splitlines() ):
             line = line.strip();
             tmp = line.lower()
             if tmp.startswith( '/usr/lib' ) or tmp.startswith( '/system/library' ):
                 continue
             index = line.rfind( '(compatibility' )
-            items.append( line[ :index ].strip() )
-        return items;
+            filePath = line[ :index ].strip()
+            if binaryFilePath != os.path.basename( filePath ):
+                items.append( filePath )
+        return items
     
     def copyDependencies(self, binary, target):
         if not Tools.createDirectory( target ):
             return False
         frameworks = self.getDependencies( binary )
+        
+        #print 'Frameworks for %s' % ( binary )
+        #print frameworks
+        
         for framework in frameworks:
+            if framework == os.path.basename( binary ):
+                continue
             if not os.path.exists( framework ) and ( 'Qt' in framework or 'phonon' in framework ):
                 frameworkName = os.path.basename( framework )
                 index = framework.find( '.framework' )
@@ -86,8 +95,10 @@ class MacOSBundle:
         return True
     
     def deployPlugins(self):
+        frameworkFilePath = self.frameworksFilePath()
+        frameworks = os.listdir( frameworkFilePath )
         # copy plugins
-        for framework in os.listdir( self.frameworksFilePath() ):
+        for framework in frameworks:
             for plugin in MacOSBundle.pluginsMapping[ framework ]:
                 pluginsSource = self.qt.pluginsFilePath( plugin, 'macos' )
                 if os.path.exists( pluginsSource ):
@@ -97,16 +108,20 @@ class MacOSBundle:
                             file = '%s/%s' % ( pluginsSource, file )
                             if not Tools.copy( file, self.qtPluginsFilePath( plugin ) ):
                                 return False
-        # copy required frameworks by plugins
-        
+        # copy plugins frameworks
+        for framework in Tools.getFilesList( self.qtPluginsFilePath(), recursive = True ):
+            if not self.copyDependencies( framework, frameworkFilePath ):
+                return False
         return True
     
     def deploy(self):
         frameworkFilePath = self.frameworksFilePath()
+        # copy binary dependencies
         if not self.copyDependencies( self.binaryFilePath(), frameworkFilePath ):
             return False
-        for framework in os.listdir( frameworkFilePath ):
-            framework = '%s/%s' % ( frameworkFilePath, framework )
+        # copy frameworks dependencies
+        for framework in Tools.getFilesList( frameworkFilePath ):
             if not self.copyDependencies( framework, frameworkFilePath ):
                 return False
+        # copy plugins
         return self.deployPlugins()
