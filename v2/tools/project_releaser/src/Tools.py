@@ -88,10 +88,11 @@ def getFilesList(path, pattern = None, recursive = False):
             files.extend( getFilesList( file, pattern, recursive ) )
     return files
 
-def execute(command, workingDirectory = None, showError = True):
-    if workingDirectory:
-        print ' - From: %s' % ( workingDirectory )
-    print ' - Executing: %s' % command
+def execute(command, workingDirectory = None, showError = True, showExecInfo = True):
+    if showExecInfo:
+        if workingDirectory:
+            print ' - From: %s' % ( workingDirectory )
+        print ' - Executing: %s' % command
     args = shlex.split( command )
     runner = subprocess.Popen( args, cwd = workingDirectory, stdout = subprocess.PIPE, stderr= subprocess.STDOUT, shell = False )
     output, error = runner.communicate()
@@ -102,10 +103,11 @@ def execute(command, workingDirectory = None, showError = True):
         return False
     return True
 
-def executeAndGetOutput(command, workingDirectory = None, showError = False):
-    if workingDirectory:
-        print ' - From: %s' % ( workingDirectory )
-    print ' - Executing: %s' % command
+def executeAndGetOutput(command, workingDirectory = None, showError = False, showExecInfo = True):
+    if showExecInfo:
+        if workingDirectory:
+            print ' - From: %s' % ( workingDirectory )
+        print ' - Executing: %s' % command
     args = shlex.split( command )
     runner = subprocess.Popen( args, cwd = workingDirectory, stdout = subprocess.PIPE, stderr= subprocess.STDOUT, shell = False )
     output, error = runner.communicate()
