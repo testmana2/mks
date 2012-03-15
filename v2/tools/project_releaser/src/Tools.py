@@ -62,7 +62,15 @@ def createSymLink(source, target):
     os.symlink( source, target )
     return os.path.exists( target )
 
+def wildCardCopy(source, target):
+    for path in glob.iglob( source ):
+        if not copy( path, target ):
+            return False
+    return True
+
 def copy(source, target):
+    if '*' in source or '?' in source:
+        return wildCardCopy( source, target )
     fileName = os.path.basename( source )
     targetFilePath = target
     if not targetFilePath.endswith( fileName ):
@@ -78,14 +86,39 @@ def copy(source, target):
         shutil.copy2( source, target )
     return os.path.exists( targetFilePath )
 
+def wildCardMove(source, target):
+    for path in glob.iglob( source ):
+        if not move( path, target ):
+            return False
+    return True
+
+def move(source, target):
+    if '*' in source or '?' in source:
+        return wildCardMove( source, target )
+    if not os.path.exists( target ):
+        if not createDirectory( target ):
+            return False
+    shutil.move( source, target )
+    return os.path.exists( '%s/%s' % ( target, os.path.basename( source ) ) )
+
 def getFilesList(path, pattern = None, recursive = False):
     files = []
     for file in os.listdir( path ):
         file = '%s/%s' % ( path, file )
         if os.path.isfile( file ) and ( not pattern or fnmatch.fnmatch( file, pattern ) ):
             files.append( file )
-        elif os.path.isdir( file ):
+        elif recursive and os.path.isdir( file ):
             files.extend( getFilesList( file, pattern, recursive ) )
+    return files
+
+def getFoldersList(path, pattern = None, recursive = False):
+    files = []
+    for file in os.listdir( path ):
+        file = '%s/%s' % ( path, file )
+        if os.path.isdir( file ) and ( not pattern or fnmatch.fnmatch( file, pattern ) ):
+            files.append( file )
+            if recursive:
+                files.extend( getFoldersList( file, pattern, recursive ) )
     return files
 
 def execute(command, workingDirectory = None, showError = True, showExecInfo = True):
