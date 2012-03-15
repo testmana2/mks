@@ -32,8 +32,8 @@ class MkSProject(Project.Project):
         
         self.qtLinux = Qt.QtTriplet(
             '/usr', # linux
-            '%s/Developpement/OS/OSX-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ), # mac
-            '%s/Developpement/OS/Win32-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ) # windows
+            '%s/Developpement/OS/OSX-Libraries/Qt/4.8.0' % ( os.environ[ 'HOME' ] ), # mac
+            '%s/Developpement/OS/Win32-Libraries/Qt/4.8.0' % ( os.environ[ 'HOME' ] ) # windows
         )
         
         self.qt = Qt.QtHost( self )
@@ -48,7 +48,7 @@ class MkSProject(Project.Project):
         # Custom variables
         self.baseName = '%s_%s' % ( self.shortName, self.version )
         self.sourceName = '%s-src' % ( self.baseName )
-        self.tmpFolder = tempfile.mkdtemp()
+        self.tmpFolder = '/tmp/tmpXygzhy' #tempfile.mkdtemp()
         self.logFolder = '%s/log' % ( self.tmpFolder )
         self.packagesFolder = '%s/packages' % ( self.tmpFolder )
         self.sourcesFolder = '%s/%s' % ( self.tmpFolder, self.sourceName )
@@ -148,7 +148,7 @@ class MkSProject(Project.Project):
         Tools.createDirectory( self.logFolder )
         Tools.createDirectory( self.packagesFolder )
         
-        Tools.banner( 'Exporting sources...' )
+        '''Tools.banner( 'Exporting sources...' )
         if self.version == 'dev':
             copy = 'v2/branches/dev'
         elif self.version == 'trunk':
@@ -157,7 +157,7 @@ class MkSProject(Project.Project):
             copy = 'v2/tags/version-%s' % ( self.version )
         if not self.svnList[ 'mks' ].export( copy, self.sourcesFolder, True ):
             print 'Can\'t export sources'
-            return
+            return'''
         
         '''Tools.banner( 'Creating sources packages...' )
         if not Tools.tarGzFolder( self.sourcesFolder, self.tgzFile ):
@@ -180,9 +180,9 @@ class MkSProject(Project.Project):
         Tools.banner( 'Creating windows zip...' )
         if not self.wine.isccSetupToZip( self.winSetup, self.winZip, self.name ):
             print 'Can\'t create windows zip'
-            return
+            return'''
         
-        Tools.banner( 'Crossbuilding for mac os x...' )
+        '''Tools.banner( 'Crossbuilding for mac os x...' )
         if not Tools.buildQtProject( self.projectFile, self.qt, self.qt.macosMkSpec ):
             print 'Can\'t build for mac os x'
             return'''
@@ -192,9 +192,6 @@ class MkSProject(Project.Project):
         if not bundle.deploy():
             print 'Can\'t deploy'
             return
-        '''if not Tools.relinkMacOSBundle( '%s/bin/Monkey Studio_debug.app' % ( self.sourcesFolder ) ):
-            print 'Can\'t relink the mac os x bundle'
-            return'''
         
         # /opt/mac/bin/i686-apple-darwin10-lipo ./Monkey\ Studio_debug -extract i386 -output ./Monkey\ Studio_debug.i386
         
