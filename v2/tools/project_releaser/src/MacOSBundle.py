@@ -135,6 +135,11 @@ class MacOSBundle:
                 frameworkName = os.path.basename( framework )
                 index = framework.find( '.framework' )
                 localFramework = '%s/lib/%s%s' % ( self.qt.qt.macos, frameworkName, framework[ index: ] )
+            if not os.path.exists( framework ) and ( not 'Qt' in framework and not 'phonon' in framework ):
+                self.prof.plus()
+                self.prof.show( 'Skip non existing dependency %s' % ( framework ) )
+                self.prof.minus()
+                continue
             # copy dependency
             if not self.copyDependency( binaryFilePath, [ localFramework, framework ], frameworksPath ):
                 self.prof.minus()
