@@ -80,23 +80,10 @@ WizardSmallImageFile={#SETUP_TOP_BANNER}
 
 [Files]
 ; Project related files
-Source: bin\monkeystudio.exe; DestDir: {app}; Flags: promptifolder
-Source: {#SCRIPT_PATH}\qt.conf; DestDir: {app}; Flags: promptifolder
-Source: GPL-2; DestDir: {app}; Flags: promptifolder
-Source: GPL-3; DestDir: {app}; Flags: promptifolder
-Source: LGPL-3; DestDir: {app}; Flags: promptifolder
-Source: dev-readme; DestDir: {app}; Flags: promptifolder
-Source: readme.txt; DestDir: {app}; Flags: promptifolder
-Source: bin\plugins\*.dll; DestDir: {app}\plugins; Flags: promptifolder recursesubdirs
-Source: datas\scripts\*.*; DestDir: {app}\scripts; Flags: promptifolder
-Source: datas\translations\*.*; DestDir: {app}\translations; Flags: promptifolder
-Source: datas\templates\*.*; DestDir: {app}\templates; Flags: promptifolder recursesubdirs createallsubdirs
-Source: datas\apis\*.*; DestDir: {app}\apis; Flags: promptifolder recursesubdirs createallsubdirs
+Source: bin\*; DestDir: {app}; Flags: promptifolder recursesubdirs createallsubdirs
 ; Qt related files
 Source: {#QT_WINDOWS_PATH}\bin\*.dll; DestDir: {app}; Flags: promptifolder; Excludes: *d4.dll
-Source: {#QT_WINDOWS_PATH}\doc\qch\*.qch; DestDir: {app}\qt\doc\qch; Flags: promptifolder recursesubdirs
 Source: {#QT_WINDOWS_PATH}\plugins\*.dll; DestDir: {app}\qt\plugins; Flags: promptifolder recursesubdirs; Excludes: *d4.dll
-Source: {#QT_WINDOWS_PATH}\translations\*.*; DestDir: {app}\qt\translations; Flags: promptifolder recursesubdirs; Excludes: *.pri *.pro *.qph *.pl *.xq README
 ; Others related files
 Source: {#WINDOWS_DLLS_PATH}\mingwm10.dll; DestDir: {app}; Flags: promptifolder
 Source: {#WINDOWS_DLLS_PATH}\libgcc_s_dw2-1.dll; DestDir: {app}; Flags: promptifolder skipifsourcedoesntexist
@@ -126,11 +113,6 @@ Filename: {app}\Qt downloads page.url; Section: InternetShortcut; Key: URL; Stri
 
 [UninstallDelete]
 Name: {group}\{#PROJECT_NAME}; Type: filesandordirs
-Name: {app}\Home page.url; Type: files
-Name: {app}\Forums.url; Type: files
-Name: {app}\Issues tracker.url; Type: files
-Name: {app}\*.ini; Type: files
-Name: {app}\scripts-*; Type: filesandordirs
 Name: {app}\*; Type: filesandordirs
 Name: {app}; Type: dirifempty
 
