@@ -16,7 +16,7 @@ class QtHost:
     suffixedBinaries = [ 'assistant', 'linguist', 'lupdate', 'pinentry', 'qtconfig', 'designer', 'lrelease', 'moc', 'qmake', 'uic' ]
     
     def __init__(self, project):
-        self.useQtSuffix = True if Tools.isLinuxOS() else False
+        self.useQtSuffix = True if Tools.isLinuxOS() and project.qtLinux.linux == '/usr' else False
         
         if Tools.isLinuxOS():
             self.qt = project.qtLinux
@@ -34,6 +34,7 @@ class QtHost:
         self.windowsMkSpec = '%s/.qt/mkspecs/win32-x11-g++' % ( os.environ[ 'HOME' ] )
     
     def expandVariables(self):
+        os.environ[ 'QT_HOST_USE_SUFFIX' ] = '1' if self.useQtSuffix else '0'
         os.environ[ 'QT_LINUX_PATH' ] = self.qt.linux
         os.environ[ 'QT_MACOS_PATH' ] = self.qt.macos
         os.environ[ 'QT_WINDOWS_PATH' ] = self.qt.windows
