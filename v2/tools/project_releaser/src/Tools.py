@@ -71,20 +71,41 @@ def wildCardCopy(source, target):
 def copy(source, target):
     if '*' in source or '?' in source:
         return wildCardCopy( source, target )
-    fileName = os.path.basename( source )
-    targetFilePath = target
-    if not targetFilePath.endswith( fileName ):
-        targetFilePath = '%s/%s' % ( target, fileName )
-    if os.path.exists( targetFilePath ):
-        return True
-    if not os.path.exists( target ):
-        if not createDirectory( target ):
-            return False
+    
+    if not os.path.exists( source ):
+        return False
+    
+    sourceBasename = os.path.basename( source )
+    targetBasename = os.path.basename( target )
+    
+    if not createDirectory( os.path.dirname( target ) ):
+        return False
+    
     if os.path.isdir( source ):
-        shutil.copytree( source, target, True )
+        targetPath = target
+        
+        if os.path.exists( target ):
+            if sourceBasename == targetBasename:
+                return False
+            
+            targetPath = '%s/%s' % ( target, os.path.basename( source ) )
+        
+            if not createDirectory( target ):
+                return False
+        
+        shutil.copytree( source, targetPath, True )
     else:
-        shutil.copy2( source, target )
-    return os.path.exists( targetFilePath )
+        targetPath = target
+        
+        if sourceBasename == targetBasename:
+            targetPath = os.path.dirname( targetPath )
+        
+        if not createDirectory( targetPath ):
+            return False
+        
+        shutil.copy2( source, targetPath )
+    
+    return os.path.exists( target )
 
 def wildCardMove(source, target):
     for path in glob.iglob( source ):
@@ -106,7 +127,7 @@ def getFilesList(path, pattern = None, recursive = False):
     for file in os.listdir( path ):
         file = '%s/%s' % ( path, file )
         if os.path.isfile( file ) and ( not pattern or fnmatch.fnmatch( file, pattern ) ):
-            files.append( file )
+            files.append( os.path.normpath( file ) )
         elif recursive and os.path.isdir( file ):
             files.extend( getFilesList( file, pattern, recursive ) )
     return files
@@ -116,7 +137,7 @@ def getFoldersList(path, pattern = None, recursive = False):
     for file in os.listdir( path ):
         file = '%s/%s' % ( path, file )
         if os.path.isdir( file ) and ( not pattern or fnmatch.fnmatch( file, pattern ) ):
-            files.append( file )
+            files.append( os.path.normpath( file ) )
             if recursive:
                 files.extend( getFoldersList( file, pattern, recursive ) )
     return files
@@ -158,14 +179,18 @@ def tarGzFolder(source, target, options = None):
 def zipFolder(source, target, options = None, exclude = None, include = None):
     directory = os.path.dirname( source )
     folderName = os.path.basename( source )
-    return execute( 'zip -q -r -9 %s "%s" "%s" %s %s' % ( '"%s"' % ( options ) if options else '', target, folderName, '-x %s' % ( exclude ) if exclude else '', '-i %s' % ( include ) if include else '' ), directory )
+    e = '-x %s' % ( exclude ) if exclude else ''
+    i = '-i %s' % ( include ) if include else ''
+    o = '"%s"' % ( options ) if options else ''
+    return execute( 'zip -q -r -9 %s "%s" "%s" %s %s' % ( o, target, folderName, e, i ), directory )
 
 def buildQtProject(projectFilePath, qtHost, qtMkSpec):
     directory = os.path.dirname( projectFilePath )
     filename = os.path.basename( projectFilePath )
     jobs = os.environ[ 'PROJECT_MAKE_JOBS' ]
     make = 'make -j %s' % ( jobs if jobs else '1' )
-    qmake = '%s %s "%s"' % ( qtHost.bin( 'qmake' ), '-spec "%s"' %( qtMkSpec ) if qtMkSpec else '', filename )
+    makeInstall = 'make -j %s install kleen' % ( jobs if jobs else '1' )
+    qmake = '"%s" -r %s "%s"' % ( qtHost.bin( 'qmake' ), '-spec "%s"' %( qtMkSpec ) if qtMkSpec else '', filename )
     
     if not os.path.exists( directory ):
         return False
@@ -184,5 +209,7 @@ def buildQtProject(projectFilePath, qtHost, qtMkSpec):
     
     if not execute( make, directory ):
         return False
+    
+    execute( makeInstall, directory )
     
     return True
