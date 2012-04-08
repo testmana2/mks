@@ -45,15 +45,15 @@ def ask_confirmation(path):
  
 def create_dir(dest):
     if not os.path.exists(dest):
-	os.makedirs(dest)
-	return
+    os.makedirs(dest)
+    return
     return
 
     reps = pathsplit(dest)
     mkrep = ""
  
     for rep in reps:
-	print rep + " rep!"
+    print rep + " rep!"
         mkrep = os.path.join(mkrep, rep)
         if os.path.exists(mkrep):
             ans = ask_confirmation(mkrep)
