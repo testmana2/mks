@@ -4,53 +4,53 @@
 #include <QMenu>
 
 pStylesToolButton::pStylesToolButton( const QString& textFormat, QWidget* parent )
-	: QToolButton( parent )
+    : QToolButton( parent )
 {
-	setPopupMode( QToolButton::MenuButtonPopup );
-	
-	mActions = new pStylesActionGroup( textFormat, this );
-	mMenu = new QMenu( this );
-	
-	refreshActions();
-	
-	connect( mActions, SIGNAL( styleSelected(const QString& ) ), this, SIGNAL( styleSelected(const QString& ) ) );
+    setPopupMode( QToolButton::MenuButtonPopup );
+    
+    mActions = new pStylesActionGroup( textFormat, this );
+    mMenu = new QMenu( this );
+    
+    refreshActions();
+    
+    connect( mActions, SIGNAL( styleSelected(const QString& ) ), this, SIGNAL( styleSelected(const QString& ) ) );
 }
 
 QString pStylesToolButton::systemStyle() const
 {
-	return mActions->systemStyle();
+    return mActions->systemStyle();
 }
 
 QAction* pStylesToolButton::systemAction() const
 {
-	return mActions->systemAction();
+    return mActions->systemAction();
 }
 
 bool pStylesToolButton::isCheckableActions() const
 {
-	return mActions->isCheckable();
+    return mActions->isCheckable();
 }
 
 QString pStylesToolButton::currentStyle() const
 {
-	return mActions->currentStyle();
+    return mActions->currentStyle();
 }
 
 void pStylesToolButton::refreshActions()
 {
-	mActions->refreshActions();
-	mMenu->addActions( mActions->actions() );
-	
-	setMenu( mMenu );
-	setDefaultAction( mActions->systemAction() );
+    mActions->refreshActions();
+    mMenu->addActions( mActions->actions() );
+    
+    setMenu( mMenu );
+    setDefaultAction( mActions->systemAction() );
 }
 
 void pStylesToolButton::setCheckableActions( bool checkable )
 {
-	mActions->setCheckable( checkable );
+    mActions->setCheckable( checkable );
 }
 
 void pStylesToolButton::setCurrentStyle( const QString& style )
 {
-	mActions->setCurrentStyle( style );
+    mActions->setCurrentStyle( style );
 }

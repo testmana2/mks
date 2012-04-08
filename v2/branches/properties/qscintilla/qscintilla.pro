@@ -6,21 +6,21 @@ include( qscintilla.pri )
 include( $$QSCINTILLAVERSION/Qt4/qscintilla.pro )
 
 # include path path
-INCLUDEPATH	*= $$QSCINTILLAVERSION/include
-INCLUDEPATH	*= $$QSCINTILLAVERSION/src
-INCLUDEPATH	*= $$QSCINTILLAVERSION/Qt4
+INCLUDEPATH *= $$QSCINTILLAVERSION/include
+INCLUDEPATH *= $$QSCINTILLAVERSION/src
+INCLUDEPATH *= $$QSCINTILLAVERSION/Qt4
 # depend path
-DEPENDPATH	*= $$QSCINTILLAVERSION/Qt4
+DEPENDPATH  *= $$QSCINTILLAVERSION/Qt4
 
 # overwrite some values to made no lib
-CONFIG	-= dll
-CONFIG	-= release
-CONFIG	+= staticlib
+CONFIG  -= dll
+CONFIG  -= release
+CONFIG  += staticlib
 
 # remove install script of qscintilla
-INSTALLS	-= header trans qsci target
+INSTALLS    -= header trans qsci target
 
 # include config file
 include( ../config.pri )
 
-DESTDIR	= $${PACKAGE_BUILD_PATH}
+DESTDIR = $${PACKAGE_BUILD_PATH}

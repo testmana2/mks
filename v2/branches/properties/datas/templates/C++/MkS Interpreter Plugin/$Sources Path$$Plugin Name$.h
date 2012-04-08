@@ -5,18 +5,18 @@
 
 class $Plugin Name$ : public InterpreterPlugin
 {
-	Q_OBJECT
-	Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolPlugin )
+    Q_OBJECT
+    Q_INTERFACES( BasePlugin InterpreterPlugin CLIToolPlugin )
 
 public:
-	virtual pCommand defaultInterpretCommand() const;
-	virtual pCommandList defaultCommands() const;
+    virtual pCommand defaultInterpretCommand() const;
+    virtual pCommandList defaultCommands() const;
 
 protected:
-	virtual void fillPluginInfos();
+    virtual void fillPluginInfos();
 
-	virtual bool install();
-	virtual bool uninstall();
+    virtual bool install();
+    virtual bool uninstall();
 };
 
 #endif // $Plugin Name.upper$_H

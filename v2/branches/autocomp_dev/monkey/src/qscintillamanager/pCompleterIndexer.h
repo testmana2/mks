@@ -7,20 +7,20 @@
 
 class pCompleterIndexer : public QObject
 {
-	Q_OBJECT
-	
+    Q_OBJECT
+    
 public:
-	static pCompleterIndexer* instance();
-	virtual ~pCompleterIndexer();
-	
+    static pCompleterIndexer* instance();
+    virtual ~pCompleterIndexer();
+    
 protected slots:
-	void opened(XUPProjectItem*);
-	
+    void opened(XUPProjectItem*);
+    
 private:
-	pCompleterIndexer();
-	void recursiveFileEntries(const QStringList&, const QString&, QStringList* list);
-	
-	static pCompleterIndexer* pInstance;
+    pCompleterIndexer();
+    void recursiveFileEntries(const QStringList&, const QString&, QStringList* list);
+    
+    static pCompleterIndexer* pInstance;
 };
 
 #endif // PCOMPLETERINDEXER_H

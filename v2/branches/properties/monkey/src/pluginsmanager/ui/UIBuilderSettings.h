@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** 		Created using Monkey Studio v1.8.1.0
+**      Created using Monkey Studio v1.8.1.0
 ** Authors    : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>
 ** Project   : Monkey Studio IDE
 ** FileName  : UIBuilderSettings.h
@@ -40,26 +40,26 @@ class BuilderPlugin;
 
 class Q_MONKEY_EXPORT UIBuilderSettings : public QWidget, public Ui::UIBuilderSettings
 {
-	Q_OBJECT
-	
+    Q_OBJECT
+    
 protected:
-	pCommand mDefault;
-	pCommand mReset;
-	pCommand mCommand;
-	BuilderPlugin* mPlugin;
+    pCommand mDefault;
+    pCommand mReset;
+    pCommand mCommand;
+    BuilderPlugin* mPlugin;
 
 public:
-	UIBuilderSettings( BuilderPlugin*, QWidget* = 0 );
+    UIBuilderSettings( BuilderPlugin*, QWidget* = 0 );
 
-	void updateCommand();
-	void restoreDefault();
-	void reset();
-	void save();
+    void updateCommand();
+    void restoreDefault();
+    void reset();
+    void save();
 
 protected slots:
-	void on_tbBuildCommandCommand_clicked();
-	void on_tbBuildCommandWorkingDirectory_clicked();
-	void on_dbbButtons_clicked( QAbstractButton* );
+    void on_tbBuildCommandCommand_clicked();
+    void on_tbBuildCommandWorkingDirectory_clicked();
+    void on_dbbButtons_clicked( QAbstractButton* );
 
 };
 

@@ -3,9 +3,9 @@
 #include <XmlObjectProcessor.h>
 
 Properties::Properties()
-	: XmlObject()
+    : XmlObject()
 {
-	mFirstTimeRunning = true;
+    mFirstTimeRunning = true;
 }
 
 Properties::~Properties()
@@ -14,8 +14,8 @@ Properties::~Properties()
 
 void Properties::processData( XmlObjectProcessor* container )
 {
-	container->processData( "FirstTimeRunning", mFirstTimeRunning );
-	container->processData( "General", mGeneral );
-	container->processData( "Paths", mPaths );
-	container->processData( "Editor", mEditor );
+    container->processData( "FirstTimeRunning", mFirstTimeRunning );
+    container->processData( "General", mGeneral );
+    container->processData( "Paths", mPaths );
+    container->processData( "Editor", mEditor );
 }

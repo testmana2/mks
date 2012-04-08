@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** 		Created using Monkey Studio v1.8.1.0
+**      Created using Monkey Studio v1.8.1.0
 ** Authors    : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>
 ** Project   : Monkey Studio IDE
 ** FileName  : UITranslator.h
@@ -35,18 +35,18 @@
 
 class Q_MONKEY_EXPORT UITranslator : public QDialog, public Ui::UITranslator, public QSingleton<UITranslator>
 {
-	Q_OBJECT
-	friend class QSingleton<UITranslator>;
+    Q_OBJECT
+    friend class QSingleton<UITranslator>;
 
 private:
-	UITranslator( QWidget* = 0 );
+    UITranslator( QWidget* = 0 );
 
-	QStringList mTranslationsPath;
+    QStringList mTranslationsPath;
 
 public slots:
-	virtual void accept();
-	void on_tbLocate_clicked();
-	void on_tbReload_clicked();
+    virtual void accept();
+    void on_tbLocate_clicked();
+    void on_tbReload_clicked();
 
 };
 

@@ -34,21 +34,21 @@ using namespace Scintilla;
 // We use custom qualifiers since it is not clear what D allows.
 
 static bool IsWordStart(int ch) {
-	return isascii(ch) && (isalpha(ch) || ch == '_');
+    return isascii(ch) && (isalpha(ch) || ch == '_');
 }
 
 static bool IsWord(int ch) {
-	return isascii(ch) && (isalnum(ch) || ch == '_');
+    return isascii(ch) && (isalnum(ch) || ch == '_');
 }
 
 static bool IsDoxygen(int ch) {
-	if (isascii(ch) && islower(ch))
-		return true;
-	if (ch == '$' || ch == '@' || ch == '\\' ||
-		ch == '&' || ch == '#' || ch == '<' || ch == '>' ||
-		ch == '{' || ch == '}' || ch == '[' || ch == ']')
-		return true;
-	return false;
+    if (isascii(ch) && islower(ch))
+        return true;
+    if (ch == '$' || ch == '@' || ch == '\\' ||
+        ch == '&' || ch == '#' || ch == '<' || ch == '>' ||
+        ch == '{' || ch == '}' || ch == '[' || ch == ']')
+        return true;
+    return false;
 }
 
 
@@ -180,7 +180,7 @@ static void ColouriseDoc(unsigned int startPos, int length, int initStyle,
                     sc.Forward();
                     if (curNcLevel == 0) {
                         sc.ForwardSetState(SCE_D_DEFAULT);
-		    }
+            }
                 }
                 else if (sc.Match('/','+')) {
                     curNcLevel += 1;
@@ -226,7 +226,7 @@ static void ColouriseDoc(unsigned int startPos, int length, int initStyle,
                     sc.SetState(SCE_D_IDENTIFIER);
             } else if (sc.Match('/','+')) {
                 curNcLevel += 1;
-		curLine = styler.GetLine(sc.currentPos);
+        curLine = styler.GetLine(sc.currentPos);
                 styler.SetLineState(curLine, curNcLevel);
                 sc.SetState(SCE_D_COMMENTNESTED);
                 sc.Forward();
@@ -270,9 +270,9 @@ static void FoldDoc(unsigned int startPos, int length, int initStyle, Accessor &
     bool foldCompact = styler.GetPropertyInt("fold.compact", 1) != 0;
 
     // property lexer.d.fold.at.else 
-    //	This option enables D folding on a "} else {" line of an if statement. 
+    //  This option enables D folding on a "} else {" line of an if statement. 
     bool foldAtElse = styler.GetPropertyInt("lexer.d.fold.at.else",
-		styler.GetPropertyInt("fold.at.else", 0)) != 0;
+        styler.GetPropertyInt("fold.at.else", 0)) != 0;
     unsigned int endPos = startPos + length;
     int visibleChars = 0;
     int lineCurrent = styler.GetLine(startPos);
@@ -312,12 +312,12 @@ static void FoldDoc(unsigned int startPos, int length, int initStyle, Accessor &
             }
         }
         if (atEOL) {
-            if (foldComment) {	// Handle nested comments
-		int nc;
+            if (foldComment) {  // Handle nested comments
+        int nc;
                 nc =  styler.GetLineState(lineCurrent);
                 nc -= lineCurrent>0? styler.GetLineState(lineCurrent-1): 0;
                 levelNext += nc;
-	    }
+        }
             int levelUse = levelCurrent;
             if (foldAtElse) {
                 levelUse = levelMinCurrent;

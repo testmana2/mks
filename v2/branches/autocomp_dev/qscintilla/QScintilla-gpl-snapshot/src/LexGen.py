@@ -107,7 +107,7 @@ def UpdateFile(filename, updated):
     it as modified. """
     try:
         infile = open(filename, "rb")
-    except IOError:	# File is not there yet
+    except IOError: # File is not there yet
         out = open(filename, "wb")
         out.write(updated.encode('utf-8'))
         out.close()
@@ -183,7 +183,7 @@ def FindProperties(lexFile):
     for l in f.readlines():
         if "GetProperty" in l:
             l = l.strip()
-            if not l.startswith("//"):	# Drop comments
+            if not l.startswith("//"):  # Drop comments
                 propertyName = l.split("\"")[1]
                 if propertyName.lower() == propertyName:
                     # Only allow lower case property names

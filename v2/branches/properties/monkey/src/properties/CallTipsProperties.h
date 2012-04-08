@@ -6,17 +6,17 @@
 class CallTipsProperties : public XmlObject
 {
 public:
-	CallTipsProperties();
+    CallTipsProperties();
 
 protected:
-	QVariant mEnabled; // bool
-	QVariant mVisibleCount; // int
-	QVariant mContext; // int
-	QVariant mBackground; // QColor
-	QVariant mForeground; // QColor
-	QVariant mHighlight; // QColor
+    QVariant mEnabled; // bool
+    QVariant mVisibleCount; // int
+    QVariant mContext; // int
+    QVariant mBackground; // QColor
+    QVariant mForeground; // QColor
+    QVariant mHighlight; // QColor
 
-	virtual void processData( XmlObjectProcessor* container );
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // CALLTIPSPROPERTIES_H
