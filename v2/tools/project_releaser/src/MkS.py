@@ -95,13 +95,13 @@ class MkSProject(Project.Project):
         os.environ[ 'WINDOWS_MINGW_DOWNLOAD' ] = 'http://get.qt.nokia.com/misc/MinGW-gcc440_1.zip'
         os.environ[ 'QT_DOWNLOAD' ] = 'http://qt.nokia.com/downloads'
         os.environ[ 'WINDOWS_DLLS_PATH' ] = '%s/Developpement/OS/Win32-Libraries/bin' % ( os.environ[ 'HOME' ] )
-        os.environ[ 'SETUP_ICON' ] = '%s/v2/tools/data_windows/setup.ico' % ( self.svnList[ 'mks' ].workingCopy )
-        os.environ[ 'SETUP_LEFT_BANNER' ] = '%s/v2/tools/data_windows/left-banner.bmp' % ( self.svnList[ 'mks' ].workingCopy )
-        os.environ[ 'SETUP_TOP_BANNER' ] = '%s/v2/tools/data_windows/top-banner.bmp' % ( self.svnList[ 'mks' ].workingCopy )
+        os.environ[ 'SETUP_ICON' ] = '%s/tools/data/windows/setup.ico' % ( self.sourcesFolder )
+        os.environ[ 'SETUP_LEFT_BANNER' ] = '%s/tools/data/windows/left-banner.bmp' % ( self.sourcesFolder )
+        os.environ[ 'SETUP_TOP_BANNER' ] = '%s/tools/data/windows/top-banner.bmp' % ( self.sourcesFolder )
         os.environ[ 'SETUP_SOURCE_DIRECTORY' ] = self.sourcesFolder
         os.environ[ 'SETUP_OUTPUT_DIRECTORY' ] = self.packagesFolder
         os.environ[ 'SETUP_OUTPUT_NAME' ] = os.path.splitext( os.path.basename( self.winSetup ) )[ 0 ]
-        os.environ[ 'SCRIPT_PATH' ] = '%s/v2/tools/data_windows' % ( self.svnList[ 'mks' ].workingCopy )
+        os.environ[ 'SCRIPT_PATH' ] = '%s/tools/data/windows' % ( self.sourcesFolder )
     
     def run(self):
         self.success = False
@@ -130,7 +130,7 @@ class MkSProject(Project.Project):
         if not self.svnList[ 'mks' ].export( sources, self.sourcesFolder, True ):
             print 'Can\'t export sources'
             return
-        if not self.svnList[ 'mks' ].export( tools, '%s/../tools' % ( self.sourcesFolder ), True ):
+        if not self.svnList[ 'mks' ].export( tools, '%s/tools' % ( self.sourcesFolder ), True ):
             print 'Can\'t export tools'
             return
         
@@ -148,7 +148,7 @@ class MkSProject(Project.Project):
             return
         
         Tools.banner( 'Creating windows setup...' )
-        if not self.wine.iscc( '%s%s/v2/tools/data_windows/monkeystudio.iss' % ( self.wine.rootDrive, self.svnList[ 'mks' ].workingCopy ) ):
+        if not self.wine.iscc( '%s%s/tools/data/windows/monkeystudio.iss' % ( self.wine.rootDrive, self.sourcesFolder ) ):
             print 'Can\'t create windows setup'
             return
         
