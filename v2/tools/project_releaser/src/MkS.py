@@ -48,7 +48,7 @@ class MkSProject(Project.Project):
         # Custom variables
         self.baseName = '%s_%s' % ( self.shortName, self.version )
         self.sourceName = '%s-src' % ( self.baseName )
-        self.tmpFolder = tempfile.mkdtemp() #'/tmp/tmpwfcFQK'
+        self.tmpFolder = tempfile.mkdtemp()
         self.logFolder = '%s/log' % ( self.tmpFolder )
         self.packagesFolder = '%s/packages' % ( self.tmpFolder )
         self.sourcesFolder = '%s/%s' % ( self.tmpFolder, self.sourceName )
@@ -163,7 +163,7 @@ class MkSProject(Project.Project):
             return
         
         Tools.banner( 'Relinking the mac os x bundle' )
-        bundle = MacOSBundle.MacOSBundle( self.qt, '%s/bin/Monkey Studio.app' % ( self.sourcesFolder ), True )
+        bundle = MacOSBundle.MacOSBundle( self.qt, '%s/bin/MonkeyStudio.app' % ( self.sourcesFolder ), True )
         if not bundle.deploy():
             print 'Can\'t deploy'
             return
