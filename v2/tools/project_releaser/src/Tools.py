@@ -195,14 +195,18 @@ def buildQtProject(projectFilePath, qtHost, qtMkSpec):
     if not os.path.exists( directory ):
         return False
     
+    if os.path.exists( '%s/bin' % ( os.path.dirname( projectFilePath ) ) ):
+        if not deleteIfExists( '%s/bin' % ( os.path.dirname( projectFilePath ) ) ):
+            return False
+    
     # not important if it fails
-    #execute( '%s distclean' % ( make ), directory, False )
+    execute( '%s distclean' % ( make ), directory, False )
     
     if not execute( qmake, directory ):
         return False
     
-    #if not execute( '%s distclean' % ( make ), directory ):
-        #return False
+    if not execute( '%s distclean' % ( make ), directory ):
+        return False
     
     if not execute( qmake, directory ):
         return False
