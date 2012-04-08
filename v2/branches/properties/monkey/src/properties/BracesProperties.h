@@ -6,17 +6,17 @@
 class BracesProperties : public XmlObject
 {
 public:
-	BracesProperties();
+    BracesProperties();
 
 protected:
-	QVariant mEnabled; // bool
-	QVariant mMode; // int
-	QVariant mMatchedBackground; // color
-	QVariant mMatchedForeground; // color
-	QVariant mUnmatchedBackground; // color
-	QVariant mUnmatchedForeground; // color
-	
-	virtual void processData( XmlObjectProcessor* container );
+    QVariant mEnabled; // bool
+    QVariant mMode; // int
+    QVariant mMatchedBackground; // color
+    QVariant mMatchedForeground; // color
+    QVariant mUnmatchedBackground; // color
+    QVariant mUnmatchedForeground; // color
+    
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // BRACESPROPERTIES_H

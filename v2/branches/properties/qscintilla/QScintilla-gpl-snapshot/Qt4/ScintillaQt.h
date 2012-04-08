@@ -29,7 +29,7 @@
 
 
 #ifndef SCINTILLAQT_H
-#define	SCINTILLAQT_H
+#define SCINTILLAQT_H
 
 
 #include <qtimer.h>
@@ -78,48 +78,48 @@ class SciPopup;
 
 class ScintillaQt : public ScintillaBase
 {
-	friend class QsciScintillaBase;
-	friend class SciCallTip;
-	friend class SciPopup;
+    friend class QsciScintillaBase;
+    friend class SciCallTip;
+    friend class SciPopup;
 
 public:
-	ScintillaQt(QsciScintillaBase *qsb_);
-	virtual ~ScintillaQt();
+    ScintillaQt(QsciScintillaBase *qsb_);
+    virtual ~ScintillaQt();
 
-	virtual sptr_t WndProc(unsigned int iMessage, uptr_t wParam,
+    virtual sptr_t WndProc(unsigned int iMessage, uptr_t wParam,
             sptr_t lParam);
 
 private:
-	void Initialise();
-	void Finalise();
-	void StartDrag();
-	sptr_t DefWndProc(unsigned int, uptr_t, sptr_t);
-	void SetTicking(bool);
-	void SetMouseCapture(bool on);
-	bool HaveMouseCapture();
-	void SetVerticalScrollPos();
-	void SetHorizontalScrollPos();
-	bool ModifyScrollBars(int nMax, int nPage);
-	void ReconfigureScrollBars();
-	void NotifyChange();
-	void NotifyParent(SCNotification scn);
-	void CopyToClipboard(const SelectionText &selectedText);
-	void Copy();
-	void Paste();
-	void CreateCallTipWindow(PRectangle rc);
-	void AddToPopUp(const char *label, int cmd = 0, bool enabled = true);
-	void ClaimSelection();
-	void UnclaimSelection();
-	static sptr_t DirectFunction(ScintillaQt *sci, unsigned int iMessage,
+    void Initialise();
+    void Finalise();
+    void StartDrag();
+    sptr_t DefWndProc(unsigned int, uptr_t, sptr_t);
+    void SetTicking(bool);
+    void SetMouseCapture(bool on);
+    bool HaveMouseCapture();
+    void SetVerticalScrollPos();
+    void SetHorizontalScrollPos();
+    bool ModifyScrollBars(int nMax, int nPage);
+    void ReconfigureScrollBars();
+    void NotifyChange();
+    void NotifyParent(SCNotification scn);
+    void CopyToClipboard(const SelectionText &selectedText);
+    void Copy();
+    void Paste();
+    void CreateCallTipWindow(PRectangle rc);
+    void AddToPopUp(const char *label, int cmd = 0, bool enabled = true);
+    void ClaimSelection();
+    void UnclaimSelection();
+    static sptr_t DirectFunction(ScintillaQt *sci, unsigned int iMessage,
             uptr_t wParam,sptr_t lParam);
 
-	QString textRange(const SelectionText *text);
-	void paintEvent(QPaintEvent *e);
+    QString textRange(const SelectionText *text);
+    void paintEvent(QPaintEvent *e);
     void pasteFromClipboard(QClipboard::Mode mode);
 
-	bool capturedMouse;
-	QsciScintillaBase *qsb;
-	QTimer qtimer;
+    bool capturedMouse;
+    QsciScintillaBase *qsb;
+    QTimer qtimer;
 };
 
 #endif

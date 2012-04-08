@@ -1,2 +1,2 @@
-TEMPLATE	= subdirs
-SUBDIRS	= GNUMake
+TEMPLATE    = subdirs
+SUBDIRS = GNUMake

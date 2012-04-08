@@ -10,16 +10,16 @@
 class Properties : public XmlObject
 {
 public:
-	Properties();
-	virtual ~Properties();
+    Properties();
+    virtual ~Properties();
 
 protected:
-	QVariant mFirstTimeRunning; // bool
-	GeneralProperties mGeneral;
-	PathsProperties mPaths;
-	EditorProperties mEditor;
-	
-	virtual void processData( XmlObjectProcessor* container );
+    QVariant mFirstTimeRunning; // bool
+    GeneralProperties mGeneral;
+    PathsProperties mPaths;
+    EditorProperties mEditor;
+    
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // PROPERTIES_H

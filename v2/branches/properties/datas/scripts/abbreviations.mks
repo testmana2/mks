@@ -2,7 +2,7 @@
 # reset abbreviations
 abbreviation clear
 # introduce new ones
-#	abbreviation add	Macro	Description	Language	Snippet
+#   abbreviation add    Macro   Description Language    Snippet
 # C++
 abbreviation add "classd" "class declaration" "C++" "class |\n{\npublic:\n};"
 abbreviation add "forb" "for statement" "C++" "for ( |; ; )\n{\n}"

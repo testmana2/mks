@@ -6,15 +6,15 @@
 class EdgeProperties : public XmlObject
 {
 public:
-	EdgeProperties();
+    EdgeProperties();
 
 protected:
-	QVariant mEnabled; // bool
-	QVariant mMode; // int
-	QVariant mColumnNumber; // int
-	QVariant mColor; // color
-	
-	virtual void processData( XmlObjectProcessor* container );
+    QVariant mEnabled; // bool
+    QVariant mMode; // int
+    QVariant mColumnNumber; // int
+    QVariant mColor; // color
+    
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // EDGEPROPERTIES_H

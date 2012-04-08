@@ -6,17 +6,17 @@
 class AutoCompletionProperties : public XmlObject
 {
 public:
-	AutoCompletionProperties();
+    AutoCompletionProperties();
 
 protected:
-	QVariant mEnabled; // bool
-	QVariant mCaseSensitive; // bool
-	QVariant mReplaceWord; // bool
-	QVariant mShowSingle; // bool
-	QVariant mThreshold; // int
-	QVariant mMode; // int
+    QVariant mEnabled; // bool
+    QVariant mCaseSensitive; // bool
+    QVariant mReplaceWord; // bool
+    QVariant mShowSingle; // bool
+    QVariant mThreshold; // int
+    QVariant mMode; // int
 
-	virtual void processData( XmlObjectProcessor* container );
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // AUTOCOMPLETIONPROPERTIES_H

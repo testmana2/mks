@@ -9,10 +9,10 @@ class BasePlugin;
 
 class Q_MONKEY_EXPORT UIPluginsSettingsAbout : public QDialog, public Ui::UIPluginsSettingsAbout
 {
-	Q_OBJECT
-	
+    Q_OBJECT
+    
 public:
-	UIPluginsSettingsAbout( BasePlugin* plugin, QWidget* parent = 0 );
+    UIPluginsSettingsAbout( BasePlugin* plugin, QWidget* parent = 0 );
 };
 
 #endif // UIPLUGINSSETTINGSABOUT_H

@@ -6,26 +6,26 @@
 class PathsProperties : public XmlObject
 {
 public:
-	enum StorageLocation
-	{
-		SL_TEMPLATES,
-		SL_TRANSLATIONS,
-		SL_PLUGINS,
-		SL_SCRIPTS,
-		SL_APIS
-	};
-	
-	PathsProperties();
-	
-	QStringList paths( PathsProperties::StorageLocation location ) const;
-	void setPaths( PathsProperties::StorageLocation location, const QStringList& paths );
-	
-	static QString storageLocationToString( PathsProperties::StorageLocation location );
+    enum StorageLocation
+    {
+        SL_TEMPLATES,
+        SL_TRANSLATIONS,
+        SL_PLUGINS,
+        SL_SCRIPTS,
+        SL_APIS
+    };
+    
+    PathsProperties();
+    
+    QStringList paths( PathsProperties::StorageLocation location ) const;
+    void setPaths( PathsProperties::StorageLocation location, const QStringList& paths );
+    
+    static QString storageLocationToString( PathsProperties::StorageLocation location );
 
 protected:
-	QVariantMap mPaths; // string, stringlist
+    QVariantMap mPaths; // string, stringlist
 
-	virtual void processData( XmlObjectProcessor* container );
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // PATHSPROPERTIES_H

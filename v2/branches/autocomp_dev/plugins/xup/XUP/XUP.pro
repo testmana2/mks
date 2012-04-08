@@ -1,16 +1,16 @@
-TARGET	= XUP
+TARGET  = XUP
 include( ../../plugins.pri )
-DESTDIR	= $$MONKEY_PLUGINS_DIR/xup
+DESTDIR = $$MONKEY_PLUGINS_DIR/xup
 
-INCLUDEPATH	*= src
+INCLUDEPATH *= src
 
-FORMS	=  \
-	src/gui/UIXUPEditor.ui
+FORMS   =  \
+    src/gui/UIXUPEditor.ui
 
-HEADERS	=  \
-	src/XUP.h \
-	src/gui/UIXUPEditor.h
+HEADERS =  \
+    src/XUP.h \
+    src/gui/UIXUPEditor.h
 
-SOURCES	=  \
-	src/XUP.cpp \
-	src/gui/UIXUPEditor.cpp
+SOURCES =  \
+    src/XUP.cpp \
+    src/gui/UIXUPEditor.cpp

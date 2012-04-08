@@ -75,19 +75,19 @@ typedef enum {
 static void ColouriseErlangDoc(unsigned int startPos, int length, int initStyle,
                                WordList *keywordlists[], Accessor &styler) {
 
-	WordList &keywords = *keywordlists[0];
+    WordList &keywords = *keywordlists[0];
 
-	styler.StartAt(startPos);
+    styler.StartAt(startPos);
 
-	StyleContext sc(startPos, length, initStyle, styler);
+    StyleContext sc(startPos, length, initStyle, styler);
    atom_parse_state_t parse_state = STATE_NULL;
    int radix_digits = 0;
    int exponent_digits = 0;
-	for (; sc.More(); sc.Forward()) {
+    for (; sc.More(); sc.Forward()) {
       if ( STATE_NULL != parse_state ) {
          switch (parse_state) {
          case STATE_NULL:
-				sc.SetState(SCE_ERLANG_DEFAULT);
+                sc.SetState(SCE_ERLANG_DEFAULT);
             break;
          case ATOM_UNQUOTED:
             if ( '@' == sc.ch ){
@@ -281,34 +281,34 @@ static void ColouriseErlangDoc(unsigned int startPos, int length, int initStyle,
             }
             break;
          case PARSE_ERROR:
-				sc.SetState(SCE_ERLANG_DEFAULT);
+                sc.SetState(SCE_ERLANG_DEFAULT);
             parse_state = STATE_NULL;
             break;
          }
       } else if (sc.state == SCE_ERLANG_OPERATOR) {
-			if (sc.chPrev == '.') {
-				if (sc.ch == '*' || sc.ch == '/' || sc.ch == '\\' || sc.ch == '^') {
-					sc.ForwardSetState(SCE_ERLANG_DEFAULT);
-				} else if (sc.ch == '\'') {
-					sc.ForwardSetState(SCE_ERLANG_DEFAULT);
-				} else {
-					sc.SetState(SCE_ERLANG_DEFAULT);
-				}
-			} else {
-				sc.SetState(SCE_ERLANG_DEFAULT);
-			}
-		} else if (sc.state == SCE_ERLANG_VARIABLE) {
-			if (!isalnum(sc.ch) && sc.ch != '_') {
+            if (sc.chPrev == '.') {
+                if (sc.ch == '*' || sc.ch == '/' || sc.ch == '\\' || sc.ch == '^') {
+                    sc.ForwardSetState(SCE_ERLANG_DEFAULT);
+                } else if (sc.ch == '\'') {
+                    sc.ForwardSetState(SCE_ERLANG_DEFAULT);
+                } else {
+                    sc.SetState(SCE_ERLANG_DEFAULT);
+                }
+            } else {
+                sc.SetState(SCE_ERLANG_DEFAULT);
+            }
+        } else if (sc.state == SCE_ERLANG_VARIABLE) {
+            if (!isalnum(sc.ch) && sc.ch != '_') {
             sc.SetState(SCE_ERLANG_DEFAULT);
-			}
-		} else if (sc.state == SCE_ERLANG_STRING) {
-			if (sc.ch == '\"' && sc.chPrev != '\\') {
-				sc.ForwardSetState(SCE_ERLANG_DEFAULT);
-			}
-		} else if (sc.state == SCE_ERLANG_COMMENT ) {
-			if (sc.atLineEnd) {
-				sc.SetState(SCE_ERLANG_DEFAULT);
-			}
+            }
+        } else if (sc.state == SCE_ERLANG_STRING) {
+            if (sc.ch == '\"' && sc.chPrev != '\\') {
+                sc.ForwardSetState(SCE_ERLANG_DEFAULT);
+            }
+        } else if (sc.state == SCE_ERLANG_COMMENT ) {
+            if (sc.atLineEnd) {
+                sc.SetState(SCE_ERLANG_DEFAULT);
+            }
       } else if (sc.state == SCE_ERLANG_CHARACTER ) {
          if ( sc.chPrev == '\\' ) {
             sc.ForwardSetState(SCE_ERLANG_DEFAULT);
@@ -317,40 +317,40 @@ static void ColouriseErlangDoc(unsigned int startPos, int length, int initStyle,
          }
       }
 
-		if (sc.state == SCE_ERLANG_DEFAULT) {
-			if (sc.ch == '%') {
-				sc.SetState(SCE_ERLANG_COMMENT);
-			} else if (sc.ch == '\"') {
+        if (sc.state == SCE_ERLANG_DEFAULT) {
+            if (sc.ch == '%') {
+                sc.SetState(SCE_ERLANG_COMMENT);
+            } else if (sc.ch == '\"') {
             sc.SetState(SCE_ERLANG_STRING);
          } else if (sc.ch == '#') {
             parse_state = RECORD_START;
-				sc.SetState(SCE_ERLANG_UNKNOWN);
+                sc.SetState(SCE_ERLANG_UNKNOWN);
          } else if (sc.ch == '?') {
             parse_state = MACRO_START;
-				sc.SetState(SCE_ERLANG_UNKNOWN);
+                sc.SetState(SCE_ERLANG_UNKNOWN);
          } else if (sc.ch == '$') {
-				sc.SetState(SCE_ERLANG_CHARACTER);
+                sc.SetState(SCE_ERLANG_CHARACTER);
          } else if (sc.ch == '\'') {
             parse_state = ATOM_QUOTED;
-				sc.SetState(SCE_ERLANG_UNKNOWN);
-			} else if ( isdigit(sc.ch) ) {
+                sc.SetState(SCE_ERLANG_UNKNOWN);
+            } else if ( isdigit(sc.ch) ) {
             parse_state = NUMERAL_START;
             radix_digits = sc.ch - '0';
-				sc.SetState(SCE_ERLANG_UNKNOWN);
+                sc.SetState(SCE_ERLANG_UNKNOWN);
          } else if ( '.' == sc.ch ) {
             parse_state = NUMERAL_SPECULATIVE_MANTISSA;
-				sc.SetState(SCE_ERLANG_UNKNOWN);
-			} else if (isalpha(sc.ch) && isupper(sc.ch)) {
-				sc.SetState(SCE_ERLANG_VARIABLE);
-			} else if (isalpha(sc.ch)) {
+                sc.SetState(SCE_ERLANG_UNKNOWN);
+            } else if (isalpha(sc.ch) && isupper(sc.ch)) {
+                sc.SetState(SCE_ERLANG_VARIABLE);
+            } else if (isalpha(sc.ch)) {
             parse_state = ATOM_UNQUOTED;
-				sc.SetState(SCE_ERLANG_UNKNOWN);
-			} else if (isoperator(static_cast<char>(sc.ch)) || sc.ch == '\\') {
-				sc.SetState(SCE_ERLANG_OPERATOR);
-			}
-		}
-	}
-	sc.Complete();
+                sc.SetState(SCE_ERLANG_UNKNOWN);
+            } else if (isoperator(static_cast<char>(sc.ch)) || sc.ch == '\\') {
+                sc.SetState(SCE_ERLANG_OPERATOR);
+            }
+        }
+    }
+    sc.Complete();
 }
 
 static int ClassifyFoldPointErlang(
@@ -358,7 +358,7 @@ static int ClassifyFoldPointErlang(
    int styleNext,
    int keyword_start
 ) {
-	int lev = 0;
+    int lev = 0;
    if ( styler.Match(keyword_start,"case")
       || (
             styler.Match(keyword_start,"fun")
@@ -371,7 +371,7 @@ static int ClassifyFoldPointErlang(
    } else if ( styler.Match(keyword_start,"end") ) {
       --lev;
    }
-	return lev;
+    return lev;
 }
 
 
@@ -379,15 +379,15 @@ static void FoldErlangDoc(
    unsigned int startPos, int length, int initStyle,
    WordList** /*keywordlists*/, Accessor &styler
 ) {
-	unsigned int endPos = startPos + length;
-	//~ int visibleChars = 0;
-	int lineCurrent = styler.GetLine(startPos);
-	int levelPrev = styler.LevelAt(lineCurrent) & SC_FOLDLEVELNUMBERMASK;
-	int levelCurrent = levelPrev;
-	char chNext = styler.SafeGetCharAt(startPos);
-	int styleNext = styler.StyleAt(startPos);
-	int style = initStyle;
-	int keyword_start = 0;
+    unsigned int endPos = startPos + length;
+    //~ int visibleChars = 0;
+    int lineCurrent = styler.GetLine(startPos);
+    int levelPrev = styler.LevelAt(lineCurrent) & SC_FOLDLEVELNUMBERMASK;
+    int levelCurrent = levelPrev;
+    char chNext = styler.SafeGetCharAt(startPos);
+    int styleNext = styler.StyleAt(startPos);
+    int style = initStyle;
+    int keyword_start = 0;
 
    bool fold_keywords = true;
    bool fold_comments = true;
@@ -397,13 +397,13 @@ static void FoldErlangDoc(
 
    //int clause_level = 0;
 
-	for (unsigned int i = startPos; i < endPos; i++) {
-		char ch = chNext;
-		chNext = styler.SafeGetCharAt(i + 1);
-		int stylePrev = style;
-		style = styleNext;
-		styleNext = styler.StyleAt(i + 1);
-		bool atEOL = (ch == '\r' && chNext != '\n') || (ch == '\n');
+    for (unsigned int i = startPos; i < endPos; i++) {
+        char ch = chNext;
+        chNext = styler.SafeGetCharAt(i + 1);
+        int stylePrev = style;
+        style = styleNext;
+        styleNext = styler.StyleAt(i + 1);
+        bool atEOL = (ch == '\r' && chNext != '\n') || (ch == '\n');
 
       if ( (stylePrev != SCE_ERLANG_KEYWORD) && (style == SCE_ERLANG_KEYWORD) ) {
          keyword_start = i;
@@ -488,33 +488,33 @@ static void FoldErlangDoc(
          }
       }
 
-		if (atEOL) {
-			int lev = levelPrev;
-			//~ if (visibleChars == 0 && foldCompact)
-				//~ lev |= SC_FOLDLEVELWHITEFLAG;
-			//~ if ((levelCurrent > levelPrev) && (visibleChars > 0))
-			if ((levelCurrent > levelPrev)) {
-				lev |= SC_FOLDLEVELHEADERFLAG;
+        if (atEOL) {
+            int lev = levelPrev;
+            //~ if (visibleChars == 0 && foldCompact)
+                //~ lev |= SC_FOLDLEVELWHITEFLAG;
+            //~ if ((levelCurrent > levelPrev) && (visibleChars > 0))
+            if ((levelCurrent > levelPrev)) {
+                lev |= SC_FOLDLEVELHEADERFLAG;
          }
-			if (lev != styler.LevelAt(lineCurrent)) {
-				styler.SetLevel(lineCurrent, lev);
-			}
-			lineCurrent++;
-			levelPrev = levelCurrent;
-			//~ visibleChars = 0;
-		}
-		//~ if (!isspacechar(ch))
-			//~ visibleChars++;
+            if (lev != styler.LevelAt(lineCurrent)) {
+                styler.SetLevel(lineCurrent, lev);
+            }
+            lineCurrent++;
+            levelPrev = levelCurrent;
+            //~ visibleChars = 0;
+        }
+        //~ if (!isspacechar(ch))
+            //~ visibleChars++;
 
-	}
-	// Fill in the real level of the next line, keeping the current flags as they will be filled in later
-	int flagsNext = styler.LevelAt(lineCurrent) & ~SC_FOLDLEVELNUMBERMASK;
-	styler.SetLevel(lineCurrent, levelPrev | flagsNext);
+    }
+    // Fill in the real level of the next line, keeping the current flags as they will be filled in later
+    int flagsNext = styler.LevelAt(lineCurrent) & ~SC_FOLDLEVELNUMBERMASK;
+    styler.SetLevel(lineCurrent, levelPrev | flagsNext);
 }
 
 static const char * const erlangWordListDesc[] = {
-	"Keywords",
-	0
+    "Keywords",
+    0
 };
 
 LexerModule lmErlang(

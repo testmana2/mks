@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** 		Created using Monkey Studio v1.8.1.0
+**      Created using Monkey Studio v1.8.1.0
 ** Authors    : Filipe AZEVEDO aka Nox P@sNox <pasnox@gmail.com>
 ** Project   : Monkey Studio IDE
 ** FileName  : UICLIToolSettings.h
@@ -40,33 +40,33 @@ class BasePlugin;
 
 class Q_MONKEY_EXPORT UICLIToolSettings : public QWidget, public Ui::UICLIToolSettings
 {
-	Q_OBJECT
-	
+    Q_OBJECT
+    
 protected:
-	pCommandList mDefaults;
-	pCommandList mReset;
-	pCommandList mCommands;
-	BasePlugin* mPlugin;
-	bool mUpdating;
+    pCommandList mDefaults;
+    pCommandList mReset;
+    pCommandList mCommands;
+    BasePlugin* mPlugin;
+    bool mUpdating;
 
 public:
-	UICLIToolSettings( BasePlugin*, const pCommandList&, const pCommandList&, QWidget* = 0 );
+    UICLIToolSettings( BasePlugin*, const pCommandList&, const pCommandList&, QWidget* = 0 );
 
-	void updateCommands();
-	void restoreDefaults();
-	void reset();
-	void save();
+    void updateCommands();
+    void restoreDefaults();
+    void reset();
+    void save();
 
 protected slots:
-	void on_lwCommands_itemSelectionChanged();
-	void on_lwCommands_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
-	void on_pbCommandAdd_clicked();
-	void on_pbCommandRemove_clicked();
-	void on_pbCommandUp_clicked();
-	void on_pbCommandDown_clicked();
-	void on_tbCommandCommand_clicked();
-	void on_tbCommandWorkingDirectory_clicked();
-	void on_dbbButtons_clicked( QAbstractButton* );
+    void on_lwCommands_itemSelectionChanged();
+    void on_lwCommands_currentItemChanged( QListWidgetItem*, QListWidgetItem* );
+    void on_pbCommandAdd_clicked();
+    void on_pbCommandRemove_clicked();
+    void on_pbCommandUp_clicked();
+    void on_pbCommandDown_clicked();
+    void on_tbCommandCommand_clicked();
+    void on_tbCommandWorkingDirectory_clicked();
+    void on_dbbButtons_clicked( QAbstractButton* );
 
 };
 

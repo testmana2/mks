@@ -5,10 +5,10 @@
 
 class $Plugin Name$ : public CLIToolPlugin
 {
-	Q_INTERFACES( CLIToolPlugin )
+    Q_INTERFACES( CLIToolPlugin )
 
 public:
-	virtual pCommandList defaultCommands() const;
+    virtual pCommandList defaultCommands() const;
 };
 
 #endif // $Plugin Name.upper$_H

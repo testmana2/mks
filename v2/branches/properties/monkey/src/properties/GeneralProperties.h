@@ -6,18 +6,18 @@
 class GeneralProperties : public XmlObject
 {
 public:
-	GeneralProperties();
+    GeneralProperties();
 
 protected:
-	QVariant mSaveFilesOnCustomAction; // bool
-	QVariant mDefaultProjectDirectory; // string
-	QVariant mShowQuickFileAccess; // bool
-	QVariant mSortingMode; // int
-	QVariant mTabMode; // int
-	QVariant mSaveSessionOnClose; // bool
-	QVariant mRestoreSessionOnOpen; // bool
+    QVariant mSaveFilesOnCustomAction; // bool
+    QVariant mDefaultProjectDirectory; // string
+    QVariant mShowQuickFileAccess; // bool
+    QVariant mSortingMode; // int
+    QVariant mTabMode; // int
+    QVariant mSaveSessionOnClose; // bool
+    QVariant mRestoreSessionOnOpen; // bool
 
-	virtual void processData( XmlObjectProcessor* container );
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // GENERALPROPERTIES_H

@@ -5,18 +5,18 @@
 
 class $Plugin Name$ : public CompilerPlugin
 {
-	Q_OBJECT
-	Q_INTERFACES( BasePlugin CompilerPlugin CLIToolPlugin )
+    Q_OBJECT
+    Q_INTERFACES( BasePlugin CompilerPlugin CLIToolPlugin )
 
 public:
-	virtual pCommand defaultCompileCommand() const;
-	virtual pCommandList defaultCommands() const;
+    virtual pCommand defaultCompileCommand() const;
+    virtual pCommandList defaultCommands() const;
 
 protected:
-	virtual void fillPluginInfos();
+    virtual void fillPluginInfos();
 
-	virtual bool install();
-	virtual bool uninstall();
+    virtual bool install();
+    virtual bool uninstall();
 };
 
 #endif // $Plugin Name.upper$_H

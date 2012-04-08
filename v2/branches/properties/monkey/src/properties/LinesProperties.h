@@ -6,19 +6,19 @@
 class LinesProperties : public XmlObject
 {
 public:
-	LinesProperties();
+    LinesProperties();
 
 protected:
-	QVariant mEolMode; // int
-	QVariant mAutoDetectEol; // bool
-	QVariant mShowEol; // bool
-	QVariant mWhitespaceMode; // int
-	QVariant mWrapMode; // int
-	QVariant mWrapFlagStartMode; // int
-	QVariant mWrapFlagEndMode; // int
-	QVariant mWrapFlagIndentWidth; // int
-	
-	virtual void processData( XmlObjectProcessor* container );
+    QVariant mEolMode; // int
+    QVariant mAutoDetectEol; // bool
+    QVariant mShowEol; // bool
+    QVariant mWhitespaceMode; // int
+    QVariant mWrapMode; // int
+    QVariant mWrapFlagStartMode; // int
+    QVariant mWrapFlagEndMode; // int
+    QVariant mWrapFlagIndentWidth; // int
+    
+    virtual void processData( XmlObjectProcessor* container );
 };
 
 #endif // LINESPROPERTIES_H
