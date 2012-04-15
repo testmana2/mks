@@ -9,6 +9,7 @@ import Git
 import Svn
 import Wine
 import MacOSBundle
+import GoogleCodeUpload
 
 class MkSProject(Project.Project):
     def __init__(self):
@@ -19,7 +20,8 @@ class MkSProject(Project.Project):
         self.shortName = 'mks'
         self.name = 'Monkey Studio IDE'
         #self.version = '1.9.0.0'
-        self.version = 'dev'
+        #self.version = 'dev'
+        self.version = 'trunk'
         self.company = 'The Monkey Studio Team'
         self.copyrights = '2005 - 2012 Azevedo Filipe & The Monkey Studio Team'
         self.description = 'Free, Fast and Flexible cross-platform IDE'
@@ -63,7 +65,7 @@ class MkSProject(Project.Project):
     def __del__(self):
         Project.Project.__del__(self)
         if self.success:
-            Tools.deleteIfExists( self.target )
+            #Tools.deleteIfExists( self.target )
             Tools.createDirectory( self.target )
             for fileName in os.listdir( self.packagesFolder ):
                 sourceFilePath = '%s/%s' % ( self.packagesFolder, fileName )
@@ -114,10 +116,19 @@ class MkSProject(Project.Project):
         Tools.banner( 'Creating directories...' )
         if os.path.exists( self.target ):
             print 'Target exists and it should not, delete it first.'
-            return False
+            #return False
         Tools.createDirectory( self.target )
         Tools.createDirectory( self.logFolder )
         Tools.createDirectory( self.packagesFolder )
+        
+        # check target files existance
+        tgzFileExists = os.path.exists( '%s/%s' % ( self.target, os.path.basename( self.tgzFile ) ) )
+        zipFileExists = os.path.exists( '%s/%s' % ( self.target, os.path.basename( self.zipFile ) ) )
+        winSetupFileExists = os.path.exists( '%s/%s' % ( self.target, os.path.basename( self.winSetup ) ) )
+        winZipFileExists = os.path.exists( '%s/%s' % ( self.target, os.path.basename( self.winZip ) ) )
+        macDmgFileExists = os.path.exists( '%s/%s' % ( self.target, os.path.basename( self.macDmg ) ) )
+        macZipDmgFileExists = os.path.exists( '%s/%s.zip' % ( self.target, os.path.basename( self.macDmg ) ) )
+        macZipFileExists = os.path.exists( '%s/%s' % ( self.target, os.path.basename( self.macZip ) ) )
         
         Tools.banner( 'Exporting sources...' )
         tools = 'v2/tools'
@@ -135,47 +146,77 @@ class MkSProject(Project.Project):
             return
         
         Tools.banner( 'Creating sources packages...' )
-        if not Tools.tarGzFolder( self.sourcesFolder, self.tgzFile ):
-            print 'Can\'t create tgz file'
-            return
-        if not Tools.zipFolder( self.sourcesFolder, self.zipFile ):
-            print 'Can\'t create zip file'
-            return
+        if tgzFileExists:
+            print ' - Skipping creation of %s' % ( self.tgzFile )
+        else:
+            if not Tools.tarGzFolder( self.sourcesFolder, self.tgzFile ):
+                print 'Can\'t create tgz file'
+                return
+        if zipFileExists:
+            print ' - Skipping creation of %s' % ( self.zipFile )
+        else:
+            if not Tools.zipFolder( self.sourcesFolder, self.zipFile ):
+                print 'Can\'t create zip file'
+                return
         
         Tools.banner( 'Crossbuilding for windows...' )
-        if not Tools.buildQtProject( self.projectFile, self.qt, self.qt.windowsMkSpec ):
-            print 'Can\'t build for windows'
-            return
+        if winSetupFileExists and winZipFileExists:
+            print ' - Skipping crossbuild for windows'
+        else:
+            if not Tools.buildQtProject( self.projectFile, self.qt, self.qt.windowsMkSpec ):
+                print 'Can\'t build for windows'
+                return
         
         Tools.banner( 'Creating windows setup...' )
-        if not self.wine.iscc( '%s%s/tools/data/windows/monkeystudio.iss' % ( self.wine.rootDrive, self.sourcesFolder ) ):
-            print 'Can\'t create windows setup'
-            return
+        if winSetupFileExists:
+            print ' - Skipping creation of %s' % ( self.winSetup )
+        else:
+            if not self.wine.iscc( '%s%s/tools/data/windows/monkeystudio.iss' % ( self.wine.rootDrive, self.sourcesFolder ) ):
+                print 'Can\'t create windows setup'
+                return
         
         Tools.banner( 'Creating windows zip...' )
-        if not self.wine.isccSetupToZip( self.winSetup, self.winZip, self.name ):
-            print 'Can\'t create windows zip'
-            return
+        if winZipFileExists:
+            print ' - Skipping creation of %s' % ( self.winZip )
+        else:
+            if not self.wine.isccSetupToZip( self.winSetup, self.winZip, self.name ):
+                print 'Can\'t create windows zip'
+                return
         
         Tools.banner( 'Crossbuilding for mac os x...' )
-        if not Tools.buildQtProject( self.projectFile, self.qt, self.qt.macosMkSpec ):
-            print 'Can\'t build for mac os x'
-            return
+        if ( macDmgFileExists or macZipDmgFileExists ) and macZipFileExists:
+            print ' - Skipping crossbuild for mac os x'
+        else:
+            if not Tools.buildQtProject( self.projectFile, self.qt, self.qt.macosMkSpec ):
+                print 'Can\'t build for mac os x'
+                return
         
         Tools.banner( 'Relinking the mac os x bundle' )
         bundle = MacOSBundle.MacOSBundle( self.qt, '%s/bin/MonkeyStudio.app' % ( self.sourcesFolder ), True )
-        if not bundle.deploy():
-            print 'Can\'t deploy'
-            return
+        if macDmgFileExists or macZipDmgFileExists:
+            print ' - Skipping relinking of mac os x bundle'
+        else:
+            if not bundle.deploy():
+                print 'Can\'t deploy'
+                return
         
         Tools.banner( 'Creating mac dmg...' )
-        if not bundle.createDmg( self.macDmg ):
-            print 'Can\'t create mac dmg'
-            return
+        if macDmgFileExists or macZipDmgFileExists:
+            print ' - Skipping creation of %s' % ( self.macDmg )
+        else:
+            if not bundle.createDmg( self.macDmg ):
+                print 'Can\'t create mac dmg'
+                return
         
         Tools.banner( 'Creating mac zip...' )
-        if not Tools.zipFolder( '%s/bin/.' % ( self.sourcesFolder ), self.macZip ):
-            print 'Can\'t create mac zip'
-            return
+        if macZipFileExists:
+            print ' - Skipping creation of %s' % ( self.macZip )
+        else:
+            if not Tools.zipFolder( '%s/bin/.' % ( self.sourcesFolder ), self.macZip ):
+                print 'Can\'t create mac zip'
+                return
+        
+        gcu = GoogleCodeUpload.GoogleCodeUpload()
+        print gcu.version()
         
         self.success = True
