@@ -65,7 +65,6 @@ class MkSProject(Project.Project):
     def __del__(self):
         Project.Project.__del__(self)
         if self.success:
-            #Tools.deleteIfExists( self.target )
             Tools.createDirectory( self.target )
             for fileName in os.listdir( self.packagesFolder ):
                 sourceFilePath = '%s/%s' % ( self.packagesFolder, fileName )
@@ -114,9 +113,6 @@ class MkSProject(Project.Project):
         self.expandVariables()
         
         Tools.banner( 'Creating directories...' )
-        if os.path.exists( self.target ):
-            print 'Target exists and it should not, delete it first.'
-            #return False
         Tools.createDirectory( self.target )
         Tools.createDirectory( self.logFolder )
         Tools.createDirectory( self.packagesFolder )
