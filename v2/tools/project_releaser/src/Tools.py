@@ -142,13 +142,16 @@ def getFoldersList(path, pattern = None, recursive = False):
                 files.extend( getFoldersList( file, pattern, recursive ) )
     return files
 
-def execute(command, workingDirectory = None, showError = True, showExecInfo = True):
+def execute(command, workingDirectory = None, showError = True, showExecInfo = True, usePipe = True):
     if showExecInfo:
         if workingDirectory:
             print ' - From: %s' % ( workingDirectory )
         print ' - Executing: %s' % command
     args = shlex.split( command )
-    runner = subprocess.Popen( args, cwd = workingDirectory, stdout = subprocess.PIPE, stderr= subprocess.STDOUT, shell = False )
+    if usePipe:
+        runner = subprocess.Popen( args, cwd = workingDirectory, stdout = subprocess.PIPE, stderr= subprocess.STDOUT, shell = False )
+    else:
+        runner = subprocess.Popen( args, cwd = workingDirectory, shell = False )
     output, error = runner.communicate()
     if runner.returncode != 0:
         if showError:
