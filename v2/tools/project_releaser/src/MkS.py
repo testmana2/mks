@@ -64,15 +64,6 @@ class MkSProject(Project.Project):
     
     def __del__(self):
         Project.Project.__del__(self)
-        if self.success:
-            Tools.createDirectory( self.target )
-            for fileName in os.listdir( self.packagesFolder ):
-                sourceFilePath = '%s/%s' % ( self.packagesFolder, fileName )
-                targetFilePath = '%s/%s' % ( self.target, fileName )
-                if not os.path.isdir( sourceFilePath ):
-                    if Tools.deleteIfExists( targetFilePath ):
-                        shutil.move( sourceFilePath, targetFilePath )
-        Tools.deleteIfExists( self.tmpFolder )
         Tools.banner( 'Releasing finished (%s)' % ( 'Ok' if self.success else 'Fails' ) )
     
     def expandVariables(self):
@@ -103,6 +94,41 @@ class MkSProject(Project.Project):
         os.environ[ 'SETUP_OUTPUT_DIRECTORY' ] = self.packagesFolder
         os.environ[ 'SETUP_OUTPUT_NAME' ] = os.path.splitext( os.path.basename( self.winSetup ) )[ 0 ]
         os.environ[ 'SCRIPT_PATH' ] = '%s/tools/data/windows' % ( self.sourcesFolder )
+    
+    def getPackageInformations(self, filePath):
+        fileName = os.path.basename( filePath )
+        summary = None
+        labels = None
+        
+        # Sources
+        if fileName in self.tgzFile:
+            summary = 'Source Tgz Archive %s' % ( self.version )
+            labels = [ 'Type-Source', 'OpSys-All' ]
+        elif fileName in self.zipFile:
+            summary = 'Source Zip Archive %s' % ( self.version )
+            labels = [ 'Type-Source', 'OpSys-All' ]
+        # Windows
+        elif fileName in self.winSetup:
+            summary = 'Windows Installer %s' % ( self.version )
+            labels = [ 'Type-Installer', 'OpSys-Windows' ]
+        elif fileName in self.winZip:
+            summary = 'Windows Zip Archive %s' % ( self.version )
+            labels = [ 'Type-Archive', 'OpSys-Windows' ]
+        # Mac OSX
+        elif fileName in self.macDmg or fileName in '%s.zip' % ( self.macDmg ):
+            summary = 'Mac OS X i386 Package %s' % ( self.version )
+            labels = [ 'Type-Package', 'OpSys-OSX' ]
+        elif fileName in self.macZip:
+            summary = 'Mac OS X i386 Archive %s' % ( self.version )
+            labels = [ 'Type-Archive', 'OpSys-OSX' ]
+        
+        if self.version != 'dev':
+            labels.append( 'Status-Stable' )
+        
+        if self.version != 'trunk' and self.version != 'dev' and self.version.contains( '.' ):
+            labels.append( 'Featured' )
+        
+        return summary, labels
     
     def run(self):
         self.success = False
@@ -212,7 +238,23 @@ class MkSProject(Project.Project):
                 print 'Can\'t create mac zip'
                 return
         
-        gcu = GoogleCodeUpload.GoogleCodeUpload()
-        print gcu.version()
+        Tools.banner( 'Moving packages...' )
+        Tools.createDirectory( self.target )
+        for fileName in os.listdir( self.packagesFolder ):
+            sourceFilePath = '%s/%s' % ( self.packagesFolder, fileName )
+            targetFilePath = '%s/%s' % ( self.target, fileName )
+            if not os.path.isdir( sourceFilePath ):
+                if Tools.deleteIfExists( targetFilePath ):
+                    shutil.move( sourceFilePath, targetFilePath )
+        
+        Tools.banner( 'Uploading packages...' )
+        gcu = GoogleCodeUpload.GoogleCodeUpload( 'monkeystudio' )
+        for fileName in os.listdir( self.target ):
+            print ' - Uploading %s...' % ( fileName )
+            sourceFilePath = '%s/%s' % ( self.target, fileName )
+            summary, labels = self.getPackageInformations( sourceFilePath )
+            if not gcu.upload( sourceFilePath, summary, labels):
+                print 'Can\'t upload %s' % ( fileName )
         
         self.success = True
+    
