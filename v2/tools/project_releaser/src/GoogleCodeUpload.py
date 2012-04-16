@@ -1,3 +1,5 @@
+import os
+
 import Tools
 
 '''
@@ -5,10 +7,10 @@ import Tools
     http://code.google.com/p/googlecode-upload
 '''
 class GoogleCodeUpload:
-    def __init__(self, googleCodeScript = None):
+    def __init__(self, projectName = None, googleCodeScript = None):
         self.googleCodeScript = googleCodeScript if googleCodeScript else 'googlecode_upload.pl'
-        self.project = None
-        self.user = None
+        self.project = projectName
+        self.user = os.environ[ 'USER' ]
         self.password = None
     
     def generateCommandLine(self, parameters):
@@ -18,7 +20,10 @@ class GoogleCodeUpload:
             value = parameters[ key ]
             
             if key == 'pass' and not value:
-                value = os.environ[ 'GOOGLECODE_PASS' ]
+                continue
+            
+            if key == 'user' and not value and 'GOOGLECODE_USER' in os.environ.keys():
+                value = os.environ[ 'GOOGLECODE_USER' ]
             
             if value and ' ' in value:
                 value = '"%s"' % ( value )
@@ -35,6 +40,7 @@ class GoogleCodeUpload:
         return output.split( ' ' )[ 1 ].strip()[ 1: ] if ok else '?.??'
     
     def upload(self, filePath, summary, labels, progress = True):
+        parameters = {}
         parameters[ 'project' ] = self.project
         parameters[ 'user' ] = self.user
         parameters[ 'pass' ] = self.password
@@ -45,5 +51,4 @@ class GoogleCodeUpload:
         if progress:
             parameters[ 'progress' ] = None
         
-        ok, output = Tools.executeAndGetOutput( self.generateCommandLine( parameters ) )
-        return ok
+        return Tools.execute( self.generateCommandLine( parameters ), usePipe = not progress )
