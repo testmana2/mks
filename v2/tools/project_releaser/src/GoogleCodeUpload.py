@@ -36,7 +36,7 @@ class GoogleCodeUpload:
         return '"%s" %s' % ( self.googleCodeScript, ' '.join( options ) )
 
     def version(self):
-        ok, output = Tools.executeAndGetOutput( self.generateCommandLine( { 'version': '' } ), showExecInfo = False )
+        ok, output = Tools.executeAndGetOutput( self.generateCommandLine( { 'version': None } ), showExecInfo = False )
         return output.split( ' ' )[ 1 ].strip()[ 1: ] if ok else '?.??'
     
     def upload(self, filePath, summary, labels, progress = True):

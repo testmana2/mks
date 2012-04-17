@@ -19,9 +19,9 @@ class MkSProject(Project.Project):
         
         self.shortName = 'mks'
         self.name = 'Monkey Studio IDE'
-        #self.version = '1.9.0.0'
+        self.version = '1.9.0.2'
         #self.version = 'dev'
-        self.version = 'trunk'
+        #self.version = 'trunk'
         self.company = 'The Monkey Studio Team'
         self.copyrights = '2005 - 2012 Azevedo Filipe & The Monkey Studio Team'
         self.description = 'Free, Fast and Flexible cross-platform IDE'
@@ -64,6 +64,10 @@ class MkSProject(Project.Project):
     
     def __del__(self):
         Project.Project.__del__(self)
+        
+        if self.success:
+            Tools.deleteIfExists( self.tmpFolder )
+        
         Tools.banner( 'Releasing finished (%s)' % ( 'Ok' if self.success else 'Fails' ) )
     
     def expandVariables(self):
@@ -255,6 +259,7 @@ class MkSProject(Project.Project):
             summary, labels = self.getPackageInformations( sourceFilePath )
             if not gcu.upload( sourceFilePath, summary, labels):
                 print 'Can\'t upload %s' % ( fileName )
+                return
         
         self.success = True
     
