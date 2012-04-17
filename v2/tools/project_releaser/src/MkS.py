@@ -129,7 +129,7 @@ class MkSProject(Project.Project):
         if self.version != 'dev':
             labels.append( 'Status-Stable' )
         
-        if self.version != 'trunk' and self.version != 'dev' and self.version.contains( '.' ):
+        if self.version != 'trunk' and self.version != 'dev' and '.' in self.version:
             labels.append( 'Featured' )
         
         return summary, labels
