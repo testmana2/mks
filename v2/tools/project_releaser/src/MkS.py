@@ -38,12 +38,22 @@ class MkSProject(Project.Project):
             '%s/Developpement/OS/Win32-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ) # windows
         )
         
+        self.qtMac = Qt.QtTriplet(
+            '', # linux
+            '/usr/local/Trolltech/4.7.4-carbon-lgpl', # mac
+            '/usr/local/Trolltech/win32/4.7.4' # windows
+        )
+        
         self.qt = Qt.QtHost( self )
         
         self.wine = Wine.Wine()
         
         self.svnList[ 'mks' ] = Svn.Svn( 'svn://svn.tuxfamily.org/svnroot/monkeystudio/mks' )
-        self.svnList[ 'mks' ].workingCopy = '%s/Developpement/C++/Qt4/mks' % ( os.environ[ 'HOME' ] )
+        
+        if Tools.isLinuxOS():
+            self.svnList[ 'mks' ].workingCopy = '%s/Developpement/C++/Qt4/mks' % ( os.environ[ 'HOME' ] )
+        elif Tools.isMacOS():
+            self.svnList[ 'mks' ].workingCopy = '%s/Developpement/mks' % ( os.environ[ 'HOME' ] )
         
         self.gitList[ 'fresh' ] = Git.Git( 'git://github.com/pasnox/fresh.git' )
         

@@ -21,23 +21,25 @@ class QtHost:
         if Tools.isLinuxOS():
             self.qt = project.qtLinux
             self.qtHost = self.qt.linux;
+            self.linuxMkSpec = '%s/.qt/mkspecs/linux-x11-g++' % ( os.environ[ "HOME" ] )
+            self.macosMkSpec = '%s/.qt/mkspecs/macx-x11-g++42' % ( os.environ[ "HOME" ] )
+            self.windowsMkSpec = '%s/.qt/mkspecs/win32-x11-g++' % ( os.environ[ 'HOME' ] )
         elif Tools.isMacOS():
             self.qt = project.qtMac
             self.qtHost = self.qt.macos;
+            self.linuxMkSpec = '%s/mkspecs/4.6.x/linux-osx-g++' % ( os.environ[ "HOME" ] )
+            self.macosMkSpec = '%s/mkspecs/4.6.x/macx-osx-g++42' % ( os.environ[ "HOME" ] )
+            self.windowsMkSpec = '%s/mkspecs/4.6.x/win32-osx-g++' % ( os.environ[ 'HOME' ] )
         elif Tools.isWindowsOS():
             self.qt = project.qtWindows
             self.qtHost = self.qt.windows;
-        
-        # these can be overrides if needed
-        self.linuxMkSpec = '%s/.qt/mkspecs/linux-x11-g++' % ( os.environ[ "HOME" ] )
-        self.macosMkSpec = '%s/.qt/mkspecs/macx-x11-g++42' % ( os.environ[ "HOME" ] )
-        self.windowsMkSpec = '%s/.qt/mkspecs/win32-x11-g++' % ( os.environ[ 'HOME' ] )
     
     def expandVariables(self):
         os.environ[ 'QT_HOST_USE_SUFFIX' ] = '1' if self.useQtSuffix else '0'
         os.environ[ 'QT_LINUX_PATH' ] = self.qt.linux
         os.environ[ 'QT_MACOS_PATH' ] = self.qt.macos
         os.environ[ 'QT_WINDOWS_PATH' ] = self.qt.windows
+        os.environ[ 'CROSS_WIN32_QT_PATH' ] = self.qt.windows
     
     def pluginsFilePath(self, name = None, os = None):
         if os == 'linux':
