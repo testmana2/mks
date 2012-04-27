@@ -18,7 +18,7 @@ def isLinuxOS():
     return platform.system() == 'Linux'
 
 def isMacOS():
-    return platform.system() == 'MacOS'
+    return platform.system() == 'Darwin'
 
 def isWindowsOS():
     return platform.system() == 'Windows'
