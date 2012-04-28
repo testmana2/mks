@@ -34,7 +34,7 @@ class MkSProject(Project.Project):
         
         self.qtLinux = Qt.QtTriplet(
             '%s/Developpement/OS/Unix-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ), # linux
-            '%s/Developpement/OS/OSX-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ), # mac
+            '%s/Developpement/OS/OSX-Libraries/Qt/4.7.4-carbon' % ( os.environ[ 'HOME' ] ), # mac
             '%s/Developpement/OS/Win32-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ) # windows
         )
         
