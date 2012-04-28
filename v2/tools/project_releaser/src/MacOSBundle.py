@@ -289,7 +289,7 @@ class MacOSBundle:
             return False
         
         # mount dmg
-        if not Tools.execute( 'sudo mount -o loop,rw,uid=pasnox,sync -t hfsplus "%s" "%s"' % ( filePath, mountPoint ) ):
+        if not Tools.execute( 'sudo mount -o loop,rw,uid=pasnox,sync,umask=0000 -t hfsplus "%s" "%s"' % ( filePath, mountPoint ) ):
             return False
         
         # copy stuff in dmg
