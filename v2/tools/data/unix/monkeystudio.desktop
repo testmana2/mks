@@ -9,6 +9,7 @@ Exec=monkeystudio
 Icon=monkeystudio
 MimeType=text/*;inode/directory;
 Actions=Open;
+Categories=Development;Qt;IDE;
 
 [Desktop Action Open]
 Exec=monkeystudio %F
