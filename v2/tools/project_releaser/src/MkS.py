@@ -19,7 +19,7 @@ class MkSProject(Project.Project):
         
         self.shortName = 'mks'
         self.name = 'Monkey Studio IDE'
-        self.version = '1.9.0.2'
+        self.version = '1.9.0.3'
         #self.version = 'dev'
         #self.version = 'trunk'
         self.company = 'The Monkey Studio Team'
@@ -33,9 +33,10 @@ class MkSProject(Project.Project):
         self.makeJobs = 4
         
         self.qtLinux = Qt.QtTriplet(
-            '%s/Developpement/OS/Unix-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ), # linux
-            '%s/Developpement/OS/OSX-Libraries/Qt/4.7.4-carbon' % ( os.environ[ 'HOME' ] ), # mac
-            '%s/Developpement/OS/Win32-Libraries/Qt/4.7.4' % ( os.environ[ 'HOME' ] ) # windows
+            #'%s/Developpement/OS/Unix-Libraries/Qt/4.8.3' % ( os.environ[ 'HOME' ] ), # linux
+            '/usr', # linux
+            '%s/Developpement/OS/OSX-Libraries/Qt/4.8.3-carbon' % ( os.environ[ 'HOME' ] ), # mac
+            '%s/Developpement/OS/Win32-Libraries/Qt/4.8.3' % ( os.environ[ 'HOME' ] ) # windows
         )
         
         self.qtMac = Qt.QtTriplet(
@@ -64,13 +65,16 @@ class MkSProject(Project.Project):
         self.logFolder = '%s/log' % ( self.tmpFolder )
         self.packagesFolder = '%s/packages' % ( self.tmpFolder )
         self.sourcesFolder = '%s/%s' % ( self.tmpFolder, self.sourceName )
-        self.projectFile = '%s/build.pro' % ( self.sourcesFolder )
+        self.projectFile = '%s/monkeystudio.pro' % ( self.sourcesFolder )
         self.tgzFile = '%s/%s.tar.gz' % ( self.packagesFolder, self.sourceName )
         self.zipFile = '%s/%s.zip' % ( self.packagesFolder, self.sourceName )
         self.winSetup = '%s/%s.exe' % ( self.packagesFolder, self.baseName )
         self.winZip = '%s/%s-win32.zip' % ( self.packagesFolder, self.baseName )
         self.macDmg = '%s/%s.dmg' % ( self.packagesFolder, self.baseName )
         self.macZip = '%s/%s-mac.zip' % ( self.packagesFolder, self.baseName )
+        
+        os.environ[ 'PWD' ] = self.tmpFolder
+        os.chdir( self.tmpFolder )
     
     def __del__(self):
         Project.Project.__del__(self)
@@ -97,7 +101,7 @@ class MkSProject(Project.Project):
         os.environ[ 'PROJECT_MAC_ZIP' ] = self.macZip
         
         # Windows Setup expands
-        os.environ[ 'QT_WINDOWS_MINGW_DOWNLOAD' ] = 'http://get.qt.nokia.com/qt/source/qt-win-opensource-4.7.4-mingw.exe'
+        os.environ[ 'QT_WINDOWS_MINGW_DOWNLOAD' ] = 'http://get.qt.nokia.com/qt/source/qt-win-opensource-4.7.5-mingw.exe'
         os.environ[ 'WINDOWS_MINGW_DOWNLOAD' ] = 'http://get.qt.nokia.com/misc/MinGW-gcc440_1.zip'
         os.environ[ 'QT_DOWNLOAD' ] = 'http://qt.nokia.com/downloads'
         os.environ[ 'WINDOWS_DLLS_PATH' ] = '%s/Developpement/OS/Win32-Libraries/bin' % ( os.environ[ 'HOME' ] )
@@ -219,7 +223,7 @@ class MkSProject(Project.Project):
                 print 'Can\'t create windows zip'
                 return
         
-        Tools.banner( 'Crossbuilding for mac os x...' )
+        '''Tools.banner( 'Crossbuilding for mac os x...' )
         if ( macDmgFileExists or macZipDmgFileExists ) and macZipFileExists:
             print ' - Skipping crossbuild for mac os x'
         else:
@@ -250,7 +254,7 @@ class MkSProject(Project.Project):
         else:
             if not Tools.zipFolder( '%s/bin/.' % ( self.sourcesFolder ), self.macZip ):
                 print 'Can\'t create mac zip'
-                return
+                return'''
         
         Tools.banner( 'Moving packages...' )
         Tools.createDirectory( self.target )
