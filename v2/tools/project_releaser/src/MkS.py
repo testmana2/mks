@@ -19,7 +19,7 @@ class MkSProject(Project.Project):
         
         self.shortName = 'mks'
         self.name = 'Monkey Studio IDE'
-        self.version = '1.9.0.3'
+        self.version = '1.9.0.4'
         #self.version = 'dev'
         #self.version = 'trunk'
         self.company = 'The Monkey Studio Team'
@@ -130,7 +130,7 @@ class MkSProject(Project.Project):
             summary = 'Windows Installer %s' % ( self.version )
             labels = [ 'Type-Installer', 'OpSys-Windows' ]
         elif fileName in self.winZip:
-            summary = 'Windows Zip Archive %s' % ( self.version )
+            summary = 'Windows Zip Archive (Portable App) %s' % ( self.version )
             labels = [ 'Type-Archive', 'OpSys-Windows' ]
         # Mac OSX
         elif fileName in self.macDmg or fileName in '%s.zip' % ( self.macDmg ):
